@@ -19,8 +19,7 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
 abstract class IConfigurationEditViewModel(
-    private val testPageDestination: NavigationDestination,
-    private val service: IService,
+    private val service: IService
 ) : ScreenViewModel() {
 
     private val _configurationEditViewState = MutableStateFlow(ConfigurationEditViewState(serviceViewState = ServiceViewState(service.serviceState)))
@@ -42,7 +41,6 @@ abstract class IConfigurationEditViewModel(
         when (action) {
             Discard -> discard(false)
             Save -> save(false)
-            OpenTestScreen -> navigator.navigate(testPageDestination)
             OpenServiceStateDialog -> _configurationEditViewState.update { it.copy(dialogState = ServiceStateDialogState(service.serviceState.value)) }
             BackClick -> onBackPressedClick()
         }

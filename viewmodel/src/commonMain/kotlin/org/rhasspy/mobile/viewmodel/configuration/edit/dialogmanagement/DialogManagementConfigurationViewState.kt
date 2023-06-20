@@ -10,7 +10,7 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewStat
 
 @Stable
 data class DialogManagementConfigurationViewState internal constructor(
-    val dialogManagementOption: DialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
+    val editData: DialogManagementConfigurationData
 ) {
 
     @Stable
@@ -30,9 +30,3 @@ data class DialogManagementConfigurationViewState internal constructor(
     }
 
 }
-
-//
-//val textAsrTimeoutText: String = ConfigurationSetting.textAsrTimeout.value.toString(),
-//val intentRecognitionTimeoutText: String = ConfigurationSetting.intentRecognitionTimeout.value.toString(),
-//val recordingTimeoutText: String = ConfigurationSetting.recordingTimeout.value.toString()
-//override val isTestingEnabled: Boolean get() = dialogManagementOption != DialogManagementOption.Disabled

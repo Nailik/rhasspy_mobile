@@ -15,7 +15,6 @@ sealed interface IntentRecognitionConfigurationUiEvent {
 
     sealed interface Action : IntentRecognitionConfigurationUiEvent {
 
-        object RunIntentRecognition : Action
         object BackClick : Action
 
     }

@@ -28,7 +28,7 @@ import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationUiEvent.Action.PlayTestAudio
 import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationEditViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationViewState
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen
 
@@ -39,7 +39,7 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
  */
 @Composable
 fun AudioPlayingConfigurationContent() {
-    val viewModel: AudioPlayingConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: AudioPlayingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
     Screen(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()

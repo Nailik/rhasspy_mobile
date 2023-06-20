@@ -10,7 +10,7 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewStat
 
 @Stable
 data class SpeechToTextConfigurationViewState internal constructor(
-    val isTestRecordingAudio: Boolean = false
+    val editData: SpeechToTextConfigurationData
 ) {
 
     @Stable
@@ -30,5 +30,3 @@ data class SpeechToTextConfigurationViewState internal constructor(
     }
 
 }
-
-//override val isTestingEnabled: Boolean get() = speechToTextOption != SpeechToTextOption.Disabled

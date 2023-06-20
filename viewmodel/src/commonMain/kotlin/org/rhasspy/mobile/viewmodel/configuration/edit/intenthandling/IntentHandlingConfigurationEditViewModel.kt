@@ -1,30 +1,50 @@
 package org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling
 
 import androidx.compose.runtime.Stable
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingService
+import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent.Action.RunIntentHandlingTest
 import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentHandlingConfigurationScreenDestination.EditScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentHandlingConfigurationScreenDestination.TestScreen
+import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationViewState.IntentHandlingConfigurationData
 
 @Stable
 class IntentHandlingConfigurationEditViewModel(
-    service: DialogManagerService
-) : IConfigurationEditViewModel<IntentHandlingConfigurationViewState>(
-    service = service,
-    initialViewState = ::IntentHandlingConfigurationViewState,
-    testPageDestination = TestScreen
+    service: DialogManagerService,
+    private val viewStateCreator: ConfigurationEditViewStateCreator
+) : IConfigurationEditViewModel(
+    service = service
 ) {
 
-    val screen = navigator.topScreen(EditScreen)
+    private val initialConfigurationData = IntentHandlingConfigurationData()
+
+    private val _editData = MutableStateFlow(initialConfigurationData)
+    private val _viewState = MutableStateFlow(IntentHandlingConfigurationViewState(initialConfigurationData))
+    val viewState = combineState(_viewState, _editData) { viewState, editData ->
+        viewState.copy(editData = editData)
+    }
+
+    override fun initViewStateCreator(
+        configurationEditViewState: MutableStateFlow<ConfigurationEditViewState>
+    ): StateFlow<ConfigurationEditViewState> {
+        return viewStateCreator(
+            init = ::IntentHandlingConfigurationData,
+            editData = _editData,
+            configurationEditViewState = configurationEditViewState
+        )
+    }
 
     fun onEvent(event: IntentHandlingConfigurationUiEvent) {
         when (event) {
@@ -34,30 +54,19 @@ class IntentHandlingConfigurationEditViewModel(
     }
 
     private fun onChange(change: Change) {
-        updateViewState {
+        _editData.update {
             when (change) {
-                is ChangeIntentHandlingHassAccessToken -> it.copy(intentHandlingHassAccessToken = change.token)
-                is ChangeIntentHandlingHassEndpoint -> it.copy(intentHandlingHassEndpoint = change.endpoint)
+                is ChangeIntentHandlingHomeAssistantAccessToken -> it.copy(intentHandlingHomeAssistantAccessToken = change.token)
+                is ChangeIntentHandlingHomeAssistantEndpoint -> it.copy(intentHandlingHomeAssistantEndpoint = change.endpoint)
                 is ChangeIntentHandlingHttpEndpoint -> it.copy(intentHandlingHttpEndpoint = change.endpoint)
-                is SelectIntentHandlingHassOption -> it.copy(intentHandlingHassOption = change.option)
+                is SelectIntentHandlingHomeAssistantOption -> it.copy(intentHandlingHomeAssistantOption = change.option)
                 is SelectIntentHandlingOption -> it.copy(intentHandlingOption = change.option)
-                is UpdateTestIntentHandlingName -> it.copy(testIntentHandlingName = change.name)
-                is UpdateTestIntentHandlingText -> it.copy(testIntentHandlingText = change.text)
             }
         }
     }
 
     private fun onAction(action: Action) {
         when (action) {
-            RunIntentHandlingTest -> {
-                testScope.launch {
-                    get<IntentHandlingService>().intentHandling(
-                        intentName = data.testIntentHandlingName,
-                        intent = data.testIntentHandlingText
-                    )
-                }
-            }
-
             BackClick -> navigator.onBackPressed()
         }
     }
@@ -65,11 +74,13 @@ class IntentHandlingConfigurationEditViewModel(
     override fun onDiscard() {}
 
     override fun onSave() {
-        ConfigurationSetting.intentHandlingOption.value = data.intentHandlingOption
-        ConfigurationSetting.intentHandlingHttpEndpoint.value = data.intentHandlingHttpEndpoint
-        ConfigurationSetting.intentHandlingHomeAssistantEndpoint.value = data.intentHandlingHassEndpoint
-        ConfigurationSetting.intentHandlingHomeAssistantAccessToken.value = data.intentHandlingHassAccessToken
-        ConfigurationSetting.intentHandlingHomeAssistantOption.value = data.intentHandlingHassOption
+        with(_editData.value) {
+            ConfigurationSetting.intentHandlingOption.value = intentHandlingOption
+            ConfigurationSetting.intentHandlingHttpEndpoint.value = intentHandlingHttpEndpoint
+            ConfigurationSetting.intentHandlingHomeAssistantEndpoint.value = intentHandlingHomeAssistantEndpoint
+            ConfigurationSetting.intentHandlingHomeAssistantAccessToken.value = intentHandlingHomeAssistantAccessToken
+            ConfigurationSetting.intentHandlingHomeAssistantOption.value = intentHandlingHomeAssistantOption
+        }
     }
 
 }

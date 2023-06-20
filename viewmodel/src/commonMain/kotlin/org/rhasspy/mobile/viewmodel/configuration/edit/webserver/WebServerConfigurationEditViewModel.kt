@@ -25,7 +25,6 @@ class WebServerConfigurationEditViewModel(
     service: WebServerService,
     private val viewStateCreator: ConfigurationEditViewStateCreator
 ) : IConfigurationEditViewModel(
-    testPageDestination = TestScreen,
     service = service
 ) {
 
@@ -42,7 +41,6 @@ class WebServerConfigurationEditViewModel(
     ): StateFlow<ConfigurationEditViewState> {
         return viewStateCreator(
             init = ::WebServerConfigurationData,
-            isTestingEnabled = { it.isHttpServerEnabled },
             editData = _editData,
             configurationEditViewState = configurationEditViewState
         )

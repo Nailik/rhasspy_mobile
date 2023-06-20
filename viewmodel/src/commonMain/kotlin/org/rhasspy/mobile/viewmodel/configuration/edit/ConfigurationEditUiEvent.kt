@@ -9,7 +9,6 @@ sealed interface ConfigurationEditUiEvent {
         object Save : Action
         object Discard : Action
         object BackClick : Action
-        object OpenTestScreen : Action
         object OpenServiceStateDialog : Action
 
     }

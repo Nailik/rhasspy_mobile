@@ -27,11 +27,4 @@ sealed interface MqttConfigurationUiEvent {
 
     }
 
-    sealed interface Consumed : MqttConfigurationUiEvent {
-
-        object ShowSnackBar : Consumed
-
-    }
-
-
 }

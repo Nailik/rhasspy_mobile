@@ -27,7 +27,3 @@ data class IntentHandlingConfigurationViewState internal constructor(
     }
 
 }
-
-// override val isTestingEnabled: Boolean get() = intentHandlingOption != IntentHandlingOption.Disabled
-//    val testIntentHandlingName: String = "",
-//    val testIntentHandlingText: String = ""

@@ -21,8 +21,8 @@ data class MqttConfigurationViewState internal constructor(
         val mqttUserName: String = ConfigurationSetting.mqttUserName.value,
         val mqttPassword: String = ConfigurationSetting.mqttPassword.value,
         val isMqttSSLEnabled: Boolean = ConfigurationSetting.isMqttSSLEnabled.value,
-        val mqttConnectionTimeout: Int? = ConfigurationSetting.mqttConnectionTimeout.value,
-        val mqttKeepAliveInterval: Int? = ConfigurationSetting.mqttKeepAliveInterval.value,
+        val mqttConnectionTimeout: Long? = ConfigurationSetting.mqttConnectionTimeout.value,
+        val mqttKeepAliveInterval: Long? = ConfigurationSetting.mqttKeepAliveInterval.value,
         val mqttRetryInterval: Long? = ConfigurationSetting.mqttRetryInterval.value,
         val mqttKeyStoreFile: Path? = ConfigurationSetting.mqttKeyStoreFile.value
     ) {

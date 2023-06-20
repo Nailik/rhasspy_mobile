@@ -15,7 +15,6 @@ class ConfigurationEditViewStateCreator(
 
     operator fun <T> invoke(
         init: () -> T,
-        isTestingEnabled: (T) -> Boolean,
         editData: StateFlow<T>,
         configurationEditViewState: MutableStateFlow<ConfigurationEditViewState>
     ): StateFlow<ConfigurationEditViewState> {
@@ -29,7 +28,6 @@ class ConfigurationEditViewStateCreator(
             val isHasUnsavedChanges = data != init()
 
              viewState.copy(
-                isTestingEnabled = isTestingEnabled(data) && !isHasUnsavedChanges,
                 hasUnsavedChanges = isHasUnsavedChanges,
                 isOpenServiceStateDialogEnabled = serviceState.isOpenServiceStateDialogEnabled(),
             )

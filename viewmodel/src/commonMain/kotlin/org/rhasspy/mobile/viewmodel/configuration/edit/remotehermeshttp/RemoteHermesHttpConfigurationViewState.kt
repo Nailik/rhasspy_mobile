@@ -12,7 +12,7 @@ data class RemoteHermesHttpConfigurationViewState internal constructor(
     data class RemoteHermesHttpConfigurationData internal constructor(
         val httpClientServerEndpointHost: String = ConfigurationSetting.httpClientServerEndpointHost.value,
         val httpClientServerEndpointPort: Int? = ConfigurationSetting.httpClientServerEndpointPort.value,
-        val httpClientTimeout: Long = ConfigurationSetting.httpClientTimeout.value,
+        val httpClientTimeout: Long? = ConfigurationSetting.httpClientTimeout.value,
         val isHttpSSLVerificationDisabled: Boolean = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value
     ) {
 

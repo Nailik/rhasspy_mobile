@@ -7,7 +7,7 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.logic.logicModule
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.settings.settingsModule
-import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationEditViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationEditViewModel
@@ -84,7 +84,7 @@ val viewModelModule = module {
     singleOf(::ConfigurationScreenViewStateCreator)
     singleOf(::ConfigurationScreenViewModel)
 
-    singleOf(::AudioPlayingConfigurationEditViewModel)
+    singleOf(::AudioPlayingConfigurationViewModel)
     singleOf(::DialogManagementConfigurationEditViewModel)
     singleOf(::IntentHandlingConfigurationEditViewModel)
     singleOf(::IntentRecognitionConfigurationEditViewModel)

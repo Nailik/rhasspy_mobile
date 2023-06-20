@@ -39,8 +39,8 @@ object ConfigurationSetting {
     val mqttUserName = ISetting(SettingsEnum.MQTTUserName, "")
     val mqttPassword = ISetting(SettingsEnum.MQTTPassword, "")
     val isMqttSSLEnabled = ISetting(SettingsEnum.MQTTSSLEnabled, false)
-    val mqttConnectionTimeout = ISetting(SettingsEnum.MQTTConnectionTimeout, 5)
-    val mqttKeepAliveInterval = ISetting(SettingsEnum.MQTTKeepAliveInterval, 30)
+    val mqttConnectionTimeout = ISetting(SettingsEnum.MQTTConnectionTimeout, 5L)
+    val mqttKeepAliveInterval = ISetting(SettingsEnum.MQTTKeepAliveInterval, 30L)
     val mqttRetryInterval = ISetting(SettingsEnum.MQTTRetryInterval, 10L)
     val mqttKeyStoreFile = ISetting(
         SettingsEnum.MQTTKeyStoreFile,

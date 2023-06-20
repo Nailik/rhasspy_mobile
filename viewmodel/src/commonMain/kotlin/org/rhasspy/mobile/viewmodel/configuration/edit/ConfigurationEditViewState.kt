@@ -6,7 +6,6 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 @Stable
 data class ConfigurationEditViewState(
     val serviceViewState: ServiceViewState,
-    val isTestingEnabled: Boolean = false,
     val hasUnsavedChanges: Boolean = false,
     val isOpenServiceStateDialogEnabled: Boolean = false,
     val dialogState: ConfigurationDialogState? = null

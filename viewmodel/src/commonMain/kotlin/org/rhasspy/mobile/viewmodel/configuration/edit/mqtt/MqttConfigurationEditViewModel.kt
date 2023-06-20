@@ -1,55 +1,70 @@
 package org.rhasspy.mobile.viewmodel.configuration.edit.mqtt
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.launch
-import org.koin.core.component.get
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.link.LinkType
-import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
+import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
-import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
-import org.rhasspy.mobile.platformspecific.utils.OpenLinkUtils
-import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.platformspecific.toIntOrZero
+import org.rhasspy.mobile.platformspecific.toLongOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.*
+import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.MqttConfigurationScreenDestination.EditScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.MqttConfigurationScreenDestination.TestScreen
+import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationViewState.MqttConfigurationData
 
 @Stable
 class MqttConfigurationEditViewModel(
-    service: MqttService
-) : IConfigurationEditViewModel<MqttConfigurationViewState>(
-    service = service,
-    initialViewState = ::MqttConfigurationViewState,
-    testPageDestination = TestScreen
+    service: MqttService,
+    private val viewStateCreator: ConfigurationEditViewStateCreator
+) : IConfigurationEditViewModel(
+    service = service
 ) {
 
-    val screen = navigator.topScreen(EditScreen)
+    private val initialConfigurationData = MqttConfigurationData()
+
+    private val _editData = MutableStateFlow(initialConfigurationData)
+    private val _viewState = MutableStateFlow(MqttConfigurationViewState(initialConfigurationData))
+    val viewState = combineState(_viewState, _editData) { viewState, editData ->
+        viewState.copy(editData = editData)
+    }
+
+    override fun initViewStateCreator(
+        configurationEditViewState: MutableStateFlow<ConfigurationEditViewState>
+    ): StateFlow<ConfigurationEditViewState> {
+        return viewStateCreator(
+            init = ::MqttConfigurationData,
+            editData = _editData,
+            configurationEditViewState = configurationEditViewState
+        )
+    }
 
     fun onEvent(action: MqttConfigurationUiEvent) {
         when (action) {
             is Change -> onChange(action)
             is Action -> onAction(action)
-            is Consumed -> onConsumed(action)
         }
     }
 
     private fun onChange(change: Change) {
-        updateViewState {
+        _editData.update {
             when (change) {
                 is SetMqttEnabled -> it.copy(isMqttEnabled = change.enabled)
                 is SetMqttSSLEnabled -> it.copy(isMqttSSLEnabled = change.enabled)
-                is UpdateMqttConnectionTimeout -> it.copy(mqttConnectionTimeoutText = change.timeout)
+                is UpdateMqttConnectionTimeout -> it.copy(mqttConnectionTimeout = change.timeout.toLongOrNull())
                 is UpdateMqttHost -> it.copy(mqttHost = change.host)
-                is UpdateMqttKeepAliveInterval -> it.copy(mqttKeepAliveIntervalText = change.keepAliveInterval)
+                is UpdateMqttKeepAliveInterval -> it.copy(mqttKeepAliveInterval = change.keepAliveInterval.toLongOrNull())
                 is UpdateMqttPassword -> it.copy(mqttPassword = change.password)
-                is UpdateMqttPort -> it.copy(mqttPortText = change.port)
-                is UpdateMqttRetryInterval -> it.copy(mqttRetryIntervalText = change.retryInterval)
+                is UpdateMqttPort -> it.copy(mqttPort = change.port.toIntOrNull())
+                is UpdateMqttRetryInterval -> it.copy(mqttRetryInterval = change.retryInterval.toLongOrNull())
                 is UpdateMqttUserName -> it.copy(mqttUserName = change.userName)
                 is UpdateMqttKeyStoreFile -> it.copy(mqttKeyStoreFile = change.file)
             }
@@ -58,60 +73,39 @@ class MqttConfigurationEditViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            OpenMqttSSLWiki -> openMqttSSLWikiLink()
-            SelectSSLCertificate -> selectSSLCertificate()
+            OpenMqttSSLWiki -> openLink(LinkType.WikiMQTTSSL)
+            SelectSSLCertificate -> selectFile(FolderType.CertificateFolder.Mqtt) { path ->
+                onChange(UpdateMqttKeyStoreFile(path))
+            }
+
             BackClick -> navigator.onBackPressed()
         }
     }
 
-    private fun onConsumed(consumed: Consumed) {
-        updateViewState {
-            when (consumed) {
-                is ShowSnackBar -> it.copy(snackBarText = null)
-            }
-        }
-    }
-
-    private fun openMqttSSLWikiLink() {
-        if (!get<OpenLinkUtils>().openLink(LinkType.WikiMQTTSSL)) {
-            updateViewState {
-                it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
-            }
-        }
-    }
-
-    private fun selectSSLCertificate() {
-        viewModelScope.launch {
-            FileUtils.selectFile(FolderType.CertificateFolder.Mqtt)?.also { path ->
-                onChange(UpdateMqttKeyStoreFile(path))
-            } ?: run {
-                updateViewState {
-                    it.copy(snackBarText = MR.strings.selectFileFailed.stable)
-                }
-            }
-        }
-    }
-
     override fun onSave() {
-        if (ConfigurationSetting.mqttKeyStoreFile.value != data.mqttKeyStoreFile) {
-            ConfigurationSetting.mqttKeyStoreFile.value?.commonDelete()
-        }
+        with(_editData.value) {
+            if (ConfigurationSetting.mqttKeyStoreFile.value != mqttKeyStoreFile) {
+                ConfigurationSetting.mqttKeyStoreFile.value?.commonDelete()
+            }
 
-        ConfigurationSetting.isMqttEnabled.value = data.isMqttEnabled
-        ConfigurationSetting.mqttHost.value = data.mqttHost
-        ConfigurationSetting.mqttPort.value = data.mqttPort
-        ConfigurationSetting.mqttUserName.value = data.mqttUserName
-        ConfigurationSetting.mqttPassword.value = data.mqttPassword
-        ConfigurationSetting.isMqttSSLEnabled.value = data.isMqttSSLEnabled
-        ConfigurationSetting.mqttKeyStoreFile.value = data.mqttKeyStoreFile
-        ConfigurationSetting.mqttConnectionTimeout.value = data.mqttConnectionTimeout
-        ConfigurationSetting.mqttKeepAliveInterval.value = data.mqttKeepAliveInterval
-        ConfigurationSetting.mqttRetryInterval.value = data.mqttRetryInterval
+            ConfigurationSetting.isMqttEnabled.value = isMqttEnabled
+            ConfigurationSetting.mqttHost.value = mqttHost
+            ConfigurationSetting.mqttPort.value = mqttPort.toIntOrZero()
+            ConfigurationSetting.mqttUserName.value = mqttUserName
+            ConfigurationSetting.mqttPassword.value = mqttPassword
+            ConfigurationSetting.isMqttSSLEnabled.value = isMqttSSLEnabled
+            ConfigurationSetting.mqttKeyStoreFile.value = mqttKeyStoreFile
+            ConfigurationSetting.mqttConnectionTimeout.value = mqttConnectionTimeout.toLongOrZero()
+            ConfigurationSetting.mqttKeepAliveInterval.value = mqttKeepAliveInterval.toLongOrZero()
+            ConfigurationSetting.mqttRetryInterval.value = mqttRetryInterval.toLongOrZero()
+        }
     }
 
     override fun onDiscard() {
-        if (ConfigurationSetting.mqttKeyStoreFile.value != data.mqttKeyStoreFile) {
-            data.mqttKeyStoreFile?.commonDelete()
+        with(_editData.value) {
+            if (ConfigurationSetting.mqttKeyStoreFile.value != mqttKeyStoreFile) {
+                mqttKeyStoreFile?.commonDelete()
+            }
         }
     }
 

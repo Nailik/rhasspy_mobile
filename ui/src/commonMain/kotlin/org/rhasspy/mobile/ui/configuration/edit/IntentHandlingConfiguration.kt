@@ -149,7 +149,7 @@ private fun HomeAssistantOption(
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.Endpoint),
             value = intentHandlingHassEndpoint,
-            onValueChange = { onEvent(ChangeIntentHandlingHassEndpoint(it)) },
+            onValueChange = { onEvent(ChangeIntentHandlingHomeAssistantEndpoint(it)) },
             label = MR.strings.hassURL.stable,
             isLastItem = false
         )
@@ -158,7 +158,7 @@ private fun HomeAssistantOption(
         TextFieldListItemVisibility(
             modifier = Modifier.testTag(TestTag.AccessToken),
             value = intentHandlingHassAccessToken,
-            onValueChange = { onEvent(ChangeIntentHandlingHassAccessToken(it)) },
+            onValueChange = { onEvent(ChangeIntentHandlingHomeAssistantAccessToken(it)) },
             label = MR.strings.accessToken.stable
         )
 
@@ -167,14 +167,14 @@ private fun HomeAssistantOption(
             modifier = Modifier.testTag(TestTag.SendEvents),
             text = MR.strings.homeAssistantEvents.stable,
             isChecked = intentHandlingHassOption == Event,
-            onClick = { onEvent(SelectIntentHandlingHassOption(Event)) }
+            onClick = { onEvent(SelectIntentHandlingHomeAssistantOption(Event)) }
         )
 
         RadioButtonListItem(
             modifier = Modifier.testTag(TestTag.SendIntents),
             text = MR.strings.homeAssistantIntents.stable,
             isChecked = intentHandlingHassOption == Intent,
-            onClick = { onEvent(SelectIntentHandlingHassOption(Intent)) }
+            onClick = { onEvent(SelectIntentHandlingHomeAssistantOption(Intent)) }
         )
 
     }
