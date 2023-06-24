@@ -25,7 +25,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogMa
 import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationViewState.DialogManagementConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.DialogManagementConfigurationScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
 
 /**
  * DropDown to select dialog management option
@@ -38,7 +37,7 @@ fun DialogManagementEditConfigurationScreen() {
     val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
 
     ConfigurationScreenItemEdit(
-        modifier = Modifier.testTag(DialogManagementConfigurationScreen(ConfigurationScreenDestinationType.Edit)),
+        modifier = Modifier,
         kViewModel = viewModel,
         title = MR.strings.dialogManagement.stable,
         viewState = configurationEditViewState,

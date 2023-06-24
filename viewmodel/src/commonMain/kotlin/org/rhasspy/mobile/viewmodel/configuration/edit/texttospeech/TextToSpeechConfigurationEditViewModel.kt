@@ -4,7 +4,6 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
 import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -16,7 +15,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeech
 import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationViewState.TextToSpeechConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.TextToSpeechConfigurationScreenDestination.TestScreen
 
 @Stable
 class TextToSpeechConfigurationEditViewModel(

@@ -47,7 +47,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigur
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordUdpConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.*
 
 /**
@@ -101,7 +100,7 @@ private fun WakeWordConfigurationEditContent(
 ) {
 
     ConfigurationScreenItemEdit(
-        modifier = Modifier.testTag(WakeWordConfigurationScreen(ConfigurationScreenDestinationType.Edit)),
+        modifier = Modifier,
         kViewModel = viewModel,
         title = MR.strings.wakeWord.stable,
         viewState = configurationEditViewState,

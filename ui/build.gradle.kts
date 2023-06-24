@@ -78,6 +78,7 @@ kotlin {
             iosSimulatorArm64Test.dependsOn(this)
         }
     }
+
 }
 
 android {

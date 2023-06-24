@@ -30,7 +30,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfig
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationViewState.WebServerConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WebServerConfigurationScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Edit
 
 /**
  * Content to configure text to speech
@@ -46,7 +45,7 @@ fun WebServerEditConfigurationScreen() {
     val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
 
     ConfigurationScreenItemEdit(
-        modifier = Modifier.testTag(WebServerConfigurationScreen(Edit)),
+        modifier = Modifier,
         kViewModel = viewModel,
         title = MR.strings.webserver.stable,
         viewState = configurationEditViewState,

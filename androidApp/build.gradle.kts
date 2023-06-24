@@ -216,6 +216,6 @@ dependencies {
     androidTestImplementation(Jetbrains.Compose.material3)
     androidTestImplementation(Jetbrains.Kotlinx.immutable)
 
-    debugImplementation(AndroidX.tracing)
+    debugImplementation(AndroidX.tracing.ktx)
     debugImplementation(AndroidX.Compose.Ui.testManifest)
 }

@@ -24,10 +24,8 @@ import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationViewState.TextToSpeechConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.TextToSpeechConfigurationScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Edit
 
 /**
  * Content to configure text to speech
@@ -42,7 +40,7 @@ fun TextToSpeechEditConfigurationScreen() {
     val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
 
     ConfigurationScreenItemEdit(
-        modifier = Modifier.testTag(TextToSpeechConfigurationScreen(Edit)),
+        modifier = Modifier,
         kViewModel = viewModel,
         title = MR.strings.webserver.stable,
         viewState = configurationEditViewState,

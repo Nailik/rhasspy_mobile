@@ -14,11 +14,11 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.*
+import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationViewState.WebServerConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WebServerConfigurationScreenDestination.TestScreen
 
 @Stable
 class WebServerConfigurationEditViewModel(

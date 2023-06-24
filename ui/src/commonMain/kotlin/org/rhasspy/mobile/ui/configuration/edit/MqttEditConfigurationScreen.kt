@@ -30,7 +30,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiE
 import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationViewState.MqttConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.MqttConfigurationScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
 
 /**
  * mqtt configuration content
@@ -49,7 +48,7 @@ fun MqttEditConfigurationScreen() {
     val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
 
     ConfigurationScreenItemEdit(
-        modifier = Modifier.testTag(MqttConfigurationScreen(ConfigurationScreenDestinationType.Edit)),
+        modifier = Modifier,
         kViewModel = viewModel,
         title = MR.strings.mqtt.stable,
         viewState = configurationEditViewState,

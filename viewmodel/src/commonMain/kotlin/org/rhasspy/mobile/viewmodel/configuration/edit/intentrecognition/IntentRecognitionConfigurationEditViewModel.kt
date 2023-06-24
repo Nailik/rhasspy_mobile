@@ -15,7 +15,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentR
 import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationViewState.IntentRecognitionConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentRecognitionConfigurationScreenDestination.EditScreen
 
 @Stable
 class IntentRecognitionConfigurationEditViewModel(
@@ -42,9 +41,6 @@ class IntentRecognitionConfigurationEditViewModel(
             configurationEditViewState = configurationEditViewState
         )
     }
-
-
-    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(event: IntentRecognitionConfigurationUiEvent) {
         when (event) {

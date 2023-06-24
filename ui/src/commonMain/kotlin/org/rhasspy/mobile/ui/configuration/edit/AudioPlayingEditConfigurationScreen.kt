@@ -28,8 +28,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlaying
 import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationViewState.AudioPlayingConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
 
 /**
  * Content to configure audio playing
@@ -44,7 +42,7 @@ fun AudioPlayingEditConfigurationScreen() {
     val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
 
     ConfigurationScreenItemEdit(
-        modifier = Modifier.testTag(AudioPlayingConfigurationScreen(ConfigurationScreenDestinationType.Edit)),
+        modifier = Modifier,
         kViewModel = viewModel,
         title = MR.strings.audioPlaying.stable,
         viewState = configurationEditViewState,

@@ -1,9 +1,13 @@
+@file:Suppress("UnstableApiUsage")
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20GradlePlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class BaseGradle : Plugin<Project> {
@@ -25,25 +29,19 @@ class BaseGradle : Plugin<Project> {
                 }
             }
 
-        } catch (e: UnknownDomainObjectException) {
-        }
+        } catch (_: UnknownDomainObjectException) { }
 
         // Configure common android build parameters.
         val androidExtension = project.extensions.getByName("android")
         if (androidExtension is BaseExtension) {
             androidExtension.apply {
-                setCompileSdkVersion(33)
+                setCompileSdkVersion(34)
                 defaultConfig {
                     minSdk = 23
                 }
                 compileOptions {
                     sourceCompatibility = JavaVersion.VERSION_17
                     targetCompatibility = JavaVersion.VERSION_17
-                }
-                project.tasks.withType(KotlinCompile::class.java).configureEach {
-                    kotlinOptions {
-                        jvmTarget = "17"
-                    }
                 }
                 composeOptions {
                     kotlinCompilerExtensionVersion = "_"

@@ -21,7 +21,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHe
 import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHermesHttpConfigurationViewState.RemoteHermesHttpConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
 
 /**
  * content to configure http configuration
@@ -35,7 +34,7 @@ fun RemoteHermesHttpEditConfigurationScreen() {
     val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
 
     ConfigurationScreenItemEdit(
-        modifier = Modifier.testTag(ConfigurationScreenNavigationDestination.TextToSpeechConfigurationScreen(ConfigurationScreenDestinationType.Edit)),
+        modifier = Modifier,
         kViewModel = viewModel,
         title = MR.strings.webserver.stable,
         viewState = configurationEditViewState,
