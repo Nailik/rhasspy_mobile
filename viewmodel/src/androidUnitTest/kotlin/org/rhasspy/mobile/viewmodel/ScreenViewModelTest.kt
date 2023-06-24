@@ -9,9 +9,9 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.OverlayPermissionDialogResult
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.OverlayPermissionDialogResult
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFalse

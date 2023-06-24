@@ -12,8 +12,8 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.ui.configuration.edit.DialogManagementEditConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
 import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationEditViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
 import kotlin.test.assertEquals
 
 class DialogActionStateActionStateManagementConfigurationContentTest : FlakyTest() {

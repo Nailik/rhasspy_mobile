@@ -6,7 +6,6 @@ import org.rhasspy.mobile.data.httpclient.HttpClientPath
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 
 @Stable
 data class SpeechToTextConfigurationViewState internal constructor(

@@ -14,7 +14,6 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption.*
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason
-import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.*
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
 actual object AudioFocusUtil : KoinComponent {

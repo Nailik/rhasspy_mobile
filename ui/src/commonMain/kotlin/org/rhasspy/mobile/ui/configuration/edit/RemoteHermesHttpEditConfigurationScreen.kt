@@ -20,7 +20,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHe
 import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHermesHttpConfigurationViewState.RemoteHermesHttpConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
 
 /**
  * content to configure http configuration

@@ -29,7 +29,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfig
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationViewState.WebServerConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WebServerConfigurationScreen
 
 /**
  * Content to configure text to speech

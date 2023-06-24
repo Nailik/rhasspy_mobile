@@ -27,7 +27,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHand
 import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationViewState.IntentHandlingConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.IntentHandlingConfigurationScreen
 
 /**
  * content for intent handling configuration

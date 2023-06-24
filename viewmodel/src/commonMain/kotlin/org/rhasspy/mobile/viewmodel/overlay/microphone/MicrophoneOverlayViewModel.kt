@@ -4,13 +4,13 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabUiEvent.Action.MicrophoneFabClick
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayUiEvent.Action
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayUiEvent.Action.ToggleUserSession
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayUiEvent.Change
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayUiEvent.Change.UpdateMicrophoneOverlayPosition
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
 class MicrophoneOverlayViewModel(

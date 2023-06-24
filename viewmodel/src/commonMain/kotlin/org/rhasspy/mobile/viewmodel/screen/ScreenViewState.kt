@@ -10,16 +10,16 @@ data class ScreenViewState internal constructor(
 
     sealed interface ScreenDialogState {
 
-        object MicrophonePermissionInfo: ScreenDialogState
-        object OverlayPermissionInfo: ScreenDialogState
+        object MicrophonePermissionInfo : ScreenDialogState
+        object OverlayPermissionInfo : ScreenDialogState
 
     }
 
     sealed interface ScreenSnackBarState {
 
-        object OverlayPermissionRequestFailed: ScreenSnackBarState
-        object MicrophonePermissionRequestFailed: ScreenSnackBarState
-        object MicrophonePermissionRequestDenied: ScreenSnackBarState
+        object OverlayPermissionRequestFailed : ScreenSnackBarState
+        object MicrophonePermissionRequestFailed : ScreenSnackBarState
+        object MicrophonePermissionRequestDenied : ScreenSnackBarState
         object LinkOpenFailed : ScreenSnackBarState
         object SelectFileFailed : ScreenSnackBarState
 

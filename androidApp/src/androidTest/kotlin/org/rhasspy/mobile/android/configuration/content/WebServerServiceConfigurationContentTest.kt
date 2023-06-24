@@ -11,9 +11,9 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.edit.WebServerConfigurationContent
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationEditViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

@@ -26,7 +26,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentR
 import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationViewState.IntentRecognitionConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.IntentRecognitionConfigurationScreen
 
 /**
  * configuration content for intent recognition

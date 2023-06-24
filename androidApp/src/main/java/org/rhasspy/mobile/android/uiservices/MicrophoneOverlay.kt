@@ -22,7 +22,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.ui.native.nativeComposeView
 import org.rhasspy.mobile.ui.overlay.MicrophoneOverlay

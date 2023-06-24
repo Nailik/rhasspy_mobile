@@ -2,7 +2,6 @@ package org.rhasspy.mobile.viewmodel.configuration.test
 
 import androidx.compose.runtime.Stable
 import co.touchlab.kermit.Logger
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -10,17 +9,15 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.get
-import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent.*
 import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestViewState.DialogState.ServiceStateDialog
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable

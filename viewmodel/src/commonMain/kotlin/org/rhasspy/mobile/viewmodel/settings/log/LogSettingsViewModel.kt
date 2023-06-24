@@ -26,20 +26,20 @@ class LogSettingsViewModel(
     }
 
     private fun onChange(change: Change) {
-            when (change) {
-                is SetCrashlyticsEnabled -> {
-                    AppSetting.isCrashlyticsEnabled.value = change.enabled
-                    nativeApplication.setCrashlyticsCollectionEnabled(change.enabled)
-                }
+        when (change) {
+            is SetCrashlyticsEnabled -> {
+                AppSetting.isCrashlyticsEnabled.value = change.enabled
+                nativeApplication.setCrashlyticsCollectionEnabled(change.enabled)
+            }
 
-                is SetLogAudioFramesEnabled -> AppSetting.isLogAudioFramesEnabled.value = change.enabled
+            is SetLogAudioFramesEnabled -> AppSetting.isLogAudioFramesEnabled.value = change.enabled
 
-                is SetLogLevel -> {
-                    AppSetting.logLevel.value = change.logLevel
-                    Logger.setMinSeverity(AppSetting.logLevel.value.severity)
-                }
+            is SetLogLevel -> {
+                AppSetting.logLevel.value = change.logLevel
+                Logger.setMinSeverity(AppSetting.logLevel.value.severity)
+            }
 
-                is SetShowLogEnabled -> AppSetting.isShowLogEnabled.value = change.enabled
+            is SetShowLogEnabled -> AppSetting.isShowLogEnabled.value = change.enabled
         }
     }
 

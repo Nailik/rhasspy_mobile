@@ -6,7 +6,6 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 
 @Stable
 data class AudioPlayingConfigurationViewState internal constructor(

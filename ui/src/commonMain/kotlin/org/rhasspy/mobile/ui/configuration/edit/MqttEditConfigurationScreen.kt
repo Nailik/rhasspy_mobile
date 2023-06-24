@@ -29,7 +29,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiE
 import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationViewState.MqttConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.MqttConfigurationScreen
 
 /**
  * mqtt configuration content

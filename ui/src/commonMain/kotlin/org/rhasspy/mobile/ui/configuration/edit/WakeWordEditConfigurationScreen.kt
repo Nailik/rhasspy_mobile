@@ -46,7 +46,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigur
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordUdpConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.*
 
 /**

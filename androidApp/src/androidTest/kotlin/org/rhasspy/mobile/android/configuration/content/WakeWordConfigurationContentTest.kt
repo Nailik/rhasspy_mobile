@@ -20,9 +20,9 @@ import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.edit.WakeWordEditConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

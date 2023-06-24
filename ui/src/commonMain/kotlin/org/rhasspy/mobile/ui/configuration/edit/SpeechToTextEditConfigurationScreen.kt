@@ -25,7 +25,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToText
 import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToTextConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToTextConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.SpeechToTextConfigurationScreen
 
 /**
  * Content to configure speech to text

@@ -13,8 +13,8 @@ import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.edit.IntentHandlingEditConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
 import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationEditViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
 import kotlin.test.assertEquals
 
 class IntentHandlingConfigurationContentTest : FlakyTest() {

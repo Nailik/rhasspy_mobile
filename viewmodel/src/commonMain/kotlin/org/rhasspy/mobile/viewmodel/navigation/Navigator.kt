@@ -9,8 +9,8 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 /**
  * top viewmodel

@@ -12,8 +12,8 @@ import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.edit.IntentRecognitionEditConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
 import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationEditViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
 import kotlin.test.assertEquals
 
 class IntentRecognitionConfigurationContentTest : FlakyTest() {

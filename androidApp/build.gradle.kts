@@ -2,7 +2,7 @@
 
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
-import java.util.*
+import java.util.Properties
 
 plugins {
     id("com.android.application")

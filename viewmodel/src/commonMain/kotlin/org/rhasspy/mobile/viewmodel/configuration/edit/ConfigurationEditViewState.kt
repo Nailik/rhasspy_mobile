@@ -13,8 +13,8 @@ data class ConfigurationEditViewState(
 
     sealed interface DialogState {
 
-        object UnsavedChangesDialogState: DialogState
-        data class ServiceStateDialogState(val dialogText: Any): DialogState
+        object UnsavedChangesDialogState : DialogState
+        data class ServiceStateDialogState(val dialogText: Any) : DialogState
 
     }
 

@@ -14,21 +14,27 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.*
+import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.Screen
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.edit.*
 import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.item.EventStateIconTinted
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.ConfigurationScreen
-import org.rhasspy.mobile.viewmodel.screens.configuration.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToErrorClick
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Consumed.ScrollToError
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 /**
  * configuration screens with list items that open bottom sheet

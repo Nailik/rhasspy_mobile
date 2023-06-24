@@ -12,8 +12,8 @@ import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.edit.SpeechToTextEditConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
 import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToTextConfigurationEditViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
 import kotlin.test.assertEquals
 
 class SpeechToTextConfigurationContentTest : FlakyTest() {

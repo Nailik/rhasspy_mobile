@@ -11,9 +11,9 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.edit.MqttEditConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
 import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled
-import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationEditViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

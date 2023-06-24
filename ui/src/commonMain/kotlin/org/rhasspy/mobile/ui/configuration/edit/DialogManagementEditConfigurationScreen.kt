@@ -24,7 +24,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogMa
 import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationViewState.DialogManagementConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.DialogManagementConfigurationScreen
 
 /**
  * DropDown to select dialog management option

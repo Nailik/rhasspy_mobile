@@ -19,7 +19,7 @@ sealed interface ScreenViewModelUiEvent {
 
     }
 
-    sealed interface Dialog: ScreenViewModelUiEvent {
+    sealed interface Dialog : ScreenViewModelUiEvent {
 
         data class Confirm(val dialogState: ScreenDialogState) : Dialog
         object Dismiss : Dialog

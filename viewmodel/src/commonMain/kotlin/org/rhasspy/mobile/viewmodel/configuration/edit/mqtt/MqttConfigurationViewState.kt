@@ -2,11 +2,7 @@ package org.rhasspy.mobile.viewmodel.configuration.edit.mqtt
 
 import androidx.compose.runtime.Stable
 import okio.Path
-import org.rhasspy.mobile.data.resource.StableStringResource
-import org.rhasspy.mobile.platformspecific.toIntOrZero
-import org.rhasspy.mobile.platformspecific.toLongOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 
 @Stable
 data class MqttConfigurationViewState internal constructor(

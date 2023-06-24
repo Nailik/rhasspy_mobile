@@ -1,12 +1,8 @@
 package org.rhasspy.mobile.viewmodel.screens.configuration
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
