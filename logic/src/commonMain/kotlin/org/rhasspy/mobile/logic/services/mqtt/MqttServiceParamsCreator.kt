@@ -51,8 +51,8 @@ class MqttServiceParamsCreator {
                 keyStorePath = ConfigurationSetting.mqttKeyStoreFile.value,
                 connUsername = ConfigurationSetting.mqttUserName.value,
                 connPassword = ConfigurationSetting.mqttPassword.value,
-                connectionTimeout = ConfigurationSetting.mqttConnectionTimeout.value,
-                keepAliveInterval = ConfigurationSetting.mqttKeepAliveInterval.value
+                connectionTimeout = ConfigurationSetting.mqttConnectionTimeout.value.toInt(),
+                keepAliveInterval = ConfigurationSetting.mqttKeepAliveInterval.value.toInt()
             ),
             isUseSpeechToTextMqttSilenceDetection = ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value,
             audioPlayingMqttSiteId = ConfigurationSetting.audioPlayingMqttSiteId.value

@@ -16,7 +16,6 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.configuration.edit.*
-import org.rhasspy.mobile.ui.configuration.test.WebServerConfigurationTestContent
 import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.item.EventStateIconTinted
 import org.rhasspy.mobile.ui.content.list.ListElement
@@ -55,19 +54,21 @@ fun ConfigurationScreen() {
                     )
                 }
 
-                is AudioPlayingConfigurationScreen -> AudioPlayingConfigurationContent()
-                is DialogManagementConfigurationScreen -> DialogManagementConfigurationContent()
-                is IntentHandlingConfigurationScreen -> IntentHandlingConfigurationContent()
-                is IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationContent()
-                is MqttConfigurationScreen -> MqttConfigurationContent()
-                is RemoteHermesHttpConfigurationScreen -> RemoteHermesHttpConfigurationContent()
-                is SpeechToTextConfigurationScreen -> SpeechToTextConfigurationContent()
-                is TextToSpeechConfigurationScreen -> TextToSpeechConfigurationContent()
-                is WakeWordConfigurationScreen -> WakeWordConfigurationContent()
+                is AudioPlayingConfigurationScreen -> AudioPlayingEditConfigurationScreen()
+                is DialogManagementConfigurationScreen -> DialogManagementEditConfigurationScreen()
+                is IntentHandlingConfigurationScreen -> IntentHandlingEditConfigurationScreen()
+                is IntentRecognitionConfigurationScreen -> IntentRecognitionEditConfigurationScreen()
+                is MqttConfigurationScreen -> MqttEditConfigurationScreen()
+                is RemoteHermesHttpConfigurationScreen -> RemoteHermesHttpEditConfigurationScreen()
+                is SpeechToTextConfigurationScreen -> SpeechToTextEditConfigurationScreen()
+                is TextToSpeechConfigurationScreen -> TextToSpeechEditConfigurationScreen()
+                is WakeWordConfigurationScreen -> WakeWordEditConfigurationScreen()
                 is WebServerConfigurationScreen -> {
                     when (this.destinationType) {
-                        Edit -> WebServerConfigurationEditContent()
-                        Test -> WebServerConfigurationTestContent()
+                        Edit -> WebServerEditConfigurationScreen()
+                        Test -> {
+
+                        }
                     }
                 }
 

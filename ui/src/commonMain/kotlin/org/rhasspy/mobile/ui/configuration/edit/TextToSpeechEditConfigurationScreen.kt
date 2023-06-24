@@ -1,7 +1,9 @@
 package org.rhasspy.mobile.ui.configuration.edit
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -11,23 +13,21 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreenConfig
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemContent
+import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemEdit
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.translate
-import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationUiEvent.Action.TestRemoteHermesHttpTextToSpeechTest
-import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationEditViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationViewState.TextToSpeechConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.TextToSpeechConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Edit
 
 /**
  * Content to configure text to speech
@@ -35,57 +35,71 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
  * HTTP Endpoint
  */
 @Composable
-fun TextToSpeechConfigurationContent() {
+fun TextToSpeechEditConfigurationScreen() {
+
     val viewModel: TextToSpeechConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(screenViewModel = viewModel) {
+    val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
+
+    ConfigurationScreenItemEdit(
+        modifier = Modifier.testTag(TextToSpeechConfigurationScreen(Edit)),
+        kViewModel = viewModel,
+        title = MR.strings.webserver.stable,
+        viewState = configurationEditViewState,
+        onEvent = viewModel::onEvent
+    ) {
+
         val viewState by viewModel.viewState.collectAsState()
-        val screen by viewModel.screen.collectAsState()
-        val contentViewState by viewState.editViewState.collectAsState()
 
-        ConfigurationScreenItemContent(
-            modifier = Modifier.testTag(TextToSpeechConfigurationScreen),
-            screenType = screen.destinationType,
-            config = ConfigurationScreenConfig(MR.strings.textToSpeech.stable),
-            viewState = viewState,
-            onAction = viewModel::onAction,
-            testContent = {
-                TestContent(
-                    testTextToSpeechText = contentViewState.testTextToSpeechText,
-                    onEvent = viewModel::onEvent
-                )
-            }
-        ) {
+        TextToSpeechEditContent(
+            editData = viewState.editData,
+            onEvent = viewModel::onEvent
+        )
 
-            item {
-                TextToSpeechOptionContent(
-                    viewState = contentViewState,
-                    onAction = viewModel::onEvent
-                )
-            }
-
-        }
     }
 
 }
 
 @Composable
+private fun TextToSpeechEditContent(
+    editData: TextToSpeechConfigurationData,
+    onEvent: (TextToSpeechConfigurationUiEvent) -> Unit
+) {
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+
+        item {
+            TextToSpeechOptionContent(
+                editData = editData,
+                onEvent = onEvent
+            )
+        }
+
+    }
+
+}
+
+
+@Composable
 private fun TextToSpeechOptionContent(
-    viewState: TextToSpeechConfigurationViewState,
-    onAction: (TextToSpeechConfigurationUiEvent) -> Unit
+    editData: TextToSpeechConfigurationData,
+    onEvent: (TextToSpeechConfigurationUiEvent) -> Unit
 ) {
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.TextToSpeechOptions),
-        selected = viewState.textToSpeechOption,
-        onSelect = { onAction(SelectTextToSpeechOption(it)) },
-        values = viewState.textToSpeechOptions
+        selected = editData.textToSpeechOption,
+        onSelect = { onEvent(SelectTextToSpeechOption(it)) },
+        values = editData.textToSpeechOptions
     ) {
 
         when (it) {
             TextToSpeechOption.RemoteHTTP -> TextToSpeechHTTP(
-                isUseCustomTextToSpeechHttpEndpoint = viewState.isUseCustomTextToSpeechHttpEndpoint,
-                textToSpeechHttpEndpointText = viewState.textToSpeechHttpEndpointText,
-                onAction = onAction
+                isUseCustomTextToSpeechHttpEndpoint = editData.isUseCustomTextToSpeechHttpEndpoint,
+                textToSpeechHttpEndpointText = editData.textToSpeechHttpEndpointText,
+                onAction = onEvent
             )
 
             else -> {}
@@ -123,31 +137,6 @@ private fun TextToSpeechHTTP(
             label = translate(MR.strings.rhasspyTextToSpeechURL.stable, HttpClientPath.TextToSpeech.path)
         )
 
-    }
-
-}
-
-/**
- * input field and execute button
- */
-@Composable
-private fun TestContent(
-    testTextToSpeechText: String,
-    onEvent: (TextToSpeechConfigurationUiEvent) -> Unit
-) {
-
-    Column {
-        TextFieldListItem(
-            label = MR.strings.textToSpeechText.stable,
-            modifier = Modifier.testTag(TestTag.TextToSpeechText),
-            value = testTextToSpeechText,
-            onValueChange = { onEvent(UpdateTestTextToSpeechText(it)) }
-        )
-
-        FilledTonalButtonListItem(
-            text = MR.strings.executeTextToSpeechText.stable,
-            onClick = { onEvent(TestRemoteHermesHttpTextToSpeechTest) }
-        )
     }
 
 }

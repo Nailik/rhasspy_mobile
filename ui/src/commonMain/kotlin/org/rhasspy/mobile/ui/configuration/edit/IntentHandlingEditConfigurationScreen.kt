@@ -1,7 +1,9 @@
 package org.rhasspy.mobile.ui.configuration.edit
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -13,23 +15,20 @@ import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreenConfig
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemContent
+import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemEdit
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
-import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.ui.content.list.RadioButtonListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent.Action.RunIntentHandlingTest
-import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationViewState.IntentHandlingConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.IntentHandlingConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
 
 /**
  * content for intent handling configuration
@@ -38,63 +37,76 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
  * home assistant configuration
  */
 @Composable
-fun IntentHandlingConfigurationContent() {
+fun IntentHandlingEditConfigurationScreen() {
+
     val viewModel: IntentHandlingConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(screenViewModel = viewModel) {
+    val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
+
+    ConfigurationScreenItemEdit(
+        modifier = Modifier.testTag(IntentHandlingConfigurationScreen(ConfigurationScreenDestinationType.Edit)),
+        kViewModel = viewModel,
+        title = MR.strings.intentHandling.stable,
+        viewState = configurationEditViewState,
+        onEvent = viewModel::onEvent
+    ) {
+
         val viewState by viewModel.viewState.collectAsState()
-        val screen by viewModel.screen.collectAsState()
-        val contentViewState by viewState.editViewState.collectAsState()
 
-        ConfigurationScreenItemContent(
-            modifier = Modifier.testTag(IntentHandlingConfigurationScreen),
-            screenType = screen.destinationType,
-            config = ConfigurationScreenConfig(MR.strings.intentHandling.stable),
-            viewState = viewState,
-            onAction = viewModel::onAction,
-            testContent = {
-                TestContent(
-                    testIntentNameText = contentViewState.testIntentHandlingName,
-                    testIntentText = contentViewState.testIntentHandlingText,
-                    onEvent = viewModel::onEvent
-                )
-            }
-        ) {
+        IntentHandlingEditContent(
+            editData = viewState.editData,
+            onEvent = viewModel::onEvent
+        )
 
-            item {
-                IntentHandlingOptionContent(
-                    viewState = contentViewState,
-                    onEvent = viewModel::onEvent
-                )
-            }
+    }
+
+}
+
+@Composable
+private fun IntentHandlingEditContent(
+    editData: IntentHandlingConfigurationData,
+    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
+) {
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+
+        item {
+            IntentHandlingOptionContent(
+                editData = editData,
+                onEvent = onEvent
+            )
         }
+
     }
 
 }
 
 @Composable
 private fun IntentHandlingOptionContent(
-    viewState: IntentHandlingConfigurationViewState,
+    editData: IntentHandlingConfigurationData,
     onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
 ) {
 
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.IntentHandlingOptions),
-        selected = viewState.intentHandlingOption,
+        selected = editData.intentHandlingOption,
         onSelect = { onEvent(SelectIntentHandlingOption(it)) },
-        values = viewState.intentHandlingOptionList
+        values = editData.intentHandlingOptionList
     ) { option ->
 
         when (option) {
             IntentHandlingOption.HomeAssistant -> HomeAssistantOption(
-                intentHandlingHassEndpoint = viewState.intentHandlingHassEndpoint,
-                intentHandlingHassAccessToken = viewState.intentHandlingHassAccessToken,
-                intentHandlingHassOption = viewState.intentHandlingHassOption,
+                intentHandlingHassEndpoint = editData.intentHandlingHomeAssistantEndpoint,
+                intentHandlingHassAccessToken = editData.intentHandlingHomeAssistantAccessToken,
+                intentHandlingHassOption = editData.intentHandlingHomeAssistantOption,
                 onEvent = onEvent
             )
 
             IntentHandlingOption.RemoteHTTP -> RemoteHTTPOption(
-                intentHandlingHttpEndpoint = viewState.intentHandlingHttpEndpoint,
+                intentHandlingHttpEndpoint = editData.intentHandlingHttpEndpoint,
                 onEvent = onEvent
             )
 
@@ -175,41 +187,6 @@ private fun HomeAssistantOption(
             text = MR.strings.homeAssistantIntents.stable,
             isChecked = intentHandlingHassOption == Intent,
             onClick = { onEvent(SelectIntentHandlingHomeAssistantOption(Intent)) }
-        )
-
-    }
-
-}
-
-/**
- * show test inputs
- */
-@Composable
-private fun TestContent(
-    testIntentNameText: String,
-    testIntentText: String,
-    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
-) {
-
-    Column {
-
-        TextFieldListItem(
-            modifier = Modifier.testTag(TestTag.IntentNameText),
-            value = testIntentNameText,
-            onValueChange = { onEvent(UpdateTestIntentHandlingName(it)) },
-            label = MR.strings.intentName.stable
-        )
-
-        TextFieldListItem(
-            modifier = Modifier.testTag(TestTag.IntentText),
-            value = testIntentText,
-            onValueChange = { onEvent(UpdateTestIntentHandlingText(it)) },
-            label = MR.strings.intentText.stable
-        )
-
-        FilledTonalButtonListItem(
-            text = MR.strings.executeHandleIntent.stable,
-            onClick = { onEvent(RunIntentHandlingTest) },
         )
 
     }

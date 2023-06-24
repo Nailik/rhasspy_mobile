@@ -1,33 +1,48 @@
 package org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import org.koin.core.component.get
-import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionService
-import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionServiceParams
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
+import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent.Action.RunIntentRecognition
 import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationViewState.IntentRecognitionConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentRecognitionConfigurationScreenDestination.EditScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentRecognitionConfigurationScreenDestination.TestScreen
 
 @Stable
 class IntentRecognitionConfigurationEditViewModel(
-    service: IntentRecognitionService
-) : IConfigurationEditViewModel<IntentRecognitionConfigurationViewState>(
-    service = service,
-    initialViewState = ::IntentRecognitionConfigurationViewState,
-    testPageDestination = TestScreen
+    service: IntentRecognitionService,
+    private val viewStateCreator: ConfigurationEditViewStateCreator
+) : IConfigurationEditViewModel(
+    service = service
 ) {
+
+    private val initialConfigurationData = IntentRecognitionConfigurationData()
+
+    private val _editData = MutableStateFlow(initialConfigurationData)
+    private val _viewState = MutableStateFlow(IntentRecognitionConfigurationViewState(initialConfigurationData))
+    val viewState = combineState(_viewState, _editData) { viewState, editData ->
+        viewState.copy(editData = editData)
+    }
+
+    override fun initViewStateCreator(
+        configurationEditViewState: MutableStateFlow<ConfigurationEditViewState>
+    ): StateFlow<ConfigurationEditViewState> {
+        return viewStateCreator(
+            init = ::IntentRecognitionConfigurationData,
+            editData = _editData,
+            configurationEditViewState = configurationEditViewState
+        )
+    }
+
 
     val screen = navigator.topScreen(EditScreen)
 
@@ -39,19 +54,17 @@ class IntentRecognitionConfigurationEditViewModel(
     }
 
     private fun onChange(change: Change) {
-        updateViewState {
+        _editData.update {
             when (change) {
                 is ChangeIntentRecognitionHttpEndpoint -> it.copy(intentRecognitionHttpEndpoint = change.endpoint)
                 is SelectIntentRecognitionOption -> it.copy(intentRecognitionOption = change.option)
                 is SetUseCustomHttpEndpoint -> it.copy(isUseCustomIntentRecognitionHttpEndpoint = change.enabled)
-                is UpdateTestIntentRecognitionText -> it.copy(testIntentRecognitionText = change.text)
             }
         }
     }
 
     private fun onAction(action: Action) {
         when (action) {
-            RunIntentRecognition -> runIntentRecognition()
             BackClick -> navigator.onBackPressed()
         }
     }
@@ -59,23 +72,10 @@ class IntentRecognitionConfigurationEditViewModel(
     override fun onDiscard() {}
 
     override fun onSave() {
-        ConfigurationSetting.intentRecognitionOption.value = data.intentRecognitionOption
-        ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value = data.isUseCustomIntentRecognitionHttpEndpoint
-        ConfigurationSetting.intentRecognitionHttpEndpoint.value = data.intentRecognitionHttpEndpoint
-    }
-
-    private fun runIntentRecognition() {
-        testScope.launch {
-            //await for mqtt
-            if (get<IntentRecognitionServiceParams>().intentRecognitionOption == IntentRecognitionOption.RemoteMQTT) {
-                get<MqttService>()
-                    .isHasStarted
-                    .map { it }
-                    .distinctUntilChanged()
-                    .first { it }
-            }
-
-            get<IntentRecognitionService>().recognizeIntent("", data.testIntentRecognitionText)
+        with(_editData.value) {
+            ConfigurationSetting.intentRecognitionOption.value = intentRecognitionOption
+            ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value = isUseCustomIntentRecognitionHttpEndpoint
+            ConfigurationSetting.intentRecognitionHttpEndpoint.value = intentRecognitionHttpEndpoint
         }
     }
 

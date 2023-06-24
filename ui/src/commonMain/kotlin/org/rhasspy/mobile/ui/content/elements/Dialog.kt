@@ -67,7 +67,7 @@ fun Dialog(
 }
 
 @Composable
-private fun Dialog(
+fun Dialog(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     icon: (@Composable () -> Unit)? = null,

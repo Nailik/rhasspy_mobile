@@ -25,7 +25,7 @@ import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeWordPorcupineLanguage
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationViewState.PorcupineViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
 
 /**
  *  list of porcupine languages
@@ -33,7 +33,7 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigur
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PorcupineLanguageScreen(
-    viewState: PorcupineViewState,
+    editData: WakeWordPorcupineConfigurationData,
     onEvent: (PorcupineUiEvent) -> Unit
 ) {
 
@@ -53,7 +53,7 @@ fun PorcupineLanguageScreen(
 
             val coroutineScope = rememberCoroutineScope()
             val state = rememberLazyListState()
-            val selectedIndex = viewState.languageOptions.indexOf(viewState.porcupineLanguage)
+            val selectedIndex = editData.languageOptions.indexOf(editData.porcupineLanguage)
 
             LaunchedEffect(true) {
                 coroutineScope.launch {
@@ -63,12 +63,12 @@ fun PorcupineLanguageScreen(
 
             LazyColumn(state = state) {
 
-                items(viewState.languageOptions) { option ->
+                items(editData.languageOptions) { option ->
 
                     RadioButtonListItem(
                         modifier = Modifier.testTag(IOption = option),
                         text = option.text,
-                        isChecked = viewState.porcupineLanguage == option,
+                        isChecked = editData.porcupineLanguage == option,
                         onClick = { onEvent(SelectWakeWordPorcupineLanguage(option)) }
                     )
 

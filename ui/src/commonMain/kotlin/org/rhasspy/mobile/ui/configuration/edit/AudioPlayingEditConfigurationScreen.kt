@@ -1,7 +1,9 @@
 package org.rhasspy.mobile.ui.configuration.edit
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -13,24 +15,21 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreenConfig
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemContent
+import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemEdit
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.elements.translate
-import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationUiEvent.Action.PlayTestAudio
 import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationViewState.AudioPlayingConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
 
 /**
  * Content to configure audio playing
@@ -38,63 +37,82 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
  * HTTP Endpoint
  */
 @Composable
-fun AudioPlayingConfigurationContent() {
+fun AudioPlayingEditConfigurationScreen() {
+
     val viewModel: AudioPlayingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(screenViewModel = viewModel) {
+    val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
+
+    ConfigurationScreenItemEdit(
+        modifier = Modifier.testTag(AudioPlayingConfigurationScreen(ConfigurationScreenDestinationType.Edit)),
+        kViewModel = viewModel,
+        title = MR.strings.audioPlaying.stable,
+        viewState = configurationEditViewState,
+        onEvent = viewModel::onEvent
+    ) {
+
         val viewState by viewModel.viewState.collectAsState()
-        val screen by viewModel.screen.collectAsState()
-        val contentViewState by viewState.editViewState.collectAsState()
 
-        ConfigurationScreenItemContent(
-            modifier = Modifier.testTag(AudioPlayingConfigurationScreen),
-            screenType = screen.destinationType,
-            config = ConfigurationScreenConfig(MR.strings.audioPlaying.stable),
-            viewState = viewState,
-            onAction = viewModel::onAction,
-            testContent = { TestContent(viewModel::onEvent) }
-        ) {
+        AudioPlayingEditContent(
+            editData = viewState.editData,
+            onEvent = viewModel::onEvent
+        )
 
-            item {
-                AudioPlayingOptionContent(
-                    viewState = contentViewState,
-                    onEvent = viewModel::onEvent
-                )
-            }
+    }
+
+}
+
+@Composable
+private fun AudioPlayingEditContent(
+    editData: AudioPlayingConfigurationData,
+    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
+) {
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+
+        item {
+            AudioPlayingOptionContent(
+                editData = editData,
+                onEvent = onEvent
+            )
         }
+
     }
 
 }
 
 @Composable
 private fun AudioPlayingOptionContent(
-    viewState: AudioPlayingConfigurationViewState,
+    editData: AudioPlayingConfigurationData,
     onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
 ) {
 
     //radio buttons list of available values
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.AudioPlayingOptions),
-        selected = viewState.audioPlayingOption,
+        selected = editData.audioPlayingOption,
         onSelect = { onEvent(SelectAudioPlayingOption(it)) },
-        values = viewState.audioPlayingOptionList
+        values = editData.audioPlayingOptionList
     ) { option ->
 
         when (option) {
             AudioPlayingOption.Local -> LocalConfigurationContent(
-                audioOutputOption = viewState.audioOutputOption,
-                audioOutputOptionList = viewState.audioOutputOptionList,
+                audioOutputOption = editData.audioOutputOption,
+                audioOutputOptionList = editData.audioOutputOptionList,
                 onEvent = onEvent
             )
 
             AudioPlayingOption.RemoteHTTP -> HttpEndpointConfigurationContent(
-                isUseCustomAudioPlayingHttpEndpoint = viewState.isUseCustomAudioPlayingHttpEndpoint,
-                audioPlayingHttpEndpoint = viewState.audioPlayingHttpEndpoint,
+                isUseCustomAudioPlayingHttpEndpoint = editData.isUseCustomAudioPlayingHttpEndpoint,
+                audioPlayingHttpEndpoint = editData.audioPlayingHttpEndpoint,
                 onEvent = onEvent
             )
 
             AudioPlayingOption.RemoteMQTT -> MqttSiteIdConfigurationContent(
-                audioPlayingMqttSiteId = viewState.audioPlayingMqttSiteId,
+                audioPlayingMqttSiteId = editData.audioPlayingMqttSiteId,
                 onEvent = onEvent
             )
 
@@ -185,18 +203,5 @@ private fun MqttSiteIdConfigurationContent(
         )
 
     }
-
-}
-
-/**
- * test content, play button
- */
-@Composable
-private fun TestContent(onEvent: (AudioPlayingConfigurationUiEvent) -> Unit) {
-
-    FilledTonalButtonListItem(
-        text = MR.strings.executePlayTestAudio.stable,
-        onClick = { onEvent(PlayTestAudio) }
-    )
 
 }

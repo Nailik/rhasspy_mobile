@@ -28,6 +28,3 @@ data class IntentRecognitionConfigurationViewState internal constructor(
     }
 
 }
-
-//val testIntentRecognitionText: String = ""
-//override val isTestingEnabled: Boolean get() = intentRecognitionOption != IntentRecognitionOption.Disabled

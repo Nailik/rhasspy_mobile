@@ -21,14 +21,14 @@ import org.rhasspy.mobile.ui.content.list.SliderListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationViewState.PorcupineViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
 
 /**
  * default keywords screen
  */
 @Composable
 fun PorcupineKeywordDefaultScreen(
-    viewState: PorcupineViewState,
+    editData: WakeWordPorcupineConfigurationData,
     onEvent: (PorcupineUiEvent) -> Unit
 ) {
 
@@ -37,7 +37,7 @@ fun PorcupineKeywordDefaultScreen(
             .testTag(TestTag.PorcupineKeywordDefaultScreen)
             .fillMaxHeight()
     ) {
-        items(viewState.defaultOptionsUi) { option ->
+        items(editData.defaultOptionsUi) { option ->
 
             DefaultKeywordListItem(
                 element = option,

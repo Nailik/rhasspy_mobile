@@ -37,12 +37,12 @@ android {
             }
         }
     }
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "org.rhasspy.mobile.android"
         minSdk = 23
-        targetSdk = 33
+        targetSdk = 34
         versionCode = Version.code
         versionName = Version.toString()
         resourceConfigurations += setOf("en", "de")

@@ -229,7 +229,7 @@ class WakeWordConfigurationEditViewModel(
             navigator.replace<PorcupineKeywordConfigurationScreenDestination>(DefaultKeywordScreen)
             //was handled
             true
-        } else if (viewState.value.screen == EditScreen || viewState.value.screen == TestScreen) {
+        } else if (viewState.value.screen == EditScreen) {
             super.onBackPressed()
         } else {
             //close porcupine language or keyword screen

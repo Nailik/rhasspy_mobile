@@ -1,7 +1,9 @@
 package org.rhasspy.mobile.ui.configuration.edit
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -12,23 +14,20 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreenConfig
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemContent
+import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemEdit
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.translate
-import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent.Action.RunIntentRecognition
-import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationViewState.IntentRecognitionConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.IntentRecognitionConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
 
 /**
  * configuration content for intent recognition
@@ -36,56 +35,71 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
  * text field for endpoint
  */
 @Composable
-fun IntentRecognitionConfigurationContent() {
+fun IntentRecognitionEditConfigurationScreen() {
+
     val viewModel: IntentRecognitionConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
-    val screen by viewModel.screen.collectAsState()
-    val contentViewState by viewState.editViewState.collectAsState()
 
-    Screen(screenViewModel = viewModel) {
-        ConfigurationScreenItemContent(
-            modifier = Modifier.testTag(IntentRecognitionConfigurationScreen),
-            screenType = screen.destinationType,
-            config = ConfigurationScreenConfig(MR.strings.intentRecognition.stable),
-            viewState = viewState,
-            onAction = viewModel::onAction,
-            testContent = {
-                TestContent(
-                    testIntentRecognitionText = contentViewState.testIntentRecognitionText,
-                    onEvent = viewModel::onEvent
-                )
-            }
-        ) {
+    val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
 
-            item {
-                IntentRecognitionOptionContent(
-                    viewState = contentViewState,
-                    onEvent = viewModel::onEvent
-                )
-            }
+    ConfigurationScreenItemEdit(
+        modifier = Modifier.testTag(IntentRecognitionConfigurationScreen(ConfigurationScreenDestinationType.Edit)),
+        kViewModel = viewModel,
+        title = MR.strings.intentRecognition.stable,
+        viewState = configurationEditViewState,
+        onEvent = viewModel::onEvent
+    ) {
+
+        val viewState by viewModel.viewState.collectAsState()
+
+        IntentRecognitionEditContent(
+            editData = viewState.editData,
+            onEvent = viewModel::onEvent
+        )
+
+    }
+
+}
+
+@Composable
+fun IntentRecognitionEditContent(
+    editData: IntentRecognitionConfigurationData,
+    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit
+) {
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+
+        item {
+            IntentRecognitionOptionContent(
+                editData = editData,
+                onEvent = onEvent
+            )
         }
+
     }
 
 }
 
 @Composable
 private fun IntentRecognitionOptionContent(
-    viewState: IntentRecognitionConfigurationViewState,
+    editData: IntentRecognitionConfigurationData,
     onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit
 ) {
 
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.IntentRecognitionOptions),
-        selected = viewState.intentRecognitionOption,
+        selected = editData.intentRecognitionOption,
         onSelect = { onEvent(SelectIntentRecognitionOption(it)) },
-        values = viewState.intentRecognitionOptionList
+        values = editData.intentRecognitionOptionList
     ) { option ->
 
         when (option) {
             IntentRecognitionOption.RemoteHTTP ->
                 IntentRecognitionHTTP(
-                    isUseCustomIntentRecognitionHttpEndpoint = viewState.isUseCustomIntentRecognitionHttpEndpoint,
-                    intentRecognitionHttpEndpointText = viewState.intentRecognitionHttpEndpointText,
+                    isUseCustomIntentRecognitionHttpEndpoint = editData.isUseCustomIntentRecognitionHttpEndpoint,
+                    intentRecognitionHttpEndpointText = editData.intentRecognitionHttpEndpointText,
                     onEvent = onEvent
                 )
 
@@ -124,31 +138,6 @@ private fun IntentRecognitionHTTP(
             value = intentRecognitionHttpEndpointText,
             onValueChange = { onEvent(ChangeIntentRecognitionHttpEndpoint(it)) },
             label = translate(MR.strings.rhasspyTextToIntentURL.stable, HttpClientPath.TextToIntent.path)
-        )
-    }
-
-}
-
-/**
- * text input and intent recognition execute button
- */
-@Composable
-private fun TestContent(
-    testIntentRecognitionText: String,
-    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit
-) {
-
-    Column {
-        TextFieldListItem(
-            modifier = Modifier.testTag(TestTag.TextToSpeechText),
-            value = testIntentRecognitionText,
-            onValueChange = { onEvent(UpdateTestIntentRecognitionText(it)) },
-            label = MR.strings.textIntentRecognitionText.stable
-        )
-
-        FilledTonalButtonListItem(
-            text = MR.strings.executeIntentRecognition.stable,
-            onClick = { onEvent(RunIntentRecognition) },
         )
     }
 

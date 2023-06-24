@@ -2,13 +2,11 @@ package org.rhasspy.mobile.ui.configuration
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -26,7 +24,6 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
-import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.DialogAction.*
@@ -34,7 +31,7 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewStat
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState.ServiceStateDialogState
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState.UnsavedChangesDialogState
-
+import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 
 /**
  * configuration screen where settings are edited
@@ -74,7 +71,6 @@ fun ConfigurationScreenItemEdit(
             bottomBar = {
                 BottomAppBar(
                     hasUnsavedChanges = viewState.hasUnsavedChanges,
-                    isTestingEnabled = viewState.isTestingEnabled,
                     onEvent = onEvent,
                 )
             }
@@ -148,7 +144,6 @@ private fun Dialogs(
 @Composable
 private fun BottomAppBar(
     hasUnsavedChanges: Boolean,
-    isTestingEnabled: Boolean,
     onEvent: (ConfigurationEditUiEvent) -> Unit,
 ) {
     BottomAppBar(
@@ -173,39 +168,6 @@ private fun BottomAppBar(
                     contentDescription = MR.strings.save.stable
                 )
             }
-        },
-        floatingActionButton = {
-            FloatingActionButtonElement(
-                hasUnsavedChanges = hasUnsavedChanges,
-                isTestingEnabled = isTestingEnabled,
-                onAction = onEvent
-            )
-        }
-    )
-}
-
-@Composable
-private fun FloatingActionButtonElement(
-    hasUnsavedChanges: Boolean,
-    isTestingEnabled: Boolean,
-    onAction: (ConfigurationEditUiEvent) -> Unit
-) {
-    org.rhasspy.mobile.ui.content.elements.FloatingActionButton(
-        modifier = Modifier
-            .testTag(TestTag.BottomAppBarTest)
-            .defaultMinSize(
-                minWidth = 56.0.dp,
-                minHeight = 56.0.dp,
-            ),
-        onClick = { onAction(OpenTestScreen) },
-        containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-        contentColor = LocalContentColor.current,
-        isEnabled = !hasUnsavedChanges && isTestingEnabled,
-        icon = {
-            Icon(
-                imageVector = if (!hasUnsavedChanges && isTestingEnabled) Icons.Filled.PlayArrow else Icons.Outlined.PlayArrow,
-                contentDescription = MR.strings.test.stable
-            )
         }
     )
 }

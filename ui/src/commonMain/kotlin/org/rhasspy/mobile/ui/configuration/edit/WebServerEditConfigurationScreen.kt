@@ -28,6 +28,7 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfig
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationViewState.WebServerConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WebServerConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Edit
 
@@ -38,7 +39,8 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.Config
  * select ssl certificate
  */
 @Composable
-fun WebServerConfigurationEditContent() {
+fun WebServerEditConfigurationScreen() {
+
     val viewModel: WebServerConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
 
     val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
@@ -53,53 +55,69 @@ fun WebServerConfigurationEditContent() {
 
         val viewState by viewModel.viewState.collectAsState()
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            item {
-                //switch to enable http server
-                SwitchListItem(
-                    text = MR.strings.enableHTTPApi.stable,
-                    modifier = Modifier.testTag(TestTag.ServerSwitch),
-                    isChecked = viewState.editData.isHttpServerEnabled,
-                    onCheckedChange = { viewModel.onEvent(SetHttpServerEnabled(it)) }
-                )
-            }
+        WebServerEditContent(
+            editData = viewState.editData,
+            onEvent = viewModel::onEvent
+        )
 
-            item {
-                //visibility of server settings
-                AnimatedVisibility(
-                    enter = expandVertically(),
-                    exit = shrinkVertically(),
-                    visible = viewState.editData.isHttpServerEnabled
-                ) {
+    }
 
-                    Column {
+}
 
-                        //port of server
-                        TextFieldListItem(
-                            label = MR.strings.port.stable,
-                            modifier = Modifier.testTag(TestTag.Port),
-                            value = viewState.editData.httpServerPortText,
-                            isLastItem = true,
-                            onValueChange = { viewModel.onEvent(UpdateHttpServerPort(it)) },
-                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-                        )
+@Composable
+private fun WebServerEditContent(
+    editData: WebServerConfigurationData,
+    onEvent: (WebServerConfigurationUiEvent) -> Unit
+) {
 
-                        WebserverSSL(
-                            isHttpServerSSLEnabled = viewState.editData.isHttpServerSSLEnabled,
-                            httpServerSSLKeyStoreFileName = viewState.editData.httpServerSSLKeyStoreFileName,
-                            httpServerSSLKeyStorePassword = viewState.editData.httpServerSSLKeyStorePassword,
-                            httpServerSSLKeyAlias = viewState.editData.httpServerSSLKeyAlias,
-                            httpServerSSLKeyPassword = viewState.editData.httpServerSSLKeyPassword,
-                            onAction = viewModel::onEvent
-                        )
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
 
-                    }
+        item {
+            //switch to enable http server
+            SwitchListItem(
+                text = MR.strings.enableHTTPApi.stable,
+                modifier = Modifier.testTag(TestTag.ServerSwitch),
+                isChecked = editData.isHttpServerEnabled,
+                onCheckedChange = { onEvent(SetHttpServerEnabled(it)) }
+            )
+        }
+
+        item {
+            //visibility of server settings
+            AnimatedVisibility(
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+                visible = editData.isHttpServerEnabled
+            ) {
+
+                Column {
+
+                    //port of server
+                    TextFieldListItem(
+                        label = MR.strings.port.stable,
+                        modifier = Modifier.testTag(TestTag.Port),
+                        value = editData.httpServerPortText,
+                        isLastItem = true,
+                        onValueChange = { onEvent(UpdateHttpServerPort(it)) },
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                    )
+
+                    WebserverSSL(
+                        isHttpServerSSLEnabled = editData.isHttpServerSSLEnabled,
+                        httpServerSSLKeyStoreFileName = editData.httpServerSSLKeyStoreFileName,
+                        httpServerSSLKeyStorePassword = editData.httpServerSSLKeyStorePassword,
+                        httpServerSSLKeyAlias = editData.httpServerSSLKeyAlias,
+                        httpServerSSLKeyPassword = editData.httpServerSSLKeyPassword,
+                        onEvent = onEvent
+                    )
 
                 }
+
             }
+
         }
 
     }
@@ -118,7 +136,7 @@ private fun WebserverSSL(
     httpServerSSLKeyStorePassword: String,
     httpServerSSLKeyAlias: String,
     httpServerSSLKeyPassword: String,
-    onAction: (WebServerConfigurationUiEvent) -> Unit
+    onEvent: (WebServerConfigurationUiEvent) -> Unit
 ) {
 
 
@@ -127,7 +145,7 @@ private fun WebserverSSL(
         text = MR.strings.enableSSL.stable,
         modifier = Modifier.testTag(TestTag.SSLSwitch),
         isChecked = isHttpServerSSLEnabled,
-        onCheckedChange = { onAction(SetHttpServerSSLEnabled(it)) }
+        onCheckedChange = { onEvent(SetHttpServerSSLEnabled(it)) }
     )
 
     //visibility of choose certificate button for ssl
@@ -142,7 +160,7 @@ private fun WebserverSSL(
             ListElement(
                 modifier = Modifier
                     .testTag(TestTag.WebServerSSLWiki)
-                    .clickable(onClick = { onAction(OpenWebServerSSLWiki) }),
+                    .clickable(onClick = { onEvent(OpenWebServerSSLWiki) }),
                 icon = {
                     Icon(
                         imageVector = Icons.Filled.Link,
@@ -157,7 +175,7 @@ private fun WebserverSSL(
             FilledTonalButtonListItem(
                 text = MR.strings.chooseCertificate.stable,
                 modifier = Modifier.testTag(TestTag.CertificateButton),
-                onClick = { onAction(SelectSSLCertificate) }
+                onClick = { onEvent(SelectSSLCertificate) }
             )
 
             val isKeyStoreFileTextVisible by remember { derivedStateOf { httpServerSSLKeyStoreFileName != null } }
@@ -179,7 +197,7 @@ private fun WebserverSSL(
             TextFieldListItemVisibility(
                 label = MR.strings.keyStorePassword.stable,
                 value = httpServerSSLKeyStorePassword,
-                onValueChange = { onAction(UpdateHttpSSLKeyStorePassword(it)) },
+                onValueChange = { onEvent(UpdateHttpSSLKeyStorePassword(it)) },
                 isLastItem = false
             )
 
@@ -187,7 +205,7 @@ private fun WebserverSSL(
             TextFieldListItemVisibility(
                 label = MR.strings.keyStoreKeyAlias.stable,
                 value = httpServerSSLKeyAlias,
-                onValueChange = { onAction(UpdateHttpSSLKeyAlias(it)) },
+                onValueChange = { onEvent(UpdateHttpSSLKeyAlias(it)) },
                 isLastItem = false
             )
 
@@ -195,7 +213,7 @@ private fun WebserverSSL(
             TextFieldListItemVisibility(
                 label = MR.strings.keyStoreKeyPassword.stable,
                 value = httpServerSSLKeyPassword,
-                onValueChange = { onAction(UpdateHttpSSLKeyPassword(it)) },
+                onValueChange = { onEvent(UpdateHttpSSLKeyPassword(it)) },
             )
 
         }

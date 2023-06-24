@@ -1,7 +1,9 @@
 package org.rhasspy.mobile.ui.configuration.edit
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -12,78 +14,98 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreenConfig
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemContent
+import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemEdit
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationViewState.DialogManagementConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.DialogManagementConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
 
 /**
  * DropDown to select dialog management option
  */
 @Composable
-fun DialogManagementConfigurationContent() {
+fun DialogManagementEditConfigurationScreen() {
+
     val viewModel: DialogManagementConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(screenViewModel = viewModel) {
+    val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
+
+    ConfigurationScreenItemEdit(
+        modifier = Modifier.testTag(DialogManagementConfigurationScreen(ConfigurationScreenDestinationType.Edit)),
+        kViewModel = viewModel,
+        title = MR.strings.dialogManagement.stable,
+        viewState = configurationEditViewState,
+        onEvent = viewModel::onEvent
+    ) {
+
         val viewState by viewModel.viewState.collectAsState()
-        val screen by viewModel.screen.collectAsState()
-        val contentViewState by viewState.editViewState.collectAsState()
 
-        ConfigurationScreenItemContent(
-            modifier = Modifier.testTag(DialogManagementConfigurationScreen),
-            screenType = screen.destinationType,
-            config = ConfigurationScreenConfig(MR.strings.dialogManagement.stable),
-            viewState = viewState,
-            onAction = viewModel::onAction
-        ) {
+        DialogManagementEditContent(
+            editData = viewState.editData,
+            onEvent = viewModel::onEvent
+        )
 
-            item {
-                DialogManagementOptionContent(
-                    viewState = contentViewState,
-                    onAction = viewModel::onEvent
-                )
-            }
+    }
 
+}
+
+@Composable
+private fun DialogManagementEditContent(
+    editData: DialogManagementConfigurationData,
+    onEvent: (DialogManagementConfigurationUiEvent) -> Unit
+) {
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+
+        item {
+            DialogManagementOptionContent(
+                editData = editData,
+                onEvent = onEvent
+            )
         }
+
     }
 
 }
 
 @Composable
 private fun DialogManagementOptionContent(
-    viewState: DialogManagementConfigurationViewState,
-    onAction: (DialogManagementConfigurationUiEvent) -> Unit
+    editData: DialogManagementConfigurationData,
+    onEvent: (DialogManagementConfigurationUiEvent) -> Unit
 ) {
+
     //drop down to select option
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.DialogManagementOptions),
-        selected = viewState.dialogManagementOption,
-        onSelect = { onAction(SelectDialogManagementOption(it)) },
-        values = viewState.dialogManagementOptionList
+        selected = editData.dialogManagementOption,
+        onSelect = { onEvent(SelectDialogManagementOption(it)) },
+        values = editData.dialogManagementOptionList
     ) { option ->
 
         when (option) {
             DialogManagementOption.Local ->
                 LocalDialogManagementSettings(
-                    textAsrTimeoutText = viewState.textAsrTimeoutText,
-                    intentRecognitionTimeoutText = viewState.intentRecognitionTimeoutText,
-                    recordingTimeoutText = viewState.recordingTimeoutText,
-                    onAction = onAction
+                    textAsrTimeoutText = editData.textAsrTimeoutText,
+                    intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
+                    recordingTimeoutText = editData.recordingTimeoutText,
+                    onEvent = onEvent
                 )
 
             else -> {}
         }
 
     }
+
 }
 
 /**
@@ -95,7 +117,7 @@ private fun LocalDialogManagementSettings(
     textAsrTimeoutText: String,
     intentRecognitionTimeoutText: String,
     recordingTimeoutText: String,
-    onAction: (DialogManagementConfigurationUiEvent) -> Unit
+    onEvent: (DialogManagementConfigurationUiEvent) -> Unit
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
@@ -104,7 +126,7 @@ private fun LocalDialogManagementSettings(
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.TextAsrTimeout),
             value = textAsrTimeoutText,
-            onValueChange = { onAction(ChangeTextAsrTimeout(it)) },
+            onValueChange = { onEvent(ChangeTextAsrTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             label = MR.strings.textAsrTimeoutText.stable
         )
@@ -113,7 +135,7 @@ private fun LocalDialogManagementSettings(
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.IntentRecognitionTimeout),
             value = intentRecognitionTimeoutText,
-            onValueChange = { onAction(ChangeIntentRecognitionTimeout(it)) },
+            onValueChange = { onEvent(ChangeIntentRecognitionTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             label = MR.strings.intentRecognitionTimeoutText.stable
         )
@@ -122,7 +144,7 @@ private fun LocalDialogManagementSettings(
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.RecordingTimeout),
             value = recordingTimeoutText,
-            onValueChange = { onAction(ChangeRecordingTimeout(it)) },
+            onValueChange = { onEvent(ChangeRecordingTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             label = MR.strings.recordingTimeoutText.stable
         )

@@ -22,25 +22,3 @@ data class RemoteHermesHttpConfigurationViewState internal constructor(
     }
 
 }
-
-// override val isTestingEnabled: Boolean
-//        get() = httpClientServerEndpointHost.isNotBlank() &&
-//                (ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteHTTP ||
-//                        ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.RemoteHTTP ||
-//                        ConfigurationSetting.textToSpeechOption.value == TextToSpeechOption.RemoteHTTP)
-// val testIntentRecognitionText: String = "",
-// val testTextToSpeechText: String = "",
-// val isTestRecordingAudio: Boolean = false
-
-/*
-
-
-    val isSpeechToTextTestVisible  = ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteHTTP &&
-                    !ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value
-
-    val isIntentRecognitionTestVisible = ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.RemoteHTTP
-                    && !ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value
-
-    val isTextToSpeechTestVisible = ConfigurationSetting.textToSpeechOption.value == TextToSpeechOption.RemoteHTTP
-                    && !ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value
- */

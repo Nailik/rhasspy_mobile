@@ -8,7 +8,6 @@ enum class WakeWordConfigurationScreenDestination(val destinationType: Configura
 
     EditScreen(Edit),
     EditPorcupineLanguageScreen(Edit),
-    EditPorcupineWakeWordScreen(Edit),
-    TestScreen(Test)
+    EditPorcupineWakeWordScreen(Edit)
 
 }

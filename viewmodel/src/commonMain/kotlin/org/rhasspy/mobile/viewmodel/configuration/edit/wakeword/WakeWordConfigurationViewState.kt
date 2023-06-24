@@ -37,6 +37,7 @@ data class WakeWordConfigurationViewState internal constructor(
         val wakeWordPorcupineConfigurationData: WakeWordPorcupineConfigurationData = WakeWordPorcupineConfigurationData(),
         val wakeWordUdpConfigurationData: WakeWordUdpConfigurationData = WakeWordUdpConfigurationData(),
     ) {
+        val wakeWordOptions: ImmutableList<WakeWordOption> = WakeWordOption.values().toImmutableList()
 
         @Stable
         data class WakeWordPorcupineConfigurationData internal constructor(
@@ -47,7 +48,6 @@ data class WakeWordConfigurationViewState internal constructor(
             val deletedCustomOptions: ImmutableList<PorcupineCustomKeyword> = persistentListOf(),
         ) {
 
-            val wakeWordOptions: ImmutableList<WakeWordOption> = WakeWordOption.values().toImmutableList()
             val languageOptions: ImmutableList<PorcupineLanguageOption> = PorcupineLanguageOption.values().toImmutableList()
 
             val customOptionsUi: ImmutableList<PorcupineCustomKeywordViewState> =

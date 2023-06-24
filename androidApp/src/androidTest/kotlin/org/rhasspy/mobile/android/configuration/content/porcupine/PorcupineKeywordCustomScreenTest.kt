@@ -59,7 +59,7 @@ class PorcupineKeywordCustomScreenTest : FlakyTest() {
                     val viewState by viewModel.viewState.collectAsState()
                     val contentViewState by viewState.editViewState.collectAsState()
                     PorcupineKeywordCustomScreen(
-                        viewState = contentViewState.wakeWordPorcupineViewState,
+                        editData = contentViewState.wakeWordPorcupineViewState,
                         onEvent = viewModel::onEvent
                     )
                 }

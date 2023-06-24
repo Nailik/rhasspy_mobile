@@ -4,9 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
@@ -136,30 +134,14 @@ private fun MainScreenContent(
 @Composable
 fun CrashlyticsDialog(onResult: (result: Boolean) -> Unit) {
     Dialog(
-        modifier = Modifier.testTag(TestTag.DialogCrashlytics),
-        onDismissRequest = { onResult(false) },
-        confirmButton = {
-            TextButton(
-                onClick = { onResult(true) },
-                modifier = Modifier.testTag(TestTag.DialogOk)
-            ) {
-                Text(MR.strings.confirm.stable)
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { onResult(false) },
-                modifier = Modifier.testTag(TestTag.DialogOk)
-            ) {
-                Text(MR.strings.deny.stable)
-            }
-        },
-        headline = {
-            Text(MR.strings.crashlytics.stable)
-        },
-        supportingText = {
-            Text(MR.strings.crashlyticsDialogText.stable)
-        }
+        icon = Icons.Filled.BugReport,
+        title = MR.strings.crashlytics.stable,
+        message = MR.strings.crashlyticsDialogText.stable,
+        confirmLabel = MR.strings.confirm.stable,
+        dismissLabel = MR.strings.deny.stable,
+        onConfirm = { onResult(true) },
+        onDismiss = { onResult(false) },
+        onClose = {}
     )
 }
 

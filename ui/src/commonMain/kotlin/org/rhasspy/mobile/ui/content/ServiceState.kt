@@ -32,31 +32,12 @@ fun ServiceStateDialog(
 ) {
 
     Dialog(
-        onDismissRequest = onDismiss,
-        headline = {
-            Text(MR.strings.error.stable)
-        },
-        supportingText = {
-            when (dialogText) {
-                is StableStringResource -> Text(dialogText)
-                is String -> Text(dialogText)
-                else -> Text(dialogText.toString())
-            }
-        },
-        icon = {
-            Icon(
-                imageVector = Icons.Filled.Info,
-                contentDescription = MR.strings.error.stable
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = onConfirm,
-                modifier = Modifier.testTag(TestTag.DialogOk)
-            ) {
-                Text(MR.strings.close.stable)
-            }
-        }
+        icon = Icons.Filled.Info,
+        title = MR.strings.error.stable,
+        message = dialogText,
+        confirmLabel = MR.strings.close.stable,
+        onConfirm = onConfirm,
+        onDismiss = onDismiss
     )
 
 }

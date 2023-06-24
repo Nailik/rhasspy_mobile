@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.edit
 
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.ConfigurationDialogState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState
 
 sealed interface ConfigurationEditUiEvent {
 
@@ -15,11 +15,11 @@ sealed interface ConfigurationEditUiEvent {
 
     sealed interface DialogAction : ConfigurationEditUiEvent {
 
-        val dialogState: ConfigurationDialogState
+        val dialogState: DialogState
 
-        data class Confirm(override val dialogState: ConfigurationDialogState) : DialogAction
-        data class Dismiss(override val dialogState: ConfigurationDialogState) : DialogAction
-        data class Close(override val dialogState: ConfigurationDialogState) : DialogAction
+        data class Confirm(override val dialogState: DialogState) : DialogAction
+        data class Dismiss(override val dialogState: DialogState) : DialogAction
+        data class Close(override val dialogState: DialogState) : DialogAction
 
     }
 

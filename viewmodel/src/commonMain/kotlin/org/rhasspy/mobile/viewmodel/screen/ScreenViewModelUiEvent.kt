@@ -1,5 +1,8 @@
 package org.rhasspy.mobile.viewmodel.screen
 
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState
+
 sealed interface ScreenViewModelUiEvent {
 
     sealed interface Action : ScreenViewModelUiEvent {

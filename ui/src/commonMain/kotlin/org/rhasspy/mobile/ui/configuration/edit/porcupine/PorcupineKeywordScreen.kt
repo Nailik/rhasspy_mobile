@@ -19,7 +19,7 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationViewState.PorcupineViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.CustomKeywordScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.DefaultKeywordScreen
@@ -34,7 +34,7 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcup
 @Composable
 fun PorcupineKeywordScreen(
     porcupineScreen: PorcupineKeywordConfigurationScreenDestination,
-    viewState: PorcupineViewState,
+    editData: WakeWordPorcupineConfigurationData,
     onEvent: (PorcupineUiEvent) -> Unit
 ) {
     Surface(tonalElevation = 3.dp) {
@@ -51,7 +51,7 @@ fun PorcupineKeywordScreen(
                             .testTag(TestTag.PorcupineLanguage)
                             .clickable { onEvent(PorcupineLanguageClick) },
                         text = { Text(MR.strings.language.stable) },
-                        secondaryText = { Text(viewState.porcupineLanguage.text) }
+                        secondaryText = { Text(editData.porcupineLanguage.text) }
                     )
                 }
             },
@@ -71,12 +71,12 @@ fun PorcupineKeywordScreen(
 
                 when (porcupineScreen) {
                     DefaultKeywordScreen -> PorcupineKeywordDefaultScreen(
-                        viewState = viewState,
+                        editData = editData,
                         onEvent = onEvent
                     )
 
                     CustomKeywordScreen -> PorcupineKeywordCustomScreen(
-                        viewState = viewState,
+                        editData = editData,
                         onEvent = onEvent
                     )
                 }
