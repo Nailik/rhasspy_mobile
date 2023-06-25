@@ -10,6 +10,7 @@ import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.settings.content.SilenceDetectionSettingsContent
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.SetSilenceDetectionEnabled
@@ -66,7 +67,7 @@ class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOn()
         //Automatic silence detection enabled saved
-        assertTrue { SilenceDetectionSettingsViewModel(get(), get(), get()).viewState.value.isSilenceDetectionEnabled }
+        assertTrue { SilenceDetectionSettingsViewModel(get(), get()).viewState.value.isSilenceDetectionEnabled }
         //settings visible
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)
             .assertIsDisplayed()
@@ -79,7 +80,7 @@ class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
         //silence detection time 5000 saved
         assertEquals(
             numberInputTest,
-            SilenceDetectionSettingsViewModel(get(), get(), get()).viewState.value.silenceDetectionMinimumTimeText
+            SilenceDetectionSettingsViewModel(get(), get()).viewState.value.silenceDetectionMinimumTimeText
         )
 
         //user changes silence detection time to 5000
@@ -90,7 +91,7 @@ class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
         //silence detection time 5000 saved
         assertEquals(
             numberInputTest,
-            SilenceDetectionSettingsViewModel(get(), get(), get()).viewState.value.silenceDetectionTimeText
+            SilenceDetectionSettingsViewModel(get(), get()).viewState.value.silenceDetectionTimeText
         )
     }
 
@@ -108,7 +109,7 @@ class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
      */
     @Test
     fun testRecording() = runTest {
-        requestMicrophonePermissions()
+        get<MicrophonePermission>().requestMicrophonePermissions()
 
         //Automatic silence detection enabled
         viewModel.onEvent(SetSilenceDetectionEnabled(true))

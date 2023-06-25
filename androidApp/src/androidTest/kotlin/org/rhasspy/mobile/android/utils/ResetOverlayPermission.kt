@@ -12,7 +12,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.resources.MR
 
-fun UiDevice.resetOverlayPermission(context: Context) {
+fun UiDevice.resetOverlayPermission(context: Context, overlayPermission: OverlayPermission) {
     if (!Settings.canDrawOverlays(context)) {
         return
     }
@@ -30,10 +30,10 @@ fun UiDevice.resetOverlayPermission(context: Context) {
 
     this.pressBack()
     this.pressBack()
-    OverlayPermission.update()
+    overlayPermission.update()
 }
 
-fun UiDevice.requestOverlayPermissionLegacy(context: Context) {
+fun UiDevice.requestOverlayPermissionLegacy(context: Context, overlayPermission: OverlayPermission) {
     if (Settings.canDrawOverlays(context)) {
         return
     }
@@ -51,5 +51,5 @@ fun UiDevice.requestOverlayPermissionLegacy(context: Context) {
 
     this.pressBack()
     this.pressBack()
-    OverlayPermission.update()
+    overlayPermission.update()
 }

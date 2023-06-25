@@ -17,6 +17,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
@@ -54,7 +55,7 @@ class OverlayPermissionTest : FlakyTest() {
         composeTestRule.activity.setContent {
             AppTheme {
                 TestContentProvider {
-                    Screen(testViewModel) {
+                    Screen(screenViewModel = testViewModel) {
                         Button(onClick = testViewModel::onRequestOverlayPermission) {
                             Text(btnRequestPermission)
                         }
@@ -83,10 +84,10 @@ class OverlayPermissionTest : FlakyTest() {
      */
     @Test
     fun testAllow() = runTest {
-        device.resetOverlayPermission(composeTestRule.activity)
+        device.resetOverlayPermission(composeTestRule.activity, get<OverlayPermission>())
 
         permissionResult = false
-        assertFalse { OverlayPermission.granted.value }
+        assertFalse { get<OverlayPermission>().granted.value }
 
         //User clicks button
         composeTestRule.onNodeWithText(btnRequestPermission).performClick()
@@ -122,9 +123,9 @@ class OverlayPermissionTest : FlakyTest() {
             device.pressBack()
 
             //app will be closed when pressing one more back
-            OverlayPermission.update()
+            get<OverlayPermission>().update()
             //Dialog is closed and permission granted
-            assertTrue { OverlayPermission.granted.value }
+            assertTrue { get<OverlayPermission>().granted.value }
         }
 
         assertTrue { true }

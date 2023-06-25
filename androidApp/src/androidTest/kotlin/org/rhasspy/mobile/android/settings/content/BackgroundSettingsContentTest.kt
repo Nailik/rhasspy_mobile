@@ -78,7 +78,7 @@ class BackgroundSettingsContentTest : FlakyTest() {
         //background services active
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOn()
         //background services enabled saved
-        val newViewModel = BackgroundServiceSettingsViewModel(get())
+        val newViewModel = BackgroundServiceSettingsViewModel(get(), get())
         assertTrue { newViewModel.viewState.value.isBackgroundServiceEnabled }
 
         if (!viewModel.viewState.value.isBatteryOptimizationDisabled) {

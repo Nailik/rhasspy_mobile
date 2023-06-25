@@ -9,12 +9,14 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onNodeWithCombinedTag
 import org.rhasspy.mobile.android.utils.requestMicrophonePermissions
 import org.rhasspy.mobile.android.utils.requestOverlayPermissions
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
 
@@ -27,7 +29,7 @@ class MicrophoneOverlayTest : FlakyTest() {
 
     @Before
     fun setUp() {
-        requestMicrophonePermissions()
+        get<MicrophonePermission>().requestMicrophonePermissions()
         device.requestOverlayPermissions(composeTestRule.activity)
         AppSetting.microphoneOverlaySizeOption.value = MicrophoneOverlaySizeOption.Big
         AppSetting.isMicrophoneOverlayWhileAppEnabled.value = true

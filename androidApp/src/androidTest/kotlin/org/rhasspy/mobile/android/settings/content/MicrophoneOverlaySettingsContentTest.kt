@@ -14,6 +14,7 @@ import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.settings.content.MicrophoneOverlaySettingsContent
@@ -73,7 +74,7 @@ class MicrophoneOverlaySettingsContentTest : FlakyTest() {
      */
     @Test
     fun testContent() {
-        device.resetOverlayPermission(composeTestRule.activity)
+        device.resetOverlayPermission(composeTestRule.activity, get<OverlayPermission>())
 
         viewModel.onEvent(SelectMicrophoneOverlaySizeOption(MicrophoneOverlaySizeOption.Disabled))
         viewModel.onEvent(SetMicrophoneOverlayWhileAppEnabled(false))
@@ -111,7 +112,7 @@ class MicrophoneOverlaySettingsContentTest : FlakyTest() {
         //Visible while app is visible
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).assertIsDisplayed()
         //Medium is saved
-        var newViewModel = MicrophoneOverlaySettingsViewModel()
+        var newViewModel = MicrophoneOverlaySettingsViewModel(get())
         assertEquals(
             MicrophoneOverlaySizeOption.Medium,
             newViewModel.viewState.value.microphoneOverlaySizeOption
@@ -127,7 +128,7 @@ class MicrophoneOverlaySettingsContentTest : FlakyTest() {
         //element is turned on
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).onListItemSwitch().assertIsOn()
         //visible while app is saved
-        newViewModel = MicrophoneOverlaySettingsViewModel()
+        newViewModel = MicrophoneOverlaySettingsViewModel(get())
         assertTrue { newViewModel.viewState.value.isMicrophoneOverlayWhileAppEnabled }
 
     }

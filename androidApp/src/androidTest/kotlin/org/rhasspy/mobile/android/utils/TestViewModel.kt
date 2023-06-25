@@ -1,27 +1,24 @@
 package org.rhasspy.mobile.android.utils
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
+import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 class TestService : IService(LogType.AudioPlayingService)
 
-data class TestViewState(
-    val data: Boolean = true
-) : IConfigurationViewState() {
-
-    override val isTestingEnabled: Boolean
-        get() = false
-
-}
-
-class TestViewModel : IConfigurationViewModel<TestViewState>(
-    service = TestService(),
-    initialViewState = { TestViewState() },
-    testPageDestination = TestNavigationDestinations.Test
+class TestViewModel : IConfigurationViewModel(
+    service = TestService()
 ) {
+
+    private val _stateFlow = MutableStateFlow(
+        IConfigurationViewState(serviceViewState = ServiceViewState(TestService().serviceState))
+    )
 
     var onSave = false
     var onDiscard = false
@@ -35,19 +32,15 @@ class TestViewModel : IConfigurationViewModel<TestViewState>(
     }
 
     fun setUnsavedChanges(value: Boolean) {
-        if (value) {
-            updateViewState { it.copy(data = !it.data) }
-        } else {
-            contentViewState.value = TestViewState()
-        }
+        _stateFlow.update { it.copy(hasUnsavedChanges = value) }
     }
 
     fun onRequestOverlayPermission() {
-        requireOverlayPermission(Unit) { }
+        requireOverlayPermission { }
     }
 
-}
+    override fun initViewStateCreator(configurationViewState: MutableStateFlow<IConfigurationViewState>): StateFlow<IConfigurationViewState> {
+        return _stateFlow
+    }
 
-enum class TestNavigationDestinations : NavigationDestination {
-    Test
 }

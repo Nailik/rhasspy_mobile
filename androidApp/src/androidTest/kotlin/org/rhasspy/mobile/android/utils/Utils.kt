@@ -120,12 +120,12 @@ fun requestExternalStoragePermissions(device: UiDevice) {
     }
 }
 
-fun requestMicrophonePermissions() {
+fun MicrophonePermission.requestMicrophonePermissions() {
     with(PermissionRequester()) {
         addPermissions("android.permission.RECORD_AUDIO")
         requestPermissions()
     }
-    MicrophonePermission.update()
+    this.update()
 }
 
 fun UiDevice.requestOverlayPermissions(context: Context) {
@@ -162,7 +162,7 @@ fun SemanticsNodeInteraction.assertTextEquals(
         includeEditableText = includeEditableText
     )
 
-fun <V : IConfigurationViewState> ComposeTestRule.saveBottomAppBar(viewModel: IConfigurationViewModel<V>) {
+fun ComposeTestRule.saveBottomAppBar(viewModel: IConfigurationViewModel) {
     Espresso.closeSoftKeyboard()
     waitUntilExists(hasTestTag(TestTag.BottomAppBarSave).and(isEnabled()))
     onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
@@ -170,9 +170,9 @@ fun <V : IConfigurationViewState> ComposeTestRule.saveBottomAppBar(viewModel: IC
 }
 
 
-fun <V : IConfigurationViewState> ComposeTestRule.awaitSaved(viewModel: IConfigurationViewModel<V>) {
+fun ComposeTestRule.awaitSaved(viewModel: IConfigurationViewModel) {
     this.waitUntil(
-        condition = { !viewModel.viewState.value.hasUnsavedChanges },
+        condition = { !viewModel.configurationEditViewState.value.hasUnsavedChanges },
         timeoutMillis = 5000
     )
 }
