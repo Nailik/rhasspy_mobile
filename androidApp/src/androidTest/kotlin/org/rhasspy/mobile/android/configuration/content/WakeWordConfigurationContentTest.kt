@@ -19,10 +19,10 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.edit.WakeWordEditConfigurationScreen
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -35,7 +35,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
     private val device: UiDevice =
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-    private val viewModel = get<WakeWordConfigurationEditViewModel>()
+    private val viewModel = get<WakeWordConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -81,7 +81,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
 
         //user clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        WakeWordConfigurationEditViewModel(get()).viewState.value.editViewState.value.also {
+        WakeWordConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //new option is saved
             assertEquals(WakeWordOption.Porcupine, it.wakeWordOption)
         }
@@ -133,7 +133,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
 
         //user clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        WakeWordConfigurationEditViewModel(get()).viewState.value.editViewState.value.also {
+        WakeWordConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //access token is saved
             assertEquals(WakeWordOption.Porcupine, it.wakeWordOption)
         }

@@ -10,9 +10,9 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.edit.RemoteHermesHttpEditConfigurationScreen
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHermesHttpConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.SetHttpSSLVerificationDisabled
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.SetHttpSSLVerificationDisabled
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -22,7 +22,7 @@ class RemoteHermesHttpConfigurationContentTest : FlakyTest() {
     @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
-    private val viewModel = get<RemoteHermesHttpConfigurationEditViewModel>()
+    private val viewModel = get<RemoteHermesHttpConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -75,7 +75,7 @@ class RemoteHermesHttpConfigurationContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar(viewModel)
-        RemoteHermesHttpConfigurationEditViewModel(get()).viewState.value.editViewState.value.also {
+        RemoteHermesHttpConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //disable ssl validation off is saved
             assertEquals(false, it.isHttpSSLVerificationDisabled)
             //host is saved

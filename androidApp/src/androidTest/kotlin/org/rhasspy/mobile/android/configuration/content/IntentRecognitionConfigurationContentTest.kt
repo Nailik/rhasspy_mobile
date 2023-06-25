@@ -11,9 +11,9 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.edit.IntentRecognitionEditConfigurationScreen
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
 import kotlin.test.assertEquals
 
 class IntentRecognitionConfigurationContentTest : FlakyTest() {
@@ -21,7 +21,7 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
     @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
-    private val viewModel = get<IntentRecognitionConfigurationEditViewModel>()
+    private val viewModel = get<IntentRecognitionConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -97,7 +97,7 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        IntentRecognitionConfigurationEditViewModel(get()).viewState.value.editViewState.value.also {
+        IntentRecognitionConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //option is saved to remote http
             assertEquals(IntentRecognitionOption.RemoteHTTP, it.intentRecognitionOption)
             //endpoint is saved

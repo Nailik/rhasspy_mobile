@@ -7,16 +7,17 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.logic.logicModule
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.settings.settingsModule
-import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHermesHttpConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToTextConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationEditViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewStateCreator
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
@@ -70,56 +71,58 @@ val viewModelModule = module {
     singleOf(::Navigator)
     singleOf(::ViewModelFactory)
 
-    singleOf(::MainScreenViewStateCreator)
+    factoryOf(::MainScreenViewStateCreator)
     singleOf(::MainScreenViewModel)
 
-    singleOf(::MicrophoneFabViewStateCreator)
+    factoryOf(::MicrophoneFabViewStateCreator)
 
-    singleOf(::HomeScreenViewStateCreator)
+    factoryOf(::HomeScreenViewStateCreator)
     singleOf(::HomeScreenViewModel)
 
-    singleOf(::MicrophoneFabViewStateCreator)
+    factoryOf(::MicrophoneFabViewStateCreator)
     singleOf(::MicrophoneFabViewModel)
 
-    singleOf(::ConfigurationScreenViewStateCreator)
+    factoryOf(::ConfigurationScreenViewStateCreator)
     singleOf(::ConfigurationScreenViewModel)
 
-    singleOf(::AudioPlayingConfigurationViewModel)
-    singleOf(::DialogManagementConfigurationEditViewModel)
-    singleOf(::IntentHandlingConfigurationEditViewModel)
-    singleOf(::IntentRecognitionConfigurationEditViewModel)
-    singleOf(::MqttConfigurationEditViewModel)
-    singleOf(::RemoteHermesHttpConfigurationEditViewModel)
-    singleOf(::SpeechToTextConfigurationEditViewModel)
-    singleOf(::TextToSpeechConfigurationEditViewModel)
-    singleOf(::WakeWordConfigurationEditViewModel)
-    singleOf(::WebServerConfigurationEditViewModel)
+    factoryOf(::IConfigurationViewStateCreator)
 
-    singleOf(::LogScreenViewStateCreator)
+    singleOf(::AudioPlayingConfigurationViewModel)
+    singleOf(::DialogManagementConfigurationViewModel)
+    singleOf(::IntentHandlingConfigurationViewModel)
+    singleOf(::IntentRecognitionConfigurationViewModel)
+    singleOf(::MqttConfigurationViewModel)
+    singleOf(::RemoteHermesHttpConfigurationViewModel)
+    singleOf(::SpeechToTextConfigurationViewModel)
+    singleOf(::TextToSpeechConfigurationViewModel)
+    singleOf(::WakeWordConfigurationViewModel)
+    singleOf(::WebServerConfigurationViewModel)
+
+    factoryOf(::LogScreenViewStateCreator)
     singleOf(::LogScreenViewModel)
 
-    singleOf(::SettingsScreenViewStateCreator)
+    factoryOf(::SettingsScreenViewStateCreator)
     singleOf(::SettingsScreenViewModel)
 
-    singleOf(::AboutScreenViewStateCreator)
+    factoryOf(::AboutScreenViewStateCreator)
     singleOf(::AboutScreenViewModel)
 
-    singleOf(::SilenceDetectionSettingsViewStateCreator)
+    factoryOf(::SilenceDetectionSettingsViewStateCreator)
     singleOf(::SilenceDetectionSettingsViewModel)
 
-    singleOf(::AudioFocusSettingsViewStateCreator)
+    factoryOf(::AudioFocusSettingsViewStateCreator)
     singleOf(::AudioFocusSettingsViewModel)
 
-    singleOf(::AudioRecorderSettingsViewStateCreator)
+    factoryOf(::AudioRecorderSettingsViewStateCreator)
     singleOf(::AudioRecorderSettingsViewModel)
 
-    singleOf(::BackgroundServiceSettingsViewStateCreator)
+    factoryOf(::BackgroundServiceSettingsViewStateCreator)
     singleOf(::BackgroundServiceSettingsViewModel)
 
-    singleOf(::DeviceSettingsViewStateCreator)
+    factoryOf(::DeviceSettingsViewStateCreator)
     singleOf(::DeviceSettingsViewModel)
 
-    singleOf(::IndicationSettingsViewStateCreator)
+    factoryOf(::IndicationSettingsViewStateCreator)
     singleOf(::IndicationSettingsViewModel)
 
     factoryOf(::IIndicationSoundSettingsViewStateCreator)
@@ -129,17 +132,17 @@ val viewModelModule = module {
 
     singleOf(::LanguageSettingsViewModel)
 
-    singleOf(::LogSettingsViewStateCreator)
+    factoryOf(::LogSettingsViewStateCreator)
     singleOf(::LogSettingsViewModel)
 
-    singleOf(::MicrophoneOverlaySettingsViewStateCreator)
+    factoryOf(::MicrophoneOverlaySettingsViewStateCreator)
     singleOf(::MicrophoneOverlaySettingsViewModel)
 
     singleOf(::SaveAndRestoreSettingsViewModel)
 
-    singleOf(::MicrophoneOverlayViewStateCreator)
+    factoryOf(::MicrophoneOverlayViewStateCreator)
     singleOf(::MicrophoneOverlayViewModel)
 
-    singleOf(::IndicationOverlayViewStateCreator)
+    factoryOf(::IndicationOverlayViewStateCreator)
     singleOf(::IndicationOverlayViewModel)
 }

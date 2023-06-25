@@ -10,10 +10,10 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.edit.WebServerConfigurationContent
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -23,7 +23,7 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
     @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
-    private val viewModel = get<WebServerConfigurationEditViewModel>()
+    private val viewModel = get<WebServerConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -114,7 +114,7 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar(viewModel)
-        WebServerConfigurationEditViewModel(get()).configurationEditViewState.value.editViewState.value.also {
+        WebServerConfigurationViewModel(get()).configurationEditViewState.value.editViewState.value.also {
             //enable http api is saved
             assertEquals(true, it.isHttpServerEnabled)
             //port is saved

@@ -12,9 +12,9 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.edit.AudioPlayingEditConfigurationScreen
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationUiEvent.Change.SelectAudioPlayingOption
-import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.SelectEditAudioPlayingOption
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import kotlin.test.assertEquals
 
 class AudioPlayingConfigurationContentTest : FlakyTest() {
@@ -57,7 +57,7 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
      */
     @Test
     fun testEndpoint() = runTest {
-        viewModel.onEvent(SelectAudioPlayingOption(AudioPlayingOption.Disabled))
+        viewModel.onEvent(SelectEditAudioPlayingOption(AudioPlayingOption.Disabled))
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
@@ -127,7 +127,7 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
      */
     @Test
     fun testLocalOutput() = runTest {
-        viewModel.onEvent(SelectAudioPlayingOption(AudioPlayingOption.Disabled))
+        viewModel.onEvent(SelectEditAudioPlayingOption(AudioPlayingOption.Disabled))
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()

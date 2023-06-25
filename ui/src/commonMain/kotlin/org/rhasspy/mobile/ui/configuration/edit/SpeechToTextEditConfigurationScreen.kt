@@ -21,10 +21,10 @@ import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToTextConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToTextConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToTextConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData
 
 /**
  * Content to configure speech to text
@@ -34,7 +34,7 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToText
 @Composable
 fun SpeechToTextEditConfigurationScreen() {
 
-    val viewModel: SpeechToTextConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: SpeechToTextConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
     val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
 

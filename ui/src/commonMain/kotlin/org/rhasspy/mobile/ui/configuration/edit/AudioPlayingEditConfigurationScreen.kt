@@ -24,10 +24,10 @@ import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationViewState.AudioPlayingConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewState.AudioPlayingConfigurationData
 
 /**
  * Content to configure audio playing
@@ -92,7 +92,7 @@ private fun AudioPlayingOptionContent(
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.AudioPlayingOptions),
         selected = editData.audioPlayingOption,
-        onSelect = { onEvent(SelectAudioPlayingOption(it)) },
+        onSelect = { onEvent(SelectEditAudioPlayingOption(it)) },
         values = editData.audioPlayingOptionList
     ) { option ->
 
@@ -171,7 +171,7 @@ private fun HttpEndpointConfigurationContent(
             enabled = isUseCustomAudioPlayingHttpEndpoint,
             modifier = Modifier.testTag(TestTag.Endpoint),
             value = audioPlayingHttpEndpoint,
-            onValueChange = { onEvent(ChangeAudioPlayingHttpEndpoint(it)) },
+            onValueChange = { onEvent(ChangeEditAudioPlayingHttpEndpoint(it)) },
             label = translate(MR.strings.audioOutputURL.stable, HttpClientPath.PlayWav.path)
         )
 
@@ -196,7 +196,7 @@ private fun MqttSiteIdConfigurationContent(
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.ConfigurationSiteId),
             value = audioPlayingMqttSiteId,
-            onValueChange = { onEvent(ChangeAudioPlayingMqttSiteId(it)) },
+            onValueChange = { onEvent(ChangeEditAudioPlayingMqttSiteId(it)) },
             label = translate(MR.strings.siteId.stable)
         )
 

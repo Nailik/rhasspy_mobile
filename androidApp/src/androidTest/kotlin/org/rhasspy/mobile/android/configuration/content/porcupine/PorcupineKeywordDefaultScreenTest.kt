@@ -13,8 +13,8 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.service.option.PorcupineKeywordOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.edit.porcupine.PorcupineKeywordDefaultScreen
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationEditViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -23,7 +23,7 @@ class PorcupineKeywordDefaultScreenTest : FlakyTest() {
     @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
-    private val viewModel = get<WakeWordConfigurationEditViewModel>()
+    private val viewModel = get<WakeWordConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -123,7 +123,7 @@ class PorcupineKeywordDefaultScreenTest : FlakyTest() {
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val newViewModel = WakeWordConfigurationEditViewModel(get())
+        val newViewModel = WakeWordConfigurationViewModel(get())
         newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState.defaultOptionsUi.forEach {
             //americano is saved with enabled
             //porcupine is saved with not enabled

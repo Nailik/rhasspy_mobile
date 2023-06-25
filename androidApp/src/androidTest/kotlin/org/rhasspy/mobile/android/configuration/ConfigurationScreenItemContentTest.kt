@@ -44,7 +44,7 @@ class ConfigurationScreenItemContentTest : FlakyTest() {
 
     private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-    private val viewModel = TestEditViewModel()
+    private val viewModel = TestViewModel()
 
     private val toolbarTitle = MR.strings.defaultText.stable
 

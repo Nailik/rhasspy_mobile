@@ -22,10 +22,10 @@ import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentRecognitionConfigurationViewState.IntentRecognitionConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewState.IntentRecognitionConfigurationData
 
 /**
  * configuration content for intent recognition
@@ -35,7 +35,7 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.intentrecognition.IntentR
 @Composable
 fun IntentRecognitionEditConfigurationScreen() {
 
-    val viewModel: IntentRecognitionConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: IntentRecognitionConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
     val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
 

@@ -23,12 +23,12 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.*
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationViewState.WebServerConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewState.WebServerConfigurationData
 
 /**
  * Content to configure text to speech
@@ -39,7 +39,7 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfig
 @Composable
 fun WebServerEditConfigurationScreen() {
 
-    val viewModel: WebServerConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: WebServerConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
     val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
 

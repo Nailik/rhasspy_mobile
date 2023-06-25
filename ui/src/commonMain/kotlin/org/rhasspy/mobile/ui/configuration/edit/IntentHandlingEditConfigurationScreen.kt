@@ -23,10 +23,10 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationViewState.IntentHandlingConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewState.IntentHandlingConfigurationData
 
 /**
  * content for intent handling configuration
@@ -37,7 +37,7 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHand
 @Composable
 fun IntentHandlingEditConfigurationScreen() {
 
-    val viewModel: IntentHandlingConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: IntentHandlingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
     val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
 

@@ -33,19 +33,19 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.Action.Navigate
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.Action.RequestMicrophonePermission
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordUdpConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.RequestMicrophonePermission
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordUdpConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.*
 
 /**
@@ -54,7 +54,7 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWo
 @Composable
 fun WakeWordEditConfigurationScreen() {
 
-    val viewModel: WakeWordConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: WakeWordConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
     val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
 
@@ -66,7 +66,7 @@ fun WakeWordEditConfigurationScreen() {
                 viewModel = viewModel,
                 viewState = viewState,
                 onEvent = viewModel::onEvent,
-                configurationEditViewState = configurationEditViewState
+                IConfigurationViewState = configurationEditViewState
             )
 
         EditPorcupineLanguageScreen ->
@@ -92,9 +92,9 @@ fun WakeWordEditConfigurationScreen() {
  */
 @Composable
 private fun WakeWordConfigurationEditContent(
-    viewModel: WakeWordConfigurationEditViewModel,
+    viewModel: WakeWordConfigurationViewModel,
     viewState: WakeWordConfigurationViewState,
-    configurationEditViewState: ConfigurationEditViewState,
+    IConfigurationViewState: IConfigurationViewState,
     onEvent: (WakeWordConfigurationUiEvent) -> Unit
 ) {
 
@@ -102,7 +102,7 @@ private fun WakeWordConfigurationEditContent(
         modifier = Modifier,
         kViewModel = viewModel,
         title = MR.strings.wakeWord.stable,
-        viewState = configurationEditViewState,
+        viewState = IConfigurationViewState,
         onEvent = viewModel::onEvent
     ) {
 

@@ -16,7 +16,7 @@ import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.edit.porcupine.PorcupineKeywordScreen
-import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationEditViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertTrue
 
 class PorcupineKeywordScreenTest : FlakyTest() {
@@ -24,7 +24,7 @@ class PorcupineKeywordScreenTest : FlakyTest() {
     @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
-    private val viewModel = get<WakeWordConfigurationEditViewModel>()
+    private val viewModel = get<WakeWordConfigurationViewModel>()
 
     @Before
     fun setUp() {

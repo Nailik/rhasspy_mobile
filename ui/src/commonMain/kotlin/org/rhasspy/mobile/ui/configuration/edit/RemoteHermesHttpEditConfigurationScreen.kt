@@ -16,10 +16,10 @@ import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemEdit
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHermesHttpConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHermesHttpConfigurationViewState.RemoteHermesHttpConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewState.RemoteHermesHttpConfigurationData
 
 /**
  * content to configure http configuration
@@ -28,7 +28,7 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHe
 @Composable
 fun RemoteHermesHttpEditConfigurationScreen() {
 
-    val viewModel: RemoteHermesHttpConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: RemoteHermesHttpConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
     val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
 

@@ -27,13 +27,13 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.DialogAction.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState.ServiceStateDialogState
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState.UnsavedChangesDialogState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction.*
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.DialogState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.DialogState.ServiceStateDialogState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.DialogState.UnsavedChangesDialogState
 import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 
 /**
@@ -45,8 +45,8 @@ fun ConfigurationScreenItemEdit(
     modifier: Modifier,
     kViewModel: IScreenViewModel,
     title: StableStringResource,
-    viewState: ConfigurationEditViewState,
-    onEvent: (ConfigurationEditUiEvent) -> Unit,
+    viewState: IConfigurationViewState,
+    onEvent: (IConfigurationUiEvent) -> Unit,
     content: @Composable () -> Unit
 ) {
 
@@ -112,7 +112,7 @@ fun ConfigurationScreenItemEdit(
 @Composable
 private fun Dialogs(
     dialogState: DialogState,
-    onEvent: (ConfigurationEditUiEvent) -> Unit
+    onEvent: (IConfigurationUiEvent) -> Unit
 ) {
     when (dialogState) {
         is ServiceStateDialogState -> {
@@ -147,7 +147,7 @@ private fun Dialogs(
 @Composable
 private fun BottomAppBar(
     hasUnsavedChanges: Boolean,
-    onEvent: (ConfigurationEditUiEvent) -> Unit,
+    onEvent: (IConfigurationUiEvent) -> Unit,
 ) {
     BottomAppBar(
         actions = {
@@ -182,7 +182,7 @@ private fun BottomAppBar(
 @Composable
 private fun AppBar(
     title: StableStringResource,
-    onEvent: (ConfigurationEditUiEvent) -> Unit
+    onEvent: (IConfigurationUiEvent) -> Unit
 ) {
 
     TopAppBar(

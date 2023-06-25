@@ -20,10 +20,10 @@ import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationViewState.DialogManagementConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewState.DialogManagementConfigurationData
 
 /**
  * DropDown to select dialog management option
@@ -31,7 +31,7 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogMa
 @Composable
 fun DialogManagementEditConfigurationScreen() {
 
-    val viewModel: DialogManagementConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: DialogManagementConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
     val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
 
