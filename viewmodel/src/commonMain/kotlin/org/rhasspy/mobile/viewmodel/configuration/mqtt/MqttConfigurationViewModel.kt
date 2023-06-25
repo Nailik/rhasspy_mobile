@@ -106,6 +106,7 @@ class MqttConfigurationViewModel(
                 mqttKeyStoreFile?.commonDelete()
             }
         }
+        _editData.value = MqttConfigurationData()
     }
 
 }

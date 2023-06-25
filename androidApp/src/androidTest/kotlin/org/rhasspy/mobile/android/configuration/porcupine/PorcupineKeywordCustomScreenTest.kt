@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.configuration.content.porcupine
+package org.rhasspy.mobile.android.configuration.porcupine
 
 import android.os.Environment
 import androidx.activity.compose.setContent

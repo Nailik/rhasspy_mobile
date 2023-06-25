@@ -75,7 +75,7 @@ abstract class IConfigurationViewModel(
 
         viewModelScope.launch(Dispatchers.IO) {
             function()
-            _configurationViewState.update { it.copy(dialogState = null) }
+            _configurationViewState.update { it.copy(dialogState = null, hasUnsavedChanges = false) }
             if (popBackStack) {
                 navigator.popBackStack()
             }
@@ -85,8 +85,15 @@ abstract class IConfigurationViewModel(
 
     override fun onBackPressed(): Boolean {
         return when (_configurationViewState.value.dialogState) {
-            null -> false
             UnsavedChangesDialogState -> true
+
+            null -> {
+                if (_configurationViewState.value.hasUnsavedChanges) {
+                    _configurationViewState.update { it.copy(dialogState = UnsavedChangesDialogState) }
+                    true
+                } else false
+            }
+
             else -> {
                 _configurationViewState.update { it.copy(dialogState = null) }
                 true

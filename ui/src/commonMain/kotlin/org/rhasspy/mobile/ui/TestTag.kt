@@ -16,7 +16,6 @@ enum class TestTag {
     AppBarTitle,
     BottomAppBarDiscard,
     BottomAppBarSave,
-    BottomAppBarTest,
     LibrariesContainer,
     MicrophoneOverlaySizeOptions,
     MicrophoneFab,

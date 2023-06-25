@@ -66,7 +66,9 @@ class IntentHandlingConfigurationViewModel(
         }
     }
 
-    override fun onDiscard() {}
+    override fun onDiscard() {
+        _editData.value = IntentHandlingConfigurationData()
+    }
 
     override fun onSave() {
         with(_editData.value) {

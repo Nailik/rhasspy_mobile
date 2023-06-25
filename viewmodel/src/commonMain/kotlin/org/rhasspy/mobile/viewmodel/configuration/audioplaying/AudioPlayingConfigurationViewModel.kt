@@ -73,7 +73,9 @@ class AudioPlayingConfigurationViewModel(
         }
     }
 
-    override fun onDiscard() {}
+    override fun onDiscard() {
+        _editData.value = AudioPlayingConfigurationData()
+    }
 
     override fun onSave() {
         with(_editData.value) {

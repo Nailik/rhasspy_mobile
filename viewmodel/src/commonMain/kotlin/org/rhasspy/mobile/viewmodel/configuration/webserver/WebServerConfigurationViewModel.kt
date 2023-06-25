@@ -107,6 +107,7 @@ class WebServerConfigurationViewModel(
                 httpServerSSLKeyStoreFile?.commonDelete()
             }
         }
+        _editData.value = WebServerConfigurationData()
     }
 
 }

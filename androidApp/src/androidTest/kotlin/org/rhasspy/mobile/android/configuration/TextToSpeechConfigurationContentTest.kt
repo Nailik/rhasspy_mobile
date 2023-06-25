@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.configuration.content
+package org.rhasspy.mobile.android.configuration
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -8,27 +8,27 @@ import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
-import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
+import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.IntentRecognitionConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.TextToSpeechConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SelectTextToSpeechOption
 import kotlin.test.assertEquals
 
-class IntentRecognitionConfigurationContentTest : FlakyTest() {
+class TextToSpeechConfigurationContentTest : FlakyTest() {
 
     @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
-    private val viewModel = get<IntentRecognitionConfigurationViewModel>()
+    private val viewModel = get<TextToSpeechConfigurationViewModel>()
 
     @Before
     fun setUp() {
 
         composeTestRule.setContent {
             TestContentProvider {
-                IntentRecognitionConfigurationScreen()
+                TextToSpeechConfigurationScreen()
             }
         }
 
@@ -56,7 +56,7 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
      */
     @Test
     fun testEndpoint() = runTest {
-        viewModel.onEvent(SelectIntentRecognitionOption(IntentRecognitionOption.Disabled))
+        viewModel.onEvent(SelectTextToSpeechOption(TextToSpeechOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
@@ -65,12 +65,12 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
         val textInputTest = "endpointTestInput"
 
         //option disable is set
-        composeTestRule.onNodeWithTag(IntentRecognitionOption.Disabled, true).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(TextToSpeechOption.Disabled, true).onListItemRadioButton().assertIsSelected()
 
         //User clicks option remote http
-        composeTestRule.onNodeWithTag(IntentRecognitionOption.RemoteHTTP).performClick()
+        composeTestRule.onNodeWithTag(TextToSpeechOption.RemoteHTTP).performClick()
         //new option is selected
-        assertEquals(IntentRecognitionOption.RemoteHTTP, editData.intentRecognitionOption)
+        assertEquals(TextToSpeechOption.RemoteHTTP, editData.textToSpeechOption)
 
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
@@ -78,8 +78,7 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
 
         //switch is off
-        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performScrollTo().onListItemSwitch()
-            .assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performScrollTo().onListItemSwitch().assertIsOff()
         //endpoint cannot be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsNotEnabled()
 
@@ -89,21 +88,19 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).onListItemSwitch().assertIsOn()
         //endpoint can be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsEnabled()
-        composeTestRule.onNodeWithTag(TestTag.Endpoint).performClick()
-        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
         composeTestRule.awaitIdle()
-        assertEquals(textInputTest, editData.intentRecognitionHttpEndpoint)
+        assertEquals(textInputTest, editData.textToSpeechHttpEndpoint)
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        IntentRecognitionConfigurationViewModel(get()).viewState.value.editData.also {
+        TextToSpeechConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
-            assertEquals(IntentRecognitionOption.RemoteHTTP, it.intentRecognitionOption)
+            assertEquals(TextToSpeechOption.RemoteHTTP, it.textToSpeechOption)
             //endpoint is saved
-            assertEquals(textInputTest, it.intentRecognitionHttpEndpoint)
+            assertEquals(textInputTest, it.textToSpeechHttpEndpoint)
             //use custom endpoint is saved
-            assertEquals(true, it.isUseCustomIntentRecognitionHttpEndpoint)
+            assertEquals(true, it.isUseCustomTextToSpeechHttpEndpoint)
         }
     }
 

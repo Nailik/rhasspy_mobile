@@ -71,7 +71,9 @@ class DialogManagementConfigurationViewModel(
         }
     }
 
-    override fun onDiscard() {}
+    override fun onDiscard() {
+        _editData.value = DialogManagementConfigurationData()
+    }
 
     override fun onSave() {
         with(_editData.value) {

@@ -213,6 +213,7 @@ class WakeWordConfigurationViewModel(
         }
         newFiles.clear()
         filesToDelete.clear()
+        _editData.value = WakeWordConfigurationData()
     }
 
     override fun onBackPressed(): Boolean {

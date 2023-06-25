@@ -66,7 +66,9 @@ class RemoteHermesHttpConfigurationViewModel(
         }
     }
 
-    override fun onDiscard() {}
+    override fun onDiscard() {
+        _editData.value = RemoteHermesHttpConfigurationData()
+    }
 
     override fun onSave() {
         with(_editData.value) {

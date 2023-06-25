@@ -65,7 +65,9 @@ class SpeechToTextConfigurationViewModel(
         }
     }
 
-    override fun onDiscard() {}
+    override fun onDiscard() {
+        _editData.value = SpeechToTextConfigurationData()
+    }
 
     override fun onSave() {
         with(_editData.value) {

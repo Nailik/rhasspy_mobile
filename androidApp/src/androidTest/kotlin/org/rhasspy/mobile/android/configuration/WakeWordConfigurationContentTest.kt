@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.configuration.content
+package org.rhasspy.mobile.android.configuration
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
