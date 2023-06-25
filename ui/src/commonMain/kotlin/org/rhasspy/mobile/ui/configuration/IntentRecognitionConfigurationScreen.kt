@@ -33,7 +33,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
  * text field for endpoint
  */
 @Composable
-fun IntentRecognitionEditConfigurationScreen() {
+fun IntentRecognitionConfigurationScreen() {
 
     val viewModel: IntentRecognitionConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
@@ -41,7 +41,7 @@ fun IntentRecognitionEditConfigurationScreen() {
 
     ConfigurationScreenItemEdit(
         modifier = Modifier,
-        kViewModel = viewModel,
+        screenViewModel = viewModel,
         title = MR.strings.intentRecognition.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent

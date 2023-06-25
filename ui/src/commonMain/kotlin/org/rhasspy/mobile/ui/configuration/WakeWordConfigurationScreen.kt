@@ -52,7 +52,7 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWo
  * Nav Host of Wake word configuration screens
  */
 @Composable
-fun WakeWordEditConfigurationScreen() {
+fun WakeWordConfigurationScreen() {
 
     val viewModel: WakeWordConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
@@ -100,7 +100,7 @@ private fun WakeWordConfigurationEditContent(
 
     ConfigurationScreenItemEdit(
         modifier = Modifier,
-        kViewModel = viewModel,
+        screenViewModel = viewModel,
         title = MR.strings.wakeWord.stable,
         viewState = IConfigurationViewState,
         onEvent = viewModel::onEvent

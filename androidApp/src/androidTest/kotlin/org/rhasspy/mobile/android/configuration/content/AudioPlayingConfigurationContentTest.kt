@@ -11,7 +11,7 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.AudioPlayingEditConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.AudioPlayingConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.SelectEditAudioPlayingOption
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
@@ -29,7 +29,7 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
 
         composeTestRule.setContent {
             TestContentProvider {
-                AudioPlayingEditConfigurationScreen()
+                AudioPlayingConfigurationScreen()
             }
         }
 

@@ -35,7 +35,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
  * HTTP Endpoint
  */
 @Composable
-fun AudioPlayingEditConfigurationScreen() {
+fun AudioPlayingConfigurationScreen() {
 
     val viewModel: AudioPlayingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
@@ -43,7 +43,7 @@ fun AudioPlayingEditConfigurationScreen() {
 
     ConfigurationScreenItemEdit(
         modifier = Modifier,
-        kViewModel = viewModel,
+        screenViewModel = viewModel,
         title = MR.strings.audioPlaying.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent

@@ -11,7 +11,7 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.IntentHandlingEditConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.IntentHandlingConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
@@ -29,7 +29,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
 
         composeTestRule.setContent {
             TestContentProvider {
-                IntentHandlingEditConfigurationScreen()
+                IntentHandlingConfigurationScreen()
             }
         }
 

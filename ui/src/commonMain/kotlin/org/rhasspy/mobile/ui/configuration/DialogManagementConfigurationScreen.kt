@@ -29,7 +29,7 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
  * DropDown to select dialog management option
  */
 @Composable
-fun DialogManagementEditConfigurationScreen() {
+fun DialogManagementConfigurationScreen() {
 
     val viewModel: DialogManagementConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
@@ -37,7 +37,7 @@ fun DialogManagementEditConfigurationScreen() {
 
     ConfigurationScreenItemEdit(
         modifier = Modifier,
-        kViewModel = viewModel,
+        screenViewModel = viewModel,
         title = MR.strings.dialogManagement.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent

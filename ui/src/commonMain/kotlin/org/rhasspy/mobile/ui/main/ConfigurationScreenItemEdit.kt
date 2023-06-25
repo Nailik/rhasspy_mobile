@@ -43,7 +43,7 @@ import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 @Composable
 fun ConfigurationScreenItemEdit(
     modifier: Modifier,
-    kViewModel: IScreenViewModel,
+    screenViewModel: IScreenViewModel,
     title: StableStringResource,
     viewState: IConfigurationViewState,
     onEvent: (IConfigurationUiEvent) -> Unit,
@@ -52,7 +52,7 @@ fun ConfigurationScreenItemEdit(
 
     Screen(
         modifier = modifier,
-        screenViewModel = kViewModel
+        screenViewModel = screenViewModel
     ) {
 
         SetSystemColor(0.dp)

@@ -37,7 +37,7 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
  * select ssl certificate
  */
 @Composable
-fun WebServerEditConfigurationScreen() {
+fun WebServerConfigurationScreen() {
 
     val viewModel: WebServerConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
@@ -45,7 +45,7 @@ fun WebServerEditConfigurationScreen() {
 
     ConfigurationScreenItemEdit(
         modifier = Modifier,
-        kViewModel = viewModel,
+        screenViewModel = viewModel,
         title = MR.strings.webserver.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent

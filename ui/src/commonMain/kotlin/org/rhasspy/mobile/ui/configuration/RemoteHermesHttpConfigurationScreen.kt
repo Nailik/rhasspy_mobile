@@ -26,7 +26,7 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
  * switch to disable ssl verification
  */
 @Composable
-fun RemoteHermesHttpEditConfigurationScreen() {
+fun RemoteHermesHttpConfigurationScreen() {
 
     val viewModel: RemoteHermesHttpConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
@@ -34,7 +34,7 @@ fun RemoteHermesHttpEditConfigurationScreen() {
 
     ConfigurationScreenItemEdit(
         modifier = Modifier,
-        kViewModel = viewModel,
+        screenViewModel = viewModel,
         title = MR.strings.webserver.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent

@@ -58,16 +58,16 @@ fun ConfigurationScreen() {
                     )
                 }
 
-                AudioPlayingConfigurationScreen -> AudioPlayingEditConfigurationScreen()
-                DialogManagementConfigurationScreen -> DialogManagementEditConfigurationScreen()
-                IntentHandlingConfigurationScreen -> IntentHandlingEditConfigurationScreen()
-                IntentRecognitionConfigurationScreen -> IntentRecognitionEditConfigurationScreen()
-                MqttConfigurationScreen -> MqttEditConfigurationScreen()
-                RemoteHermesHttpConfigurationScreen -> RemoteHermesHttpEditConfigurationScreen()
-                SpeechToTextConfigurationScreen -> SpeechToTextEditConfigurationScreen()
-                TextToSpeechConfigurationScreen -> TextToSpeechEditConfigurationScreen()
-                WakeWordConfigurationScreen -> WakeWordEditConfigurationScreen()
-                WebServerConfigurationScreen -> WebServerEditConfigurationScreen()
+                AudioPlayingConfigurationScreen -> AudioPlayingConfigurationScreen()
+                DialogManagementConfigurationScreen -> DialogManagementConfigurationScreen()
+                IntentHandlingConfigurationScreen -> IntentHandlingConfigurationScreen()
+                IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationScreen()
+                MqttConfigurationScreen -> MqttConfigurationScreen()
+                RemoteHermesHttpConfigurationScreen -> RemoteHermesHttpConfigurationScreen()
+                SpeechToTextConfigurationScreen -> SpeechToTextConfigurationScreen()
+                TextToSpeechConfigurationScreen -> TextToSpeechConfigurationScreen()
+                WakeWordConfigurationScreen -> WakeWordConfigurationScreen()
+                WebServerConfigurationScreen -> WebServerConfigurationScreen()
             }
         }
     }

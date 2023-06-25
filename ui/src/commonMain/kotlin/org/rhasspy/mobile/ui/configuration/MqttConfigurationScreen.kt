@@ -40,7 +40,7 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewStat
  * connection timeout settings
  */
 @Composable
-fun MqttEditConfigurationScreen() {
+fun MqttConfigurationScreen() {
 
     val viewModel: MqttConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
@@ -48,7 +48,7 @@ fun MqttEditConfigurationScreen() {
 
     ConfigurationScreenItemEdit(
         modifier = Modifier,
-        kViewModel = viewModel,
+        screenViewModel = viewModel,
         title = MR.strings.mqtt.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent

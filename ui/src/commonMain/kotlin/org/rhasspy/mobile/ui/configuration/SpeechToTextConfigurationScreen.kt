@@ -32,7 +32,7 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
  * HTTP Endpoint
  */
 @Composable
-fun SpeechToTextEditConfigurationScreen() {
+fun SpeechToTextConfigurationScreen() {
 
     val viewModel: SpeechToTextConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
@@ -40,7 +40,7 @@ fun SpeechToTextEditConfigurationScreen() {
 
     ConfigurationScreenItemEdit(
         modifier = Modifier,
-        kViewModel = viewModel,
+        screenViewModel = viewModel,
         title = MR.strings.webserver.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent

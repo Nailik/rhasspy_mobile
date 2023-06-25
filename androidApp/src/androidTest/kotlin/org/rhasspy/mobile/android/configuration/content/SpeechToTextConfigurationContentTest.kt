@@ -10,7 +10,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.SpeechToTextEditConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.SpeechToTextConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
@@ -28,7 +28,7 @@ class SpeechToTextConfigurationContentTest : FlakyTest() {
 
         composeTestRule.setContent {
             TestContentProvider {
-                SpeechToTextEditConfigurationScreen()
+                SpeechToTextConfigurationScreen()
             }
         }
 

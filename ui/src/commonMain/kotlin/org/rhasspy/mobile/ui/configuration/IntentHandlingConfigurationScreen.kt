@@ -35,7 +35,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
  * home assistant configuration
  */
 @Composable
-fun IntentHandlingEditConfigurationScreen() {
+fun IntentHandlingConfigurationScreen() {
 
     val viewModel: IntentHandlingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
@@ -43,7 +43,7 @@ fun IntentHandlingEditConfigurationScreen() {
 
     ConfigurationScreenItemEdit(
         modifier = Modifier,
-        kViewModel = viewModel,
+        screenViewModel = viewModel,
         title = MR.strings.intentHandling.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent

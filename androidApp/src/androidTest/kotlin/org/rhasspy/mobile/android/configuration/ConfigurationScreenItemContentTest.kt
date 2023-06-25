@@ -24,12 +24,10 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreenConfig
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemContent
+import org.rhasspy.mobile.ui.main.ConfigurationScreenItemEdit
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
 
 /**
  * Content Test of Configuration screens
@@ -67,13 +65,12 @@ class ConfigurationScreenItemContentTest : FlakyTest() {
 
                         MainScreenNavigationDestination.ConfigurationScreen -> {
                             Screen(screenViewModel = viewModel) {
-                                ConfigurationScreenItemContent(
+                                ConfigurationScreenItemEdit(
                                     modifier = Modifier.testTag(TestTag.ConfigurationScreenItemContent),
-                                    screenType = ConfigurationScreenDestinationType.Edit,
-                                    config = ConfigurationScreenConfig(toolbarTitle),
-                                    viewState = viewModel.viewState.collectAsState().value,
-                                    onAction = { viewModel.onAction(it) },
-                                    testContent = { },
+                                    screenViewModel = viewModel,
+                                    title = toolbarTitle,
+                                    viewState = viewModel.configurationEditViewState.collectAsState().value,
+                                    onEvent = viewModel::onEvent,
                                     content = { }
                                 )
                             }

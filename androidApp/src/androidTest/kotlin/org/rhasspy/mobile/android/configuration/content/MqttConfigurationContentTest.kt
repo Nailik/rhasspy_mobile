@@ -9,7 +9,7 @@ import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.MqttEditConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.MqttConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
@@ -30,7 +30,7 @@ class MqttConfigurationContentTest : FlakyTest() {
 
         composeTestRule.setContent {
             TestContentProvider {
-                MqttEditConfigurationScreen()
+                MqttConfigurationScreen()
             }
         }
 
