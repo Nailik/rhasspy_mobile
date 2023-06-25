@@ -16,16 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalSnackBarHostState
-import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
+import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.SaveAndRestoreSettings
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
@@ -181,32 +178,14 @@ private fun ShareSettings(onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit) {
 private fun SaveSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
 
     Dialog(
-        onDismissRequest = onDismiss,
-        headline = {
-            Text(MR.strings.saveSettings.stable)
-        },
-        supportingText = {
-            Text(
-                resource = MR.strings.saveSettingsWarningText.stable,
-                textAlign = TextAlign.Center
-            )
-        },
-        icon = {
-            Icon(
-                imageVector = Icons.Filled.Warning,
-                contentDescription = MR.strings.warning.stable
-            )
-        },
-        confirmButton = {
-            Button(onConfirm) {
-                Text(MR.strings.ok.stable)
-            }
-        },
-        dismissButton = {
-            OutlinedButton(onDismiss) {
-                Text(MR.strings.cancel.stable)
-            }
-        }
+        testTag = TestTag.DialogSaveSettings,
+        icon = Icons.Filled.Warning,
+        title = MR.strings.saveSettings.stable,
+        message = MR.strings.saveSettingsWarningText.stable,
+        confirmLabel = MR.strings.ok.stable,
+        dismissLabel = MR.strings.cancel.stable,
+        onConfirm = onConfirm,
+        onDismiss = onDismiss
     )
 
 }
@@ -218,32 +197,14 @@ private fun SaveSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
 private fun RestoreSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
 
     Dialog(
-        onDismissRequest = onDismiss,
-        headline = {
-            Text(MR.strings.restoreSettings.stable)
-        },
-        supportingText = {
-            Text(
-                resource = MR.strings.restoreSettingsWarningText.stable,
-                textAlign = TextAlign.Center
-            )
-        },
-        icon = {
-            Icon(
-                imageVector = Icons.Filled.Warning,
-                contentDescription = MR.strings.warning.stable
-            )
-        },
-        confirmButton = {
-            Button(onConfirm) {
-                Text(MR.strings.ok.stable)
-            }
-        },
-        dismissButton = {
-            OutlinedButton(onDismiss) {
-                Text(MR.strings.cancel.stable)
-            }
-        }
+        testTag = TestTag.DialogRestoreSettings,
+        icon = Icons.Filled.Warning,
+        title = MR.strings.restoreSettings.stable,
+        message = MR.strings.restoreSettingsWarningText.stable,
+        confirmLabel = MR.strings.ok.stable,
+        dismissLabel = MR.strings.cancel.stable,
+        onConfirm = onConfirm,
+        onDismiss = onDismiss
     )
 
 }

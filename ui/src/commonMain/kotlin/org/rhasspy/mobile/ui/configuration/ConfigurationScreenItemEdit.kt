@@ -126,6 +126,7 @@ private fun Dialogs(
 
         UnsavedChangesDialogState -> {
             Dialog(
+                testTag = TestTag.DialogUnsavedChanges,
                 icon = Icons.Filled.Warning,
                 title = MR.strings.unsavedChanges.stable,
                 message = MR.strings.unsavedChangesInformation.stable,

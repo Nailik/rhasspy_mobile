@@ -12,6 +12,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.item.EventStateCard
@@ -26,6 +27,7 @@ fun ServiceStateDialog(
 ) {
 
     Dialog(
+        testTag = TestTag.DialogServiceState,
         icon = Icons.Filled.Info,
         title = MR.strings.error.stable,
         message = dialogText,

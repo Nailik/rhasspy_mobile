@@ -218,20 +218,8 @@ fun DataPrivacyDialog(
     val scrollState = rememberScrollState()
 
     Dialog(
-        modifier = Modifier
-            .testTag(TestTag.DialogDataPrivacy),
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            TextButton(
-                onClick = onDismissRequest,
-                modifier = Modifier.testTag(TestTag.DialogOk)
-            ) {
-                Text(MR.strings.close.stable)
-            }
-        },
-        headline = {
-            Text(MR.strings.dataPrivacy.stable)
-        },
+        testTag = TestTag.DialogDataPrivacy,
+        title = MR.strings.dataPrivacy.stable,
         supportingText = {
             Column(
                 modifier = Modifier.verticalScroll(scrollState),
@@ -241,7 +229,10 @@ fun DataPrivacyDialog(
                     color = LocalContentColor.current
                 )
             }
-        }
+        },
+        confirmLabel = MR.strings.close.stable,
+        onConfirm = onDismissRequest,
+        onDismiss = onDismissRequest
     )
 
 }
@@ -256,26 +247,18 @@ private fun ChangelogDialog(
 ) {
 
     Dialog(
-        modifier = Modifier.testTag(TestTag.DialogChangelog),
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            TextButton(
-                onClick = onDismissRequest,
-                modifier = Modifier.testTag(TestTag.DialogOk)
-            ) {
-                Text(MR.strings.close.stable)
-            }
-        },
-        headline = {
-            Text(MR.strings.changelog.stable)
-        },
+        testTag = TestTag.DialogChangelog,
+        title = MR.strings.changelog.stable,
         supportingText = {
             LazyColumn {
                 items(changelog) { item ->
                     Text(text = item)
                 }
             }
-        }
+        },
+        confirmLabel = MR.strings.close.stable,
+        onConfirm = onDismissRequest,
+        onDismiss = onDismissRequest
     )
 
 }
@@ -369,18 +352,8 @@ fun LibraryDialog(
 ) {
 
     Dialog(
-        modifier = Modifier
-            .testTag(TestTag.DialogLibrary),
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            TextButton(
-                onClick = onDismissRequest,
-                modifier = Modifier.testTag(TestTag.DialogOk)
-            ) {
-                Text(MR.strings.ok.stable)
-            }
-        },
-        headline = {
+        testTag = TestTag.DialogLibrary,
+        supportingText = {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
             ) {
@@ -389,7 +362,10 @@ fun LibraryDialog(
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
-        }
+        },
+        confirmLabel = MR.strings.ok.stable,
+        onConfirm = onDismissRequest,
+        onDismiss = onDismissRequest
     )
 
 }

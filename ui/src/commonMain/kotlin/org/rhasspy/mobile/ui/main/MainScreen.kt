@@ -23,15 +23,12 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalSnackBarHostState
-import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
+import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.configuration.ConfigurationScreen
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.settings.SettingsScreen
-import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
@@ -140,6 +137,7 @@ private fun MainScreenContent(
 @Composable
 fun CrashlyticsDialog(onResult: (result: Boolean) -> Unit) {
     Dialog(
+        testTag = TestTag.DialogCrashlytics,
         icon = Icons.Filled.BugReport,
         title = MR.strings.crashlytics.stable,
         message = MR.strings.crashlyticsDialogText.stable,

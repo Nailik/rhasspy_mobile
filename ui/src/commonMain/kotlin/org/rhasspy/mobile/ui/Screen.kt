@@ -51,6 +51,7 @@ fun Screen(
         when (dialogState) {
             MicrophonePermissionInfo -> {
                 Dialog(
+                    testTag = TestTag.DialogMicrophonePermissionInfo,
                     icon = Icons.Filled.Mic,
                     title = MR.strings.microphonePermissionDialogTitle.stable,
                     message = MR.strings.microphonePermissionInfoRecord.stable,
@@ -63,6 +64,7 @@ fun Screen(
 
             OverlayPermissionInfo -> {
                 Dialog(
+                    testTag = TestTag.DialogOverlayPermissionInfo,
                     icon = Icons.Filled.Layers,
                     title = MR.strings.overlayPermissionTitle.stable,
                     message = MR.strings.overlayPermissionInfo.stable,

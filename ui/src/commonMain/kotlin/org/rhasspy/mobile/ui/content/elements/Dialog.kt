@@ -13,14 +13,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.testTag
 
-
 @Composable
 fun Dialog(
-    icon: ImageVector,
-    title: StableStringResource,
+    testTag: TestTag,
+    icon: ImageVector? = null,
+    title: StableStringResource? = null,
     message: Any,
     confirmLabel: StableStringResource,
     dismissLabel: StableStringResource? = null,
@@ -28,10 +30,11 @@ fun Dialog(
     onDismiss: () -> Unit,
     onClose: () -> Unit = onDismiss //outside click
 ) {
+
     Dialog(
-        modifier = Modifier.testTag(title),
-        onDismissRequest = onClose,
-        headline = { Text(title) },
+        testTag = testTag,
+        icon = icon,
+        title = title,
         supportingText = {
             when (message) {
                 is StableStringResource -> Text(message)
@@ -39,11 +42,40 @@ fun Dialog(
                 else -> Text(message.toString())
             }
         },
-        icon = {
-            Icon(
-                imageVector = icon,
-                contentDescription = title
-            )
+        confirmLabel = confirmLabel,
+        dismissLabel = dismissLabel,
+        onConfirm = onConfirm,
+        onDismiss = onDismiss,
+        onClose = onClose
+    )
+
+}
+
+@Composable
+fun Dialog(
+    testTag: TestTag,
+    icon: ImageVector? = null,
+    title: StableStringResource? = null,
+    supportingText: (@Composable () -> Unit),
+    confirmLabel: StableStringResource,
+    dismissLabel: StableStringResource? = null,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    onClose: () -> Unit = onDismiss //outside click
+) {
+    Dialog(
+        modifier = Modifier.testTag(testTag),
+        onDismissRequest = onClose,
+        headline = title?.let { { Text(it) } },
+        supportingText = supportingText,
+        icon =
+        icon?.let {
+            {
+                Icon(
+                    imageVector = it,
+                    contentDescription = MR.strings.icon.stable
+                )
+            }
         },
         confirmButton = {
             Button(
@@ -67,11 +99,11 @@ fun Dialog(
 }
 
 @Composable
-fun Dialog(
+private fun Dialog(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     icon: (@Composable () -> Unit)? = null,
-    headline: @Composable () -> Unit,
+    headline: (@Composable () -> Unit)? = null,
     supportingText: (@Composable () -> Unit)? = null,
     confirmButton: @Composable () -> Unit,
     dismissButton: (@Composable () -> Unit)? = null,
@@ -129,13 +161,15 @@ fun Dialog(
                             }
                         }
 
-                        CompositionLocalProvider(
-                            LocalContentColor provides MaterialTheme.colorScheme.onSurface,
-                            LocalTextStyle provides MaterialTheme.typography.headlineSmall
-                        ) {
-                            //Headline
-                            headline()
-                            Spacer(modifier = Modifier.height(16.dp))
+                        if(headline != null) {
+                            CompositionLocalProvider(
+                                LocalContentColor provides MaterialTheme.colorScheme.onSurface,
+                                LocalTextStyle provides MaterialTheme.typography.headlineSmall
+                            ) {
+                                //Headline
+                                headline()
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
                         }
 
                         if (supportingText != null) {

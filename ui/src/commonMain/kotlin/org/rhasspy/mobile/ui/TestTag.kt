@@ -12,21 +12,11 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
  */
 enum class TestTag {
     List,
-    DialogCrashlytics,
-    DialogOk,
-    DialogCancel,
-    DialogUnsavedChanges,
-    DialogChangelogButton,
-    DialogChangelog,
-    DialogDataPrivacyButton,
-    DialogDataPrivacy,
-    DialogLibrary,
     AppBarBackButton,
     AppBarTitle,
     BottomAppBarDiscard,
     BottomAppBarSave,
     BottomAppBarTest,
-    DialogManagementOptions,
     LibrariesContainer,
     MicrophoneOverlaySizeOptions,
     MicrophoneFab,
@@ -137,6 +127,24 @@ enum class TestTag {
 
 
     OpenConfigScreen,
+
+
+    DialogManagementOptions,
+
+    DialogOk,
+    DialogCancel,
+    DialogUnsavedChanges,
+    DialogChangelogButton,
+    DialogChangelog,
+    DialogDataPrivacyButton,
+    DialogDataPrivacy,
+    DialogLibrary,
+    DialogServiceState,
+    DialogCrashlytics,
+    DialogMicrophonePermissionInfo,
+    DialogOverlayPermissionInfo,
+    DialogSaveSettings,
+    DialogRestoreSettings
 }
 
 fun Modifier.combinedTestTag(IOption: IOption<*>, tag: TestTag) = semantics(
