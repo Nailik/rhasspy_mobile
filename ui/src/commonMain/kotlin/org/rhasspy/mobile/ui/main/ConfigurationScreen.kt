@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration
+package org.rhasspy.mobile.ui.main
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,7 +17,7 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.edit.*
+import org.rhasspy.mobile.ui.configuration.*
 import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.item.EventStateIconTinted
 import org.rhasspy.mobile.ui.content.list.ListElement
@@ -58,16 +58,16 @@ fun ConfigurationScreen() {
                     )
                 }
 
-                is AudioPlayingConfigurationScreen -> AudioPlayingEditConfigurationScreen()
-                is DialogManagementConfigurationScreen -> DialogManagementEditConfigurationScreen()
-                is IntentHandlingConfigurationScreen -> IntentHandlingEditConfigurationScreen()
-                is IntentRecognitionConfigurationScreen -> IntentRecognitionEditConfigurationScreen()
-                is MqttConfigurationScreen -> MqttEditConfigurationScreen()
-                is RemoteHermesHttpConfigurationScreen -> RemoteHermesHttpEditConfigurationScreen()
-                is SpeechToTextConfigurationScreen -> SpeechToTextEditConfigurationScreen()
-                is TextToSpeechConfigurationScreen -> TextToSpeechEditConfigurationScreen()
-                is WakeWordConfigurationScreen -> WakeWordEditConfigurationScreen()
-                is WebServerConfigurationScreen -> WebServerEditConfigurationScreen()
+                AudioPlayingConfigurationScreen -> AudioPlayingEditConfigurationScreen()
+                DialogManagementConfigurationScreen -> DialogManagementEditConfigurationScreen()
+                IntentHandlingConfigurationScreen -> IntentHandlingEditConfigurationScreen()
+                IntentRecognitionConfigurationScreen -> IntentRecognitionEditConfigurationScreen()
+                MqttConfigurationScreen -> MqttEditConfigurationScreen()
+                RemoteHermesHttpConfigurationScreen -> RemoteHermesHttpEditConfigurationScreen()
+                SpeechToTextConfigurationScreen -> SpeechToTextEditConfigurationScreen()
+                TextToSpeechConfigurationScreen -> TextToSpeechEditConfigurationScreen()
+                WakeWordConfigurationScreen -> WakeWordEditConfigurationScreen()
+                WebServerConfigurationScreen -> WebServerEditConfigurationScreen()
             }
         }
     }

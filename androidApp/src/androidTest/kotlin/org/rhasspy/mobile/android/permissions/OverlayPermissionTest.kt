@@ -93,18 +93,18 @@ class OverlayPermissionTest : FlakyTest() {
         composeTestRule.onNodeWithText(btnRequestPermission).performClick()
         composeTestRule.awaitIdle()
         //InformationDialog is shown
-        composeTestRule.onNodeWithTag(TestTag.DialogInformationOverlayPermission).assertExists()
+        composeTestRule.onNodeWithTag(TestTag.DialogOverlayPermissionInfo).assertExists()
         //Cancel clicked
         composeTestRule.onNodeWithTag(TestTag.DialogCancel).performClick()
         //Dialog closed
-        composeTestRule.onNodeWithTag(TestTag.DialogInformationOverlayPermission)
+        composeTestRule.onNodeWithTag(TestTag.DialogOverlayPermissionInfo)
             .assertDoesNotExist()
 
         //User clicks button
         composeTestRule.onNodeWithText(btnRequestPermission).performClick()
         composeTestRule.awaitIdle()
         //InformationDialog is shown
-        composeTestRule.onNodeWithTag(TestTag.DialogInformationOverlayPermission).assertExists()
+        composeTestRule.onNodeWithTag(TestTag.DialogOverlayPermissionInfo).assertExists()
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             //Ok clicked

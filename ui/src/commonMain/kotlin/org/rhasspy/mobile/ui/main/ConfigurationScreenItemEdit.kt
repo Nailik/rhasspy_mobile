@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration
+package org.rhasspy.mobile.ui.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

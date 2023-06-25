@@ -24,7 +24,6 @@ import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.*
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreen
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
