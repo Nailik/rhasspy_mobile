@@ -172,7 +172,7 @@ fun ComposeTestRule.saveBottomAppBar(viewModel: IConfigurationViewModel) {
 
 fun ComposeTestRule.awaitSaved(viewModel: IConfigurationViewModel) {
     this.waitUntil(
-        condition = { !viewModel.configurationEditViewState.value.hasUnsavedChanges },
+        condition = { !viewModel.viewState.value.editData.hasUnsavedChanges },
         timeoutMillis = 5000
     )
 }

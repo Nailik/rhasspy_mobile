@@ -9,11 +9,11 @@ import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.edit.WebServerConfigurationContent
+import org.rhasspy.mobile.ui.configuration.WebServerConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -30,7 +30,7 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
 
         composeTestRule.setContent {
             TestContentProvider {
-                WebServerConfigurationContent()
+                WebServerConfigurationScreen()
             }
         }
 
@@ -66,15 +66,15 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
     fun testHttpContent() = runTest {
         viewModel.onEvent(SetHttpServerEnabled(false))
         viewModel.onEvent(SetHttpServerSSLEnabled(false))
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val viewState = viewModel.configurationEditViewState.value.editViewState
+        val editData = viewModel.viewState.value.editData
 
         val textInputTest = "6541"
 
         //http api is disabled
-        assertFalse { viewState.value.isHttpServerEnabled }
+        assertFalse { editData.isHttpServerEnabled }
         //switch is off
         composeTestRule.onNodeWithTag(TestTag.ServerSwitch).onListItemSwitch().assertIsOff()
         //settings not visible
@@ -85,7 +85,7 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
         //user clicks switch
         composeTestRule.onNodeWithTag(TestTag.ServerSwitch).performClick()
         //http api is enabled
-        assertTrue { viewState.value.isHttpServerEnabled }
+        assertTrue { editData.isHttpServerEnabled }
         //switch is on
         composeTestRule.onNodeWithTag(TestTag.ServerSwitch).onListItemSwitch().assertIsOn()
         //settings visible
@@ -97,7 +97,7 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.Port).performTextReplacement(textInputTest)
 
         //enable ssl is off
-        assertFalse { viewState.value.isHttpServerSSLEnabled }
+        assertFalse { editData.isHttpServerSSLEnabled }
         //enable ssl switch is off
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOff()
         //certificate button not visible
@@ -106,7 +106,7 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
         //user clicks enable ssl
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).performScrollTo().performClick()
         //ssl is on
-        assertTrue { viewState.value.isHttpServerSSLEnabled }
+        assertTrue { editData.isHttpServerSSLEnabled }
         //enable ssl switch is on
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOn()
         //certificate button visible
@@ -114,7 +114,7 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar(viewModel)
-        WebServerConfigurationViewModel(get()).configurationEditViewState.value.editViewState.value.also {
+        WebServerConfigurationViewModel(get()).viewState.value.editData.also {
             //enable http api is saved
             assertEquals(true, it.isHttpServerEnabled)
             //port is saved

@@ -51,10 +51,10 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
     @Test
     fun testEndpoint() = runTest {
         viewModel.onEvent(SelectIntentHandlingOption(IntentHandlingOption.Disabled))
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val viewState = viewModel.viewState.value.editViewState
+        val editData = viewModel.viewState.value.editData
 
         val textInputTest = "endpointTestInput"
         //option disable is set
@@ -63,7 +63,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
         //User clicks option remote http
         composeTestRule.onNodeWithTag(IntentHandlingOption.RemoteHTTP, true).performClick()
         //new option is selected
-        assertEquals(IntentHandlingOption.RemoteHTTP, viewState.value.intentHandlingOption)
+        assertEquals(IntentHandlingOption.RemoteHTTP, editData.intentHandlingOption)
         composeTestRule.awaitIdle()
 
         //Endpoint visible
@@ -72,13 +72,13 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsEnabled()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
         composeTestRule.awaitIdle()
-        assertEquals(textInputTest, viewState.value.intentHandlingHttpEndpoint)
+        assertEquals(textInputTest, editData.intentHandlingHttpEndpoint)
 
         composeTestRule.onNodeWithTag(IntentHandlingOption.RemoteHTTP, true).performClick()
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        IntentHandlingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        IntentHandlingConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
             assertEquals(IntentHandlingOption.RemoteHTTP, it.intentHandlingOption)
             //endpoint is saved
@@ -112,10 +112,10 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
     @Test
     fun testHomeAssistant() = runTest {
         viewModel.onEvent(SelectIntentHandlingOption(IntentHandlingOption.Disabled))
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val viewState = viewModel.viewState.value.editViewState
+        val editData = viewModel.viewState.value.editData
 
         val textInputTestEndpoint = "endpointTestInput"
         val textInputTestToken = "tokenTestInput"
@@ -126,7 +126,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
         //User clicks option HomeAssistant
         composeTestRule.onNodeWithTag(IntentHandlingOption.HomeAssistant).performClick()
         //new option is selected
-        assertEquals(IntentHandlingOption.HomeAssistant, viewState.value.intentHandlingOption)
+        assertEquals(IntentHandlingOption.HomeAssistant, editData.intentHandlingOption)
 
         //endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
@@ -157,15 +157,15 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        IntentHandlingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        IntentHandlingConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to HomeAssistant
             assertEquals(IntentHandlingOption.HomeAssistant, it.intentHandlingOption)
             //endpoint is saved
-            assertEquals(textInputTestEndpoint, it.intentHandlingHassEndpoint)
+            assertEquals(textInputTestEndpoint, it.intentHandlingHomeAssistantEndpoint)
             //access token is saved
-            assertEquals(textInputTestToken, it.intentHandlingHassAccessToken)
+            assertEquals(textInputTestToken, it.intentHandlingHomeAssistantAccessToken)
             //send events is saved
-            assertEquals(HomeAssistantIntentHandlingOption.Event, it.intentHandlingHassOption)
+            assertEquals(HomeAssistantIntentHandlingOption.Event, it.intentHandlingHomeAssistantOption)
         }
     }
 

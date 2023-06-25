@@ -31,9 +31,8 @@ class PorcupineKeywordDefaultScreenTest : FlakyTest() {
         composeTestRule.setContent {
             TestContentProvider {
                 val viewState by viewModel.viewState.collectAsState()
-                val contentViewState by viewState.editViewState.collectAsState()
                 PorcupineKeywordDefaultScreen(
-                    editData = contentViewState.wakeWordPorcupineViewState,
+                    editData = viewState.editData.wakeWordPorcupineConfigurationData,
                     onEvent = viewModel::onEvent
                 )
             }
@@ -65,7 +64,7 @@ class PorcupineKeywordDefaultScreenTest : FlakyTest() {
     @Test
     fun testList() = runTest {
         //no wake word is set
-        val viewState = viewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
+        val viewState = viewModel.viewState.value.editData.wakeWordPorcupineConfigurationData
         viewState.defaultOptionsUi.forEach {
             assertFalse(it.isEnabled)
         }
@@ -120,11 +119,11 @@ class PorcupineKeywordDefaultScreenTest : FlakyTest() {
         ).assertDoesNotExist()
 
         //viewModel save is invoked
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val newViewModel = WakeWordConfigurationViewModel(get())
-        newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState.defaultOptionsUi.forEach {
+        val newViewModel = WakeWordConfigurationViewModel(get(), get())
+        newViewModel.viewState.value.editData.wakeWordPorcupineConfigurationData.defaultOptionsUi.forEach {
             //americano is saved with enabled
             //porcupine is saved with not enabled
             //everything else is saved with not enabled

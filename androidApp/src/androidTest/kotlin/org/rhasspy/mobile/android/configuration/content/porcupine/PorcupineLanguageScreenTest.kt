@@ -31,9 +31,8 @@ class PorcupineLanguageScreenTest : FlakyTest() {
         composeTestRule.setContent {
             TestContentProvider {
                 val viewState by viewModel.viewState.collectAsState()
-                val contentViewState by viewState.editViewState.collectAsState()
                 PorcupineLanguageScreen(
-                    viewState = contentViewState.wakeWordPorcupineViewState,
+                    editData = viewState.editData.wakeWordPorcupineConfigurationData,
                     onEvent = viewModel::onEvent
                 )
             }
@@ -56,12 +55,12 @@ class PorcupineLanguageScreenTest : FlakyTest() {
     fun testContent() = runTest {
         //English is saved
         viewModel.onEvent(SelectWakeWordPorcupineLanguage(PorcupineLanguageOption.EN))
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val viewState = viewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
+        val editData = viewModel.viewState.value.editData.wakeWordPorcupineConfigurationData
 
-        assertEquals(PorcupineLanguageOption.EN, viewState.porcupineLanguage)
+        assertEquals(PorcupineLanguageOption.EN, editData.porcupineLanguage)
 
         //english is selected
         composeTestRule.onNodeWithTag(PorcupineLanguageOption.EN).onListItemRadioButton().assertIsSelected()
@@ -72,11 +71,11 @@ class PorcupineLanguageScreenTest : FlakyTest() {
         composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).onListItemRadioButton().assertIsSelected()
 
         //save is invoked
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val newViewModel = WakeWordConfigurationViewModel(get())
+        val newViewModel = WakeWordConfigurationViewModel(get(), get())
         //german is saved
-        assertEquals(PorcupineLanguageOption.DE, newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState.porcupineLanguage)
+        assertEquals(PorcupineLanguageOption.DE, newViewModel.viewState.value.editData.wakeWordPorcupineConfigurationData.porcupineLanguage)
     }
 }

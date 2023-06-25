@@ -57,9 +57,8 @@ class PorcupineKeywordCustomScreenTest : FlakyTest() {
             activity.setContent {
                 TestContentProvider {
                     val viewState by viewModel.viewState.collectAsState()
-                    val contentViewState by viewState.editViewState.collectAsState()
                     PorcupineKeywordCustomScreen(
-                        editData = contentViewState.wakeWordPorcupineViewState,
+                        editData = viewState.editData.wakeWordPorcupineConfigurationData,
                         onEvent = viewModel::onEvent
                     )
                 }
@@ -144,14 +143,14 @@ class PorcupineKeywordCustomScreenTest : FlakyTest() {
         composeTestRule.onNodeWithTag(ppn).onListItemSwitch().assertIsOn()
 
         //viewModel save is invoked
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val newViewModel = WakeWordConfigurationViewModel(get())
+        val newViewModel = WakeWordConfigurationViewModel(get(), get())
 
         //jarvis is saved with enabled
         assertTrue {
-            newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
+            newViewModel.viewState.value.editData.wakeWordPorcupineConfigurationData
                 .customOptionsUi.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null
         }
     }
@@ -197,12 +196,12 @@ class PorcupineKeywordCustomScreenTest : FlakyTest() {
         composeTestRule.onNodeWithTag(ppn).assertIsDisplayed()
         composeTestRule.onNodeWithTag(ppn).onListItemSwitch().assertIsOn()
 
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
 
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
 
-        val viewState = viewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
+        val viewState = viewModel.viewState.value.editData.wakeWordPorcupineConfigurationData
         assertTrue { viewState.customOptionsUi.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
 
         //user clicks delete on ppn
@@ -214,13 +213,13 @@ class PorcupineKeywordCustomScreenTest : FlakyTest() {
         composeTestRule.onNodeWithCombinedTag(ppn, TestTag.Undo).performClick()
 
         //viewModel save is invoked
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val newViewModel = WakeWordConfigurationViewModel(get())
+        val newViewModel = WakeWordConfigurationViewModel(get(), get())
         //ppn is saved with ppn.ppn and enabled
         assertTrue {
-            newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
+            newViewModel.viewState.value.editData.wakeWordPorcupineConfigurationData
                 .customOptionsUi.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null
         }
     }

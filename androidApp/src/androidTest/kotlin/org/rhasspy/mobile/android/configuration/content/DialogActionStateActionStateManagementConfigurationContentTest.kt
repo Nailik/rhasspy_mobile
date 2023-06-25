@@ -45,7 +45,7 @@ class DialogActionStateActionStateManagementConfigurationContentTest : FlakyTest
     @Test
     fun testEndpoint() = runTest {
         viewModel.onEvent(SelectDialogManagementOption(DialogManagementOption.Disabled))
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
 
@@ -59,7 +59,7 @@ class DialogActionStateActionStateManagementConfigurationContentTest : FlakyTest
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        DialogManagementConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        DialogManagementConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to local
             assertEquals(DialogManagementOption.Local, it.dialogManagementOption)
         }

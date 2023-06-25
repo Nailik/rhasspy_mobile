@@ -65,12 +65,12 @@ class WakeWordConfigurationContentTest : FlakyTest() {
     fun testWakeWordContent() = runTest {
         //option is disable
         viewModel.onEvent(SelectWakeWordOption(WakeWordOption.Disabled))
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val viewState = viewModel.viewState.value.editViewState
+        val editData = viewModel.viewState.value.editData
 
-        assertEquals(WakeWordOption.Disabled, viewState.value.wakeWordOption)
+        assertEquals(WakeWordOption.Disabled, editData.wakeWordOption)
 
         //porcupine options not visible
         composeTestRule.onNodeWithTag(TestTag.PorcupineWakeWordSettings).assertDoesNotExist()
@@ -81,7 +81,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
 
         //user clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        WakeWordConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        WakeWordConfigurationViewModel(get(), get()).viewState.value.editData.also {
             //new option is saved
             assertEquals(WakeWordOption.Porcupine, it.wakeWordOption)
         }
@@ -105,12 +105,12 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         //option is porcupine
         viewModel.onEvent(SelectWakeWordOption(WakeWordOption.Porcupine))
         viewModel.onEvent(UpdateWakeWordPorcupineAccessToken(""))
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val viewState = viewModel.viewState.value.editViewState
+        val editData = viewModel.viewState.value.editData
 
-        assertEquals(WakeWordOption.Porcupine, viewState.value.wakeWordOption)
+        assertEquals(WakeWordOption.Porcupine, editData.wakeWordOption)
 
         val textInputTest = "fghfghhrtrtzh34ß639254´1´90!$/%(&$("
 
@@ -133,7 +133,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
 
         //user clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        WakeWordConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        WakeWordConfigurationViewModel(get(), get()).viewState.value.editData.also {
             //access token is saved
             assertEquals(WakeWordOption.Porcupine, it.wakeWordOption)
         }
@@ -158,12 +158,12 @@ class WakeWordConfigurationContentTest : FlakyTest() {
     fun testPorcupineWakeWordOptions() = runTest {
         //option is porcupine
         viewModel.onEvent(SelectWakeWordOption(WakeWordOption.Porcupine))
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val viewState = viewModel.viewState.value.editViewState
+        val editData = viewModel.viewState.value.editData
 
-        assertEquals(WakeWordOption.Porcupine, viewState.value.wakeWordOption)
+        assertEquals(WakeWordOption.Porcupine, editData.wakeWordOption)
 
         //wake word is clicked,
         composeTestRule.onNodeWithTag(TestTag.PorcupineKeyword).performScrollTo().performClick()

@@ -57,10 +57,10 @@ class TextToSpeechConfigurationContentTest : FlakyTest() {
     @Test
     fun testEndpoint() = runTest {
         viewModel.onEvent(SelectTextToSpeechOption(TextToSpeechOption.Disabled))
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val viewState = viewModel.viewState.value.editViewState
+        val viewState = viewModel.viewState.value.editData
 
         val textInputTest = "endpointTestInput"
 
@@ -94,7 +94,7 @@ class TextToSpeechConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        TextToSpeechConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        TextToSpeechConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
             assertEquals(TextToSpeechOption.RemoteHTTP, it.textToSpeechOption)
             //endpoint is saved

@@ -51,10 +51,10 @@ class RemoteHermesHttpConfigurationContentTest : FlakyTest() {
     @Test
     fun testHttpContent() = runTest {
         viewModel.onEvent(SetHttpSSLVerificationDisabled(true))
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val viewState = viewModel.viewState.value.editViewState
+        val editData = viewModel.viewState.value.editData
 
         val textInputTest = "textTestInput"
 
@@ -62,20 +62,20 @@ class RemoteHermesHttpConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.Host).performScrollTo().performClick()
         composeTestRule.onNodeWithTag(TestTag.Host).performTextReplacement(textInputTest)
         //disable ssl validation is on
-        assertTrue { viewState.value.isHttpSSLVerificationDisabled }
+        assertTrue { editData.isHttpSSLVerificationDisabled }
         //switch is on
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOn()
 
         //user clicks switch
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).performClick()
         //disable ssl validation is off
-        assertFalse { viewState.value.isHttpSSLVerificationDisabled }
+        assertFalse { editData.isHttpSSLVerificationDisabled }
         //switch is off
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOff()
 
         //user click save
         composeTestRule.saveBottomAppBar(viewModel)
-        RemoteHermesHttpConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        RemoteHermesHttpConfigurationViewModel(get()).viewState.value.editData.also {
             //disable ssl validation off is saved
             assertEquals(false, it.isHttpSSLVerificationDisabled)
             //host is saved

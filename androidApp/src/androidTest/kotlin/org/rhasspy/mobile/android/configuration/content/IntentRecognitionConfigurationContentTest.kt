@@ -57,10 +57,10 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
     @Test
     fun testEndpoint() = runTest {
         viewModel.onEvent(SelectIntentRecognitionOption(IntentRecognitionOption.Disabled))
-        viewModel.onAction(Save)
+        viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val viewState = viewModel.viewState.value.editViewState
+        val editData = viewModel.viewState.value.editData
 
         val textInputTest = "endpointTestInput"
 
@@ -70,7 +70,7 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
         //User clicks option remote http
         composeTestRule.onNodeWithTag(IntentRecognitionOption.RemoteHTTP).performClick()
         //new option is selected
-        assertEquals(IntentRecognitionOption.RemoteHTTP, viewState.value.intentRecognitionOption)
+        assertEquals(IntentRecognitionOption.RemoteHTTP, editData.intentRecognitionOption)
 
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
@@ -93,11 +93,11 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
         composeTestRule.awaitIdle()
-        assertEquals(textInputTest, viewState.value.intentRecognitionHttpEndpoint)
+        assertEquals(textInputTest, editData.intentRecognitionHttpEndpoint)
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        IntentRecognitionConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        IntentRecognitionConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
             assertEquals(IntentRecognitionOption.RemoteHTTP, it.intentRecognitionOption)
             //endpoint is saved

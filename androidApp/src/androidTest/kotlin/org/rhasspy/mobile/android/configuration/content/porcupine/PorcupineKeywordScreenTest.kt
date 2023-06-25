@@ -32,11 +32,9 @@ class PorcupineKeywordScreenTest : FlakyTest() {
         composeTestRule.setContent {
             TestContentProvider {
                 val viewState by viewModel.viewState.collectAsState()
-                val porcupineScreen by viewModel.porcupineScreen.collectAsState()
-                val contentViewState by viewState.editViewState.collectAsState()
                 PorcupineKeywordScreen(
-                    porcupineScreen = porcupineScreen,
-                    viewState = contentViewState.wakeWordPorcupineViewState,
+                    porcupineScreen = viewState.porcupineWakeWordScreen,
+                    editData = viewState.editData.wakeWordPorcupineConfigurationData,
                     onEvent = viewModel::onEvent
                 )
             }
