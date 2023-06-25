@@ -11,11 +11,13 @@ import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.OverlayPermissionDialogResult
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Confirm
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.MicrophonePermissionInfo
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.OverlayPermissionInfo
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class ScreenViewModelTest : AppTest() {
 
@@ -48,13 +50,13 @@ class ScreenViewModelTest : AppTest() {
 
     @Test
     fun `when a view model is composed it informs the navigator`() {
-        screenViewModel.composed()
+        screenViewModel.onComposed()
         verify { navigator.onComposed(screenViewModel) }
     }
 
     @Test
     fun `when a view model is disposed it informs the navigator`() {
-        screenViewModel.disposed()
+        screenViewModel.onDisposed()
         verify { navigator.onDisposed(screenViewModel) }
     }
 
@@ -84,11 +86,11 @@ class ScreenViewModelTest : AppTest() {
 
         screenViewModel.requireMicrophonePermission(function)
 
-        assertTrue { screenViewModel.kViewState.value.isShowMicrophonePermissionInformationDialog }
+        assertEquals(MicrophonePermissionInfo, screenViewModel.screenViewState.value.dialogState)
 
         screenViewModel.onBackPressedClick()
 
-        assertFalse { screenViewModel.kViewState.value.isShowMicrophonePermissionInformationDialog }
+        assertNull(screenViewModel.screenViewState.value.dialogState)
         coVerify(exactly = 0) { navigator.onBackPressed() }
     }
 
@@ -97,7 +99,7 @@ class ScreenViewModelTest : AppTest() {
         every { overlayPermission.granted } returns MutableStateFlow(false).readOnly
 
         screenViewModel.requireOverlayPermission(function)
-        screenViewModel.onEvent(OverlayPermissionDialogResult(true))
+        screenViewModel.onEvent(Confirm(OverlayPermissionInfo))
 
         coVerify { overlayPermission.request() }
     }
@@ -117,11 +119,11 @@ class ScreenViewModelTest : AppTest() {
         every { overlayPermission.granted } returns MutableStateFlow(false).readOnly
         screenViewModel.requireOverlayPermission(function)
 
-        assertTrue { screenViewModel.kViewState.value.isShowOverlayPermissionInformationDialog }
+        assertEquals(OverlayPermissionInfo, screenViewModel.screenViewState.value.dialogState)
 
         screenViewModel.onBackPressedClick()
 
-        assertFalse { screenViewModel.kViewState.value.isShowOverlayPermissionInformationDialog }
+        assertNull(screenViewModel.screenViewState.value.dialogState)
         coVerify(exactly = 0) { navigator.onBackPressed() }
     }
 

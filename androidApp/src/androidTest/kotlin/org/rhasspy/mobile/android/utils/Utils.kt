@@ -18,6 +18,7 @@ import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
@@ -128,22 +129,22 @@ fun MicrophonePermission.requestMicrophonePermissions() {
     this.update()
 }
 
-fun UiDevice.requestOverlayPermissions(context: Context) {
+fun UiDevice.requestOverlayPermissions(context: Context, overlayPermission: OverlayPermission) {
     try {
         with(PermissionRequester()) {
             try {
                 addPermissions("android.permission.SYSTEM_ALERT_WINDOW")
                 requestPermissions()
             } catch (e: Exception) {
-                requestOverlayPermissionLegacy(context)
+                requestOverlayPermissionLegacy(context, overlayPermission)
             }
         }
     } catch (e: Exception) {
-        requestOverlayPermissionLegacy(context)
+        requestOverlayPermissionLegacy(context, overlayPermission)
     }
     if (!Settings.canDrawOverlays(context)) {
         //will be called on android M (23)
-        requestOverlayPermissionLegacy(context)
+        requestOverlayPermissionLegacy(context, overlayPermission)
     }
 }
 
@@ -172,7 +173,7 @@ fun ComposeTestRule.saveBottomAppBar(viewModel: IConfigurationViewModel) {
 
 fun ComposeTestRule.awaitSaved(viewModel: IConfigurationViewModel) {
     this.waitUntil(
-        condition = { !viewModel.viewState.value.editData.hasUnsavedChanges },
+        condition = { !viewModel.configurationEditViewState.value.hasUnsavedChanges },
         timeoutMillis = 5000
     )
 }

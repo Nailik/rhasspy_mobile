@@ -8,7 +8,7 @@ import kotlin.test.Test
 
 class IConfigurationEditViewModelTest : AppTest() {
 
-    private lateinit var iConfigurationViewModelTest: IConfigurationEditViewModelTest
+   // private lateinit var iConfigurationViewModelTest: IConfigurationEditViewModelTest
 
     @BeforeTest
     fun before() {
@@ -18,7 +18,7 @@ class IConfigurationEditViewModelTest : AppTest() {
             }
         )
 
-        iConfigurationViewModelTest = get()
+       // iConfigurationViewModelTest = get()
     }
 
 

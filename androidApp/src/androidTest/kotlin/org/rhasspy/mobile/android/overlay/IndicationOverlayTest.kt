@@ -16,6 +16,7 @@ import org.rhasspy.mobile.android.utils.requestOverlayPermissions
 import org.rhasspy.mobile.android.utils.waitUntilExists
 import org.rhasspy.mobile.data.indication.IndicationState
 import org.rhasspy.mobile.logic.services.indication.IndicationService
+import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
 
@@ -28,7 +29,7 @@ class IndicationOverlayTest : FlakyTest() {
 
     @Before
     fun setUp() {
-        device.requestOverlayPermissions(composeTestRule.activity)
+        device.requestOverlayPermissions(composeTestRule.activity, get<OverlayPermission>())
         AppSetting.isWakeWordLightIndicationEnabled.value = true
     }
 

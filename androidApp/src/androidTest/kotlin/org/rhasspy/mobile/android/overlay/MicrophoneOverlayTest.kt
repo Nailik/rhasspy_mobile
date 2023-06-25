@@ -17,6 +17,7 @@ import org.rhasspy.mobile.android.utils.requestMicrophonePermissions
 import org.rhasspy.mobile.android.utils.requestOverlayPermissions
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
 
@@ -30,7 +31,7 @@ class MicrophoneOverlayTest : FlakyTest() {
     @Before
     fun setUp() {
         get<MicrophonePermission>().requestMicrophonePermissions()
-        device.requestOverlayPermissions(composeTestRule.activity)
+        device.requestOverlayPermissions(composeTestRule.activity, get<OverlayPermission>())
         AppSetting.microphoneOverlaySizeOption.value = MicrophoneOverlaySizeOption.Big
         AppSetting.isMicrophoneOverlayWhileAppEnabled.value = true
     }

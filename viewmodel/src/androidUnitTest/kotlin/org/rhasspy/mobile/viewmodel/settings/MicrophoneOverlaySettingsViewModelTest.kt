@@ -11,7 +11,10 @@ import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption.Disabl
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.AppTest
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.OverlayPermissionDialogResult
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Confirm
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.OverlayPermissionInfo
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SelectMicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewModel
 import kotlin.test.BeforeTest
@@ -55,7 +58,7 @@ class MicrophoneOverlaySettingsViewModelTest : AppTest() {
         MicrophoneOverlaySizeOption.values().filter { it != Disabled }.forEach { option ->
 
             microphoneOverlaySettingsViewModel.onEvent(SelectMicrophoneOverlaySizeOption(option))
-            microphoneOverlaySettingsViewModel.onEvent(OverlayPermissionDialogResult(true))
+            microphoneOverlaySettingsViewModel.onEvent(Confirm(OverlayPermissionInfo))
 
             verify { overlayPermission.request() }
             assertEquals(Disabled, AppSetting.microphoneOverlaySizeOption.value)

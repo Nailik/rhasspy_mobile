@@ -60,7 +60,7 @@ class TextToSpeechConfigurationContentTest : FlakyTest() {
         viewModel.onEvent(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val viewState = viewModel.viewState.value.editData
+        val editData = viewModel.viewState.value.editData
 
         val textInputTest = "endpointTestInput"
 
@@ -70,7 +70,7 @@ class TextToSpeechConfigurationContentTest : FlakyTest() {
         //User clicks option remote http
         composeTestRule.onNodeWithTag(TextToSpeechOption.RemoteHTTP).performClick()
         //new option is selected
-        assertEquals(TextToSpeechOption.RemoteHTTP, viewState.value.textToSpeechOption)
+        assertEquals(TextToSpeechOption.RemoteHTTP, editData.textToSpeechOption)
 
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
@@ -90,7 +90,7 @@ class TextToSpeechConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsEnabled()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
         composeTestRule.awaitIdle()
-        assertEquals(textInputTest, viewState.value.textToSpeechHttpEndpoint)
+        assertEquals(textInputTest, editData.textToSpeechHttpEndpoint)
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)

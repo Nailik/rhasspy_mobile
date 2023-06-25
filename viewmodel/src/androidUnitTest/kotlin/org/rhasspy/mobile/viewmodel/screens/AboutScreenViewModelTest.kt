@@ -60,7 +60,7 @@ class AboutScreenViewModelTest : AppTest() {
         )
 
         aboutScreenViewModel = get()
-        aboutScreenViewModel.composed()
+        aboutScreenViewModel.onComposed()
         navigator = get()
     }
 
