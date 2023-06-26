@@ -66,7 +66,7 @@ private fun DefaultKeywordListItem(
 ) {
     ListElement(
         modifier = Modifier
-            .testTag(IOption = element.option)
+            .testTag(option = element.option)
             .clickable(onClick = onClick),
         icon = {
             Checkbox(

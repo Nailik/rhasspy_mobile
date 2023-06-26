@@ -12,8 +12,8 @@ import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.IntentRecognitionConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
 import kotlin.test.assertEquals
 
 class IntentRecognitionConfigurationContentTest : FlakyTest() {
@@ -58,9 +58,7 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
     fun testEndpoint() = runTest {
         viewModel.onEvent(SelectIntentRecognitionOption(IntentRecognitionOption.Disabled))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val editData = viewModel.viewState.value.editData
 
         val textInputTest = "endpointTestInput"
 
@@ -70,7 +68,8 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
         //User clicks option remote http
         composeTestRule.onNodeWithTag(IntentRecognitionOption.RemoteHTTP).performClick()
         //new option is selected
-        assertEquals(IntentRecognitionOption.RemoteHTTP, editData.intentRecognitionOption)
+        composeTestRule.awaitIdle()
+        assertEquals(IntentRecognitionOption.RemoteHTTP, viewModel.viewState.value.editData.intentRecognitionOption)
 
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
@@ -91,9 +90,10 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsEnabled()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performClick()
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextClearance()
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextInput(textInputTest)
         composeTestRule.awaitIdle()
-        assertEquals(textInputTest, editData.intentRecognitionHttpEndpoint)
+        assertEquals(textInputTest, viewModel.viewState.value.editData.intentRecognitionHttpEndpoint)
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)

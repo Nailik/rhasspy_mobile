@@ -105,6 +105,9 @@ fun String.toLongOrZero(): Long = toLongOrNull() ?: 0L
 fun String.toIntOrZero(): Int = toIntOrNull() ?: 0
 fun Int?.toIntOrZero(): Int = this ?: 0
 fun Long?.toLongOrZero(): Long = this ?: 0
+fun Int?.toStringOrEmpty(): String = this?.toString() ?: ""
+fun Long?.toStringOrEmpty(): String = this?.toString() ?: ""
+
 
 
 fun <E> ImmutableList<E>.updateList(block: MutableList<E>.() -> Unit): ImmutableList<E> {

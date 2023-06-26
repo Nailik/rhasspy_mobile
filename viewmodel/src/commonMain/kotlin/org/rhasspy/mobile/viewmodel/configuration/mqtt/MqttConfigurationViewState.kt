@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.configuration.mqtt
 
 import androidx.compose.runtime.Stable
 import okio.Path
+import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 @Stable
@@ -23,10 +24,10 @@ data class MqttConfigurationViewState internal constructor(
         val mqttKeyStoreFile: Path? = ConfigurationSetting.mqttKeyStoreFile.value
     ) {
 
-        val mqttPortText: String = mqttPort.toString()
-        val mqttConnectionTimeoutText: String = mqttConnectionTimeout.toString()
-        val mqttKeepAliveIntervalText: String = mqttKeepAliveInterval.toString()
-        val mqttRetryIntervalText: String = mqttRetryInterval.toString()
+        val mqttPortText: String = mqttPort.toStringOrEmpty()
+        val mqttConnectionTimeoutText: String = mqttConnectionTimeout.toStringOrEmpty()
+        val mqttKeepAliveIntervalText: String = mqttKeepAliveInterval.toStringOrEmpty()
+        val mqttRetryIntervalText: String = mqttRetryInterval.toStringOrEmpty()
         val mqttKeyStoreFileName: String? = mqttKeyStoreFile?.name
 
     }

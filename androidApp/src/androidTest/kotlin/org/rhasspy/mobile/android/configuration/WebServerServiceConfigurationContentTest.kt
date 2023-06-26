@@ -67,14 +67,12 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
         viewModel.onEvent(SetHttpServerEnabled(false))
         viewModel.onEvent(SetHttpServerSSLEnabled(false))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val editData = viewModel.viewState.value.editData
 
         val textInputTest = "6541"
 
         //http api is disabled
-        assertFalse { editData.isHttpServerEnabled }
+        assertFalse { viewModel.viewState.value.editData.isHttpServerEnabled }
         //switch is off
         composeTestRule.onNodeWithTag(TestTag.ServerSwitch).onListItemSwitch().assertIsOff()
         //settings not visible
@@ -85,7 +83,8 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
         //user clicks switch
         composeTestRule.onNodeWithTag(TestTag.ServerSwitch).performClick()
         //http api is enabled
-        assertTrue { editData.isHttpServerEnabled }
+        composeTestRule.awaitIdle()
+        assertTrue { viewModel.viewState.value.editData.isHttpServerEnabled }
         //switch is on
         composeTestRule.onNodeWithTag(TestTag.ServerSwitch).onListItemSwitch().assertIsOn()
         //settings visible
@@ -97,7 +96,8 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.Port).performTextReplacement(textInputTest)
 
         //enable ssl is off
-        assertFalse { editData.isHttpServerSSLEnabled }
+        composeTestRule.awaitIdle()
+        assertFalse { viewModel.viewState.value.editData.isHttpServerSSLEnabled }
         //enable ssl switch is off
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOff()
         //certificate button not visible
@@ -106,7 +106,8 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
         //user clicks enable ssl
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).performScrollTo().performClick()
         //ssl is on
-        assertTrue { editData.isHttpServerSSLEnabled }
+        composeTestRule.awaitIdle()
+        assertTrue { viewModel.viewState.value.editData.isHttpServerSSLEnabled }
         //enable ssl switch is on
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOn()
         //certificate button visible

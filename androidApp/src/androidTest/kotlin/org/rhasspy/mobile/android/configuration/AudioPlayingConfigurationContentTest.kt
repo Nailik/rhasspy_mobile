@@ -59,9 +59,7 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
     fun testEndpoint() = runTest {
         viewModel.onEvent(SelectEditAudioPlayingOption(AudioPlayingOption.Disabled))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val editData = viewModel.viewState.value.editData
 
         val textInputTest = "endpointTestInput"
 
@@ -69,14 +67,16 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled).onListItemRadioButton().assertIsSelected()
 
         //User clicks option remote http
-        composeTestRule.onNodeWithTag(AudioPlayingOption.RemoteHTTP).performClick()
+        composeTestRule.onNodeWithTag(AudioPlayingOption.RemoteHTTP).onListItemRadioButton().performClick()
         //new option is selected
-        assertEquals(AudioPlayingOption.RemoteHTTP, editData.audioPlayingOption)
+        composeTestRule.awaitIdle()
+        assertEquals(AudioPlayingOption.RemoteHTTP, viewModel.viewState.value.editData.audioPlayingOption)
+        composeTestRule.onNodeWithTag(AudioPlayingOption.RemoteHTTP).onListItemRadioButton().assertIsSelected()
 
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
         //custom endpoint switch visible
-        composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
+        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).assertExists()
 
         //switch is off
         composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performScrollTo().onListItemSwitch().assertIsOff()
@@ -89,11 +89,13 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).onListItemSwitch().assertIsOn()
         //endpoint can be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsEnabled()
-        composeTestRule.onNodeWithTag(TestTag.Endpoint).performClick()
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performScrollTo().performClick()
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextClearance()
         composeTestRule.awaitIdle()
-        assertEquals(textInputTest, editData.audioPlayingHttpEndpoint)
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextInput(textInputTest)
+        composeTestRule.awaitIdle()
+        assertEquals(textInputTest, viewModel.viewState.value.editData.audioPlayingHttpEndpoint)
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
@@ -129,12 +131,10 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
     fun testLocalOutput() = runTest {
         viewModel.onEvent(SelectEditAudioPlayingOption(AudioPlayingOption.Disabled))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val editData = viewModel.viewState.value.editData
 
         //output is set to sound
-        assertEquals(AudioOutputOption.Sound, editData.audioOutputOption)
+        assertEquals(AudioOutputOption.Sound, viewModel.viewState.value.editData.audioOutputOption)
 
         //option disable is set
         composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled, true).performScrollTo().onListItemRadioButton().assertIsSelected()
@@ -144,7 +144,8 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
         //User clicks option local
         composeTestRule.onNodeWithTag(AudioPlayingOption.Local).performClick()
         //new option is selected
-        assertEquals(AudioPlayingOption.Local, editData.audioPlayingOption)
+        composeTestRule.awaitIdle()
+        assertEquals(AudioPlayingOption.Local, viewModel.viewState.value.editData.audioPlayingOption)
 
         //output options visible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertIsDisplayed()

@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -76,6 +78,7 @@ fun IndicationSoundScreen(
                 ) {
 
                     SoundElements(
+                        modifier = Modifier.weight(1f),
                         soundSetting = viewState.soundSetting,
                         customSoundFiles = viewState.customSoundFiles,
                         onEvent = viewModel::onEvent
@@ -132,27 +135,31 @@ fun IndicationSoundScreen(
  */
 @Composable
 private fun SoundElements(
+    modifier: Modifier,
     soundSetting: String,
     customSoundFiles: ImmutableList<String>,
     onEvent: (IIndicationSoundSettingsUiEvent) -> Unit
 ) {
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+    ) {
 
-    RadioButtonListItem(
-        modifier = Modifier.testTag(TestTag.Default),
-        text = MR.strings.defaultText.stable,
-        isChecked = soundSetting == SoundOption.Default.name,
-        onClick = { onEvent(SetSoundIndicationOption(SoundOption.Default)) }
-    )
+        RadioButtonListItem(
+            modifier = Modifier.testTag(TestTag.Default),
+            text = MR.strings.defaultText.stable,
+            isChecked = soundSetting == SoundOption.Default.name,
+            onClick = { onEvent(SetSoundIndicationOption(SoundOption.Default)) }
+        )
 
-    RadioButtonListItem(
-        modifier = Modifier.testTag(TestTag.Disabled),
-        text = MR.strings.disabled.stable,
-        isChecked = soundSetting == SoundOption.Disabled.name,
-        onClick = { onEvent(SetSoundIndicationOption(SoundOption.Disabled)) }
-    )
+        RadioButtonListItem(
+            modifier = Modifier.testTag(TestTag.Disabled),
+            text = MR.strings.disabled.stable,
+            isChecked = soundSetting == SoundOption.Disabled.name,
+            onClick = { onEvent(SetSoundIndicationOption(SoundOption.Disabled)) }
+        )
 
-    //added files
-    Column {
+        //added files
         customSoundFiles.forEach { item ->
             SoundListItem(
                 isSelected = item == soundSetting,

@@ -12,11 +12,11 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.ui.configuration.DialogManagementConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import kotlin.test.assertEquals
 
-class DialogActionStateActionStateManagementConfigurationContentTest : FlakyTest() {
+class DialogManagementConfigurationContentTest : FlakyTest() {
 
     @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
@@ -46,7 +46,6 @@ class DialogActionStateActionStateManagementConfigurationContentTest : FlakyTest
     fun testEndpoint() = runTest {
         viewModel.onEvent(SelectDialogManagementOption(DialogManagementOption.Disabled))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
 
         //option disable is set

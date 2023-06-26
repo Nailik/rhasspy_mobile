@@ -161,7 +161,7 @@ private fun Dialog(
                             }
                         }
 
-                        if(headline != null) {
+                        if (headline != null) {
                             CompositionLocalProvider(
                                 LocalContentColor provides MaterialTheme.colorScheme.onSurface,
                                 LocalTextStyle provides MaterialTheme.typography.headlineSmall

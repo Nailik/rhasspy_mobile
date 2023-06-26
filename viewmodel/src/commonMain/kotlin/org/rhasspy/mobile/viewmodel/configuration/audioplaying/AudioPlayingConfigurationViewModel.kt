@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change
@@ -46,6 +46,10 @@ class AudioPlayingConfigurationViewModel(
             editData = _editData,
             configurationViewState = configurationViewState
         )
+    }
+
+    init {
+        println("IConfigurationViewModel $configurationEditViewState")
     }
 
     fun onEvent(change: AudioPlayingConfigurationUiEvent) {

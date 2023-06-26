@@ -84,7 +84,7 @@ class OverlayPermissionTest : FlakyTest() {
      */
     @Test
     fun testAllow() = runTest {
-        device.resetOverlayPermission(composeTestRule.activity, get<OverlayPermission>())
+        device.resetOverlayPermission(composeTestRule.activity, get())
 
         permissionResult = false
         assertFalse { get<OverlayPermission>().granted.value }

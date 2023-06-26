@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.viewmodel.configuration
 
-import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.viewmodel.AppTest
 import kotlin.test.BeforeTest
@@ -8,7 +7,7 @@ import kotlin.test.Test
 
 class IConfigurationEditViewModelTest : AppTest() {
 
-   // private lateinit var iConfigurationViewModelTest: IConfigurationEditViewModelTest
+    // private lateinit var iConfigurationViewModelTest: IConfigurationEditViewModelTest
 
     @BeforeTest
     fun before() {
@@ -18,7 +17,7 @@ class IConfigurationEditViewModelTest : AppTest() {
             }
         )
 
-       // iConfigurationViewModelTest = get()
+        // iConfigurationViewModelTest = get()
     }
 
 

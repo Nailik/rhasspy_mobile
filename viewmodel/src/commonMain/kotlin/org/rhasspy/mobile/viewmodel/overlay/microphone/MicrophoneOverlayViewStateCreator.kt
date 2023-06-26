@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.combineStateFlow
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
@@ -17,25 +18,23 @@ class MicrophoneOverlayViewStateCreator(
     private val overlayPermission: OverlayPermission,
     microphoneFabViewStateCreator: MicrophoneFabViewStateCreator
 ) {
-    private val updaterScope = CoroutineScope(Dispatchers.IO)
+
     private val microphoneFabViewStateFlow = microphoneFabViewStateCreator()
 
     operator fun invoke(): StateFlow<MicrophoneOverlayViewState> {
-        val viewState = MutableStateFlow(getViewState())
-        updaterScope.launch {
-            combineStateFlow(
-                overlayPermission.granted,
-                nativeApplication.isAppInBackground,
-                AppSetting.isMicrophoneOverlayWhileAppEnabled.data,
-                AppSetting.microphoneOverlaySizeOption.data,
-                AppSetting.microphoneOverlayPositionX.data,
-                AppSetting.microphoneOverlayPositionY.data,
-                microphoneFabViewStateFlow
-            ).collect {
-                viewState.value = getViewState()
-            }
+
+        return combineStateFlow(
+            overlayPermission.granted,
+            nativeApplication.isAppInBackground,
+            AppSetting.isMicrophoneOverlayWhileAppEnabled.data,
+            AppSetting.microphoneOverlaySizeOption.data,
+            AppSetting.microphoneOverlayPositionX.data,
+            AppSetting.microphoneOverlayPositionY.data,
+            microphoneFabViewStateFlow
+        ).mapReadonlyState {
+            getViewState()
         }
-        return viewState
+
     }
 
     private fun getViewState(): MicrophoneOverlayViewState {

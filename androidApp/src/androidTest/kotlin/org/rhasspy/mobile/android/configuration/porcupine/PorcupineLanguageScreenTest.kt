@@ -10,12 +10,15 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.utils.FlakyTest
+import org.rhasspy.mobile.android.utils.TestContentProvider
+import org.rhasspy.mobile.android.utils.onListItemRadioButton
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.ui.configuration.porcupine.PorcupineLanguageScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeWordPorcupineLanguage
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertEquals
 
 class PorcupineLanguageScreenTest : FlakyTest() {
@@ -56,7 +59,6 @@ class PorcupineLanguageScreenTest : FlakyTest() {
         //English is saved
         viewModel.onEvent(SelectWakeWordPorcupineLanguage(PorcupineLanguageOption.EN))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val editData = viewModel.viewState.value.editData.wakeWordPorcupineConfigurationData
 
@@ -72,7 +74,6 @@ class PorcupineLanguageScreenTest : FlakyTest() {
 
         //save is invoked
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val newViewModel = WakeWordConfigurationViewModel(get(), get())
         //german is saved

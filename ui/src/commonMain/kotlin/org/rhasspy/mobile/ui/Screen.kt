@@ -91,6 +91,8 @@ fun Screen(
             MicrophonePermissionRequestFailed -> {
                 SnackBar(
                     title = MR.strings.microphonePermissionRequestFailed.stable,
+                    label = MR.strings.settings.stable,
+                    action = { screenViewModel.onEvent(Action(snackBarState)) },
                     consumed = { screenViewModel.onEvent(Consumed) },
                 )
             }

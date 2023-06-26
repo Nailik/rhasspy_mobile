@@ -3,14 +3,14 @@ package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
 import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.platformspecific.toLongOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change
@@ -50,12 +50,12 @@ class RemoteHermesHttpConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        with(_editData.value) {
+        _editData.update {
             when (change) {
-                is SetHttpSSLVerificationDisabled -> copy(isHttpSSLVerificationDisabled = change.disabled)
-                is UpdateHttpClientServerEndpointHost -> copy(httpClientServerEndpointHost = change.host)
-                is UpdateHttpClientServerEndpointPort -> copy(httpClientServerEndpointPort = change.port.toIntOrNull())
-                is UpdateHttpClientTimeout -> copy(httpClientTimeout = change.text.toLongOrNull())
+                is SetHttpSSLVerificationDisabled -> it.copy(isHttpSSLVerificationDisabled = change.disabled)
+                is UpdateHttpClientServerEndpointHost -> it.copy(httpClientServerEndpointHost = change.host)
+                is UpdateHttpClientServerEndpointPort -> it.copy(httpClientServerEndpointPort = change.port.toIntOrNull())
+                is UpdateHttpClientTimeout -> it.copy(httpClientTimeout = change.text.toLongOrNull())
             }
         }
     }

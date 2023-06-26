@@ -17,11 +17,16 @@ import androidx.test.uiautomator.UiSelector
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.service.option.IOption
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
 
 
 fun SemanticsNodeInteraction.onListItemSwitch(): SemanticsNodeInteraction {
@@ -44,9 +49,19 @@ fun hasCombinedTestTag(tag1: Enum<*>, tag2: Enum<*>): SemanticsMatcher =
     SemanticsMatcher.expectValue(SemanticsProperties.TestTag, "${tag1.name}${tag2.name}")
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
-    testTag: Enum<*>,
+    testTag: IOption<*>,
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag(testTag.name), useUnmergedTree)
+
+fun SemanticsNodeInteractionsProvider.onNodeWithTag(
+    testTag: TestTag,
+    useUnmergedTree: Boolean = false
+): SemanticsNodeInteraction = onNode(hasTestTag(testTag.name), useUnmergedTree)
+
+fun SemanticsNodeInteractionsProvider.onNodeWithTag(
+    testTag: NavigationDestination,
+    useUnmergedTree: Boolean = false
+): SemanticsNodeInteraction = onNode(hasTestTag(testTag.toString()), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     name: String,
@@ -163,21 +178,12 @@ fun SemanticsNodeInteraction.assertTextEquals(
         includeEditableText = includeEditableText
     )
 
-fun ComposeTestRule.saveBottomAppBar(viewModel: IConfigurationViewModel) {
+suspend fun ComposeTestRule.saveBottomAppBar(viewModel: IConfigurationViewModel) {
     Espresso.closeSoftKeyboard()
     waitUntilExists(hasTestTag(TestTag.BottomAppBarSave).and(isEnabled()))
     onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-    awaitSaved(viewModel)
+    awaitIdle()
 }
-
-
-fun ComposeTestRule.awaitSaved(viewModel: IConfigurationViewModel) {
-    this.waitUntil(
-        condition = { !viewModel.configurationEditViewState.value.hasUnsavedChanges },
-        timeoutMillis = 5000
-    )
-}
-
 
 @OptIn(ExperimentalTestApi::class)
 fun ComposeTestRule.waitUntilExists(

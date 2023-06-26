@@ -111,6 +111,7 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
             Consumed -> Unit
             is SnackBar.Action -> {
                 when (snackBar.snackBarState) {
+                    MicrophonePermissionRequestDenied,
                     MicrophonePermissionRequestFailed ->
                         if (externalResultRequest.launch(RequestMicrophonePermissionExternally) !is ExternalRedirectResult.Success) {
                             _screenViewState.update { it.copy(snackBarState = MicrophonePermissionRequestFailed) }

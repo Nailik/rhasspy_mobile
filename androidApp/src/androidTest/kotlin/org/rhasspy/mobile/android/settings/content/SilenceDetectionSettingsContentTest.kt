@@ -11,6 +11,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.settings.content.SilenceDetectionSettingsContent
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.SetSilenceDetectionEnabled
@@ -19,7 +20,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
+class SilenceDetectionSettingsContentTest : FlakyTest() {
 
     @get: Rule(order = 0)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
@@ -67,7 +68,7 @@ class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOn()
         //Automatic silence detection enabled saved
-        assertTrue { SilenceDetectionSettingsViewModel(get(), get()).viewState.value.isSilenceDetectionEnabled }
+        assertTrue { AppSetting.isAutomaticSilenceDetectionEnabled.value }
         //settings visible
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)
             .assertIsDisplayed()
@@ -80,7 +81,7 @@ class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
         //silence detection time 5000 saved
         assertEquals(
             numberInputTest,
-            SilenceDetectionSettingsViewModel(get(), get()).viewState.value.silenceDetectionMinimumTimeText
+            AppSetting.automaticSilenceDetectionMinimumTime.value.toString()
         )
 
         //user changes silence detection time to 5000
@@ -91,7 +92,7 @@ class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
         //silence detection time 5000 saved
         assertEquals(
             numberInputTest,
-            SilenceDetectionSettingsViewModel(get(), get()).viewState.value.silenceDetectionTimeText
+            AppSetting.automaticSilenceDetectionTime.value.toString()
         )
     }
 

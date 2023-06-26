@@ -3,8 +3,10 @@ package org.rhasspy.mobile.viewmodel
 
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.logicModule
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewStateCreator
@@ -107,8 +109,15 @@ val viewModelModule = module {
     factoryOf(::AboutScreenViewStateCreator)
     singleOf(::AboutScreenViewModel)
 
-    factoryOf(::SilenceDetectionSettingsViewStateCreator)
-    singleOf(::SilenceDetectionSettingsViewModel)
+    factory { params -> SilenceDetectionSettingsViewStateCreator(audioRecorder = params.get()) }
+    single {
+        val audioRecorder: AudioRecorder = get()
+        SilenceDetectionSettingsViewModel(
+            nativeApplication = get(),
+            viewStateCreator = get { parametersOf(audioRecorder) },
+            audioRecorder = audioRecorder
+        )
+    }
 
     factoryOf(::AudioFocusSettingsViewStateCreator)
     singleOf(::AudioFocusSettingsViewModel)

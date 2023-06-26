@@ -9,6 +9,7 @@ import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
+import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination
@@ -68,7 +69,7 @@ data class WakeWordConfigurationViewState internal constructor(
             val outputPort: Int? = ConfigurationSetting.wakeWordUdpOutputPort.value
         ) {
 
-            val outputPortText: String = outputPort.toString()
+            val outputPortText: String = outputPort.toStringOrEmpty()
 
         }
 

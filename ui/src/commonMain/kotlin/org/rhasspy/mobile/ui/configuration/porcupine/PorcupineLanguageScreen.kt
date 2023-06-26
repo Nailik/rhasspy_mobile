@@ -66,7 +66,7 @@ fun PorcupineLanguageScreen(
                 items(editData.languageOptions) { option ->
 
                     RadioButtonListItem(
-                        modifier = Modifier.testTag(IOption = option),
+                        modifier = Modifier.testTag(option = option),
                         text = option.text,
                         isChecked = editData.porcupineLanguage == option,
                         onClick = { onEvent(SelectWakeWordPorcupineLanguage(option)) }

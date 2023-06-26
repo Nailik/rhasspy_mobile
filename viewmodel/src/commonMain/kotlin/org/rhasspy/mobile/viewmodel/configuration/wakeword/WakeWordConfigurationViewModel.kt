@@ -19,9 +19,8 @@ import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.platformspecific.updateListItem
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.BackClick
@@ -104,10 +103,6 @@ class WakeWordConfigurationViewModel(
             BackClick -> navigator.onBackPressed()
             is Navigate -> {
                 navigator.navigate(action.destination)
-
-                if (action.destination == EditPorcupineWakeWordScreen) {
-                    navigator.navigate(DefaultKeywordScreen)
-                }
             }
         }
     }
@@ -126,7 +121,7 @@ class WakeWordConfigurationViewModel(
                     is UpdateWakeWordPorcupineAccessToken -> data.copy(accessToken = change.value)
                     is ClickPorcupineKeywordCustom -> data.copy(customOptions = data.customOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
                     is ClickPorcupineKeywordDefault -> data.copy(defaultOptions = data.defaultOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
-                    is DeletePorcupineKeywordCustom -> data.copy(customOptions = data.customOptions.updateList { add(change.item) })
+                    is DeletePorcupineKeywordCustom -> data.copy(deletedCustomOptions = data.deletedCustomOptions.updateList { add(change.item) })
                     is SelectWakeWordPorcupineLanguage -> data.copy(porcupineLanguage = change.option)
                     is SetPorcupineKeywordCustom -> data.copy(customOptions = data.customOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
                     is SetPorcupineKeywordDefault -> data.copy(defaultOptions = data.defaultOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
@@ -217,14 +212,12 @@ class WakeWordConfigurationViewModel(
     }
 
     override fun onBackPressed(): Boolean {
-        return if (viewState.value.screen == EditPorcupineWakeWordScreen && viewState.value.porcupineWakeWordScreen == DefaultKeywordScreen) {
+        return if (viewState.value.porcupineWakeWordScreen == DefaultKeywordScreen) {
             //pop backstack to remove DefaultKeywordScreen
-            navigator.popBackStack()
-            //pop backstack to remove EditPorcupineWakeWordScreen and go to keyword edit
             navigator.popBackStack()
             //was handled
             true
-        } else if (viewState.value.screen == EditPorcupineWakeWordScreen && viewState.value.porcupineWakeWordScreen == CustomKeywordScreen) {
+        } else if (viewState.value.porcupineWakeWordScreen == CustomKeywordScreen) {
             //navigate to DefaultKeywordScreen
             navigator.replace<PorcupineKeywordConfigurationScreenDestination>(DefaultKeywordScreen)
             //was handled

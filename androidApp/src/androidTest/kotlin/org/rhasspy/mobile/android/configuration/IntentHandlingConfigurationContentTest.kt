@@ -13,8 +13,8 @@ import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.IntentHandlingConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
 import kotlin.test.assertEquals
 
 class IntentHandlingConfigurationContentTest : FlakyTest() {
@@ -52,9 +52,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
     fun testEndpoint() = runTest {
         viewModel.onEvent(SelectIntentHandlingOption(IntentHandlingOption.Disabled))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val editData = viewModel.viewState.value.editData
 
         val textInputTest = "endpointTestInput"
         //option disable is set
@@ -63,16 +61,20 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
         //User clicks option remote http
         composeTestRule.onNodeWithTag(IntentHandlingOption.RemoteHTTP, true).performClick()
         //new option is selected
-        assertEquals(IntentHandlingOption.RemoteHTTP, editData.intentHandlingOption)
+        composeTestRule.awaitIdle()
+        assertEquals(IntentHandlingOption.RemoteHTTP, viewModel.viewState.value.editData.intentHandlingOption)
         composeTestRule.awaitIdle()
 
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint, true).assertExists()
         //endpoint can be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsEnabled()
-        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performScrollTo().performClick()
         composeTestRule.awaitIdle()
-        assertEquals(textInputTest, editData.intentHandlingHttpEndpoint)
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextClearance()
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextInput(textInputTest)
+        composeTestRule.awaitIdle()
+        assertEquals(textInputTest, viewModel.viewState.value.editData.intentHandlingHttpEndpoint)
 
         composeTestRule.onNodeWithTag(IntentHandlingOption.RemoteHTTP, true).performClick()
 
@@ -113,9 +115,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
     fun testHomeAssistant() = runTest {
         viewModel.onEvent(SelectIntentHandlingOption(IntentHandlingOption.Disabled))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val editData = viewModel.viewState.value.editData
 
         val textInputTestEndpoint = "endpointTestInput"
         val textInputTestToken = "tokenTestInput"
@@ -126,7 +126,8 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
         //User clicks option HomeAssistant
         composeTestRule.onNodeWithTag(IntentHandlingOption.HomeAssistant).performClick()
         //new option is selected
-        assertEquals(IntentHandlingOption.HomeAssistant, editData.intentHandlingOption)
+        composeTestRule.awaitIdle()
+        assertEquals(IntentHandlingOption.HomeAssistant, viewModel.viewState.value.editData.intentHandlingOption)
 
         //endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
@@ -139,12 +140,16 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
 
         //endpoint can be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(TestTag.Endpoint)
-            .performTextReplacement(textInputTestEndpoint)
+        composeTestRule.awaitIdle()
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextClearance()
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextInput(textInputTestEndpoint)
+        composeTestRule.awaitIdle()
         //access token can be changed
         composeTestRule.onNodeWithTag(TestTag.AccessToken).performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(TestTag.AccessToken)
-            .performTextReplacement(textInputTestToken)
+        composeTestRule.awaitIdle()
+        composeTestRule.onNodeWithTag(TestTag.AccessToken).performTextClearance()
+        composeTestRule.onNodeWithTag(TestTag.AccessToken).performTextInput(textInputTestToken)
+        composeTestRule.awaitIdle()
 
         //send intents is set
         composeTestRule.onNodeWithTag(TestTag.SendIntents, true)
@@ -157,6 +162,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.awaitIdle()
         IntentHandlingConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to HomeAssistant
             assertEquals(IntentHandlingOption.HomeAssistant, it.intentHandlingOption)

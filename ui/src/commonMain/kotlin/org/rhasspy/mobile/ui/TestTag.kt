@@ -172,9 +172,9 @@ fun Modifier.testTag(enum: TestTag) = semantics(
     }
 )
 
-fun Modifier.testTag(IOption: IOption<*>) = semantics(
+fun Modifier.testTag(option: IOption<*>) = semantics(
     properties = {
-        testTag = IOption.name
+        testTag = option.name
     }
 )
 

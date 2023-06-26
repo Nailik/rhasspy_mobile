@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.configuration.webserver
 
 import androidx.compose.runtime.Stable
 import okio.Path
+import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 @Stable
@@ -20,7 +21,7 @@ data class WebServerConfigurationViewState internal constructor(
         val httpServerSSLKeyPassword: String = ConfigurationSetting.httpServerSSLKeyPassword.value,
     ) {
 
-        val httpServerPortText: String = httpServerPort.toString()
+        val httpServerPortText: String = httpServerPort.toStringOrEmpty()
         val httpServerSSLKeyStoreFileName: String? = httpServerSSLKeyStoreFile?.name
 
     }

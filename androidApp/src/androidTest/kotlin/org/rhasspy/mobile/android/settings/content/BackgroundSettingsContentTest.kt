@@ -19,6 +19,7 @@ import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.settings.content.BackgroundServiceSettingsContent
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Change.SetBackgroundServiceSettingsEnabled
@@ -68,6 +69,7 @@ class BackgroundSettingsContentTest : FlakyTest() {
     @Test
     fun testContent() = runTest {
         viewModel.onEvent(SetBackgroundServiceSettingsEnabled(false))
+        composeTestRule.awaitIdle()
 
         //background services disabled
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOff()
@@ -78,8 +80,7 @@ class BackgroundSettingsContentTest : FlakyTest() {
         //background services active
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOn()
         //background services enabled saved
-        val newViewModel = BackgroundServiceSettingsViewModel(get(), get())
-        assertTrue { newViewModel.viewState.value.isBackgroundServiceEnabled }
+        assertTrue { AppSetting.isBackgroundServiceEnabled.value }
 
         if (!viewModel.viewState.value.isBatteryOptimizationDisabled) {
             //deactivate battery optimization visible
@@ -96,7 +97,6 @@ class BackgroundSettingsContentTest : FlakyTest() {
             device.wait(Until.hasObject(By.res(acceptButton.toPattern())), 5000)
             device.findObject(UiSelector().resourceIdMatches(acceptButton)).click()
         }
-
     }
 
 }

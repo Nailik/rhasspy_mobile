@@ -1,10 +1,6 @@
 package org.rhasspy.mobile.platformspecific.background
 
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
-
-actual class BackgroundService actual constructor(
-    private val nativeApplication: NativeApplication
-) {
+actual class BackgroundService {
 
     /**
      * start background service

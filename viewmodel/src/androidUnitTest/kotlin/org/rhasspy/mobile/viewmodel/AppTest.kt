@@ -16,7 +16,7 @@ import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.logic.logicModule
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
-import kotlin.test.*
+import kotlin.test.AfterTest
 
 abstract class AppTest : KoinTest {
 

@@ -5,8 +5,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.koin.core.component.get
-import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.platformspecific.toIntOrZero
@@ -22,10 +20,10 @@ import kotlin.math.pow
 @Stable
 class SilenceDetectionSettingsViewModel(
     private val nativeApplication: NativeApplication,
+    viewStateCreator: SilenceDetectionSettingsViewStateCreator,
     private val audioRecorder: AudioRecorder,
 ) : ScreenViewModel() {
 
-    private val viewStateCreator: SilenceDetectionSettingsViewStateCreator = get { parametersOf(audioRecorder) }
     val viewState: StateFlow<SilenceDetectionSettingsViewState> = viewStateCreator()
 
     init {
@@ -34,6 +32,11 @@ class SilenceDetectionSettingsViewModel(
                 if (isAppInBackground) {
                     audioRecorder.stopRecording()
                 }
+            }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            audioRecorder.isRecording.collect { isAppInBackground ->
+                println(isAppInBackground)
             }
         }
     }
@@ -66,7 +69,8 @@ class SilenceDetectionSettingsViewModel(
     private fun onAction(action: Action) {
         when (action) {
             ToggleAudioLevelTest -> requireMicrophonePermission {
-                if (audioRecorder.isRecording.value) audioRecorder.stopRecording() else audioRecorder.startRecording(
+                if (audioRecorder.isRecording.value) audioRecorder.stopRecording()
+                else audioRecorder.startRecording(
                     audioRecorderChannelType = AppSetting.audioRecorderChannel.value,
                     audioRecorderEncodingType = AppSetting.audioRecorderEncoding.value,
                     audioRecorderSampleRateType = AppSetting.audioRecorderSampleRate.value

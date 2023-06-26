@@ -74,6 +74,7 @@ class LogSettingsContentTest : FlakyTest() {
 
         //show log is false
         viewModel.onEvent(SetShowLogEnabled(false))
+        composeTestRule.awaitIdle()
         //show log false is shown
         composeTestRule.onNodeWithTag(TestTag.ShowLogEnabled).onListItemSwitch().assertIsOff()
         //user clicks show log

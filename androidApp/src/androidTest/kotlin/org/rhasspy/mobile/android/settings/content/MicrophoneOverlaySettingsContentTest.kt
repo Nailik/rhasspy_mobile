@@ -74,7 +74,7 @@ class MicrophoneOverlaySettingsContentTest : FlakyTest() {
      */
     @Test
     fun testContent() {
-        device.resetOverlayPermission(composeTestRule.activity, get<OverlayPermission>())
+        device.resetOverlayPermission(composeTestRule.activity, get())
 
         viewModel.onEvent(SelectMicrophoneOverlaySizeOption(MicrophoneOverlaySizeOption.Disabled))
         viewModel.onEvent(SetMicrophoneOverlayWhileAppEnabled(false))

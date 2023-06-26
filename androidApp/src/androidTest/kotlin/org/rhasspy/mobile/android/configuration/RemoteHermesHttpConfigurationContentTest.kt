@@ -11,8 +11,8 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.RemoteHermesHttpConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.SetHttpSSLVerificationDisabled
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -52,24 +52,27 @@ class RemoteHermesHttpConfigurationContentTest : FlakyTest() {
     fun testHttpContent() = runTest {
         viewModel.onEvent(SetHttpSSLVerificationDisabled(true))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val editData = viewModel.viewState.value.editData
 
         val textInputTest = "textTestInput"
 
         //host is changed
         composeTestRule.onNodeWithTag(TestTag.Host).performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(TestTag.Host).performTextReplacement(textInputTest)
+        composeTestRule.awaitIdle()
+        composeTestRule.onNodeWithTag(TestTag.Host).performTextClearance()
+        composeTestRule.awaitIdle()
+        composeTestRule.onNodeWithTag(TestTag.Host).performTextInput(textInputTest)
         //disable ssl validation is on
-        assertTrue { editData.isHttpSSLVerificationDisabled }
+        composeTestRule.awaitIdle()
+        assertTrue { viewModel.viewState.value.editData.isHttpSSLVerificationDisabled }
         //switch is on
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOn()
 
         //user clicks switch
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).performClick()
         //disable ssl validation is off
-        assertFalse { editData.isHttpSSLVerificationDisabled }
+        composeTestRule.awaitIdle()
+        assertFalse { viewModel.viewState.value.editData.isHttpSSLVerificationDisabled }
         //switch is off
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOff()
 

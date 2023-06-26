@@ -21,9 +21,9 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemEdit
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewState.TextToSpeechConfigurationData
 
 /**
@@ -41,7 +41,7 @@ fun TextToSpeechConfigurationScreen() {
     ConfigurationScreenItemEdit(
         modifier = Modifier,
         screenViewModel = viewModel,
-        title = MR.strings.webserver.stable,
+        title = MR.strings.textToSpeechText.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent
     ) {
@@ -127,8 +127,8 @@ private fun TextToSpeechHTTP(
 
         //http endpoint input field
         TextFieldListItem(
-            enabled = isUseCustomTextToSpeechHttpEndpoint,
             modifier = Modifier.testTag(TestTag.Endpoint),
+            enabled = isUseCustomTextToSpeechHttpEndpoint,
             value = textToSpeechHttpEndpointText,
             onValueChange = { onAction(UpdateTextToSpeechHttpEndpoint(it)) },
             label = translate(MR.strings.rhasspyTextToSpeechURL.stable, HttpClientPath.TextToSpeech.path)

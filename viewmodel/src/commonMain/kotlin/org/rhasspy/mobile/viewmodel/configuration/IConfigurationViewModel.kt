@@ -28,11 +28,11 @@ abstract class IConfigurationViewModel(
 
     private val _configurationViewState = MutableStateFlow(IConfigurationViewState(serviceViewState = ServiceViewState(service.serviceState)))
     val configurationEditViewState by lazy { initViewStateCreator(_configurationViewState) }
-
     abstract fun initViewStateCreator(configurationViewState: MutableStateFlow<IConfigurationViewState>): StateFlow<IConfigurationViewState>
 
     protected abstract fun onDiscard()
     protected abstract fun onSave()
+
 
     fun onEvent(event: IConfigurationUiEvent) {
         when (event) {
@@ -57,9 +57,9 @@ abstract class IConfigurationViewModel(
         when (dialogAction.dialogState) {
             UnsavedChangesDialogState ->
                 when (dialogAction) {
-                    is Close -> discard(true)
+                    is Close -> Unit
                     is Confirm -> save(true)
-                    is Dismiss -> Unit
+                    is Dismiss -> discard(true)
                 }
 
             else -> Unit

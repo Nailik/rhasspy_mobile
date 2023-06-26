@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.platformspecific
 
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.application.NativeApplication.Companion.koinApplicationModule
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
@@ -42,11 +43,7 @@ val platformSpecificModule = module {
             externalResultRequest = get()
         )
     }
-    single {
-        BackgroundService(
-            nativeApplication = get()
-        )
-    }
+    singleOf(::BackgroundService)
     single {
         ExternalResultRequest(
             nativeApplication = get()

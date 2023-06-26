@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
+import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 @Stable
@@ -21,9 +22,9 @@ data class DialogManagementConfigurationViewState internal constructor(
 
         val dialogManagementOptionList: ImmutableList<DialogManagementOption> = DialogManagementOption.values().toImmutableList()
 
-        val textAsrTimeoutText: String = textAsrTimeout.toString()
-        val intentRecognitionTimeoutText: String = intentRecognitionTimeout.toString()
-        val recordingTimeoutText: String = recordingTimeout.toString()
+        val textAsrTimeoutText: String = textAsrTimeout.toStringOrEmpty()
+        val intentRecognitionTimeoutText: String = intentRecognitionTimeout.toStringOrEmpty()
+        val recordingTimeoutText: String = recordingTimeout.toStringOrEmpty()
 
     }
 

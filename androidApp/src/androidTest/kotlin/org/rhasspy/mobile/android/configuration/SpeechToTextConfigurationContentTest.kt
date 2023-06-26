@@ -12,8 +12,8 @@ import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.SpeechToTextConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import kotlin.test.assertEquals
 
 class SpeechToTextConfigurationContentTest : FlakyTest() {
@@ -58,9 +58,7 @@ class SpeechToTextConfigurationContentTest : FlakyTest() {
     fun testEndpoint() = runTest {
         viewModel.onEvent(SelectSpeechToTextOption(SpeechToTextOption.Disabled))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val editData = viewModel.viewState.value.editData
 
         val textInputTest = "endpointTestInput"
 
@@ -70,7 +68,8 @@ class SpeechToTextConfigurationContentTest : FlakyTest() {
         //User clicks option remote http
         composeTestRule.onNodeWithTag(SpeechToTextOption.RemoteHTTP).performClick()
         //new option is selected
-        assertEquals(SpeechToTextOption.RemoteHTTP, editData.speechToTextOption)
+        composeTestRule.awaitIdle()
+        assertEquals(SpeechToTextOption.RemoteHTTP, viewModel.viewState.value.editData.speechToTextOption)
 
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
@@ -91,9 +90,11 @@ class SpeechToTextConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsEnabled()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performClick()
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextClearance()
         composeTestRule.awaitIdle()
-        assertEquals(textInputTest, editData.speechToTextHttpEndpoint)
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextInput(textInputTest)
+        composeTestRule.awaitIdle()
+        assertEquals(textInputTest, viewModel.viewState.value.editData.speechToTextHttpEndpoint)
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)

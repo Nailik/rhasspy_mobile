@@ -69,8 +69,8 @@ fun <E : IOption<*>> RadioButtonsEnumSelection(
                         content = { nullSafeContent(item) }
                     )
                 }
-            }
 
+            }
         }
     }
 }

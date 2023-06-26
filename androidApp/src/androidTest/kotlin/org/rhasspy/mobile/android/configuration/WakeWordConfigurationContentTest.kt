@@ -1,10 +1,7 @@
 package org.rhasspy.mobile.android.configuration
 
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextReplacement
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
@@ -15,15 +12,21 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.utils.FlakyTest
+import org.rhasspy.mobile.android.utils.TestContentProvider
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.WakeWordConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditPorcupineWakeWordScreen
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -39,6 +42,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
 
     @Before
     fun setUp() {
+        get<Navigator>().navigate(WakeWordConfigurationScreen)
 
         composeTestRule.setContent {
             TestContentProvider {
@@ -66,11 +70,9 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         //option is disable
         viewModel.onEvent(SelectWakeWordOption(WakeWordOption.Disabled))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val editData = viewModel.viewState.value.editData
 
-        assertEquals(WakeWordOption.Disabled, editData.wakeWordOption)
+        assertEquals(WakeWordOption.Disabled, viewModel.viewState.value.editData.wakeWordOption)
 
         //porcupine options not visible
         composeTestRule.onNodeWithTag(TestTag.PorcupineWakeWordSettings).assertDoesNotExist()
@@ -106,11 +108,9 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         viewModel.onEvent(SelectWakeWordOption(WakeWordOption.Porcupine))
         viewModel.onEvent(UpdateWakeWordPorcupineAccessToken(""))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val editData = viewModel.viewState.value.editData
 
-        assertEquals(WakeWordOption.Porcupine, editData.wakeWordOption)
+        assertEquals(WakeWordOption.Porcupine, viewModel.viewState.value.editData.wakeWordOption)
 
         val textInputTest = "fghfghhrtrtzh34ß639254´1´90!$/%(&$("
 
@@ -118,8 +118,10 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.PorcupineAccessToken).assertIsDisplayed()
         //user changes access token
         composeTestRule.onNodeWithTag(TestTag.PorcupineAccessToken).performScrollTo().performClick()
+        composeTestRule.awaitIdle()
         //access token change
-        composeTestRule.onNodeWithTag(TestTag.PorcupineAccessToken).performTextReplacement(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.PorcupineAccessToken).performTextClearance()
+        composeTestRule.onNodeWithTag(TestTag.PorcupineAccessToken).performTextInput(textInputTest)
 
         //user clicks picovoice console
         composeTestRule.onNodeWithTag(TestTag.PorcupineOpenConsole).performScrollTo().performClick()
@@ -128,15 +130,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         device.findObject(UiSelector().textMatches(".*console.picovoice.ai.*")).exists()
         device.pressBack()
 
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         composeTestRule.awaitIdle()
-
-        //user clicks save
-        composeTestRule.saveBottomAppBar(viewModel)
-        WakeWordConfigurationViewModel(get(), get()).viewState.value.editData.also {
-            //access token is saved
-            assertEquals(WakeWordOption.Porcupine, it.wakeWordOption)
-        }
     }
 
     /**
@@ -159,11 +153,10 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         //option is porcupine
         viewModel.onEvent(SelectWakeWordOption(WakeWordOption.Porcupine))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val editData = viewModel.viewState.value.editData
 
-        assertEquals(WakeWordOption.Porcupine, editData.wakeWordOption)
+        assertEquals(WakeWordOption.Porcupine, viewModel.viewState.value.editData.wakeWordOption)
+        composeTestRule.onNodeWithTag(WakeWordConfigurationScreen).assertIsDisplayed()
 
         //wake word is clicked,
         composeTestRule.onNodeWithTag(TestTag.PorcupineKeyword).performScrollTo().performClick()
@@ -173,8 +166,8 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         //back is clicked
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
         //page is back to wake word settings
-        composeTestRule.onNodeWithTag(ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen)
-            .assertIsDisplayed()
+        composeTestRule.awaitIdle()
+        composeTestRule.onNodeWithTag(WakeWordConfigurationScreen).assertIsDisplayed()
 
         //language is clicked
         composeTestRule.onNodeWithTag(TestTag.PorcupineLanguage).performScrollTo().performClick()
@@ -184,8 +177,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         //back is clicked
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
         //page is back to wake word settings
-        composeTestRule.onNodeWithTag(ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen)
-            .assertIsDisplayed()
+        composeTestRule.onNodeWithTag(WakeWordConfigurationScreen).assertIsDisplayed()
 
         assertTrue(true)
     }

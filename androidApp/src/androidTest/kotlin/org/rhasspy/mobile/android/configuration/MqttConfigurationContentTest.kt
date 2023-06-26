@@ -11,9 +11,9 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.MqttConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -53,12 +53,10 @@ class MqttConfigurationContentTest : FlakyTest() {
     fun testMqttContent() = runTest {
         viewModel.onEvent(SetMqttEnabled(false))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val editData = viewModel.viewState.value.editData
 
         //MQTT disabled
-        assertFalse { editData.isMqttEnabled }
+        assertFalse { viewModel.viewState.value.editData.isMqttEnabled }
         //switch is off
         composeTestRule.onNodeWithTag(TestTag.MqttSwitch).onListItemSwitch().assertIsOff()
         //MQTT Settings not visible
@@ -75,7 +73,8 @@ class MqttConfigurationContentTest : FlakyTest() {
         //User clicks switch
         composeTestRule.onNodeWithTag(TestTag.MqttSwitch).performClick()
         //mqtt enabled
-        assertTrue { editData.isMqttEnabled }
+        composeTestRule.awaitIdle()
+        assertTrue { viewModel.viewState.value.editData.isMqttEnabled }
         //switch is on
         composeTestRule.onNodeWithTag(TestTag.MqttSwitch).onListItemSwitch().assertIsOn()
         //settings visible
@@ -113,9 +112,7 @@ class MqttConfigurationContentTest : FlakyTest() {
     fun testMqttConnectionSettings() = runTest {
         viewModel.onEvent(SetMqttEnabled(true))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val editData = viewModel.viewState.value.editData
 
         val textInputTestHost = "hostTestInput"
         val textInputTestPort = "1672"
@@ -123,28 +120,39 @@ class MqttConfigurationContentTest : FlakyTest() {
         val textInputTestPassword = "passwordTestInput"
 
         //mqtt is enabled
-        assertTrue { editData.isMqttEnabled }
+        assertTrue { viewModel.viewState.value.editData.isMqttEnabled }
         //host is changed
         composeTestRule.onNodeWithTag(TestTag.Host).performScrollTo().performClick()
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.Host).performTextReplacement(textInputTestHost)
+        composeTestRule.onNodeWithTag(TestTag.Host).performTextClearance()
+        composeTestRule.awaitIdle()
+        composeTestRule.onNodeWithTag(TestTag.Host).performTextInput(textInputTestHost)
+        composeTestRule.awaitIdle()
         //port is changed
         composeTestRule.onNodeWithTag(TestTag.Port).performScrollTo().performClick()
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.Port).performTextReplacement(textInputTestPort)
+        composeTestRule.onNodeWithTag(TestTag.Port).performTextClearance()
+        composeTestRule.awaitIdle()
+        composeTestRule.onNodeWithTag(TestTag.Port).performTextInput(textInputTestPort)
+        composeTestRule.awaitIdle()
         //username is changed
         composeTestRule.onNodeWithTag(TestTag.UserName).performScrollTo().performClick()
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.UserName)
-            .performTextReplacement(textInputTestUsername)
+        composeTestRule.onNodeWithTag(TestTag.UserName).performTextClearance()
+        composeTestRule.awaitIdle()
+        composeTestRule.onNodeWithTag(TestTag.UserName).performTextInput(textInputTestUsername)
+        composeTestRule.awaitIdle()
         //password is changed
         composeTestRule.onNodeWithTag(TestTag.Password).performScrollTo().performClick()
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.Password)
-            .performTextReplacement(textInputTestPassword)
+        composeTestRule.onNodeWithTag(TestTag.Password).performTextClearance()
+        composeTestRule.awaitIdle()
+        composeTestRule.onNodeWithTag(TestTag.Password).performTextInput(textInputTestPassword)
+        composeTestRule.awaitIdle()
 
         //user click save
         composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.awaitIdle()
         MqttConfigurationViewModel(get()).viewState.value.editData.also {
             //host is saved
             assertEquals(textInputTestHost, it.mqttHost)
@@ -176,21 +184,20 @@ class MqttConfigurationContentTest : FlakyTest() {
         viewModel.onEvent(SetMqttEnabled(true))
         viewModel.onEvent(SetMqttSSLEnabled(false))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val editData = viewModel.viewState.value.editData
 
         //mqtt is enabled
-        assertTrue { editData.isMqttEnabled }
+        assertTrue { viewModel.viewState.value.editData.isMqttEnabled }
         //ssl is disabled
-        assertFalse { editData.isMqttSSLEnabled }
+        assertFalse { viewModel.viewState.value.editData.isMqttSSLEnabled }
         //ssl is off
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOff()
 
         //user clicks ssl
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).performScrollTo().performClick()
         //ssl is enabled
-        assertTrue { editData.isMqttSSLEnabled }
+        composeTestRule.awaitIdle()
+        assertTrue { viewModel.viewState.value.editData.isMqttSSLEnabled }
         //ssl is on
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOn()
 
@@ -220,16 +227,14 @@ class MqttConfigurationContentTest : FlakyTest() {
     fun testMqttConnectionTiming() = runTest {
         viewModel.onEvent(SetMqttEnabled(true))
         viewModel.onEvent(Save)
-        composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val editData = viewModel.viewState.value.editData
 
         val textInputTestConnectionTimeout = "498"
         val textInputTestKeepAliveInterval = "120"
         val textInputTestRetryInterval = "16504"
 
         //mqtt is enabled
-        assertTrue { editData.isMqttEnabled }
+        assertTrue { viewModel.viewState.value.editData.isMqttEnabled }
         //timeout is changed
         composeTestRule.onNodeWithTag(TestTag.ConnectionTimeout).performScrollTo().performClick()
         composeTestRule.awaitIdle()

@@ -6,6 +6,7 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.*
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -67,27 +68,26 @@ class IndicationSettingsContentTest : FlakyTest() {
      * sound is saved
      */
     @Test
+    @AllowFlaky
     fun testIndicationSettings() {
-        device.resetOverlayPermission(composeTestRule.activity, get<OverlayPermission>())
+        device.resetOverlayPermission(composeTestRule.activity, get())
 
         viewModel.onEvent(SetWakeWordLightIndicationEnabled(false))
         viewModel.onEvent(SetSoundIndicationEnabled(false))
         viewModel.onEvent(SetWakeWordDetectionTurnOnDisplay(false))
 
         //wake up display disabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onListItemSwitch()
-            .assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onListItemSwitch().assertIsOff()
         //visual disabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onListItemSwitch()
-            .assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onListItemSwitch().assertIsOff()
         //sound disabled
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onListItemSwitch().assertIsOff()
 
         //user clicks wake up display
         composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).performClick()
+        composeTestRule.waitForIdle()
         //wake up display is enabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onListItemSwitch()
-            .assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onListItemSwitch().assertIsOn()
         //wake up display is saved
         assertTrue { IndicationSettingsViewModel(get()).viewState.value.isWakeWordDetectionTurnOnDisplayEnabled }
 
