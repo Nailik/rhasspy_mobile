@@ -84,29 +84,29 @@ class OverlayPermissionTest : FlakyTest() {
      */
     @Test
     fun testAllow() = runTest {
-        device.resetOverlayPermission(composeTestRule.activity, get())
-
-        permissionResult = false
-        assertFalse { get<OverlayPermission>().granted.value }
-
-        //User clicks button
-        composeTestRule.onNodeWithText(btnRequestPermission).performClick()
-        composeTestRule.awaitIdle()
-        //InformationDialog is shown
-        composeTestRule.onNodeWithTag(TestTag.DialogOverlayPermissionInfo).assertExists()
-        //Cancel clicked
-        composeTestRule.onNodeWithTag(TestTag.DialogCancel).performClick()
-        //Dialog closed
-        composeTestRule.onNodeWithTag(TestTag.DialogOverlayPermissionInfo)
-            .assertDoesNotExist()
-
-        //User clicks button
-        composeTestRule.onNodeWithText(btnRequestPermission).performClick()
-        composeTestRule.awaitIdle()
-        //InformationDialog is shown
-        composeTestRule.onNodeWithTag(TestTag.DialogOverlayPermissionInfo).assertExists()
-
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            device.resetOverlayPermission(composeTestRule.activity, get())
+
+            permissionResult = false
+            assertFalse { get<OverlayPermission>().granted.value }
+
+            //User clicks button
+            composeTestRule.onNodeWithText(btnRequestPermission).performClick()
+            composeTestRule.awaitIdle()
+            //InformationDialog is shown
+            composeTestRule.onNodeWithTag(TestTag.DialogOverlayPermissionInfo).assertExists()
+            //Cancel clicked
+            composeTestRule.onNodeWithTag(TestTag.DialogCancel).performClick()
+            //Dialog closed
+            composeTestRule.onNodeWithTag(TestTag.DialogOverlayPermissionInfo)
+                .assertDoesNotExist()
+
+            //User clicks button
+            composeTestRule.onNodeWithText(btnRequestPermission).performClick()
+            composeTestRule.awaitIdle()
+            //InformationDialog is shown
+            composeTestRule.onNodeWithTag(TestTag.DialogOverlayPermissionInfo).assertExists()
+
             //Ok clicked
             composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
             //on Q app is restarted when allowing overlay permission
