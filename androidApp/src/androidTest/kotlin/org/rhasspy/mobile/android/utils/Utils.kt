@@ -23,10 +23,6 @@ import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
 
 
 fun SemanticsNodeInteraction.onListItemSwitch(): SemanticsNodeInteraction {

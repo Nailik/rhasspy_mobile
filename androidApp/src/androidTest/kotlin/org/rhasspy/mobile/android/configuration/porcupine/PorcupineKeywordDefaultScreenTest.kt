@@ -16,7 +16,6 @@ import org.rhasspy.mobile.ui.configuration.porcupine.PorcupineKeywordDefaultScre
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class PorcupineKeywordDefaultScreenTest : FlakyTest() {
 

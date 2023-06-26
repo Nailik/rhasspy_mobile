@@ -109,7 +109,6 @@ fun Int?.toStringOrEmpty(): String = this?.toString() ?: ""
 fun Long?.toStringOrEmpty(): String = this?.toString() ?: ""
 
 
-
 fun <E> ImmutableList<E>.updateList(block: MutableList<E>.() -> Unit): ImmutableList<E> {
     return this.toMutableList().apply(block).toImmutableList()
 }
