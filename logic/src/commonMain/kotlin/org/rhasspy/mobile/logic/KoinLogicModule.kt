@@ -1,5 +1,7 @@
 package org.rhasspy.mobile.logic
 
+import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.logger.FileLogger
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
@@ -48,54 +50,49 @@ val logicModule = module {
 
     single { AudioFocusService() }
 
-    single { AudioPlayingServiceParamsCreator() }
-    single { AudioPlayingService(paramsCreator = get()) }
+    factoryOf(::AudioPlayingServiceParamsCreator)
+    singleOf(::AudioPlayingService)
 
-    single { DialogManagerServiceParamsCreator() }
-    single { DialogManagerService(paramsCreator = get()) }
+    factoryOf(::DialogManagerServiceParamsCreator)
+    singleOf(::DialogManagerService)
 
-    single { HomeAssistantServiceParamsCreator() }
-    single { HomeAssistantService(paramsCreator = get()) }
+    factoryOf(::HomeAssistantServiceParamsCreator)
+    singleOf(::HomeAssistantService)
 
-    single { HttpClientServiceParamsCreator() }
-    single { HttpClientService(paramsCreator = get()) }
+    factoryOf(::HttpClientServiceParamsCreator)
+    singleOf(::HttpClientService)
 
-    single { IndicationService() }
+    singleOf(::IndicationService)
 
-    single { IntentHandlingServiceParamsCreator() }
-    single { IntentHandlingService(paramsCreator = get()) }
+    factoryOf(::IntentHandlingServiceParamsCreator)
+    singleOf(::IntentHandlingService)
 
-    single { IntentRecognitionServiceParamsCreator() }
-    single { IntentRecognitionService(paramsCreator = get()) }
+    factoryOf(::IntentRecognitionServiceParamsCreator)
+    singleOf(::IntentRecognitionService)
 
-    single { LocalAudioServiceParamsCreator() }
-    single { LocalAudioService(paramsCreator = get()) }
+    factoryOf(::LocalAudioServiceParamsCreator)
+    singleOf(::LocalAudioService)
 
-    single { RecordingService(audioRecorder = get()) }
+    singleOf(::RecordingService)
 
-    single { AppSettingsService() }
+    singleOf(::AppSettingsService)
 
-    single { MqttServiceParamsCreator() }
-    single { MqttService(paramsCreator = get()) }
+    factoryOf(::MqttServiceParamsCreator)
+    singleOf(::MqttService)
 
-    single { SpeechToTextServiceParamsCreator() }
-    single { SpeechToTextService(paramsCreator = get()) }
+    factoryOf(::SpeechToTextServiceParamsCreator)
+    singleOf(::SpeechToTextService)
 
-    single { TextToSpeechServiceParamsCreator() }
-    single { TextToSpeechService(paramsCreator = get()) }
+    factoryOf(::TextToSpeechServiceParamsCreator)
+    singleOf(::TextToSpeechService)
 
-    single { WakeWordServiceParamsCreator() }
-    single { WakeWordService(paramsCreator = get()) }
+    factoryOf(::WakeWordServiceParamsCreator)
+    singleOf(::WakeWordService)
 
-    single { WebServerServiceParamsCreator() }
-    single { WebServerService(paramsCreator = get()) }
+    factoryOf(::WebServerServiceParamsCreator)
+    singleOf(::WebServerService)
 
     factory { params -> UdpConnection(params[0], params[1]) }
 
-    single {
-        FileLogger(
-            nativeApplication = get(),
-            externalResultRequest = get()
-        )
-    }
+    singleOf(::FileLogger)
 }
