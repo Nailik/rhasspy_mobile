@@ -11,16 +11,18 @@ import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination
 
 @Stable
 data class WakeWordConfigurationViewState internal constructor(
-    val editData: WakeWordConfigurationData,
+    override val editData: WakeWordConfigurationData,
     val screen: WakeWordConfigurationScreenDestination,
     val porcupineWakeWordScreen: PorcupineKeywordConfigurationScreenDestination,
     val isMicrophonePermissionRequestVisible: Boolean
-) {
+) : IConfigurationViewState {
 
     @Stable
     data class PorcupineCustomKeywordViewState(
@@ -33,7 +35,7 @@ data class WakeWordConfigurationViewState internal constructor(
         val wakeWordOption: WakeWordOption = ConfigurationSetting.wakeWordOption.value,
         val wakeWordPorcupineConfigurationData: WakeWordPorcupineConfigurationData = WakeWordPorcupineConfigurationData(),
         val wakeWordUdpConfigurationData: WakeWordUdpConfigurationData = WakeWordUdpConfigurationData(),
-    ) {
+    ) : IConfigurationData {
         val wakeWordOptions: ImmutableList<WakeWordOption> = WakeWordOption.values().toImmutableList()
 
         @Stable

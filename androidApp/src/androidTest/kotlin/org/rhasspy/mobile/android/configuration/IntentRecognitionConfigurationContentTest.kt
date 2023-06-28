@@ -96,7 +96,7 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
         assertEquals(textInputTest, viewModel.viewState.value.editData.intentRecognitionHttpEndpoint)
 
         //User clicks save
-        composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.saveBottomAppBar()
         IntentRecognitionConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
             assertEquals(IntentRecognitionOption.RemoteHTTP, it.intentRecognitionOption)

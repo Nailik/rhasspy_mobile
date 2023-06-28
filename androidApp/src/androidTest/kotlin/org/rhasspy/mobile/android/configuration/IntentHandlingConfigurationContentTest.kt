@@ -79,7 +79,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(IntentHandlingOption.RemoteHTTP, true).performClick()
 
         //User clicks save
-        composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.saveBottomAppBar()
         IntentHandlingConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
             assertEquals(IntentHandlingOption.RemoteHTTP, it.intentHandlingOption)
@@ -161,7 +161,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
             .performScrollTo().onListItemRadioButton().assertIsSelected()
 
         //User clicks save
-        composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.saveBottomAppBar()
         composeTestRule.awaitIdle()
         IntentHandlingConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to HomeAssistant

@@ -5,12 +5,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
-import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.platformspecific.toLongOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change
@@ -24,20 +24,15 @@ class RemoteHermesHttpConfigurationViewModel(
     service = service
 ) {
 
-    private val initialConfigurationData = RemoteHermesHttpConfigurationData()
-
-    private val _editData = MutableStateFlow(initialConfigurationData)
-    private val _viewState = MutableStateFlow(RemoteHermesHttpConfigurationViewState(initialConfigurationData))
-    val viewState = combineState(_viewState, _editData) { viewState, editData ->
-        viewState.copy(editData = editData)
-    }
+    private val _viewState = MutableStateFlow(RemoteHermesHttpConfigurationViewState(RemoteHermesHttpConfigurationData()))
+    val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<IConfigurationViewState>
-    ): StateFlow<IConfigurationViewState> {
+        configurationViewState: MutableStateFlow<ConfigurationViewState>
+    ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
             init = ::RemoteHermesHttpConfigurationData,
-            editData = _editData,
+            viewState = viewState,
             configurationViewState = configurationViewState
         )
     }
@@ -50,13 +45,15 @@ class RemoteHermesHttpConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        _editData.update {
-            when (change) {
-                is SetHttpSSLVerificationDisabled -> it.copy(isHttpSSLVerificationDisabled = change.disabled)
-                is UpdateHttpClientServerEndpointHost -> it.copy(httpClientServerEndpointHost = change.host)
-                is UpdateHttpClientServerEndpointPort -> it.copy(httpClientServerEndpointPort = change.port.toIntOrNull())
-                is UpdateHttpClientTimeout -> it.copy(httpClientTimeout = change.text.toLongOrNull())
-            }
+        _viewState.update {
+            it.copy(editData = with(it.editData) {
+                when (change) {
+                    is SetHttpSSLVerificationDisabled -> copy(isHttpSSLVerificationDisabled = change.disabled)
+                    is UpdateHttpClientServerEndpointHost -> copy(httpClientServerEndpointHost = change.host)
+                    is UpdateHttpClientServerEndpointPort -> copy(httpClientServerEndpointPort = change.port.toIntOrNull())
+                    is UpdateHttpClientTimeout -> copy(httpClientTimeout = change.text.toLongOrNull())
+                }
+            })
         }
     }
 
@@ -67,11 +64,11 @@ class RemoteHermesHttpConfigurationViewModel(
     }
 
     override fun onDiscard() {
-        _editData.value = RemoteHermesHttpConfigurationData()
+        _viewState.update { it.copy(editData = RemoteHermesHttpConfigurationData()) }
     }
 
     override fun onSave() {
-        with(_editData.value) {
+        with(_viewState.value.editData) {
             ConfigurationSetting.httpClientServerEndpointHost.value = httpClientServerEndpointHost
             ConfigurationSetting.httpClientServerEndpointPort.value = httpClientServerEndpointPort.toIntOrZero()
             ConfigurationSetting.isHttpClientSSLVerificationDisabled.value = isHttpSSLVerificationDisabled

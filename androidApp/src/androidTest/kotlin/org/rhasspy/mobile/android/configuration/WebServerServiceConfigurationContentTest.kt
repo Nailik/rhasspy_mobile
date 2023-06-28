@@ -114,7 +114,7 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.CertificateButton).assertExists()
 
         //user click save
-        composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.saveBottomAppBar()
         WebServerConfigurationViewModel(get()).viewState.value.editData.also {
             //enable http api is saved
             assertEquals(true, it.isHttpServerEnabled)

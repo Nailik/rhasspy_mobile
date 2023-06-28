@@ -66,13 +66,14 @@ class RecordingService(
     }
 
     private fun silenceDetection(volume: Float) {
+        val automaticSilenceDetectionTime = AppSetting.automaticSilenceDetectionTime.value ?: 0
         //check enabled
         if (AppSetting.isAutomaticSilenceDetectionEnabled.value) {
 
             //check minimum recording time
             val currentTime = Clock.System.now()
             val timeSinceStart = recordingStartTime?.let { currentTime.minus(it) } ?: 0.milliseconds
-            if (timeSinceStart > AppSetting.automaticSilenceDetectionMinimumTime.value.milliseconds) {
+            if (timeSinceStart > automaticSilenceDetectionTime.milliseconds) {
 
                 //volume below threshold
                 if (volume < AppSetting.automaticSilenceDetectionAudioLevel.value) {
@@ -83,7 +84,7 @@ class RecordingService(
                         //silence duration
                         val timeSinceSilenceDetected = silenceStartTime?.let { currentTime.minus(it) } ?: 0.milliseconds
                         //check if silence was detected for x milliseconds
-                        if (timeSinceSilenceDetected > AppSetting.automaticSilenceDetectionTime.value.milliseconds) {
+                        if (timeSinceSilenceDetected > automaticSilenceDetectionTime.milliseconds) {
                             serviceMiddleware.action(ServiceMiddlewareAction.DialogServiceMiddlewareAction.SilenceDetected(Source.Local))
                         }
 

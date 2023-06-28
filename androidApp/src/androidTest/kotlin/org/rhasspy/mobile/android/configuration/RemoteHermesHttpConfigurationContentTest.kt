@@ -60,7 +60,6 @@ class RemoteHermesHttpConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.Host).performScrollTo().performClick()
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Host).performTextClearance()
-        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Host).performTextInput(textInputTest)
         //disable ssl validation is on
         composeTestRule.awaitIdle()
@@ -77,7 +76,7 @@ class RemoteHermesHttpConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOff()
 
         //user click save
-        composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.saveBottomAppBar()
         RemoteHermesHttpConfigurationViewModel(get()).viewState.value.editData.also {
             //disable ssl validation off is saved
             assertEquals(false, it.isHttpSSLVerificationDisabled)

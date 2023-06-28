@@ -5,10 +5,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
-import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change
@@ -30,20 +30,15 @@ class AudioPlayingConfigurationViewModel(
     service = service
 ) {
 
-    private val initialConfigurationData = AudioPlayingConfigurationData()
-
-    private val _editData = MutableStateFlow(initialConfigurationData)
-    private val _viewState = MutableStateFlow(AudioPlayingConfigurationViewState(initialConfigurationData))
-    val viewState = combineState(_viewState, _editData) { viewState, editData ->
-        viewState.copy(editData = editData)
-    }
+    private val _viewState = MutableStateFlow(AudioPlayingConfigurationViewState(AudioPlayingConfigurationData()))
+    val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<IConfigurationViewState>
-    ): StateFlow<IConfigurationViewState> {
+        configurationViewState: MutableStateFlow<ConfigurationViewState>
+    ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
             init = ::AudioPlayingConfigurationData,
-            editData = _editData,
+            viewState = viewState,
             configurationViewState = configurationViewState
         )
     }
@@ -60,14 +55,16 @@ class AudioPlayingConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        _editData.update {
-            when (change) {
-                is SelectEditAudioPlayingOption -> it.copy(audioPlayingOption = change.option)
-                is SelectAudioOutputOption -> it.copy(audioOutputOption = change.option)
-                is SetUseCustomHttpEndpoint -> it.copy(isUseCustomAudioPlayingHttpEndpoint = change.enabled)
-                is ChangeEditAudioPlayingHttpEndpoint -> it.copy(audioPlayingHttpEndpoint = change.enabled)
-                is ChangeEditAudioPlayingMqttSiteId -> it.copy(audioPlayingMqttSiteId = change.siteId)
-            }
+        _viewState.update {
+            it.copy(editData = with(it.editData) {
+                when (change) {
+                    is SelectEditAudioPlayingOption -> copy(audioPlayingOption = change.option)
+                    is SelectAudioOutputOption -> copy(audioOutputOption = change.option)
+                    is SetUseCustomHttpEndpoint -> copy(isUseCustomAudioPlayingHttpEndpoint = change.enabled)
+                    is ChangeEditAudioPlayingHttpEndpoint -> copy(audioPlayingHttpEndpoint = change.enabled)
+                    is ChangeEditAudioPlayingMqttSiteId -> copy(audioPlayingMqttSiteId = change.siteId)
+                }
+            })
         }
     }
 
@@ -78,11 +75,11 @@ class AudioPlayingConfigurationViewModel(
     }
 
     override fun onDiscard() {
-        _editData.value = AudioPlayingConfigurationData()
+        _viewState.update { it.copy(editData = AudioPlayingConfigurationData()) }
     }
 
     override fun onSave() {
-        with(_editData.value) {
+        with(_viewState.value.editData) {
             ConfigurationSetting.audioPlayingOption.value = audioPlayingOption
             ConfigurationSetting.audioOutputOption.value = audioOutputOption
             ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value = isUseCustomAudioPlayingHttpEndpoint

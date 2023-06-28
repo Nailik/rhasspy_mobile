@@ -57,7 +57,7 @@ class DialogManagementConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(DialogManagementOption.Local, true).onListItemRadioButton().assertIsSelected()
 
         //User clicks save
-        composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.saveBottomAppBar()
         DialogManagementConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to local
             assertEquals(DialogManagementOption.Local, it.dialogManagementOption)

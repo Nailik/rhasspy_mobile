@@ -5,10 +5,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
-import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change
@@ -22,20 +22,15 @@ class TextToSpeechConfigurationViewModel(
     service = service
 ) {
 
-    private val initialConfigurationData = TextToSpeechConfigurationData()
-
-    private val _editData = MutableStateFlow(initialConfigurationData)
-    private val _viewState = MutableStateFlow(TextToSpeechConfigurationViewState(initialConfigurationData))
-    val viewState = combineState(_viewState, _editData) { viewState, editData ->
-        viewState.copy(editData = editData)
-    }
+    private val _viewState = MutableStateFlow(TextToSpeechConfigurationViewState(TextToSpeechConfigurationData()))
+    val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<IConfigurationViewState>
-    ): StateFlow<IConfigurationViewState> {
+        configurationViewState: MutableStateFlow<ConfigurationViewState>
+    ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = TextToSpeechConfigurationViewState::TextToSpeechConfigurationData,
-            editData = _editData,
+            init = ::TextToSpeechConfigurationData,
+            viewState = viewState,
             configurationViewState = configurationViewState
         )
     }
@@ -48,12 +43,14 @@ class TextToSpeechConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        _editData.update {
-            when (change) {
-                is SelectTextToSpeechOption -> it.copy(textToSpeechOption = change.option)
-                is SetUseCustomHttpEndpoint -> it.copy(isUseCustomTextToSpeechHttpEndpoint = change.enabled)
-                is UpdateTextToSpeechHttpEndpoint -> it.copy(textToSpeechHttpEndpoint = change.endpoint)
-            }
+        _viewState.update {
+            it.copy(editData = with(it.editData) {
+                when (change) {
+                    is SelectTextToSpeechOption -> copy(textToSpeechOption = change.option)
+                    is SetUseCustomHttpEndpoint -> copy(isUseCustomTextToSpeechHttpEndpoint = change.enabled)
+                    is UpdateTextToSpeechHttpEndpoint -> copy(textToSpeechHttpEndpoint = change.endpoint)
+                }
+            })
         }
     }
 
@@ -64,11 +61,11 @@ class TextToSpeechConfigurationViewModel(
     }
 
     override fun onDiscard() {
-        _editData.value = TextToSpeechConfigurationData()
+        _viewState.update { it.copy(editData = TextToSpeechConfigurationData()) }
     }
 
     override fun onSave() {
-        with(_editData.value) {
+        with(_viewState.value.editData) {
             ConfigurationSetting.textToSpeechOption.value = textToSpeechOption
             ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value = isUseCustomTextToSpeechHttpEndpoint
             ConfigurationSetting.textToSpeechHttpEndpoint.value = textToSpeechHttpEndpoint

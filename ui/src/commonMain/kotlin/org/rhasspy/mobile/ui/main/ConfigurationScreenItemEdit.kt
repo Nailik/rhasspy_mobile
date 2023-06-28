@@ -27,13 +27,13 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.ServiceStateDialogState
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.UnsavedChangesDialogState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction.*
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.DialogState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.DialogState.ServiceStateDialogState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.DialogState.UnsavedChangesDialogState
 import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 
 /**
@@ -45,7 +45,7 @@ fun ConfigurationScreenItemEdit(
     modifier: Modifier,
     screenViewModel: IScreenViewModel,
     title: StableStringResource,
-    viewState: IConfigurationViewState,
+    viewState: ConfigurationViewState,
     onEvent: (IConfigurationUiEvent) -> Unit,
     content: @Composable () -> Unit
 ) {

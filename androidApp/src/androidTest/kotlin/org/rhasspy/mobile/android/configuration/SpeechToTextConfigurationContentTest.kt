@@ -91,13 +91,12 @@ class SpeechToTextConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performClick()
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextClearance()
-        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextInput(textInputTest)
         composeTestRule.awaitIdle()
         assertEquals(textInputTest, viewModel.viewState.value.editData.speechToTextHttpEndpoint)
 
         //User clicks save
-        composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.saveBottomAppBar()
         SpeechToTextConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
             assertEquals(SpeechToTextOption.RemoteHTTP, it.speechToTextOption)

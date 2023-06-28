@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
-import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action
@@ -59,10 +58,10 @@ class SilenceDetectionSettingsViewModel(
                 } else 0f
 
             is UpdateSilenceDetectionMinimumTime ->
-                AppSetting.automaticSilenceDetectionMinimumTime.value = change.time.toIntOrZero()
+                AppSetting.automaticSilenceDetectionMinimumTime.value = change.time.toLongOrNull()
 
             is UpdateSilenceDetectionTime ->
-                AppSetting.automaticSilenceDetectionTime.value = change.time.toIntOrZero()
+                AppSetting.automaticSilenceDetectionTime.value = change.time.toLongOrNull()
         }
     }
 

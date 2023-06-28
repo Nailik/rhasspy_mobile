@@ -10,12 +10,12 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.ServiceStateDialogState
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.UnsavedChangesDialogState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction.*
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.DialogState.ServiceStateDialogState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.DialogState.UnsavedChangesDialogState
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
@@ -26,9 +26,9 @@ abstract class IConfigurationViewModel(
 
     protected val viewStateCreator by inject<IConfigurationViewStateCreator> { parametersOf(service) }
 
-    private val _configurationViewState = MutableStateFlow(IConfigurationViewState(serviceViewState = ServiceViewState(service.serviceState)))
+    private val _configurationViewState = MutableStateFlow(ConfigurationViewState(serviceViewState = ServiceViewState(service.serviceState)))
     val configurationEditViewState by lazy { initViewStateCreator(_configurationViewState) }
-    abstract fun initViewStateCreator(configurationViewState: MutableStateFlow<IConfigurationViewState>): StateFlow<IConfigurationViewState>
+    abstract fun initViewStateCreator(configurationViewState: MutableStateFlow<ConfigurationViewState>): StateFlow<ConfigurationViewState>
 
     protected abstract fun onDiscard()
     protected abstract fun onSave()

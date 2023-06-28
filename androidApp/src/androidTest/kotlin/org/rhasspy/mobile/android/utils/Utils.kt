@@ -21,7 +21,6 @@ import org.rhasspy.mobile.data.service.option.IOption
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
 
@@ -174,7 +173,7 @@ fun SemanticsNodeInteraction.assertTextEquals(
         includeEditableText = includeEditableText
     )
 
-suspend fun ComposeTestRule.saveBottomAppBar(viewModel: IConfigurationViewModel) {
+suspend fun ComposeTestRule.saveBottomAppBar() {
     Espresso.closeSoftKeyboard()
     waitUntilExists(hasTestTag(TestTag.BottomAppBarSave).and(isEnabled()))
     onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()

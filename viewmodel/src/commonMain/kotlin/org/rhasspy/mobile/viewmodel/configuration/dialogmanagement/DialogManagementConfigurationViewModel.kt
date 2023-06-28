@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
-import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toLongOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change
@@ -29,20 +29,15 @@ class DialogManagementConfigurationViewModel(
     service = service
 ) {
 
-    private val initialConfigurationData = DialogManagementConfigurationData()
-
-    private val _editData = MutableStateFlow(initialConfigurationData)
-    private val _viewState = MutableStateFlow(DialogManagementConfigurationViewState(initialConfigurationData))
-    val viewState = combineState(_viewState, _editData) { viewState, editData ->
-        viewState.copy(editData = editData)
-    }
+    private val _viewState = MutableStateFlow(DialogManagementConfigurationViewState(DialogManagementConfigurationData()))
+    val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<IConfigurationViewState>
-    ): StateFlow<IConfigurationViewState> {
+        configurationViewState: MutableStateFlow<ConfigurationViewState>
+    ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
             init = ::DialogManagementConfigurationData,
-            editData = _editData,
+            viewState = viewState,
             configurationViewState = configurationViewState
         )
     }
@@ -55,13 +50,15 @@ class DialogManagementConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        _editData.update {
-            when (change) {
-                is ChangeIntentRecognitionTimeout -> it.copy(intentRecognitionTimeout = change.timeout.toLongOrNull())
-                is ChangeRecordingTimeout -> it.copy(recordingTimeout = change.timeout.toLongOrNull())
-                is ChangeTextAsrTimeout -> it.copy(textAsrTimeout = change.timeout.toLongOrNull())
-                is SelectDialogManagementOption -> it.copy(dialogManagementOption = change.option)
-            }
+        _viewState.update {
+            it.copy(editData = with(it.editData) {
+                when (change) {
+                    is ChangeIntentRecognitionTimeout -> copy(intentRecognitionTimeout = change.timeout.toLongOrNull())
+                    is ChangeRecordingTimeout -> copy(recordingTimeout = change.timeout.toLongOrNull())
+                    is ChangeTextAsrTimeout -> copy(textAsrTimeout = change.timeout.toLongOrNull())
+                    is SelectDialogManagementOption -> copy(dialogManagementOption = change.option)
+                }
+            })
         }
     }
 
@@ -72,11 +69,11 @@ class DialogManagementConfigurationViewModel(
     }
 
     override fun onDiscard() {
-        _editData.value = DialogManagementConfigurationData()
+        _viewState.update { it.copy(editData = DialogManagementConfigurationData()) }
     }
 
     override fun onSave() {
-        with(_editData.value) {
+        with(_viewState.value.editData) {
             ConfigurationSetting.dialogManagementOption.value = dialogManagementOption
             ConfigurationSetting.textAsrTimeout.value = textAsrTimeout.toLongOrZero()
             ConfigurationSetting.intentRecognitionTimeout.value = intentRecognitionTimeout.toLongOrZero()

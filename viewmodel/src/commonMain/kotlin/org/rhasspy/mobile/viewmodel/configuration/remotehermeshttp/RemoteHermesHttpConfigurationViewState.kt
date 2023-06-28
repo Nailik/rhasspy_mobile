@@ -3,11 +3,13 @@ package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 
 @Stable
 data class RemoteHermesHttpConfigurationViewState internal constructor(
-    val editData: RemoteHermesHttpConfigurationData
-) {
+    override val editData: RemoteHermesHttpConfigurationData
+) : IConfigurationViewState {
 
     @Stable
     data class RemoteHermesHttpConfigurationData internal constructor(
@@ -15,7 +17,7 @@ data class RemoteHermesHttpConfigurationViewState internal constructor(
         val httpClientServerEndpointPort: Int? = ConfigurationSetting.httpClientServerEndpointPort.value,
         val httpClientTimeout: Long? = ConfigurationSetting.httpClientTimeout.value,
         val isHttpSSLVerificationDisabled: Boolean = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value
-    ) {
+    ) : IConfigurationData {
 
         val httpClientServerEndpointPortText: String = httpClientServerEndpointPort.toStringOrEmpty()
         val httpClientTimeoutText: String = httpClientTimeout.toStringOrEmpty()

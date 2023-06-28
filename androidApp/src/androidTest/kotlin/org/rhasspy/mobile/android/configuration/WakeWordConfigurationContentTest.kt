@@ -80,7 +80,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.PorcupineWakeWordSettings).assertIsDisplayed()
 
         //user clicks save
-        composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.saveBottomAppBar()
         WakeWordConfigurationViewModel(get(), get()).viewState.value.editData.also {
             //new option is saved
             assertEquals(WakeWordOption.Porcupine, it.wakeWordOption)

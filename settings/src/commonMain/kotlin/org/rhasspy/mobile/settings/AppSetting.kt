@@ -28,8 +28,8 @@ object AppSetting : KoinComponent {
     val isAutomaticSilenceDetectionEnabled = ISetting(SettingsEnum.AutomaticSilenceDetection, false)
     val automaticSilenceDetectionAudioLevel =
         ISetting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
-    val automaticSilenceDetectionTime = ISetting(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
-    val automaticSilenceDetectionMinimumTime = ISetting(SettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000)
+    val automaticSilenceDetectionTime = ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
+    val automaticSilenceDetectionMinimumTime = ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000)
 
     val isBackgroundServiceEnabled = ISetting(SettingsEnum.BackgroundEnabled, false)
     val microphoneOverlaySizeOption =

@@ -5,10 +5,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
-import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change
@@ -22,20 +22,15 @@ class IntentHandlingConfigurationViewModel(
     service = service
 ) {
 
-    private val initialConfigurationData = IntentHandlingConfigurationData()
-
-    private val _editData = MutableStateFlow(initialConfigurationData)
-    private val _viewState = MutableStateFlow(IntentHandlingConfigurationViewState(initialConfigurationData))
-    val viewState = combineState(_viewState, _editData) { viewState, editData ->
-        viewState.copy(editData = editData)
-    }
+    private val _viewState = MutableStateFlow(IntentHandlingConfigurationViewState(IntentHandlingConfigurationData()))
+    val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<IConfigurationViewState>
-    ): StateFlow<IConfigurationViewState> {
+        configurationViewState: MutableStateFlow<ConfigurationViewState>
+    ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
             init = ::IntentHandlingConfigurationData,
-            editData = _editData,
+            viewState = viewState,
             configurationViewState = configurationViewState
         )
     }
@@ -48,14 +43,16 @@ class IntentHandlingConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        _editData.update {
-            when (change) {
-                is ChangeIntentHandlingHomeAssistantAccessToken -> it.copy(intentHandlingHomeAssistantAccessToken = change.token)
-                is ChangeIntentHandlingHomeAssistantEndpoint -> it.copy(intentHandlingHomeAssistantEndpoint = change.endpoint)
-                is ChangeIntentHandlingHttpEndpoint -> it.copy(intentHandlingHttpEndpoint = change.endpoint)
-                is SelectIntentHandlingHomeAssistantOption -> it.copy(intentHandlingHomeAssistantOption = change.option)
-                is SelectIntentHandlingOption -> it.copy(intentHandlingOption = change.option)
-            }
+        _viewState.update {
+            it.copy(editData = with(it.editData) {
+                when (change) {
+                    is ChangeIntentHandlingHomeAssistantAccessToken -> copy(intentHandlingHomeAssistantAccessToken = change.token)
+                    is ChangeIntentHandlingHomeAssistantEndpoint -> copy(intentHandlingHomeAssistantEndpoint = change.endpoint)
+                    is ChangeIntentHandlingHttpEndpoint -> copy(intentHandlingHttpEndpoint = change.endpoint)
+                    is SelectIntentHandlingHomeAssistantOption -> copy(intentHandlingHomeAssistantOption = change.option)
+                    is SelectIntentHandlingOption -> copy(intentHandlingOption = change.option)
+                }
+            })
         }
     }
 
@@ -66,11 +63,11 @@ class IntentHandlingConfigurationViewModel(
     }
 
     override fun onDiscard() {
-        _editData.value = IntentHandlingConfigurationData()
+        _viewState.update { it.copy(editData = IntentHandlingConfigurationData()) }
     }
 
     override fun onSave() {
-        with(_editData.value) {
+        with(_viewState.value.editData) {
             ConfigurationSetting.intentHandlingOption.value = intentHandlingOption
             ConfigurationSetting.intentHandlingHttpEndpoint.value = intentHandlingHttpEndpoint
             ConfigurationSetting.intentHandlingHomeAssistantEndpoint.value = intentHandlingHomeAssistantEndpoint

@@ -33,7 +33,7 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemEdit
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.RequestMicrophonePermission
@@ -95,7 +95,7 @@ fun WakeWordConfigurationScreen() {
 private fun WakeWordConfigurationEditContent(
     viewModel: WakeWordConfigurationViewModel,
     viewState: WakeWordConfigurationViewState,
-    configurationViewState: IConfigurationViewState,
+    configurationViewState: ConfigurationViewState,
     onEvent: (WakeWordConfigurationUiEvent) -> Unit
 ) {
 

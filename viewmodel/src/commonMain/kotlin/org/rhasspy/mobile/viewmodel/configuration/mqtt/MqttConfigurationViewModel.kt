@@ -6,14 +6,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.platformspecific.toLongOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change
@@ -27,20 +27,15 @@ class MqttConfigurationViewModel(
     service = service
 ) {
 
-    private val initialConfigurationData = MqttConfigurationData()
-
-    private val _editData = MutableStateFlow(initialConfigurationData)
-    private val _viewState = MutableStateFlow(MqttConfigurationViewState(initialConfigurationData))
-    val viewState = combineState(_viewState, _editData) { viewState, editData ->
-        viewState.copy(editData = editData)
-    }
+    private val _viewState = MutableStateFlow(MqttConfigurationViewState(MqttConfigurationData()))
+    val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<IConfigurationViewState>
-    ): StateFlow<IConfigurationViewState> {
+        configurationViewState: MutableStateFlow<ConfigurationViewState>
+    ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
             init = ::MqttConfigurationData,
-            editData = _editData,
+            viewState = viewState,
             configurationViewState = configurationViewState
         )
     }
@@ -53,19 +48,21 @@ class MqttConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        _editData.update {
-            when (change) {
-                is SetMqttEnabled -> it.copy(isMqttEnabled = change.enabled)
-                is SetMqttSSLEnabled -> it.copy(isMqttSSLEnabled = change.enabled)
-                is UpdateMqttConnectionTimeout -> it.copy(mqttConnectionTimeout = change.timeout.toLongOrNull())
-                is UpdateMqttHost -> it.copy(mqttHost = change.host)
-                is UpdateMqttKeepAliveInterval -> it.copy(mqttKeepAliveInterval = change.keepAliveInterval.toLongOrNull())
-                is UpdateMqttPassword -> it.copy(mqttPassword = change.password)
-                is UpdateMqttPort -> it.copy(mqttPort = change.port.toIntOrNull())
-                is UpdateMqttRetryInterval -> it.copy(mqttRetryInterval = change.retryInterval.toLongOrNull())
-                is UpdateMqttUserName -> it.copy(mqttUserName = change.userName)
-                is UpdateMqttKeyStoreFile -> it.copy(mqttKeyStoreFile = change.file)
-            }
+        _viewState.update {
+            it.copy(editData = with(it.editData) {
+                when (change) {
+                    is SetMqttEnabled -> copy(isMqttEnabled = change.enabled)
+                    is SetMqttSSLEnabled -> copy(isMqttSSLEnabled = change.enabled)
+                    is UpdateMqttConnectionTimeout -> copy(mqttConnectionTimeout = change.timeout.toLongOrNull())
+                    is UpdateMqttHost -> copy(mqttHost = change.host)
+                    is UpdateMqttKeepAliveInterval -> copy(mqttKeepAliveInterval = change.keepAliveInterval.toLongOrNull())
+                    is UpdateMqttPassword -> copy(mqttPassword = change.password)
+                    is UpdateMqttPort -> copy(mqttPort = change.port.toIntOrNull())
+                    is UpdateMqttRetryInterval -> copy(mqttRetryInterval = change.retryInterval.toLongOrNull())
+                    is UpdateMqttUserName -> copy(mqttUserName = change.userName)
+                    is UpdateMqttKeyStoreFile -> copy(mqttKeyStoreFile = change.file)
+                }
+            })
         }
     }
 
@@ -80,8 +77,17 @@ class MqttConfigurationViewModel(
         }
     }
 
+    override fun onDiscard() {
+        with(_viewState.value.editData) {
+            if (ConfigurationSetting.mqttKeyStoreFile.value != mqttKeyStoreFile) {
+                mqttKeyStoreFile?.commonDelete()
+            }
+        }
+        _viewState.update { it.copy(editData = MqttConfigurationData()) }
+    }
+
     override fun onSave() {
-        with(_editData.value) {
+        with(_viewState.value.editData) {
             if (ConfigurationSetting.mqttKeyStoreFile.value != mqttKeyStoreFile) {
                 ConfigurationSetting.mqttKeyStoreFile.value?.commonDelete()
             }
@@ -97,15 +103,6 @@ class MqttConfigurationViewModel(
             ConfigurationSetting.mqttKeepAliveInterval.value = mqttKeepAliveInterval.toLongOrZero()
             ConfigurationSetting.mqttRetryInterval.value = mqttRetryInterval.toLongOrZero()
         }
-    }
-
-    override fun onDiscard() {
-        with(_editData.value) {
-            if (ConfigurationSetting.mqttKeyStoreFile.value != mqttKeyStoreFile) {
-                mqttKeyStoreFile?.commonDelete()
-            }
-        }
-        _editData.value = MqttConfigurationData()
     }
 
 }

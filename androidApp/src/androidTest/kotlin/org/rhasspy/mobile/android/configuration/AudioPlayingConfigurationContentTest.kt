@@ -92,13 +92,12 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performScrollTo().performClick()
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextClearance()
-        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextInput(textInputTest)
         composeTestRule.awaitIdle()
         assertEquals(textInputTest, viewModel.viewState.value.editData.audioPlayingHttpEndpoint)
 
         //User clicks save
-        composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.saveBottomAppBar()
         AudioPlayingConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
             assertEquals(AudioPlayingOption.RemoteHTTP, it.audioPlayingOption)
@@ -158,7 +157,7 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(AudioOutputOption.Notification, true).onListItemRadioButton().assertIsSelected()
 
         //User clicks save
-        composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.saveBottomAppBar()
         AudioPlayingConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to local
             assertEquals(AudioPlayingOption.Local, it.audioPlayingOption)

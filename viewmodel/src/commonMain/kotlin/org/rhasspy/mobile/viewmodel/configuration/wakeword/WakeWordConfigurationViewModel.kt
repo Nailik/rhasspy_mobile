@@ -19,8 +19,8 @@ import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.platformspecific.updateListItem
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.BackClick
@@ -44,39 +44,35 @@ class WakeWordConfigurationViewModel(
     service = service
 ) {
 
-    private val initialConfigurationData = WakeWordConfigurationData()
-
-    private val _editData = MutableStateFlow(initialConfigurationData)
+    private val initialData = WakeWordConfigurationData()
     private val _viewState = MutableStateFlow(
         WakeWordConfigurationViewState(
-            editData = initialConfigurationData,
+            editData = initialData,
             screen = navigator.topScreen(EditScreen).value,
             porcupineWakeWordScreen = navigator.topScreen(DefaultKeywordScreen).value,
-            isMicrophonePermissionRequestVisible = !microphonePermission.granted.value && (_editData.value.wakeWordOption == WakeWordOption.Porcupine || _editData.value.wakeWordOption == WakeWordOption.Udp),
+            isMicrophonePermissionRequestVisible = !microphonePermission.granted.value && (initialData.wakeWordOption == WakeWordOption.Porcupine || initialData.wakeWordOption == WakeWordOption.Udp),
         )
     )
 
     val viewState = combineState(
         _viewState,
-        _editData,
         navigator.topScreen(EditScreen),
         navigator.topScreen(DefaultKeywordScreen),
         microphonePermission.granted
-    ) { viewState, editData, screen, porcupineWakeWordScreen, isMicrophonePermissionGranted ->
+    ) { viewState, screen, porcupineWakeWordScreen, isMicrophonePermissionGranted ->
         viewState.copy(
-            editData = editData,
             screen = screen,
             porcupineWakeWordScreen = porcupineWakeWordScreen,
-            isMicrophonePermissionRequestVisible = !isMicrophonePermissionGranted && (editData.wakeWordOption == WakeWordOption.Porcupine || editData.wakeWordOption == WakeWordOption.Udp)
+            isMicrophonePermissionRequestVisible = !isMicrophonePermissionGranted && (viewState.editData.wakeWordOption == WakeWordOption.Porcupine || viewState.editData.wakeWordOption == WakeWordOption.Udp)
         )
     }
 
     override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<IConfigurationViewState>
-    ): StateFlow<IConfigurationViewState> {
+        configurationViewState: MutableStateFlow<ConfigurationViewState>
+    ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
             init = ::WakeWordConfigurationData,
-            editData = _editData,
+            viewState = viewState,
             configurationViewState = configurationViewState
         )
     }
@@ -91,10 +87,12 @@ class WakeWordConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        _editData.update {
-            when (change) {
-                is SelectWakeWordOption -> it.copy(wakeWordOption = change.option)
-            }
+        _viewState.update {
+            it.copy(editData = with(it.editData) {
+                when (change) {
+                    is SelectWakeWordOption -> copy(wakeWordOption = change.option)
+                }
+            })
         }
     }
 
@@ -116,23 +114,25 @@ class WakeWordConfigurationViewModel(
     }
 
     private fun onPorcupineChange(change: PorcupineUiEvent.Change) {
-        _editData.update {
-            it.copy(wakeWordPorcupineConfigurationData = it.wakeWordPorcupineConfigurationData.let { data ->
-                when (change) {
-                    is UpdateWakeWordPorcupineAccessToken -> data.copy(accessToken = change.value)
-                    is ClickPorcupineKeywordCustom -> data.copy(customOptions = data.customOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
-                    is ClickPorcupineKeywordDefault -> data.copy(defaultOptions = data.defaultOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
-                    is DeletePorcupineKeywordCustom -> data.copy(deletedCustomOptions = data.deletedCustomOptions.updateList { add(change.item) })
-                    is SelectWakeWordPorcupineLanguage -> data.copy(porcupineLanguage = change.option)
-                    is SetPorcupineKeywordCustom -> data.copy(customOptions = data.customOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
-                    is SetPorcupineKeywordDefault -> data.copy(defaultOptions = data.defaultOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
-                    is UndoCustomKeywordDeleted -> data.copy(deletedCustomOptions = data.deletedCustomOptions.updateList { remove(change.item) })
-                    is UpdateWakeWordPorcupineKeywordCustomSensitivity -> data.copy(customOptions = data.customOptions.updateList(change.index) { copy(sensitivity = change.value) })
-                    is UpdateWakeWordPorcupineKeywordDefaultSensitivity -> data.copy(defaultOptions = data.defaultOptions.updateListItem(change.item) { copy(sensitivity = change.value) })
-                    is AddPorcupineKeywordCustom -> data.copy(customOptions = data.customOptions.updateList {
-                        add(PorcupineCustomKeyword(fileName = change.path.name, isEnabled = true, sensitivity = 0.5f))
-                    })
-                }
+        _viewState.update {
+            it.copy(editData = with(it.editData) {
+                copy(wakeWordPorcupineConfigurationData = with(wakeWordPorcupineConfigurationData) {
+                    when (change) {
+                        is UpdateWakeWordPorcupineAccessToken -> copy(accessToken = change.value)
+                        is ClickPorcupineKeywordCustom -> copy(customOptions = customOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
+                        is ClickPorcupineKeywordDefault -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
+                        is DeletePorcupineKeywordCustom -> copy(deletedCustomOptions = deletedCustomOptions.updateList { add(change.item) })
+                        is SelectWakeWordPorcupineLanguage -> copy(porcupineLanguage = change.option)
+                        is SetPorcupineKeywordCustom -> copy(customOptions = customOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
+                        is SetPorcupineKeywordDefault -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
+                        is UndoCustomKeywordDeleted -> copy(deletedCustomOptions = deletedCustomOptions.updateList { remove(change.item) })
+                        is UpdateWakeWordPorcupineKeywordCustomSensitivity -> copy(customOptions = customOptions.updateList(change.index) { copy(sensitivity = change.value) })
+                        is UpdateWakeWordPorcupineKeywordDefaultSensitivity -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(sensitivity = change.value) })
+                        is AddPorcupineKeywordCustom -> copy(customOptions = customOptions.updateList {
+                            add(PorcupineCustomKeyword(fileName = change.path.name, isEnabled = true, sensitivity = 0.5f))
+                        })
+                    }
+                })
             })
         }
     }
@@ -166,19 +166,21 @@ class WakeWordConfigurationViewModel(
     }
 
     private fun onUdpChange(change: UdpUiEvent.Change) {
-        _editData.update {
-            it.copy(wakeWordUdpConfigurationData = it.wakeWordUdpConfigurationData.let { data ->
-                when (change) {
-                    is UpdateUdpOutputHost -> data.copy(outputHost = change.value)
-                    is UpdateUdpOutputPort -> data.copy(outputPort = change.value.toIntOrZero())
-                }
+        _viewState.update {
+            it.copy(editData = with(it.editData) {
+                copy(wakeWordUdpConfigurationData = wakeWordUdpConfigurationData.let { data ->
+                    when (change) {
+                        is UpdateUdpOutputHost -> data.copy(outputHost = change.value)
+                        is UpdateUdpOutputPort -> data.copy(outputPort = change.value.toIntOrNull())
+                    }
+                })
             })
         }
     }
 
 
     override fun onSave() {
-        with(_editData.value) {
+        with(_viewState.value.editData) {
             ConfigurationSetting.wakeWordOption.value = wakeWordOption
 
             with(wakeWordPorcupineConfigurationData) {
@@ -209,7 +211,7 @@ class WakeWordConfigurationViewModel(
         }
         newFiles.clear()
         filesToDelete.clear()
-        _editData.value = WakeWordConfigurationData()
+        _viewState.update { it.copy(editData = WakeWordConfigurationData()) }
     }
 
     override fun onBackPressed(): Boolean {

@@ -88,7 +88,7 @@ class MqttConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.RetryInterval).assertExists()
 
         //user click save
-        composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.saveBottomAppBar()
         MqttConfigurationViewModel(get()).viewState.value.editData.also {
             //mqtt enabled saved
             assertEquals(true, it.isMqttEnabled)
@@ -125,33 +125,29 @@ class MqttConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.Host).performScrollTo().performClick()
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Host).performTextClearance()
-        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Host).performTextInput(textInputTestHost)
         composeTestRule.awaitIdle()
         //port is changed
         composeTestRule.onNodeWithTag(TestTag.Port).performScrollTo().performClick()
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Port).performTextClearance()
-        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Port).performTextInput(textInputTestPort)
         composeTestRule.awaitIdle()
         //username is changed
         composeTestRule.onNodeWithTag(TestTag.UserName).performScrollTo().performClick()
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.UserName).performTextClearance()
-        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.UserName).performTextInput(textInputTestUsername)
         composeTestRule.awaitIdle()
         //password is changed
         composeTestRule.onNodeWithTag(TestTag.Password).performScrollTo().performClick()
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Password).performTextClearance()
-        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Password).performTextInput(textInputTestPassword)
         composeTestRule.awaitIdle()
 
         //user click save
-        composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.saveBottomAppBar()
         composeTestRule.awaitIdle()
         MqttConfigurationViewModel(get()).viewState.value.editData.also {
             //host is saved
@@ -205,7 +201,7 @@ class MqttConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.CertificateButton).assertExists()
 
         //user clicks save
-        composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.saveBottomAppBar()
         MqttConfigurationViewModel(get()).viewState.value.editData.also {
             //ssl on is saved
             assertEquals(true, it.isMqttSSLEnabled)
@@ -252,7 +248,7 @@ class MqttConfigurationContentTest : FlakyTest() {
             .performTextReplacement(textInputTestRetryInterval)
 
         //user click save
-        composeTestRule.saveBottomAppBar(viewModel)
+        composeTestRule.saveBottomAppBar()
         MqttConfigurationViewModel(get()).viewState.value.editData.also {
             //timeout is saved
             assertEquals(textInputTestConnectionTimeout, it.mqttConnectionTimeoutText)

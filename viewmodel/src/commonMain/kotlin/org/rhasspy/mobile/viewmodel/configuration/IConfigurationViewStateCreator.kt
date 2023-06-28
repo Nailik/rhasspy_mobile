@@ -12,21 +12,21 @@ class IConfigurationViewStateCreator(
 
     operator fun <T> invoke(
         init: () -> T,
-        editData: StateFlow<T>,
-        configurationViewState: MutableStateFlow<IConfigurationViewState>
-    ): StateFlow<IConfigurationViewState> {
+        viewState: StateFlow<IConfigurationViewState>,
+        configurationViewState: MutableStateFlow<ConfigurationViewState>
+    ): StateFlow<ConfigurationViewState> {
 
         return combineState(
-            editData,
+            viewState,
             configurationViewState,
             service.serviceState
-        ) { data, viewState, serviceState ->
+        ) { viewStateValue, configurationViewStateValue, serviceState ->
 
-            val isHasUnsavedChanges = data != init()
+            val isHasUnsavedChanges = viewStateValue.editData != init()
 
             configurationViewState.update { it.copy(hasUnsavedChanges = isHasUnsavedChanges) }
 
-            viewState.copy(
+            configurationViewStateValue.copy(
                 hasUnsavedChanges = isHasUnsavedChanges,
                 isOpenServiceStateDialogEnabled = serviceState.isOpenServiceStateDialogEnabled(),
             )

@@ -6,11 +6,13 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 
 @Stable
 data class AudioPlayingConfigurationViewState internal constructor(
-    val editData: AudioPlayingConfigurationData
-) {
+    override val editData: AudioPlayingConfigurationData
+) : IConfigurationViewState {
 
     @Stable
     data class AudioPlayingConfigurationData internal constructor(
@@ -19,7 +21,7 @@ data class AudioPlayingConfigurationViewState internal constructor(
         val isUseCustomAudioPlayingHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value,
         val audioPlayingHttpEndpoint: String = ConfigurationSetting.audioPlayingHttpEndpoint.value,
         val audioPlayingMqttSiteId: String = ConfigurationSetting.audioPlayingMqttSiteId.value
-    ) {
+    ) : IConfigurationData {
 
         val audioPlayingOptionList: ImmutableList<AudioPlayingOption> = AudioPlayingOption.values().toImmutableList()
         val audioOutputOptionList: ImmutableList<AudioOutputOption> = AudioOutputOption.values().toImmutableList()

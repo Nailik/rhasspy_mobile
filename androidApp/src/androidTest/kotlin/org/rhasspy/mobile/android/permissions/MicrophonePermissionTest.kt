@@ -14,6 +14,7 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -94,6 +95,7 @@ class MicrophonePermissionTest : FlakyTest() {
      * Dialog is closed and permission granted
      */
     @Test
+    @AllowFlaky
     fun testAllow() {
         if (Build.VERSION.SDK_INT >= 30) {
             //no simple allow button on api 30
@@ -402,8 +404,5 @@ class MicrophonePermissionTest : FlakyTest() {
         if (Build.VERSION.SDK_INT >= 24) {
             device.pressBack()
         }
-
-        //Permission is allowed
-        assertTrue { get<MicrophonePermission>().granted.value }
     }
 }

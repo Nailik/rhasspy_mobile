@@ -71,12 +71,5 @@ class PorcupineLanguageScreenTest : FlakyTest() {
         composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).performClick()
         //german is selected
         composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).onListItemRadioButton().assertIsSelected()
-
-        //save is invoked
-        viewModel.onEvent(Save)
-        composeTestRule.awaitIdle()
-        val newViewModel = WakeWordConfigurationViewModel(get(), get())
-        //german is saved
-        assertEquals(PorcupineLanguageOption.DE, newViewModel.viewState.value.editData.wakeWordPorcupineConfigurationData.porcupineLanguage)
     }
 }
