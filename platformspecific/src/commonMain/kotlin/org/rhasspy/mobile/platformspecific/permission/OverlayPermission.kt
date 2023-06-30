@@ -4,29 +4,38 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 
+interface IOverlayPermission {
+
+    val granted: StateFlow<Boolean>
+    fun request(): Boolean
+    fun isGranted(): Boolean
+    fun update()
+
+}
+
 expect class OverlayPermission(
     nativeApplication: NativeApplication,
     externalResultRequest: ExternalResultRequest
-) {
+) : IOverlayPermission {
 
     /**
      * to observe if microphone permission is granted
      */
-    val granted: StateFlow<Boolean>
+    override val granted: StateFlow<Boolean>
 
     /**
      * to request the permission externally, redirect user to settings
      */
-    fun request(): Boolean
+    override fun request(): Boolean
 
     /**
      * check if the permission is currently granted
      */
-    fun isGranted(): Boolean
+    override fun isGranted(): Boolean
 
     /**
      * read from system
      */
-    fun update()
+    override fun update()
 
 }

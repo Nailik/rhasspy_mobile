@@ -3,6 +3,7 @@ package org.rhasspy.mobile.viewmodel.settings.indication
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.topScreen
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.BackClick

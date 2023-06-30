@@ -8,6 +8,7 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.services.audiofocus.AudioFocusService
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParamsCreator
+import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParamsCreator
 import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantService

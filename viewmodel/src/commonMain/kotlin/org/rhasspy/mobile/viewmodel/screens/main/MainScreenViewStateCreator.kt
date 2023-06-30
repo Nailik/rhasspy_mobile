@@ -8,6 +8,7 @@ import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.topScreen
 
 class MainScreenViewStateCreator(
     private val navigator: Navigator

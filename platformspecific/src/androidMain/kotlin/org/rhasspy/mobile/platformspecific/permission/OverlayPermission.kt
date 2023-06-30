@@ -11,19 +11,19 @@ import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntenti
 actual class OverlayPermission actual constructor(
     private val nativeApplication: NativeApplication,
     private val externalResultRequest: ExternalResultRequest
-) {
+) :IOverlayPermission {
 
     private val _granted = MutableStateFlow(isGranted())
 
     /**
      * to observe if microphone permission is granted
      */
-    actual val granted: StateFlow<Boolean> = _granted
+    actual override val granted: StateFlow<Boolean> = _granted
 
     /**
      * to request the permission externally, redirect user to settings
      */
-    actual fun request(): Boolean {
+    actual override fun request(): Boolean {
         val result = externalResultRequest.launch(ExternalResultRequestIntention.OpenOverlaySettings)
 
         return if (result is ExternalRedirectResult.Success) {
@@ -36,12 +36,12 @@ actual class OverlayPermission actual constructor(
     /**
      * check if the permission is currently granted
      */
-    actual fun isGranted(): Boolean = Settings.canDrawOverlays(nativeApplication)
+    actual override fun isGranted(): Boolean = Settings.canDrawOverlays(nativeApplication)
 
     /**
      * read from system
      */
-    actual fun update() {
+    actual override fun update() {
         _granted.value = isGranted()
     }
 

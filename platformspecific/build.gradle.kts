@@ -54,7 +54,11 @@ kotlin {
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
             }
         }
-        val androidUnitTest by getting
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(AndroidX.archCore.testing)
+            }
+        }
         val iosX64Main by getting {
             dependencies {
                 implementation(Square.Okio.iosx64)

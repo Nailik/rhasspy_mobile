@@ -1,6 +1,7 @@
 @file:Suppress("UNUSED_VARIABLE")
 
 plugins {
+    id("org.kodein.mock.mockmp")
     kotlin("multiplatform")
     id("com.android.library")
     kotlin("plugin.serialization")
@@ -35,9 +36,14 @@ kotlin {
             }
         }
         val commonTest by getting {
+            dependsOn(commonMain)
             dependencies {
+                implementation(project(":shared"))
+                implementation(project(":platformspecific"))
+                implementation(Russhwolf.multiplatformSettingsTest)
                 implementation(Kotlin.test)
                 implementation(Koin.test)
+                implementation(KotlinX.Coroutines.test)
             }
         }
         val androidMain by getting {
@@ -70,4 +76,8 @@ kotlin {
 
 android {
     namespace = "org.rhasspy.mobile.logic"
+}
+
+mockmp {
+    usesHelper = true
 }

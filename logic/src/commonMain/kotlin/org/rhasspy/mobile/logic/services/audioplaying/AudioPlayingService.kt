@@ -17,6 +17,11 @@ import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.readOnly
 
+interface IAudioPlayingService {
+    suspend fun playAudio(audioSource: AudioSource)
+    fun stopPlayAudio()
+}
+
 /**
  * calls actions and returns result
  *
@@ -24,7 +29,7 @@ import org.rhasspy.mobile.platformspecific.readOnly
  */
 open class AudioPlayingService(
     paramsCreator: AudioPlayingServiceParamsCreator
-) : IService(LogType.AudioPlayingService) {
+) : IAudioPlayingService, IService(LogType.AudioPlayingService) {
 
     private val audioFocusService by inject<AudioFocusService>()
     private val localAudioService by inject<LocalAudioService>()
@@ -55,7 +60,7 @@ open class AudioPlayingService(
      * MQTT:
      * - calls default site to play audio
      */
-    suspend fun playAudio(audioSource: AudioSource) {
+    override suspend fun playAudio(audioSource: AudioSource) {
         logger.d { "playAudio dataSize: $audioSource" }
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local -> {
@@ -82,7 +87,7 @@ open class AudioPlayingService(
     /**
      * stops playing audio when aduio is played locally
      */
-    fun stopPlayAudio() {
+    override fun stopPlayAudio() {
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local -> localAudioService.stop()
             else -> {}

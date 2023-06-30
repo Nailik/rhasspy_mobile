@@ -43,10 +43,6 @@ class AudioPlayingConfigurationViewModel(
         )
     }
 
-    init {
-        println("IConfigurationViewModel $configurationEditViewState")
-    }
-
     fun onEvent(change: AudioPlayingConfigurationUiEvent) {
         when (change) {
             is Change -> onChange(change)

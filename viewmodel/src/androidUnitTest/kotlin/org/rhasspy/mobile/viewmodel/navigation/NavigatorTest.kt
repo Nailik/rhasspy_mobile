@@ -110,7 +110,7 @@ class NavigatorTest : AppTest() {
         navigator.updateNavStack(persistentListOf(HomeScreen))
         assertEquals(1, navigator.navStack.value.size)
 
-        navigator.replace<MainScreenNavigationDestination>(ConfigurationScreen)
+        navigator.replace(MainScreenNavigationDestination::class, ConfigurationScreen)
 
         assertEquals(ConfigurationScreen, navigator.navStack.value.last())
         assertEquals(1, navigator.navStack.value.size)
@@ -121,7 +121,7 @@ class NavigatorTest : AppTest() {
         navigator.updateNavStack(persistentListOf(HomeScreen))
         assertEquals(1, navigator.navStack.value.size)
 
-        navigator.replace<ConfigurationScreenNavigationDestination>(WebServerConfigurationScreen)
+        navigator.replace(ConfigurationScreenNavigationDestination::class, WebServerConfigurationScreen)
 
         assertEquals(WebServerConfigurationScreen, navigator.navStack.value.last())
         assertEquals(2, navigator.navStack.value.size)

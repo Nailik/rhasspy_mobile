@@ -4,32 +4,40 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 
+interface IMicrophonePermission {
+    val granted: StateFlow<Boolean>
+    fun shouldShowInformationDialog(): Boolean
+    fun update()
+    suspend fun request()
+}
+
+
 /**
  * to check microphone permission
  */
 expect class MicrophonePermission(
     nativeApplication: NativeApplication,
     externalResultRequest: ExternalResultRequest
-) {
+) : IMicrophonePermission {
 
     /**
      * to observe if microphone permission is granted
      */
-    val granted: StateFlow<Boolean>
+    override val granted: StateFlow<Boolean>
 
     /**
      * to check if the information dialog should be shown
      */
-    fun shouldShowInformationDialog(): Boolean
+    override fun shouldShowInformationDialog(): Boolean
 
     /**
      * read from system
      */
-    fun update()
+    override fun update()
 
     /**
      * request permission from user
      */
-    suspend fun request()
+    override suspend fun request()
 
 }

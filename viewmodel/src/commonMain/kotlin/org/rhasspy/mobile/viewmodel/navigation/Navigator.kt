@@ -9,8 +9,24 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
+import kotlin.reflect.KClass
+
+interface INavigator {
+
+    val navStack: StateFlow<ImmutableList<NavigationDestination>>
+    fun popBackStack()
+    fun onBackPressed()
+    fun navigate(screen: NavigationDestination)
+    fun onComposed(viewModel: ScreenViewModel)
+    fun onDisposed(viewModel: ScreenViewModel)
+    fun replace(clazz: KClass<out NavigationDestination>, screen: NavigationDestination)
+}
+
+inline fun <reified T : NavigationDestination> INavigator.topScreen(): StateFlow<T?> = navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() }
+inline fun <reified T : NavigationDestination> INavigator.topScreen(default: T): StateFlow<T> = navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() ?: default }
 
 /**
  * top viewmodel
@@ -18,18 +34,14 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
  */
 class Navigator(
     private val nativeApplication: NativeApplication
-) {
+) : INavigator {
 
     private val _navStack = MutableStateFlow<ImmutableList<NavigationDestination>>(persistentListOf(HomeScreen))
-    val navStack = _navStack.readOnly
+    override val navStack = _navStack.readOnly
 
     private val _viewModelStack = mutableListOf<ScreenViewModel>()
 
-    inline fun <reified T : NavigationDestination> topScreen(): StateFlow<T?> = navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() }
-    inline fun <reified T : NavigationDestination> topScreen(default: T): StateFlow<T> = navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() ?: default }
-
-
-    fun popBackStack() {
+    override fun popBackStack() {
         if (navStack.value.size <= 1) {
             nativeApplication.closeApp()
         } else {
@@ -44,7 +56,7 @@ class Navigator(
     /**
      * go to previous screen
      */
-    fun onBackPressed() {
+    override fun onBackPressed() {
         if (_viewModelStack.lastOrNull()?.onBackPressedClick() != true) {
             //check if top nav destination handles back press
             popBackStack()
@@ -54,7 +66,7 @@ class Navigator(
     /**
      * navigate to screen (add to backstack)
      */
-    fun navigate(screen: NavigationDestination) {
+    override fun navigate(screen: NavigationDestination) {
         if (_navStack.value.lastOrNull() != screen) {
             _navStack.update {
                 it.updateList {
@@ -64,27 +76,28 @@ class Navigator(
         }
     }
 
-    internal inline fun <reified T : NavigationDestination> replace(screen: NavigationDestination) {
+    override fun replace(clazz: KClass<out NavigationDestination>, screen: NavigationDestination) {
         val currentStack = navStack.value
-        updateNavStack(currentStack.updateList {
-            val index = indexOfLast { it is T }
+        val list = currentStack.updateList {
+            val index = indexOfLast { clazz.isInstance(it) }
             if (index == -1) {
                 add(screen)
             } else {
                 set(index, screen)
             }
-        })
+        }
+        updateNavStack(list)
     }
 
     internal fun updateNavStack(list: ImmutableList<NavigationDestination>) {
         _navStack.value = list
     }
 
-    fun onComposed(viewModel: ScreenViewModel) {
+    override fun onComposed(viewModel: ScreenViewModel) {
         _viewModelStack.add(viewModel)
     }
 
-    fun onDisposed(viewModel: ScreenViewModel) {
+    override fun onDisposed(viewModel: ScreenViewModel) {
         val index = _viewModelStack.indexOfLast { it == viewModel }
         if (index != -1) {
             _viewModelStack.removeAt(index)

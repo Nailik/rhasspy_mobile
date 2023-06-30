@@ -1,6 +1,7 @@
 @file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
 
 plugins {
+    id("org.kodein.mock.mockmp")
     kotlin("multiplatform")
     id("com.android.library")
     id("base-gradle")
@@ -33,6 +34,7 @@ kotlin {
         val commonTest by getting {
             dependsOn(commonMain)
             dependencies {
+                implementation(Koin.test)
                 implementation(Kotlin.test)
                 implementation(KotlinX.Coroutines.test)
                 implementation(Russhwolf.multiplatformSettingsTest)
@@ -52,6 +54,7 @@ kotlin {
                 implementation(project(":platformspecific"))
                 implementation(Koin.test)
                 implementation(Kotlin.test)
+                implementation(AndroidX.archCore.testing)
                 implementation("io.mockk:mockk:_")
             }
         }
@@ -86,4 +89,8 @@ android {
         unitTests.isReturnDefaultValues = true
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
+}
+
+mockmp {
+    usesHelper = true
 }

@@ -30,11 +30,13 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.CustomKeywordScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.DefaultKeywordScreen
+import org.rhasspy.mobile.viewmodel.navigation.topScreen
 
 @Stable
 class WakeWordConfigurationViewModel(
@@ -144,7 +146,7 @@ class WakeWordConfigurationViewModel(
             OpenPicoVoiceConsole -> openLink(LinkType.PicoVoiceConsole)
             PorcupineUiEvent.Action.BackClick -> navigator.onBackPressed()
             PorcupineLanguageClick -> navigator.navigate(EditPorcupineLanguageScreen)
-            is PageClick -> navigator.replace<PorcupineKeywordConfigurationScreenDestination>(action.screen)
+            is PageClick -> navigator.replace(PorcupineKeywordConfigurationScreenDestination::class, action.screen)
         }
     }
 
@@ -222,7 +224,7 @@ class WakeWordConfigurationViewModel(
             true
         } else if (viewState.value.porcupineWakeWordScreen == CustomKeywordScreen) {
             //navigate to DefaultKeywordScreen
-            navigator.replace<PorcupineKeywordConfigurationScreenDestination>(DefaultKeywordScreen)
+            navigator.replace(PorcupineKeywordConfigurationScreenDestination::class, DefaultKeywordScreen)
             //was handled
             true
         } else if (viewState.value.screen == EditScreen) {

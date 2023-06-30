@@ -14,18 +14,18 @@ import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 actual class MicrophonePermission actual constructor(
     private val nativeApplication: NativeApplication,
     private val externalResultRequest: ExternalResultRequest
-) {
+) : IMicrophonePermission {
 
     /**
      * to observe if microphone permission is granted
      */
     private val _granted = MutableStateFlow(isGranted())
-    actual val granted: StateFlow<Boolean> = _granted
+    actual override val granted: StateFlow<Boolean> = _granted
 
     /**
      * to request the permission externally, redirect user to settings
      */
-    actual fun shouldShowInformationDialog(): Boolean {
+    actual override fun shouldShowInformationDialog(): Boolean {
         return nativeApplication.currentActivity?.let {
             ActivityCompat.shouldShowRequestPermissionRationale(
                 it,
@@ -47,11 +47,11 @@ actual class MicrophonePermission actual constructor(
     /**
      * read from system
      */
-    actual fun update() {
+    actual override fun update() {
         _granted.value = isGranted()
     }
 
-    actual suspend fun request() {
+    actual override suspend fun request() {
         _granted.value = externalResultRequest.launchForPermission(Manifest.permission.RECORD_AUDIO)
     }
 
