@@ -11,7 +11,7 @@ import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntenti
 actual class OverlayPermission actual constructor(
     private val nativeApplication: NativeApplication,
     private val externalResultRequest: ExternalResultRequest
-) :IOverlayPermission {
+) : IOverlayPermission {
 
     private val _granted = MutableStateFlow(isGranted())
 
