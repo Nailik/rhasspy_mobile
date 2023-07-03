@@ -93,7 +93,9 @@ aboutLibraries {
 
 android {
     namespace = "org.rhasspy.mobile.resources"
-    buildFeatures.compose = true
+    sourceSets {
+        getByName("main").java.srcDirs("build/generated/moko/androidMain/src")
+    }
 }
 
 buildkonfig {

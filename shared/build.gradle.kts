@@ -10,7 +10,6 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.compose")
     id("co.touchlab.crashkios.crashlyticslink")
-    id("com.google.devtools.ksp")
     id("base-gradle")
 }
 

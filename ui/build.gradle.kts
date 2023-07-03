@@ -83,5 +83,4 @@ kotlin {
 
 android {
     namespace = "org.rhasspy.mobile.ui"
-    buildFeatures.compose = true
 }

@@ -3,8 +3,8 @@
 plugins {
     id("org.kodein.mock.mockmp")
     kotlin("multiplatform")
-    id("com.android.library")
     kotlin("plugin.serialization")
+    id("com.android.library")
     id("base-gradle")
 }
 

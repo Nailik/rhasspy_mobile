@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         //classpath dependencies cannot be loaded from buildSrc
+        classpath("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:_")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
         classpath("dev.icerock.moko:resources-generator:_")
         classpath("com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:_")
@@ -26,6 +27,7 @@ allprojects {
         google()
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://androidx.dev/storage/compose-compiler/repository/")
     }
 }
 

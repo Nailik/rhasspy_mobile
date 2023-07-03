@@ -14,7 +14,7 @@ class BaseGradle : Plugin<Project> {
             val kotlinMultiplatformExtension = project.extensions.getByName("kotlin")
             if (kotlinMultiplatformExtension is KotlinMultiplatformExtension) {
                 kotlinMultiplatformExtension.apply {
-                    android()
+                    androidTarget()
                     iosX64()
                     iosArm64()
                     iosSimulatorArm64()
@@ -33,7 +33,7 @@ class BaseGradle : Plugin<Project> {
         val androidExtension = project.extensions.getByName("android")
         if (androidExtension is BaseExtension) {
             androidExtension.apply {
-                setCompileSdkVersion(34)
+                setCompileSdkVersion(33)
                 defaultConfig {
                     minSdk = 23
                 }
