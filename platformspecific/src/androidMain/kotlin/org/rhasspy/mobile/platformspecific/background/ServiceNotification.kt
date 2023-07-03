@@ -10,6 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.resources.MR
 
@@ -22,7 +23,7 @@ object ServiceNotification : KoinComponent {
     private const val GROUP_ID = "org.rhasspy.mobile.services.group.id"
     const val ONGOING_NOTIFICATION_ID = 324234
 
-    private val context = get<NativeApplication>()
+    private val context = (get<INativeApplication>() as NativeApplication)
 
     fun create(): Notification {
         createGroup()

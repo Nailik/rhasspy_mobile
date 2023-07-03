@@ -7,13 +7,14 @@ import android.os.IBinder
 import co.touchlab.kermit.Logger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
 /**
  * Native Service to run continuously in background
  */
 internal actual class BackgroundService : IBackgroundService, Service(), KoinComponent {
-    private val nativeApplication = get<NativeApplication>()
+    private val nativeApplication = (get<INativeApplication>() as NativeApplication)
 
     private val logger = Logger.withTag("BackgroundService")
     private val intent = Intent(nativeApplication, BackgroundService::class.java)

@@ -99,6 +99,7 @@ class MicrophoneOverlaySettingsContentTest : FlakyTest() {
         device.wait(Until.hasObject(By.pkg(settingsPage.toPattern())), 5000)
         assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
         UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName.stable))
+        device.waitForIdle()
         device.findObject(UiSelector().text(MR.strings.appName.stable)).click()
         device.findObject(UiSelector().className(Switch::class.java)).click()
         //User clicks back

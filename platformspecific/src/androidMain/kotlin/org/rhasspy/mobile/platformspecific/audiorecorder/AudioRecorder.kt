@@ -2,6 +2,7 @@ package org.rhasspy.mobile.platformspecific.audiorecorder
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
@@ -18,6 +19,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.readOnly
 import java.nio.ByteBuffer
@@ -72,7 +74,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
 
         logger.v { "startRecording" }
 
-        if (ActivityCompat.checkSelfPermission(get<NativeApplication>(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(get<INativeApplication>() as Context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             logger.e { "missing recording permission" }
             return
         }

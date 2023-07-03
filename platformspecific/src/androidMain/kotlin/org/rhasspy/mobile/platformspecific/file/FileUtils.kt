@@ -10,6 +10,7 @@ import okio.Path
 import okio.Path.Companion.toPath
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectUtils
 import java.io.BufferedInputStream
@@ -23,7 +24,7 @@ import kotlin.coroutines.suspendCoroutine
  */
 actual object FileUtils : KoinComponent {
 
-    private val context = get<NativeApplication>()
+    private val context = (get<INativeApplication>() as NativeApplication)
 
     /**
      * open file selection and copy file to specific folder and return selected file name

@@ -82,11 +82,11 @@ class BackgroundSettingsContentTest : FlakyTest() {
         //background services enabled saved
         assertTrue { AppSetting.isBackgroundServiceEnabled.value }
 
-        if (!viewModel.viewState.value.isBatteryOptimizationDisabled) {
+        if (!viewModel.viewState.value.isBatteryOptimizationDeactivationEnabled) {
             //deactivate battery optimization visible
             composeTestRule.onNodeWithTag(TestTag.BatteryOptimization).assertIsDisplayed()
             //battery optimization is deactivated
-            assertFalse { viewModel.viewState.value.isBatteryOptimizationDisabled }
+            assertFalse { viewModel.viewState.value.isBatteryOptimizationDeactivationEnabled }
             //user clicks deactivate battery optimization
             composeTestRule.onNodeWithTag(TestTag.BatteryOptimization).performClick()
             composeTestRule.awaitIdle()

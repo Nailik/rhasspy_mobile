@@ -9,10 +9,10 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.resources.MR
 
-fun UiDevice.resetOverlayPermission(context: Context, overlayPermission: OverlayPermission) {
+fun UiDevice.resetOverlayPermission(context: Context, overlayPermission: IOverlayPermission) {
     if (!Settings.canDrawOverlays(context)) {
         return
     }
@@ -33,7 +33,7 @@ fun UiDevice.resetOverlayPermission(context: Context, overlayPermission: Overlay
     overlayPermission.update()
 }
 
-fun UiDevice.requestOverlayPermissionLegacy(context: Context, overlayPermission: OverlayPermission) {
+fun UiDevice.requestOverlayPermissionLegacy(context: Context, overlayPermission: IOverlayPermission) {
     if (Settings.canDrawOverlays(context)) {
         return
     }

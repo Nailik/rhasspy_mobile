@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.combineState
 
@@ -22,7 +23,7 @@ import org.rhasspy.mobile.platformspecific.combineState
  */
 actual object DeviceVolume : KoinComponent {
 
-    private val context = get<NativeApplication>()
+    private val context = (get<INativeApplication>() as NativeApplication)
 
     private val audioManager = context.getSystemService<AudioManager>()
 

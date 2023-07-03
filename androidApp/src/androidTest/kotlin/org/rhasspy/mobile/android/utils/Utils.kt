@@ -18,8 +18,8 @@ import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.service.option.IOption
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
-import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
@@ -131,7 +131,7 @@ fun requestExternalStoragePermissions(device: UiDevice) {
     }
 }
 
-fun MicrophonePermission.requestMicrophonePermissions() {
+fun IMicrophonePermission.requestMicrophonePermissions() {
     with(PermissionRequester()) {
         addPermissions("android.permission.RECORD_AUDIO")
         requestPermissions()
@@ -139,7 +139,7 @@ fun MicrophonePermission.requestMicrophonePermissions() {
     this.update()
 }
 
-fun UiDevice.requestOverlayPermissions(context: Context, overlayPermission: OverlayPermission) {
+fun UiDevice.requestOverlayPermissions(context: Context, overlayPermission: IOverlayPermission) {
     try {
         with(PermissionRequester()) {
             try {

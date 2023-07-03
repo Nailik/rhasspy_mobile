@@ -10,7 +10,7 @@ import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.utils.*
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.settings.content.SilenceDetectionSettingsContent
@@ -110,7 +110,7 @@ class SilenceDetectionSettingsContentTest : FlakyTest() {
      */
     @Test
     fun testRecording() = runTest {
-        get<MicrophonePermission>().requestMicrophonePermissions()
+        get<IMicrophonePermission>().requestMicrophonePermissions()
 
         //Automatic silence detection enabled
         viewModel.onEvent(SetSilenceDetectionEnabled(true))

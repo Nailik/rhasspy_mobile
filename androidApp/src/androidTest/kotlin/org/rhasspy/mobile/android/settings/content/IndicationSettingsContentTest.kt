@@ -16,7 +16,7 @@ import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
-import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.settings.content.IndicationSettingsContent
@@ -104,6 +104,8 @@ class IndicationSettingsContentTest : FlakyTest() {
         device.wait(Until.hasObject(By.pkg(settingsPage.toPattern())), 5000)
         assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
         UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName.stable))
+        device.waitForIdle()
+
         device.findObject(UiSelector().text(MR.strings.appName.stable)).click()
         device.findObject(UiSelector().className(Switch::class.java)).click()
         //User clicks back
@@ -111,9 +113,9 @@ class IndicationSettingsContentTest : FlakyTest() {
         device.pressBack()
 
         //app will be closed when pressing one more back
-        get<OverlayPermission>().update()
+        get<IOverlayPermission>().update()
         //Dialog is closed and permission granted
-        assertTrue { get<OverlayPermission>().granted.value }
+        assertTrue { get<IOverlayPermission>().granted.value }
 
         //visual is enabled
         composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).performClick()

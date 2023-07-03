@@ -13,6 +13,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import java.io.File
 
@@ -34,7 +35,7 @@ actual class PorcupineWakeWordClient actual constructor(
     //manager to stop start and reload porcupine
     private var porcupineManager: PorcupineManager? = null
 
-    private val context = get<NativeApplication>()
+    private val context = (get<INativeApplication>() as NativeApplication)
 
     private var initialized: Boolean = false
     actual val isInitialized: Boolean = initialized

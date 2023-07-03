@@ -21,7 +21,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
@@ -88,7 +88,7 @@ class OverlayPermissionTest : FlakyTest() {
             device.resetOverlayPermission(composeTestRule.activity, get())
 
             permissionResult = false
-            assertFalse { get<OverlayPermission>().granted.value }
+            assertFalse { get<IOverlayPermission>().granted.value }
 
             //User clicks button
             composeTestRule.onNodeWithText(btnRequestPermission).performClick()
@@ -123,9 +123,9 @@ class OverlayPermissionTest : FlakyTest() {
             device.pressBack()
 
             //app will be closed when pressing one more back
-            get<OverlayPermission>().update()
+            get<IOverlayPermission>().update()
             //Dialog is closed and permission granted
-            assertTrue { get<OverlayPermission>().granted.value }
+            assertTrue { get<IOverlayPermission>().granted.value }
         }
 
         assertTrue { true }

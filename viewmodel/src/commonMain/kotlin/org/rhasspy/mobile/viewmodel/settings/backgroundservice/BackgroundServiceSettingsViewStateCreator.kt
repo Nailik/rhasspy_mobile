@@ -35,7 +35,7 @@ class BackgroundServiceSettingsViewStateCreator(
     private fun getViewState(): BackgroundServiceSettingsViewState {
         return BackgroundServiceSettingsViewState(
             isBackgroundServiceEnabled = AppSetting.isBackgroundServiceEnabled.value,
-            isBatteryOptimizationDisabled = batteryOptimization.isBatteryOptimizationDisabled()
+            isBatteryOptimizationDeactivationEnabled = !batteryOptimization.isBatteryOptimizationDisabled()
         )
     }
 
