@@ -1,16 +1,18 @@
 package org.rhasspy.mobile.platformspecific
 
-import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.application.NativeApplication.Companion.koinApplicationModule
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.platformspecific.background.BackgroundService
+import org.rhasspy.mobile.platformspecific.background.IBackgroundService
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
+import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
+import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
 import org.rhasspy.mobile.platformspecific.language.LanguageUtils
-import org.rhasspy.mobile.platformspecific.permission.BatteryOptimization
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
-import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.platformspecific.permission.*
+import org.rhasspy.mobile.platformspecific.settings.ISettingsUtils
 import org.rhasspy.mobile.platformspecific.settings.SettingsUtils
+import org.rhasspy.mobile.platformspecific.utils.IOpenLinkUtils
 import org.rhasspy.mobile.platformspecific.utils.OpenLinkUtils
 
 val platformSpecificModule = module {
@@ -23,13 +25,13 @@ val platformSpecificModule = module {
             nativeApplication = get()
         )
     }
-    single {
+    single<IMicrophonePermission> {
         MicrophonePermission(
             nativeApplication = get(),
             externalResultRequest = get()
         )
     }
-    single {
+    single<IOverlayPermission> {
         OverlayPermission(
             nativeApplication = get(),
             externalResultRequest = get()
@@ -38,21 +40,23 @@ val platformSpecificModule = module {
     factory {
         AudioRecorder()
     }
-    single {
+    single<IOpenLinkUtils> {
         OpenLinkUtils(
             externalResultRequest = get()
         )
     }
-    singleOf(::BackgroundService)
-    single {
+    single<IBackgroundService> {
+        BackgroundService()
+    }
+    single<IExternalResultRequest> {
         ExternalResultRequest(
             nativeApplication = get()
         )
     }
-    single {
+    single<ILanguageUtils> {
         LanguageUtils()
     }
-    single {
+    single<ISettingsUtils> {
         SettingsUtils(
             externalResultRequest = get(),
             nativeApplication = get()

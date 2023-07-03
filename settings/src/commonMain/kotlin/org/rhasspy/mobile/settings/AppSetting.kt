@@ -12,7 +12,7 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.data.sounds.SoundOption
-import org.rhasspy.mobile.platformspecific.language.LanguageUtils
+import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.settings.serializer.StringListSerializer
 
@@ -23,7 +23,7 @@ object AppSetting : KoinComponent {
 
     val didShowCrashlyticsDialog = ISetting(SettingsEnum.CrashlyticsDialog, false)
 
-    val languageType = ISetting(SettingsEnum.LanguageOption, get<LanguageUtils>().getDeviceLanguage())
+    val languageType = ISetting(SettingsEnum.LanguageOption, get<ILanguageUtils>().getDeviceLanguage())
 
     val isAutomaticSilenceDetectionEnabled = ISetting(SettingsEnum.AutomaticSilenceDetection, false)
     val automaticSilenceDetectionAudioLevel =

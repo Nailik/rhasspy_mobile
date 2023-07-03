@@ -9,8 +9,8 @@ import okio.Path
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.logic.services.localaudio.ILocalAudioService
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.file.FileUtils
@@ -28,8 +28,8 @@ import kotlin.reflect.KFunction1
 
 @Stable
 abstract class IIndicationSoundSettingsViewModel(
-    private val localAudioService: LocalAudioService,
-    private val nativeApplication: NativeApplication,
+    private val localAudioService: ILocalAudioService,
+    private val nativeApplication: INativeApplication,
     private val customSoundOptions: ISetting<ImmutableList<String>>,
     private val soundSetting: ISetting<String>,
     private val soundVolume: ISetting<Float>,
@@ -37,7 +37,7 @@ abstract class IIndicationSoundSettingsViewModel(
 ) : ScreenViewModel() {
 
     val viewStateCreator: IIndicationSoundSettingsViewStateCreator = get { parametersOf(customSoundOptions, soundSetting, soundVolume) }
-    abstract val playSound: KFunction1<LocalAudioService, Unit>
+    abstract val playSound: KFunction1<ILocalAudioService, Unit>
 
     private val _viewState: MutableStateFlow<IIndicationSoundSettingsViewState> = viewStateCreator()
     val viewState = _viewState.readOnly

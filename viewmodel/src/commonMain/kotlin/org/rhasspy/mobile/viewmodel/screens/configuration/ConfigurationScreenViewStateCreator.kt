@@ -4,32 +4,32 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
-import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingService
-import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionService
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
-import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
-import org.rhasspy.mobile.logic.services.webserver.WebServerService
+import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
+import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
+import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.services.intenthandling.IIntentHandlingService
+import org.rhasspy.mobile.logic.services.intentrecognition.IIntentRecognitionService
+import org.rhasspy.mobile.logic.services.mqtt.IMqttService
+import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
+import org.rhasspy.mobile.logic.services.texttospeech.ITextToSpeechService
+import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
+import org.rhasspy.mobile.logic.services.webserver.IWebServerService
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
 
 class ConfigurationScreenViewStateCreator(
-    private val httpClientService: HttpClientService,
-    private val webServerService: WebServerService,
-    private val mqttService: MqttService,
-    private val wakeWordService: WakeWordService,
-    private val speechToTextService: SpeechToTextService,
-    private val intentRecognitionService: IntentRecognitionService,
-    private val textToSpeechService: TextToSpeechService,
-    private val audioPlayingService: AudioPlayingService,
-    private val dialogManagerService: DialogManagerService,
-    private val intentHandlingService: IntentHandlingService
+    private val httpClientService: IHttpClientService,
+    private val webServerService: IWebServerService,
+    private val mqttService: IMqttService,
+    private val wakeWordService: IWakeWordService,
+    private val speechToTextService: ISpeechToTextService,
+    private val intentRecognitionService: IIntentRecognitionService,
+    private val textToSpeechService: ITextToSpeechService,
+    private val audioPlayingService: IAudioPlayingService,
+    private val dialogManagerService: IDialogManagerService,
+    private val intentHandlingService: IIntentHandlingService
 ) {
 
     private val serviceStateFlow = combineStateFlow(

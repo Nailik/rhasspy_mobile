@@ -1,14 +1,14 @@
 package org.rhasspy.mobile.viewmodel.screens.home
 
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
+import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
 
 class HomeScreenViewStateCreator(
-    private val serviceMiddleware: ServiceMiddleware,
+    private val serviceMiddleware: IServiceMiddleware,
     microphoneFabViewStateCreator: MicrophoneFabViewStateCreator
 ) {
 

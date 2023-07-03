@@ -4,21 +4,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.module.Module
 
-expect abstract class NativeApplication() {
-
-    companion object {
-        val koinApplicationModule: Module
-    }
+interface INativeApplication {
 
     val currentlyAppInBackground: MutableStateFlow<Boolean>
     val isAppInBackground: StateFlow<Boolean>
-    abstract val isHasStarted: StateFlow<Boolean>
+    val isHasStarted: StateFlow<Boolean>
 
-    abstract fun resume()
+    fun resume()
 
-    abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
+    fun setCrashlyticsCollectionEnabled(enabled: Boolean)
 
-    abstract fun startRecordingAction()
+    fun startRecordingAction()
 
     fun onInit()
 
@@ -29,5 +25,33 @@ expect abstract class NativeApplication() {
     fun restart()
 
     fun onCreate()
+
+}
+
+expect abstract class NativeApplication() : INativeApplication {
+
+    companion object {
+        val koinApplicationModule: Module
+    }
+
+    override val currentlyAppInBackground: MutableStateFlow<Boolean>
+    override val isAppInBackground: StateFlow<Boolean>
+    abstract override val isHasStarted: StateFlow<Boolean>
+
+    abstract override fun resume()
+
+    abstract override fun setCrashlyticsCollectionEnabled(enabled: Boolean)
+
+    abstract override fun startRecordingAction()
+
+    override fun onInit()
+
+    override fun isInstrumentedTest(): Boolean
+
+    override fun closeApp()
+
+    override fun restart()
+
+    override fun onCreate()
 
 }

@@ -1,9 +1,9 @@
 package org.rhasspy.mobile.platformspecific.permission
 
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 
 actual class BatteryOptimization actual constructor(
-    private val nativeApplication: NativeApplication
+    private val nativeApplication: INativeApplication
 ) {
 
     actual fun isBatteryOptimizationDisabled(): Boolean {

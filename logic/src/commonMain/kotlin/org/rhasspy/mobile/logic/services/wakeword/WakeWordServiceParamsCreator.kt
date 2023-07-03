@@ -5,7 +5,7 @@ import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-class WakeWordServiceParamsCreator {
+internal class WakeWordServiceParamsCreator {
 
     operator fun invoke(): StateFlow<WakeWordServiceParams> {
 

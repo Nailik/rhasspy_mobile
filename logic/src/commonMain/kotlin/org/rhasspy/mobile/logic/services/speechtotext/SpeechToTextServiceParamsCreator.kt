@@ -5,7 +5,7 @@ import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-class SpeechToTextServiceParamsCreator {
+internal class SpeechToTextServiceParamsCreator {
 
     operator fun invoke(): StateFlow<SpeechToTextServiceParams> {
 

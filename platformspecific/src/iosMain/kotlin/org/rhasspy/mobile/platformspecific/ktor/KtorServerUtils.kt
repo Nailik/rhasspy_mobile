@@ -6,7 +6,7 @@ import io.ktor.server.engine.ApplicationEngineEnvironment
 import io.ktor.server.engine.ApplicationEngineEnvironmentBuilder
 import io.ktor.server.engine.BaseApplicationEngine
 import io.ktor.server.engine.embeddedServer
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 
 /**
  * adds call logging to web server
@@ -26,7 +26,7 @@ actual fun Application.installCallLogging() {
  * create connector for webserver with ssl settings if enabled
  */
 actual fun ApplicationEngineEnvironmentBuilder.installConnector(
-    nativeApplication: NativeApplication,
+    nativeApplication: INativeApplication,
     port: Int,
     isUseSSL: Boolean,
     keyStoreFile: String,

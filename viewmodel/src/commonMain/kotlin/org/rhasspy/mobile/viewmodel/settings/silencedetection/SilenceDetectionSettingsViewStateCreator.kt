@@ -1,14 +1,14 @@
 package org.rhasspy.mobile.viewmodel.settings.silencedetection
 
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
+import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.AppSetting
 import kotlin.math.log
 
 class SilenceDetectionSettingsViewStateCreator(
-    private val audioRecorder: AudioRecorder
+    private val audioRecorder: IAudioRecorder
 ) {
 
     operator fun invoke(): StateFlow<SilenceDetectionSettingsViewState> {

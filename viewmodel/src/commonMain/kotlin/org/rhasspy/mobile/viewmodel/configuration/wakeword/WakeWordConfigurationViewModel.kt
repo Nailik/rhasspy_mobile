@@ -9,12 +9,12 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
+import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
 import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.file.FolderType
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.platformspecific.updateListItem
@@ -39,8 +39,8 @@ import org.rhasspy.mobile.viewmodel.navigation.topScreen
 
 @Stable
 class WakeWordConfigurationViewModel(
-    microphonePermission: MicrophonePermission,
-    service: WakeWordService
+    microphonePermission: IMicrophonePermission,
+    service: IWakeWordService
 ) : IConfigurationViewModel(
     service = service
 ) {

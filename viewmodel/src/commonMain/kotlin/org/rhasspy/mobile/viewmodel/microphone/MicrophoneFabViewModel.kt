@@ -2,7 +2,7 @@ package org.rhasspy.mobile.viewmodel.microphone
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
+import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabUiEvent.Action
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabUiEvent.Action.MicrophoneFabClick
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
@@ -10,7 +10,7 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.Request
 
 @Stable
 class MicrophoneFabViewModel(
-    private val serviceMiddleware: ServiceMiddleware,
+    private val serviceMiddleware: IServiceMiddleware,
     viewStateCreator: MicrophoneFabViewStateCreator
 ) : ScreenViewModel() {
 

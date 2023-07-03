@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewmodel.settings.language
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.platformspecific.language.LanguageUtils
+import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
@@ -14,7 +14,7 @@ import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Ch
 
 @Stable
 class LanguageSettingsViewModel(
-    private val languageUtils: LanguageUtils
+    private val languageUtils: ILanguageUtils
 ) : ScreenViewModel() {
 
     private val _viewState = MutableStateFlow(LanguageSettingsViewState())

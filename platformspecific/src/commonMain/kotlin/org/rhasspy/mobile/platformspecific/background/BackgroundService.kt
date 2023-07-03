@@ -1,18 +1,25 @@
 package org.rhasspy.mobile.platformspecific.background
 
+interface IBackgroundService {
+
+    fun start()
+    fun stop()
+
+}
+
 /**
  * Native Service to run continuously in background
  */
-expect class BackgroundService() {
+internal expect class BackgroundService() : IBackgroundService {
 
     /**
      * start background service
      */
-    fun start()
+    override fun start()
 
     /**
      * stop background work
      */
-    fun stop()
+    override fun stop()
 
 }

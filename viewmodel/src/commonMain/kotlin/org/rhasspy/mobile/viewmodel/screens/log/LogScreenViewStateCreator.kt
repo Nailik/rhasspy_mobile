@@ -8,12 +8,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.logic.logger.FileLogger
+import org.rhasspy.mobile.logic.logger.IFileLogger
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.settings.AppSetting
 
 class LogScreenViewStateCreator(
-    private val fileLogger: FileLogger
+    private val fileLogger: IFileLogger
 ) {
 
     private val updaterScope = CoroutineScope(Dispatchers.IO)

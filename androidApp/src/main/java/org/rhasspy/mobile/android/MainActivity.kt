@@ -13,10 +13,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.ui.main.MainScreen
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.INavigator
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action.MicrophoneFabClick
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 import org.rhasspy.mobile.widget.microphone.MicrophoneWidgetUtils
@@ -41,12 +41,12 @@ class MainActivity : KoinComponent, AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(this) {
             // Handle the back button event
-            get<Navigator>().onBackPressed()
+            get<INavigator>().onBackPressed()
         }
 
         installSplashScreen().setKeepOnScreenCondition {
             //splash screen should be visible until the app has started
-            !get<NativeApplication>().isHasStarted.value
+            !get<INativeApplication>().isHasStarted.value
         }
         super.onCreate(savedInstanceState)
 

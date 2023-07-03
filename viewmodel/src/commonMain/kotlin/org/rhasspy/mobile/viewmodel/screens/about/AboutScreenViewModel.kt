@@ -7,7 +7,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.utils.OpenLinkUtils
+import org.rhasspy.mobile.platformspecific.utils.IOpenLinkUtils
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.*
@@ -68,7 +68,7 @@ class AboutScreenViewModel(
     }
 
     private fun openSourceCode() {
-        if (!get<OpenLinkUtils>().openLink(LinkType.SourceCode)) {
+        if (!get<IOpenLinkUtils>().openLink(LinkType.SourceCode)) {
             _viewState.update {
                 it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
             }

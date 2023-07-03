@@ -12,14 +12,14 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
-import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.RequestMicrophonePermissionExternally
+import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.utils.OpenLinkUtils
+import org.rhasspy.mobile.platformspecific.utils.IOpenLinkUtils
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.*
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.RequestMicrophonePermission
@@ -35,9 +35,9 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
 
     protected val navigator by inject<INavigator>()
     protected val microphonePermission = get<IMicrophonePermission>()
-    protected val externalResultRequest = get<ExternalResultRequest>()
+    protected val externalResultRequest = get<IExternalResultRequest>()
     private val overlayPermission = get<IOverlayPermission>()
-    private val openLinkUtils = get<OpenLinkUtils>()
+    private val openLinkUtils = get<IOpenLinkUtils>()
 
     private val _screenViewState = MutableStateFlow(ScreenViewState())
     override val screenViewState = _screenViewState.readOnly
@@ -134,7 +134,7 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
     /**
      * returns true if pop back stack was handled internally
      */
-    fun onBackPressedClick(): Boolean {
+    override fun onBackPressedClick(): Boolean {
         return if (_screenViewState.value.dialogState != null) {
             _screenViewState.update { it.copy(dialogState = null) }
             true

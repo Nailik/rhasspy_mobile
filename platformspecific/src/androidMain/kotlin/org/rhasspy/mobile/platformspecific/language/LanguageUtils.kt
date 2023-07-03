@@ -9,9 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.language.LanguageType
 
-actual class LanguageUtils {
+internal actual class LanguageUtils : ILanguageUtils {
 
-    actual fun getDeviceLanguage(): LanguageType {
+    actual override fun getDeviceLanguage(): LanguageType {
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS
         return LocaleListCompat.getDefault().getFirstMatch(arrayOf("en", "de")).let {
             when (it?.language) {
@@ -22,7 +22,7 @@ actual class LanguageUtils {
         }
     }
 
-    actual fun setupLanguage(defaultLanguageType: LanguageType): LanguageType {
+    actual override fun setupLanguage(defaultLanguageType: LanguageType): LanguageType {
         val language: LanguageType = getSystemAppLanguage() ?: defaultLanguageType
         StringDesc.localeType = StringDesc.LocaleType.Custom(language.code)
         if (getDeviceLanguage() != language && getSystemAppLanguage() != language) {
@@ -32,7 +32,7 @@ actual class LanguageUtils {
         return language
     }
 
-    actual fun getSystemAppLanguage(): LanguageType? {
+    actual override fun getSystemAppLanguage(): LanguageType? {
         return AppCompatDelegate.getApplicationLocales().getFirstMatch(arrayOf("en", "de")).let {
             when (it?.language) {
                 "en" -> LanguageType.English
@@ -42,7 +42,7 @@ actual class LanguageUtils {
         }
     }
 
-    actual fun setLanguage(languageType: LanguageType) {
+    actual override fun setLanguage(languageType: LanguageType) {
         val appLocale = LocaleListCompat.forLanguageTags(languageType.code)
         CoroutineScope(Dispatchers.Main).launch {
             //must be called from main thread

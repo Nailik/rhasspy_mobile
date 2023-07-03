@@ -5,12 +5,12 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
+import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 import kotlin.reflect.KClass
 
 interface INavigator {
@@ -19,8 +19,8 @@ interface INavigator {
     fun popBackStack()
     fun onBackPressed()
     fun navigate(screen: NavigationDestination)
-    fun onComposed(viewModel: ScreenViewModel)
-    fun onDisposed(viewModel: ScreenViewModel)
+    fun onComposed(viewModel: IScreenViewModel)
+    fun onDisposed(viewModel: IScreenViewModel)
     fun replace(clazz: KClass<out NavigationDestination>, screen: NavigationDestination)
 }
 
@@ -31,14 +31,14 @@ inline fun <reified T : NavigationDestination> INavigator.topScreen(default: T):
  * top viewmodel
  * wenn screen nicht mehr angezeigt wird disposen
  */
-class Navigator(
-    private val nativeApplication: NativeApplication
+internal class Navigator(
+    private val nativeApplication: INativeApplication
 ) : INavigator {
 
     private val _navStack = MutableStateFlow<ImmutableList<NavigationDestination>>(persistentListOf(HomeScreen))
     override val navStack = _navStack.readOnly
 
-    private val _viewModelStack = mutableListOf<ScreenViewModel>()
+    private val _viewModelStack = mutableListOf<IScreenViewModel>()
 
     override fun popBackStack() {
         if (navStack.value.size <= 1) {
@@ -92,11 +92,11 @@ class Navigator(
         _navStack.value = list
     }
 
-    override fun onComposed(viewModel: ScreenViewModel) {
+    override fun onComposed(viewModel: IScreenViewModel) {
         _viewModelStack.add(viewModel)
     }
 
-    override fun onDisposed(viewModel: ScreenViewModel) {
+    override fun onDisposed(viewModel: IScreenViewModel) {
         val index = _viewModelStack.indexOfLast { it == viewModel }
         if (index != -1) {
             _viewModelStack.removeAt(index)

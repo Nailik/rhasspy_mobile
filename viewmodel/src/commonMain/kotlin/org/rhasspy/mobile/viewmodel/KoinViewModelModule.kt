@@ -6,7 +6,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.logicModule
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
+import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewStateCreator
@@ -22,6 +22,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
+import org.rhasspy.mobile.viewmodel.navigation.INavigator
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewStateCreator
@@ -70,7 +71,11 @@ val viewModelModule = module {
         settingsModule
     )
 
-    singleOf(::Navigator)
+    single<INavigator> {
+        Navigator(
+            nativeApplication = get()
+        )
+    }
     singleOf(::ViewModelFactory)
 
     factoryOf(::MainScreenViewStateCreator)
@@ -111,7 +116,7 @@ val viewModelModule = module {
 
     factory { params -> SilenceDetectionSettingsViewStateCreator(audioRecorder = params.get()) }
     single {
-        val audioRecorder: AudioRecorder = get()
+        val audioRecorder: IAudioRecorder = get()
         SilenceDetectionSettingsViewModel(
             nativeApplication = get(),
             viewStateCreator = get { parametersOf(audioRecorder) },

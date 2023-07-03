@@ -5,7 +5,7 @@ import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-class LocalAudioServiceParamsCreator {
+internal class LocalAudioServiceParamsCreator {
 
     operator fun invoke(): StateFlow<LocalAudioServiceParams> {
 

@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.link.LinkType
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
+import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -22,7 +22,7 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewStat
 
 @Stable
 class MqttConfigurationViewModel(
-    service: MqttService
+    service: IMqttService
 ) : IConfigurationViewModel(
     service = service
 ) {

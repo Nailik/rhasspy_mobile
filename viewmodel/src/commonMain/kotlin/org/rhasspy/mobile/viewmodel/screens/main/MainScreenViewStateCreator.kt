@@ -5,13 +5,13 @@ import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.INavigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.navigation.topScreen
 
 class MainScreenViewStateCreator(
-    private val navigator: Navigator
+    private val navigator: INavigator
 ) {
 
     private val mainScreens = arrayOf(HomeScreen, ConfigurationScreen, SettingsScreen, LogScreen)

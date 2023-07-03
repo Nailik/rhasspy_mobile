@@ -1,23 +1,26 @@
 package org.rhasspy.mobile.platformspecific.permission
 
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 
 interface IMicrophonePermission {
+
     val granted: StateFlow<Boolean>
+
     fun shouldShowInformationDialog(): Boolean
     fun update()
     suspend fun request()
+
 }
 
 
 /**
  * to check microphone permission
  */
-expect class MicrophonePermission(
-    nativeApplication: NativeApplication,
-    externalResultRequest: ExternalResultRequest
+internal expect class MicrophonePermission(
+    nativeApplication: INativeApplication,
+    externalResultRequest: IExternalResultRequest
 ) : IMicrophonePermission {
 
     /**

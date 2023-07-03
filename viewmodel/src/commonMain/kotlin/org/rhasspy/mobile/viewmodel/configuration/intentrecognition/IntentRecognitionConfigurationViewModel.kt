@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionService
+import org.rhasspy.mobile.logic.services.intentrecognition.IIntentRecognitionService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
@@ -17,7 +17,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 
 @Stable
 class IntentRecognitionConfigurationViewModel(
-    service: IntentRecognitionService
+    service: IIntentRecognitionService
 ) : IConfigurationViewModel(
     service = service
 ) {

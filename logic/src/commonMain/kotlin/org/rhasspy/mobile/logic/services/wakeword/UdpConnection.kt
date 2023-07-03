@@ -14,7 +14,7 @@ import kotlinx.coroutines.channels.SendChannel
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
 import org.rhasspy.mobile.settings.AppSetting
 
-class UdpConnection(
+internal class UdpConnection(
     private val host: String,
     private val port: Int
 ) {

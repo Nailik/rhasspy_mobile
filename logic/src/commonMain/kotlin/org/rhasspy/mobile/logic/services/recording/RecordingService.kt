@@ -7,14 +7,29 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
+import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
+import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import kotlin.time.Duration.Companion.milliseconds
+
+interface IRecordingService : IService {
+
+    override val serviceState: StateFlow<ServiceState>
+
+    val isRecording: StateFlow<Boolean>
+    val output: StateFlow<ByteArray>
+
+    fun toggleSilenceDetectionEnabled(enabled: Boolean)
+
+}
+
 
 /**
  * records audio and sends data to state machine service
@@ -22,19 +37,26 @@ import kotlin.time.Duration.Companion.milliseconds
  *
  * recording is started and stopped automatically when output is observed
  */
-class RecordingService(
-    private val audioRecorder: AudioRecorder
-) : IService(LogType.RecordingService) {
+internal class RecordingService(
+    private val audioRecorder: IAudioRecorder
+) : IRecordingService {
+
+    override val logger = LogType.RecordingService.logger()
+
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
+    override val serviceState = _serviceState.readOnly
+
+    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private var silenceStartTime: Instant? = null
     private var recordingStartTime: Instant? = null
 
     private val _isRecording = MutableStateFlow(false)
-    val isRecording = _isRecording.readOnly
+    override val isRecording = _isRecording.readOnly
 
     private val _output = MutableStateFlow(ByteArray(0))
-    val output = _output.readOnly
+    override val output = _output.readOnly
 
     private var isSilenceDetectionEnabled = false
 
@@ -101,7 +123,7 @@ class RecordingService(
         }
     }
 
-    fun toggleSilenceDetectionEnabled(enabled: Boolean) {
+    override fun toggleSilenceDetectionEnabled(enabled: Boolean) {
         isSilenceDetectionEnabled = enabled
     }
 

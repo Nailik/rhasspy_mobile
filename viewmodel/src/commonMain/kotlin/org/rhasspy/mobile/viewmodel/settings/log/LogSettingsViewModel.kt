@@ -2,7 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings.log
 
 import androidx.compose.runtime.Stable
 import co.touchlab.kermit.Logger
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Action
@@ -13,7 +13,7 @@ import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.*
 @Stable
 class LogSettingsViewModel(
     val viewStateCreator: LogSettingsViewStateCreator,
-    private val nativeApplication: NativeApplication
+    private val nativeApplication: INativeApplication
 ) : ScreenViewModel() {
 
     val viewState = viewStateCreator()

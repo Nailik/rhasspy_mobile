@@ -10,15 +10,18 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import okio.Path
 import okio.buffer
+import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioOutputToggle
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
 import org.rhasspy.mobile.platformspecific.extensions.commonData
@@ -28,13 +31,44 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
 
-class MqttService(
+interface IMqttService : IService {
+
+    override val serviceState: StateFlow<ServiceState>
+    val isConnected: StateFlow<Boolean>
+    val isHasStarted: StateFlow<Boolean>
+
+    fun onMessageReceived(topic: String, payload: ByteArray)
+    suspend fun sessionStarted(sessionId: String): ServiceState
+    suspend fun sessionEnded(sessionId: String): ServiceState
+    suspend fun intentNotRecognized(sessionId: String): ServiceState
+    suspend fun asrAudioFrame(sessionId: String, byteArray: ByteArray): ServiceState
+    suspend fun hotWordDetected(keyword: String): ServiceState
+    suspend fun wakeWordError(description: String): ServiceState
+    suspend fun startListening(sessionId: String): ServiceState
+    suspend fun stopListening(sessionId: String): ServiceState
+    suspend fun asrTextCaptured(sessionId: String, text: String?): ServiceState
+    suspend fun asrError(sessionId: String): ServiceState
+    suspend fun audioCaptured(sessionId: String, audioFilePath: Path): ServiceState
+    suspend fun recognizeIntent(sessionId: String, text: String): ServiceState
+    suspend fun say(sessionId: String, text: String): ServiceState
+    suspend fun playAudioRemote(audioSource: AudioSource): ServiceState
+    suspend fun playFinished(): ServiceState
+
+}
+
+internal class MqttService(
     paramsCreator: MqttServiceParamsCreator
-) : IService(LogType.MqttService) {
-    private var scope = CoroutineScope(Dispatchers.IO)
+) : IMqttService {
+
+    override val logger = LogType.MqttService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
+
+    private val nativeApplication by inject<INativeApplication>()
+    private val serviceMiddleware by inject<IServiceMiddleware>()
+
+    private var scope = CoroutineScope(Dispatchers.IO)
 
     private val paramsFlow: StateFlow<MqttServiceParams> = paramsCreator()
     private val params: MqttServiceParams get() = paramsFlow.value
@@ -46,9 +80,9 @@ class MqttService(
     private val id = uuid4().variant
 
     private val _isConnected = MutableStateFlow(false)
-    val isConnected = _isConnected.readOnly
+    override val isConnected = _isConnected.readOnly
     private val _isHasStarted = MutableStateFlow(false)
-    val isHasStarted = _isHasStarted.readOnly
+    override val isHasStarted = _isHasStarted.readOnly
 
     /**
      * start client externally, only starts if mqtt is enabled
@@ -191,7 +225,7 @@ class MqttService(
      * message from external sources
      * eg: http api
      */
-    fun onMessageReceived(topic: String, payload: ByteArray) {
+    override fun onMessageReceived(topic: String, payload: ByteArray) {
         logger.d { "onMessageReceived $topic" }
 
         try {
@@ -427,7 +461,7 @@ class MqttService(
      * Response to [hermes/dialogueManager/startSession]
      * Also used when session has started for other reasons
      */
-    suspend fun sessionStarted(sessionId: String) =
+    override suspend fun sessionStarted(sessionId: String) =
         publishMessage(
             MqttTopicsPublish.SessionStarted,
             createMqttMessage {
@@ -457,7 +491,7 @@ class MqttService(
      *
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
-    suspend fun sessionEnded(sessionId: String) =
+    override suspend fun sessionEnded(sessionId: String) =
         publishMessage(
             MqttTopicsPublish.SessionEnded,
             createMqttMessage {
@@ -472,7 +506,7 @@ class MqttService(
      * sessionId: string - current session ID
      * siteId: string = "default" - Hermes site ID
      */
-    suspend fun intentNotRecognized(sessionId: String) =
+    override suspend fun intentNotRecognized(sessionId: String) =
         publishMessage(
             MqttTopicsPublish.IntentNotRecognizedInSession,
             createMqttMessage {
@@ -487,7 +521,7 @@ class MqttService(
      * siteId: string - Hermes site ID (part of topic)
      * sessionId: string - session ID (part of topic)
      */
-    suspend fun asrAudioFrame(sessionId: String, byteArray: ByteArray) =
+    override suspend fun asrAudioFrame(sessionId: String, byteArray: ByteArray) =
         publishMessage(
             MqttTopicsPublish.AsrAudioFrame.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
@@ -553,7 +587,7 @@ class MqttService(
      * currentSensitivity: float = 1.0 - sensitivity of wake word detection (service specific)
      * siteId: string = "default" - Hermes site ID
      */
-    suspend fun hotWordDetected(keyword: String) =
+    override suspend fun hotWordDetected(keyword: String) =
         publishMessage(
             MqttTopicsPublish.HotWordDetected.topic
                 .set(MqttTopicPlaceholder.WakeWord, keyword),
@@ -570,7 +604,7 @@ class MqttService(
      *
      * siteId: string = "default" - Hermes site ID
      */
-    suspend fun wakeWordError(description: String) =
+    override suspend fun wakeWordError(description: String) =
         publishMessage(
             MqttTopicsPublish.WakeWordError,
             createMqttMessage {
@@ -602,7 +636,7 @@ class MqttService(
      *
      * stopOnSilence: bool = true - detect silence and automatically end voice command (Rhasspy only)
      */
-    suspend fun startListening(sessionId: String) =
+    override suspend fun startListening(sessionId: String) =
         publishMessage(
             MqttTopicsPublish.AsrStartListening,
             createMqttMessage {
@@ -631,7 +665,7 @@ class MqttService(
      * siteId: string = "default" - Hermes site ID
      * sessionId: string = "" - current session ID
      */
-    suspend fun stopListening(sessionId: String) =
+    override suspend fun stopListening(sessionId: String) =
         publishMessage(
             MqttTopicsPublish.AsrStopListening,
             createMqttMessage {
@@ -663,7 +697,7 @@ class MqttService(
      * siteId: string = "default" - Hermes site ID
      * sessionId: string? = null - current session ID
      */
-    suspend fun asrTextCaptured(sessionId: String, text: String?) =
+    override suspend fun asrTextCaptured(sessionId: String, text: String?) =
         publishMessage(
             MqttTopicsPublish.AsrTextCaptured,
             createMqttMessage {
@@ -691,7 +725,7 @@ class MqttService(
      * siteId: string = "default" - Hermes site ID
      * sessionId: string? = null - current session ID
      */
-    suspend fun asrError(sessionId: String) =
+    override suspend fun asrError(sessionId: String) =
         publishMessage(
             MqttTopicsPublish.AsrError,
             createMqttMessage {
@@ -706,7 +740,7 @@ class MqttService(
      * sessionId: string - current session ID (part of topic)
      * Only sent if sendAudioCaptured = true in startListening
      */
-    suspend fun audioCaptured(sessionId: String, audioFilePath: Path) =
+    override suspend fun audioCaptured(sessionId: String, audioFilePath: Path) =
         publishMessage(
             MqttTopicsPublish.AudioCaptured.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
@@ -726,7 +760,7 @@ class MqttService(
      * hermes/intent/<intentName>
      * hermes/nlu/intentNotRecognized
      */
-    suspend fun recognizeIntent(sessionId: String, text: String) =
+    override suspend fun recognizeIntent(sessionId: String, text: String) =
         publishMessage(
             MqttTopicsPublish.Query,
             createMqttMessage {
@@ -794,7 +828,7 @@ class MqttService(
      * Response(s)
      * hermes/tts/sayFinished (JSON)
      */
-    suspend fun say(sessionId: String, text: String) =
+    override suspend fun say(sessionId: String, text: String) =
         publishMessage(
             MqttTopicsPublish.Say,
             createMqttMessage {
@@ -840,19 +874,20 @@ class MqttService(
      * hermes/audioServer/<siteId>/playFinished (JSON)
      *
      */
-    suspend fun playAudioRemote(audioSource: AudioSource) = publishMessage(
-        MqttTopicsPublish.AudioOutputPlayBytes.topic
-            .set(MqttTopicPlaceholder.SiteId, params.audioPlayingMqttSiteId)
-            .set(MqttTopicPlaceholder.RequestId, uuid4().toString()),
-        MqttMessage(
-            @Suppress("DEPRECATION")
-            when (audioSource) {
-                is AudioSource.Data -> audioSource.data
-                is AudioSource.File -> audioSource.path.commonSource().buffer().readByteArray()
-                is AudioSource.Resource -> audioSource.fileResource.commonData(nativeApplication)
-            }
+    override suspend fun playAudioRemote(audioSource: AudioSource) =
+        publishMessage(
+            MqttTopicsPublish.AudioOutputPlayBytes.topic
+                .set(MqttTopicPlaceholder.SiteId, params.audioPlayingMqttSiteId)
+                .set(MqttTopicPlaceholder.RequestId, uuid4().toString()),
+            MqttMessage(
+                @Suppress("DEPRECATION")
+                when (audioSource) {
+                    is AudioSource.Data -> audioSource.data
+                    is AudioSource.File -> audioSource.path.commonSource().buffer().readByteArray()
+                    is AudioSource.Resource -> audioSource.fileResource.commonData(nativeApplication)
+                }
+            )
         )
-    )
 
     /**
      * hermes/audioServer/toggleOff (JSON)
@@ -876,7 +911,7 @@ class MqttService(
      * Response to hermes/audioServer/<siteId>/playBytes/<requestId>
      * siteId: string - Hermes site ID (part of topic)
      */
-    suspend fun playFinished() =
+    override suspend fun playFinished() =
         publishMessage(
             MqttTopicsPublish.AudioOutputPlayFinished.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId),

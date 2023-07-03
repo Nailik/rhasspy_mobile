@@ -16,14 +16,15 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.*
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.*
 import kotlin.coroutines.resume
 
-actual class ExternalResultRequest actual constructor(
-    private val nativeApplication: NativeApplication
-) : KoinComponent {
+internal actual class ExternalResultRequest actual constructor(
+    private val nativeApplication: INativeApplication
+) : IExternalResultRequest, KoinComponent {
 
     private val logger = Logger.withTag("ExternalRedirect")
 
@@ -47,13 +48,13 @@ actual class ExternalResultRequest actual constructor(
         }
     }
 
-    actual fun <R> launch(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> {
+    actual override fun <R> launch(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> {
         logger.v { "launch $intention" }
         return launching {
-            nativeApplication.currentActivity?.also {
+            (nativeApplication as NativeApplication).currentActivity?.also {
                 it.startActivity(intentFromIntention(intention))
             } ?: run {
-                nativeApplication.startActivity(
+                (nativeApplication as NativeApplication).startActivity(
                     intentFromIntention(intention).apply {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
@@ -64,7 +65,7 @@ actual class ExternalResultRequest actual constructor(
 
     @Suppress("UNCHECKED_CAST")
     @OptIn(ExperimentalCoroutinesApi::class)
-    actual suspend fun <R> launchForResult(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> =
+    actual override suspend fun <R> launchForResult(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> =
         suspendCancellableCoroutine { continuation ->
             logger.v { "launchForResult $intention" }
             launching<R> {
@@ -73,7 +74,7 @@ actual class ExternalResultRequest actual constructor(
             }
         }
 
-    actual suspend fun launchForPermission(permission: String): Boolean =
+    actual override suspend fun launchForPermission(permission: String): Boolean =
         suspendCancellableCoroutine { continuation ->
             logger.v { "launchForResult $permission" }
             permissionResultCallback = { continuation.resume(it) }
@@ -106,12 +107,12 @@ actual class ExternalResultRequest actual constructor(
             is CreateDocument ->
                 ActivityResultContracts
                     .CreateDocument(intention.mimeType)
-                    .createIntent(nativeApplication, intention.title)
+                    .createIntent((nativeApplication as NativeApplication), intention.title)
 
             is OpenDocument ->
                 ActivityResultContracts
                     .OpenDocument()
-                    .createIntent(nativeApplication, intention.mimeTypes.toTypedArray())
+                    .createIntent((nativeApplication as NativeApplication), intention.mimeTypes.toTypedArray())
                     .apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(intention.uri))
@@ -122,7 +123,7 @@ actual class ExternalResultRequest actual constructor(
             is GetContent ->
                 ActivityResultContracts
                     .GetContent()
-                    .createIntent(nativeApplication, "*/*")
+                    .createIntent((nativeApplication as NativeApplication), "*/*")
                     .apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(intention.uri))
@@ -134,7 +135,7 @@ actual class ExternalResultRequest actual constructor(
                 Intent().apply {
                     @SuppressLint("BatteryLife")
                     action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                    data = Uri.parse("package:${nativeApplication.packageName}")
+                    data = Uri.parse("package:${(nativeApplication as NativeApplication).packageName}")
                 }
 
             RequestMicrophonePermissionExternally ->

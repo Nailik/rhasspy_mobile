@@ -1,18 +1,18 @@
 package org.rhasspy.mobile.platformspecific.background
 
-actual class BackgroundService {
+internal actual class BackgroundService : IBackgroundService {
 
     /**
      * start background service
      */
-    actual fun start() {
+    actual override fun start() {
         //TODO("Not yet implemented")
     }
 
     /**
      * stop background work
      */
-    actual fun stop() {
+    actual override fun stop() {
         //TODO("Not yet implemented")
     }
 

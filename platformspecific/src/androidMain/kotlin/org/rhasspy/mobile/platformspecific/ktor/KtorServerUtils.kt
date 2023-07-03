@@ -7,6 +7,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.compression.Compression
 import io.ktor.server.plugins.compression.gzip
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import java.io.File
 import java.security.KeyStore
@@ -33,7 +34,7 @@ actual fun Application.installCallLogging() {
  * create connector for webserver with ssl settings if enabled
  */
 actual fun ApplicationEngineEnvironmentBuilder.installConnector(
-    nativeApplication: NativeApplication,
+    nativeApplication: INativeApplication,
     port: Int,
     isUseSSL: Boolean,
     keyStoreFile: String,
@@ -46,7 +47,7 @@ actual fun ApplicationEngineEnvironmentBuilder.installConnector(
 
         keystore.load(
             File(
-                nativeApplication.filesDir,
+                (nativeApplication as NativeApplication).filesDir,
                 keyStoreFile
             ).inputStream(), keyStorePassword.toCharArray()
         )

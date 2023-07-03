@@ -1,6 +1,7 @@
 package org.rhasspy.mobile
 
 import co.touchlab.kermit.ExperimentalKermitApi
+import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
@@ -14,16 +15,16 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
-import org.rhasspy.mobile.logic.logger.FileLogger
+import org.rhasspy.mobile.logic.logger.IFileLogger
 import org.rhasspy.mobile.logic.logicModule
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.logic.services.webserver.WebServerService
+import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
+import org.rhasspy.mobile.logic.services.mqtt.IMqttService
+import org.rhasspy.mobile.logic.services.webserver.IWebServerService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.background.BackgroundService
-import org.rhasspy.mobile.platformspecific.language.LanguageUtils
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
-import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.platformspecific.background.IBackgroundService
+import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
+import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.utils.isDebug
@@ -52,7 +53,7 @@ abstract class Application : NativeApplication(), KoinComponent {
         }
 
         CoroutineScope(Dispatchers.IO).launch {
-            Logger.addLogWriter(get<FileLogger>())
+            Logger.addLogWriter(get<IFileLogger>() as LogWriter)
             if (!isDebug() && !isInstrumentedTest()) {
                 Logger.addLogWriter(
                     CrashlyticsLogWriter(
@@ -80,7 +81,7 @@ abstract class Application : NativeApplication(), KoinComponent {
 
             //start foreground service if enabled
             if (AppSetting.isBackgroundServiceEnabled.value) {
-                get<BackgroundService>().start()
+                get<IBackgroundService>().start()
             }
 
             //check if overlay permission is granted
@@ -94,15 +95,15 @@ abstract class Application : NativeApplication(), KoinComponent {
     abstract fun stopOverlay()
 
     override fun resume() {
-        get<MicrophonePermission>().update()
-        get<OverlayPermission>().update()
+        get<IMicrophonePermission>().update()
+        get<IOverlayPermission>().update()
         checkOverlayPermission()
         startServices()
         startOverlay()
     }
 
     private fun checkOverlayPermission() {
-        if (!get<OverlayPermission>().isGranted()) {
+        if (!get<IOverlayPermission>().isGranted()) {
             if (AppSetting.microphoneOverlaySizeOption.value != MicrophoneOverlaySizeOption.Disabled ||
                 AppSetting.isWakeWordLightIndicationEnabled.value
             ) {
@@ -115,12 +116,12 @@ abstract class Application : NativeApplication(), KoinComponent {
     }
 
     private fun startServices() {
-        get<WebServerService>()
-        get<MqttService>()
-        get<DialogManagerService>()
+        get<IWebServerService>()
+        get<IMqttService>()
+        get<IDialogManagerService>()
     }
 
     private fun initializeLanguage() {
-        AppSetting.languageType.value = get<LanguageUtils>().setupLanguage(AppSetting.languageType.value)
+        AppSetting.languageType.value = get<ILanguageUtils>().setupLanguage(AppSetting.languageType.value)
     }
 }

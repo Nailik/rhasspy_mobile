@@ -9,7 +9,7 @@ object ExternalRedirectUtils : KoinComponent {
     suspend fun openDocument(folder: String, folderType: FolderType): String? = openDocument(folder, folderType.fileTypes)
 
     suspend fun openDocument(folder: String, mimeTypes: Array<String>): String? {
-        var result = get<ExternalResultRequest>().launchForResult(
+        var result = get<IExternalResultRequest>().launchForResult(
             ExternalResultRequestIntention.OpenDocument(folder, mimeTypes.toList())
         )
 
@@ -17,7 +17,7 @@ object ExternalRedirectUtils : KoinComponent {
             return result.data
         }
 
-        result = get<ExternalResultRequest>().launch(
+        result = get<IExternalResultRequest>().launch(
             ExternalResultRequestIntention.GetContent(folder, mimeTypes.toList())
         )
 

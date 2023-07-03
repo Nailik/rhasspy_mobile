@@ -5,8 +5,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action
@@ -18,9 +18,9 @@ import kotlin.math.pow
 
 @Stable
 class SilenceDetectionSettingsViewModel(
-    private val nativeApplication: NativeApplication,
+    private val nativeApplication: INativeApplication,
     viewStateCreator: SilenceDetectionSettingsViewStateCreator,
-    private val audioRecorder: AudioRecorder,
+    private val audioRecorder: IAudioRecorder,
 ) : ScreenViewModel() {
 
     val viewState: StateFlow<SilenceDetectionSettingsViewState> = viewStateCreator()

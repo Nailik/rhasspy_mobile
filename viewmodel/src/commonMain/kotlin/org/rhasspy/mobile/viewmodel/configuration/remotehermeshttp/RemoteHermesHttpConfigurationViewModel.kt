@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
+import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.platformspecific.toLongOrZero
@@ -19,7 +19,7 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
 
 @Stable
 class RemoteHermesHttpConfigurationViewModel(
-    service: HttpClientService
+    service: IHttpClientService
 ) : IConfigurationViewModel(
     service = service
 ) {

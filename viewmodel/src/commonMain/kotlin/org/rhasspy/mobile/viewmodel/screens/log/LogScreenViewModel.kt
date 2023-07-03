@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.logic.logger.FileLogger
+import org.rhasspy.mobile.logic.logger.IFileLogger
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
@@ -20,7 +20,7 @@ import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Consumed.ShowSn
 
 @Stable
 class LogScreenViewModel(
-    private val fileLogger: FileLogger,
+    private val fileLogger: IFileLogger,
     viewStateCreator: LogScreenViewStateCreator
 ) : ScreenViewModel() {
 

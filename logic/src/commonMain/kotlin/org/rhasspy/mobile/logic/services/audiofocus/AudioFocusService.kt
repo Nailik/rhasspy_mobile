@@ -6,7 +6,14 @@ import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.*
 import org.rhasspy.mobile.platformspecific.media.AudioFocusUtil
 import org.rhasspy.mobile.settings.AppSetting
 
-class AudioFocusService {
+interface IAudioFocusService {
+
+    fun request(reason: AudioFocusRequestReason)
+    fun abandon(reason: AudioFocusRequestReason)
+
+}
+
+internal class AudioFocusService : IAudioFocusService {
 
     private var reason: AudioFocusRequestReason? = null
 
@@ -19,7 +26,7 @@ class AudioFocusService {
         }
     }
 
-    fun request(reason: AudioFocusRequestReason) {
+    override fun request(reason: AudioFocusRequestReason) {
         if (AppSetting.audioFocusOption.value != AudioFocusOption.Disabled) {
 
             if (shouldRequest(reason)) {
@@ -30,7 +37,7 @@ class AudioFocusService {
         }
     }
 
-    fun abandon(reason: AudioFocusRequestReason) {
+    override fun abandon(reason: AudioFocusRequestReason) {
         if (AppSetting.audioFocusOption.value != AudioFocusOption.Disabled) {
 
             if (shouldRequest(reason) && (reason.ordinal > (this.reason?.ordinal ?: -1))) {

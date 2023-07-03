@@ -4,52 +4,65 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import okio.Path
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopListening
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceState.*
-import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.logic.services.settings.AppSettingsService
-import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
-import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
+import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
+import org.rhasspy.mobile.logic.services.localaudio.ILocalAudioService
+import org.rhasspy.mobile.logic.services.mqtt.IMqttService
+import org.rhasspy.mobile.logic.services.settings.IAppSettingsService
+import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
+import org.rhasspy.mobile.logic.services.texttospeech.ITextToSpeechService
+import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 
+interface IServiceMiddleware {
+
+    val isUserActionEnabled: StateFlow<Boolean>
+    val isPlayingRecording: StateFlow<Boolean>
+    val isPlayingRecordingEnabled: StateFlow<Boolean>
+
+    fun action(serviceMiddlewareAction: ServiceMiddlewareAction)
+    fun userSessionClick()
+    fun getRecordedFile(): Path
+
+}
+
 /**
  * handles ALL INCOMING events
  */
-class ServiceMiddleware(
-    private val dialogManagerService: DialogManagerService,
-    private val speechToTextService: SpeechToTextService,
-    private val textToSpeechService: TextToSpeechService,
-    private val appSettingsService: AppSettingsService,
-    private val localAudioService: LocalAudioService,
-    private val mqttService: MqttService,
-    private val wakeWordService: WakeWordService
-) {
+internal class ServiceMiddleware(
+    private val dialogManagerService: IDialogManagerService,
+    private val speechToTextService: ISpeechToTextService,
+    private val textToSpeechService: ITextToSpeechService,
+    private val appSettingsService: IAppSettingsService,
+    private val localAudioService: ILocalAudioService,
+    private val mqttService: IMqttService,
+    private val wakeWordService: IWakeWordService
+) : IServiceMiddleware {
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val _isPlayingRecording = MutableStateFlow(false)
-    val isPlayingRecording = _isPlayingRecording.readOnly
-    val isPlayingRecordingEnabled = combineState(_isPlayingRecording, dialogManagerService.currentDialogState) { playing, state ->
+    override val isPlayingRecording = _isPlayingRecording.readOnly
+    override val isPlayingRecordingEnabled = combineState(_isPlayingRecording, dialogManagerService.currentDialogState) { playing, state ->
         playing || (state == Idle || state == AwaitingWakeWord)
     }
 
-    val isUserActionEnabled = combineState(_isPlayingRecording, dialogManagerService.currentDialogState) { playingRecording, dialogState ->
+    override val isUserActionEnabled = combineState(_isPlayingRecording, dialogManagerService.currentDialogState) { playingRecording, dialogState ->
         !playingRecording && (dialogState == Idle || dialogState == AwaitingWakeWord || dialogState == RecordingIntent)
     }
     private var shouldResumeHotWordService = false
 
-    fun action(serviceMiddlewareAction: ServiceMiddlewareAction) {
+    override fun action(serviceMiddlewareAction: ServiceMiddlewareAction) {
         coroutineScope.launch {
             when (serviceMiddlewareAction) {
                 is PlayStopRecording -> {
@@ -102,7 +115,7 @@ class ServiceMiddleware(
         }
     }
 
-    fun userSessionClick() {
+    override fun userSessionClick() {
         when (dialogManagerService.currentDialogState.value) {
             AwaitingWakeWord -> action(WakeWordDetected(Source.Local, "manual"))
             RecordingIntent -> action(StopListening(Source.Local))
@@ -110,6 +123,6 @@ class ServiceMiddleware(
         }
     }
 
-    fun getRecordedFile(): Path = speechToTextService.speechToTextAudioFile
+    override fun getRecordedFile(): Path = speechToTextService.speechToTextAudioFile
 
 }

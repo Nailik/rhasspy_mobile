@@ -5,7 +5,7 @@ import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-class DialogManagerServiceParamsCreator {
+internal class DialogManagerServiceParamsCreator {
 
     operator fun invoke(): StateFlow<DialogManagerServiceParams> {
         return combineStateFlow(

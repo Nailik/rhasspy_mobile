@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
+import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toLongOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -24,7 +24,7 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
  */
 @Stable
 class DialogManagementConfigurationViewModel(
-    service: DialogManagerService,
+    service: IDialogManagerService,
 ) : IConfigurationViewModel(
     service = service
 ) {

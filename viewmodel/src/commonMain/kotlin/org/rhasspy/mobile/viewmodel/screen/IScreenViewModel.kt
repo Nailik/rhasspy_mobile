@@ -9,5 +9,6 @@ interface IScreenViewModel {
     fun onComposed()
     fun onDisposed()
     fun onEvent(event: ScreenViewModelUiEvent)
+    fun onBackPressedClick(): Boolean
 
 }

@@ -6,8 +6,7 @@ import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-class MqttServiceParamsCreator {
-
+internal class MqttServiceParamsCreator {
 
     operator fun invoke(): StateFlow<MqttServiceParams> {
 

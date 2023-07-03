@@ -5,7 +5,7 @@ import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-class HttpClientServiceParamsCreator {
+internal class HttpClientServiceParamsCreator {
 
     operator fun invoke(): StateFlow<HttpClientServiceParams> {
 
@@ -49,8 +49,8 @@ class HttpClientServiceParamsCreator {
             isUseCustomAudioPlayingEndpoint = ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value,
             audioPlayingHttpEndpoint = ConfigurationSetting.audioPlayingHttpEndpoint.value,
             intentHandlingHttpEndpoint = ConfigurationSetting.intentHandlingHttpEndpoint.value,
-            intentHandlingHassEndpoint = ConfigurationSetting.intentHandlingHomeAssistantEndpoint.value,
-            intentHandlingHassAccessToken = ConfigurationSetting.intentHandlingHomeAssistantAccessToken.value,
+            intentHandlingHomeAssistantEndpoint = ConfigurationSetting.intentHandlingHomeAssistantEndpoint.value,
+            intentHandlingHomeAssistantAccessToken = ConfigurationSetting.intentHandlingHomeAssistantAccessToken.value,
             intentHandlingOption = ConfigurationSetting.intentHandlingOption.value
         )
     }

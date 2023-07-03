@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.link.LinkType
-import org.rhasspy.mobile.logic.services.webserver.WebServerService
+import org.rhasspy.mobile.logic.services.webserver.IWebServerService
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -21,7 +21,7 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
 
 @Stable
 class WebServerConfigurationViewModel(
-    service: WebServerService
+    service: IWebServerService
 ) : IConfigurationViewModel(
     service = service
 ) {

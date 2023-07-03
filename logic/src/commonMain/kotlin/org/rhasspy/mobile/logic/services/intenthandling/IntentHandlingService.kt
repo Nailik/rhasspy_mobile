@@ -7,21 +7,31 @@ import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantService
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
+import org.rhasspy.mobile.logic.services.homeassistant.IHomeAssistantService
+import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
 import org.rhasspy.mobile.platformspecific.readOnly
+
+interface IIntentHandlingService : IService {
+
+    override val serviceState: StateFlow<ServiceState>
+
+    suspend fun intentHandling(intentName: String, intent: String)
+
+}
 
 /**
  * calls actions and returns result
  *
  * when data is null the service was most probably mqtt and will return result in a call function
  */
-open class IntentHandlingService(
-    paramsCreator: IntentHandlingServiceParamsCreator,
-) : IService(LogType.IntentHandlingService) {
+internal class IntentHandlingService(
+    paramsCreator: IntentHandlingServiceParamsCreator
+) : IIntentHandlingService {
 
-    private val httpClientService by inject<HttpClientService>()
-    private val homeAssistantService by inject<HomeAssistantService>()
+    override val logger = LogType.IntentHandlingService.logger()
+
+    private val httpClientService by inject<IHttpClientService>()
+    private val homeAssistantService by inject<IHomeAssistantService>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
     override val serviceState = _serviceState.readOnly
@@ -44,7 +54,7 @@ open class IntentHandlingService(
      *
      * if local dialogue management it will end the session
      */
-    suspend fun intentHandling(intentName: String, intent: String) {
+    override suspend fun intentHandling(intentName: String, intent: String) {
         logger.d { "intentHandling intentName: $intentName intent: $intent" }
         when (params.intentHandlingOption) {
             IntentHandlingOption.HomeAssistant -> _serviceState.value =

@@ -12,7 +12,7 @@ import org.rhasspy.mobile.platformspecific.extensions.commonSource
 
 private val logger = Logger.withTag("StreamContent")
 
-class StreamContent(private val filePath: Path) : OutgoingContent.WriteChannelContent() {
+internal class StreamContent(private val filePath: Path) : OutgoingContent.WriteChannelContent() {
 
     override suspend fun writeTo(channel: ByteWriteChannel) {
         var bytesRead: Int

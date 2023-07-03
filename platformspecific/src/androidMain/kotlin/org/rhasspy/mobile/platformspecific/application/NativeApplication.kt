@@ -18,8 +18,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
+import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 
-actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
+actual abstract class NativeApplication : INativeApplication, MultiDexApplication(), KoinComponent {
 
     var currentActivity: AppCompatActivity? = null
         private set
@@ -40,11 +41,11 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
     actual companion object {
         private lateinit var koinApplicationInstance: NativeApplication
         actual val koinApplicationModule = module {
-            single { koinApplicationInstance }
+            single<INativeApplication> { koinApplicationInstance }
         }
     }
 
-    actual fun onInit() {
+    actual override fun onInit() {
         koinApplicationInstance = this
     }
 
@@ -57,7 +58,7 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
                 //always represents top activity
                 if (p0 is AppCompatActivity) {
                     currentActivity = p0
-                    get<ExternalResultRequest>().registerCallback(p0)
+                    (get<IExternalResultRequest>() as ExternalResultRequest).registerCallback(p0)
                 }
             }
 
@@ -69,15 +70,15 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
         })
     }
 
-    actual val currentlyAppInBackground = MutableStateFlow(false)
-    actual val isAppInBackground: StateFlow<Boolean>
+    actual override val currentlyAppInBackground = MutableStateFlow(false)
+    actual override val isAppInBackground: StateFlow<Boolean>
         get() = currentlyAppInBackground
 
-    actual fun isInstrumentedTest(): Boolean {
+    actual override fun isInstrumentedTest(): Boolean {
         return Settings.System.getString(contentResolver, "firebase.test.lab") == "true"
     }
 
-    actual fun restart() {
+    actual override fun restart() {
         try {
             val packageManager: PackageManager = this.packageManager
             val intent: Intent = packageManager.getLaunchIntentForPackage(this.packageName)!!
@@ -90,11 +91,11 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
         }
     }
 
-    actual abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
-    actual abstract val isHasStarted: StateFlow<Boolean>
-    actual abstract fun resume()
-    actual abstract fun startRecordingAction()
-    actual fun closeApp() {
+    actual abstract override fun setCrashlyticsCollectionEnabled(enabled: Boolean)
+    actual abstract override val isHasStarted: StateFlow<Boolean>
+    actual abstract override fun resume()
+    actual abstract override fun startRecordingAction()
+    actual override fun closeApp() {
         currentActivity?.moveTaskToBack(false)
     }
 

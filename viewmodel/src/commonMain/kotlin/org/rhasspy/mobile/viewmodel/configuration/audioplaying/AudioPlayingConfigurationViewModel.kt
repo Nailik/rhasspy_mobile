@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
+import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
@@ -25,7 +25,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
  */
 @Stable
 class AudioPlayingConfigurationViewModel(
-    service: AudioPlayingService
+    service: IAudioPlayingService
 ) : IConfigurationViewModel(
     service = service
 ) {

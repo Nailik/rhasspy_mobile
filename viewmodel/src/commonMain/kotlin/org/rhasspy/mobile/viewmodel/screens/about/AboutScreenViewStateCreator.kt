@@ -5,12 +5,12 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.data.libraries.stable
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.resource.readToString
 import org.rhasspy.mobile.resources.MR
 
 class AboutScreenViewStateCreator(
-    val nativeApplication: NativeApplication
+    val nativeApplication: INativeApplication
 ) {
 
     operator fun invoke(): MutableStateFlow<AboutScreenViewState> {

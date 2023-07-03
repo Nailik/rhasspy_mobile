@@ -10,17 +10,18 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import okio.*
 import org.rhasspy.mobile.data.log.LogElement
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Result
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Success
-import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
+import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.io.SequenceInputStream
 import java.util.Collections
 
-actual fun Path.Companion.commonInternalPath(nativeApplication: NativeApplication, fileName: String): Path = "${nativeApplication.filesDir}/$fileName".toPath()
+actual fun Path.Companion.commonInternalPath(nativeApplication: INativeApplication, fileName: String): Path = "${(nativeApplication as NativeApplication).filesDir}/$fileName".toPath()
 
 actual fun Path.commonDelete() {
     FileSystem.SYSTEM.delete(this)
@@ -58,11 +59,11 @@ fun InputStream.modify(): InputStream {
 }
 
 actual fun Path.commonShare(
-    nativeApplication: NativeApplication,
-    externalResultRequest: ExternalResultRequest
+    nativeApplication: INativeApplication,
+    externalResultRequest: IExternalResultRequest
 ): Boolean {
     val fileUri: Uri = FileProvider.getUriForFile(
-        nativeApplication, nativeApplication.packageName.toString() + ".provider",
+        (nativeApplication as NativeApplication), nativeApplication.packageName.toString() + ".provider",
         this.toFile()
     )
 
@@ -77,8 +78,8 @@ actual fun Path.commonShare(
 }
 
 actual suspend fun Path.commonSave(
-    nativeApplication: NativeApplication,
-    externalResultRequest: ExternalResultRequest,
+    nativeApplication: INativeApplication,
+    externalResultRequest: IExternalResultRequest,
     fileName: String,
     fileType: String
 ): Boolean {
@@ -86,7 +87,7 @@ actual suspend fun Path.commonSave(
     val result = externalResultRequest.launchForResult(ExternalResultRequestIntention.CreateDocument(fileName, fileType))
 
     return if (result is Result) {
-        nativeApplication.contentResolver.openOutputStream(result.data.toUri())
+        (nativeApplication as NativeApplication).contentResolver.openOutputStream(result.data.toUri())
             ?.also { outputStream ->
                 this.toFile().inputStream().copyTo(outputStream)
                 outputStream.flush()

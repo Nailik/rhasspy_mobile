@@ -20,8 +20,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.ui.native.nativeComposeView
 import org.rhasspy.mobile.ui.overlay.IndicationOverlay
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
@@ -43,8 +44,8 @@ object IndicationOverlay : KoinComponent {
 
     private val context: Context
         get() {
-            val application = get<NativeApplication>()
-            return application.currentActivity ?: application
+            val application = get<INativeApplication>()
+            return (application as NativeApplication).currentActivity ?: application
         }
 
     private val overlayWindowManager by lazy {
@@ -107,7 +108,7 @@ object IndicationOverlay : KoinComponent {
                         if (it.isShowVisualIndication != showVisualIndicationOldValue) {
                             showVisualIndicationOldValue = it.isShowVisualIndication
                             if (it.isShowVisualIndication) {
-                                if (get<OverlayPermission>().isGranted()) {
+                                if (get<IOverlayPermission>().isGranted()) {
                                     if (Looper.myLooper() == null) {
                                         Looper.prepare()
                                     }

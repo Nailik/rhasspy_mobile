@@ -10,25 +10,37 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
+import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
+import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.platformspecific.readOnly
+
+interface IIntentRecognitionService : IService {
+
+    override val serviceState: StateFlow<ServiceState>
+
+    suspend fun recognizeIntent(sessionId: String, text: String)
+
+}
 
 /**
  * calls actions and returns result
  *
  * when data is null the service was most probably mqtt and will return result in a call function
  */
-open class IntentRecognitionService(
+internal class IntentRecognitionService(
     paramsCreator: IntentRecognitionServiceParamsCreator
-) : IService(LogType.IntentRecognitionService) {
+) : IIntentRecognitionService {
 
-    private val httpClientService by inject<HttpClientService>()
-    private val mqttClientService by inject<MqttService>()
+    override val logger = LogType.IntentRecognitionService.logger()
+
+    private val serviceMiddleware by inject<IServiceMiddleware>()
+    private val httpClientService by inject<IHttpClientService>()
+    private val mqttClientService by inject<IMqttService>()
 
     private val paramsFlow: StateFlow<IntentRecognitionServiceParams> = paramsCreator()
     private val params get() = paramsFlow.value
@@ -54,7 +66,7 @@ open class IntentRecognitionService(
      * - calls default site to recognize intent
      * - later eventually intentRecognized or intentNotRecognized will be called with received data
      */
-    suspend fun recognizeIntent(sessionId: String, text: String) {
+    override suspend fun recognizeIntent(sessionId: String, text: String) {
         logger.d { "recognizeIntent sessionId: $sessionId text: $text" }
         when (params.intentRecognitionOption) {
             IntentRecognitionOption.RemoteHTTP -> {

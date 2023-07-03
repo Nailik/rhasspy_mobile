@@ -5,7 +5,7 @@ import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-class IntentRecognitionServiceParamsCreator {
+internal class IntentRecognitionServiceParamsCreator {
 
     operator fun invoke(): StateFlow<IntentRecognitionServiceParams> {
 

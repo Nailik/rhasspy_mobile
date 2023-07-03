@@ -12,7 +12,7 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 /**
  * Native Service to run continuously in background
  */
-actual class BackgroundService : Service(), KoinComponent {
+internal actual class BackgroundService : IBackgroundService, Service(), KoinComponent {
     private val nativeApplication = get<NativeApplication>()
 
     private val logger = Logger.withTag("BackgroundService")
@@ -21,7 +21,7 @@ actual class BackgroundService : Service(), KoinComponent {
     /**
      * start background service
      */
-    actual fun start() {
+    actual override fun start() {
         logger.d { "start" }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             nativeApplication.startForegroundService(intent)
@@ -33,7 +33,7 @@ actual class BackgroundService : Service(), KoinComponent {
     /**
      * stop background work
      */
-    actual fun stop() {
+    actual override fun stop() {
         logger.d { "stop" }
         nativeApplication.stopService(intent)
     }

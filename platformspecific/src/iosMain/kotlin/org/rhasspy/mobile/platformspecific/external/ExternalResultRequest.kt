@@ -1,22 +1,22 @@
 package org.rhasspy.mobile.platformspecific.external
 
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
 
-actual class ExternalResultRequest actual constructor(
-    private val nativeApplication: NativeApplication
-) {
+internal actual class ExternalResultRequest actual constructor(
+    private val nativeApplication: INativeApplication
+) : IExternalResultRequest {
 
-    actual fun <R> launch(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> {
+    actual override fun <R> launch(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> {
         //TODO("Not yet implemented")
         return ExternalRedirectResult.Success()
     }
 
-    actual suspend fun <R> launchForResult(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> {
+    actual override suspend fun <R> launchForResult(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> {
         //TODO("Not yet implemented")
         return ExternalRedirectResult.Success()
     }
 
-    actual suspend fun launchForPermission(permission: String): Boolean {
+    actual override suspend fun launchForPermission(permission: String): Boolean {
         //TODO("Not yet implemented")
         return true
     }

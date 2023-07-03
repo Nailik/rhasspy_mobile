@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.platformspecific.background.BackgroundService
+import org.rhasspy.mobile.platformspecific.background.IBackgroundService
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Success
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -29,7 +29,7 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
 @Stable
 class BackgroundServiceSettingsViewModel(
     viewStateCreator: BackgroundServiceSettingsViewStateCreator,
-    private val backgroundService: BackgroundService
+    private val backgroundService: IBackgroundService
 ) : ScreenViewModel() {
 
     private val _viewState: MutableStateFlow<BackgroundServiceSettingsViewState> = viewStateCreator()
