@@ -1,6 +1,6 @@
 {
     "metadata": {
-        "generated": "2023-07-04T13:59:42.867Z"
+        "generated": "2023-07-04T14:11:34.964Z"
     },
     "libraries": [
         {
@@ -1401,26 +1401,24 @@
                 "name": "JUnit"
             }
         },
-        {
-            "uniqueId": "org.hamcrest:hamcrest-core",
-            "funding": [
-                
-            ],
-            "developers": [
-                
-            ],
-            "artifactVersion": "1.3",
-            "description": "This is the core API of hamcrest matcher framework to be used by third-party framework providers. This includes the a foundation set of matcher implementations for common operations.",
-          "scm": {
-            "connection": "scm:git:git@github.com:hamcrest/JavaHamcrest.git",
-            "url": "https://github.com/hamcrest/JavaHamcrest"
-          },
-          "name": "Hamcrest Core",
-          "website": "https://github.com/hamcrest/JavaHamcrest",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+      {
+        "uniqueId": "org.hamcrest:hamcrest-core",
+        "funding": [
+        ],
+        "developers": [
+        ],
+        "artifactVersion": "1.3",
+        "description": "This is the core API of hamcrest matcher framework to be used by third-party framework providers. This includes the a foundation set of matcher implementations for common operations.",
+        "scm": {
+          "connection": "scm:git:git@github.com:hamcrest/JavaHamcrest.git",
+          "url": "https://github.com/hamcrest/JavaHamcrest"
         },
+        "name": "Hamcrest Core",
+        "website": "https://github.com/hamcrest/JavaHamcrest",
+        "licenses": [
+          "BSD-3-Clause"
+        ]
+      },
       {
         "uniqueId": "org.jetbrains.compose.animation:animation",
         "funding": [
@@ -1765,16 +1763,16 @@
           {
             "organisationUrl": "https://www.jetbrains.com",
             "name": "Kotlin Team"
-                }
-            ],
-            "artifactVersion": "1.8.20",
-            "description": "Kotlin Android Extensions Runtime",
-            "scm": {
-                "connection": "scm:git:https://github.com/JetBrains/kotlin.git",
-                "url": "https://github.com/JetBrains/kotlin",
-                "developerConnection": "scm:git:https://github.com/JetBrains/kotlin.git"
-            },
-            "name": "Kotlin Android Extensions Runtime",
+          }
+        ],
+        "artifactVersion": "1.8.20",
+        "description": "Kotlin Android Extensions Runtime",
+        "scm": {
+          "connection": "scm:git:https://github.com/JetBrains/kotlin.git",
+          "url": "https://github.com/JetBrains/kotlin",
+          "developerConnection": "scm:git:https://github.com/JetBrains/kotlin.git"
+        },
+        "name": "Kotlin Android Extensions Runtime",
             "website": "https://kotlinlang.org/",
             "licenses": [
                 "Apache-2.0"
