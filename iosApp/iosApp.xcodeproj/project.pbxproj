@@ -377,6 +377,7 @@
 					ui,
 					"-framework",
 					shared,
+					"-w",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.rhasspy.mobile.identifier01;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -409,6 +410,7 @@
 					ui,
 					"-framework",
 					shared,
+					"-w",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.rhasspy.mobile.identifier01;
 				PRODUCT_NAME = "$(TARGET_NAME)";

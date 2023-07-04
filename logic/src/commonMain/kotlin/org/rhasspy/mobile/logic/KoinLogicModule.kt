@@ -51,7 +51,7 @@ import org.rhasspy.mobile.logic.services.webserver.IWebServerService
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParamsCreator
 
-val logicModule = module {
+fun logicModule() = module {
     single<IServiceMiddleware> {
         ServiceMiddleware(
             dialogManagerService = get(),

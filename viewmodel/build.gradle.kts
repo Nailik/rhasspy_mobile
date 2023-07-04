@@ -38,9 +38,6 @@ kotlin {
                 implementation(Kotlin.test)
                 implementation(KotlinX.Coroutines.test)
                 implementation(Russhwolf.multiplatformSettingsTest)
-                implementation(project(":shared"))
-                implementation(project(":platformspecific"))
-                implementation(project(":settings"))
             }
         }
         val androidMain by getting {
@@ -53,6 +50,7 @@ kotlin {
             dependsOn(commonTest)
             dependencies {
                 implementation(project(":androidApp"))
+                implementation(project(":shared"))
                 implementation(AndroidX.archCore.testing)
             }
         }

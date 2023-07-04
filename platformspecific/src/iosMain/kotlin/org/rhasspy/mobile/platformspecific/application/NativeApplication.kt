@@ -6,8 +6,9 @@ import org.koin.dsl.module
 
 actual abstract class NativeApplication : INativeApplication {
 
+    @ThreadLocal
     actual companion object {
-        private lateinit var koinApplicationInstance: NativeApplication
+        lateinit var koinApplicationInstance: NativeApplication
         actual val koinApplicationModule = module {
             single<INativeApplication> { koinApplicationInstance }
         }

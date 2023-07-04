@@ -12,7 +12,7 @@ class KoinViewModelModuleTest {
     fun checkKoinDefinitions() {
 
         koinApplication {
-            modules(viewModelModule)
+            modules(viewModelModule())
             checkModules {
                 withInstance(ISetting::class)
                 withInstance(IService::class)

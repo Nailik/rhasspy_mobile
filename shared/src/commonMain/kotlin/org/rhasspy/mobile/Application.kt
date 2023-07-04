@@ -45,8 +45,8 @@ abstract class Application : NativeApplication(), KoinComponent {
             // declare used modules
             modules(
                 koinApplicationModule,
-                logicModule,
-                viewModelModule,
+                logicModule(),
+                viewModelModule(),
                 settingsModule,
                 platformSpecificModule
             )

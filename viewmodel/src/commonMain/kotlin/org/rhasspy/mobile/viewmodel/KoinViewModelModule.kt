@@ -64,9 +64,9 @@ import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSe
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewStateCreator
 
 
-val viewModelModule = module {
+fun viewModelModule() = module {
     includes(
-        logicModule,
+        logicModule(),
         platformSpecificModule,
         settingsModule
     )

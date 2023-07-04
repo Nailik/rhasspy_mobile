@@ -29,8 +29,8 @@ abstract class AppTest : IAppTest(), KoinTest {
         startKoin {
             modules(
                 platformSpecificModule,
-                logicModule,
-                viewModelModule,
+                logicModule(),
+                viewModelModule(),
                 module {
                     single<Settings> {
                         MapSettings()
