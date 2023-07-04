@@ -4,14 +4,22 @@ import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.viewmodel.AppTest
 import kotlin.test.BeforeTest
-import kotlin.test.Test
 
 class AudioPlayingConfigurationViewModelTest : AppTest() {
 
     @Mock
     lateinit var nativeApplication: INativeApplication
+
+    @Mock
+    lateinit var microphonePermission: IMicrophonePermission
+
+    @Mock
+    lateinit var overlayPermission: IOverlayPermission
+
     override fun setUpMocks() = injectMocks(mocker)
 
     private lateinit var audioPlayingConfigurationViewModel: AudioPlayingConfigurationViewModel
@@ -20,13 +28,15 @@ class AudioPlayingConfigurationViewModelTest : AppTest() {
     fun before() {
         super.before(
             module {
-
+                single { nativeApplication }
+                single { microphonePermission }
+                single { overlayPermission }
             }
         )
 
         audioPlayingConfigurationViewModel = get()
     }
-
+    /*
     @Test
     fun onEvent() {
     }
@@ -42,4 +52,6 @@ class AudioPlayingConfigurationViewModelTest : AppTest() {
     @Test
     fun getScreen() {
     }
+
+     */
 }

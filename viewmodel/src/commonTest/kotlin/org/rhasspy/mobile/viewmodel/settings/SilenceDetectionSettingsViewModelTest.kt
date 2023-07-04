@@ -6,6 +6,8 @@ import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
+import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.nVerify
@@ -25,6 +27,12 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
     @Mock
     lateinit var audioRecorder: IAudioRecorder
 
+    @Mock
+    lateinit var microphonePermission: IMicrophonePermission
+
+    @Mock
+    lateinit var overlayPermission: IOverlayPermission
+
 
     private lateinit var silenceDetectionSettingsViewModel: SilenceDetectionSettingsViewModel
 
@@ -38,6 +46,8 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
             module {
                 single { nativeApplication }
                 single { audioRecorder }
+                single { microphonePermission }
+                single { overlayPermission }
             }
         )
 
@@ -63,6 +73,9 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
 
     @Test
     fun `when the user tests the audio recording and closes the app audio recording test is stopped`() {
+        every { audioRecorder.stopRecording() } returns Unit
+        every { audioRecorder.startRecording(isAny(), isAny(), isAny()) } returns Unit
+        every { microphonePermission.granted } returns MutableStateFlow(true)
         assertEquals(false, audioRecorder.isRecording.value)
 
         silenceDetectionSettingsViewModel.onEvent(ToggleAudioLevelTest)

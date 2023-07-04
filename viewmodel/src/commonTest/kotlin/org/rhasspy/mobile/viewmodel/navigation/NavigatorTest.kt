@@ -37,11 +37,12 @@ class NavigatorTest : AppTest() {
                 single { homeScreenViewModel }
             }
         )
-        navigator = get()
+        navigator = get<INavigator>() as Navigator
     }
 
     @Test
     fun `when back stack is popped and there is only one screen the app is closed`() {
+        every { nativeApplication.closeApp() } returns Unit
         navigator.updateNavStack(persistentListOf(HomeScreen))
         assertEquals(1, navigator.navStack.value.size)
 
@@ -66,20 +67,21 @@ class NavigatorTest : AppTest() {
 
     @Test
     fun `when user clicks back and top view model doesn't handle it popBackStack is called`() {
+        every { nativeApplication.closeApp() } returns Unit
         every { homeScreenViewModel.onBackPressedClick() } returns false
         navigator.updateNavStack(persistentListOf(HomeScreen))
         navigator.onComposed(homeScreenViewModel)
 
         navigator.onBackPressed()
 
-        verify { nativeApplication.closeApp() }
+        nVerify { nativeApplication.closeApp() }
 
         assertEquals(1, navigator.navStack.value.size)
     }
 
     @Test
     fun `when user clicks back and top view model handles it popBackStack is not called`() {
-        every { homeScreenViewModel.onBackPressedClick() } returns false
+        every { nativeApplication.closeApp() } returns Unit
         every { homeScreenViewModel.onBackPressedClick() } returns true
         navigator.updateNavStack(persistentListOf(HomeScreen))
         navigator.onComposed(homeScreenViewModel)
@@ -130,6 +132,8 @@ class NavigatorTest : AppTest() {
 
     @Test
     fun `when view model is composed it's added to the back stack`() {
+        every { homeScreenViewModel.onBackPressedClick() } returns true
+
         navigator.onComposed(homeScreenViewModel)
 
         navigator.onBackPressed()
@@ -138,6 +142,9 @@ class NavigatorTest : AppTest() {
 
     @Test
     fun `when view model is disposed and exists on the back stack it's removed`() {
+        every { nativeApplication.closeApp() } returns Unit
+        every { homeScreenViewModel.onBackPressedClick() } returns true
+
         navigator.onComposed(homeScreenViewModel)
 
         navigator.onDisposed(homeScreenViewModel)

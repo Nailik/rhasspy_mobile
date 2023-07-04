@@ -165,11 +165,9 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
                 _screenViewState.update { it.copy(dialogState = OverlayPermissionInfo) }
             } else {
                 //request directly
-                viewModelScope.launch(Dispatchers.IO) {
-                    if (!overlayPermission.request()) {
-                        //show snack bar
-                        _screenViewState.update { it.copy(snackBarState = OverlayPermissionRequestFailed) }
-                    }
+                if (!overlayPermission.request()) {
+                    //show snack bar
+                    _screenViewState.update { it.copy(snackBarState = OverlayPermissionRequestFailed) }
                 }
             }
         }

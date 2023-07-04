@@ -6,7 +6,6 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.viewmodel.AppTest
 import kotlin.test.BeforeTest
-import kotlin.test.Test
 
 class MqttConfigurationViewModelTest : AppTest() {
 
@@ -26,7 +25,7 @@ class MqttConfigurationViewModelTest : AppTest() {
 
         mqttConfigurationViewModel = get()
     }
-
+/*
     @Test
     fun getScreen() {
     }
@@ -42,4 +41,6 @@ class MqttConfigurationViewModelTest : AppTest() {
     @Test
     fun onDiscard() {
     }
+    */
+
 }

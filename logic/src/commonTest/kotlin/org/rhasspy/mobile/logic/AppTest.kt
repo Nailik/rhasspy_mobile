@@ -1,6 +1,7 @@
-package org.rhasspy.mobile.logic.services
+package org.rhasspy.mobile.logic
 
 import com.russhwolf.settings.MapSettings
+import com.russhwolf.settings.Settings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.setMain
@@ -10,28 +11,32 @@ import org.koin.core.context.stopKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.koin.test.KoinTest
-import org.rhasspy.mobile.logic.logicModule
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import kotlin.test.AfterTest
 
-abstract class AppTest : KoinTest, TestsWithMocks() {
+expect abstract class IAppTest() : TestsWithMocks
+
+abstract class AppTest : IAppTest(), KoinTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     open fun before(module: Module) {
         injectMocksBeforeTest()
 
+        initApplication()
+
         Dispatchers.setMain(Dispatchers.Unconfined)
         startKoin {
             modules(
-                logicModule,
                 platformSpecificModule,
+                logicModule,
                 module {
-                    single { MapSettings() }
+                    single<Settings> {
+                        MapSettings()
+                    }
                 },
                 module
             )
         }
-
     }
 
     @AfterTest

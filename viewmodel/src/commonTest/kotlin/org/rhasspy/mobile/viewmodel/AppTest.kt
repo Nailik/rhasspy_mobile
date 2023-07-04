@@ -32,9 +32,8 @@ abstract class AppTest : IAppTest(), KoinTest {
                 logicModule,
                 viewModelModule,
                 module {
-                    single {
-                        @Suppress("USELESS_CAST")
-                        MapSettings() as Settings
+                    single<Settings> {
+                        MapSettings()
                     }
                 },
                 module

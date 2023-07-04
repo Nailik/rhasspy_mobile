@@ -6,7 +6,6 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.viewmodel.AppTest
 import kotlin.test.BeforeTest
-import kotlin.test.Test
 
 class WebServerConfigurationViewModelTest : AppTest() {
     @Mock
@@ -25,7 +24,7 @@ class WebServerConfigurationViewModelTest : AppTest() {
 
         webServerConfigurationViewModel = get()
     }
-
+/*
     @Test
     fun getScreen() {
     }
@@ -41,4 +40,6 @@ class WebServerConfigurationViewModelTest : AppTest() {
     @Test
     fun onDiscard() {
     }
+
+ */
 }

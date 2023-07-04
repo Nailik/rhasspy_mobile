@@ -6,6 +6,8 @@ import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.nVerify
@@ -21,6 +23,12 @@ class LogSettingsViewModelTest : AppTest() {
     @Mock
     lateinit var nativeApplication: INativeApplication
 
+    @Mock
+    lateinit var microphonePermission: IMicrophonePermission
+
+    @Mock
+    lateinit var overlayPermission: IOverlayPermission
+
     private lateinit var logSettingsViewModel: LogSettingsViewModel
 
     override fun setUpMocks() = injectMocks(mocker)
@@ -30,6 +38,8 @@ class LogSettingsViewModelTest : AppTest() {
         super.before(
             module {
                 single { nativeApplication }
+                single { microphonePermission }
+                single { overlayPermission }
             }
         )
 
@@ -38,6 +48,7 @@ class LogSettingsViewModelTest : AppTest() {
 
     @Test
     fun `when user select crashlytics to be enabled or disabled it is saved and set in the application`() {
+        every { nativeApplication.setCrashlyticsCollectionEnabled(isAny()) } returns Unit
 
         logSettingsViewModel.onEvent(SetCrashlyticsEnabled(true))
 

@@ -2,7 +2,6 @@ package org.rhasspy.mobile.viewmodel.settings.saveandrestore
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -32,7 +31,7 @@ class SaveAndRestoreSettingsViewModel(
     }
 
     private fun onAction(action: Action) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Unconfined) {
             _viewState.update {
                 when (action) {
                     ExportSettingsFile -> it.copy(isSaveSettingsToFileDialogVisible = true)

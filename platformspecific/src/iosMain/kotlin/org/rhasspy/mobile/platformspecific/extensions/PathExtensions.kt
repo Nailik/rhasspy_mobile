@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.platformspecific.extensions
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.serialization.json.Json
 import okio.FileHandle
 import okio.FileSystem
@@ -15,6 +16,7 @@ import platform.Foundation.NSUserDomainMask
 
 private val fileManager = NSFileManager.defaultManager
 
+@OptIn(ExperimentalForeignApi::class)
 private fun readDocumentsDirectory(): String {
     val documentsDirectoryUrl = fileManager.URLForDirectory(
         directory = NSDocumentDirectory,
@@ -28,6 +30,7 @@ private fun readDocumentsDirectory(): String {
     return documentsDirectoryUrl.absoluteString!!
 }
 
+@OptIn(ExperimentalForeignApi::class)
 private fun createDirectoryIfNotExists(parentDirectory: NSURL) {
     if (!fileManager.fileExistsAtPath(parentDirectory.path!!)) {
         fileManager.createDirectoryAtPath(parentDirectory.path!!, true, null, null)

@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_VARIABLE")
+@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
 
 plugins {
     id("org.kodein.mock.mockmp")
@@ -41,6 +41,7 @@ kotlin {
                 implementation(project(":shared"))
                 implementation(project(":platformspecific"))
                 implementation(Russhwolf.multiplatformSettingsTest)
+                implementation(Russhwolf.multiplatformSettingsNoArg)
                 implementation(Kotlin.test)
                 implementation(Koin.test)
                 implementation(KotlinX.Coroutines.test)
@@ -52,7 +53,13 @@ kotlin {
                 implementation(Picovoice.porcupineAndroid)
             }
         }
-        val androidUnitTest by getting
+        val androidUnitTest by getting {
+            dependsOn(commonTest)
+            dependencies {
+                implementation(project(":androidApp"))
+                implementation(AndroidX.archCore.testing)
+            }
+        }
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
@@ -76,6 +83,11 @@ kotlin {
 
 android {
     namespace = "org.rhasspy.mobile.logic"
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+    }
 }
 
 mockmp {

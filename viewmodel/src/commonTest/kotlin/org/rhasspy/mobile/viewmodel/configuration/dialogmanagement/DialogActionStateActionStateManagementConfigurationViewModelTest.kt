@@ -6,7 +6,6 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.viewmodel.AppTest
 import kotlin.test.BeforeTest
-import kotlin.test.Test
 
 class DialogActionStateActionStateManagementConfigurationViewModelTest : AppTest() {
 
@@ -20,34 +19,38 @@ class DialogActionStateActionStateManagementConfigurationViewModelTest : AppTest
     fun before() {
         super.before(
             module {
-
+                module {
+                    single { nativeApplication }
+                }
             }
         )
 
         dialogManagementConfigurationViewModel = get()
     }
+    /*
+        @Test
+        fun getScreen() {
+        }
 
-    @Test
-    fun getScreen() {
-    }
+        @Test
+        fun onEvent() {
+        }
 
-    @Test
-    fun onEvent() {
-    }
+        @Test
+        fun onChange() {
+        }
 
-    @Test
-    fun onChange() {
-    }
+        @Test
+        fun onAction() {
+        }
 
-    @Test
-    fun onAction() {
-    }
+        @Test
+        fun onDiscard() {
+        }
 
-    @Test
-    fun onDiscard() {
-    }
+        @Test
+        fun onSave() {
 
-    @Test
-    fun onSave() {
-    }
+        }
+    */
 }

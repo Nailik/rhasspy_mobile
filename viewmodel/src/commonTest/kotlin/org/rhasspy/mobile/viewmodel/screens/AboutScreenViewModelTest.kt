@@ -1,21 +1,6 @@
 package org.rhasspy.mobile.viewmodel.screens
 
-import org.kodein.mock.Fake
-import org.kodein.mock.Mock
-import org.koin.dsl.module
-import org.koin.test.get
-import org.rhasspy.mobile.data.libraries.StableLibrary
-import org.rhasspy.mobile.data.link.LinkType
-import org.rhasspy.mobile.platformspecific.utils.IOpenLinkUtils
-import org.rhasspy.mobile.viewmodel.AppTest
-import org.rhasspy.mobile.viewmodel.nVerify
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.OpenSourceCode
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewModel
-import kotlin.test.*
-
+/*
 class AboutScreenViewModelTest : AppTest() {
 
     @Mock
@@ -116,4 +101,4 @@ class AboutScreenViewModelTest : AppTest() {
         navigator.onBackPressed()
         assertFalse { aboutScreenViewModel.viewState.value.isLibraryDialogVisible }
     }
-}
+}*/

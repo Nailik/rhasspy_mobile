@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.logic.services.httpclient
+package org.rhasspy.mobile.logic.httpclient
 
 import kotlin.test.BeforeTest
 import kotlin.test.Test

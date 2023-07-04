@@ -9,6 +9,7 @@ import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.AppTest
+import org.rhasspy.mobile.viewmodel.coEvery
 import org.rhasspy.mobile.viewmodel.coVerify
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabUiEvent.Action.MicrophoneFabClick
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
@@ -36,27 +37,38 @@ class MicrophoneFabViewModelTest : AppTest() {
                 single { microphonePermission }
             }
         )
-
-        every { microphonePermission.granted } returns MutableStateFlow(false).readOnly
-        every { serviceMiddleware.isUserActionEnabled } returns MutableStateFlow(true).readOnly
-        every { serviceMiddleware.isPlayingRecording } returns MutableStateFlow(false).readOnly
-        every { serviceMiddleware.isPlayingRecordingEnabled } returns MutableStateFlow(false).readOnly
-        microphoneFabViewModel = get()
     }
 
     @Test
     fun `when user clicks microphone fab and no microphone permission is given it's requested`() = runTest {
+        every { serviceMiddleware.isUserActionEnabled } returns MutableStateFlow(true).readOnly
+        every { serviceMiddleware.isPlayingRecording } returns MutableStateFlow(false).readOnly
+        every { serviceMiddleware.isPlayingRecordingEnabled } returns MutableStateFlow(false).readOnly
+
+        coEvery { microphonePermission.request() } returns Unit
+        every { microphonePermission.shouldShowInformationDialog() } returns false
         every { microphonePermission.granted } returns MutableStateFlow(false).readOnly
 
+        microphoneFabViewModel = get()
         microphoneFabViewModel.onEvent(MicrophoneFabClick)
+
         coVerify { microphonePermission.request() }
     }
 
     @Test
     fun `when user clicks microphone fab and microphone permission is given session is toggled`() {
+        every { serviceMiddleware.isUserActionEnabled } returns MutableStateFlow(true).readOnly
+        every { serviceMiddleware.isPlayingRecording } returns MutableStateFlow(false).readOnly
+        every { serviceMiddleware.isPlayingRecordingEnabled } returns MutableStateFlow(false).readOnly
+
+        every { serviceMiddleware.userSessionClick() } returns Unit
+        every { microphonePermission.shouldShowInformationDialog() } returns false
         every { microphonePermission.granted } returns MutableStateFlow(true).readOnly
 
+
+        microphoneFabViewModel = get()
         microphoneFabViewModel.onEvent(MicrophoneFabClick)
+
         nVerify { serviceMiddleware.userSessionClick() }
     }
 

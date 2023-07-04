@@ -6,7 +6,6 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.viewmodel.AppTest
 import kotlin.test.BeforeTest
-import kotlin.test.Test
 
 class IntentHandlingConfigurationViewModelTest : AppTest() {
 
@@ -27,19 +26,19 @@ class IntentHandlingConfigurationViewModelTest : AppTest() {
         intentHandlingConfigurationViewModel = get()
     }
 
-    @Test
-    fun getScreen() {
-    }
+    /*
+      fun getScreen() {
+      }
 
-    @Test
-    fun onEvent() {
-    }
+     // @Test
+      fun onEvent() {
+      }
 
-    @Test
-    fun onDiscard() {
-    }
+      //@Test
+      fun onDiscard() {
+      }
 
-    @Test
-    fun onSave() {
-    }
+     // @Test
+      fun onSave() {
+      }*/
 }

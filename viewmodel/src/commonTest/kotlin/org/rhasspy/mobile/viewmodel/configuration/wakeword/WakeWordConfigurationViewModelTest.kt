@@ -6,7 +6,6 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.viewmodel.AppTest
 import kotlin.test.BeforeTest
-import kotlin.test.Test
 
 class WakeWordConfigurationViewModelTest : AppTest() {
     @Mock
@@ -25,7 +24,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
 
         wakeWordConfigurationViewModel = get()
     }
-
+/*
     @Test
     fun getScreen() {
     }
@@ -49,4 +48,6 @@ class WakeWordConfigurationViewModelTest : AppTest() {
     @Test
     fun onBackPressed() {
     }
+
+ */
 }

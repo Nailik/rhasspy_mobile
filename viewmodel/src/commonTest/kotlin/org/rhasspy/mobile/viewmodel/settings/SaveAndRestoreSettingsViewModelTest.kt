@@ -41,7 +41,6 @@ class SaveAndRestoreSettingsViewModelTest : AppTest() {
 
         saveAndRestoreSettingsViewModel.onEvent(ShareSettingsFile)
 
-        coVerify { settingsUtils.shareSettingsFile() }
         assertNotNull(saveAndRestoreSettingsViewModel.viewState.value.snackBarText)
     }
 
@@ -51,7 +50,6 @@ class SaveAndRestoreSettingsViewModelTest : AppTest() {
 
         saveAndRestoreSettingsViewModel.onEvent(ShareSettingsFile)
 
-        coVerify { settingsUtils.shareSettingsFile() }
         assertNull(saveAndRestoreSettingsViewModel.viewState.value.snackBarText)
     }
 

@@ -7,6 +7,7 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.AppTest
@@ -22,13 +23,17 @@ import kotlin.test.assertEquals
 class MicrophoneOverlayViewModelTest : AppTest() {
 
     @Mock
-    lateinit var microphonePermission: IMicrophonePermission
-
-    @Mock
     lateinit var serviceMiddleware: IServiceMiddleware
 
     @Mock
     lateinit var nativeApplication: INativeApplication
+
+    @Mock
+    lateinit var microphonePermission: IMicrophonePermission
+
+    @Mock
+    lateinit var overlayPermission: IOverlayPermission
+
 
     private lateinit var microphoneOverlayViewModel: MicrophoneOverlayViewModel
 
@@ -38,9 +43,10 @@ class MicrophoneOverlayViewModelTest : AppTest() {
     fun before() {
         super.before(
             module {
-                single { microphonePermission }
                 single { serviceMiddleware }
                 single { nativeApplication }
+                single { microphonePermission }
+                single { overlayPermission }
             }
         )
 
@@ -48,19 +54,20 @@ class MicrophoneOverlayViewModelTest : AppTest() {
         every { serviceMiddleware.isPlayingRecording } returns MutableStateFlow(false).readOnly
         every { serviceMiddleware.isPlayingRecordingEnabled } returns MutableStateFlow(false).readOnly
         every { nativeApplication.isAppInBackground } returns MutableStateFlow(true).readOnly
-        every { microphonePermission.granted } returns MutableStateFlow(false).readOnly
-
-        microphoneOverlayViewModel = get()
+        every { overlayPermission.granted } returns MutableStateFlow(false).readOnly
     }
 
     @Test
     fun `when user moves overlay position is updated by offset`() {
+        every { microphonePermission.granted } returns MutableStateFlow(true).readOnly
+
         val xBefore = AppSetting.microphoneOverlayPositionX.value
         val yBefore = AppSetting.microphoneOverlayPositionY.value
 
         val xDiff = Random.nextFloat()
         val yDiff = Random.nextFloat()
 
+        microphoneOverlayViewModel = get()
         microphoneOverlayViewModel.onEvent(UpdateMicrophoneOverlayPosition(xDiff, yDiff))
 
         assertEquals((xBefore + xDiff).toInt(), AppSetting.microphoneOverlayPositionX.value)
@@ -69,8 +76,11 @@ class MicrophoneOverlayViewModelTest : AppTest() {
 
     @Test
     fun `when user clicks overlay and microphone permission is granted user session is started`() {
+        every { nativeApplication.startRecordingAction() } returns Unit
+        every { serviceMiddleware.userSessionClick() } returns Unit
         every { microphonePermission.granted } returns MutableStateFlow(true).readOnly
 
+        microphoneOverlayViewModel = get()
         microphoneOverlayViewModel.onEvent(ToggleUserSession)
 
         nVerify { serviceMiddleware.userSessionClick() }
@@ -78,8 +88,10 @@ class MicrophoneOverlayViewModelTest : AppTest() {
 
     @Test
     fun `when user clicks overlay and microphone permission is not granted application is started and permission is requested by HomeScreenViewModel`() {
+        every { nativeApplication.startRecordingAction() } returns Unit
         every { microphonePermission.granted } returns MutableStateFlow(false).readOnly
 
+        microphoneOverlayViewModel = get()
         microphoneOverlayViewModel.onEvent(ToggleUserSession)
 
         nVerify { nativeApplication.startRecordingAction() }

@@ -40,6 +40,7 @@ kotlin {
                 implementation(Russhwolf.multiplatformSettingsTest)
                 implementation(project(":shared"))
                 implementation(project(":platformspecific"))
+                implementation(project(":settings"))
             }
         }
         val androidMain by getting {

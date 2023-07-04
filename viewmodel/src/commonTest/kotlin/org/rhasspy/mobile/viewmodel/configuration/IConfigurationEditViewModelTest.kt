@@ -5,7 +5,6 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.viewmodel.AppTest
 import kotlin.test.BeforeTest
-import kotlin.test.Test
 
 class IConfigurationEditViewModelTest : AppTest() {
 
@@ -25,7 +24,7 @@ class IConfigurationEditViewModelTest : AppTest() {
         // iConfigurationViewModelTest = get()
     }
 
-
+/*
     @Test
     fun getContentViewState() {
     }
@@ -61,4 +60,6 @@ class IConfigurationEditViewModelTest : AppTest() {
     @Test
     fun onBackPressed() {
     }
+
+ */
 }

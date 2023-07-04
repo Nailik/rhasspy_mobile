@@ -17,6 +17,7 @@ import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlay
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class MicrophoneOverlaySettingsViewModelTest : AppTest() {
 
@@ -59,9 +60,11 @@ class MicrophoneOverlaySettingsViewModelTest : AppTest() {
             microphoneOverlaySettingsViewModel.onEvent(SelectMicrophoneOverlaySizeOption(option))
             microphoneOverlaySettingsViewModel.onEvent(Confirm(OverlayPermissionInfo))
 
-            verify { overlayPermission.request() }
+            nVerify { overlayPermission.request() }
             assertEquals(Disabled, AppSetting.microphoneOverlaySizeOption.value)
         }
+
+        assertTrue { true }
     }
 
     @Test

@@ -6,7 +6,6 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.viewmodel.AppTest
 import kotlin.test.BeforeTest
-import kotlin.test.Test
 
 class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
 
@@ -26,7 +25,7 @@ class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
 
         remoteHermesHttpConfigurationViewModel = get()
     }
-
+/*
     @Test
     fun getScreen() {
     }
@@ -42,4 +41,6 @@ class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
     @Test
     fun onSave() {
     }
+
+ */
 }
