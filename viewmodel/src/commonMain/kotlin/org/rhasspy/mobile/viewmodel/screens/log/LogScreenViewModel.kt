@@ -1,13 +1,13 @@
 package org.rhasspy.mobile.viewmodel.screens.log
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.component.inject
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.logger.IFileLogger
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
@@ -23,6 +23,8 @@ class LogScreenViewModel(
     private val fileLogger: IFileLogger,
     viewStateCreator: LogScreenViewStateCreator
 ) : ScreenViewModel() {
+
+    private val dispatcher by inject<IDispatcherProvider>()
 
     private val _viewState: MutableStateFlow<LogScreenViewState> = viewStateCreator()
     val viewState = _viewState.readOnly
@@ -44,7 +46,7 @@ class LogScreenViewModel(
     private fun onAction(action: Action) {
         when (action) {
             SaveLogFile -> {
-                viewModelScope.launch(Dispatchers.IO) {
+                viewModelScope.launch(dispatcher.IO) {
                     if (!fileLogger.saveLogFile()) {
                         _viewState.update {
                             it.copy(snackBarText = MR.strings.saveLogFileFailed.stable)

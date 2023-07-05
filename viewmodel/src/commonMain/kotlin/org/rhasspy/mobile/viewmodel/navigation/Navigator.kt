@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
 import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
@@ -35,8 +34,7 @@ internal class Navigator(
     private val nativeApplication: INativeApplication
 ) : INavigator {
 
-    private val _navStack = MutableStateFlow<ImmutableList<NavigationDestination>>(persistentListOf(HomeScreen))
-    override val navStack = _navStack.readOnly
+    override val navStack = MutableStateFlow<ImmutableList<NavigationDestination>>(persistentListOf(HomeScreen))
 
     private val _viewModelStack = mutableListOf<IScreenViewModel>()
 
@@ -44,7 +42,7 @@ internal class Navigator(
         if (navStack.value.size <= 1) {
             nativeApplication.closeApp()
         } else {
-            _navStack.update {
+            navStack.update {
                 it.updateList {
                     removeLast()
                 }
@@ -66,8 +64,8 @@ internal class Navigator(
      * navigate to screen (add to backstack)
      */
     override fun navigate(screen: NavigationDestination) {
-        if (_navStack.value.lastOrNull() != screen) {
-            _navStack.update {
+        if (navStack.value.lastOrNull() != screen) {
+            navStack.update {
                 it.updateList {
                     add(screen)
                 }
@@ -89,7 +87,7 @@ internal class Navigator(
     }
 
     internal fun updateNavStack(list: ImmutableList<NavigationDestination>) {
-        _navStack.value = list
+        navStack.value = list
     }
 
     override fun onComposed(viewModel: IScreenViewModel) {

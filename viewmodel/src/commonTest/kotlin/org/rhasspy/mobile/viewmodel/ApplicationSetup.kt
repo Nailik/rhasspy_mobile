@@ -1,3 +1,5 @@
 package org.rhasspy.mobile.viewmodel
 
-expect fun initApplication()
+import org.rhasspy.mobile.platformspecific.application.INativeApplication
+
+expect fun initApplication(): INativeApplication

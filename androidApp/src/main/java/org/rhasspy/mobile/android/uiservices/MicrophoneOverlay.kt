@@ -22,6 +22,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.ui.native.nativeComposeView
@@ -40,6 +42,7 @@ object MicrophoneOverlay : KoinComponent {
     //stores old value to only react to changes
     private var showVisualIndicationOldValue = false
     private val viewModel = get<MicrophoneOverlayViewModel>()
+    private val dispatcher by inject<IDispatcherProvider>()
 
     private var job: Job? = null
 
@@ -131,14 +134,14 @@ object MicrophoneOverlay : KoinComponent {
                                 if (Looper.myLooper() == null) {
                                     Looper.prepare()
                                 }
-                                launch(Dispatchers.Main) {
+                                launch(dispatcher.Main) {
                                     overlayWindowManager?.addView(view, mParams) ?: {
                                         logger.e { "addView overlayWindowManager is null" }
                                     }
                                     lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
                                 }
                             } else {
-                                launch(Dispatchers.Main) {
+                                launch(dispatcher.Main) {
                                     if (view.parent != null) {
                                         overlayWindowManager?.removeView(view) ?: {
                                             logger.e { "removeView overlayWindowManager is null" }

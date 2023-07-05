@@ -49,7 +49,7 @@ fun ConfigurationScreen() {
 
         with(screen) {
             when (this) {
-                null -> {
+                OverviewScreen -> {
                     val viewState by viewModel.viewState.collectAsState()
 
                     ConfigurationScreenContent(

@@ -6,11 +6,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
+import org.rhasspy.mobile.platformspecific.*
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FolderType
-import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.toIntOrZero
-import org.rhasspy.mobile.platformspecific.toLongOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
@@ -53,12 +51,12 @@ class MqttConfigurationViewModel(
                 when (change) {
                     is SetMqttEnabled -> copy(isMqttEnabled = change.enabled)
                     is SetMqttSSLEnabled -> copy(isMqttSSLEnabled = change.enabled)
-                    is UpdateMqttConnectionTimeout -> copy(mqttConnectionTimeout = change.timeout.toLongOrNull())
+                    is UpdateMqttConnectionTimeout -> copy(mqttConnectionTimeout = change.timeout.toLongOrNullOrConstant())
                     is UpdateMqttHost -> copy(mqttHost = change.host)
-                    is UpdateMqttKeepAliveInterval -> copy(mqttKeepAliveInterval = change.keepAliveInterval.toLongOrNull())
+                    is UpdateMqttKeepAliveInterval -> copy(mqttKeepAliveInterval = change.keepAliveInterval.toLongOrNullOrConstant())
                     is UpdateMqttPassword -> copy(mqttPassword = change.password)
-                    is UpdateMqttPort -> copy(mqttPort = change.port.toIntOrNull())
-                    is UpdateMqttRetryInterval -> copy(mqttRetryInterval = change.retryInterval.toLongOrNull())
+                    is UpdateMqttPort -> copy(mqttPort = change.port.toIntOrNullOrConstant())
+                    is UpdateMqttRetryInterval -> copy(mqttRetryInterval = change.retryInterval.toLongOrNullOrConstant())
                     is UpdateMqttUserName -> copy(mqttUserName = change.userName)
                     is UpdateMqttKeyStoreFile -> copy(mqttKeyStoreFile = change.file)
                 }

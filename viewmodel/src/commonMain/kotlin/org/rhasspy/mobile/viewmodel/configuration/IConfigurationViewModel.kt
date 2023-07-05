@@ -1,8 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -10,6 +8,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.ServiceStateDialogState
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.UnsavedChangesDialogState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action
@@ -25,6 +24,7 @@ abstract class IConfigurationViewModel(
 ) : ScreenViewModel() {
 
     protected val viewStateCreator by inject<IConfigurationViewStateCreator> { parametersOf(service) }
+    private val dispatcher by inject<IDispatcherProvider>()
 
     private val _configurationViewState = MutableStateFlow(ConfigurationViewState(serviceViewState = ServiceViewState(service.serviceState)))
     val configurationEditViewState by lazy { initViewStateCreator(_configurationViewState) }
@@ -73,7 +73,7 @@ abstract class IConfigurationViewModel(
 
     private fun updateData(popBackStack: Boolean, function: () -> Unit) {
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher.IO) {
             function()
             _configurationViewState.update { it.copy(dialogState = null, hasUnsavedChanges = false) }
             if (popBackStack) {

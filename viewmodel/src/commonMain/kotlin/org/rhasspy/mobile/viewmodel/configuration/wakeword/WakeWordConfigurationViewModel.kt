@@ -10,14 +10,11 @@ import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
-import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.*
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
-import org.rhasspy.mobile.platformspecific.toIntOrZero
-import org.rhasspy.mobile.platformspecific.updateList
-import org.rhasspy.mobile.platformspecific.updateListItem
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
@@ -172,7 +169,7 @@ class WakeWordConfigurationViewModel(
                 copy(wakeWordUdpConfigurationData = wakeWordUdpConfigurationData.let { data ->
                     when (change) {
                         is UpdateUdpOutputHost -> data.copy(outputHost = change.value)
-                        is UpdateUdpOutputPort -> data.copy(outputPort = change.value.toIntOrNull())
+                        is UpdateUdpOutputPort -> data.copy(outputPort = change.value.toIntOrNullOrConstant())
                     }
                 })
             })

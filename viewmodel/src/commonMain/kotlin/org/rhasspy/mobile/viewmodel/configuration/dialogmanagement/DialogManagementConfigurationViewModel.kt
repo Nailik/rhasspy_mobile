@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.platformspecific.toLongOrNullOrConstant
 import org.rhasspy.mobile.platformspecific.toLongOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
@@ -53,9 +54,9 @@ class DialogManagementConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is ChangeIntentRecognitionTimeout -> copy(intentRecognitionTimeout = change.timeout.toLongOrNull())
-                    is ChangeRecordingTimeout -> copy(recordingTimeout = change.timeout.toLongOrNull())
-                    is ChangeTextAsrTimeout -> copy(textAsrTimeout = change.timeout.toLongOrNull())
+                    is ChangeIntentRecognitionTimeout -> copy(intentRecognitionTimeout = change.timeout.toLongOrNullOrConstant())
+                    is ChangeRecordingTimeout -> copy(recordingTimeout = change.timeout.toLongOrNullOrConstant())
+                    is ChangeTextAsrTimeout -> copy(textAsrTimeout = change.timeout.toLongOrNullOrConstant())
                     is SelectDialogManagementOption -> copy(dialogManagementOption = change.option)
                 }
             })

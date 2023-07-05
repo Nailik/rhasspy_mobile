@@ -21,7 +21,7 @@ class ConfigurationScreenViewModel(
     private val _viewState: MutableStateFlow<ConfigurationScreenViewState> = viewStateCreator()
     val viewState = _viewState.readOnly
 
-    val screen = navigator.topScreen<ConfigurationScreenNavigationDestination>()
+    val screen = navigator.topScreen(ConfigurationScreenNavigationDestination.OverviewScreen)
 
     fun onEvent(event: ConfigurationScreenUiEvent) {
         when (event) {

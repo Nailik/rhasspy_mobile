@@ -9,6 +9,7 @@ import org.rhasspy.mobile.logic.services.webserver.IWebServerService
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.platformspecific.toIntOrNullOrConstant
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
@@ -55,7 +56,7 @@ class WebServerConfigurationViewModel(
                     is UpdateHttpSSLKeyAlias -> copy(httpServerSSLKeyAlias = change.value)
                     is UpdateHttpSSLKeyPassword -> copy(httpServerSSLKeyPassword = change.value)
                     is UpdateHttpSSLKeyStorePassword -> copy(httpServerSSLKeyStorePassword = change.value)
-                    is UpdateHttpServerPort -> copy(httpServerPort = change.value.toIntOrNull())
+                    is UpdateHttpServerPort -> copy(httpServerPort = change.value.toIntOrNullOrConstant())
                     is SetHttpServerSSLKeyStoreFile -> copy(httpServerSSLKeyStoreFile = change.value)
                 }
             })

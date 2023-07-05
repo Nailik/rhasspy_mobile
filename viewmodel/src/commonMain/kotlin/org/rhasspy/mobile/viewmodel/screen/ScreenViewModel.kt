@@ -1,8 +1,6 @@
 package org.rhasspy.mobile.viewmodel.screen
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -11,6 +9,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.link.LinkType
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.RequestMicrophonePermissionExternally
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
@@ -34,6 +33,8 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.*
 abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
 
     protected val navigator by inject<INavigator>()
+    private val dispatcher by inject<IDispatcherProvider>()
+
     protected val microphonePermission = get<IMicrophonePermission>()
     protected val externalResultRequest = get<IExternalResultRequest>()
     private val overlayPermission = get<IOverlayPermission>()
@@ -68,7 +69,7 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
     }
 
     fun selectFile(folderType: FolderType, action: (Path) -> Unit) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher.IO) {
             FileUtils.selectFile(folderType)?.also(action) ?: run {
                 _screenViewState.update { it.copy(snackBarState = SelectFileFailed) }
             }
@@ -147,7 +148,7 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
                 _screenViewState.update { it.copy(dialogState = MicrophonePermissionInfo) }
             } else {
                 //request directly
-                viewModelScope.launch(Dispatchers.IO) {
+                viewModelScope.launch(dispatcher.IO) {
                     microphonePermission.request()
 
                     if (!microphonePermission.granted.value) {

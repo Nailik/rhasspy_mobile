@@ -5,9 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
-import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.toIntOrZero
-import org.rhasspy.mobile.platformspecific.toLongOrZero
+import org.rhasspy.mobile.platformspecific.*
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
@@ -50,8 +48,8 @@ class RemoteHermesHttpConfigurationViewModel(
                 when (change) {
                     is SetHttpSSLVerificationDisabled -> copy(isHttpSSLVerificationDisabled = change.disabled)
                     is UpdateHttpClientServerEndpointHost -> copy(httpClientServerEndpointHost = change.host)
-                    is UpdateHttpClientServerEndpointPort -> copy(httpClientServerEndpointPort = change.port.toIntOrNull())
-                    is UpdateHttpClientTimeout -> copy(httpClientTimeout = change.text.toLongOrNull())
+                    is UpdateHttpClientServerEndpointPort -> copy(httpClientServerEndpointPort = change.port.toIntOrNullOrConstant())
+                    is UpdateHttpClientTimeout -> copy(httpClientTimeout = change.text.toLongOrNullOrConstant())
                 }
             })
         }

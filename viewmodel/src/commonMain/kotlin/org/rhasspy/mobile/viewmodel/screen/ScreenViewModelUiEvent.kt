@@ -7,22 +7,22 @@ sealed interface ScreenViewModelUiEvent {
 
     sealed interface Action : ScreenViewModelUiEvent {
 
-        object RequestMicrophonePermission : Action
-        object RequestOverlayPermission : Action
+        data object RequestMicrophonePermission : Action
+        data object RequestOverlayPermission : Action
 
     }
 
     sealed interface SnackBar : ScreenViewModelUiEvent {
 
         data class Action(val snackBarState: ScreenSnackBarState) : SnackBar
-        object Consumed : SnackBar
+        data object Consumed : SnackBar
 
     }
 
     sealed interface Dialog : ScreenViewModelUiEvent {
 
         data class Confirm(val dialogState: ScreenDialogState) : Dialog
-        object Dismiss : Dialog
+        data object Dismiss : Dialog
 
     }
 

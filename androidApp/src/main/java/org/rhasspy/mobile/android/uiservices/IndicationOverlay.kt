@@ -15,11 +15,12 @@ import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
@@ -39,6 +40,7 @@ object IndicationOverlay : KoinComponent {
     private var showVisualIndicationOldValue = false
 
     private var viewModel = get<IndicationOverlayViewModel>()
+    private val dispatcher by inject<IDispatcherProvider>()
 
     private var job: Job? = null
 
@@ -102,7 +104,7 @@ object IndicationOverlay : KoinComponent {
             if (job?.isActive == true) {
                 return
             }
-            job = CoroutineScope(Dispatchers.IO).launch {
+            job = CoroutineScope(dispatcher.IO).launch {
                 viewModel.viewState.collect {
                     try {
                         if (it.isShowVisualIndication != showVisualIndicationOldValue) {
@@ -112,7 +114,7 @@ object IndicationOverlay : KoinComponent {
                                     if (Looper.myLooper() == null) {
                                         Looper.prepare()
                                     }
-                                    launch(Dispatchers.Main) {
+                                    launch(dispatcher.Main) {
                                         overlayWindowManager?.addView(view, mParams) ?: {
                                             logger.e { "addView overlayWindowManager is null" }
                                         }
@@ -120,7 +122,7 @@ object IndicationOverlay : KoinComponent {
                                     }
                                 }
                             } else {
-                                launch(Dispatchers.Main) {
+                                launch(dispatcher.Main) {
                                     if (view.parent != null) {
                                         overlayWindowManager?.removeView(view) ?: {
                                             logger.e { "removeView overlayWindowManager is null" }

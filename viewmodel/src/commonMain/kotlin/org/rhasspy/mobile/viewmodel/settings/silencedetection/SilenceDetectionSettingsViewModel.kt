@@ -1,10 +1,10 @@
 package org.rhasspy.mobile.viewmodel.settings.silencedetection
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.inject
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.settings.AppSetting
@@ -23,17 +23,19 @@ class SilenceDetectionSettingsViewModel(
     private val audioRecorder: IAudioRecorder,
 ) : ScreenViewModel() {
 
+    private val dispatcher by inject<IDispatcherProvider>()
+
     val viewState: StateFlow<SilenceDetectionSettingsViewState> = viewStateCreator()
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher.IO) {
             nativeApplication.isAppInBackground.collect { isAppInBackground ->
                 if (isAppInBackground) {
                     audioRecorder.stopRecording()
                 }
             }
         }
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher.IO) {
             audioRecorder.isRecording.collect { isAppInBackground ->
                 println(isAppInBackground)
             }

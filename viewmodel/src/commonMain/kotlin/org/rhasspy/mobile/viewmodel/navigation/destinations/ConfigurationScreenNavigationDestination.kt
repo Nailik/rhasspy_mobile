@@ -4,6 +4,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
 enum class ConfigurationScreenNavigationDestination : NavigationDestination {
 
+    OverviewScreen,
     AudioPlayingConfigurationScreen,
     DialogManagementConfigurationScreen,
     IntentHandlingConfigurationScreen,

@@ -21,6 +21,9 @@ val platformSpecificModule = module {
         koinApplicationModule
     )
 
+    single<IDispatcherProvider> {
+        DispatcherProvider()
+    }
     single {
         BatteryOptimization(
             nativeApplication = get()

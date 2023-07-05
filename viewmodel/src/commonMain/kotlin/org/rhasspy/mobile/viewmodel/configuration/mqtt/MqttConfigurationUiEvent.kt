@@ -21,9 +21,9 @@ sealed interface MqttConfigurationUiEvent {
 
     sealed interface Action : MqttConfigurationUiEvent {
 
-        object OpenMqttSSLWiki : Action
-        object SelectSSLCertificate : Action
-        object BackClick : Action
+        data object OpenMqttSSLWiki : Action
+        data object SelectSSLCertificate : Action
+        data object BackClick : Action
 
     }
 

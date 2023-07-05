@@ -12,6 +12,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.rhasspy.mobile.logic.logicModule
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import kotlin.test.AfterTest
 
@@ -23,7 +24,7 @@ abstract class AppTest : IAppTest(), KoinTest {
     open fun before(module: Module) {
         injectMocksBeforeTest()
 
-        initApplication()
+        val application = initApplication()
 
         Dispatchers.setMain(Dispatchers.Unconfined)
         startKoin {
@@ -32,8 +33,14 @@ abstract class AppTest : IAppTest(), KoinTest {
                 logicModule(),
                 viewModelModule(),
                 module {
+                    single {
+                        application
+                    }
                     single<Settings> {
                         MapSettings()
+                    }
+                    single<IDispatcherProvider> {
+                        TestDispatcherProvider()
                     }
                 },
                 module

@@ -1,6 +1,6 @@
 {
     "metadata": {
-        "generated": "2023-07-04T14:11:34.964Z"
+        "generated": "2023-07-05T12:55:36.101Z"
     },
     "libraries": [
         {
@@ -1391,15 +1391,15 @@
                 "url": "https://github.com/junit-team/junit4",
                 "developerConnection": "scm:git:git@github.com:junit-team/junit4.git"
             },
-            "name": "JUnit",
-            "website": "http://junit.org",
-            "licenses": [
-                "EPL-1.0"
-            ],
-            "organization": {
-                "url": "http://www.junit.org",
-                "name": "JUnit"
-            }
+          "name": "JUnit",
+          "website": "http://junit.org",
+          "licenses": [
+            "EPL-1.0"
+          ],
+          "organization": {
+            "url": "http://www.junit.org",
+            "name": "JUnit"
+          }
         },
       {
         "uniqueId": "org.hamcrest:hamcrest-core",
@@ -1773,16 +1773,15 @@
           "developerConnection": "scm:git:https://github.com/JetBrains/kotlin.git"
         },
         "name": "Kotlin Android Extensions Runtime",
-            "website": "https://kotlinlang.org/",
-            "licenses": [
-                "Apache-2.0"
-            ]
-        },
-        {
-            "uniqueId": "org.jetbrains.kotlin:kotlin-parcelize-runtime",
-            "funding": [
-                
-            ],
+        "website": "https://kotlinlang.org/",
+        "licenses": [
+          "Apache-2.0"
+        ]
+      },
+      {
+        "uniqueId": "org.jetbrains.kotlin:kotlin-parcelize-runtime",
+        "funding": [
+        ],
             "developers": [
                 {
                     "organisationUrl": "https://www.jetbrains.com",

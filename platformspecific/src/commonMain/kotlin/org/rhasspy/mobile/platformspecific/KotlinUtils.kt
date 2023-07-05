@@ -105,7 +105,13 @@ fun Int?.toIntOrZero(): Int = this ?: 0
 fun Long?.toLongOrZero(): Long = this ?: 0
 fun Int?.toStringOrEmpty(): String = this?.toString() ?: ""
 fun Long?.toStringOrEmpty(): String = this?.toString() ?: ""
+fun String?.toLongOrNullOrConstant(): Long? =
+    this?.let { if (it.length > 10) this.substring(0..9).toLong() else it.trimTrailingZeros()?.toLongOrNull() }
 
+fun String?.toIntOrNullOrConstant(): Int? =
+    this?.let { if (it.length > 10) this.substring(0..9).toInt() else it.trimTrailingZeros()?.toIntOrNull() }
+
+fun String?.trimTrailingZeros() = this?.replaceFirst(Regex("^0*"), "")
 
 fun <E> ImmutableList<E>.updateList(block: MutableList<E>.() -> Unit): ImmutableList<E> {
     return this.toMutableList().apply(block).toImmutableList()
