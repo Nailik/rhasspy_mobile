@@ -1,6 +1,6 @@
 {
     "metadata": {
-        "generated": "2023-07-05T12:55:36.101Z"
+        "generated": "2023-07-05T20:08:40.684Z"
     },
     "libraries": [
         {
@@ -1374,23 +1374,23 @@
                 {
                     "name": "David Saff"
                 },
-                {
-                    "name": "Kevin Cooney"
-                },
-                {
-                    "name": "Stefan Birkner"
-                },
-                {
-                    "name": "Marc Philipp"
-                }
+              {
+                "name": "Kevin Cooney"
+              },
+              {
+                "name": "Stefan Birkner"
+              },
+              {
+                "name": "Marc Philipp"
+              }
             ],
-            "artifactVersion": "4.13.2",
-            "description": "JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.",
-            "scm": {
-                "connection": "scm:git:git://github.com/junit-team/junit4.git",
-                "url": "https://github.com/junit-team/junit4",
-                "developerConnection": "scm:git:git@github.com:junit-team/junit4.git"
-            },
+          "artifactVersion": "4.13.2",
+          "description": "JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.",
+          "scm": {
+            "connection": "scm:git:git://github.com/junit-team/junit4.git",
+            "url": "https://github.com/junit-team/junit4",
+            "developerConnection": "scm:git:git@github.com:junit-team/junit4.git"
+          },
           "name": "JUnit",
           "website": "http://junit.org",
           "licenses": [
@@ -1782,25 +1782,25 @@
         "uniqueId": "org.jetbrains.kotlin:kotlin-parcelize-runtime",
         "funding": [
         ],
-            "developers": [
-                {
-                    "organisationUrl": "https://www.jetbrains.com",
-                    "name": "Kotlin Team"
-                }
-            ],
-            "artifactVersion": "1.8.20",
-            "description": "Runtime library for the Parcelize compiler plugin",
-            "scm": {
-                "connection": "scm:git:https://github.com/JetBrains/kotlin.git",
-                "url": "https://github.com/JetBrains/kotlin",
-                "developerConnection": "scm:git:https://github.com/JetBrains/kotlin.git"
-            },
-            "name": "Parcelize Runtime",
-            "website": "https://kotlinlang.org/",
-            "licenses": [
-                "Apache-2.0"
-            ]
+        "developers": [
+          {
+            "organisationUrl": "https://www.jetbrains.com",
+            "name": "Kotlin Team"
+          }
+        ],
+        "artifactVersion": "1.8.20",
+        "description": "Runtime library for the Parcelize compiler plugin",
+        "scm": {
+          "connection": "scm:git:https://github.com/JetBrains/kotlin.git",
+          "url": "https://github.com/JetBrains/kotlin",
+          "developerConnection": "scm:git:https://github.com/JetBrains/kotlin.git"
         },
+        "name": "Parcelize Runtime",
+        "website": "https://kotlinlang.org/",
+        "licenses": [
+          "Apache-2.0"
+        ]
+      },
         {
             "uniqueId": "org.jetbrains.kotlin:kotlin-stdlib",
             "funding": [

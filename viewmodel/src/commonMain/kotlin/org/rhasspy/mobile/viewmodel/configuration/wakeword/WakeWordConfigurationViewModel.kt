@@ -4,8 +4,10 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.get
+import org.koin.core.component.inject
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.service.option.WakeWordOption
@@ -27,6 +29,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination
@@ -42,6 +45,8 @@ class WakeWordConfigurationViewModel(
     service = service
 ) {
 
+    private val dispatcher by inject<IDispatcherProvider>()
+
     private val initialData = WakeWordConfigurationData()
     private val _viewState = MutableStateFlow(
         WakeWordConfigurationViewState(
@@ -51,19 +56,7 @@ class WakeWordConfigurationViewModel(
             isMicrophonePermissionRequestVisible = !microphonePermission.granted.value && (initialData.wakeWordOption == WakeWordOption.Porcupine || initialData.wakeWordOption == WakeWordOption.Udp),
         )
     )
-
-    val viewState = combineState(
-        _viewState,
-        navigator.topScreen(EditScreen),
-        navigator.topScreen(DefaultKeywordScreen),
-        microphonePermission.granted
-    ) { viewState, screen, porcupineWakeWordScreen, isMicrophonePermissionGranted ->
-        viewState.copy(
-            screen = screen,
-            porcupineWakeWordScreen = porcupineWakeWordScreen,
-            isMicrophonePermissionRequestVisible = !isMicrophonePermissionGranted && (viewState.editData.wakeWordOption == WakeWordOption.Porcupine || viewState.editData.wakeWordOption == WakeWordOption.Udp)
-        )
-    }
+    val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
@@ -73,6 +66,30 @@ class WakeWordConfigurationViewModel(
             viewState = viewState,
             configurationViewState = configurationViewState
         )
+    }
+
+    init {
+        viewModelScope.launch(dispatcher.IO) {
+            combineStateFlow(
+                navigator.topScreen(EditScreen),
+                navigator.topScreen(DefaultKeywordScreen),
+                microphonePermission.granted
+            ).collect { data ->
+                val screen: WakeWordConfigurationScreenDestination = data[0] as WakeWordConfigurationScreenDestination
+                val porcupineWakeWordScreen: PorcupineKeywordConfigurationScreenDestination = data[1] as PorcupineKeywordConfigurationScreenDestination
+                val isMicrophonePermissionGranted = data[2] as Boolean
+
+                _viewState.update {
+                    it.copy(
+                        screen = screen,
+                        porcupineWakeWordScreen = porcupineWakeWordScreen,
+                        isMicrophonePermissionRequestVisible = !isMicrophonePermissionGranted && (it.editData.wakeWordOption == WakeWordOption.Porcupine || it.editData.wakeWordOption == WakeWordOption.Udp)
+                    )
+                }
+            }
+
+
+        }
     }
 
     fun onEvent(event: WakeWordConfigurationUiEvent) {
@@ -124,7 +141,7 @@ class WakeWordConfigurationViewModel(
                         is SetPorcupineKeywordCustom -> copy(customOptions = customOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
                         is SetPorcupineKeywordDefault -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
                         is UndoCustomKeywordDeleted -> copy(deletedCustomOptions = deletedCustomOptions.updateList { remove(change.item) })
-                        is UpdateWakeWordPorcupineKeywordCustomSensitivity -> copy(customOptions = customOptions.updateList(change.index) { copy(sensitivity = change.value) })
+                        is UpdateWakeWordPorcupineKeywordCustomSensitivity -> copy(customOptions = customOptions.updateListItem(change.item) { copy(sensitivity = change.value) })
                         is UpdateWakeWordPorcupineKeywordDefaultSensitivity -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(sensitivity = change.value) })
                         is AddPorcupineKeywordCustom -> copy(customOptions = customOptions.updateList {
                             add(PorcupineCustomKeyword(fileName = change.path.name, isEnabled = true, sensitivity = 0.5f))
@@ -201,6 +218,7 @@ class WakeWordConfigurationViewModel(
         }
         filesToDelete.clear()
         newFiles.clear()
+        _viewState.update { it.copy(editData = WakeWordConfigurationData()) }
     }
 
     override fun onDiscard() {

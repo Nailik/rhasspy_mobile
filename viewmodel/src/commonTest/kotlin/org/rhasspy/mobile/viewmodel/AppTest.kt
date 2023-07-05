@@ -20,6 +20,8 @@ expect abstract class IAppTest() : TestsWithMocks
 
 abstract class AppTest : IAppTest(), KoinTest {
 
+    override fun setUpMocks() {}
+
     @OptIn(ExperimentalCoroutinesApi::class)
     open fun before(module: Module) {
         injectMocksBeforeTest()

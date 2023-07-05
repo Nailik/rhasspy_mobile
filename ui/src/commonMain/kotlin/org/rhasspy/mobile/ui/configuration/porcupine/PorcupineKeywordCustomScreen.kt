@@ -4,7 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Delete
@@ -56,11 +56,10 @@ fun PorcupineKeywordCustomScreen(
                 InformationListElement(text = MR.strings.porcupineLanguageInformation.stable)
             }
 
-            itemsIndexed(editData.customOptionsUi) { index, option ->
+            items(editData.customOptionsUi) { option ->
 
                 KeywordListItem(
                     option = option,
-                    index = index,
                     onEvent = onEvent
                 )
 
@@ -80,7 +79,6 @@ fun PorcupineKeywordCustomScreen(
 @Composable
 private fun KeywordListItem(
     option: PorcupineCustomKeywordViewState,
-    index: Int,
     onEvent: (PorcupineUiEvent) -> Unit
 ) {
     if (option.deleted) {
@@ -98,7 +96,7 @@ private fun KeywordListItem(
             onClick = { onEvent(ClickPorcupineKeywordCustom(option.keyword)) },
             onToggle = { onEvent(SetPorcupineKeywordCustom(option.keyword, it)) },
             onDelete = { onEvent(DeletePorcupineKeywordCustom(option.keyword)) },
-            onUpdateSensitivity = { onEvent(UpdateWakeWordPorcupineKeywordCustomSensitivity(index, it)) }
+            onUpdateSensitivity = { onEvent(UpdateWakeWordPorcupineKeywordCustomSensitivity(option.keyword, it)) }
         )
     }
 }

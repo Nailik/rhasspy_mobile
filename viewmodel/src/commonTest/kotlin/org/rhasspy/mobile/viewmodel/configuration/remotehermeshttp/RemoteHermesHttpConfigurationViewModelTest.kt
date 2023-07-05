@@ -1,10 +1,8 @@
 package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
 
 import kotlinx.coroutines.test.runTest
-import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
@@ -16,10 +14,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
-
-    @Mock
-    lateinit var nativeApplication: INativeApplication
-    override fun setUpMocks() = injectMocks(mocker)
 
     private lateinit var remoteHermesHttpConfigurationViewModel: RemoteHermesHttpConfigurationViewModel
 

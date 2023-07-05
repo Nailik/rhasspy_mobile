@@ -1,11 +1,9 @@
 package org.rhasspy.mobile.viewmodel.configuration.dialogmanagement
 
 import kotlinx.coroutines.test.runTest
-import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
@@ -18,10 +16,6 @@ import kotlin.test.assertEquals
 
 class DialogActionStateActionStateManagementConfigurationViewModelTest : AppTest() {
 
-    @Mock
-    lateinit var nativeApplication: INativeApplication
-    override fun setUpMocks() = injectMocks(mocker)
-
     private lateinit var dialogManagementConfigurationViewModel: DialogManagementConfigurationViewModel
 
     private lateinit var initialDialogManagementConfigurationData: DialogManagementConfigurationData
@@ -31,9 +25,7 @@ class DialogActionStateActionStateManagementConfigurationViewModelTest : AppTest
     fun before() {
         super.before(
             module {
-                module {
-                    single { nativeApplication }
-                }
+
             }
         )
 

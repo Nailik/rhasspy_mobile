@@ -58,8 +58,7 @@ data class WakeWordConfigurationViewState internal constructor(
                 }.toImmutableList()
 
             val defaultOptionsUi: ImmutableList<PorcupineDefaultKeyword>
-                get() =
-                    defaultOptions.filter { it.option.language == porcupineLanguage }.toImmutableList()
+                get() = defaultOptions.filter { it.option.language == porcupineLanguage }.toImmutableList()
 
             val keywordCount: Int get() = defaultOptionsUi.count { it.isEnabled } + customOptionsUi.count { it.keyword.isEnabled }
 
