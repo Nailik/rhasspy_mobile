@@ -26,10 +26,6 @@ class IosApplication : Application() {
         )
     }
 
-    override fun setCrashlyticsCollectionEnabled(enabled: Boolean) {
-        //TODO call ios
-    }
-
     override fun startOverlay() {
         //TODO??
     }

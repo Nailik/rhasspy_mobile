@@ -1,16 +1,13 @@
 package org.rhasspy.mobile.viewmodel.configuration
 
-import org.kodein.mock.Mock
 import org.koin.dsl.module
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.viewmodel.AppTest
 import kotlin.test.BeforeTest
 
 class IConfigurationEditViewModelTest : AppTest() {
 
     // private lateinit var iConfigurationViewModelTest: IConfigurationEditViewModelTest
-    @Mock
-    lateinit var nativeApplication: INativeApplication
+
     override fun setUpMocks() = injectMocks(mocker)
 
     @BeforeTest

@@ -191,13 +191,10 @@ dependencies {
     implementation(Touchlab.kermit)
     implementation(Koin.core)
 
-    implementation(Firebase.analyticsKtx)
-    implementation(Firebase.crashlyticsKtx)
     implementation(Square.okio)
 
     implementation(Russhwolf.multiplatformSettingsNoArg)
     implementation(Icerock.Mvvm.core)
-    implementation(platform(Firebase.bom))
 
     implementation(Kotlin.test)
     implementation(Kotlin.Test.junit)

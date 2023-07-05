@@ -22,6 +22,7 @@ import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.logic.services.webserver.IWebServerService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.background.IBackgroundService
+import org.rhasspy.mobile.platformspecific.firebase.setCrashlyticsCollectionEnabled
 import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
@@ -76,7 +77,7 @@ abstract class Application : NativeApplication(), KoinComponent {
             )
 
             //setup language
-            initializeLanguage()
+            AppSetting.languageType.value = get<ILanguageUtils>().setupLanguage(AppSetting.languageType.value)
             StringDesc.localeType = StringDesc.LocaleType.Custom(AppSetting.languageType.value.code)
 
             //start foreground service if enabled
@@ -121,7 +122,4 @@ abstract class Application : NativeApplication(), KoinComponent {
         get<IDialogManagerService>()
     }
 
-    private fun initializeLanguage() {
-        AppSetting.languageType.value = get<ILanguageUtils>().setupLanguage(AppSetting.languageType.value)
-    }
 }

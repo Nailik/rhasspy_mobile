@@ -6,8 +6,6 @@ import android.content.Intent
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import co.touchlab.kermit.Logger
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -57,10 +55,6 @@ class AndroidApplication : Application(), KoinComponent {
             IndicationOverlay.stop()
             MicrophoneOverlay.stop()
         }
-    }
-
-    override fun setCrashlyticsCollectionEnabled(enabled: Boolean) {
-        Firebase.crashlytics.setCrashlyticsCollectionEnabled(enabled)
     }
 
     override fun startRecordingAction() {

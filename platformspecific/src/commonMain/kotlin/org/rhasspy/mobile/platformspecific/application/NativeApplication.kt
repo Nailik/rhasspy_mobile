@@ -12,8 +12,6 @@ interface INativeApplication {
 
     fun resume()
 
-    fun setCrashlyticsCollectionEnabled(enabled: Boolean)
-
     fun startRecordingAction()
 
     fun onInit()
@@ -39,8 +37,6 @@ expect abstract class NativeApplication() : INativeApplication {
     abstract override val isHasStarted: StateFlow<Boolean>
 
     abstract override fun resume()
-
-    abstract override fun setCrashlyticsCollectionEnabled(enabled: Boolean)
 
     abstract override fun startRecordingAction()
 

@@ -23,7 +23,6 @@ actual abstract class NativeApplication : INativeApplication {
     actual override val isAppInBackground: StateFlow<Boolean>
         get() = MutableStateFlow(false) //TODO("Not yet implemented")
     actual abstract override val isHasStarted: StateFlow<Boolean>
-    actual abstract override fun setCrashlyticsCollectionEnabled(enabled: Boolean)
     actual override fun isInstrumentedTest(): Boolean {
         //TODO("Not yet implemented")
         return true

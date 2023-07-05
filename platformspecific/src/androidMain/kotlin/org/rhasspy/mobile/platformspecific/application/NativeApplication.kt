@@ -91,7 +91,6 @@ actual abstract class NativeApplication : INativeApplication, MultiDexApplicatio
         }
     }
 
-    actual abstract override fun setCrashlyticsCollectionEnabled(enabled: Boolean)
     actual abstract override val isHasStarted: StateFlow<Boolean>
     actual abstract override fun resume()
     actual abstract override fun startRecordingAction()
