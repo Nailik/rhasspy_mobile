@@ -36,7 +36,7 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogService
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.ktor.getEngine
 import org.rhasspy.mobile.platformspecific.ktor.installCallLogging
@@ -68,7 +68,7 @@ internal class WebServerService(
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
 
-    private val nativeApplication by inject<INativeApplication>()
+    private val nativeApplication by inject<NativeApplication>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val paramsFlow: StateFlow<WebServerServiceParams> = paramsCreator()

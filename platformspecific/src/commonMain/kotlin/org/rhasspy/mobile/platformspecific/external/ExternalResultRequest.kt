@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.platformspecific.external
 
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
 interface IExternalResultRequest {
 
@@ -13,7 +13,7 @@ interface IExternalResultRequest {
 }
 
 internal expect class ExternalResultRequest(
-    nativeApplication: INativeApplication
+    nativeApplication: NativeApplication
 ) : IExternalResultRequest {
 
     override fun <R> launch(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R>

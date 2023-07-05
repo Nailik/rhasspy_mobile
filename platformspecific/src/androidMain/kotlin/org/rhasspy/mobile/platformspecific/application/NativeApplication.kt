@@ -20,7 +20,7 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 
-actual abstract class NativeApplication : INativeApplication, MultiDexApplication(), KoinComponent {
+actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
 
     var currentActivity: AppCompatActivity? = null
         private set
@@ -41,11 +41,11 @@ actual abstract class NativeApplication : INativeApplication, MultiDexApplicatio
     actual companion object {
         private lateinit var koinApplicationInstance: NativeApplication
         actual val koinApplicationModule = module {
-            single<INativeApplication> { koinApplicationInstance }
+            single { koinApplicationInstance }
         }
     }
 
-    actual override fun onInit() {
+    actual fun onInit() {
         koinApplicationInstance = this
     }
 
@@ -70,15 +70,15 @@ actual abstract class NativeApplication : INativeApplication, MultiDexApplicatio
         })
     }
 
-    actual override val currentlyAppInBackground = MutableStateFlow(false)
-    actual override val isAppInBackground: StateFlow<Boolean>
+    actual val currentlyAppInBackground = MutableStateFlow(false)
+    actual val isAppInBackground: StateFlow<Boolean>
         get() = currentlyAppInBackground
 
-    actual override fun isInstrumentedTest(): Boolean {
+    actual fun isInstrumentedTest(): Boolean {
         return Settings.System.getString(contentResolver, "firebase.test.lab") == "true"
     }
 
-    actual override fun restart() {
+    actual fun restart() {
         try {
             val packageManager: PackageManager = this.packageManager
             val intent: Intent = packageManager.getLaunchIntentForPackage(this.packageName)!!
@@ -91,10 +91,10 @@ actual abstract class NativeApplication : INativeApplication, MultiDexApplicatio
         }
     }
 
-    actual abstract override val isHasStarted: StateFlow<Boolean>
-    actual abstract override fun resume()
-    actual abstract override fun startRecordingAction()
-    actual override fun closeApp() {
+    actual abstract val isHasStarted: StateFlow<Boolean>
+    actual abstract fun resume()
+    actual abstract fun startRecordingAction()
+    actual fun closeApp() {
         currentActivity?.moveTaskToBack(false)
     }
 

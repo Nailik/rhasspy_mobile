@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.viewmodel.overlay.microphone
 
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
@@ -9,7 +9,7 @@ import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
 
 class MicrophoneOverlayViewStateCreator(
-    private val nativeApplication: INativeApplication,
+    private val nativeApplication: NativeApplication,
     private val overlayPermission: IOverlayPermission,
     microphoneFabViewStateCreator: MicrophoneFabViewStateCreator
 ) {

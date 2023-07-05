@@ -6,7 +6,7 @@ import okio.FileHandle
 import okio.FileSystem
 import okio.Path
 import okio.Source
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
@@ -37,7 +37,7 @@ private fun createDirectoryIfNotExists(parentDirectory: NSURL) {
     }
 }
 
-actual fun Path.Companion.commonInternalPath(nativeApplication: INativeApplication, fileName: String): Path = "${readDocumentsDirectory().replace("file:", "")}/$fileName".toPath()
+actual fun Path.Companion.commonInternalPath(nativeApplication: NativeApplication, fileName: String): Path = "${readDocumentsDirectory().replace("file:", "")}/$fileName".toPath()
 
 actual fun Path.commonDelete() {
     FileSystem.SYSTEM.delete(this, mustExist = false)
@@ -52,7 +52,7 @@ actual fun Path.commonReadWrite(): FileHandle = FileSystem.SYSTEM.openReadWrite(
 actual inline fun <reified T> Path.commonDecodeLogList(): T = Json.decodeFromString("")
 
 actual fun Path.commonShare(
-    nativeApplication: INativeApplication,
+    nativeApplication: NativeApplication,
     externalResultRequest: IExternalResultRequest
 ): Boolean {
     //TODO("Not yet implemented")
@@ -60,7 +60,7 @@ actual fun Path.commonShare(
 }
 
 actual suspend fun Path.commonSave(
-    nativeApplication: INativeApplication,
+    nativeApplication: NativeApplication,
     externalResultRequest: IExternalResultRequest,
     fileName: String,
     fileType: String

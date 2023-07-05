@@ -21,7 +21,6 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.ui.native.nativeComposeView
@@ -46,8 +45,8 @@ object IndicationOverlay : KoinComponent {
 
     private val context: Context
         get() {
-            val application = get<INativeApplication>()
-            return (application as NativeApplication).currentActivity ?: application
+            val application = get<NativeApplication>()
+            return application.currentActivity ?: application
         }
 
     private val overlayWindowManager by lazy {

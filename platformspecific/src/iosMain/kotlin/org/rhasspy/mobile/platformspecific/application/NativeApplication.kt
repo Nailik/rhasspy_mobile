@@ -4,41 +4,41 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.dsl.module
 
-actual abstract class NativeApplication : INativeApplication {
+actual abstract class NativeApplication {
 
     @ThreadLocal
     actual companion object {
         lateinit var koinApplicationInstance: NativeApplication
         actual val koinApplicationModule = module {
-            single<INativeApplication> { koinApplicationInstance }
+            single { koinApplicationInstance }
         }
     }
 
-    actual override fun onInit() {
+    actual fun onInit() {
         koinApplicationInstance = this
     }
 
-    actual override val currentlyAppInBackground: MutableStateFlow<Boolean>
+    actual val currentlyAppInBackground: MutableStateFlow<Boolean>
         get() = MutableStateFlow(false) //TODO("Not yet implemented")
-    actual override val isAppInBackground: StateFlow<Boolean>
+    actual val isAppInBackground: StateFlow<Boolean>
         get() = MutableStateFlow(false) //TODO("Not yet implemented")
-    actual abstract override val isHasStarted: StateFlow<Boolean>
-    actual override fun isInstrumentedTest(): Boolean {
+    actual abstract val isHasStarted: StateFlow<Boolean>
+    actual fun isInstrumentedTest(): Boolean {
         //TODO("Not yet implemented")
         return true
     }
 
-    actual override fun restart() {
+    actual fun restart() {
         //TODO("Not yet implemented")
     }
 
-    actual override fun onCreate() {
+    actual fun onCreate() {
         //TODO("Not yet implemented")
     }
 
-    actual abstract override fun resume()
-    actual abstract override fun startRecordingAction()
-    actual override fun closeApp() {
+    actual abstract fun resume()
+    actual abstract fun startRecordingAction()
+    actual fun closeApp() {
         //TODO("Not yet implemented")
     }
 }

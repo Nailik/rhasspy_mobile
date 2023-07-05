@@ -3,14 +3,13 @@ package org.rhasspy.mobile.platformspecific.permission
 import android.provider.Settings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 
 internal actual class OverlayPermission actual constructor(
-    private val nativeApplication: INativeApplication,
+    private val nativeApplication: NativeApplication,
     private val externalResultRequest: IExternalResultRequest
 ) : IOverlayPermission {
 
@@ -37,7 +36,7 @@ internal actual class OverlayPermission actual constructor(
     /**
      * check if the permission is currently granted
      */
-    actual override fun isGranted(): Boolean = Settings.canDrawOverlays(nativeApplication as NativeApplication)
+    actual override fun isGranted(): Boolean = Settings.canDrawOverlays(nativeApplication)
 
     /**
      * read from system

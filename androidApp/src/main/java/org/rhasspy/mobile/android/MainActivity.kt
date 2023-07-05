@@ -13,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.ui.main.MainScreen
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
@@ -46,7 +46,7 @@ class MainActivity : KoinComponent, AppCompatActivity() {
 
         installSplashScreen().setKeepOnScreenCondition {
             //splash screen should be visible until the app has started
-            !get<INativeApplication>().isHasStarted.value
+            !get<NativeApplication>().isHasStarted.value
         }
         super.onCreate(savedInstanceState)
 

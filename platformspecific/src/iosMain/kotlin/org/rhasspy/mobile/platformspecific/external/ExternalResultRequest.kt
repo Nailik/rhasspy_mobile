@@ -1,9 +1,9 @@
 package org.rhasspy.mobile.platformspecific.external
 
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
 internal actual class ExternalResultRequest actual constructor(
-    private val nativeApplication: INativeApplication
+    private val nativeApplication: NativeApplication
 ) : IExternalResultRequest {
 
     actual override fun <R> launch(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> {

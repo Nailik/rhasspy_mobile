@@ -19,7 +19,7 @@ import kotlinx.serialization.json.Json
 import okio.Path
 import okio.buffer
 import org.rhasspy.mobile.data.log.LogElement
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.*
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -37,7 +37,7 @@ interface IFileLogger {
 }
 
 internal class FileLogger(
-    private val nativeApplication: INativeApplication,
+    private val nativeApplication: NativeApplication,
     private val externalResultRequest: IExternalResultRequest
 ) : IFileLogger, LogWriter() {
     private val logger = Logger.withTag("FileLogger")

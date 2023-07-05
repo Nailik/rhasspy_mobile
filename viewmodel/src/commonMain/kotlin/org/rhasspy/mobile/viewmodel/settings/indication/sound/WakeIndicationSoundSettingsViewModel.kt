@@ -2,14 +2,14 @@ package org.rhasspy.mobile.viewmodel.settings.indication.sound
 
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.logic.services.localaudio.ILocalAudioService
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.file.FolderType.SoundFolder.Wake
 import org.rhasspy.mobile.settings.AppSetting
 
 @Stable
 class WakeIndicationSoundSettingsViewModel(
     localAudioService: ILocalAudioService,
-    nativeApplication: INativeApplication
+    nativeApplication: NativeApplication
 ) : IIndicationSoundSettingsViewModel(
     localAudioService = localAudioService,
     nativeApplication = nativeApplication,

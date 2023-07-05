@@ -16,14 +16,13 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.*
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.*
 import kotlin.coroutines.resume
 
 internal actual class ExternalResultRequest actual constructor(
-    private val nativeApplication: INativeApplication
+    private val nativeApplication: NativeApplication
 ) : IExternalResultRequest, KoinComponent {
 
     private val logger = Logger.withTag("ExternalRedirect")
@@ -51,10 +50,10 @@ internal actual class ExternalResultRequest actual constructor(
     actual override fun <R> launch(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> {
         logger.v { "launch $intention" }
         return launching {
-            (nativeApplication as NativeApplication).currentActivity?.also {
+            nativeApplication.currentActivity?.also {
                 it.startActivity(intentFromIntention(intention))
             } ?: run {
-                (nativeApplication as NativeApplication).startActivity(
+                nativeApplication.startActivity(
                     intentFromIntention(intention).apply {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
@@ -107,12 +106,12 @@ internal actual class ExternalResultRequest actual constructor(
             is CreateDocument ->
                 ActivityResultContracts
                     .CreateDocument(intention.mimeType)
-                    .createIntent((nativeApplication as NativeApplication), intention.title)
+                    .createIntent(nativeApplication, intention.title)
 
             is OpenDocument ->
                 ActivityResultContracts
                     .OpenDocument()
-                    .createIntent((nativeApplication as NativeApplication), intention.mimeTypes.toTypedArray())
+                    .createIntent(nativeApplication, intention.mimeTypes.toTypedArray())
                     .apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(intention.uri))
@@ -123,7 +122,7 @@ internal actual class ExternalResultRequest actual constructor(
             is GetContent ->
                 ActivityResultContracts
                     .GetContent()
-                    .createIntent((nativeApplication as NativeApplication), "*/*")
+                    .createIntent(nativeApplication, "*/*")
                     .apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(intention.uri))
@@ -135,7 +134,7 @@ internal actual class ExternalResultRequest actual constructor(
                 Intent().apply {
                     @SuppressLint("BatteryLife")
                     action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                    data = Uri.parse("package:${(nativeApplication as NativeApplication).packageName}")
+                    data = Uri.parse("package:${nativeApplication.packageName}")
                 }
 
             RequestMicrophonePermissionExternally ->

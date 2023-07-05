@@ -5,7 +5,6 @@ import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -26,9 +25,6 @@ class MicrophoneOverlayViewModelTest : AppTest() {
     lateinit var serviceMiddleware: IServiceMiddleware
 
     @Mock
-    lateinit var nativeApplication: INativeApplication
-
-    @Mock
     lateinit var microphonePermission: IMicrophonePermission
 
     @Mock
@@ -44,7 +40,6 @@ class MicrophoneOverlayViewModelTest : AppTest() {
         super.before(
             module {
                 single { serviceMiddleware }
-                single { nativeApplication }
                 single { microphonePermission }
                 single { overlayPermission }
             }

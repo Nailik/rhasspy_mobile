@@ -5,7 +5,7 @@ import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.log.LogLevel
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.firebase.setCrashlyticsCollectionEnabled
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.settings.AppSetting
@@ -21,9 +21,6 @@ import kotlin.test.assertEquals
 class LogSettingsViewModelTest : AppTest() {
 
     @Mock
-    lateinit var nativeApplication: INativeApplication
-
-    @Mock
     lateinit var microphonePermission: IMicrophonePermission
 
     @Mock
@@ -37,7 +34,6 @@ class LogSettingsViewModelTest : AppTest() {
     fun before() {
         super.before(
             module {
-                single { nativeApplication }
                 single { microphonePermission }
                 single { overlayPermission }
             }
@@ -48,17 +44,17 @@ class LogSettingsViewModelTest : AppTest() {
 
     @Test
     fun `when user select crashlytics to be enabled or disabled it is saved and set in the application`() {
-        every { nativeApplication.setCrashlyticsCollectionEnabled(isAny()) } returns Unit
+        every { setCrashlyticsCollectionEnabled(isAny()) } returns Unit
 
         logSettingsViewModel.onEvent(SetCrashlyticsEnabled(true))
 
-        nVerify { nativeApplication.setCrashlyticsCollectionEnabled(true) }
+        nVerify { setCrashlyticsCollectionEnabled(true) }
         assertEquals(true, AppSetting.isCrashlyticsEnabled.value)
 
 
         logSettingsViewModel.onEvent(SetCrashlyticsEnabled(false))
 
-        nVerify { nativeApplication.setCrashlyticsCollectionEnabled(false) }
+        nVerify { setCrashlyticsCollectionEnabled(false) }
         assertEquals(false, AppSetting.isCrashlyticsEnabled.value)
 
     }

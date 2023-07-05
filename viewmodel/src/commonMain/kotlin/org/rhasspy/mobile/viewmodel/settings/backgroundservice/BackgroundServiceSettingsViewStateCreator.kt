@@ -5,13 +5,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.permission.BatteryOptimization
 import org.rhasspy.mobile.settings.AppSetting
 
 class BackgroundServiceSettingsViewStateCreator(
-    private val nativeApplication: INativeApplication,
+    private val nativeApplication: NativeApplication,
     private val batteryOptimization: BatteryOptimization
 ) {
 

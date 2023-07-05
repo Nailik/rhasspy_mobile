@@ -19,7 +19,7 @@ import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
 import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.logic.services.recording.IRecordingService
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeader
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
@@ -54,7 +54,7 @@ internal class SpeechToTextService(
     private val httpClientService by inject<IHttpClientService>()
     private val mqttClientService by inject<IMqttService>()
     private val recordingService by inject<IRecordingService>()
-    private val nativeApplication by inject<INativeApplication>()
+    private val nativeApplication by inject<NativeApplication>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val paramsFlow: StateFlow<SpeechToTextServiceParams> = paramsCreator()

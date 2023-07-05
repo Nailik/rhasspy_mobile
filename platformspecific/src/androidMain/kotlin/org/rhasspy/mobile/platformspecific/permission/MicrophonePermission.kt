@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 
@@ -13,7 +12,7 @@ import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
  * to check microphone permission
  */
 internal actual class MicrophonePermission actual constructor(
-    private val nativeApplication: INativeApplication,
+    private val nativeApplication: NativeApplication,
     private val externalResultRequest: IExternalResultRequest
 ) : IMicrophonePermission {
 
@@ -27,7 +26,7 @@ internal actual class MicrophonePermission actual constructor(
      * to request the permission externally, redirect user to settings
      */
     actual override fun shouldShowInformationDialog(): Boolean {
-        return (nativeApplication as NativeApplication).currentActivity?.let {
+        return nativeApplication.currentActivity?.let {
             ActivityCompat.shouldShowRequestPermissionRationale(
                 it,
                 Manifest.permission.RECORD_AUDIO
@@ -40,7 +39,7 @@ internal actual class MicrophonePermission actual constructor(
      */
     private fun isGranted(): Boolean {
         return ActivityCompat.checkSelfPermission(
-            (nativeApplication as NativeApplication),
+            nativeApplication,
             Manifest.permission.RECORD_AUDIO
         ) == PackageManager.PERMISSION_GRANTED
     }

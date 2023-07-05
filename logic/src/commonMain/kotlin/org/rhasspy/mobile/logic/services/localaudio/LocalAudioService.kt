@@ -12,7 +12,7 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.sounds.SoundOption
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.audiofocus.IAudioFocusService
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioPlayer
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
@@ -46,7 +46,7 @@ internal class LocalAudioService(
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
 
-    private val nativeApplication by inject<INativeApplication>()
+    private val nativeApplication by inject<NativeApplication>()
     private val audioFocusService by inject<IAudioFocusService>()
 
     private var coroutineScope = CoroutineScope(Dispatchers.IO)

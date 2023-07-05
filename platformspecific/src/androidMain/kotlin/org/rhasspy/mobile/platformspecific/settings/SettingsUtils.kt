@@ -10,7 +10,6 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.rhasspy.mobile.data.settings.SettingsEnum
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectUtils
@@ -25,10 +24,9 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
-//TODO remove (nativeApplication as NativeApplication)
 internal actual class SettingsUtils actual constructor(
     private val externalResultRequest: IExternalResultRequest,
-    private val nativeApplication: INativeApplication
+    private val nativeApplication: NativeApplication
 ) : ISettingsUtils {
 
     private val logger = Logger.withTag("SettingsUtils")
@@ -49,7 +47,7 @@ internal actual class SettingsUtils actual constructor(
 
             return when (result) {
                 is ExternalRedirectResult.Result -> {
-                    return (nativeApplication as NativeApplication).contentResolver.openOutputStream(result.data.toUri())?.let { outputStream ->
+                    return nativeApplication.contentResolver.openOutputStream(result.data.toUri())?.let { outputStream ->
 
                         //create output for zip file
                         val zipOutputStream =
@@ -123,7 +121,7 @@ internal actual class SettingsUtils actual constructor(
 
             return result?.toUri()?.let { uri ->
                 logger.d { "restoreSettingsFromFile $uri" }
-                (nativeApplication as NativeApplication).contentResolver.openInputStream(uri)
+                nativeApplication.contentResolver.openInputStream(uri)
                     ?.let { inputStream ->
                         //read input data
                         val zipInputStream = ZipInputStream(BufferedInputStream(inputStream))
@@ -208,7 +206,7 @@ internal actual class SettingsUtils actual constructor(
 
             //copy org.rhasspy.mobile.android_prefenrences.xml
             val sharedPreferencesFile = File(
-                (nativeApplication as NativeApplication).filesDir.parent,
+                nativeApplication.filesDir.parent,
                 "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
             )
             val exportFile = File(

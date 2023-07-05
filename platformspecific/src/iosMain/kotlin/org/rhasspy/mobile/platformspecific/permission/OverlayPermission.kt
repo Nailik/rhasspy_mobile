@@ -2,11 +2,11 @@ package org.rhasspy.mobile.platformspecific.permission
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 
 internal actual class OverlayPermission actual constructor(
-    private val nativeApplication: INativeApplication,
+    private val nativeApplication: NativeApplication,
     private val externalResultRequest: IExternalResultRequest
 ) : IOverlayPermission {
 

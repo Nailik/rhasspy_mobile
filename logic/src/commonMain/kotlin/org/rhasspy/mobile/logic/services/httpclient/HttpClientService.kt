@@ -25,7 +25,7 @@ import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.*
 import org.rhasspy.mobile.platformspecific.extensions.commonData
@@ -56,7 +56,7 @@ internal class HttpClientService(
 
     override val logger = LogType.HttpClientService.logger()
 
-    private val nativeApplication by inject<INativeApplication>()
+    private val nativeApplication by inject<NativeApplication>()
 
     private var coroutineScope = CoroutineScope(Dispatchers.IO)
 

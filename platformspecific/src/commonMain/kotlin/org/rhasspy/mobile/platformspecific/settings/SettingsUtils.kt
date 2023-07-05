@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.platformspecific.settings
 
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 
 interface ISettingsUtils {
@@ -13,7 +13,7 @@ interface ISettingsUtils {
 
 internal expect class SettingsUtils(
     externalResultRequest: IExternalResultRequest,
-    nativeApplication: INativeApplication
+    nativeApplication: NativeApplication
 ) : ISettingsUtils {
 
     /**

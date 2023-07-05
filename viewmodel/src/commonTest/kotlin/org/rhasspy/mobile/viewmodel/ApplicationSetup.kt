@@ -1,5 +1,5 @@
 package org.rhasspy.mobile.viewmodel
 
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
-expect fun initApplication(): INativeApplication
+expect fun initApplication(): NativeApplication

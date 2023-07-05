@@ -11,9 +11,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import java.io.File
 
@@ -27,7 +25,7 @@ class InternalAudioPlayer(
     private val onFinished: (exception: Exception?) -> Unit
 ) : KoinComponent {
 
-    private val nativeApplication = get<INativeApplication>() as NativeApplication
+    private val nativeApplication = get<NativeApplication>()
 
     private var finishCalled = false
     private var coroutineScope = CoroutineScope(Dispatchers.IO)

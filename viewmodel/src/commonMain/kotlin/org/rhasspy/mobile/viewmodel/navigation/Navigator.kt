@@ -5,7 +5,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
@@ -31,7 +31,7 @@ inline fun <reified T : NavigationDestination> INavigator.topScreen(default: T):
  * wenn screen nicht mehr angezeigt wird disposen
  */
 internal class Navigator(
-    private val nativeApplication: INativeApplication
+    private val nativeApplication: NativeApplication
 ) : INavigator {
 
     override val navStack = MutableStateFlow<ImmutableList<NavigationDestination>>(persistentListOf(HomeScreen))

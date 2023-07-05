@@ -1,11 +1,11 @@
 package org.rhasspy.mobile.platformspecific.settings
 
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 
 internal actual class SettingsUtils actual constructor(
     externalResultRequest: IExternalResultRequest,
-    nativeApplication: INativeApplication
+    nativeApplication: NativeApplication
 ) : ISettingsUtils {
 
     /**

@@ -21,7 +21,7 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsSe
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
 import org.rhasspy.mobile.platformspecific.extensions.commonData
@@ -65,7 +65,7 @@ internal class MqttService(
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
 
-    private val nativeApplication by inject<INativeApplication>()
+    private val nativeApplication by inject<NativeApplication>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private var scope = CoroutineScope(Dispatchers.IO)

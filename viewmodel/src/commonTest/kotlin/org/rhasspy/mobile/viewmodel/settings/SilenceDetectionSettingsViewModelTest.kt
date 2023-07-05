@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
-import org.rhasspy.mobile.platformspecific.application.INativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
@@ -20,9 +19,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SilenceDetectionSettingsViewModelTest : AppTest() {
-
-    @Mock
-    lateinit var nativeApplication: INativeApplication
 
     @Mock
     lateinit var audioRecorder: IAudioRecorder
@@ -44,7 +40,6 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
     fun before() {
         super.before(
             module {
-                single { nativeApplication }
                 single { audioRecorder }
                 single { microphonePermission }
                 single { overlayPermission }
