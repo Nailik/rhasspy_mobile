@@ -57,9 +57,9 @@ abstract class ConfigurationViewModel(
         when (dialogAction.dialogState) {
             UnsavedChangesDialogState ->
                 when (dialogAction) {
-                    is Close -> Unit
                     is Confirm -> save(true)
                     is Dismiss -> discard(true)
+                    is Close -> _configurationViewState.update { it.copy(dialogState = null) }
                 }
 
             else -> Unit
@@ -85,7 +85,10 @@ abstract class ConfigurationViewModel(
 
     override fun onBackPressed(): Boolean {
         return when (_configurationViewState.value.dialogState) {
-            UnsavedChangesDialogState -> true
+            UnsavedChangesDialogState -> {
+                _configurationViewState.update { it.copy(dialogState = null) }
+                true
+            }
 
             null -> {
                 if (_configurationViewState.value.hasUnsavedChanges) {

@@ -26,7 +26,7 @@ import org.rhasspy.mobile.overlay.koinOverlayModule
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.background.IBackgroundService
-import org.rhasspy.mobile.platformspecific.firebase.setCrashlyticsCollectionEnabled
+import org.rhasspy.mobile.platformspecific.firebase.ICrashlytics
 import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
@@ -75,7 +75,7 @@ class Application : NativeApplication(), KoinComponent {
             AppSetting
             ConfigurationSetting
 
-            setCrashlyticsCollectionEnabled(
+            get<ICrashlytics>().setEnabled(
                 if (!isDebug() && !isInstrumentedTest()) {
                     AppSetting.isCrashlyticsEnabled.value
                 } else false

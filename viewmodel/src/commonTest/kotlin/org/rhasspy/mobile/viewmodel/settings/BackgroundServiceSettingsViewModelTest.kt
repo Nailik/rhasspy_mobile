@@ -33,7 +33,7 @@ class BackgroundServiceSettingsViewModelTest : AppTest() {
     fun before() {
         super.before(
             module {
-                single { backgroundService } //TODO check if overriding
+                single { backgroundService }
                 single { externalResultRequest }
             }
         )

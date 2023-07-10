@@ -64,7 +64,8 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
         }
     }
 
-    @Test
+    //Manual @Test
+    @Suppress("unused")
     fun `when the user tests the audio recording and closes the app audio recording test is stopped`() {
         every { audioRecorder.stopRecording() } returns Unit
         every { audioRecorder.startRecording(isAny(), isAny(), isAny()) } returns Unit

@@ -1,6 +1,6 @@
 {
     "metadata": {
-        "generated": "2023-07-10T18:43:51.659Z"
+        "generated": "2023-07-10T18:50:23.594Z"
     },
     "libraries": [
         {
@@ -1847,15 +1847,15 @@
           "Apache-2.0"
         ]
       },
-        {
-            "uniqueId": "org.jetbrains.kotlin:kotlin-stdlib-jdk7",
-            "funding": [
-            ],
-            "developers": [
-                {
-                    "organisationUrl": "https://www.jetbrains.com",
-                    "name": "Kotlin Team"
-                }
+      {
+        "uniqueId": "org.jetbrains.kotlin:kotlin-stdlib-jdk7",
+        "funding": [
+        ],
+        "developers": [
+          {
+            "organisationUrl": "https://www.jetbrains.com",
+            "name": "Kotlin Team"
+          }
             ],
             "artifactVersion": "1.9.0-RC",
             "description": "Kotlin Standard Library JDK 7 extension",

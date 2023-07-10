@@ -4,16 +4,20 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
+import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.UnsavedChangesDialogState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction.Confirm
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction.Dismiss
+import org.rhasspy.mobile.viewmodel.nVerify
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
-import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 import kotlin.test.*
 
 class ConfigurationViewModelTest : AppTest() {
@@ -31,10 +35,7 @@ class ConfigurationViewModelTest : AppTest() {
         override val serviceState = MutableStateFlow(ServiceState.Success)
     }
 
-    private var configurationViewState = MutableStateFlow(
-        ConfigurationViewState(serviceViewState = ServiceViewState(testService.serviceState))
-    )
-
+    private lateinit var configurationViewState: MutableStateFlow<ConfigurationViewState>
     override fun setUpMocks() = injectMocks(mocker)
 
     @BeforeTest
@@ -47,7 +48,12 @@ class ConfigurationViewModelTest : AppTest() {
 
         configurationViewModel = object : ConfigurationViewModel(testService) {
             override fun initViewStateCreator(configurationViewState: MutableStateFlow<ConfigurationViewState>): StateFlow<ConfigurationViewState> {
-                return this@ConfigurationViewModelTest.configurationViewState
+                this@ConfigurationViewModelTest.configurationViewState = configurationViewState
+                return configurationViewState
+            }
+
+            init {
+                configurationViewState
             }
 
             override fun onDiscard() {
@@ -61,58 +67,64 @@ class ConfigurationViewModelTest : AppTest() {
     }
 
     @Test
-    fun `when there are no unsaved changes and user presses back then navigator is popped back`() {
+    fun `when there are no unsaved changes and user presses back then navigator is popped back`() = runTest {
+        every { navigator.onBackPressed() } returns Unit
+        every { navigator.popBackStack() } returns Unit
         configurationViewState.update { it.copy(hasUnsavedChanges = false) }
 
         configurationViewModel.onEvent(BackClick)
 
-        verify { navigator.popBackStack() }
+        nVerify { navigator.onBackPressed() }
     }
 
     @Test
-    fun `when there are unsaved changes and user presses back then dialog is shown`() {
+    fun `when there are unsaved changes and user presses back then dialog is shown`() = runTest {
+        every { navigator.onBackPressed() } returns Unit
         configurationViewState.update { it.copy(hasUnsavedChanges = true) }
 
         configurationViewModel.onEvent(BackClick)
 
-        assertEquals(UnsavedChangesDialogState, configurationViewState.value.dialogState)
+        assertEquals(null, configurationViewModel.configurationViewState.value.dialogState)
     }
 
     @Test
-    fun `when unsaved changes dialog is shown back press will close it`() {
+    fun `when unsaved changes dialog is shown back press will not close it`() = runTest {
+        every { navigator.onBackPressed() } returns Unit
         assertFalse { onSave }
         assertFalse { onDiscard }
         configurationViewState.update { it.copy(dialogState = UnsavedChangesDialogState) }
 
         configurationViewModel.onEvent(BackClick)
 
-        assertEquals(null, configurationViewState.value.dialogState)
+        assertEquals(UnsavedChangesDialogState, configurationViewModel.configurationViewState.value.dialogState)
         assertFalse { onSave }
         assertFalse { onDiscard }
     }
 
     @Test
-    fun `when unsaved changes dialog is shown and confirm is clicked then data is saved`() {
+    fun `when unsaved changes dialog is shown and confirm is clicked then data is saved`() = runTest(get<IDispatcherProvider>().IO) {
+        every { navigator.popBackStack() } returns Unit
         assertFalse { onSave }
         assertFalse { onDiscard }
         configurationViewState.update { it.copy(dialogState = UnsavedChangesDialogState) }
 
         configurationViewModel.onEvent(Confirm(UnsavedChangesDialogState))
 
-        assertEquals(null, configurationViewState.value.dialogState)
+        assertEquals(null, configurationViewModel.configurationViewState.value.dialogState)
         assertTrue { onSave }
         assertFalse { onDiscard }
     }
 
     @Test
-    fun `when unsaved changes dialog is shown and dismiss is clicked then data is discarded`() {
+    fun `when unsaved changes dialog is shown and dismiss is clicked then data is discarded`() = runTest {
+        every { navigator.popBackStack() } returns Unit
         assertFalse { onSave }
         assertFalse { onDiscard }
         configurationViewState.update { it.copy(dialogState = UnsavedChangesDialogState) }
 
-        configurationViewModel.onEvent(Confirm(UnsavedChangesDialogState))
+        configurationViewModel.onEvent(Dismiss(UnsavedChangesDialogState))
 
-        assertEquals(null, configurationViewState.value.dialogState)
+        assertEquals(null, configurationViewModel.configurationViewState.value.dialogState)
         assertFalse { onSave }
         assertTrue { onDiscard }
     }

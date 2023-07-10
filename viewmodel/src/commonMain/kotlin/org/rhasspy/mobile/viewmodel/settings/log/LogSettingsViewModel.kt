@@ -2,8 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings.log
 
 import androidx.compose.runtime.Stable
 import co.touchlab.kermit.Logger
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.firebase.setCrashlyticsCollectionEnabled
+import org.rhasspy.mobile.platformspecific.firebase.ICrashlytics
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Action
@@ -14,7 +13,7 @@ import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.*
 @Stable
 class LogSettingsViewModel(
     val viewStateCreator: LogSettingsViewStateCreator,
-    private val nativeApplication: NativeApplication
+    private val crashlytics: ICrashlytics
 ) : ScreenViewModel() {
 
     val viewState = viewStateCreator()
@@ -30,7 +29,7 @@ class LogSettingsViewModel(
         when (change) {
             is SetCrashlyticsEnabled -> {
                 AppSetting.isCrashlyticsEnabled.value = change.enabled
-                setCrashlyticsCollectionEnabled(change.enabled)
+                crashlytics.setEnabled(change.enabled)
             }
 
             is SetLogAudioFramesEnabled -> AppSetting.isLogAudioFramesEnabled.value = change.enabled

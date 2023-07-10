@@ -182,7 +182,5 @@ class WakeWordConfigurationViewModelTest : AppTest() {
         assertEquals(initialWakeWordConfigurationData, wakeWordConfigurationViewModel.viewState.value.editData)
         assertEquals(initialWakeWordConfigurationData, WakeWordConfigurationData())
     }
-}
 
-//TODO deleted list gets really deleted (files)
-//TODO saved files are copied
+}

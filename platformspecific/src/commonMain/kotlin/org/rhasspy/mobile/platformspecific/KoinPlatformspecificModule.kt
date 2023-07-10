@@ -8,6 +8,8 @@ import org.rhasspy.mobile.platformspecific.background.BackgroundService
 import org.rhasspy.mobile.platformspecific.background.IBackgroundService
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
+import org.rhasspy.mobile.platformspecific.firebase.Crashlytics
+import org.rhasspy.mobile.platformspecific.firebase.ICrashlytics
 import org.rhasspy.mobile.platformspecific.intent.IIntentAction
 import org.rhasspy.mobile.platformspecific.intent.IntentAction
 import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
@@ -22,6 +24,10 @@ val platformSpecificModule = module {
     includes(
         koinApplicationModule
     )
+
+    single<ICrashlytics> {
+        Crashlytics()
+    }
 
     single<IIntentAction> {
         IntentAction(
