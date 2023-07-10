@@ -56,7 +56,7 @@ kotlin {
             dependsOn(commonTest)
             dependencies {
                 implementation(project(":androidApp"))
-                implementation(project(":shared"))
+                implementation(project(":app"))
                 implementation(AndroidX.archCore.testing)
             }
         }

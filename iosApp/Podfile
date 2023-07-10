@@ -4,7 +4,7 @@ target 'iosApp' do
   pod 'Firebase/Crashlytics'
   pod 'resources', :path => '../resources'
   pod 'ui', :path => '../ui'
-  pod 'shared', :path => '../shared'
+  pod 'app', :path => '../app'
 end
 
 post_install do |installer|

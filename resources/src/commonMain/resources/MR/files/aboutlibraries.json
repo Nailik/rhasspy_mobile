@@ -1,6 +1,6 @@
 {
     "metadata": {
-        "generated": "2023-07-10T11:09:25.219Z"
+        "generated": "2023-07-10T18:43:51.659Z"
     },
     "libraries": [
         {
@@ -1847,10 +1847,9 @@
           "Apache-2.0"
         ]
       },
-      {
-        "uniqueId": "org.jetbrains.kotlin:kotlin-stdlib-jdk7",
+        {
+            "uniqueId": "org.jetbrains.kotlin:kotlin-stdlib-jdk7",
             "funding": [
-                
             ],
             "developers": [
                 {

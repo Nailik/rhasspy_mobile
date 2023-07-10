@@ -23,6 +23,7 @@ import org.rhasspy.mobile.logic.services.webserver.IWebServerService
 import org.rhasspy.mobile.overlay.IIndicationOverlay
 import org.rhasspy.mobile.overlay.IMicrophoneOverlay
 import org.rhasspy.mobile.overlay.koinOverlayModule
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.background.IBackgroundService
 import org.rhasspy.mobile.platformspecific.firebase.setCrashlyticsCollectionEnabled
@@ -96,14 +97,15 @@ class Application : NativeApplication(), KoinComponent {
     }
 
     private fun startOverlay() {
-        CoroutineScope(get<Dispatchers>().Main).launch {
+        CoroutineScope(get<IDispatcherProvider>().Main).launch {
             get<IIndicationOverlay>().start()
             get<IMicrophoneOverlay>().start()
         }
     }
 
+    @Suppress("unused")
     fun stopOverlay() {
-        CoroutineScope(get<Dispatchers>().Main).launch {
+        CoroutineScope(get<IDispatcherProvider>().Main).launch {
             get<IIndicationOverlay>().stop()
             get<IMicrophoneOverlay>().stop()
         }

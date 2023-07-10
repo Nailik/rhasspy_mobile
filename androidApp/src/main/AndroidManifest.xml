@@ -12,12 +12,8 @@
 
     <uses-permission-sdk-23 android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
-    <uses-permission
-        android:name="com.google.android.gms.permission.AD_ID"
-        tools:node="remove" />
-
     <application
-        android:name="org.rhasspy.mobile.platformspecific.application.NativeApplication"
+        android:name="org.rhasspy.mobile.Application"
         android:enableOnBackInvokedCallback="true"
         android:exported="true"
         android:hardwareAccelerated="true"
@@ -41,7 +37,7 @@
         </service>
 
         <activity
-            android:name=".MainActivity"
+            android:name="org.rhasspy.mobile.MainActivity"
             android:exported="true"
             android:theme="@style/AppTheme.AppSplash">
             <intent-filter>
@@ -51,7 +47,7 @@
         </activity>
 
         <receiver
-            android:name=".StartRecordingReceiver"
+            android:name="org.rhasspy.mobile.StartRecordingReceiver"
             android:exported="true"
             tools:ignore="ExportedReceiver">
             <intent-filter android:priority="100">

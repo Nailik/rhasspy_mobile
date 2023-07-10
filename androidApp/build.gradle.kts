@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import java.util.Properties
 
@@ -9,7 +8,6 @@ plugins {
     kotlin("android")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
-    id("org.gradle.test-retry")
     id("base-gradle")
 }
 
@@ -145,33 +143,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_metrics"
 }
 
-tasks.withType<Test> {
-    testLogging {
-        events(STARTED, PASSED, SKIPPED, FAILED, STANDARD_OUT, STANDARD_ERROR)
-        exceptionFormat = FULL
-        showExceptions = true
-        showCauses = true
-        showStackTraces = true
-    }
-    retry {
-        maxRetries.set(3)
-        maxFailures.set(20)
-        failOnPassedAfterRetry.set(false)
-    }
-}
-
-kotlin {
-    sourceSets {
-        all {
-            //Warning: This class can only be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'
-            languageSettings.optIn("kotlin.RequiresOptIn")
-        }
-    }
-}
-
 dependencies {
     coreLibraryDesugaring(Android.tools.desugarJdkLibs)
-    implementation(project(":shared"))
+
+    implementation(project(":app"))
     implementation(project(":viewmodel"))
     implementation(project(":logic"))
     implementation(project(":resources"))
@@ -181,26 +156,13 @@ dependencies {
     implementation(project(":settings"))
     implementation(project(":widget"))
 
-    implementation(AndroidX.appCompat)
-    implementation(AndroidX.Core.splashscreen)
     implementation(AndroidX.Activity.compose)
-    implementation(AndroidX.multidex)
-    implementation(AndroidX.window)
-    implementation(AndroidX.Core.ktx)
-
-    implementation(Touchlab.kermit)
-    implementation(Koin.core)
-
-    implementation(Square.okio)
-
-    implementation(Russhwolf.multiplatformSettingsNoArg)
-    implementation(Icerock.Mvvm.core)
-
-    implementation(Kotlin.test)
-    implementation(Kotlin.Test.junit)
+    implementation(AndroidX.appCompat)
 
     androidTestUtil(AndroidX.Test.orchestrator)
 
+    androidTestImplementation(AndroidX.Activity.compose)
+    androidTestImplementation(Koin.test)
     androidTestImplementation(AndroidX.Test.uiAutomator)
     androidTestImplementation(AndroidX.Test.runner)
     androidTestImplementation(AndroidX.Test.rules)
@@ -210,6 +172,7 @@ dependencies {
     androidTestImplementation(Jetbrains.Compose.testJunit4)
     androidTestImplementation(Adevinta.barista)
     androidTestImplementation(Hamcrest.hamcrest)
+    androidTestImplementation(Jetbrains.Compose.ui)
     androidTestImplementation(Jetbrains.Compose.material3)
     androidTestImplementation(Jetbrains.Kotlinx.immutable)
 

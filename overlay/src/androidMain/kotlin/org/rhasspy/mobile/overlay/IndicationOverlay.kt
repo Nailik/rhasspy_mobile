@@ -7,6 +7,7 @@ import android.os.Looper
 import android.view.Gravity
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.*
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.getSystemService
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.setViewTreeLifecycleOwner
@@ -52,8 +53,10 @@ actual class IndicationOverlay actual constructor(
     /**
      * view that's displayed when a wake word is detected
      */
-    private fun getView() = nativeComposeView(context) {
-        IndicationOverlay(viewModel)
+    private fun getView(): ComposeView {
+        return nativeComposeView(context) {
+            IndicationOverlay(viewModel)
+        }
     }
 
     init {

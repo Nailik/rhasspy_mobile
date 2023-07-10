@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.rhasspy.mobile.android.configuration.porcupine
 
 import android.os.Environment
@@ -20,7 +22,7 @@ import kotlinx.coroutines.withContext
 import org.junit.Before
 import org.junit.Rule
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.MainActivity
+import org.rhasspy.mobile.MainActivity
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.ui.TestTag

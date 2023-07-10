@@ -1,10 +1,9 @@
-package org.rhasspy.mobile.android
+package org.rhasspy.mobile
 
 import android.os.Bundle
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.NoLiveLiterals
 import androidx.core.app.AppLaunchChecker
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -26,7 +25,6 @@ import org.rhasspy.mobile.widget.microphone.MicrophoneWidgetUtils
 /**
  * simple main activity to start application with splash screen
  */
-@NoLiveLiterals
 class MainActivity : KoinComponent, AppCompatActivity() {
 
     companion object : KoinComponent {

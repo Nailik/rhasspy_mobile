@@ -3,6 +3,7 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("multiplatform")
@@ -23,7 +24,7 @@ kotlin {
         ios.deploymentTarget = "14.0"
         podfile = project.file("../iosApp/Podfile")
         framework {
-            baseName = "shared"
+            baseName = "app"
             isStatic = true
         }
     }
@@ -38,6 +39,7 @@ kotlin {
                 implementation(project(":platformspecific"))
                 implementation(project(":settings"))
                 implementation(project(":overlay"))
+                implementation(project(":widget"))
                 implementation(Kotlin.Stdlib.common)
                 implementation(Touchlab.kermit)
                 implementation(Touchlab.Kermit.crashlytics)
@@ -70,6 +72,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(AndroidX.appCompat)
+                implementation(AndroidX.Activity.compose)
                 implementation(AndroidX.lifecycle.process)
                 implementation(AndroidX.Fragment.ktx)
                 implementation(AndroidX.multidex)
@@ -82,6 +85,7 @@ kotlin {
                 implementation(Ktor2.Server.callLogging)
                 implementation(Ktor.Server.netty)
                 implementation(Ktor.Plugins.networkTlsCertificates)
+                implementation(AndroidX.Core.splashscreen)
             }
         }
         val androidUnitTest by getting {
@@ -125,12 +129,12 @@ kotlin {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+tasks.withType<KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-opt-in=co.touchlab.kermit.ExperimentalKermitApi"
 }
 
 android {
-    namespace = "org.rhasspy.mobile.shared"
+    namespace = "org.rhasspy.mobile"
 }
 
 tasks.withType<Test> {
