@@ -16,7 +16,7 @@ expect abstract class NativeApplication() {
 
     abstract fun resume()
 
-    abstract fun startRecordingAction()
+    abstract fun onCreated()
 
     fun onInit()
 

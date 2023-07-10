@@ -37,6 +37,7 @@ kotlin {
                 implementation(project(":viewmodel"))
                 implementation(project(":platformspecific"))
                 implementation(project(":settings"))
+                implementation(project(":overlay"))
                 implementation(Kotlin.Stdlib.common)
                 implementation(Touchlab.kermit)
                 implementation(Touchlab.Kermit.crashlytics)

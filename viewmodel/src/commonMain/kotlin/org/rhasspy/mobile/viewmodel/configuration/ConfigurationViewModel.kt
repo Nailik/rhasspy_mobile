@@ -19,7 +19,7 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
-abstract class IConfigurationViewModel(
+abstract class ConfigurationViewModel(
     private val service: IService
 ) : ScreenViewModel() {
 
@@ -27,7 +27,7 @@ abstract class IConfigurationViewModel(
     private val dispatcher by inject<IDispatcherProvider>()
 
     private val _configurationViewState = MutableStateFlow(ConfigurationViewState(serviceViewState = ServiceViewState(service.serviceState)))
-    val configurationEditViewState by lazy { initViewStateCreator(_configurationViewState) }
+    val configurationViewState by lazy { initViewStateCreator(_configurationViewState) }
     abstract fun initViewStateCreator(configurationViewState: MutableStateFlow<ConfigurationViewState>): StateFlow<ConfigurationViewState>
 
     protected abstract fun onDiscard()

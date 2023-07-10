@@ -36,7 +36,7 @@ fun SpeechToTextConfigurationScreen() {
 
     val viewModel: SpeechToTextConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
-    val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
+    val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
     ConfigurationScreenItemEdit(
         modifier = Modifier,

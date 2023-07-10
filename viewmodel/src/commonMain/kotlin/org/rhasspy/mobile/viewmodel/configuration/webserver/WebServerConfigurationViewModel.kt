@@ -12,8 +12,8 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toIntOrNullOrConstant
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change
@@ -23,7 +23,7 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
 @Stable
 class WebServerConfigurationViewModel(
     service: IWebServerService
-) : IConfigurationViewModel(
+) : ConfigurationViewModel(
     service = service
 ) {
 

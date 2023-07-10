@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.uiservices
+package org.rhasspy.mobile.overlay
 
 import android.os.Bundle
 import androidx.lifecycle.*

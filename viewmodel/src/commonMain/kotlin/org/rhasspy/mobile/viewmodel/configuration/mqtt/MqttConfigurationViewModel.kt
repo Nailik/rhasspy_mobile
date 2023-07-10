@@ -10,8 +10,8 @@ import org.rhasspy.mobile.platformspecific.*
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change
@@ -21,7 +21,7 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewStat
 @Stable
 class MqttConfigurationViewModel(
     service: IMqttService
-) : IConfigurationViewModel(
+) : ConfigurationViewModel(
     service = service
 ) {
 

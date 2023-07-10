@@ -33,7 +33,7 @@ fun DialogManagementConfigurationScreen() {
 
     val viewModel: DialogManagementConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
-    val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
+    val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
     ConfigurationScreenItemEdit(
         modifier = Modifier,

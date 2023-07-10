@@ -1,15 +1,12 @@
-package org.rhasspy.mobile.android.uiservices
+package org.rhasspy.mobile.overlay
 
 import android.content.Context
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Looper
 import android.view.Gravity
-import android.view.View
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.*
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.getSystemService
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.setViewTreeLifecycleOwner
@@ -17,63 +14,46 @@ import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.ui.native.nativeComposeView
-import org.rhasspy.mobile.ui.overlay.MicrophoneOverlay
-import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayUiEvent.Change.UpdateMicrophoneOverlayPosition
-import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewModel
+import org.rhasspy.mobile.ui.overlay.IndicationOverlay
+import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 
 /**
- * show overlay with microphone button
+ * Overlay Service
  */
-object MicrophoneOverlay : KoinComponent {
-    private val logger = Logger.withTag("MicrophoneOverlay")
+actual class IndicationOverlay actual constructor(
+    private val viewModel: IndicationOverlayViewModel,
+    private val nativeApplication: NativeApplication,
+    private val overlayPermission: IOverlayPermission,
+    private val dispatcher: IDispatcherProvider
+) : IIndicationOverlay {
+
+    private val logger = Logger.withTag("IndicationOverlay")
     private var mParams = WindowManager.LayoutParams()
-    private val lifecycleOwner = CustomLifecycleOwner()
+    private var lifecycleOwner = CustomLifecycleOwner()
 
     //stores old value to only react to changes
     private var showVisualIndicationOldValue = false
-    private val viewModel = get<MicrophoneOverlayViewModel>()
-    private val dispatcher by inject<IDispatcherProvider>()
 
     private var job: Job? = null
 
     private val context: Context
-        get() {
-            val application = get<NativeApplication>()
-            return application.currentActivity ?: application
-        }
+        get() = nativeApplication.currentActivity ?: nativeApplication
 
     private val overlayWindowManager by lazy {
         context.getSystemService<WindowManager>()
     }
 
     /**
-     * view that's displayed as overlay to start wake word detection
+     * view that's displayed when a wake word is detected
      */
-    private fun getView(): ComposeView {
-        return nativeComposeView(context) { view ->
-            MicrophoneOverlay(
-                viewModel = viewModel,
-                onDrag = { drag -> onDrag(drag, view) }
-            )
-        }
-    }
-
-
-    private fun onDrag(delta: Offset, view: View) {
-        viewModel.onEvent(UpdateMicrophoneOverlayPosition(offsetX = delta.x, offsetY = delta.y))
-        mParams.applySettings()
-        overlayWindowManager?.updateViewLayout(view, mParams) ?: {
-            logger.e { "updateViewLayout overlayWindowManager is null" }
-        }
+    private fun getView() = nativeComposeView(context) {
+        IndicationOverlay(viewModel)
     }
 
     init {
@@ -88,9 +68,11 @@ object MicrophoneOverlay : KoinComponent {
                 WRAP_CONTENT,
                 WRAP_CONTENT,
                 typeFlag,
-                @Suppress("DEPRECATION") FLAG_SHOW_WHEN_LOCKED or FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSLUCENT
-            ).applySettings()
+                @Suppress("DEPRECATION") FLAG_SHOW_WHEN_LOCKED or FLAG_NOT_FOCUSABLE or FLAG_NOT_TOUCHABLE,
+                PixelFormat.TRANSLUCENT,
+            ).apply {
+                gravity = Gravity.BOTTOM
+            }
             lifecycleOwner.performRestore(null)
             lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
         } catch (exception: Exception) {
@@ -99,19 +81,10 @@ object MicrophoneOverlay : KoinComponent {
     }
 
 
-    private fun WindowManager.LayoutParams.applySettings(): WindowManager.LayoutParams {
-        //apply
-        x = viewModel.viewState.value.microphoneOverlayPositionX
-        y = viewModel.viewState.value.microphoneOverlayPositionY
-        gravity = Gravity.NO_GRAVITY
-        //save
-        return this
-    }
-
     /**
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary
      */
-    fun start() {
+    override fun start() {
         try {
             val view = getView()
 
@@ -122,22 +95,22 @@ object MicrophoneOverlay : KoinComponent {
             if (job?.isActive == true) {
                 return
             }
-            logger.d { "start" }
-
-            job = CoroutineScope(Dispatchers.IO).launch {
+            job = CoroutineScope(dispatcher.IO).launch {
                 viewModel.viewState.collect {
                     try {
-                        if (it.shouldOverlayBeShown != showVisualIndicationOldValue) {
-                            showVisualIndicationOldValue = it.shouldOverlayBeShown
-                            if (it.shouldOverlayBeShown) {
-                                if (Looper.myLooper() == null) {
-                                    Looper.prepare()
-                                }
-                                launch(dispatcher.Main) {
-                                    overlayWindowManager?.addView(view, mParams) ?: {
-                                        logger.e { "addView overlayWindowManager is null" }
+                        if (it.isShowVisualIndication != showVisualIndicationOldValue) {
+                            showVisualIndicationOldValue = it.isShowVisualIndication
+                            if (it.isShowVisualIndication) {
+                                if (overlayPermission.isGranted()) {
+                                    if (Looper.myLooper() == null) {
+                                        Looper.prepare()
                                     }
-                                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                                    launch(dispatcher.Main) {
+                                        overlayWindowManager?.addView(view, mParams) ?: {
+                                            logger.e { "addView overlayWindowManager is null" }
+                                        }
+                                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                                    }
                                 }
                             } else {
                                 launch(dispatcher.Main) {
@@ -173,8 +146,10 @@ object MicrophoneOverlay : KoinComponent {
     /**
      * stop overlay service
      */
-    fun stop() {
+    override fun stop() {
         job?.cancel()
         job = null
     }
+
 }
+

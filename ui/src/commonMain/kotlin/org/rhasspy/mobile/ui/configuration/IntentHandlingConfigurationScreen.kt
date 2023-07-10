@@ -39,7 +39,7 @@ fun IntentHandlingConfigurationScreen() {
 
     val viewModel: IntentHandlingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
-    val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
+    val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
     ConfigurationScreenItemEdit(
         modifier = Modifier,

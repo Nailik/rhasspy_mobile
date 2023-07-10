@@ -37,8 +37,11 @@ actual abstract class NativeApplication {
     }
 
     actual abstract fun resume()
-    actual abstract fun startRecordingAction()
     actual fun closeApp() {
         //TODO("Not yet implemented")
     }
+
+    actual abstract fun onCreated()
+
+
 }

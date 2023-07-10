@@ -20,6 +20,9 @@ import org.rhasspy.mobile.logic.logicModule
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.logic.services.webserver.IWebServerService
+import org.rhasspy.mobile.overlay.IIndicationOverlay
+import org.rhasspy.mobile.overlay.IMicrophoneOverlay
+import org.rhasspy.mobile.overlay.koinOverlayModule
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.background.IBackgroundService
 import org.rhasspy.mobile.platformspecific.firebase.setCrashlyticsCollectionEnabled
@@ -34,20 +37,21 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.viewModelModule
 
-abstract class Application : NativeApplication(), KoinComponent {
+class Application : NativeApplication(), KoinComponent {
 
     private val logger = Logger.withTag("Application")
     private val _isHasStarted = MutableStateFlow(false)
     override val isHasStarted = _isHasStarted.readOnly
 
     @OptIn(ExperimentalKermitApi::class)
-    fun onCreated() {
+    override fun onCreated() {
         startKoin {
             // declare used modules
             modules(
                 koinApplicationModule,
                 logicModule(),
                 viewModelModule(),
+                koinOverlayModule(),
                 settingsModule,
                 platformSpecificModule
             )
@@ -91,9 +95,19 @@ abstract class Application : NativeApplication(), KoinComponent {
         }
     }
 
-    abstract fun startOverlay()
+    private fun startOverlay() {
+        CoroutineScope(get<Dispatchers>().Main).launch {
+            get<IIndicationOverlay>().start()
+            get<IMicrophoneOverlay>().start()
+        }
+    }
 
-    abstract fun stopOverlay()
+    fun stopOverlay() {
+        CoroutineScope(get<Dispatchers>().Main).launch {
+            get<IIndicationOverlay>().stop()
+            get<IMicrophoneOverlay>().stop()
+        }
+    }
 
     override fun resume() {
         get<IMicrophonePermission>().update()

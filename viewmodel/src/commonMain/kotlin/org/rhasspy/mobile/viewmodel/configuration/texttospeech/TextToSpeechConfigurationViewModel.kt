@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.services.texttospeech.ITextToSpeechService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change
@@ -18,7 +18,7 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 @Stable
 class TextToSpeechConfigurationViewModel(
     service: ITextToSpeechService
-) : IConfigurationViewModel(
+) : ConfigurationViewModel(
     service = service
 ) {
 

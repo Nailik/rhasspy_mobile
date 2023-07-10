@@ -1,6 +1,6 @@
 {
     "metadata": {
-        "generated": "2023-07-05T23:00:45.166Z"
+        "generated": "2023-07-08T10:46:50.755Z"
     },
     "libraries": [
         {
@@ -1820,26 +1820,25 @@
         },
         "name": "Kotlin Stdlib",
         "website": "https://kotlinlang.org/",
-            "licenses": [
-                "Apache-2.0"
-            ]
-        },
-        {
-            "uniqueId": "org.jetbrains.kotlin:kotlin-stdlib-common",
-            "funding": [
-                
-            ],
-            "developers": [
-                {
-                    "organisationUrl": "https://www.jetbrains.com",
-                    "name": "Kotlin Team"
-                }
-            ],
-            "artifactVersion": "1.9.0-RC",
-            "description": "Kotlin Common Standard Library",
-            "scm": {
-                "connection": "scm:git:https://github.com/JetBrains/kotlin.git",
-                "url": "https://github.com/JetBrains/kotlin",
+        "licenses": [
+          "Apache-2.0"
+        ]
+      },
+      {
+        "uniqueId": "org.jetbrains.kotlin:kotlin-stdlib-common",
+        "funding": [
+        ],
+        "developers": [
+          {
+            "organisationUrl": "https://www.jetbrains.com",
+            "name": "Kotlin Team"
+          }
+        ],
+        "artifactVersion": "1.9.0-RC",
+        "description": "Kotlin Common Standard Library",
+        "scm": {
+          "connection": "scm:git:https://github.com/JetBrains/kotlin.git",
+          "url": "https://github.com/JetBrains/kotlin",
                 "developerConnection": "scm:git:https://github.com/JetBrains/kotlin.git"
             },
             "name": "Kotlin Stdlib Common",

@@ -48,7 +48,6 @@ class MicrophoneOverlayViewModelTest : AppTest() {
         every { serviceMiddleware.isUserActionEnabled } returns MutableStateFlow(true).readOnly
         every { serviceMiddleware.isPlayingRecording } returns MutableStateFlow(false).readOnly
         every { serviceMiddleware.isPlayingRecordingEnabled } returns MutableStateFlow(false).readOnly
-        every { nativeApplication.isAppInBackground } returns MutableStateFlow(true).readOnly
         every { overlayPermission.granted } returns MutableStateFlow(false).readOnly
     }
 
@@ -89,7 +88,7 @@ class MicrophoneOverlayViewModelTest : AppTest() {
         microphoneOverlayViewModel = get()
         microphoneOverlayViewModel.onEvent(ToggleUserSession)
 
-        nVerify { nativeApplication.startRecordingAction() }
+        nVerify { starn() }
     }
 
 }

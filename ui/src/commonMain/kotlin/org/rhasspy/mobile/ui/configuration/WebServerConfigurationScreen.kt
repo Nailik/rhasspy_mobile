@@ -41,7 +41,7 @@ fun WebServerConfigurationScreen() {
 
     val viewModel: WebServerConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
-    val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
+    val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
     ConfigurationScreenItemEdit(
         modifier = Modifier,

@@ -3,11 +3,10 @@ package org.rhasspy.mobile.android.utils
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
@@ -27,7 +26,7 @@ data class TestConfigurationViewState(
 
 }
 
-class TestViewModel : IConfigurationViewModel(
+class TestViewModel : ConfigurationViewModel(
     service = TestService()
 ) {
 

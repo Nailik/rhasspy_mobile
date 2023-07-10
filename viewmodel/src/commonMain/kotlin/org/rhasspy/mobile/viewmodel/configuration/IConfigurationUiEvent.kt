@@ -6,10 +6,10 @@ sealed interface IConfigurationUiEvent {
 
     sealed interface Action : IConfigurationUiEvent {
 
-        object Save : Action
-        object Discard : Action
-        object BackClick : Action
-        object OpenServiceStateDialog : Action
+        data object Save : Action
+        data object Discard : Action
+        data object BackClick : Action
+        data object OpenServiceStateDialog : Action
 
     }
 

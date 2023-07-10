@@ -17,7 +17,7 @@
         tools:node="remove" />
 
     <application
-        android:name="org.rhasspy.mobile.android.AndroidApplication"
+        android:name="org.rhasspy.mobile.platformspecific.application.NativeApplication"
         android:enableOnBackInvokedCallback="true"
         android:exported="true"
         android:hardwareAccelerated="true"

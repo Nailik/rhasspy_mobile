@@ -57,7 +57,7 @@ fun WakeWordConfigurationScreen() {
 
     val viewModel: WakeWordConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
-    val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
+    val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
     val viewState by viewModel.viewState.collectAsState()
 
