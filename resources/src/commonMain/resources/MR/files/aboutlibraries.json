@@ -1,6 +1,6 @@
 {
     "metadata": {
-        "generated": "2023-07-08T10:46:50.755Z"
+        "generated": "2023-07-10T11:09:25.219Z"
     },
     "libraries": [
         {
@@ -1839,16 +1839,16 @@
         "scm": {
           "connection": "scm:git:https://github.com/JetBrains/kotlin.git",
           "url": "https://github.com/JetBrains/kotlin",
-                "developerConnection": "scm:git:https://github.com/JetBrains/kotlin.git"
-            },
-            "name": "Kotlin Stdlib Common",
-            "website": "https://kotlinlang.org/",
-            "licenses": [
-                "Apache-2.0"
-            ]
+          "developerConnection": "scm:git:https://github.com/JetBrains/kotlin.git"
         },
-        {
-            "uniqueId": "org.jetbrains.kotlin:kotlin-stdlib-jdk7",
+        "name": "Kotlin Stdlib Common",
+        "website": "https://kotlinlang.org/",
+        "licenses": [
+          "Apache-2.0"
+        ]
+      },
+      {
+        "uniqueId": "org.jetbrains.kotlin:kotlin-stdlib-jdk7",
             "funding": [
                 
             ],

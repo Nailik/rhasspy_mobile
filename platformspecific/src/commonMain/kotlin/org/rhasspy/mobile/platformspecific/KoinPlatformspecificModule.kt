@@ -8,6 +8,8 @@ import org.rhasspy.mobile.platformspecific.background.BackgroundService
 import org.rhasspy.mobile.platformspecific.background.IBackgroundService
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
+import org.rhasspy.mobile.platformspecific.intent.IIntentAction
+import org.rhasspy.mobile.platformspecific.intent.IntentAction
 import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
 import org.rhasspy.mobile.platformspecific.language.LanguageUtils
 import org.rhasspy.mobile.platformspecific.permission.*
@@ -20,6 +22,12 @@ val platformSpecificModule = module {
     includes(
         koinApplicationModule
     )
+
+    single<IIntentAction> {
+        IntentAction(
+            nativeApplication = get()
+        )
+    }
 
     single<IDispatcherProvider> {
         DispatcherProvider()

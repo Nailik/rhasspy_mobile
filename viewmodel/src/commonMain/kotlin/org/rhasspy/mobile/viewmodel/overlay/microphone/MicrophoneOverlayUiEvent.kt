@@ -10,7 +10,7 @@ sealed interface MicrophoneOverlayUiEvent {
 
     sealed interface Action : MicrophoneOverlayUiEvent {
 
-        object ToggleUserSession : Action
+        data object ToggleUserSession : Action
 
     }
 

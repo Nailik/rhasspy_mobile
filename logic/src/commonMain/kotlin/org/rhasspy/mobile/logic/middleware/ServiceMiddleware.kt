@@ -9,8 +9,8 @@ import kotlinx.coroutines.launch
 import okio.Path
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopListening
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.Source.Local
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceState.*
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.services.localaudio.ILocalAudioService
@@ -71,7 +71,7 @@ internal class ServiceMiddleware(
                         if (shouldResumeHotWordService) {
                             action(HotWordToggle(true))
                         }
-                        action(DialogServiceMiddlewareAction.PlayFinished(Source.Local))
+                        action(PlayFinished(Local))
                     } else {
                         if (dialogManagerService.currentDialogState.value == Idle ||
                             dialogManagerService.currentDialogState.value == AwaitingWakeWord
@@ -117,8 +117,8 @@ internal class ServiceMiddleware(
 
     override fun userSessionClick() {
         when (dialogManagerService.currentDialogState.value) {
-            AwaitingWakeWord -> action(WakeWordDetected(Source.Local, "manual"))
-            RecordingIntent -> action(StopListening(Source.Local))
+            AwaitingWakeWord -> action(WakeWordDetected(Local, "manual"))
+            RecordingIntent -> action(StopListening(Local))
             else -> {}
         }
     }

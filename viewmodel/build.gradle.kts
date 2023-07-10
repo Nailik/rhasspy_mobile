@@ -34,6 +34,7 @@ kotlin {
         val commonTest by getting {
             dependsOn(commonMain)
             dependencies {
+                implementation(project(":shared"))
                 implementation(Koin.test)
                 implementation(Kotlin.test)
                 implementation(KotlinX.Coroutines.test)
@@ -49,8 +50,6 @@ kotlin {
         val androidUnitTest by getting {
             dependsOn(commonTest)
             dependencies {
-                implementation(project(":androidApp"))
-                implementation(project(":shared"))
                 implementation(AndroidX.archCore.testing)
             }
         }

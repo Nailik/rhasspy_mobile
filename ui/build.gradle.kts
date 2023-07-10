@@ -51,6 +51,7 @@ kotlin {
             }
         }
         val androidMain by getting {
+            dependsOn(commonMain)
             dependencies {
                 implementation(AndroidX.Activity.compose)
                 implementation(AndroidX.Compose.ui)

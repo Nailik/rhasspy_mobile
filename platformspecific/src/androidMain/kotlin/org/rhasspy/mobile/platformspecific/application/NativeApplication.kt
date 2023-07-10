@@ -50,7 +50,10 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
             exitProcess(2)
         }
         if (isDebug()) {
-            StrictMode.setVmPolicy(Builder(StrictMode.getVmPolicy()).detectAll().build())
+            try {
+                StrictMode.setVmPolicy(Builder(StrictMode.getVmPolicy()).detectAll().detectAll().build())
+            } catch (_: Exception) {
+            }
         }
         ProcessLifecycleOwner.get().lifecycle.addObserver(object : LifecycleEventObserver {
             override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {

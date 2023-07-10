@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.intent.IntentAction
+import org.rhasspy.mobile.platformspecific.intent.IntentActionType
 import org.rhasspy.mobile.ui.main.MainScreen
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
@@ -55,7 +55,7 @@ class MainActivity : KoinComponent, AppCompatActivity() {
 
         val viewModelFactory = get<ViewModelFactory>()
 
-        if (intent.getBooleanExtra(IntentAction.StartRecording.param, false)) {
+        if (intent.getBooleanExtra(IntentActionType.StartRecording.param, false)) {
             viewModelFactory.getViewModel<HomeScreenViewModel>().onEvent(MicrophoneFabClick)
         }
 

@@ -46,7 +46,6 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
             }
         )
 
-        every { nativeApplication.isAppInBackground } returns isAppInBackground
         every { audioRecorder.maxVolume } returns MutableStateFlow(0f)
         every { audioRecorder.absoluteMaxVolume } returns 100f
         every { audioRecorder.isRecording } returns MutableStateFlow(false)
@@ -63,7 +62,6 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
             silenceDetectionSettingsViewModel.onEvent(UpdateSilenceDetectionAudioLevelLogarithm(percentage))
             assertEquals(audioRecorder.absoluteMaxVolume.pow(percentage), AppSetting.automaticSilenceDetectionAudioLevel.value)
         }
-
     }
 
     @Test

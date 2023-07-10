@@ -2,8 +2,7 @@ package org.rhasspy.mobile.viewmodel.overlay.microphone
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.intent.startRecording
+import org.rhasspy.mobile.platformspecific.intent.IIntentAction
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabUiEvent.Action.MicrophoneFabClick
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
@@ -15,7 +14,7 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
 class MicrophoneOverlayViewModel(
-    private val nativeApplication: NativeApplication,
+    private val intentAction: IIntentAction,
     private val microphoneFabViewModel: MicrophoneFabViewModel,
     viewStateCreator: MicrophoneOverlayViewStateCreator
 ) : ScreenViewModel() {
@@ -46,7 +45,7 @@ class MicrophoneOverlayViewModel(
                 if (microphonePermission.granted.value) {
                     microphoneFabViewModel.onEvent(MicrophoneFabClick)
                 } else {
-                    startRecording(nativeApplication)
+                    intentAction.startRecording()
                 }
         }
     }

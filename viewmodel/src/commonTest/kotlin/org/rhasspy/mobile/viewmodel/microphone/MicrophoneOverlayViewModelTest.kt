@@ -5,6 +5,7 @@ import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
+import org.rhasspy.mobile.platformspecific.intent.IIntentAction
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -30,6 +31,9 @@ class MicrophoneOverlayViewModelTest : AppTest() {
     @Mock
     lateinit var overlayPermission: IOverlayPermission
 
+    @Mock
+    lateinit var intentAction: IIntentAction
+
 
     private lateinit var microphoneOverlayViewModel: MicrophoneOverlayViewModel
 
@@ -42,6 +46,7 @@ class MicrophoneOverlayViewModelTest : AppTest() {
                 single { serviceMiddleware }
                 single { microphonePermission }
                 single { overlayPermission }
+                single { intentAction }
             }
         )
 
@@ -70,7 +75,6 @@ class MicrophoneOverlayViewModelTest : AppTest() {
 
     @Test
     fun `when user clicks overlay and microphone permission is granted user session is started`() {
-        every { nativeApplication.startRecordingAction() } returns Unit
         every { serviceMiddleware.userSessionClick() } returns Unit
         every { microphonePermission.granted } returns MutableStateFlow(true).readOnly
 
@@ -82,13 +86,13 @@ class MicrophoneOverlayViewModelTest : AppTest() {
 
     @Test
     fun `when user clicks overlay and microphone permission is not granted application is started and permission is requested by HomeScreenViewModel`() {
-        every { nativeApplication.startRecordingAction() } returns Unit
+        every { intentAction.startRecording() } returns Unit
         every { microphonePermission.granted } returns MutableStateFlow(false).readOnly
 
         microphoneOverlayViewModel = get()
         microphoneOverlayViewModel.onEvent(ToggleUserSession)
 
-        nVerify { starn() }
+        nVerify { intentAction.startRecording() }
     }
 
 }
