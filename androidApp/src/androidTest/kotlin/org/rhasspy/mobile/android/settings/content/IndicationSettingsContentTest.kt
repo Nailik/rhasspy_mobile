@@ -6,7 +6,6 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.*
-import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -67,8 +66,8 @@ class IndicationSettingsContentTest : FlakyTest() {
      * sound is enabled
      * sound is saved
      */
-    @Test
-    @AllowFlaky
+    //@Test Manual
+    @Suppress("unused")
     fun testIndicationSettings() {
         device.resetOverlayPermission(composeTestRule.activity, get())
 

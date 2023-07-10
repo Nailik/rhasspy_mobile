@@ -134,6 +134,16 @@ android {
 
 }
 
+configurations.all {
+    resolutionStrategy {
+        eachDependency {
+            if ((requested.group == "org.jetbrains.kotlin") && (!requested.name.startsWith("kotlin-gradle"))) {
+                useVersion("1.9.0-RC")
+            }
+        }
+    }
+}
+
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
     kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
@@ -156,6 +166,7 @@ dependencies {
     implementation(project(":settings"))
     implementation(project(":widget"))
 
+    implementation(Kotlin.test)
     implementation(AndroidX.Activity.compose)
     implementation(AndroidX.appCompat)
 
@@ -175,6 +186,8 @@ dependencies {
     androidTestImplementation(Jetbrains.Compose.ui)
     androidTestImplementation(Jetbrains.Compose.material3)
     androidTestImplementation(Jetbrains.Kotlinx.immutable)
+    androidTestImplementation(Icerock.Mvvm.core)
+    androidTestImplementation(Touchlab.kermit)
 
     debugImplementation(AndroidX.tracing.ktx)
     debugImplementation(AndroidX.Compose.Ui.testManifest)
