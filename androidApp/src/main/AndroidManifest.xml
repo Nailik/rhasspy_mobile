@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -25,7 +26,8 @@
         tools:ignore="Instantiatable,UnusedAttribute">
         <service
             android:name="org.rhasspy.mobile.platformspecific.background.BackgroundService"
-            android:foregroundServiceType="microphone" />
+            android:foregroundServiceType="microphone"
+            android:permission="android.permission.RECORD_AUDIO" />
 
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
