@@ -23,10 +23,8 @@ kotlin {
             }
         }
         val commonTest by getting {
-            dependsOn(commonMain)
             dependencies {
                 implementation(Kotlin.test)
-                implementation(Koin.test)
             }
         }
         val androidMain by getting {

@@ -33,13 +33,13 @@ class BaseGradle : Plugin<Project> {
         val androidExtension = project.extensions.getByName("android")
         if (androidExtension is BaseExtension) {
             androidExtension.apply {
-                setCompileSdkVersion(33)
+                setCompileSdkVersion(34)
                 defaultConfig {
                     minSdk = 23
                 }
                 compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_17
-                    targetCompatibility = JavaVersion.VERSION_17
+                    sourceCompatibility = JavaVersion.VERSION_19
+                    targetCompatibility = JavaVersion.VERSION_19
                 }
                 composeOptions {
                     kotlinCompilerExtensionVersion = "_"

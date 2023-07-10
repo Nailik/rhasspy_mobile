@@ -100,7 +100,11 @@ aboutLibraries {
 android {
     namespace = "org.rhasspy.mobile.resources"
     sourceSets {
+        //java because else Expected object 'MR' has no actual declaration in module <resources_debug> for JVM
         getByName("main").java.srcDirs("build/generated/moko/androidMain/src")
+    }
+    kotlin {
+        jvmToolchain(19)
     }
 }
 

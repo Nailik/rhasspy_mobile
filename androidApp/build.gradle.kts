@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import java.util.Properties
 
@@ -35,12 +36,12 @@ android {
             }
         }
     }
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "org.rhasspy.mobile.android"
         minSdk = 23
-        targetSdk = 33
+        targetSdk = 34
         versionCode = Version.code
         versionName = Version.toString()
         resourceConfigurations += setOf("en", "de")
@@ -109,7 +110,6 @@ android {
     }
 
     testOptions {
-        unitTests.isIncludeAndroidResources = true
         testOptions.animationsDisabled = true
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
@@ -153,6 +153,16 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_metrics"
 }
 
+tasks.withType<Test> {
+    testLogging {
+        events(STARTED, PASSED, SKIPPED, FAILED, STANDARD_OUT, STANDARD_ERROR)
+        exceptionFormat = FULL
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+    }
+}
+
 dependencies {
     coreLibraryDesugaring(Android.tools.desugarJdkLibs)
 
@@ -165,6 +175,20 @@ dependencies {
     implementation(project(":ui"))
     implementation(project(":settings"))
     implementation(project(":widget"))
+
+    implementation(AndroidX.appCompat)
+    implementation(AndroidX.Core.splashscreen)
+    implementation(AndroidX.Activity.compose)
+    implementation(AndroidX.multidex)
+    implementation(AndroidX.window)
+    implementation(AndroidX.Core.ktx)
+    implementation(Touchlab.kermit)
+    implementation(Koin.core)
+    implementation(Square.okio)
+    implementation(Russhwolf.multiplatformSettingsNoArg)
+    implementation(Icerock.Mvvm.core)
+    implementation(Kotlin.test)
+    implementation(Kotlin.Test.junit)
 
     implementation(Kotlin.test)
     implementation(AndroidX.Activity.compose)
