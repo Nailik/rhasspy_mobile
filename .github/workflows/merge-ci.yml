@@ -64,7 +64,7 @@ jobs:
         if: always()
         with:
           name: Test Report
-          path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml
+          path: androidApp/build/outputs/androidTest-results/connected/debug/TEST-*.xml
           reporter: java-junit
   build:
     runs-on: self-hosted
