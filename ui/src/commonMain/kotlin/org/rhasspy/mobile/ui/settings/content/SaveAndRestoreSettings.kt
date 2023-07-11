@@ -6,26 +6,20 @@ import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalSnackBarHostState
-import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
+import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.SaveAndRestoreSettings
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
@@ -40,7 +34,7 @@ import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettin
 fun SaveAndRestoreSettingsContent() {
     val viewModel: SaveAndRestoreSettingsViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(viewModel) {
+    Screen(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         val snackBarHostState = LocalSnackBarHostState.current
@@ -108,8 +102,8 @@ private fun SaveSettings(
     //save settings dialog
     if (isSaveSettingsToFileDialogVisible) {
         SaveSettingsDialog(
-            onConfirm = { onEvent(ExportSettingsFileConfirmation) },
-            onDismiss = { onEvent(ExportSettingsFileDismiss) }
+            onConfirm = { onEvent(ExportSettingsFileDialogResult(true)) },
+            onDismiss = { onEvent(ExportSettingsFileDialogResult(false)) }
         )
     }
 }
@@ -145,8 +139,8 @@ private fun RestoreSettings(
     if (isRestoreSettingsFromFileDialogVisible) {
 
         RestoreSettingsDialog(
-            onConfirm = { onEvent(RestoreSettingsFromFileConfirmation) },
-            onDismiss = { onEvent(RestoreSettingsFromFileDismiss) }
+            onConfirm = { onEvent(RestoreSettingsFromFileDialogResult(true)) },
+            onDismiss = { onEvent(RestoreSettingsFromFileDialogResult(false)) }
         )
 
     }
@@ -181,32 +175,14 @@ private fun ShareSettings(onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit) {
 private fun SaveSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
 
     Dialog(
-        onDismissRequest = onDismiss,
-        headline = {
-            Text(MR.strings.saveSettings.stable)
-        },
-        supportingText = {
-            Text(
-                resource = MR.strings.saveSettingsWarningText.stable,
-                textAlign = TextAlign.Center
-            )
-        },
-        icon = {
-            Icon(
-                imageVector = Icons.Filled.Warning,
-                contentDescription = MR.strings.warning.stable
-            )
-        },
-        confirmButton = {
-            Button(onConfirm) {
-                Text(MR.strings.ok.stable)
-            }
-        },
-        dismissButton = {
-            OutlinedButton(onDismiss) {
-                Text(MR.strings.cancel.stable)
-            }
-        }
+        testTag = TestTag.DialogSaveSettings,
+        icon = Icons.Filled.Warning,
+        title = MR.strings.saveSettings.stable,
+        message = MR.strings.saveSettingsWarningText.stable,
+        confirmLabel = MR.strings.ok.stable,
+        dismissLabel = MR.strings.cancel.stable,
+        onConfirm = onConfirm,
+        onDismiss = onDismiss
     )
 
 }
@@ -218,32 +194,14 @@ private fun SaveSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
 private fun RestoreSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
 
     Dialog(
-        onDismissRequest = onDismiss,
-        headline = {
-            Text(MR.strings.restoreSettings.stable)
-        },
-        supportingText = {
-            Text(
-                resource = MR.strings.restoreSettingsWarningText.stable,
-                textAlign = TextAlign.Center
-            )
-        },
-        icon = {
-            Icon(
-                imageVector = Icons.Filled.Warning,
-                contentDescription = MR.strings.warning.stable
-            )
-        },
-        confirmButton = {
-            Button(onConfirm) {
-                Text(MR.strings.ok.stable)
-            }
-        },
-        dismissButton = {
-            OutlinedButton(onDismiss) {
-                Text(MR.strings.cancel.stable)
-            }
-        }
+        testTag = TestTag.DialogRestoreSettings,
+        icon = Icons.Filled.Warning,
+        title = MR.strings.restoreSettings.stable,
+        message = MR.strings.restoreSettingsWarningText.stable,
+        confirmLabel = MR.strings.ok.stable,
+        dismissLabel = MR.strings.cancel.stable,
+        onConfirm = onConfirm,
+        onDismiss = onDismiss
     )
 
 }

@@ -162,7 +162,7 @@
     <string name="wakeSound">Aufwecken</string>
     <string name="recordedSound">Aufgezeichnet</string>
     <string name="errorSound">Fehler</string>
-    <string name="selectFile">Datei auswählen</string>
+    <string name="selectFile">Datei</string>
     <string name="defaultText">Standard</string>
     <string name="remoteHermesHTTP">Remote-Hermes-HTTP</string>
     <string name="sslValidation">SSL-Validierung</string>
@@ -211,7 +211,7 @@
     <string name="test">Test</string>
     <string name="back">Zurück</string>
     <string name="language">Sprache</string>
-    <string name="fileOpen">Datei auswählen</string>
+    <string name="fileOpen">Datei</string>
     <string name="useCustomEndpoint">Benutzerdefinierte HTTP-URL</string>
     <string name="textDefault">Standard</string>
     <string name="textCustom">Benutzerdefiniert</string>

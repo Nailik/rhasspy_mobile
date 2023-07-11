@@ -5,7 +5,7 @@ import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 
-data class DialogManagerServiceParams(
+internal data class DialogManagerServiceParams(
     val option: DialogManagementOption,
     val wakeWordOption: WakeWordOption,
     val speechToTextOption: SpeechToTextOption,

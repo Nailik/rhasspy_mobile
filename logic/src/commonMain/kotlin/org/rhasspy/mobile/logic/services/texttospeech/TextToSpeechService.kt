@@ -6,25 +6,37 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
+import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
+import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.platformspecific.readOnly
+
+interface ITextToSpeechService : IService {
+
+    override val serviceState: StateFlow<ServiceState>
+
+    suspend fun textToSpeech(sessionId: String, text: String)
+
+}
 
 /**
  * calls actions and returns result
  *
  * when data is null the service was most probably mqtt and will return result in a call function
  */
-open class TextToSpeechService(
-    paramsCreator: TextToSpeechServiceParamsCreator,
-) : IService(LogType.TextToSpeechService) {
+internal class TextToSpeechService(
+    paramsCreator: TextToSpeechServiceParamsCreator
+) : ITextToSpeechService {
 
-    private val httpClientService by inject<HttpClientService>()
-    private val mqttClientService by inject<MqttService>()
+    override val logger = LogType.TextToSpeechService.logger()
+
+    private val httpClientService by inject<IHttpClientService>()
+    private val mqttClientService by inject<IMqttService>()
+    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val paramsFlow: StateFlow<TextToSpeechServiceParams> = paramsCreator()
     private val params: TextToSpeechServiceParams get() = paramsFlow.value
@@ -41,7 +53,7 @@ open class TextToSpeechService(
      * hermes/tts/sayFinished (JSON)
      * is called when playing audio is finished
      */
-    suspend fun textToSpeech(sessionId: String, text: String) {
+    override suspend fun textToSpeech(sessionId: String, text: String) {
         logger.d { "textToSpeech sessionId: $sessionId text: $text" }
         when (params.textToSpeechOption) {
             TextToSpeechOption.RemoteHTTP -> {

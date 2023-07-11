@@ -18,9 +18,9 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.FloatingActionButton
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.UserSessionClick
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewState
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabUiEvent
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabUiEvent.Action.MicrophoneFabClick
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewState
 
 /**
  * Floating Action Button with microphone
@@ -48,7 +48,7 @@ fun MicrophoneFab(
             },
         onClick = {
             if (viewState.isUserActionEnabled) {
-                onEvent(UserSessionClick)
+                onEvent(MicrophoneFabClick)
             }
         },
         isEnabled = viewState.isUserActionEnabled,

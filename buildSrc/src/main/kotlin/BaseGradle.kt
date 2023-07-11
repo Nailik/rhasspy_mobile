@@ -1,10 +1,11 @@
+@file:Suppress("UnstableApiUsage")
+
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class BaseGradle : Plugin<Project> {
     override fun apply(project: Project) {
@@ -13,7 +14,7 @@ class BaseGradle : Plugin<Project> {
             val kotlinMultiplatformExtension = project.extensions.getByName("kotlin")
             if (kotlinMultiplatformExtension is KotlinMultiplatformExtension) {
                 kotlinMultiplatformExtension.apply {
-                    android()
+                    androidTarget()
                     iosX64()
                     iosArm64()
                     iosSimulatorArm64()
@@ -25,25 +26,20 @@ class BaseGradle : Plugin<Project> {
                 }
             }
 
-        } catch (e: UnknownDomainObjectException) {
+        } catch (_: UnknownDomainObjectException) {
         }
 
         // Configure common android build parameters.
         val androidExtension = project.extensions.getByName("android")
         if (androidExtension is BaseExtension) {
             androidExtension.apply {
-                setCompileSdkVersion(33)
+                setCompileSdkVersion(34)
                 defaultConfig {
                     minSdk = 23
                 }
                 compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_17
-                    targetCompatibility = JavaVersion.VERSION_17
-                }
-                project.tasks.withType(KotlinCompile::class.java).configureEach {
-                    kotlinOptions {
-                        jvmTarget = "17"
-                    }
+                    sourceCompatibility = JavaVersion.VERSION_19
+                    targetCompatibility = JavaVersion.VERSION_19
                 }
                 composeOptions {
                     kotlinCompilerExtensionVersion = "_"

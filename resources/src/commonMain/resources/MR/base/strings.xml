@@ -156,7 +156,7 @@
     <string name="wakeSound">Wake</string>
     <string name="recordedSound">Recorded</string>
     <string name="errorSound">Error</string>
-    <string name="selectFile">select File</string>
+    <string name="selectFile">File</string>
     <string name="defaultText">Default</string>
     <string name="remoteHermesHTTP">Remote Hermes HTTP</string>
     <string name="sslValidation">SSL Validation</string>
@@ -205,7 +205,7 @@
     <string name="test">Test</string>
     <string name="back">Back</string>
     <string name="language">Language</string>
-    <string name="fileOpen">select file</string>
+    <string name="fileOpen">file</string>
     <string name="useCustomEndpoint">Custom Http Endpoint</string>
     <string name="textDefault">Default</string>
     <string name="textCustom">Custom</string>

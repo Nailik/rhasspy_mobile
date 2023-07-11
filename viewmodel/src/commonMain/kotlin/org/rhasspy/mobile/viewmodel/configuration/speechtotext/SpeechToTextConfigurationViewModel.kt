@@ -1,36 +1,39 @@
 package org.rhasspy.mobile.viewmodel.configuration.speechtotext
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import org.koin.core.component.get
-import org.rhasspy.mobile.data.service.option.SpeechToTextOption
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.logic.services.recording.RecordingService
-import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
-import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextServiceParams
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
+import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.TestSpeechToTextToggleRecording
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.SpeechToTextConfigurationScreenDestination.EditScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.SpeechToTextConfigurationScreenDestination.TestScreen
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData
 
 @Stable
 class SpeechToTextConfigurationViewModel(
-    service: SpeechToTextService
-) : IConfigurationViewModel<SpeechToTextConfigurationViewState>(
-    service = service,
-    initialViewState = ::SpeechToTextConfigurationViewState,
-    testPageDestination = TestScreen
+    service: ISpeechToTextService
+) : ConfigurationViewModel(
+    service = service
 ) {
 
-    val screen = navigator.topScreen(EditScreen)
+    private val _viewState = MutableStateFlow(SpeechToTextConfigurationViewState(SpeechToTextConfigurationData()))
+    val viewState = _viewState.readOnly
+
+    override fun initViewStateCreator(
+        configurationViewState: MutableStateFlow<ConfigurationViewState>
+    ): StateFlow<ConfigurationViewState> {
+        return viewStateCreator(
+            init = ::SpeechToTextConfigurationData,
+            viewState = viewState,
+            configurationViewState = configurationViewState
+        )
+    }
 
     fun onEvent(event: SpeechToTextConfigurationUiEvent) {
         when (event) {
@@ -40,52 +43,34 @@ class SpeechToTextConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        updateViewState {
-            when (change) {
-                is SelectSpeechToTextOption -> it.copy(speechToTextOption = change.option)
-                is SetUseCustomHttpEndpoint -> it.copy(isUseCustomSpeechToTextHttpEndpoint = change.enabled)
-                is SetUseSpeechToTextMqttSilenceDetection -> it.copy(isUseSpeechToTextMqttSilenceDetection = change.enabled)
-                is UpdateSpeechToTextHttpEndpoint -> it.copy(speechToTextHttpEndpoint = change.endpoint)
-            }
+        _viewState.update {
+            it.copy(editData = with(it.editData) {
+                when (change) {
+                    is SelectSpeechToTextOption -> copy(speechToTextOption = change.option)
+                    is SetUseCustomHttpEndpoint -> copy(isUseCustomSpeechToTextHttpEndpoint = change.enabled)
+                    is SetUseSpeechToTextMqttSilenceDetection -> copy(isUseSpeechToTextMqttSilenceDetection = change.enabled)
+                    is UpdateSpeechToTextHttpEndpoint -> copy(speechToTextHttpEndpoint = change.endpoint)
+                }
+            })
         }
     }
 
     private fun onAction(action: Action) {
         when (action) {
-            TestSpeechToTextToggleRecording -> requireMicrophonePermission(::toggleRecording)
             BackClick -> navigator.onBackPressed()
         }
     }
 
-    override fun onDiscard() {}
-
-    override fun onSave() {
-        ConfigurationSetting.speechToTextOption.value = data.speechToTextOption
-        ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value = data.isUseCustomSpeechToTextHttpEndpoint
-        ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value = data.isUseSpeechToTextMqttSilenceDetection
-        ConfigurationSetting.speechToTextHttpEndpoint.value = data.speechToTextHttpEndpoint
+    override fun onDiscard() {
+        _viewState.update { it.copy(editData = SpeechToTextConfigurationData()) }
     }
 
-    private fun toggleRecording() {
-        testScope.launch {
-            if (get<SpeechToTextServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT) {
-                //await for mqtt service to start if necessary
-                get<MqttService>()
-                    .isHasStarted
-                    .map { it }
-                    .distinctUntilChanged()
-                    .first { it }
-            }
-
-            if (!get<RecordingService>().isRecording.value) {
-                println("not yet recording start")
-                //start recording
-                get<SpeechToTextService>().startSpeechToText("", false)
-            } else {
-                println("is recording, stop")
-                //stop recording
-                get<SpeechToTextService>().endSpeechToText("", false)
-            }
+    override fun onSave() {
+        with(_viewState.value.editData) {
+            ConfigurationSetting.speechToTextOption.value = speechToTextOption
+            ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value = isUseCustomSpeechToTextHttpEndpoint
+            ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value = isUseSpeechToTextMqttSilenceDetection
+            ConfigurationSetting.speechToTextHttpEndpoint.value = speechToTextHttpEndpoint
         }
     }
 

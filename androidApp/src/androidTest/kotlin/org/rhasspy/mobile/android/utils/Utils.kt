@@ -17,10 +17,11 @@ import androidx.test.uiautomator.UiSelector
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.resource.StableStringResource
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.data.service.option.IOption
+import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
 
 fun SemanticsNodeInteraction.onListItemSwitch(): SemanticsNodeInteraction {
@@ -43,9 +44,19 @@ fun hasCombinedTestTag(tag1: Enum<*>, tag2: Enum<*>): SemanticsMatcher =
     SemanticsMatcher.expectValue(SemanticsProperties.TestTag, "${tag1.name}${tag2.name}")
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
-    testTag: Enum<*>,
+    testTag: IOption<*>,
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag(testTag.name), useUnmergedTree)
+
+fun SemanticsNodeInteractionsProvider.onNodeWithTag(
+    testTag: TestTag,
+    useUnmergedTree: Boolean = false
+): SemanticsNodeInteraction = onNode(hasTestTag(testTag.name), useUnmergedTree)
+
+fun SemanticsNodeInteractionsProvider.onNodeWithTag(
+    testTag: NavigationDestination,
+    useUnmergedTree: Boolean = false
+): SemanticsNodeInteraction = onNode(hasTestTag(testTag.toString()), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     name: String,
@@ -120,30 +131,30 @@ fun requestExternalStoragePermissions(device: UiDevice) {
     }
 }
 
-fun requestMicrophonePermissions() {
+fun IMicrophonePermission.requestMicrophonePermissions() {
     with(PermissionRequester()) {
         addPermissions("android.permission.RECORD_AUDIO")
         requestPermissions()
     }
-    MicrophonePermission.update()
+    this.update()
 }
 
-fun UiDevice.requestOverlayPermissions(context: Context) {
+fun UiDevice.requestOverlayPermissions(context: Context, overlayPermission: IOverlayPermission) {
     try {
         with(PermissionRequester()) {
             try {
                 addPermissions("android.permission.SYSTEM_ALERT_WINDOW")
                 requestPermissions()
             } catch (e: Exception) {
-                requestOverlayPermissionLegacy(context)
+                requestOverlayPermissionLegacy(context, overlayPermission)
             }
         }
     } catch (e: Exception) {
-        requestOverlayPermissionLegacy(context)
+        requestOverlayPermissionLegacy(context, overlayPermission)
     }
     if (!Settings.canDrawOverlays(context)) {
         //will be called on android M (23)
-        requestOverlayPermissionLegacy(context)
+        requestOverlayPermissionLegacy(context, overlayPermission)
     }
 }
 
@@ -162,21 +173,12 @@ fun SemanticsNodeInteraction.assertTextEquals(
         includeEditableText = includeEditableText
     )
 
-fun <V : IConfigurationEditViewState> ComposeTestRule.saveBottomAppBar(viewModel: IConfigurationViewModel<V>) {
+suspend fun ComposeTestRule.saveBottomAppBar() {
     Espresso.closeSoftKeyboard()
     waitUntilExists(hasTestTag(TestTag.BottomAppBarSave).and(isEnabled()))
     onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-    awaitSaved(viewModel)
+    awaitIdle()
 }
-
-
-fun <V : IConfigurationEditViewState> ComposeTestRule.awaitSaved(viewModel: IConfigurationViewModel<V>) {
-    this.waitUntil(
-        condition = { !viewModel.viewState.value.hasUnsavedChanges },
-        timeoutMillis = 5000
-    )
-}
-
 
 @OptIn(ExperimentalTestApi::class)
 fun ComposeTestRule.waitUntilExists(

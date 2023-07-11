@@ -70,10 +70,11 @@ class LogSettingsContentTest : FlakyTest() {
         //error is selected
         composeTestRule.onNodeWithTag(LogLevel.Error, true).onListItemRadioButton().assertIsSelected()
         //error is saved
-        assertEquals(LogLevel.Error, LogSettingsViewModel(get()).viewState.value.logLevel)
+        assertEquals(LogLevel.Error, LogSettingsViewModel(get(), get()).viewState.value.logLevel)
 
         //show log is false
         viewModel.onEvent(SetShowLogEnabled(false))
+        composeTestRule.awaitIdle()
         //show log false is shown
         composeTestRule.onNodeWithTag(TestTag.ShowLogEnabled).onListItemSwitch().assertIsOff()
         //user clicks show log
@@ -82,7 +83,7 @@ class LogSettingsContentTest : FlakyTest() {
         //show log true is shown
         composeTestRule.onNodeWithTag(TestTag.ShowLogEnabled).onListItemSwitch().assertIsOn()
         //show log true is saved
-        assertTrue { LogSettingsViewModel(get()).viewState.value.isShowLogEnabled }
+        assertTrue { LogSettingsViewModel(get(), get()).viewState.value.isShowLogEnabled }
 
         //audio frame logging is false
         viewModel.onEvent(SetShowLogEnabled(false))
@@ -95,7 +96,7 @@ class LogSettingsContentTest : FlakyTest() {
         //audio frame logging true is shown
         composeTestRule.onNodeWithTag(TestTag.AudioFramesEnabled).onListItemSwitch().assertIsOn()
         //audio frame logging true is saved
-        assertTrue { LogSettingsViewModel(get()).viewState.value.isLogAudioFramesEnabled }
+        assertTrue { LogSettingsViewModel(get(), get()).viewState.value.isLogAudioFramesEnabled }
     }
 
 

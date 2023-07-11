@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewmodel.settings.audiorecorder
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Change
@@ -12,7 +12,7 @@ import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettings
 @Stable
 class AudioRecorderSettingsViewModel(
     viewStateCreator: AudioRecorderSettingsViewStateCreator
-) : KViewModel() {
+) : ScreenViewModel() {
 
     val viewState: StateFlow<AudioRecorderSettingsViewState> = viewStateCreator()
 

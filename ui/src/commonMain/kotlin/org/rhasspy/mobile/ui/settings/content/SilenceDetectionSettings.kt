@@ -50,7 +50,7 @@ import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSe
 fun SilenceDetectionSettingsContent() {
     val viewModel: SilenceDetectionSettingsViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(viewModel) {
+    Screen(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         SettingsScreenItemContent(
@@ -152,7 +152,7 @@ private fun AudioLevel(
         text = MR.strings.audioLevelThreshold.stable,
         value = silenceDetectionAudioLevelPercentage,
         valueText = silenceDetectionAudioLevel.roundToDecimals(0).toString(),
-        onValueChange = { onEvent(UpdateSilenceDetectionAudioLevelPercentage(it)) }
+        onValueChange = { onEvent(UpdateSilenceDetectionAudioLevelLogarithm(it)) }
     )
 
 }

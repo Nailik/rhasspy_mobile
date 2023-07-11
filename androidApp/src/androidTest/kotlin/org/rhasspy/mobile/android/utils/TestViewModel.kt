@@ -1,27 +1,38 @@
 package org.rhasspy.mobile.android.utils
 
-import org.rhasspy.mobile.data.log.LogType
+import co.touchlab.kermit.Logger
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
-class TestService : IService(LogType.AudioPlayingService)
+class TestService : IService {
+    override val logger: Logger
+        get() = Logger.withTag("TestService")
+    override val serviceState: StateFlow<ServiceState>
+        get() = MutableStateFlow(ServiceState.Disabled)
+}
 
-data class TestViewState(
-    val data: Boolean = true
-) : IConfigurationEditViewState() {
+data class TestConfigurationViewState(
+    override val editData: TestConfigurationData = TestConfigurationData(null)
 
-    override val isTestingEnabled: Boolean
-        get() = false
+) : IConfigurationViewState {
+
+    data class TestConfigurationData(val data: Any?) : IConfigurationViewState.IConfigurationData
 
 }
 
-class TestViewModel : IConfigurationViewModel<TestViewState>(
-    service = TestService(),
-    initialViewState = { TestViewState() },
-    testPageDestination = TestNavigationDestinations.Test
+class TestViewModel : ConfigurationViewModel(
+    service = TestService()
 ) {
+
+    private val _stateFlow = MutableStateFlow(
+        ConfigurationViewState(serviceViewState = ServiceViewState(serviceState = TestService().serviceState))
+    )
 
     var onSave = false
     var onDiscard = false
@@ -34,20 +45,12 @@ class TestViewModel : IConfigurationViewModel<TestViewState>(
         onSave = true
     }
 
-    fun setUnsavedChanges(value: Boolean) {
-        if (value) {
-            updateViewState { it.copy(data = !it.data) }
-        } else {
-            contentViewState.value = TestViewState()
-        }
-    }
-
     fun onRequestOverlayPermission() {
-        requireOverlayPermission(Unit) { }
+        requireOverlayPermission { }
     }
 
-}
+    override fun initViewStateCreator(configurationViewState: MutableStateFlow<ConfigurationViewState>): StateFlow<ConfigurationViewState> {
+        return _stateFlow
+    }
 
-enum class TestNavigationDestinations : NavigationDestination {
-    Test
 }

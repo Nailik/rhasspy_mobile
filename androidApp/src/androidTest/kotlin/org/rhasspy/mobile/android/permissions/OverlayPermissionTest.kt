@@ -17,10 +17,12 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.component.get
+import org.rhasspy.mobile.MainActivity
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
@@ -54,7 +56,7 @@ class OverlayPermissionTest : FlakyTest() {
         composeTestRule.activity.setContent {
             AppTheme {
                 TestContentProvider {
-                    Screen(testViewModel) {
+                    Screen(screenViewModel = testViewModel) {
                         Button(onClick = testViewModel::onRequestOverlayPermission) {
                             Text(btnRequestPermission)
                         }
@@ -83,29 +85,29 @@ class OverlayPermissionTest : FlakyTest() {
      */
     @Test
     fun testAllow() = runTest {
-        device.resetOverlayPermission(composeTestRule.activity)
-
-        permissionResult = false
-        assertFalse { OverlayPermission.granted.value }
-
-        //User clicks button
-        composeTestRule.onNodeWithText(btnRequestPermission).performClick()
-        composeTestRule.awaitIdle()
-        //InformationDialog is shown
-        composeTestRule.onNodeWithTag(TestTag.DialogInformationOverlayPermission).assertExists()
-        //Cancel clicked
-        composeTestRule.onNodeWithTag(TestTag.DialogCancel).performClick()
-        //Dialog closed
-        composeTestRule.onNodeWithTag(TestTag.DialogInformationOverlayPermission)
-            .assertDoesNotExist()
-
-        //User clicks button
-        composeTestRule.onNodeWithText(btnRequestPermission).performClick()
-        composeTestRule.awaitIdle()
-        //InformationDialog is shown
-        composeTestRule.onNodeWithTag(TestTag.DialogInformationOverlayPermission).assertExists()
-
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            device.resetOverlayPermission(composeTestRule.activity, get())
+
+            permissionResult = false
+            assertFalse { get<IOverlayPermission>().granted.value }
+
+            //User clicks button
+            composeTestRule.onNodeWithText(btnRequestPermission).performClick()
+            composeTestRule.awaitIdle()
+            //InformationDialog is shown
+            composeTestRule.onNodeWithTag(TestTag.DialogOverlayPermissionInfo).assertExists()
+            //Cancel clicked
+            composeTestRule.onNodeWithTag(TestTag.DialogCancel).performClick()
+            //Dialog closed
+            composeTestRule.onNodeWithTag(TestTag.DialogOverlayPermissionInfo)
+                .assertDoesNotExist()
+
+            //User clicks button
+            composeTestRule.onNodeWithText(btnRequestPermission).performClick()
+            composeTestRule.awaitIdle()
+            //InformationDialog is shown
+            composeTestRule.onNodeWithTag(TestTag.DialogOverlayPermissionInfo).assertExists()
+
             //Ok clicked
             composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
             //on Q app is restarted when allowing overlay permission
@@ -122,9 +124,9 @@ class OverlayPermissionTest : FlakyTest() {
             device.pressBack()
 
             //app will be closed when pressing one more back
-            OverlayPermission.update()
+            get<IOverlayPermission>().update()
             //Dialog is closed and permission granted
-            assertTrue { OverlayPermission.granted.value }
+            assertTrue { get<IOverlayPermission>().granted.value }
         }
 
         assertTrue { true }

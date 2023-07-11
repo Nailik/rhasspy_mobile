@@ -1,6 +1,10 @@
 package org.rhasspy.mobile.platformspecific.permission
 
-expect object BatteryOptimization {
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
+
+expect class BatteryOptimization(
+    nativeApplication: NativeApplication
+) {
 
     /**
      * check if battery optimization is disabled

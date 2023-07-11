@@ -16,14 +16,14 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogService
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.logic.services.audiofocus.AudioFocusService
-import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
-import org.rhasspy.mobile.logic.services.indication.IndicationService
-import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingService
-import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionService
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
+import org.rhasspy.mobile.logic.services.audiofocus.IAudioFocusService
+import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
+import org.rhasspy.mobile.logic.services.indication.IIndicationService
+import org.rhasspy.mobile.logic.services.intenthandling.IIntentHandlingService
+import org.rhasspy.mobile.logic.services.intentrecognition.IIntentRecognitionService
+import org.rhasspy.mobile.logic.services.mqtt.IMqttService
+import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
+import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.notNull
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -31,21 +31,32 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
+interface IDialogManagerService : IService {
+
+    override val serviceState: StateFlow<ServiceState>
+    val currentDialogState: StateFlow<DialogManagerServiceState>
+
+    fun onAction(action: DialogServiceMiddlewareAction)
+
+}
+
 /**
  * The Dialog Manager handles the various states and goes to the next state according to the function that is called
  */
-class DialogManagerService(
+internal class DialogManagerService(
     paramsCreator: DialogManagerServiceParamsCreator,
-) : IService(LogType.DialogManagerService) {
+) : IDialogManagerService {
 
-    private val audioFocusService by inject<AudioFocusService>()
-    private val wakeWordService by inject<WakeWordService>()
-    private val intentRecognitionService by inject<IntentRecognitionService>()
-    private val intentHandlingService by inject<IntentHandlingService>()
-    private val audioPlayingService by inject<AudioPlayingService>()
-    private val speechToTextService by inject<SpeechToTextService>()
-    private val indicationService by inject<IndicationService>()
-    private val mqttService by inject<MqttService>()
+    override val logger = LogType.DialogManagerService.logger()
+
+    private val audioFocusService by inject<IAudioFocusService>()
+    private val wakeWordService by inject<IWakeWordService>()
+    private val intentRecognitionService by inject<IIntentRecognitionService>()
+    private val intentHandlingService by inject<IIntentHandlingService>()
+    private val audioPlayingService by inject<IAudioPlayingService>()
+    private val speechToTextService by inject<ISpeechToTextService>()
+    private val indicationService by inject<IIndicationService>()
+    private val mqttService by inject<IMqttService>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
@@ -65,7 +76,7 @@ class DialogManagerService(
     private val recordingTimeout get() = params.recordingTimeout.toDuration(DurationUnit.MILLISECONDS)
 
     private val _currentDialogState = MutableStateFlow(DialogManagerServiceState.Idle)
-    val currentDialogState = _currentDialogState.readOnly
+    override val currentDialogState = _currentDialogState.readOnly
 
     init {
         coroutineScope.launch {
@@ -81,7 +92,7 @@ class DialogManagerService(
         }
     }
 
-    fun onAction(action: DialogServiceMiddlewareAction) {
+    override fun onAction(action: DialogServiceMiddlewareAction) {
         logger.d { "onAction $action" }
         coroutineScope.launch {
             when (action) {

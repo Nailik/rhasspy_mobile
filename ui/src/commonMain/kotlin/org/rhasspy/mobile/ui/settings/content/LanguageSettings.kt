@@ -25,7 +25,7 @@ import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
 fun LanguageSettingsScreenItemContent() {
     val viewModel: LanguageSettingsViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(viewModel) {
+    Screen(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         SettingsScreenItemContent(

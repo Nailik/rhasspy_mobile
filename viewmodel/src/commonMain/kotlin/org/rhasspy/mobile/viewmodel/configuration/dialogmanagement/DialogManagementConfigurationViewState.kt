@@ -4,25 +4,30 @@ import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
-import org.rhasspy.mobile.platformspecific.toLongOrZero
+import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 
 @Stable
 data class DialogManagementConfigurationViewState internal constructor(
-    val dialogManagementOption: DialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
-    val textAsrTimeoutText: String = ConfigurationSetting.textAsrTimeout.value.toString(),
-    val intentRecognitionTimeoutText: String = ConfigurationSetting.intentRecognitionTimeout.value.toString(),
-    val recordingTimeoutText: String = ConfigurationSetting.recordingTimeout.value.toString()
-) : IConfigurationEditViewState() {
+    override val editData: DialogManagementConfigurationData
+) : IConfigurationViewState {
 
-    val dialogManagementOptionList: ImmutableList<DialogManagementOption> = DialogManagementOption.values().toImmutableList()
+    @Stable
+    data class DialogManagementConfigurationData internal constructor(
+        val dialogManagementOption: DialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
+        val textAsrTimeout: Long? = ConfigurationSetting.textAsrTimeout.value,
+        val intentRecognitionTimeout: Long? = ConfigurationSetting.intentRecognitionTimeout.value,
+        val recordingTimeout: Long? = ConfigurationSetting.recordingTimeout.value
+    ) : IConfigurationData {
 
-    val textAsrTimeout: Long get() = textAsrTimeoutText.toLongOrZero()
-    val intentRecognitionTimeout: Long get() = intentRecognitionTimeoutText.toLongOrZero()
-    val recordingTimeout: Long get() = recordingTimeoutText.toLongOrZero()
+        val dialogManagementOptionList: ImmutableList<DialogManagementOption> = DialogManagementOption.values().toImmutableList()
 
-    override val isTestingEnabled: Boolean get() = dialogManagementOption != DialogManagementOption.Disabled
+        val textAsrTimeoutText: String = textAsrTimeout.toStringOrEmpty()
+        val intentRecognitionTimeoutText: String = intentRecognitionTimeout.toStringOrEmpty()
+        val recordingTimeoutText: String = recordingTimeout.toStringOrEmpty()
 
+    }
 
 }

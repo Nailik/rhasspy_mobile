@@ -1,26 +1,19 @@
 package org.rhasspy.mobile.viewmodel.configuration.audioplaying
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import org.koin.core.component.get
-import org.rhasspy.mobile.data.service.option.AudioPlayingOption
-import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
-import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParams
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
-import org.rhasspy.mobile.resources.MR
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
+import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.PlayTestAudio
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.AudioPlayingConfigurationScreenDestination.EditScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.AudioPlayingConfigurationScreenDestination.TestScreen
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewState.AudioPlayingConfigurationData
 
 /**
  * ViewModel for Audio Playing Configuration
@@ -32,14 +25,23 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.AudioP
  */
 @Stable
 class AudioPlayingConfigurationViewModel(
-    service: AudioPlayingService
-) : IConfigurationViewModel<AudioPlayingConfigurationViewState>(
-    service = service,
-    initialViewState = ::AudioPlayingConfigurationViewState,
-    testPageDestination = TestScreen
+    service: IAudioPlayingService
+) : ConfigurationViewModel(
+    service = service
 ) {
 
-    val screen = navigator.topScreen(EditScreen)
+    private val _viewState = MutableStateFlow(AudioPlayingConfigurationViewState(AudioPlayingConfigurationData()))
+    val viewState = _viewState.readOnly
+
+    override fun initViewStateCreator(
+        configurationViewState: MutableStateFlow<ConfigurationViewState>
+    ): StateFlow<ConfigurationViewState> {
+        return viewStateCreator(
+            init = ::AudioPlayingConfigurationData,
+            viewState = viewState,
+            configurationViewState = configurationViewState
+        )
+    }
 
     fun onEvent(change: AudioPlayingConfigurationUiEvent) {
         when (change) {
@@ -49,45 +51,36 @@ class AudioPlayingConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        updateViewState {
-            when (change) {
-                is SelectAudioPlayingOption -> it.copy(audioPlayingOption = change.option)
-                is SelectAudioOutputOption -> it.copy(audioOutputOption = change.option)
-                is SetUseCustomHttpEndpoint -> it.copy(isUseCustomAudioPlayingHttpEndpoint = change.enabled)
-                is ChangeAudioPlayingHttpEndpoint -> it.copy(audioPlayingHttpEndpoint = change.enabled)
-                is ChangeAudioPlayingMqttSiteId -> it.copy(audioPlayingMqttSiteId = change.siteId)
-            }
+        _viewState.update {
+            it.copy(editData = with(it.editData) {
+                when (change) {
+                    is SelectEditAudioPlayingOption -> copy(audioPlayingOption = change.option)
+                    is SelectAudioOutputOption -> copy(audioOutputOption = change.option)
+                    is SetUseCustomHttpEndpoint -> copy(isUseCustomAudioPlayingHttpEndpoint = change.enabled)
+                    is ChangeEditAudioPlayingHttpEndpoint -> copy(audioPlayingHttpEndpoint = change.enabled)
+                    is ChangeEditAudioPlayingMqttSiteId -> copy(audioPlayingMqttSiteId = change.siteId)
+                }
+            })
         }
     }
 
     private fun onAction(action: Action) {
         when (action) {
-            PlayTestAudio -> playTestAudio()
             BackClick -> navigator.onBackPressed()
         }
     }
 
-    override fun onDiscard() {}
-
-    override fun onSave() {
-        ConfigurationSetting.audioPlayingOption.value = data.audioPlayingOption
-        ConfigurationSetting.audioOutputOption.value = data.audioOutputOption
-        ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value = data.isUseCustomAudioPlayingHttpEndpoint
-        ConfigurationSetting.audioPlayingHttpEndpoint.value = data.audioPlayingHttpEndpoint
-        ConfigurationSetting.audioPlayingMqttSiteId.value = data.audioPlayingMqttSiteId
+    override fun onDiscard() {
+        _viewState.update { it.copy(editData = AudioPlayingConfigurationData()) }
     }
 
-    private fun playTestAudio() {
-        testScope.launch {
-            if (get<AudioPlayingServiceParams>().audioPlayingOption == AudioPlayingOption.RemoteMQTT) {
-                //await for mqtt service to start if necessary
-                get<MqttService>()
-                    .isHasStarted
-                    .map { it }
-                    .distinctUntilChanged()
-                    .first { it }
-            }
-            get<AudioPlayingService>().playAudio(AudioSource.Resource(MR.files.etc_wav_beep_hi))
+    override fun onSave() {
+        with(_viewState.value.editData) {
+            ConfigurationSetting.audioPlayingOption.value = audioPlayingOption
+            ConfigurationSetting.audioOutputOption.value = audioOutputOption
+            ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value = isUseCustomAudioPlayingHttpEndpoint
+            ConfigurationSetting.audioPlayingHttpEndpoint.value = audioPlayingHttpEndpoint
+            ConfigurationSetting.audioPlayingMqttSiteId.value = audioPlayingMqttSiteId
         }
     }
 

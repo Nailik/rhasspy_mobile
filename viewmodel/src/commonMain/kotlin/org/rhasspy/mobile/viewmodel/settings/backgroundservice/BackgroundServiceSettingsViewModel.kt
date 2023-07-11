@@ -1,20 +1,16 @@
 package org.rhasspy.mobile.viewmodel.settings.backgroundservice
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.platformspecific.background.BackgroundService
+import org.rhasspy.mobile.platformspecific.background.IBackgroundService
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Success
-import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
-import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.OpenBatteryOptimizationSettings
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.*
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Action.DisableBatteryOptimization
@@ -29,8 +25,9 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
  */
 @Stable
 class BackgroundServiceSettingsViewModel(
-    viewStateCreator: BackgroundServiceSettingsViewStateCreator
-) : KViewModel() {
+    viewStateCreator: BackgroundServiceSettingsViewStateCreator,
+    private val backgroundService: IBackgroundService
+) : ScreenViewModel() {
 
     private val _viewState: MutableStateFlow<BackgroundServiceSettingsViewState> = viewStateCreator()
     val viewState = _viewState.readOnly
@@ -48,9 +45,9 @@ class BackgroundServiceSettingsViewModel(
             is SetBackgroundServiceSettingsEnabled -> {
                 AppSetting.isBackgroundServiceEnabled.value = change.enabled
                 if (change.enabled) {
-                    BackgroundService.start()
+                    backgroundService.start()
                 } else {
-                    BackgroundService.stop()
+                    backgroundService.stop()
                 }
             }
         }
@@ -72,11 +69,9 @@ class BackgroundServiceSettingsViewModel(
     }
 
     private fun disableBatteryOptimization() {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (ExternalResultRequest.launch(ExternalResultRequestIntention.OpenBatteryOptimizationSettings) !is Success) {
-                _viewState.update {
-                    it.copy(snackBarText = MR.strings.disableBatteryOptimizationFailed.stable)
-                }
+        if (externalResultRequest.launch(OpenBatteryOptimizationSettings) !is Success) {
+            _viewState.update {
+                it.copy(snackBarText = MR.strings.disableBatteryOptimizationFailed.stable)
             }
         }
     }

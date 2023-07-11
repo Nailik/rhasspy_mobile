@@ -2,14 +2,13 @@
 
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
-import java.util.*
+import java.util.Properties
 
 plugins {
     id("com.android.application")
     kotlin("android")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
-    id("org.gradle.test-retry")
     id("base-gradle")
 }
 
@@ -37,12 +36,12 @@ android {
             }
         }
     }
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "org.rhasspy.mobile.android"
         minSdk = 23
-        targetSdk = 33
+        targetSdk = 34
         versionCode = Version.code
         versionName = Version.toString()
         resourceConfigurations += setOf("en", "de")
@@ -111,7 +110,6 @@ android {
     }
 
     testOptions {
-        unitTests.isIncludeAndroidResources = true
         testOptions.animationsDisabled = true
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
@@ -136,6 +134,16 @@ android {
 
 }
 
+configurations.all {
+    resolutionStrategy {
+        eachDependency {
+            if ((requested.group == "org.jetbrains.kotlin") && (!requested.name.startsWith("kotlin-gradle"))) {
+                useVersion("1.9.0-RC")
+            }
+        }
+    }
+}
+
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
     kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
@@ -153,25 +161,12 @@ tasks.withType<Test> {
         showCauses = true
         showStackTraces = true
     }
-    retry {
-        maxRetries.set(3)
-        maxFailures.set(20)
-        failOnPassedAfterRetry.set(false)
-    }
-}
-
-kotlin {
-    sourceSets {
-        all {
-            //Warning: This class can only be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'
-            languageSettings.optIn("kotlin.RequiresOptIn")
-        }
-    }
 }
 
 dependencies {
     coreLibraryDesugaring(Android.tools.desugarJdkLibs)
-    implementation(project(":shared"))
+
+    implementation(project(":app"))
     implementation(project(":viewmodel"))
     implementation(project(":logic"))
     implementation(project(":resources"))
@@ -186,23 +181,23 @@ dependencies {
     implementation(AndroidX.Activity.compose)
     implementation(AndroidX.multidex)
     implementation(AndroidX.window)
-
+    implementation(AndroidX.Core.ktx)
     implementation(Touchlab.kermit)
     implementation(Koin.core)
-
-    implementation(Firebase.analyticsKtx)
-    implementation(Firebase.crashlyticsKtx)
     implementation(Square.okio)
-
     implementation(Russhwolf.multiplatformSettingsNoArg)
     implementation(Icerock.Mvvm.core)
-    implementation(platform(Firebase.bom))
-
     implementation(Kotlin.test)
     implementation(Kotlin.Test.junit)
 
+    implementation(Kotlin.test)
+    implementation(AndroidX.Activity.compose)
+    implementation(AndroidX.appCompat)
+
     androidTestUtil(AndroidX.Test.orchestrator)
 
+    androidTestImplementation(AndroidX.Activity.compose)
+    androidTestImplementation(Koin.test)
     androidTestImplementation(AndroidX.Test.uiAutomator)
     androidTestImplementation(AndroidX.Test.runner)
     androidTestImplementation(AndroidX.Test.rules)
@@ -212,9 +207,12 @@ dependencies {
     androidTestImplementation(Jetbrains.Compose.testJunit4)
     androidTestImplementation(Adevinta.barista)
     androidTestImplementation(Hamcrest.hamcrest)
+    androidTestImplementation(Jetbrains.Compose.ui)
     androidTestImplementation(Jetbrains.Compose.material3)
     androidTestImplementation(Jetbrains.Kotlinx.immutable)
+    androidTestImplementation(Icerock.Mvvm.core)
+    androidTestImplementation(Touchlab.kermit)
 
-    debugImplementation(AndroidX.tracing)
+    debugImplementation(AndroidX.tracing.ktx)
     debugImplementation(AndroidX.Compose.Ui.testManifest)
 }

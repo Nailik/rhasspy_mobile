@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Settings
@@ -23,7 +24,6 @@ import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.*
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreen
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -62,7 +62,7 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
                         Box(modifier = Modifier.padding(paddingValues)) {
 
                             val viewModel: MainScreenViewModel = LocalViewModelFactory.current.getViewModel()
-                            Screen(viewModel) {
+                            Screen(screenViewModel = viewModel) {
                                 val screen by viewModel.screen.collectAsState()
                                 val viewState by viewModel.viewState.collectAsState()
 
@@ -136,30 +136,15 @@ private fun MainScreenContent(
 @Composable
 fun CrashlyticsDialog(onResult: (result: Boolean) -> Unit) {
     Dialog(
-        modifier = Modifier.testTag(TestTag.DialogCrashlytics),
-        onDismissRequest = { onResult(false) },
-        confirmButton = {
-            TextButton(
-                onClick = { onResult(true) },
-                modifier = Modifier.testTag(TestTag.DialogOk)
-            ) {
-                Text(MR.strings.confirm.stable)
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { onResult(false) },
-                modifier = Modifier.testTag(TestTag.DialogOk)
-            ) {
-                Text(MR.strings.deny.stable)
-            }
-        },
-        headline = {
-            Text(MR.strings.crashlytics.stable)
-        },
-        supportingText = {
-            Text(MR.strings.crashlyticsDialogText.stable)
-        }
+        testTag = TestTag.DialogCrashlytics,
+        icon = Icons.Filled.BugReport,
+        title = MR.strings.crashlytics.stable,
+        message = MR.strings.crashlyticsDialogText.stable,
+        confirmLabel = MR.strings.confirm.stable,
+        dismissLabel = MR.strings.deny.stable,
+        onConfirm = { onResult(true) },
+        onDismiss = { onResult(false) },
+        onClose = {}
     )
 }
 

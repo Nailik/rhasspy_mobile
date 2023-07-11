@@ -2,7 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings.devicesettings
 
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change
@@ -11,7 +11,7 @@ import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEven
 @Stable
 class DeviceSettingsViewModel(
     viewStateCreator: DeviceSettingsViewStateCreator
-) : KViewModel() {
+) : ScreenViewModel() {
 
     val viewState = viewStateCreator()
 

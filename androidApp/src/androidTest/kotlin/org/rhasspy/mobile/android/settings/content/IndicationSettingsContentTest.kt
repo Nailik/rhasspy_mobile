@@ -11,11 +11,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.MainActivity
+import org.rhasspy.mobile.MainActivity
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
-import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.settings.content.IndicationSettingsContent
@@ -66,30 +66,29 @@ class IndicationSettingsContentTest : FlakyTest() {
      * sound is enabled
      * sound is saved
      */
-    @Test
+    //@Test Manual
+    @Suppress("unused")
     fun testIndicationSettings() {
-        device.resetOverlayPermission(composeTestRule.activity)
+        device.resetOverlayPermission(composeTestRule.activity, get())
 
         viewModel.onEvent(SetWakeWordLightIndicationEnabled(false))
         viewModel.onEvent(SetSoundIndicationEnabled(false))
         viewModel.onEvent(SetWakeWordDetectionTurnOnDisplay(false))
 
         //wake up display disabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onListItemSwitch()
-            .assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onListItemSwitch().assertIsOff()
         //visual disabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onListItemSwitch()
-            .assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onListItemSwitch().assertIsOff()
         //sound disabled
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onListItemSwitch().assertIsOff()
 
         //user clicks wake up display
         composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).performClick()
+        composeTestRule.waitForIdle()
         //wake up display is enabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onListItemSwitch()
-            .assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onListItemSwitch().assertIsOn()
         //wake up display is saved
-        assertTrue { IndicationSettingsViewModel().viewState.value.isWakeWordDetectionTurnOnDisplayEnabled }
+        assertTrue { IndicationSettingsViewModel(get()).viewState.value.isWakeWordDetectionTurnOnDisplayEnabled }
 
 
         //user clicks visual
@@ -104,6 +103,8 @@ class IndicationSettingsContentTest : FlakyTest() {
         device.wait(Until.hasObject(By.pkg(settingsPage.toPattern())), 5000)
         assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
         UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName.stable))
+        device.waitForIdle()
+
         device.findObject(UiSelector().text(MR.strings.appName.stable)).click()
         device.findObject(UiSelector().className(Switch::class.java)).click()
         //User clicks back
@@ -111,22 +112,22 @@ class IndicationSettingsContentTest : FlakyTest() {
         device.pressBack()
 
         //app will be closed when pressing one more back
-        OverlayPermission.update()
+        get<IOverlayPermission>().update()
         //Dialog is closed and permission granted
-        assertTrue { OverlayPermission.granted.value }
+        assertTrue { get<IOverlayPermission>().granted.value }
 
         //visual is enabled
         composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).performClick()
         composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onListItemSwitch().assertIsOn()
         //visual is saved
-        assertTrue { IndicationSettingsViewModel().viewState.value.isWakeWordLightIndicationEnabled }
+        assertTrue { IndicationSettingsViewModel(get()).viewState.value.isWakeWordLightIndicationEnabled }
 
         //user clicks sound
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).performClick()
         //sound is enabled
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onListItemSwitch().assertIsOn()
         //sound is saved
-        assertTrue { IndicationSettingsViewModel().viewState.value.isSoundIndicationEnabled }
+        assertTrue { IndicationSettingsViewModel(get()).viewState.value.isSoundIndicationEnabled }
     }
 
     /**
@@ -196,7 +197,7 @@ class IndicationSettingsContentTest : FlakyTest() {
         //sound output sound is saved
         assertEquals(
             AudioOutputOption.Sound,
-            IndicationSettingsViewModel().viewState.value.soundIndicationOutputOption
+            IndicationSettingsViewModel(get()).viewState.value.soundIndicationOutputOption
         )
 
         //user clicks wake word

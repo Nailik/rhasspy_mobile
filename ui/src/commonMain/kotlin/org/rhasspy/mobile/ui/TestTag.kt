@@ -3,30 +3,19 @@ package org.rhasspy.mobile.ui
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.service.option.IOption
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
 /**
  * test tags to be used in compose
  */
 enum class TestTag {
     List,
-    DialogCrashlytics,
-    DialogInformationMicrophonePermission,
-    DialogInformationOverlayPermission,
-    DialogOk,
-    DialogCancel,
-    DialogUnsavedChanges,
-    DialogChangelogButton,
-    DialogChangelog,
-    DialogDataPrivacyButton,
-    DialogDataPrivacy,
-    DialogLibrary,
     AppBarBackButton,
     AppBarTitle,
     BottomAppBarDiscard,
     BottomAppBarSave,
-    BottomAppBarTest,
-    DialogManagementOptions,
     LibrariesContainer,
     MicrophoneOverlaySizeOptions,
     MicrophoneFab,
@@ -137,6 +126,24 @@ enum class TestTag {
 
 
     OpenConfigScreen,
+
+
+    DialogManagementOptions,
+
+    DialogOk,
+    DialogCancel,
+    DialogUnsavedChanges,
+    DialogChangelogButton,
+    DialogChangelog,
+    DialogDataPrivacyButton,
+    DialogDataPrivacy,
+    DialogLibrary,
+    DialogServiceState,
+    DialogCrashlytics,
+    DialogMicrophonePermissionInfo,
+    DialogOverlayPermissionInfo,
+    DialogSaveSettings,
+    DialogRestoreSettings
 }
 
 fun Modifier.combinedTestTag(IOption: IOption<*>, tag: TestTag) = semantics(
@@ -159,20 +166,32 @@ fun Modifier.combinedTestTag(name: TestTag, tag: TestTag) = semantics(
 )
 
 
-fun Modifier.testTag(enum: Enum<*>) = semantics(
+fun Modifier.testTag(enum: TestTag) = semantics(
     properties = {
         testTag = enum.name
     }
 )
 
-fun Modifier.testTag(IOption: IOption<*>) = semantics(
+fun Modifier.testTag(option: IOption<*>) = semantics(
     properties = {
-        testTag = IOption.name
+        testTag = option.name
     }
 )
 
 fun Modifier.testTag(name: String) = semantics(
     properties = {
         testTag = name
+    }
+)
+
+fun Modifier.testTag(name: StableStringResource) = semantics(
+    properties = {
+        testTag = name.toString()
+    }
+)
+
+fun Modifier.testTag(name: NavigationDestination) = semantics(
+    properties = {
+        testTag = name.toString()
     }
 )

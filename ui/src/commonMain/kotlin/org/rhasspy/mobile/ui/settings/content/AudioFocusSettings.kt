@@ -26,7 +26,7 @@ import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewMo
 fun AudioFocusSettingsContent() {
     val viewModel: AudioFocusSettingsViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(viewModel) {
+    Screen(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         SettingsScreenItemContent(

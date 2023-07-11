@@ -73,7 +73,7 @@ fun BackgroundServiceSettingsContent() {
         AnimatedVisibility(
             enter = expandVertically(),
             exit = shrinkVertically(),
-            visible = !viewState.isBatteryOptimizationDisabled
+            visible = !viewState.isBatteryOptimizationDeactivationEnabled
         ) {
 
             //background battery optimization on/off
@@ -91,7 +91,7 @@ fun BackgroundServiceSettingsContent() {
                     Text(MR.strings.batteryOptimization.stable)
                 },
                 secondaryText = {
-                    Text(viewState.isBatteryOptimizationDisabled.toText())
+                    Text(viewState.isBatteryOptimizationDeactivationEnabled.toText())
                 },
             )
 

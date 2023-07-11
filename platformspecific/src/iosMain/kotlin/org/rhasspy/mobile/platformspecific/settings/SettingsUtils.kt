@@ -1,10 +1,17 @@
 package org.rhasspy.mobile.platformspecific.settings
 
-actual object SettingsUtils {
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
+
+internal actual class SettingsUtils actual constructor(
+    externalResultRequest: IExternalResultRequest,
+    nativeApplication: NativeApplication
+) : ISettingsUtils {
+
     /**
      * export the settings file
      */
-    actual suspend fun exportSettingsFile(): Boolean {
+    actual override suspend fun exportSettingsFile(): Boolean {
         //TODO("Not yet implemented")
         return true
     }
@@ -12,7 +19,7 @@ actual object SettingsUtils {
     /**
      * restore all settings from a file
      */
-    actual suspend fun restoreSettingsFromFile(): Boolean {
+    actual override suspend fun restoreSettingsFromFile(): Boolean {
         //TODO("Not yet implemented")
         return true
     }
@@ -20,7 +27,7 @@ actual object SettingsUtils {
     /**
      * share settings file but without sensitive data
      */
-    actual suspend fun shareSettingsFile(): Boolean {
+    actual override suspend fun shareSettingsFile(): Boolean {
         //TODO("Not yet implemented")
         return true
     }

@@ -13,8 +13,8 @@ import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Result
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Success
-import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
+import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.io.SequenceInputStream
@@ -57,13 +57,16 @@ fun InputStream.modify(): InputStream {
     return SequenceInputStream(Collections.enumeration(streams))
 }
 
-actual fun Path.commonShare(nativeApplication: NativeApplication): Boolean {
+actual fun Path.commonShare(
+    nativeApplication: NativeApplication,
+    externalResultRequest: IExternalResultRequest
+): Boolean {
     val fileUri: Uri = FileProvider.getUriForFile(
         nativeApplication, nativeApplication.packageName.toString() + ".provider",
         this.toFile()
     )
 
-    val result = ExternalResultRequest.launch(
+    val result = externalResultRequest.launch(
         ExternalResultRequestIntention.ShareFile(
             fileUri = fileUri.toString(),
             mimeType = "text/html"
@@ -73,9 +76,14 @@ actual fun Path.commonShare(nativeApplication: NativeApplication): Boolean {
     return result is Success
 }
 
-actual suspend fun Path.commonSave(nativeApplication: NativeApplication, fileName: String, fileType: String): Boolean {
+actual suspend fun Path.commonSave(
+    nativeApplication: NativeApplication,
+    externalResultRequest: IExternalResultRequest,
+    fileName: String,
+    fileType: String
+): Boolean {
 
-    val result = ExternalResultRequest.launchForResult(ExternalResultRequestIntention.CreateDocument(fileName, fileType))
+    val result = externalResultRequest.launchForResult(ExternalResultRequestIntention.CreateDocument(fileName, fileType))
 
     return if (result is Result) {
         nativeApplication.contentResolver.openOutputStream(result.data.toUri())

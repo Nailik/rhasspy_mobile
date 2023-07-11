@@ -19,6 +19,43 @@ fun <T1, T2, R> combineState(
     transform.invoke(o1, o2)
 }.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value))
 
+
+fun <T1, T2, T3, R> combineState(
+    flow1: StateFlow<T1>,
+    flow2: StateFlow<T2>,
+    flow3: StateFlow<T3>,
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    sharingStarted: SharingStarted = SharingStarted.Lazily,
+    transform: (T1, T2, T3) -> R
+): StateFlow<R> = combine(flow1, flow2, flow3) { o1, o2, o3 ->
+    transform.invoke(o1, o2, o3)
+}.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value, flow3.value))
+
+fun <T1, T2, T3, T4, R> combineState(
+    flow1: StateFlow<T1>,
+    flow2: StateFlow<T2>,
+    flow3: StateFlow<T3>,
+    flow4: StateFlow<T4>,
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    sharingStarted: SharingStarted = SharingStarted.Lazily,
+    transform: (T1, T2, T3, T4) -> R
+): StateFlow<R> = combine(flow1, flow2, flow3, flow4) { o1, o2, o3, o4 ->
+    transform.invoke(o1, o2, o3, o4)
+}.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value, flow3.value, flow4.value))
+
+fun <T1, T2, T3, T4, T5, R> combineState(
+    flow1: StateFlow<T1>,
+    flow2: StateFlow<T2>,
+    flow3: StateFlow<T3>,
+    flow4: StateFlow<T4>,
+    flow5: StateFlow<T5>,
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    sharingStarted: SharingStarted = SharingStarted.Lazily,
+    transform: (T1, T2, T3, T4, T5) -> R
+): StateFlow<R> = combine(flow1, flow2, flow3, flow4, flow5) { o1, o2, o3, o4, o5 ->
+    transform.invoke(o1, o2, o3, o4, o5)
+}.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value, flow3.value, flow4.value, flow5.value))
+
 inline fun <reified T> combineStateFlow(
     vararg flows: StateFlow<T>,
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
@@ -64,8 +101,17 @@ fun <T> Array<out T>.toImmutableList(): ImmutableList<T> {
     }
 }
 
-fun String.toLongOrZero(): Long = toLongOrNull() ?: 0L
-fun String.toIntOrZero(): Int = toIntOrNull() ?: 0
+fun Int?.toIntOrZero(): Int = this ?: 0
+fun Long?.toLongOrZero(): Long = this ?: 0
+fun Int?.toStringOrEmpty(): String = this?.toString() ?: ""
+fun Long?.toStringOrEmpty(): String = this?.toString() ?: ""
+fun String?.toLongOrNullOrConstant(): Long? =
+    this?.let { if (it.length > 10) this.substring(0..9).toLong() else it.trimTrailingZeros()?.toLongOrNull() }
+
+fun String?.toIntOrNullOrConstant(): Int? =
+    this?.let { if (it.length > 10) this.substring(0..9).toInt() else it.trimTrailingZeros()?.toIntOrNull() }
+
+fun String?.trimTrailingZeros() = this?.replaceFirst(Regex("^0*"), "")
 
 fun <E> ImmutableList<E>.updateList(block: MutableList<E>.() -> Unit): ImmutableList<E> {
     return this.toMutableList().apply(block).toImmutableList()

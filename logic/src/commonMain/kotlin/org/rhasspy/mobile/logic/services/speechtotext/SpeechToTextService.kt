@@ -9,15 +9,17 @@ import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
+import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.logic.services.audiofocus.AudioFocusService
+import org.rhasspy.mobile.logic.services.audiofocus.IAudioFocusService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.logic.services.recording.RecordingService
+import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.services.mqtt.IMqttService
+import org.rhasspy.mobile.logic.services.recording.IRecordingService
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeader
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
@@ -26,19 +28,34 @@ import org.rhasspy.mobile.platformspecific.extensions.commonSize
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 
+interface ISpeechToTextService : IService {
+
+    override val serviceState: StateFlow<ServiceState>
+
+    val speechToTextAudioFile: Path
+
+    suspend fun endSpeechToText(sessionId: String, fromMqtt: Boolean)
+    suspend fun startSpeechToText(sessionId: String, fromMqtt: Boolean)
+
+}
+
 /**
  * calls actions and returns result
  *
  * when data is null the service was most probably mqtt and will return result in a call function
  */
-open class SpeechToTextService(
+internal class SpeechToTextService(
     paramsCreator: SpeechToTextServiceParamsCreator,
-) : IService(LogType.SpeechToTextService) {
+) : ISpeechToTextService {
 
-    private val audioFocusService by inject<AudioFocusService>()
-    private val httpClientService by inject<HttpClientService>()
-    private val mqttClientService by inject<MqttService>()
-    private val recordingService by inject<RecordingService>()
+    override val logger = LogType.SpeechToTextService.logger()
+
+    private val audioFocusService by inject<IAudioFocusService>()
+    private val httpClientService by inject<IHttpClientService>()
+    private val mqttClientService by inject<IMqttService>()
+    private val recordingService by inject<IRecordingService>()
+    private val nativeApplication by inject<NativeApplication>()
+    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val paramsFlow: StateFlow<SpeechToTextServiceParams> = paramsCreator()
     private val params: SpeechToTextServiceParams get() = paramsFlow.value
@@ -46,7 +63,7 @@ open class SpeechToTextService(
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
     override val serviceState = _serviceState.readOnly
 
-    val speechToTextAudioFile: Path = Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
+    override val speechToTextAudioFile: Path = Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private var collector: Job? = null
@@ -73,7 +90,7 @@ open class SpeechToTextService(
      *
      * fromMqtt is used to check if silence was detected by remote mqtt device
      */
-    suspend fun endSpeechToText(sessionId: String, fromMqtt: Boolean) {
+    override suspend fun endSpeechToText(sessionId: String, fromMqtt: Boolean) {
         logger.d { "endSpeechToText sessionId: $sessionId fromMqtt $fromMqtt" }
 
         //stop collection
@@ -111,7 +128,7 @@ open class SpeechToTextService(
         }
     }
 
-    suspend fun startSpeechToText(sessionId: String, fromMqtt: Boolean) {
+    override suspend fun startSpeechToText(sessionId: String, fromMqtt: Boolean) {
         logger.d { "startSpeechToText sessionId: $sessionId fromMqtt $fromMqtt" }
 
         if (collector?.isActive == true) {

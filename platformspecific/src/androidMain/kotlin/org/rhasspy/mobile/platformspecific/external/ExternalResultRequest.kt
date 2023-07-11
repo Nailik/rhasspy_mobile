@@ -16,16 +16,16 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.*
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.*
 import kotlin.coroutines.resume
 
-actual object ExternalResultRequest : KoinComponent {
+internal actual class ExternalResultRequest actual constructor(
+    private val nativeApplication: NativeApplication
+) : IExternalResultRequest, KoinComponent {
 
     private val logger = Logger.withTag("ExternalRedirect")
-    private val nativeApplication by inject<NativeApplication>()
 
     private lateinit var someActivityResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var somePermissionResultLauncher: ActivityResultLauncher<String>
@@ -47,7 +47,7 @@ actual object ExternalResultRequest : KoinComponent {
         }
     }
 
-    actual fun <R> launch(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> {
+    actual override fun <R> launch(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> {
         logger.v { "launch $intention" }
         return launching {
             nativeApplication.currentActivity?.also {
@@ -64,7 +64,7 @@ actual object ExternalResultRequest : KoinComponent {
 
     @Suppress("UNCHECKED_CAST")
     @OptIn(ExperimentalCoroutinesApi::class)
-    actual suspend fun <R> launchForResult(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> =
+    actual override suspend fun <R> launchForResult(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> =
         suspendCancellableCoroutine { continuation ->
             logger.v { "launchForResult $intention" }
             launching<R> {
@@ -73,7 +73,7 @@ actual object ExternalResultRequest : KoinComponent {
             }
         }
 
-    actual suspend fun launchForPermission(permission: String): Boolean =
+    actual override suspend fun launchForPermission(permission: String): Boolean =
         suspendCancellableCoroutine { continuation ->
             logger.v { "launchForResult $permission" }
             permissionResultCallback = { continuation.resume(it) }

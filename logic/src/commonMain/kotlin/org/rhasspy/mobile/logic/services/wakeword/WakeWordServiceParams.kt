@@ -6,7 +6,7 @@ import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 
-class WakeWordServiceParams(
+internal class WakeWordServiceParams(
     val wakeWordOption: WakeWordOption,
     val wakeWordPorcupineAccessToken: String,
     val wakeWordPorcupineKeywordDefaultOptions: ImmutableList<PorcupineDefaultKeyword>,

@@ -25,6 +25,8 @@ class InternalAudioPlayer(
     private val onFinished: (exception: Exception?) -> Unit
 ) : KoinComponent {
 
+    private val nativeApplication = get<NativeApplication>()
+
     private var finishCalled = false
     private var coroutineScope = CoroutineScope(Dispatchers.IO)
     private var timeoutJob: Job? = null
@@ -93,7 +95,7 @@ class InternalAudioPlayer(
             mediaPlayer.setVolume(volume.value, volume.value)
             mediaPlayer.setOnCompletionListener { onMediaPlayerCompletion() }
             mediaPlayer.setOnErrorListener { _, _, _ -> onMediaPlayerError(); false }
-            mediaPlayer.setDataSource(get<NativeApplication>(), uri)
+            mediaPlayer.setDataSource(nativeApplication, uri)
             mediaPlayer.prepare()
             volumeChange.start()
             val duration = mediaPlayer.duration
@@ -136,7 +138,7 @@ class InternalAudioPlayer(
 
     @Throws(Resources.NotFoundException::class)
     private fun getUriFromResource(@AnyRes resId: Int): Uri {
-        val res: Resources = get<NativeApplication>().resources
+        val res: Resources = nativeApplication.resources
         return Uri.parse(
             ContentResolver.SCHEME_ANDROID_RESOURCE +
                     "://" + res.getResourcePackageName(resId)
@@ -146,7 +148,7 @@ class InternalAudioPlayer(
     }
 
     private fun getUriFromData(data: ByteArray): Uri {
-        val soundFile = File(get<NativeApplication>().cacheDir, "/playData.wav")
+        val soundFile = File(nativeApplication.cacheDir, "/playData.wav")
         if (!soundFile.exists()) {
             soundFile.createNewFile()
         }

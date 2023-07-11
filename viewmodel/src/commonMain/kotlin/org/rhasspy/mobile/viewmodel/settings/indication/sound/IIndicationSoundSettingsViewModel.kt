@@ -6,8 +6,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okio.Path
+import org.koin.core.component.get
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
+import org.rhasspy.mobile.logic.services.localaudio.ILocalAudioService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
@@ -17,7 +19,7 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ISetting
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.*
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.*
@@ -26,16 +28,16 @@ import kotlin.reflect.KFunction1
 
 @Stable
 abstract class IIndicationSoundSettingsViewModel(
-    private val localAudioService: LocalAudioService,
+    private val localAudioService: ILocalAudioService,
     private val nativeApplication: NativeApplication,
     private val customSoundOptions: ISetting<ImmutableList<String>>,
     private val soundSetting: ISetting<String>,
     private val soundVolume: ISetting<Float>,
     private val soundFolderType: FolderType,
-    viewStateCreator: IIndicationSoundSettingsViewStateCreator
-) : KViewModel() {
+) : ScreenViewModel() {
 
-    abstract val playSound: KFunction1<LocalAudioService, Unit>
+    val viewStateCreator: IIndicationSoundSettingsViewStateCreator = get { parametersOf(customSoundOptions, soundSetting, soundVolume) }
+    abstract val playSound: KFunction1<ILocalAudioService, Unit>
 
     private val _viewState: MutableStateFlow<IIndicationSoundSettingsViewState> = viewStateCreator()
     val viewState = _viewState.readOnly

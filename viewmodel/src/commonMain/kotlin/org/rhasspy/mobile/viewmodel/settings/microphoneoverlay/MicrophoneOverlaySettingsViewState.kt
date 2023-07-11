@@ -4,12 +4,11 @@ import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
-import org.rhasspy.mobile.settings.AppSetting
 
 @Stable
 data class MicrophoneOverlaySettingsViewState internal constructor(
-    val microphoneOverlaySizeOption: MicrophoneOverlaySizeOption = AppSetting.microphoneOverlaySizeOption.value,
-    val isMicrophoneOverlayWhileAppEnabled: Boolean = AppSetting.isMicrophoneOverlayWhileAppEnabled.value
+    val microphoneOverlaySizeOption: MicrophoneOverlaySizeOption,
+    val isMicrophoneOverlayWhileAppEnabled: Boolean
 ) {
 
     val microphoneOverlaySizeOptions: ImmutableList<MicrophoneOverlaySizeOption> = MicrophoneOverlaySizeOption.values().toImmutableList()

@@ -2,7 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings.audiofocus
 
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change
@@ -10,7 +10,7 @@ import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEven
 
 class AudioFocusSettingsViewModel(
     viewStateCreator: AudioFocusSettingsViewStateCreator
-) : KViewModel() {
+) : ScreenViewModel() {
 
     val viewState: StateFlow<AudioFocusSettingsViewState> = viewStateCreator()
 

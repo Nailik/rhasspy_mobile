@@ -5,29 +5,28 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
+import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 
 /**
  * to check microphone permission
  */
-actual object MicrophonePermission : KoinComponent {
-
-    private val context by inject<NativeApplication>()
+internal actual class MicrophonePermission actual constructor(
+    private val nativeApplication: NativeApplication,
+    private val externalResultRequest: IExternalResultRequest
+) : IMicrophonePermission {
 
     /**
      * to observe if microphone permission is granted
      */
     private val _granted = MutableStateFlow(isGranted())
-    actual val granted: StateFlow<Boolean> = _granted
+    actual override val granted: StateFlow<Boolean> = _granted
 
     /**
      * to request the permission externally, redirect user to settings
      */
-    actual fun shouldShowInformationDialog(): Boolean {
-        return context.currentActivity?.let {
+    actual override fun shouldShowInformationDialog(): Boolean {
+        return nativeApplication.currentActivity?.let {
             ActivityCompat.shouldShowRequestPermissionRationale(
                 it,
                 Manifest.permission.RECORD_AUDIO
@@ -40,7 +39,7 @@ actual object MicrophonePermission : KoinComponent {
      */
     private fun isGranted(): Boolean {
         return ActivityCompat.checkSelfPermission(
-            context,
+            nativeApplication,
             Manifest.permission.RECORD_AUDIO
         ) == PackageManager.PERMISSION_GRANTED
     }
@@ -48,12 +47,12 @@ actual object MicrophonePermission : KoinComponent {
     /**
      * read from system
      */
-    actual fun update() {
+    actual override fun update() {
         _granted.value = isGranted()
     }
 
-    actual suspend fun request() {
-        _granted.value = ExternalResultRequest.launchForPermission(Manifest.permission.RECORD_AUDIO)
+    actual override suspend fun request() {
+        _granted.value = externalResultRequest.launchForPermission(Manifest.permission.RECORD_AUDIO)
     }
 
 }

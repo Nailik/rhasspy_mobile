@@ -1,23 +1,25 @@
 package org.rhasspy.mobile.viewmodel.configuration
 
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState
+
 sealed interface IConfigurationUiEvent {
 
     sealed interface Action : IConfigurationUiEvent {
 
-        object StartTest : Action
-        object StopTest : Action
-        object Save : Action
-        object Discard : Action
-        object BackPress : Action
-        object SaveDialog : Action
-        object DiscardDialog : Action
-        object DismissDialog : Action
-        object ToggleListFiltered : Action
-        object ToggleListAutoscroll : Action
-        object BackClick : Action
-        object OpenTestScreen : Action
-        object OpenServiceStateDialog : Action
-        object CloseServiceStateDialog : Action
+        data object Save : Action
+        data object Discard : Action
+        data object BackClick : Action
+        data object OpenServiceStateDialog : Action
+
+    }
+
+    sealed interface DialogAction : IConfigurationUiEvent {
+
+        val dialogState: DialogState
+
+        data class Confirm(override val dialogState: DialogState) : DialogAction
+        data class Dismiss(override val dialogState: DialogState) : DialogAction
+        data class Close(override val dialogState: DialogState) : DialogAction
 
     }
 

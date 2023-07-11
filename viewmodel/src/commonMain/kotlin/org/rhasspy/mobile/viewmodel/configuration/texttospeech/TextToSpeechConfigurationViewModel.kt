@@ -1,33 +1,39 @@
 package org.rhasspy.mobile.viewmodel.configuration.texttospeech
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import org.koin.core.component.get
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
+import org.rhasspy.mobile.logic.services.texttospeech.ITextToSpeechService
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.TestRemoteHermesHttpTextToSpeechTest
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.TextToSpeechConfigurationScreenDestination.EditScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.TextToSpeechConfigurationScreenDestination.TestScreen
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewState.TextToSpeechConfigurationData
 
 @Stable
 class TextToSpeechConfigurationViewModel(
-    service: TextToSpeechService
-) : IConfigurationViewModel<TextToSpeechConfigurationViewState>(
-    service = service,
-    initialViewState = ::TextToSpeechConfigurationViewState,
-    testPageDestination = TestScreen
+    service: ITextToSpeechService
+) : ConfigurationViewModel(
+    service = service
 ) {
 
-    val screen = navigator.topScreen(EditScreen)
+    private val _viewState = MutableStateFlow(TextToSpeechConfigurationViewState(TextToSpeechConfigurationData()))
+    val viewState = _viewState.readOnly
+
+    override fun initViewStateCreator(
+        configurationViewState: MutableStateFlow<ConfigurationViewState>
+    ): StateFlow<ConfigurationViewState> {
+        return viewStateCreator(
+            init = ::TextToSpeechConfigurationData,
+            viewState = viewState,
+            configurationViewState = configurationViewState
+        )
+    }
 
     fun onEvent(event: TextToSpeechConfigurationUiEvent) {
         when (event) {
@@ -37,41 +43,32 @@ class TextToSpeechConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        updateViewState {
-            when (change) {
-                is SelectTextToSpeechOption -> it.copy(textToSpeechOption = change.option)
-                is SetUseCustomHttpEndpoint -> it.copy(isUseCustomTextToSpeechHttpEndpoint = change.enabled)
-                is UpdateTextToSpeechHttpEndpoint -> it.copy(textToSpeechHttpEndpoint = change.endpoint)
-                is UpdateTestTextToSpeechText -> it.copy(testTextToSpeechText = change.text)
-            }
+        _viewState.update {
+            it.copy(editData = with(it.editData) {
+                when (change) {
+                    is SelectTextToSpeechOption -> copy(textToSpeechOption = change.option)
+                    is SetUseCustomHttpEndpoint -> copy(isUseCustomTextToSpeechHttpEndpoint = change.enabled)
+                    is UpdateTextToSpeechHttpEndpoint -> copy(textToSpeechHttpEndpoint = change.endpoint)
+                }
+            })
         }
     }
 
     private fun onAction(action: Action) {
         when (action) {
-            TestRemoteHermesHttpTextToSpeechTest -> startTextToSpeech()
             BackClick -> navigator.onBackPressed()
         }
     }
 
-    override fun onDiscard() {}
-
-    override fun onSave() {
-        ConfigurationSetting.textToSpeechOption.value = data.textToSpeechOption
-        ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value = data.isUseCustomTextToSpeechHttpEndpoint
-        ConfigurationSetting.textToSpeechHttpEndpoint.value = data.textToSpeechHttpEndpoint
+    override fun onDiscard() {
+        _viewState.update { it.copy(editData = TextToSpeechConfigurationData()) }
     }
 
-    private fun startTextToSpeech() {
-        testScope.launch {
-            //await for mqtt
-            get<MqttService>()
-                .isHasStarted
-                .map { it }
-                .distinctUntilChanged()
-                .first { it }
-
-            get<TextToSpeechService>().textToSpeech("", data.testTextToSpeechText)
+    override fun onSave() {
+        with(_viewState.value.editData) {
+            ConfigurationSetting.textToSpeechOption.value = textToSpeechOption
+            ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value = isUseCustomTextToSpeechHttpEndpoint
+            ConfigurationSetting.textToSpeechHttpEndpoint.value = textToSpeechHttpEndpoint
         }
     }
 

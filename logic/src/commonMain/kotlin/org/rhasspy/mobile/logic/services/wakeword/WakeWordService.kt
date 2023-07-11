@@ -7,27 +7,42 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.logic.services.recording.RecordingService
+import org.rhasspy.mobile.logic.services.recording.IRecordingService
 import org.rhasspy.mobile.platformspecific.porcupine.PorcupineWakeWordClient
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
+
+interface IWakeWordService : IService {
+
+    override val serviceState: StateFlow<ServiceState>
+
+    val isRecording: StateFlow<Boolean>
+
+    fun startDetection()
+    fun stopDetection()
+
+}
 
 /**
  * hot word services listens for hot word, evaluates configuration settings but no states
  *
  * calls stateMachineService when hot word was detected
  */
-class WakeWordService(
+internal class WakeWordService(
     paramsCreator: WakeWordServiceParamsCreator,
-) : IService(LogType.WakeWordService) {
+) : IWakeWordService {
 
-    private val recordingService by inject<RecordingService>()
+    override val logger = LogType.WakeWordService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
+
+    private val recordingService by inject<IRecordingService>()
+    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val paramsFlow: StateFlow<WakeWordServiceParams> = paramsCreator()
     private val params: WakeWordServiceParams get() = paramsFlow.value
@@ -36,7 +51,7 @@ class WakeWordService(
     private var porcupineWakeWordClient: PorcupineWakeWordClient? = null
 
     private val _isRecording = MutableStateFlow(false)
-    val isRecording = _isRecording.readOnly
+    override val isRecording = _isRecording.readOnly
 
     private var isDetectionRunning = false
 
@@ -106,7 +121,7 @@ class WakeWordService(
         logger.e(exception) { "porcupineError" }
     }
 
-    fun startDetection() {
+    override fun startDetection() {
         isDetectionRunning = true
 
         when (params.wakeWordOption) {
@@ -163,7 +178,7 @@ class WakeWordService(
         }
     }
 
-    fun stopDetection() {
+    override fun stopDetection() {
         isDetectionRunning = false
         logger.d { "stopDetection" }
         _isRecording.value = false

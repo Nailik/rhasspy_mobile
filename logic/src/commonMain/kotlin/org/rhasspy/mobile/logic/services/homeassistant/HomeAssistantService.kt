@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.services.homeassistant
 
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
@@ -9,7 +10,16 @@ import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Event
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Intent
 import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
+import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
+import org.rhasspy.mobile.platformspecific.readOnly
+
+interface IHomeAssistantService : IService {
+
+    override val serviceState: StateFlow<ServiceState>
+
+    suspend fun sendIntent(intentName: String, intent: String): ServiceState
+
+}
 
 /**
  * send data to home assistant
@@ -17,19 +27,24 @@ import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
  * events
  * intent
  */
-class HomeAssistantService(
+internal class HomeAssistantService(
     paramsCreator: HomeAssistantServiceParamsCreator,
-) : IService(LogType.HomeAssistanceService) {
+) : IHomeAssistantService {
 
-    private val httpClientService by inject<HttpClientService>()
+    override val logger = LogType.HomeAssistanceService.logger()
+
+    private val httpClientService by inject<IHttpClientService>()
 
     private val paramsFlow: StateFlow<HomeAssistantServiceParams> = paramsCreator()
-    private val params: HomeAssistantServiceParams get() = paramsFlow.value
+    private val params get() = paramsFlow.value
+
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
+    override val serviceState = _serviceState.readOnly
 
     /**
      * simplified conversion from intent to hass event or hass intent
      */
-    suspend fun sendIntent(intentName: String, intent: String): ServiceState {
+    override suspend fun sendIntent(intentName: String, intent: String): ServiceState {
         logger.d { "sendIntent name: $intentName json: $intent" }
         try {
             val slots = mutableMapOf<String, JsonElement?>()
@@ -62,8 +77,8 @@ class HomeAssistantService(
             val intentRes = Json.encodeToString(slots)
 
             val result = when (params.intentHandlingHomeAssistantOption) {
-                Event -> httpClientService.hassEvent(intentRes, intentName)
-                Intent -> httpClientService.hassIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
+                Event -> httpClientService.homeAssistantEvent(intentRes, intentName)
+                Intent -> httpClientService.homeAssistantIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
             }
             return result.toServiceState()
         } catch (exception: Exception) {

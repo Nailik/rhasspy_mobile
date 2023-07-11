@@ -6,22 +6,26 @@ import org.rhasspy.mobile.data.httpclient.HttpClientPath
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 
 @Stable
 data class IntentRecognitionConfigurationViewState internal constructor(
-    val intentRecognitionOption: IntentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
-    val isUseCustomIntentRecognitionHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value,
-    val intentRecognitionHttpEndpoint: String = ConfigurationSetting.intentRecognitionHttpEndpoint.value,
-    val testIntentRecognitionText: String = ""
-) : IConfigurationEditViewState() {
+    override val editData: IntentRecognitionConfigurationData
+) : IConfigurationViewState {
 
-    val intentRecognitionOptionList: ImmutableList<IntentRecognitionOption> = IntentRecognitionOption.values().toImmutableList()
+    @Stable
+    data class IntentRecognitionConfigurationData internal constructor(
+        val intentRecognitionOption: IntentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
+        val isUseCustomIntentRecognitionHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value,
+        val intentRecognitionHttpEndpoint: String = ConfigurationSetting.intentRecognitionHttpEndpoint.value
+    ) : IConfigurationData {
 
-    override val isTestingEnabled: Boolean get() = intentRecognitionOption != IntentRecognitionOption.Disabled
+        val intentRecognitionOptionList: ImmutableList<IntentRecognitionOption> = IntentRecognitionOption.values().toImmutableList()
 
-    val intentRecognitionHttpEndpointText: String
-        get() = if (isUseCustomIntentRecognitionHttpEndpoint) intentRecognitionHttpEndpoint else
+        val intentRecognitionHttpEndpointText: String = if (isUseCustomIntentRecognitionHttpEndpoint) intentRecognitionHttpEndpoint else
             "${ConfigurationSetting.httpClientServerEndpointHost.value}:${ConfigurationSetting.httpClientServerEndpointPort.value}/${HttpClientPath.TextToIntent.path}"
+
+    }
 
 }

@@ -5,6 +5,8 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.StrictMode
+import android.os.StrictMode.VmPolicy.Builder
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -12,16 +14,47 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
+import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
+import org.rhasspy.mobile.platformspecific.utils.isDebug
+import kotlin.system.exitProcess
 
-actual abstract class NativeApplication : MultiDexApplication() {
+actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
+    private val logger = Logger.withTag("AndroidApplication")
+
+    init {
+        onInit()
+    }
 
     var currentActivity: AppCompatActivity? = null
         private set
 
-    init {
+    actual companion object {
+        private lateinit var koinApplicationInstance: NativeApplication
+        actual val koinApplicationModule = module {
+            single { koinApplicationInstance }
+        }
+    }
+
+    actual fun onInit() {
+        koinApplicationInstance = this
+        //catches all exceptions
+        Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
+            logger.a(exception) { "uncaught exception in Thread $thread" }
+            exitProcess(2)
+        }
+        if (isDebug()) {
+            try {
+                StrictMode.setVmPolicy(Builder(StrictMode.getVmPolicy()).detectAll().detectAll().build())
+            } catch (_: Exception) {
+            }
+        }
         ProcessLifecycleOwner.get().lifecycle.addObserver(object : LifecycleEventObserver {
             override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                 when (event) {
@@ -34,6 +67,8 @@ actual abstract class NativeApplication : MultiDexApplication() {
         })
     }
 
+    actual abstract fun onCreated()
+
     actual override fun onCreate() {
         super.onCreate()
 
@@ -43,7 +78,7 @@ actual abstract class NativeApplication : MultiDexApplication() {
                 //always represents top activity
                 if (p0 is AppCompatActivity) {
                     currentActivity = p0
-                    ExternalResultRequest.registerCallback(p0)
+                    (get<IExternalResultRequest>() as ExternalResultRequest).registerCallback(p0)
                 }
             }
 
@@ -53,6 +88,8 @@ actual abstract class NativeApplication : MultiDexApplication() {
             override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {}
             override fun onActivityDestroyed(p0: Activity) {}
         })
+
+        onCreated()
     }
 
     actual val currentlyAppInBackground = MutableStateFlow(false)
@@ -76,10 +113,8 @@ actual abstract class NativeApplication : MultiDexApplication() {
         }
     }
 
-    actual abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
     actual abstract val isHasStarted: StateFlow<Boolean>
     actual abstract fun resume()
-    actual abstract fun startRecordingAction()
     actual fun closeApp() {
         currentActivity?.moveTaskToBack(false)
     }

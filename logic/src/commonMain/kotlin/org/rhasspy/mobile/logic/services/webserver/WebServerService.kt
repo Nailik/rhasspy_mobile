@@ -26,20 +26,29 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.ktor.getEngine
 import org.rhasspy.mobile.platformspecific.ktor.installCallLogging
 import org.rhasspy.mobile.platformspecific.ktor.installCompression
 import org.rhasspy.mobile.platformspecific.ktor.installConnector
 import org.rhasspy.mobile.platformspecific.readOnly
+
+interface IWebServerService : IService {
+
+    override val serviceState: StateFlow<ServiceState>
+
+}
 
 /**
  * Web server service holds all routes for WebServerPath values
@@ -50,12 +59,17 @@ import org.rhasspy.mobile.platformspecific.readOnly
  * - parameter Invalid: BadRequest
  * - else: determined by Ktor
  */
-class WebServerService(
+internal class WebServerService(
     paramsCreator: WebServerServiceParamsCreator
-) : IService(LogType.WebServerService) {
+) : IWebServerService {
+
+    override val logger = LogType.WebServerService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
+
+    private val nativeApplication by inject<NativeApplication>()
+    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val paramsFlow: StateFlow<WebServerServiceParams> = paramsCreator()
     private val params: WebServerServiceParams get() = paramsFlow.value

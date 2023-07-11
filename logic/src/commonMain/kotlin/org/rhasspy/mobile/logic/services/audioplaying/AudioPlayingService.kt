@@ -7,29 +7,38 @@ import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Sound
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
+import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.logic.services.audiofocus.AudioFocusService
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
-import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
+import org.rhasspy.mobile.logic.services.audiofocus.IAudioFocusService
+import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.services.localaudio.ILocalAudioService
+import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.readOnly
+
+interface IAudioPlayingService : IService {
+    suspend fun playAudio(audioSource: AudioSource)
+    fun stopPlayAudio()
+}
 
 /**
  * calls actions and returns result
  *
  * when data is null the service was most probably mqtt and will return result in a call function
  */
-open class AudioPlayingService(
+internal class AudioPlayingService(
     paramsCreator: AudioPlayingServiceParamsCreator
-) : IService(LogType.AudioPlayingService) {
+) : IAudioPlayingService {
 
-    private val audioFocusService by inject<AudioFocusService>()
-    private val localAudioService by inject<LocalAudioService>()
-    private val httpClientService by inject<HttpClientService>()
-    private val mqttClientService by inject<MqttService>()
+    override val logger = LogType.AudioPlayingService.logger()
+
+    private val audioFocusService by inject<IAudioFocusService>()
+    private val localAudioService by inject<ILocalAudioService>()
+    private val httpClientService by inject<IHttpClientService>()
+    private val mqttClientService by inject<IMqttService>()
+    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
     override val serviceState = _serviceState.readOnly
@@ -55,7 +64,7 @@ open class AudioPlayingService(
      * MQTT:
      * - calls default site to play audio
      */
-    suspend fun playAudio(audioSource: AudioSource) {
+    override suspend fun playAudio(audioSource: AudioSource) {
         logger.d { "playAudio dataSize: $audioSource" }
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local -> {
@@ -82,7 +91,7 @@ open class AudioPlayingService(
     /**
      * stops playing audio when aduio is played locally
      */
-    fun stopPlayAudio() {
+    override fun stopPlayAudio() {
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local -> localAudioService.stop()
             else -> {}
