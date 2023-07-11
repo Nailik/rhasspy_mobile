@@ -1,4 +1,4 @@
-package org.rhasspy.mobile
+package org.rhasspy.mobile.app
 
 import kotlin.test.Test
 import kotlin.test.assertFalse

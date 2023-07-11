@@ -9,12 +9,12 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.component.get
-import org.rhasspy.mobile.MainActivity
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.hasCombinedTestTag
 import org.rhasspy.mobile.android.utils.requestOverlayPermissions
 import org.rhasspy.mobile.android.utils.waitUntilExists
+import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.data.indication.IndicationState
 import org.rhasspy.mobile.logic.services.indication.IIndicationService
 import org.rhasspy.mobile.settings.AppSetting

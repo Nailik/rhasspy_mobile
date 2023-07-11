@@ -1,11 +1,11 @@
 package org.rhasspy.mobile.platformspecific.extensions
 
+import co.touchlab.kermit.Severity
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import okio.FileHandle
-import okio.FileSystem
-import okio.Path
-import okio.Source
+import okio.*
+import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import platform.Foundation.NSDocumentDirectory
@@ -49,7 +49,24 @@ actual fun Path.commonSource(): Source = FileSystem.SYSTEM.source(this)
 
 actual fun Path.commonReadWrite(): FileHandle = FileSystem.SYSTEM.openReadWrite(this, !FileSystem.SYSTEM.exists(this), mustExist = false)
 
-actual inline fun <reified T> Path.commonDecodeLogList(): T = Json.decodeFromString("")
+actual inline fun <reified T> Path.commonDecodeLogList(): T {
+    val fileSource = this.commonSource().buffer()
+    val json = fileSource.use {
+        "[${
+            Json.encodeToString(
+                LogElement(
+                    time = "",
+                    severity = Severity.Assert,
+                    tag = "",
+                    message = "",
+                    throwable = null
+                )
+            )
+        }" + it.readUtf8() + "]"
+    }
+    println(json)
+    return Json.decodeFromString(json)
+}
 
 actual fun Path.commonShare(
     nativeApplication: NativeApplication,

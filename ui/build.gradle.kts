@@ -15,8 +15,8 @@ version = Version.toString()
 kotlin {
 
     cocoapods {
-        summary = "Some description for the Shared Module"
-        homepage = "Link to the Shared Module homepage"
+        summary = "Some description for the ui Module"
+        homepage = "Link to the ui Module homepage"
         ios.deploymentTarget = "14.0"
         podfile = project.file("../iosApp/Podfile")
         framework {
@@ -53,7 +53,6 @@ kotlin {
             }
         }
         val androidMain by getting {
-            dependsOn(commonMain)
             dependencies {
                 implementation(AndroidX.Activity.compose)
                 implementation(AndroidX.Compose.ui)

@@ -26,6 +26,4 @@ expect abstract class NativeApplication() {
 
     fun restart()
 
-    fun onCreate()
-
 }

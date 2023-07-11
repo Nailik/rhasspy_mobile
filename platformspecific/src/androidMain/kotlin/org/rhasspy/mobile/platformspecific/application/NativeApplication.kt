@@ -69,7 +69,7 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
 
     actual abstract fun onCreated()
 
-    actual override fun onCreate() {
+    override fun onCreate() {
         super.onCreate()
 
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {

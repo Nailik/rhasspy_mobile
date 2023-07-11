@@ -14,7 +14,7 @@ internal actual class IntentAction actual constructor(private val nativeApplicat
             it.startActivity(
                 Intent().apply {
                     putExtra(IntentActionType.StartRecording.param, true)
-                    setClassName(nativeApplication, "org.rhasspy.mobile.android.MainActivity")
+                    setClassName(nativeApplication, "org.rhasspy.mobile.app.MainActivity")
                 }
             )
         } ?: run {
@@ -22,7 +22,7 @@ internal actual class IntentAction actual constructor(private val nativeApplicat
                 Intent().apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     putExtra(IntentActionType.StartRecording.param, true)
-                    setClassName(nativeApplication, "org.rhasspy.mobile.android.MainActivity")
+                    setClassName(nativeApplication, "org.rhasspy.mobile.app.MainActivity")
                 }
             )
         }

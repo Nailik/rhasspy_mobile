@@ -4,10 +4,15 @@ on:
   push:
     branches:
       - develop
+  pull_request:
+    types: [ closed ]
+    branches:
+      - develop
 
 jobs:
   #build dev build
   build:
+    if: github.event.pull_request.merged == true
     uses: ./.github/workflows/build-ci.yml
     with:
       BUILD_TYPE: Debug

@@ -25,8 +25,8 @@ kotlin {
 
     //must be a framework else moko resources doesn't generate task to copy files
     cocoapods {
-        summary = "Some description for the Shared Module"
-        homepage = "Link to the Shared Module homepage"
+        summary = "Some description for the resources Module"
+        homepage = "Link to the resources Module homepage"
         ios.deploymentTarget = "14.0"
         podfile = project.file("../iosApp/Podfile")
         framework {
