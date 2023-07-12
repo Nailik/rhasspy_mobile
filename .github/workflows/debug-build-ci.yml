@@ -1,8 +1,7 @@
 name: Debug Build CI
 
 on:
-  pull_request:
-    types: [ closed ]
+  push:
     branches:
       - develop
 
