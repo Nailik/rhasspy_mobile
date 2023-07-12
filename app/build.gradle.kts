@@ -19,8 +19,8 @@ version = Version.toString()
 kotlin {
 
     cocoapods {
-        summary = "Some description for the Shared Module"
-        homepage = "Link to the Shared Module homepage"
+        summary = "Some description for the app Module"
+        homepage = "Link to the app Module homepage"
         ios.deploymentTarget = "14.0"
         podfile = project.file("../iosApp/Podfile")
         framework {
@@ -134,7 +134,7 @@ tasks.withType<KotlinCompile> {
 }
 
 android {
-    namespace = "org.rhasspy.mobile"
+    namespace = "org.rhasspy.mobile.app"
 }
 
 tasks.withType<Test> {

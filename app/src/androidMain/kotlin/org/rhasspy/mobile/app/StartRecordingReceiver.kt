@@ -1,4 +1,4 @@
-package org.rhasspy.mobile
+package org.rhasspy.mobile.app
 
 import android.content.BroadcastReceiver
 import android.content.Context

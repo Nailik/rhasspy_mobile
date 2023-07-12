@@ -10,7 +10,6 @@ plugins {
 version = Version.toString()
 
 kotlin {
-
     sourceSets {
         val commonMain by getting {
             dependencies {

@@ -2,11 +2,8 @@ package org.rhasspy.mobile.widget.microphone
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.compose.runtime.Composable
 import org.rhasspy.mobile.widget.R
 
-
-@Composable
 @DrawableRes
 fun getContainerForMicrophoneFabLegacy(
     isActionEnabled: Boolean,
@@ -19,7 +16,6 @@ fun getContainerForMicrophoneFabLegacy(
     }
 }
 
-@Composable
 @ColorRes
 fun getMicrophoneFabIconLegacy(
     isMicOn: Boolean,

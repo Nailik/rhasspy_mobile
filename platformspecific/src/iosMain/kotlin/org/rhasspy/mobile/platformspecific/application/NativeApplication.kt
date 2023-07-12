@@ -6,7 +6,10 @@ import org.koin.dsl.module
 
 actual abstract class NativeApplication {
 
-    @ThreadLocal
+    init {
+        onInit()
+    }
+
     actual companion object {
         lateinit var koinApplicationInstance: NativeApplication
         actual val koinApplicationModule = module {
@@ -16,6 +19,7 @@ actual abstract class NativeApplication {
 
     actual fun onInit() {
         koinApplicationInstance = this
+        onCreated()
     }
 
     actual val currentlyAppInBackground: MutableStateFlow<Boolean>
@@ -29,10 +33,6 @@ actual abstract class NativeApplication {
     }
 
     actual fun restart() {
-        //TODO("Not yet implemented")
-    }
-
-    actual fun onCreate() {
         //TODO("Not yet implemented")
     }
 

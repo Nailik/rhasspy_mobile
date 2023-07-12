@@ -1,6 +1,6 @@
 @file:Suppress("unused", "FunctionName")
 
-package org.rhasspy.mobile
+package org.rhasspy.mobile.app
 
 import androidx.compose.ui.window.ComposeUIViewController
 import org.koin.core.component.KoinComponent

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile
+package org.rhasspy.mobile.app
 
 import android.os.Bundle
 import androidx.activity.addCallback

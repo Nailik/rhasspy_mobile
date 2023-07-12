@@ -23,10 +23,9 @@ version = Version.toString()
 
 kotlin {
 
-    //must be a framework else moko resources doesn't generate task to copy files
     cocoapods {
-        summary = "Some description for the Shared Module"
-        homepage = "Link to the Shared Module homepage"
+        summary = "Some description for the app Module"
+        homepage = "Link to the app Module homepage"
         ios.deploymentTarget = "14.0"
         podfile = project.file("../iosApp/Podfile")
         framework {
@@ -40,6 +39,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(Icerock.Resources)
+                implementation(Icerock.Resources)
                 implementation(Jetbrains.Kotlinx.atomicfu)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Jetbrains.Compose.ui)

@@ -4,10 +4,15 @@ on:
   push:
     branches:
       - develop
+  pull_request:
+    types: [ closed ]
+    branches:
+      - develop
 
 jobs:
   #build dev build
   build:
+    if: github.event.pull_request.merged == true
     uses: ./.github/workflows/build-ci.yml
     with:
       BUILD_TYPE: Debug
@@ -18,9 +23,16 @@ jobs:
       KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
       KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
   #upload dev build
-  upload:
+  remove:
     runs-on: self-hosted
     needs: build
+    steps:
+      - uses: liudonghua123/delete-release-action@v1
+        with:
+          release_name: nightly
+  upload:
+    runs-on: self-hosted
+    needs: remove
     steps:
       - uses: softprops/action-gh-release@v1
         with:

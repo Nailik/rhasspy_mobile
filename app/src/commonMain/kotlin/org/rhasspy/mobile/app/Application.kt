@@ -1,4 +1,4 @@
-package org.rhasspy.mobile
+package org.rhasspy.mobile.app
 
 import co.touchlab.kermit.ExperimentalKermitApi
 import co.touchlab.kermit.LogWriter
@@ -7,8 +7,6 @@ import co.touchlab.kermit.Severity
 import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -58,7 +56,8 @@ class Application : NativeApplication(), KoinComponent {
             )
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(get<IDispatcherProvider>().IO).launch {
+
             Logger.addLogWriter(get<IFileLogger>() as LogWriter)
             if (!isDebug() && !isInstrumentedTest()) {
                 Logger.addLogWriter(
