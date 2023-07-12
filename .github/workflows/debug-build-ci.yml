@@ -8,7 +8,6 @@ on:
 jobs:
   #build dev build
   build:
-    if: github.event.pull_request.merged == true
     uses: ./.github/workflows/build-ci.yml
     with:
       BUILD_TYPE: Debug
