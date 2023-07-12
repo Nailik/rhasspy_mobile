@@ -2,9 +2,8 @@ target 'iosApp' do
   use_frameworks!
   platform :ios, '14.1'
   pod 'Firebase/Crashlytics'
-  pod 'resources', :path => '../resources'
-  pod 'ui', :path => '../ui'
   pod 'app', :path => '../app'
+  pod 'resources', :path => '../resources'
 end
 
 post_install do |installer|

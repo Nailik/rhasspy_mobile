@@ -64,7 +64,6 @@ actual inline fun <reified T> Path.commonDecodeLogList(): T {
             )
         }" + it.readUtf8() + "]"
     }
-    println(json)
     return Json.decodeFromString(json)
 }
 

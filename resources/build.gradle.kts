@@ -9,6 +9,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     kotlin("multiplatform")
+    kotlin("native.cocoapods")
     id("com.android.library")
     id("dev.icerock.mobile.multiplatform-resources")
     id("com.codingfeline.buildkonfig")
@@ -21,9 +22,23 @@ plugins {
 version = Version.toString()
 
 kotlin {
+
+    cocoapods {
+        summary = "Some description for the app Module"
+        homepage = "Link to the app Module homepage"
+        ios.deploymentTarget = "14.0"
+        podfile = project.file("../iosApp/Podfile")
+        framework {
+            baseName = "resources"
+            isStatic = true
+            export(Icerock.Resources)
+        }
+    }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(Icerock.Resources)
                 implementation(Icerock.Resources)
                 implementation(Jetbrains.Kotlinx.atomicfu)
                 implementation(Icerock.Resources.resourcesCompose)

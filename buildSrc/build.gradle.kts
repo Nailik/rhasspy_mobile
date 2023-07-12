@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     `kotlin-dsl`
 }
@@ -24,14 +22,6 @@ gradlePlugin {
         register("base-gradle") {
             id = "base-gradle"
             implementationClass = "BaseGradle"
-        }
-    }
-}
-
-allprojects {
-    tasks.withType(KotlinCompile::class.java).all {
-        kotlinOptions {
-            freeCompilerArgs += listOf("-P", "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=1.9.0")
         }
     }
 }
