@@ -50,5 +50,6 @@ kotlin {
 
 android {
     namespace = "org.rhasspy.mobile.widget"
+
     buildFeatures.compose = true
 }

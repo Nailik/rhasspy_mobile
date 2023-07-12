@@ -26,6 +26,7 @@ kotlin {
         framework {
             baseName = "app"
             isStatic = true
+            export(Icerock.Resources)
         }
     }
 
@@ -131,6 +132,10 @@ kotlin {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-opt-in=co.touchlab.kermit.ExperimentalKermitApi"
+}
+
+compose {
+    kotlinCompilerPluginArgs.add("suppressKotlinVersionCompatibilityCheck=1.9.0")
 }
 
 android {
