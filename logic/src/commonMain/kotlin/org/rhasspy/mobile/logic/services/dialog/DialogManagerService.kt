@@ -75,6 +75,8 @@ internal class DialogManagerService(
     private val intentRecognitionTimeout get() = params.intentRecognitionTimeout.toDuration(DurationUnit.MILLISECONDS)
     private val recordingTimeout get() = params.recordingTimeout.toDuration(DurationUnit.MILLISECONDS)
 
+
+
     private val _currentDialogState = MutableStateFlow(DialogManagerServiceState.Idle)
     override val currentDialogState = _currentDialogState.readOnly
 
@@ -91,6 +93,11 @@ internal class DialogManagerService(
             }
         }
     }
+
+    //state machine
+    //each state has accepted actions
+    //each state has a transition depending on the action
+    //in the transition data is send and done etc
 
     override fun onAction(action: DialogServiceMiddlewareAction) {
         logger.d { "onAction $action" }
