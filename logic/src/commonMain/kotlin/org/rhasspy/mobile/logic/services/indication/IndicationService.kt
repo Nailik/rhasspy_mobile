@@ -19,7 +19,7 @@ interface IIndicationService : IService {
 
     fun onIdle()
     fun onWakeWordDetected(onFinished: () -> Unit)
-    fun onListening()
+    fun onRecording()
     fun onSilenceDetected()
     fun onThinking()
     fun onPlayAudio()
@@ -72,7 +72,7 @@ internal class IndicationService : IIndicationService {
     /**
      * update indication state
      */
-    override fun onListening() {
+    override fun onRecording() {
         logger.d { "onListening" }
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true

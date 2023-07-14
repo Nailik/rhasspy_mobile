@@ -38,6 +38,7 @@ interface IMqttService : IService {
     val isHasStarted: StateFlow<Boolean>
 
     fun onMessageReceived(topic: String, payload: ByteArray)
+
     suspend fun sessionStarted(sessionId: String): ServiceState
     suspend fun sessionEnded(sessionId: String): ServiceState
     suspend fun intentNotRecognized(sessionId: String): ServiceState

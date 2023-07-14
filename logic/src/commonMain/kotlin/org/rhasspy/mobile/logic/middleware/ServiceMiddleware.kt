@@ -11,7 +11,8 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source.Local
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceState.*
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.IdleState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecordingIntentState
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.services.localaudio.ILocalAudioService
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
@@ -54,11 +55,11 @@ internal class ServiceMiddleware(
     private val _isPlayingRecording = MutableStateFlow(false)
     override val isPlayingRecording = _isPlayingRecording.readOnly
     override val isPlayingRecordingEnabled = combineState(_isPlayingRecording, dialogManagerService.currentDialogState) { playing, state ->
-        playing || (state == Idle || state == AwaitingWakeWord)
+        playing || (state is IdleState)
     }
 
     override val isUserActionEnabled = combineState(_isPlayingRecording, dialogManagerService.currentDialogState) { playingRecording, dialogState ->
-        !playingRecording && (dialogState == Idle || dialogState == AwaitingWakeWord || dialogState == RecordingIntent)
+        !playingRecording && (dialogState is IdleState || dialogState is RecordingIntentState)
     }
     private var shouldResumeHotWordService = false
 
@@ -73,9 +74,7 @@ internal class ServiceMiddleware(
                         }
                         action(PlayFinished(Local))
                     } else {
-                        if (dialogManagerService.currentDialogState.value == Idle ||
-                            dialogManagerService.currentDialogState.value == AwaitingWakeWord
-                        ) {
+                        if (dialogManagerService.currentDialogState.value is IdleState) {
                             _isPlayingRecording.value = true
                             shouldResumeHotWordService = AppSetting.isHotWordEnabled.value
                             action(HotWordToggle(false))
@@ -117,8 +116,8 @@ internal class ServiceMiddleware(
 
     override fun userSessionClick() {
         when (dialogManagerService.currentDialogState.value) {
-            AwaitingWakeWord -> action(WakeWordDetected(Local, "manual"))
-            RecordingIntent -> action(StopListening(Local))
+            is IdleState -> action(WakeWordDetected(Local, "manual"))
+            is RecordingIntentState -> action(StopListening(Local))
             else -> {}
         }
     }

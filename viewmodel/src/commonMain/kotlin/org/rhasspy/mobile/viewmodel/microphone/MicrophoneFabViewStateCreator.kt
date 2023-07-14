@@ -31,7 +31,7 @@ class MicrophoneFabViewStateCreator(
     private fun getViewState(): MicrophoneFabViewState {
         return MicrophoneFabViewState(
             isMicrophonePermissionAllowed = microphonePermission.granted.value,
-            dialogManagerServiceState = dialogManagerService.currentDialogState.value,
+            dialogManagerState = dialogManagerService.currentDialogState.value,
             isUserActionEnabled = serviceMiddleware.isUserActionEnabled.value,
             isShowBorder = wakeWordService.isRecording.value,
             isShowMicOn = microphonePermission.granted.value

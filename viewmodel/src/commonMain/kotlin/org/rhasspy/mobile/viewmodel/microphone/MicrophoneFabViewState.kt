@@ -1,12 +1,13 @@
 package org.rhasspy.mobile.viewmodel.microphone
 
 import androidx.compose.runtime.Stable
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecordingIntentState
 
 @Stable
 data class MicrophoneFabViewState internal constructor(
     val isMicrophonePermissionRequired: Boolean,
-    val dialogManagerServiceState: DialogManagerServiceState,
+    val dialogManagerState: DialogManagerState,
     val isUserActionEnabled: Boolean,
     val isShowBorder: Boolean,
     val isShowMicOn: Boolean,
@@ -15,17 +16,17 @@ data class MicrophoneFabViewState internal constructor(
 
     constructor(
         isMicrophonePermissionAllowed: Boolean,
-        dialogManagerServiceState: DialogManagerServiceState,
+        dialogManagerState: DialogManagerState,
         isUserActionEnabled: Boolean,
         isShowBorder: Boolean,
         isShowMicOn: Boolean
     ) : this(
         isMicrophonePermissionRequired = !isMicrophonePermissionAllowed,
-        dialogManagerServiceState = dialogManagerServiceState,
+        dialogManagerState = dialogManagerState,
         isUserActionEnabled = isUserActionEnabled,
         isShowBorder = isShowBorder,
         isShowMicOn = isShowMicOn,
-        isRecording = dialogManagerServiceState == DialogManagerServiceState.RecordingIntent
+        isRecording = dialogManagerState is RecordingIntentState
     )
 
 }
