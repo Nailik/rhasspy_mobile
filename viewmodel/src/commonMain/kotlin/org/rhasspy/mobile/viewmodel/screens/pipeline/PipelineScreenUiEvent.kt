@@ -8,7 +8,7 @@ sealed interface PipelineScreenUiEvent {
 
         data object StartSession : Action
 
-        data object StopRecording: Action
+        data object StopRecording : Action
 
     }
 
