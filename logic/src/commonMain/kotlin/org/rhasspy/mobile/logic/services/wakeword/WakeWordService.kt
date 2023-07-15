@@ -145,7 +145,7 @@ internal class WakeWordService(
 
             }
 
-            WakeWordOption.MQTT -> {} //nothing will wait for mqtt message
+            WakeWordOption.MQTT -> Unit //nothing will wait for mqtt message
             WakeWordOption.Udp -> {
                 _isRecording.value = true
                 //collect audio from recorder
@@ -156,7 +156,7 @@ internal class WakeWordService(
                 }
             }
 
-            WakeWordOption.Disabled -> {}
+            WakeWordOption.Disabled -> Unit
         }
     }
 
@@ -165,8 +165,8 @@ internal class WakeWordService(
             logger.d { "hotWordAudioFrame dataSize: ${data.size}" }
         }
         when (params.wakeWordOption) {
-            WakeWordOption.Porcupine -> {}
-            WakeWordOption.MQTT -> {} //nothing will wait for mqtt message
+            WakeWordOption.Porcupine -> Unit
+            WakeWordOption.MQTT -> Unit //nothing will wait for mqtt message
             WakeWordOption.Udp -> {
 
                 _serviceState.value = checkUdpConnection()
@@ -177,7 +177,7 @@ internal class WakeWordService(
                 }
             }
 
-            WakeWordOption.Disabled -> {}
+            WakeWordOption.Disabled -> Unit
         }
     }
 

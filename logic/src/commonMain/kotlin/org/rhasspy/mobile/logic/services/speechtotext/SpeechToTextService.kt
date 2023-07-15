@@ -124,7 +124,7 @@ internal class SpeechToTextService(
             }
 
             SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value = mqttClientService.stopListening(sessionId)
-            SpeechToTextOption.Disabled -> {}
+            SpeechToTextOption.Disabled -> Unit
         }
     }
 

@@ -63,8 +63,8 @@ internal class IntentHandlingService(
             IntentHandlingOption.RemoteHTTP -> _serviceState.value =
                 httpClientService.intentHandling(intent).toServiceState()
 
-            IntentHandlingOption.WithRecognition -> {}
-            IntentHandlingOption.Disabled -> {}
+            IntentHandlingOption.WithRecognition -> Unit
+            IntentHandlingOption.Disabled -> Unit
         }
     }
 

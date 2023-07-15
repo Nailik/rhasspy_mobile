@@ -118,7 +118,7 @@ internal class ServiceMiddleware(
         when (dialogManagerService.currentDialogState.value) {
             is IdleState -> action(WakeWordDetected(Local, "manual"))
             is RecordingIntentState -> action(StopListening(Local))
-            else -> {}
+            else -> Unit
         }
     }
 

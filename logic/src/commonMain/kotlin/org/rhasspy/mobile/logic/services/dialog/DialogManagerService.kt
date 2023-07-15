@@ -1,10 +1,13 @@
 package org.rhasspy.mobile.logic.services.dialog
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
@@ -20,6 +23,7 @@ import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerLocal
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerRemoteMqtt
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface IDialogManagerService : IService {
@@ -33,7 +37,7 @@ interface IDialogManagerService : IService {
 
     fun onAction(action: DialogServiceMiddlewareAction)
 
-    suspend fun informMqtt(sessionData: SessionData, action: DialogServiceMiddlewareAction)
+    suspend fun informMqtt(sessionData: SessionData?, action: DialogServiceMiddlewareAction)
 }
 
 /**
@@ -48,7 +52,7 @@ internal class DialogManagerService(
     private val dialogManagerDisabled by inject<DialogManagerDisabled>()
 
 
-    override val dialogHistory = MutableStateFlow<List<Pair<DialogServiceMiddlewareAction, DialogManagerState>>>(listOf())
+    override val dialogHistory = MutableStateFlow<ImmutableList<Pair<DialogServiceMiddlewareAction, DialogManagerState>>>(persistentListOf())
 
     override val logger = LogType.DialogManagerService.logger()
 
@@ -65,8 +69,10 @@ internal class DialogManagerService(
     }
 
     override fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState) {
-        //TODO record
         _currentDialogState.value = state
+        dialogHistory.update {
+            it.updateList { add(Pair(action, state)) }
+        }
     }
 
     override fun onAction(action: DialogServiceMiddlewareAction) {
@@ -80,21 +86,30 @@ internal class DialogManagerService(
     }
 
     override suspend fun informMqtt(
-        sessionData: SessionData,
+        sessionData: SessionData?,
         action: DialogServiceMiddlewareAction
     ) {
         if (action.source !is Source.Mqtt) {
-            when (action) {
-                is AsrError -> mqttService.asrError(sessionData.sessionId)
-                is AsrTextCaptured -> mqttService.asrTextCaptured(sessionData.sessionId, action.text)
-                is WakeWordDetected -> mqttService.hotWordDetected(action.wakeWord)
-                is IntentRecognitionError -> mqttService.intentNotRecognized(sessionData.sessionId)
-                is PlayFinished -> mqttService.playFinished()
-                is SessionEnded -> mqttService.sessionEnded(sessionData.sessionId)
-                is SessionStarted -> mqttService.sessionStarted(sessionData.sessionId)
-                else -> {}
+            if (sessionData != null) {
+                when (action) {
+                    is AsrError -> mqttService.asrError(sessionData.sessionId)
+                    is AsrTextCaptured -> mqttService.asrTextCaptured(sessionData.sessionId, action.text)
+                    is WakeWordDetected -> mqttService.hotWordDetected(action.wakeWord)
+                    is IntentRecognitionError -> mqttService.intentNotRecognized(sessionData.sessionId)
+                    is SessionEnded -> mqttService.sessionEnded(sessionData.sessionId)
+                    is SessionStarted -> mqttService.sessionStarted(sessionData.sessionId)
+                    is PlayFinished -> mqttService.playFinished()
+                    else -> Unit
+                }
+            } else {
+                when (action) {
+                    is WakeWordDetected -> mqttService.hotWordDetected(action.wakeWord)
+                    is PlayFinished -> mqttService.playFinished()
+                    else -> Unit
+                }
             }
         }
+
     }
 
 }

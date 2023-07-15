@@ -84,7 +84,7 @@ internal class AudioPlayingService(
                 serviceMiddleware.action(DialogServiceMiddlewareAction.PlayFinished(Source.Local))
             }
 
-            AudioPlayingOption.Disabled -> {}
+            AudioPlayingOption.Disabled -> Unit
         }
     }
 
@@ -94,7 +94,7 @@ internal class AudioPlayingService(
     override fun stopPlayAudio() {
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local -> localAudioService.stop()
-            else -> {}
+            else -> Unit
         }
     }
 
