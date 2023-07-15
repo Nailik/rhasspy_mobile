@@ -25,7 +25,7 @@ class SettingsScreenViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick -> navigator.onBackPressed()
+            BackClick   -> navigator.onBackPressed()
             is Navigate -> navigator.navigate(action.destination)
         }
     }

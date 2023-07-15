@@ -23,11 +23,11 @@ class AudioFocusSettingsViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            is SelectAudioFocusOption -> AppSetting.audioFocusOption.value = change.option
-            is SetAudioFocusOnDialog -> AppSetting.isAudioFocusOnDialog.value = change.enabled
+            is SelectAudioFocusOption      -> AppSetting.audioFocusOption.value = change.option
+            is SetAudioFocusOnDialog       -> AppSetting.isAudioFocusOnDialog.value = change.enabled
             is SetAudioFocusOnNotification -> AppSetting.isAudioFocusOnNotification.value = change.enabled
-            is SetAudioFocusOnRecord -> AppSetting.isAudioFocusOnRecord.value = change.enabled
-            is SetAudioFocusOnSound -> AppSetting.isAudioFocusOnSound.value = change.enabled
+            is SetAudioFocusOnRecord       -> AppSetting.isAudioFocusOnRecord.value = change.enabled
+            is SetAudioFocusOnSound        -> AppSetting.isAudioFocusOnSound.value = change.enabled
         }
     }
 

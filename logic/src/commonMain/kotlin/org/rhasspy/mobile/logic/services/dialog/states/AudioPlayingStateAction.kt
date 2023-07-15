@@ -29,9 +29,9 @@ internal class AudioPlayingStateAction(
     ) {
 
         when (action) {
-            is PlayFinished -> onPlayFinishedAction(action, state)
+            is PlayFinished     -> onPlayFinishedAction(action, state)
             is StopAudioPlaying -> onStopAudioPlayingAction(action, state)
-            else -> Unit
+            else                -> Unit
         }
 
     }

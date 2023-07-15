@@ -30,12 +30,12 @@ internal class RecordingIntentStateAction(
     ) {
 
         when (action) {
-            is AsrError -> onAsrErrorAction(action, state)
+            is AsrError        -> onAsrErrorAction(action, state)
             is AsrTextCaptured -> onAsrTextCapturedAction(action, state)
-            is EndSession -> onEndSessionAction(action, state)
+            is EndSession      -> onEndSessionAction(action, state)
             is SilenceDetected -> onSilenceDetectedAction(action, state)
-            is StopListening -> onStopListeningAction(action, state)
-            else -> Unit
+            is StopListening   -> onStopListeningAction(action, state)
+            else               -> Unit
         }
 
     }

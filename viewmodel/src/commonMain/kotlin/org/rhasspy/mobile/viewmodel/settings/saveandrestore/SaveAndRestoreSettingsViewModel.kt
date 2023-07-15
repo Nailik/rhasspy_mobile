@@ -28,7 +28,7 @@ class SaveAndRestoreSettingsViewModel(
 
     fun onEvent(event: SaveAndRestoreSettingsUiEvent) {
         when (event) {
-            is Action -> onAction(event)
+            is Action   -> onAction(event)
             is Consumed -> onConsumed(event)
         }
     }
@@ -37,15 +37,15 @@ class SaveAndRestoreSettingsViewModel(
         viewModelScope.launch(dispatcher.IO) {
             _viewState.update {
                 when (action) {
-                    ExportSettingsFile -> it.copy(isSaveSettingsToFileDialogVisible = true)
-                    RestoreSettingsFromFile -> it.copy(isRestoreSettingsFromFileDialogVisible = true)
+                    ExportSettingsFile                -> it.copy(isSaveSettingsToFileDialogVisible = true)
+                    RestoreSettingsFromFile           -> it.copy(isRestoreSettingsFromFileDialogVisible = true)
 
-                    ShareSettingsFile ->
+                    ShareSettingsFile                 ->
                         if (!settingsUtils.shareSettingsFile()) {
                             it.copy(snackBarText = MR.strings.shareSettingsFileFailed.stable)
                         } else it
 
-                    is BackClick -> {
+                    is BackClick                      -> {
                         navigator.onBackPressed()
                         it
                     }

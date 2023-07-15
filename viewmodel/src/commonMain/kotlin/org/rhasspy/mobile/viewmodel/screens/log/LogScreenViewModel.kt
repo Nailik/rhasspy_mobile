@@ -31,8 +31,8 @@ class LogScreenViewModel(
 
     fun onEvent(event: LogScreenUiEvent) {
         when (event) {
-            is Change -> onChange(event)
-            is Action -> onAction(event)
+            is Change   -> onChange(event)
+            is Action   -> onAction(event)
             is Consumed -> onConsumed(event)
         }
     }

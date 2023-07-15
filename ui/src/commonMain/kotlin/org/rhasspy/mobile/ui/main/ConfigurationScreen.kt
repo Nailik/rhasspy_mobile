@@ -49,7 +49,7 @@ fun ConfigurationScreen() {
 
         with(screen) {
             when (this) {
-                OverviewScreen -> {
+                OverviewScreen                       -> {
                     val viewState by viewModel.viewState.collectAsState()
 
                     ConfigurationScreenContent(
@@ -58,16 +58,16 @@ fun ConfigurationScreen() {
                     )
                 }
 
-                AudioPlayingConfigurationScreen -> AudioPlayingConfigurationScreen()
-                DialogManagementConfigurationScreen -> DialogManagementConfigurationScreen()
-                IntentHandlingConfigurationScreen -> IntentHandlingConfigurationScreen()
+                AudioPlayingConfigurationScreen      -> AudioPlayingConfigurationScreen()
+                DialogManagementConfigurationScreen  -> DialogManagementConfigurationScreen()
+                IntentHandlingConfigurationScreen    -> IntentHandlingConfigurationScreen()
                 IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationScreen()
-                MqttConfigurationScreen -> MqttConfigurationScreen()
-                RemoteHermesHttpConfigurationScreen -> RemoteHermesHttpConfigurationScreen()
-                SpeechToTextConfigurationScreen -> SpeechToTextConfigurationScreen()
-                TextToSpeechConfigurationScreen -> TextToSpeechConfigurationScreen()
-                WakeWordConfigurationScreen -> WakeWordConfigurationScreen()
-                WebServerConfigurationScreen -> WebServerConfigurationScreen()
+                MqttConfigurationScreen              -> MqttConfigurationScreen()
+                RemoteHermesHttpConfigurationScreen  -> RemoteHermesHttpConfigurationScreen()
+                SpeechToTextConfigurationScreen      -> SpeechToTextConfigurationScreen()
+                TextToSpeechConfigurationScreen      -> TextToSpeechConfigurationScreen()
+                WakeWordConfigurationScreen          -> WakeWordConfigurationScreen()
+                WebServerConfigurationScreen         -> WebServerConfigurationScreen()
             }
         }
     }

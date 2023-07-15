@@ -51,7 +51,7 @@ fun IndicationSettingsContent() {
         val screen by viewModel.screen.collectAsState()
 
         when (screen) {
-            null -> {
+            null                       -> {
                 val viewState by viewModel.viewState.collectAsState()
                 IndicationSettingsOverview(
                     viewState = viewState,
@@ -71,7 +71,7 @@ fun IndicationSettingsContent() {
                 title = MR.strings.recordedSound.stable
             )
 
-            WakeIndicationSoundScreen -> IndicationSoundScreen(
+            WakeIndicationSoundScreen  -> IndicationSoundScreen(
                 viewModel = viewModelFactory.getViewModel<WakeIndicationSoundSettingsViewModel>(),
                 screen = WakeIndicationSoundScreen,
                 title = MR.strings.wakeSound.stable

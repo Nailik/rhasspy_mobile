@@ -38,8 +38,8 @@ fun Dialog(
         supportingText = {
             when (message) {
                 is StableStringResource -> Text(message)
-                is String -> Text(message)
-                else -> Text(message.toString())
+                is String               -> Text(message)
+                else                    -> Text(message.toString())
             }
         },
         confirmLabel = confirmLabel,

@@ -36,17 +36,17 @@ abstract class ConfigurationViewModel(
 
     fun onEvent(event: IConfigurationUiEvent) {
         when (event) {
-            is Action -> onAction(event)
+            is Action       -> onAction(event)
             is DialogAction -> onDialog(event)
         }
     }
 
     private fun onAction(action: Action) {
         when (action) {
-            Discard -> discard(false)
-            Save -> save(false)
+            Discard                -> discard(false)
+            Save                   -> save(false)
             OpenServiceStateDialog -> _configurationViewState.update { it.copy(dialogState = ServiceStateDialogState(service.serviceState.value)) }
-            BackClick -> navigator.onBackPressed()
+            BackClick              -> navigator.onBackPressed()
         }
     }
 
@@ -59,10 +59,10 @@ abstract class ConfigurationViewModel(
                 when (dialogAction) {
                     is Confirm -> save(true)
                     is Dismiss -> discard(true)
-                    is Close -> _configurationViewState.update { it.copy(dialogState = null) }
+                    is Close   -> _configurationViewState.update { it.copy(dialogState = null) }
                 }
 
-            else -> Unit
+            else                      -> Unit
         }
 
     }

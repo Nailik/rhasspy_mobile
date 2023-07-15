@@ -29,7 +29,7 @@ class HomeScreenViewModel(
     private fun onAction(action: Action) {
         when (action) {
             TogglePlayRecording -> serviceMiddleware.action(PlayStopRecording)
-            MicrophoneFabClick -> requireMicrophonePermission(serviceMiddleware::userSessionClick)
+            MicrophoneFabClick  -> requireMicrophonePermission(serviceMiddleware::userSessionClick)
         }
     }
 

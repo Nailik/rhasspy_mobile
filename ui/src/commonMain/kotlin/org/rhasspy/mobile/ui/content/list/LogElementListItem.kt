@@ -28,11 +28,11 @@ fun LogListElement(item: LogElement) {
 
                 val color = when (item.severity) {
                     Severity.Verbose -> MaterialTheme.colorScheme.color_verbose
-                    Severity.Debug -> MaterialTheme.colorScheme.color_debug
-                    Severity.Info -> MaterialTheme.colorScheme.color_info
-                    Severity.Warn -> MaterialTheme.colorScheme.color_warn
-                    Severity.Error -> MaterialTheme.colorScheme.color_error
-                    Severity.Assert -> MaterialTheme.colorScheme.color_assert
+                    Severity.Debug   -> MaterialTheme.colorScheme.color_debug
+                    Severity.Info    -> MaterialTheme.colorScheme.color_info
+                    Severity.Warn    -> MaterialTheme.colorScheme.color_warn
+                    Severity.Error   -> MaterialTheme.colorScheme.color_error
+                    Severity.Assert  -> MaterialTheme.colorScheme.color_assert
                 }
 
                 Badge(

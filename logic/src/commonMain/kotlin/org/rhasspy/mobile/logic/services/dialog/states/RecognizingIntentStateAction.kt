@@ -29,10 +29,10 @@ internal class RecognizingIntentStateAction(
     ) {
 
         when (action) {
-            is EndSession -> onEndSessionAction(action, state)
-            is IntentRecognitionError -> onIntentRecognitionErrorAction(action, state)
+            is EndSession              -> onEndSessionAction(action, state)
+            is IntentRecognitionError  -> onIntentRecognitionErrorAction(action, state)
             is IntentRecognitionResult -> onIntentRecognitionResultAction(action, state)
-            else -> Unit
+            else                       -> Unit
         }
 
     }

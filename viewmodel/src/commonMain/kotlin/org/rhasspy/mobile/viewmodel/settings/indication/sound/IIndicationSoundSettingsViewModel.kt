@@ -44,18 +44,18 @@ abstract class IIndicationSoundSettingsViewModel(
 
     fun onEvent(event: IIndicationSoundSettingsUiEvent) {
         when (event) {
-            is Change -> onChange(event)
-            is Action -> onAction(event)
+            is Change   -> onChange(event)
+            is Action   -> onAction(event)
             is Consumed -> onConsumed(event)
         }
     }
 
     private fun onChange(change: Change) {
         when (change) {
-            is SetSoundFile -> soundSetting.value = change.file
+            is SetSoundFile             -> soundSetting.value = change.file
             is SetSoundIndicationOption -> soundSetting.value = change.option.name
-            is UpdateSoundVolume -> soundVolume.value = change.volume
-            is AddSoundFile -> {
+            is UpdateSoundVolume        -> soundVolume.value = change.volume
+            is AddSoundFile             -> {
                 val customSounds = customSoundOptions.value.updateList {
                     add(change.file)
                 }
@@ -63,7 +63,7 @@ abstract class IIndicationSoundSettingsViewModel(
                 soundSetting.value = change.file
             }
 
-            is DeleteSoundFile -> {
+            is DeleteSoundFile          -> {
                 if (viewState.value.soundSetting != change.file) {
                     val customSounds = customSoundOptions.value.updateList {
                         remove(change.file)
@@ -95,7 +95,7 @@ abstract class IIndicationSoundSettingsViewModel(
             ToggleAudioPlayerActive ->
                 if (localAudioService.isPlayingState.value) localAudioService.stop() else playSound(localAudioService)
 
-            BackClick -> navigator.onBackPressed()
+            BackClick       -> navigator.onBackPressed()
         }
     }
 

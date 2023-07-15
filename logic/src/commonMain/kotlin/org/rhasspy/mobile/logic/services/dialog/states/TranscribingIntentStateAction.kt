@@ -27,10 +27,10 @@ internal class TranscribingIntentStateAction(
     ) {
 
         when (action) {
-            is AsrError -> onAsrErrorAction(state, action)
+            is AsrError        -> onAsrErrorAction(state, action)
             is AsrTextCaptured -> onAsrTextCapturedAction(state, action)
-            is EndSession -> onEndSessionAction(state, action)
-            else -> Unit
+            is EndSession      -> onEndSessionAction(state, action)
+            else               -> Unit
         }
 
     }

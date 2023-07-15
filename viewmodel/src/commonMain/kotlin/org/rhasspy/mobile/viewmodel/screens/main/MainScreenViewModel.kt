@@ -23,8 +23,8 @@ class MainScreenViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick -> navigator.onBackPressed()
-            is Navigate -> navigator.replace(MainScreenNavigationDestination::class, action.destination)
+            BackClick                  -> navigator.onBackPressed()
+            is Navigate                -> navigator.replace(MainScreenNavigationDestination::class, action.destination)
             is CrashlyticsDialogResult -> {
                 AppSetting.isCrashlyticsEnabled.value = action.result
                 AppSetting.didShowCrashlyticsDialog.value = true

@@ -155,7 +155,7 @@ private fun WakeWordConfigurationOptionContent(
                     onEvent = onEvent
                 )
 
-            else -> {}
+            else               -> {}
         }
 
     }

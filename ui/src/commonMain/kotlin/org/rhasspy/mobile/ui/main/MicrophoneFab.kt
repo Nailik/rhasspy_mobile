@@ -69,17 +69,17 @@ fun MicrophoneFab(
 @Composable
 fun getContainerColorForMicrophoneFab(isActionEnabled: Boolean, isRecording: Boolean): Color {
     return when {
-        isRecording -> MaterialTheme.colorScheme.errorContainer
+        isRecording     -> MaterialTheme.colorScheme.errorContainer
         isActionEnabled -> MaterialTheme.colorScheme.primaryContainer
-        else -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+        else            -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
     }
 }
 
 @Composable
 fun getContentColorForMicrophoneFab(isActionEnabled: Boolean, isRecording: Boolean): Color {
     return when {
-        isRecording -> MaterialTheme.colorScheme.onErrorContainer
+        isRecording     -> MaterialTheme.colorScheme.onErrorContainer
         isActionEnabled -> MaterialTheme.colorScheme.onPrimaryContainer
-        else -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.4f)
+        else            -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.4f)
     }
 }

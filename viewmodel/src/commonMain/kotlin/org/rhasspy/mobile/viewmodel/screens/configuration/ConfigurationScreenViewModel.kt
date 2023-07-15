@@ -25,8 +25,8 @@ class ConfigurationScreenViewModel(
 
     fun onEvent(event: ConfigurationScreenUiEvent) {
         when (event) {
-            is Change -> onChange(event)
-            is Action -> onAction(event)
+            is Change   -> onChange(event)
+            is Action   -> onAction(event)
             is Consumed -> onConsumed(event)
         }
     }
@@ -40,8 +40,8 @@ class ConfigurationScreenViewModel(
     private fun onAction(action: Action) {
         when (action) {
             ScrollToErrorClick -> _viewState.update { it.copy(scrollToError = viewState.value.firstErrorIndex.value) }
-            BackClick -> navigator.onBackPressed()
-            is Navigate -> navigator.navigate(action.destination)
+            BackClick          -> navigator.onBackPressed()
+            is Navigate        -> navigator.navigate(action.destination)
         }
     }
 

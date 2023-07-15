@@ -124,7 +124,7 @@ fun requestExternalStoragePermissions(device: UiDevice) {
             device.executeShellCommand("appops set --uid ${getInstrumentation().targetContext.packageName} MANAGE_EXTERNAL_STORAGE allow")
         }
 
-        else -> return
+        else                                           -> return
     }
     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).listFiles()?.forEach {
         it.deleteRecursively()

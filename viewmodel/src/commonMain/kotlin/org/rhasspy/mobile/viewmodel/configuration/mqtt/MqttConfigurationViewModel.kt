@@ -49,16 +49,16 @@ class MqttConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SetMqttEnabled -> copy(isMqttEnabled = change.enabled)
-                    is SetMqttSSLEnabled -> copy(isMqttSSLEnabled = change.enabled)
+                    is SetMqttEnabled              -> copy(isMqttEnabled = change.enabled)
+                    is SetMqttSSLEnabled           -> copy(isMqttSSLEnabled = change.enabled)
                     is UpdateMqttConnectionTimeout -> copy(mqttConnectionTimeout = change.timeout.toLongOrNullOrConstant())
-                    is UpdateMqttHost -> copy(mqttHost = change.host)
+                    is UpdateMqttHost              -> copy(mqttHost = change.host)
                     is UpdateMqttKeepAliveInterval -> copy(mqttKeepAliveInterval = change.keepAliveInterval.toLongOrNullOrConstant())
-                    is UpdateMqttPassword -> copy(mqttPassword = change.password)
-                    is UpdateMqttPort -> copy(mqttPort = change.port.toIntOrNullOrConstant())
-                    is UpdateMqttRetryInterval -> copy(mqttRetryInterval = change.retryInterval.toLongOrNullOrConstant())
-                    is UpdateMqttUserName -> copy(mqttUserName = change.userName)
-                    is UpdateMqttKeyStoreFile -> copy(mqttKeyStoreFile = change.file)
+                    is UpdateMqttPassword          -> copy(mqttPassword = change.password)
+                    is UpdateMqttPort              -> copy(mqttPort = change.port.toIntOrNullOrConstant())
+                    is UpdateMqttRetryInterval     -> copy(mqttRetryInterval = change.retryInterval.toLongOrNullOrConstant())
+                    is UpdateMqttUserName          -> copy(mqttUserName = change.userName)
+                    is UpdateMqttKeyStoreFile      -> copy(mqttKeyStoreFile = change.file)
                 }
             })
         }
@@ -66,12 +66,12 @@ class MqttConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            OpenMqttSSLWiki -> openLink(LinkType.WikiMQTTSSL)
+            OpenMqttSSLWiki      -> openLink(LinkType.WikiMQTTSSL)
             SelectSSLCertificate -> selectFile(FolderType.CertificateFolder.Mqtt) { path ->
                 onChange(UpdateMqttKeyStoreFile(path))
             }
 
-            BackClick -> navigator.onBackPressed()
+            BackClick            -> navigator.onBackPressed()
         }
     }
 

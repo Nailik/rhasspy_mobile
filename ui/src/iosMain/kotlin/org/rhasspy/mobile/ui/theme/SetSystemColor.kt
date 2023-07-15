@@ -5,8 +5,8 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import org.rhasspy.mobile.icons.resources.DarkThemeColors
-import org.rhasspy.mobile.icons.resources.LightThemeColors
+import org.rhasspy.mobile.resources.DarkThemeColors
+import org.rhasspy.mobile.resources.LightThemeColors
 
 /**
  * HTML text to correctly display html

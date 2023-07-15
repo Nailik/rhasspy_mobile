@@ -24,10 +24,10 @@ class DeviceSettingsViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            is SetAudioOutputEnabled -> AppSetting.isAudioOutputEnabled.value = change.enabled
-            is SetHotWordEnabled -> AppSetting.isHotWordEnabled.value = change.enabled
+            is SetAudioOutputEnabled    -> AppSetting.isAudioOutputEnabled.value = change.enabled
+            is SetHotWordEnabled        -> AppSetting.isHotWordEnabled.value = change.enabled
             is SetIntentHandlingEnabled -> AppSetting.isIntentHandlingEnabled.value = change.enabled
-            is UpdateVolume -> AppSetting.volume.value = change.volume
+            is UpdateVolume             -> AppSetting.volume.value = change.volume
         }
     }
 

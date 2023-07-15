@@ -66,7 +66,7 @@ internal class ServiceMiddleware(
     override fun action(serviceMiddlewareAction: ServiceMiddlewareAction) {
         coroutineScope.launch {
             when (serviceMiddlewareAction) {
-                is PlayStopRecording -> {
+                is PlayStopRecording                  -> {
                     if (_isPlayingRecording.value) {
                         _isPlayingRecording.value = false
                         if (shouldResumeHotWordService) {
@@ -88,13 +88,13 @@ internal class ServiceMiddleware(
                     }
                 }
 
-                is WakeWordError -> mqttService.wakeWordError(serviceMiddlewareAction.description)
+                is WakeWordError                      -> mqttService.wakeWordError(serviceMiddlewareAction.description)
                 is AppSettingsServiceMiddlewareAction -> {
                     when (serviceMiddlewareAction) {
-                        is AudioOutputToggle -> appSettingsService.audioOutputToggle(serviceMiddlewareAction.enabled)
-                        is AudioVolumeChange -> appSettingsService.setAudioVolume(serviceMiddlewareAction.volume)
+                        is AudioOutputToggle    -> appSettingsService.audioOutputToggle(serviceMiddlewareAction.enabled)
+                        is AudioVolumeChange    -> appSettingsService.setAudioVolume(serviceMiddlewareAction.volume)
 
-                        is HotWordToggle -> {
+                        is HotWordToggle        -> {
                             appSettingsService.hotWordToggle(serviceMiddlewareAction.enabled)
                             if (serviceMiddlewareAction.enabled) {
                                 wakeWordService.startDetection()
@@ -107,18 +107,18 @@ internal class ServiceMiddleware(
                     }
                 }
 
-                is SayText -> textToSpeechService.textToSpeech("", serviceMiddlewareAction.text)
-                is DialogServiceMiddlewareAction -> dialogManagerService.onAction(serviceMiddlewareAction)
-                is Mqtt -> mqttService.onMessageReceived(serviceMiddlewareAction.topic, serviceMiddlewareAction.payload)
+                is SayText                            -> textToSpeechService.textToSpeech("", serviceMiddlewareAction.text)
+                is DialogServiceMiddlewareAction      -> dialogManagerService.onAction(serviceMiddlewareAction)
+                is Mqtt                               -> mqttService.onMessageReceived(serviceMiddlewareAction.topic, serviceMiddlewareAction.payload)
             }
         }
     }
 
     override fun userSessionClick() {
         when (dialogManagerService.currentDialogState.value) {
-            is IdleState -> action(WakeWordDetected(Local, "manual"))
+            is IdleState            -> action(WakeWordDetected(Local, "manual"))
             is RecordingIntentState -> action(StopListening(Local))
-            else -> Unit
+            else                    -> Unit
         }
     }
 

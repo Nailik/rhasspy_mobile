@@ -33,7 +33,7 @@ internal class IdleStateAction(
 
         val newSessionId = when (action.source) {
             Source.HttpApi -> uuid4().toString()
-            Source.Local -> uuid4().toString()
+            Source.Local   -> uuid4().toString()
             is Source.Mqtt -> action.source.sessionId ?: uuid4().toString()
         }
 
@@ -60,7 +60,7 @@ internal class IdleStateAction(
                 onStartAction(sessionData, action)
             }
 
-            is PlayAudio -> {
+            is PlayAudio    -> {
                 val sessionData = SessionData(
                     sessionId = newSessionId,
                     sendAudioCaptured = false,
@@ -71,7 +71,7 @@ internal class IdleStateAction(
                 onPlayAudio(sessionData, action)
             }
 
-            else -> Unit
+            else            -> Unit
         }
 
     }

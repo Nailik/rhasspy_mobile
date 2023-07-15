@@ -73,7 +73,7 @@ internal class IntentRecognitionService(
                 val result = httpClientService.recognizeIntent(text)
                 _serviceState.value = result.toServiceState()
                 val action = when (result) {
-                    is HttpClientResult.Error -> DialogServiceMiddlewareAction.IntentRecognitionError(Source.HttpApi)
+                    is HttpClientResult.Error   -> DialogServiceMiddlewareAction.IntentRecognitionError(Source.HttpApi)
                     is HttpClientResult.Success -> DialogServiceMiddlewareAction.IntentRecognitionResult(
                         Source.HttpApi,
                         readIntentNameFromJson(result.data),
@@ -84,7 +84,7 @@ internal class IntentRecognitionService(
             }
 
             IntentRecognitionOption.RemoteMQTT -> _serviceState.value = mqttClientService.recognizeIntent(sessionId, text)
-            IntentRecognitionOption.Disabled -> serviceMiddleware.action(DialogServiceMiddlewareAction.IntentRecognitionResult(Source.Local, "", ""))
+            IntentRecognitionOption.Disabled   -> serviceMiddleware.action(DialogServiceMiddlewareAction.IntentRecognitionResult(Source.Local, "", ""))
         }
     }
 

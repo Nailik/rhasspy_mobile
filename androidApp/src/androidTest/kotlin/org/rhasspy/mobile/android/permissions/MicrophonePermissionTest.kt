@@ -51,7 +51,7 @@ class MicrophonePermissionTest : FlakyTest() {
     //.google is on devices with google play services and is missing on devices without play services
     private val permissionDialogPackageNameRegex = when {
         Build.VERSION.SDK_INT >= 29 -> ".*permissioncontroller"
-        else -> ".*packageinstaller"
+        else                        -> ".*packageinstaller"
     }
 
     private val indexOffset = 1

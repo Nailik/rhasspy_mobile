@@ -67,7 +67,7 @@ internal class AudioPlayingService(
     override suspend fun playAudio(audioSource: AudioSource) {
         logger.d { "playAudio dataSize: $audioSource" }
         when (params.audioPlayingOption) {
-            AudioPlayingOption.Local -> {
+            AudioPlayingOption.Local    -> {
                 audioFocusService.request(Sound)
                 _serviceState.value = localAudioService.playAudio(audioSource)
                 audioFocusService.abandon(Sound)
@@ -94,7 +94,7 @@ internal class AudioPlayingService(
     override fun stopPlayAudio() {
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local -> localAudioService.stop()
-            else -> Unit
+            else                     -> Unit
         }
     }
 

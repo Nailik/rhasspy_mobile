@@ -93,7 +93,7 @@ internal class WakeWordService(
                 checkPorcupineInitialized()
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
-            WakeWordOption.MQTT -> {
+            WakeWordOption.MQTT      -> {
                 _serviceState.value = ServiceState.Loading
 
                 udpConnection = UdpConnection(
@@ -104,8 +104,8 @@ internal class WakeWordService(
                 checkUdpConnection()
             }
 
-            WakeWordOption.Udp -> ServiceState.Success
-            WakeWordOption.Disabled -> ServiceState.Disabled
+            WakeWordOption.Udp       -> ServiceState.Success
+            WakeWordOption.Disabled  -> ServiceState.Disabled
         }
     }
 
@@ -145,8 +145,8 @@ internal class WakeWordService(
 
             }
 
-            WakeWordOption.MQTT -> Unit //nothing will wait for mqtt message
-            WakeWordOption.Udp -> {
+            WakeWordOption.MQTT      -> Unit //nothing will wait for mqtt message
+            WakeWordOption.Udp       -> {
                 _isRecording.value = true
                 //collect audio from recorder
                 if (recording == null) {
@@ -156,7 +156,7 @@ internal class WakeWordService(
                 }
             }
 
-            WakeWordOption.Disabled -> Unit
+            WakeWordOption.Disabled  -> Unit
         }
     }
 
@@ -166,8 +166,8 @@ internal class WakeWordService(
         }
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> Unit
-            WakeWordOption.MQTT -> Unit //nothing will wait for mqtt message
-            WakeWordOption.Udp -> {
+            WakeWordOption.MQTT      -> Unit //nothing will wait for mqtt message
+            WakeWordOption.Udp       -> {
 
                 _serviceState.value = checkUdpConnection()
 
@@ -177,7 +177,7 @@ internal class WakeWordService(
                 }
             }
 
-            WakeWordOption.Disabled -> Unit
+            WakeWordOption.Disabled  -> Unit
         }
     }
 

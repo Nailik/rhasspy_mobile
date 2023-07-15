@@ -2,11 +2,9 @@ package org.rhasspy.mobile.viewmodel.screens.dialog
 
 sealed interface DialogScreenUiEvent {
 
-    sealed interface Action : DialogScreenUiEvent {
+    sealed interface Change : DialogScreenUiEvent {
 
-        data object StartSession : Action
-
-        data object StopRecording : Action
+        data object ToggleListAutoScroll : Change
 
     }
 

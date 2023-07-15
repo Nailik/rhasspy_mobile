@@ -18,7 +18,6 @@ import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioOutputToggle
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
@@ -261,11 +260,11 @@ internal class MqttService(
 
             MqttTopicsSubscription.PlayBytes.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                .matches(topic) -> {
+                .matches(topic)                                         -> {
                 playBytes(payload)
             }
 
-            else -> return false
+            else                                                        -> return false
         }
         return true
     }
@@ -288,36 +287,36 @@ internal class MqttService(
                 //validate site id
                 if (jsonObject.isThisSiteId()) {
                     when (mqttTopic) {
-                        MqttTopicsSubscription.StartSession -> startSession(jsonObject)
-                        MqttTopicsSubscription.EndSession -> endSession(jsonObject)
-                        MqttTopicsSubscription.SessionStarted -> sessionStarted(jsonObject)
-                        MqttTopicsSubscription.SessionEnded -> sessionEnded(jsonObject)
-                        MqttTopicsSubscription.HotWordToggleOn -> hotWordToggleOn()
-                        MqttTopicsSubscription.HotWordToggleOff -> hotWordToggleOff()
-                        MqttTopicsSubscription.AsrStartListening -> startListening(jsonObject)
-                        MqttTopicsSubscription.AsrStopListening -> stopListening(jsonObject)
-                        MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
-                        MqttTopicsSubscription.AsrError -> asrError(jsonObject)
-                        MqttTopicsSubscription.IntentNotRecognized -> intentNotRecognized(jsonObject)
-                        MqttTopicsSubscription.IntentHandlingToggleOn -> intentHandlingToggleOn()
+                        MqttTopicsSubscription.StartSession            -> startSession(jsonObject)
+                        MqttTopicsSubscription.EndSession              -> endSession(jsonObject)
+                        MqttTopicsSubscription.SessionStarted          -> sessionStarted(jsonObject)
+                        MqttTopicsSubscription.SessionEnded            -> sessionEnded(jsonObject)
+                        MqttTopicsSubscription.HotWordToggleOn         -> hotWordToggleOn()
+                        MqttTopicsSubscription.HotWordToggleOff        -> hotWordToggleOff()
+                        MqttTopicsSubscription.AsrStartListening       -> startListening(jsonObject)
+                        MqttTopicsSubscription.AsrStopListening        -> stopListening(jsonObject)
+                        MqttTopicsSubscription.AsrTextCaptured         -> asrTextCaptured(jsonObject)
+                        MqttTopicsSubscription.AsrError                -> asrError(jsonObject)
+                        MqttTopicsSubscription.IntentNotRecognized     -> intentNotRecognized(jsonObject)
+                        MqttTopicsSubscription.IntentHandlingToggleOn  -> intentHandlingToggleOn()
                         MqttTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff()
-                        MqttTopicsSubscription.AudioOutputToggleOff -> audioOutputToggleOff()
-                        MqttTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn()
-                        MqttTopicsSubscription.HotWordDetected -> hotWordDetectedCalled(topic)
+                        MqttTopicsSubscription.AudioOutputToggleOff    -> audioOutputToggleOff()
+                        MqttTopicsSubscription.AudioOutputToggleOn     -> audioOutputToggleOn()
+                        MqttTopicsSubscription.HotWordDetected         -> hotWordDetectedCalled(topic)
                         MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(
                             jsonObject
                         )
 
-                        MqttTopicsSubscription.SetVolume -> setVolume(jsonObject)
-                        else -> {
+                        MqttTopicsSubscription.SetVolume               -> setVolume(jsonObject)
+                        else                                           -> {
                             logger.d { "isThisSiteId mqttTopic notFound $topic" }
                         }
                     }
                 } else {
                     when (mqttTopic) {
                         MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
-                        MqttTopicsSubscription.AsrError -> asrError(jsonObject)
-                        else -> {
+                        MqttTopicsSubscription.AsrError        -> asrError(jsonObject)
+                        else                                   -> {
                             logger.d { "isNotThisSiteId mqttTopic notFound $topic" }
                         }
                     }
@@ -884,8 +883,8 @@ internal class MqttService(
             MqttMessage(
                 @Suppress("DEPRECATION")
                 when (audioSource) {
-                    is AudioSource.Data -> audioSource.data
-                    is AudioSource.File -> audioSource.path.commonSource().buffer().readByteArray()
+                    is AudioSource.Data     -> audioSource.data
+                    is AudioSource.File     -> audioSource.path.commonSource().buffer().readByteArray()
                     is AudioSource.Resource -> audioSource.fileResource.commonData(nativeApplication)
                 }
             )
@@ -969,13 +968,13 @@ internal class MqttService(
 
     private fun getMqttTopic(topic: String): MqttTopicsSubscription? {
         return when {
-            MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> MqttTopicsSubscription.HotWordDetected
+            MqttTopicsSubscription.HotWordDetected.topic.matches(topic)         -> MqttTopicsSubscription.HotWordDetected
             MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> MqttTopicsSubscription.IntentRecognitionResult
             MqttTopicsSubscription.PlayBytes.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                .matches(topic) -> MqttTopicsSubscription.IntentRecognitionResult
+                .matches(topic)                                                 -> MqttTopicsSubscription.IntentRecognitionResult
 
-            else -> MqttTopicsSubscription.fromTopic(topic)
+            else                                                                -> MqttTopicsSubscription.fromTopic(topic)
         }
     }
 

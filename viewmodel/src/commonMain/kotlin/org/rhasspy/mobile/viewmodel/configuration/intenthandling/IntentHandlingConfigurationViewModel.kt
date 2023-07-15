@@ -47,10 +47,10 @@ class IntentHandlingConfigurationViewModel(
             it.copy(editData = with(it.editData) {
                 when (change) {
                     is ChangeIntentHandlingHomeAssistantAccessToken -> copy(intentHandlingHomeAssistantAccessToken = change.token)
-                    is ChangeIntentHandlingHomeAssistantEndpoint -> copy(intentHandlingHomeAssistantEndpoint = change.endpoint)
-                    is ChangeIntentHandlingHttpEndpoint -> copy(intentHandlingHttpEndpoint = change.endpoint)
-                    is SelectIntentHandlingHomeAssistantOption -> copy(intentHandlingHomeAssistantOption = change.option)
-                    is SelectIntentHandlingOption -> copy(intentHandlingOption = change.option)
+                    is ChangeIntentHandlingHomeAssistantEndpoint    -> copy(intentHandlingHomeAssistantEndpoint = change.endpoint)
+                    is ChangeIntentHandlingHttpEndpoint             -> copy(intentHandlingHttpEndpoint = change.endpoint)
+                    is SelectIntentHandlingHomeAssistantOption      -> copy(intentHandlingHomeAssistantOption = change.option)
+                    is SelectIntentHandlingOption                   -> copy(intentHandlingOption = change.option)
                 }
             })
         }

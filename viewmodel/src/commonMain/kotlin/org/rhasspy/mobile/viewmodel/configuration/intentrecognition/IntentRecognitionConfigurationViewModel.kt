@@ -47,8 +47,8 @@ class IntentRecognitionConfigurationViewModel(
             it.copy(editData = with(it.editData) {
                 when (change) {
                     is ChangeIntentRecognitionHttpEndpoint -> copy(intentRecognitionHttpEndpoint = change.endpoint)
-                    is SelectIntentRecognitionOption -> copy(intentRecognitionOption = change.option)
-                    is SetUseCustomHttpEndpoint -> copy(isUseCustomIntentRecognitionHttpEndpoint = change.enabled)
+                    is SelectIntentRecognitionOption       -> copy(intentRecognitionOption = change.option)
+                    is SetUseCustomHttpEndpoint            -> copy(isUseCustomIntentRecognitionHttpEndpoint = change.enabled)
                 }
             })
         }

@@ -48,11 +48,11 @@ fun Indication(indicationState: IndicationState) {
     ) {
 
         when (indicationState) {
-            Idle -> {}
-            WakeUp -> WakeupIndication()
+            Idle      -> {}
+            WakeUp    -> WakeupIndication()
             Recording -> RecordingIndication()
-            Thinking -> ThinkingIndication()
-            Speaking -> SpeakingIndication()
+            Thinking  -> ThinkingIndication()
+            Speaking  -> SpeakingIndication()
         }
     }
 }
@@ -205,7 +205,7 @@ private fun IndicationCircle(color: Color, item: Int, current: Float) {
         val height = abs(item - current)
         return when {
             height < 1.5f -> height
-            else -> 1f
+            else          -> 1f
         }
     }
 

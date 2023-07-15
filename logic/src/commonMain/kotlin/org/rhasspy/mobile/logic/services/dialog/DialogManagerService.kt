@@ -78,9 +78,9 @@ internal class DialogManagerService(
     override fun onAction(action: DialogServiceMiddlewareAction) {
         coroutineScope.launch {
             when (ConfigurationSetting.dialogManagementOption.value) {
-                Local -> dialogManagerLocal.onAction(action)
+                Local      -> dialogManagerLocal.onAction(action)
                 RemoteMQTT -> dialogManagerRemoteMqtt.onAction(action)
-                Disabled -> dialogManagerDisabled.onAction(action)
+                Disabled   -> dialogManagerDisabled.onAction(action)
             }
         }
     }
@@ -92,20 +92,20 @@ internal class DialogManagerService(
         if (action.source !is Source.Mqtt) {
             if (sessionData != null) {
                 when (action) {
-                    is AsrError -> mqttService.asrError(sessionData.sessionId)
-                    is AsrTextCaptured -> mqttService.asrTextCaptured(sessionData.sessionId, action.text)
-                    is WakeWordDetected -> mqttService.hotWordDetected(action.wakeWord)
+                    is AsrError               -> mqttService.asrError(sessionData.sessionId)
+                    is AsrTextCaptured        -> mqttService.asrTextCaptured(sessionData.sessionId, action.text)
+                    is WakeWordDetected       -> mqttService.hotWordDetected(action.wakeWord)
                     is IntentRecognitionError -> mqttService.intentNotRecognized(sessionData.sessionId)
-                    is SessionEnded -> mqttService.sessionEnded(sessionData.sessionId)
-                    is SessionStarted -> mqttService.sessionStarted(sessionData.sessionId)
-                    is PlayFinished -> mqttService.playFinished()
-                    else -> Unit
+                    is SessionEnded           -> mqttService.sessionEnded(sessionData.sessionId)
+                    is SessionStarted         -> mqttService.sessionStarted(sessionData.sessionId)
+                    is PlayFinished           -> mqttService.playFinished()
+                    else                      -> Unit
                 }
             } else {
                 when (action) {
                     is WakeWordDetected -> mqttService.hotWordDetected(action.wakeWord)
-                    is PlayFinished -> mqttService.playFinished()
-                    else -> Unit
+                    is PlayFinished     -> mqttService.playFinished()
+                    else                -> Unit
                 }
             }
         }

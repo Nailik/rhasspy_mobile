@@ -26,11 +26,11 @@ internal class DialogManagerLocal(
         with(dialogManagerService.currentDialogState.value) {
             if (checkIfActionIsAllowed(this, action)) {
                 when (this) {
-                    is IdleState -> idleStateAction.onAction(action)
-                    is RecordingIntentState -> recordingIntentStateAction.onAction(action, this)
+                    is IdleState               -> idleStateAction.onAction(action)
+                    is RecordingIntentState    -> recordingIntentStateAction.onAction(action, this)
                     is TranscribingIntentState -> transcribingIntentState.onAction(action, this)
-                    is RecognizingIntentState -> recognizingIntentStateAction.onAction(action, this)
-                    is AudioPlayingState -> audioPlayingStateAction.onAction(action, this)
+                    is RecognizingIntentState  -> recognizingIntentStateAction.onAction(action, this)
+                    is AudioPlayingState       -> audioPlayingStateAction.onAction(action, this)
                 }
             }
         }
@@ -51,7 +51,7 @@ internal class DialogManagerLocal(
             }
 
             is AsrError,
-            is AsrTextCaptured ->
+            is AsrTextCaptured  ->
                 ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteMQTT
 
             is IntentRecognitionError,
@@ -61,7 +61,7 @@ internal class DialogManagerLocal(
             is PlayAudio,
             is StopAudioPlaying -> true
 
-            else -> false
+            else                -> false
         }
 
     }

@@ -55,9 +55,9 @@ class DialogManagementConfigurationViewModel(
             it.copy(editData = with(it.editData) {
                 when (change) {
                     is ChangeIntentRecognitionTimeout -> copy(intentRecognitionTimeout = change.timeout.toLongOrNullOrConstant())
-                    is ChangeRecordingTimeout -> copy(recordingTimeout = change.timeout.toLongOrNullOrConstant())
-                    is ChangeTextAsrTimeout -> copy(textAsrTimeout = change.timeout.toLongOrNullOrConstant())
-                    is SelectDialogManagementOption -> copy(dialogManagementOption = change.option)
+                    is ChangeRecordingTimeout         -> copy(recordingTimeout = change.timeout.toLongOrNullOrConstant())
+                    is ChangeTextAsrTimeout           -> copy(textAsrTimeout = change.timeout.toLongOrNullOrConstant())
+                    is SelectDialogManagementOption   -> copy(dialogManagementOption = change.option)
                 }
             })
         }

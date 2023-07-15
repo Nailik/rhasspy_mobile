@@ -78,8 +78,8 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
 
     override fun onEvent(event: ScreenViewModelUiEvent) {
         when (event) {
-            is Action -> onAction(event)
-            is Dialog -> onDialog(event)
+            is Action   -> onAction(event)
+            is Dialog   -> onDialog(event)
             is SnackBar -> onSnackBar(event)
         }
     }
@@ -87,7 +87,7 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
     private fun onAction(action: Action) {
         when (action) {
             RequestMicrophonePermission -> onRequestMicrophonePermission(false)
-            RequestOverlayPermission -> onRequestOverlayPermission(false)
+            RequestOverlayPermission    -> onRequestOverlayPermission(false)
         }
     }
 
@@ -100,7 +100,7 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
             is Confirm -> {
                 when (dialog.dialogState) {
                     MicrophonePermissionInfo -> onRequestMicrophonePermission(true)
-                    OverlayPermissionInfo -> onRequestOverlayPermission(true)
+                    OverlayPermissionInfo    -> onRequestOverlayPermission(true)
                 }
             }
         }
@@ -109,7 +109,7 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
     private fun onSnackBar(snackBar: SnackBar) {
         _screenViewState.update { it.copy(snackBarState = null) }
         when (snackBar) {
-            Consumed -> Unit
+            Consumed           -> Unit
             is SnackBar.Action -> {
                 when (snackBar.snackBarState) {
                     MicrophonePermissionRequestDenied,
@@ -118,7 +118,7 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
                             _screenViewState.update { it.copy(snackBarState = MicrophonePermissionRequestFailed) }
                         }
 
-                    else -> Unit
+                    else                              -> Unit
                 }
             }
         }

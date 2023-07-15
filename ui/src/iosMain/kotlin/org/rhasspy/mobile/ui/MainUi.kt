@@ -28,7 +28,7 @@ fun MainUi(
 
         Crossfade(targetState = isHasStarted.collectAsState().value) { hasStarted ->
             when (hasStarted) {
-                true -> MainScreen(viewModelFactory)
+                true  -> MainScreen(viewModelFactory)
                 false -> SplashScreen()
             }
         }

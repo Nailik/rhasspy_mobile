@@ -224,8 +224,8 @@ internal class HttpClientService(
         logger.d { "playWav size: $audioSource" }
         @Suppress("DEPRECATION")
         val body = when (audioSource) {
-            is Data -> audioSource.data
-            is File -> StreamContent(audioSource.path)
+            is Data     -> audioSource.data
+            is File     -> StreamContent(audioSource.path)
             is Resource -> audioSource.fileResource.commonData(nativeApplication)
         }
         return post(audioPlayingUrl) {

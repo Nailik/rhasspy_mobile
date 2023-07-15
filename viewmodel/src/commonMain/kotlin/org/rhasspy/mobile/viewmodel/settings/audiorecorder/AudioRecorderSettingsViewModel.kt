@@ -25,8 +25,8 @@ class AudioRecorderSettingsViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            is SelectAudioRecorderChannelType -> AppSetting.audioRecorderChannel.value = change.audioRecorderChannelType
-            is SelectAudioRecorderEncodingType -> AppSetting.audioRecorderEncoding.value = change.audioRecorderEncodingType
+            is SelectAudioRecorderChannelType    -> AppSetting.audioRecorderChannel.value = change.audioRecorderChannelType
+            is SelectAudioRecorderEncodingType   -> AppSetting.audioRecorderEncoding.value = change.audioRecorderEncodingType
             is SelectAudioRecorderSampleRateType -> AppSetting.audioRecorderSampleRate.value = change.audioRecorderSampleRateType
         }
     }

@@ -20,9 +20,9 @@ internal class AudioFocusService : IAudioFocusService {
     private fun shouldRequest(reason: AudioFocusRequestReason): Boolean {
         return when (reason) {
             Notification -> AppSetting.isAudioFocusOnNotification.value
-            Sound -> AppSetting.isAudioFocusOnSound.value
-            Record -> AppSetting.isAudioFocusOnRecord.value
-            Dialog -> AppSetting.isAudioFocusOnDialog.value
+            Sound        -> AppSetting.isAudioFocusOnSound.value
+            Record       -> AppSetting.isAudioFocusOnRecord.value
+            Dialog       -> AppSetting.isAudioFocusOnDialog.value
         }
     }
 

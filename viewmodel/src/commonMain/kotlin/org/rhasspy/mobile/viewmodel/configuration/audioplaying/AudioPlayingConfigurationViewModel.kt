@@ -54,11 +54,11 @@ class AudioPlayingConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SelectEditAudioPlayingOption -> copy(audioPlayingOption = change.option)
-                    is SelectAudioOutputOption -> copy(audioOutputOption = change.option)
-                    is SetUseCustomHttpEndpoint -> copy(isUseCustomAudioPlayingHttpEndpoint = change.enabled)
+                    is SelectEditAudioPlayingOption       -> copy(audioPlayingOption = change.option)
+                    is SelectAudioOutputOption            -> copy(audioOutputOption = change.option)
+                    is SetUseCustomHttpEndpoint           -> copy(isUseCustomAudioPlayingHttpEndpoint = change.enabled)
                     is ChangeEditAudioPlayingHttpEndpoint -> copy(audioPlayingHttpEndpoint = change.enabled)
-                    is ChangeEditAudioPlayingMqttSiteId -> copy(audioPlayingMqttSiteId = change.siteId)
+                    is ChangeEditAudioPlayingMqttSiteId   -> copy(audioPlayingMqttSiteId = change.siteId)
                 }
             })
         }

@@ -107,11 +107,11 @@ private fun MainScreenContent(
     Column {
         Box(modifier = Modifier.weight(1f)) {
             when (screen) {
-                HomeScreen -> HomeScreen()
-                DialogScreen -> DialogScreen()
+                HomeScreen          -> HomeScreen()
+                DialogScreen        -> DialogScreen()
                 ConfigurationScreen -> ConfigurationScreen()
-                SettingsScreen -> SettingsScreen()
-                LogScreen -> LogScreen()
+                SettingsScreen      -> SettingsScreen()
+                LogScreen           -> LogScreen()
             }
         }
 

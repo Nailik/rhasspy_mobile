@@ -29,7 +29,7 @@ class IndicationSettingsViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            is SetSoundIndicationEnabled -> AppSetting.isSoundIndicationEnabled.value = change.enabled
+            is SetSoundIndicationEnabled         -> AppSetting.isSoundIndicationEnabled.value = change.enabled
             is SelectSoundIndicationOutputOption -> AppSetting.soundIndicationOutputOption.value = change.option
             is SetWakeWordDetectionTurnOnDisplay -> AppSetting.isWakeWordDetectionTurnOnDisplayEnabled.value = change.enabled
             is SetWakeWordLightIndicationEnabled -> {
@@ -42,7 +42,7 @@ class IndicationSettingsViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick -> navigator.onBackPressed()
+            BackClick   -> navigator.onBackPressed()
             is Navigate -> navigator.navigate(action.destination)
         }
     }

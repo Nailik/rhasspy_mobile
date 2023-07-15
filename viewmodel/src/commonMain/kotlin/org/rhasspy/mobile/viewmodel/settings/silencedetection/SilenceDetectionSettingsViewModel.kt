@@ -51,7 +51,7 @@ class SilenceDetectionSettingsViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            is SetSilenceDetectionEnabled ->
+            is SetSilenceDetectionEnabled        ->
                 AppSetting.isAutomaticSilenceDetectionEnabled.value = change.enabled
 
             is UpdateSilenceDetectionAudioLevelLogarithm ->
@@ -62,7 +62,7 @@ class SilenceDetectionSettingsViewModel(
             is UpdateSilenceDetectionMinimumTime ->
                 AppSetting.automaticSilenceDetectionMinimumTime.value = change.time.toLongOrNull()
 
-            is UpdateSilenceDetectionTime ->
+            is UpdateSilenceDetectionTime        ->
                 AppSetting.automaticSilenceDetectionTime.value = change.time.toLongOrNull()
         }
     }

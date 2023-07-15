@@ -48,13 +48,13 @@ open class ISetting<T>(
     @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
     private fun saveValue(newValue: T) {
         when (initial) {
-            is String -> settings[key.name] = newValue as String
-            is Int -> settings[key.name] = newValue as Int
-            is Float -> settings[key.name] = newValue as Float
-            is Long -> settings[key.name] = newValue as Long
-            is Boolean -> settings[key.name] = newValue as Boolean
+            is String     -> settings[key.name] = newValue as String
+            is Int        -> settings[key.name] = newValue as Int
+            is Float      -> settings[key.name] = newValue as Float
+            is Long       -> settings[key.name] = newValue as Long
+            is Boolean    -> settings[key.name] = newValue as Boolean
             is IOption<*> -> settings[key.name] = (newValue as IOption<*>).name
-            else -> serializer?.let {
+            else          -> serializer?.let {
                 settings.encodeValue(serializer, key.name, newValue)
             } ?: run {
                 logger.a { "save value unsupported type initial: $initial key: ${key.name}" }
@@ -69,13 +69,13 @@ open class ISetting<T>(
     @Suppress("UNCHECKED_CAST")
     private fun readValue(): T {
         return when (initial) {
-            is String -> settings[key.name, initial]
-            is Int -> settings[key.name, initial]
-            is Float -> settings[key.name, initial]
-            is Long -> settings[key.name, initial]
-            is Boolean -> settings[key.name, initial]
+            is String     -> settings[key.name, initial]
+            is Int        -> settings[key.name, initial]
+            is Float      -> settings[key.name, initial]
+            is Long       -> settings[key.name, initial]
+            is Boolean    -> settings[key.name, initial]
             is IOption<*> -> initial.findValue(settings[key.name, initial.name])
-            else -> serializer?.let {
+            else          -> serializer?.let {
                 settings.decodeValue(serializer, key.name, initial)
             } ?: initial
         } as T

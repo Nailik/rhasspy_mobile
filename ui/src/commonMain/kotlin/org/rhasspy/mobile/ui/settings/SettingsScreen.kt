@@ -49,7 +49,7 @@ fun SettingsScreen() {
         val screen by viewModel.screen.collectAsState()
 
         when (screen) {
-            null -> {
+            null                      -> {
                 val viewState by viewModel.viewState.collectAsState()
 
                 SettingsScreenContent(
@@ -58,17 +58,17 @@ fun SettingsScreen() {
                 )
             }
 
-            AboutSettings -> AboutScreen()
-            AudioFocusSettings -> AudioFocusSettingsContent()
-            AudioRecorderSettings -> AudioRecorderSettingsContent()
-            SilenceDetectionSettings -> SilenceDetectionSettingsContent()
+            AboutSettings             -> AboutScreen()
+            AudioFocusSettings        -> AudioFocusSettingsContent()
+            AudioRecorderSettings     -> AudioRecorderSettingsContent()
+            SilenceDetectionSettings  -> SilenceDetectionSettingsContent()
             BackgroundServiceSettings -> BackgroundServiceSettingsContent()
-            DeviceSettings -> DeviceSettingsContent()
-            IndicationSettings -> IndicationSettingsContent()
-            LanguageSettingsScreen -> LanguageSettingsScreenItemContent()
-            LogSettings -> LogSettingsContent()
+            DeviceSettings            -> DeviceSettingsContent()
+            IndicationSettings        -> IndicationSettingsContent()
+            LanguageSettingsScreen    -> LanguageSettingsScreenItemContent()
+            LogSettings               -> LogSettingsContent()
             MicrophoneOverlaySettings -> MicrophoneOverlaySettingsContent()
-            SaveAndRestoreSettings -> SaveAndRestoreSettingsContent()
+            SaveAndRestoreSettings    -> SaveAndRestoreSettingsContent()
         }
 
     }

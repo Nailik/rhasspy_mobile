@@ -207,16 +207,16 @@ internal class WebServerService(
         logger.d { "evaluateCall ${path.path} ${call.parameters}" }
         try {
             val result = when (path) {
-                WebServerPath.ListenForCommand -> listenForCommand()
-                WebServerPath.ListenForWake -> listenForWake(call)
+                WebServerPath.ListenForCommand  -> listenForCommand()
+                WebServerPath.ListenForWake     -> listenForWake(call)
                 WebServerPath.PlayRecordingPost -> playRecordingPost()
-                WebServerPath.PlayRecordingGet -> playRecordingGet(call)
-                WebServerPath.PlayWav -> playWav(call)
-                WebServerPath.SetVolume -> setVolume(call)
-                WebServerPath.StartRecording -> startRecording()
-                WebServerPath.StopRecording -> stopRecording()
-                WebServerPath.Say -> say(call)
-                WebServerPath.Mqtt -> mqtt(call)
+                WebServerPath.PlayRecordingGet  -> playRecordingGet(call)
+                WebServerPath.PlayWav           -> playWav(call)
+                WebServerPath.SetVolume         -> setVolume(call)
+                WebServerPath.StartRecording    -> startRecording()
+                WebServerPath.StopRecording     -> stopRecording()
+                WebServerPath.Say               -> say(call)
+                WebServerPath.Mqtt              -> mqtt(call)
             }
 
             when (result) {
@@ -229,11 +229,11 @@ internal class WebServerService(
                     call.respond(HttpStatusCode.BadRequest, result.errorType.description)
                 }
 
-                Ok -> {
+                Ok       -> {
                     call.respond(HttpStatusCode.OK)
                 }
 
-                else -> {
+                else     -> {
 
                 }
             }
@@ -267,9 +267,9 @@ internal class WebServerService(
      */
     private suspend fun listenForWake(call: ApplicationCall): WebServerResult {
         val action = when (call.receive<String>()) {
-            "on" -> true
+            "on"  -> true
             "off" -> false
-            else -> null
+            else  -> null
         }
 
         return action?.let {
