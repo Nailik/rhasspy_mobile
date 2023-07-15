@@ -13,7 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Severity
 import org.rhasspy.mobile.data.log.LogElement
-import org.rhasspy.mobile.ui.theme.*
+import org.rhasspy.mobile.resources.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +33,6 @@ fun LogListElement(item: LogElement) {
                     Severity.Warn -> MaterialTheme.colorScheme.color_warn
                     Severity.Error -> MaterialTheme.colorScheme.color_error
                     Severity.Assert -> MaterialTheme.colorScheme.color_assert
-                    else -> MaterialTheme.colorScheme.color_unknown
                 }
 
                 Badge(

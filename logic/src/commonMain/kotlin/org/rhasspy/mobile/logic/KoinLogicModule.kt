@@ -96,7 +96,13 @@ fun logicModule() = module {
         )
     }
 
-    single<IAudioPlayingStateAction> { AudioPlayingStateAction() }
+    single<IAudioPlayingStateAction> {
+        AudioPlayingStateAction(
+            dialogManagerService = get(),
+            audioPlayingService = get(),
+            stateTransition = get()
+        )
+    }
     single<IIdleStateAction> {
         IdleStateAction(
             dialogManagerService = get(),

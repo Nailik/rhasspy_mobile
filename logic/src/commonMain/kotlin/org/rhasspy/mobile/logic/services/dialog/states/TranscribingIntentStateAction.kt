@@ -4,7 +4,7 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogService
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.TranscribingIntentState
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
-import org.rhasspy.mobile.logic.services.indication.IndicationService
+import org.rhasspy.mobile.logic.services.indication.IIndicationService
 
 interface ITranscribingIntentStateAction {
 
@@ -17,7 +17,7 @@ interface ITranscribingIntentStateAction {
 
 internal class TranscribingIntentStateAction(
     private val dialogManagerService: IDialogManagerService,
-    private val indicationService: IndicationService,
+    private val indicationService: IIndicationService,
     private val stateTransition: IStateTransition
 ) : ITranscribingIntentStateAction {
 

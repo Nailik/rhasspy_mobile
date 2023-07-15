@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -127,6 +128,7 @@ private fun WebServerEditContent(
  * ON/OFF
  * certificate selection
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WebserverSSL(
     isHttpServerSSLEnabled: Boolean,

@@ -17,6 +17,7 @@ kotlin {
             dependencies {
                 implementation(project(":viewmodel"))
                 implementation(project(":data"))
+                implementation(project(":logic"))
                 implementation(project(":resources"))
                 implementation(project(":settings"))
                 implementation(project(":platformspecific"))
@@ -43,6 +44,7 @@ kotlin {
             dependencies {
                 implementation(AndroidX.Activity.compose)
                 implementation(AndroidX.Compose.ui)
+                implementation(AndroidX.Compose.Ui.toolingPreview)
                 implementation(Google.accompanist.systemUiController)
                 implementation(AndroidX.core)
             }
@@ -71,10 +73,20 @@ kotlin {
 }
 
 tasks.withType<KotlinCompile> {
+    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
+    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi"
+    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi"
     kotlinOptions.freeCompilerArgs += "-P=plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_metrics"
     kotlinOptions.freeCompilerArgs += "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_metrics"
 }
 
 android {
     namespace = "org.rhasspy.mobile.ui"
+    buildFeatures {
+        compose = true
+    }
+}
+dependencies {
+    debugImplementation("androidx.compose.ui:ui-tooling:1.4.3")
 }

@@ -356,6 +356,7 @@
     <string name="sampleRate">Samplerate</string>
     <string name="channel">Channel</string>
     <string name="encoding">Encoding</string>
+    <string name="dialog">Dialog</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>

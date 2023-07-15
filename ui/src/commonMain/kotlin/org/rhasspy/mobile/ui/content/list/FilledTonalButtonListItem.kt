@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.ui.content.list
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -11,6 +12,7 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilledTonalButtonListItem(
     modifier: Modifier = Modifier,

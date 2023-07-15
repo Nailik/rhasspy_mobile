@@ -75,9 +75,11 @@ internal class StateTransition(
         audioFocusService.request(AudioFocusRequestReason.Dialog)
         speechToTextService.startSpeechToText(sessionData.sessionId, isSourceMqtt)
 
+        //TODO disabled
+
         return RecordingIntentState(
             sessionData = sessionData,
-            timeoutJob = coroutineScope.launch {
+            timeoutJob = coroutineScope.launch { //TODO would trigger while recording? max length for recording
                 delay(params.recordingTimeout.toDuration(DurationUnit.MILLISECONDS))
                 dialogManagerService.onAction(AsrError(Local))
             }
@@ -91,11 +93,14 @@ internal class StateTransition(
             mqttService.audioCaptured(sessionData.sessionId, speechToTextService.speechToTextAudioFile)
         }
 
+        //TODO actions depending on previous state
+        //TODO disabled
+
         return TranscribingIntentState(
             sessionData = sessionData,
             timeoutJob = coroutineScope.launch {
                 delay(params.asrTimeout.toDuration(DurationUnit.MILLISECONDS))
-                dialogManagerService.onAction(IntentRecognitionError(Local))
+                dialogManagerService.onAction(AsrError(Local))
             }
         )
     }
@@ -104,6 +109,8 @@ internal class StateTransition(
         indicationService.onThinking()
 
         intentRecognitionService.recognizeIntent(sessionData.sessionId, sessionData.recognizedText ?: "")
+
+        //TODO disabled
 
         return DialogManagerState.RecognizingIntentState(
             sessionData = sessionData,

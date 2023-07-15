@@ -1,12 +1,14 @@
 package org.rhasspy.mobile.ui.content.list
 
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.ui.content.elements.Text
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwitchListItem(
     modifier: Modifier = Modifier,

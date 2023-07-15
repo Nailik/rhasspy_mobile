@@ -335,6 +335,7 @@
     <string name="sampleRate">Sample rate</string>
     <string name="channel">Channel</string>
     <string name="encoding">Encoding</string>
+    <string name="dialog">Dialog</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>
@@ -481,4 +482,36 @@
     <string name="coffee_zh">咖啡</string>
     <string name="dumplings_zh">水饺</string>
     <string name="porcupine_zh">豪猪</string>
+    <!-- DialogManagerState -->
+    <string name="audio_playing_state">AudioPlayingState</string>
+    <string name="idle_state">IdleState</string>
+    <string name="recognizing_intent_state">RecognizingIntentState</string>
+    <string name="recording_intent_state">RecordingIntentState</string>
+    <string name="transcribing_intent_state">TranscribingIntentState</string>
+    <!-- DialogManagerStateInformation -->
+    <string name="asr_text">AsrText: \'%s\'</string>
+    <string name="intent">IntentName: \'%s\'</string>
+    <string name="audio_data_size">AudioDataSize: \'%s\'</string>
+    <string name="send_audio_captured">SendAudioCaptured: \'%s\'</string>
+    <string name="wake_word">WakeWord: \'%s\'</string>
+    <!-- DialogServiceMiddlewareAction -->
+    <string name="asr_error">AsrError</string>
+    <string name="asr_text_captured">AsrTextCaptured</string>
+    <string name="end_session">EndSession</string>
+    <string name="intent_recognition_error">IntentRecognitionError</string>
+    <string name="intent_recognition_result">IntentRecognitionResult</string>
+    <string name="play_audio">PlayAudio</string>
+    <string name="play_finished">PlayFinished</string>
+    <string name="session_ended">SessionEnded</string>
+    <string name="session_started">SessionStarted</string>
+    <string name="silence_detected">SilenceDetected</string>
+    <string name="start_listening">StartListening</string>
+    <string name="start_session">StartSession</string>
+    <string name="stop_audio_playing">StopAudioPlaying</string>
+    <string name="stop_listening">StopListening</string>
+    <string name="wake_word_detected">WakeWordDetected</string>
+    <!-- Source -->
+    <string name="http_api">HttpApi</string>
+    <string name="local">Local</string>
+    <string name="mqtt">Mqtt</string>
 </resources>

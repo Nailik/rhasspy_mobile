@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
+import org.rhasspy.mobile.resources.DarkThemeColors
+import org.rhasspy.mobile.resources.LightThemeColors
 
 /**
  * current App Theme

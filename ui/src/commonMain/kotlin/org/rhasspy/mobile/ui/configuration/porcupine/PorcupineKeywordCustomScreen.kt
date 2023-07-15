@@ -107,6 +107,7 @@ private fun KeywordListItem(
  * sensitivity
  * delete keyword
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CustomKeywordListItem(
     modifier: Modifier = Modifier,
@@ -155,6 +156,7 @@ private fun CustomKeywordListItem(
  * list item for deleted custom keywords but not yet saved
  * contains quick action to undo deletion
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CustomKeywordDeletedListItem(
     modifier: Modifier = Modifier,
