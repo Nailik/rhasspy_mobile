@@ -137,5 +137,30 @@ jobs:
             androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-armeabi-v7a-signed.apk
             androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-x86-signed.apk
             androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-x86_64-signed.apk
+  #upload dev build
+  remove:
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - uses: ClementTsang/delete-tag-and-release@v0.3.1
+        with:
+          delete_release: true
+          tag_name: nightly
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  upload:
+    runs-on: self-hosted
+    needs: remove
+    steps:
+      - uses: softprops/action-gh-release@v1
+        with:
+          name: nightly
+          tag_name: nightly
+          files: |
+            androidApp/build/outputs/bundle/${{ inputs.BUILD_TYPE_LOWERCASE }}/androidApp-${{ inputs.BUILD_TYPE_LOWERCASE }}.aab
+            androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-arm64-v8a-signed.apk
+            androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-armeabi-v7a-signed.apk
+            androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-x86-signed.apk
+            androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-x86_64-signed.apk
 
 

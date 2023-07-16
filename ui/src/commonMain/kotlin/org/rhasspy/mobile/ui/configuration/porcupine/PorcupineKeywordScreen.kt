@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.ui.configuration.porcupine
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.theme.horizontalAnimationSpec
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
@@ -18,7 +19,6 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
-import org.rhasspy.mobile.ui.main.CONTENT_ANIMATION_DURATION
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.*
@@ -72,24 +72,12 @@ fun PorcupineKeywordScreen(
             //horizontal pager to slide between pages
             Surface(modifier = Modifier.padding(paddingValues)) {
 
-                AnimatedContent(targetState = porcupineScreen,
+                AnimatedContent(
+                    targetState = porcupineScreen,
                     transitionSpec = {
-                        if (targetState.ordinal > initialState.ordinal) {
-                            slideInHorizontally(
-                                animationSpec = tween(CONTENT_ANIMATION_DURATION),
-                                initialOffsetX = { fullWidth -> fullWidth }
-                            ) with slideOutHorizontally(
-                                animationSpec = tween(CONTENT_ANIMATION_DURATION),
-                                targetOffsetX = { fullWidth -> -fullWidth })
-                        } else {
-                            slideInHorizontally(
-                                animationSpec = tween(CONTENT_ANIMATION_DURATION),
-                                initialOffsetX = { fullWidth -> -fullWidth }
-                            ) with slideOutHorizontally(
-                                animationSpec = tween(CONTENT_ANIMATION_DURATION),
-                                targetOffsetX = { fullWidth -> fullWidth })
-                        }
-                    }) { targetState ->
+                        horizontalAnimationSpec(targetState.ordinal, initialState.ordinal)
+                    }
+                ) { targetState ->
                     when (targetState) {
                         DefaultKeywordScreen -> PorcupineKeywordDefaultScreen(
                             editData = editData,
