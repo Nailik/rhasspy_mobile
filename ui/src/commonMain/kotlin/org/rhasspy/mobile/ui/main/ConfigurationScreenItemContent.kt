@@ -41,7 +41,7 @@ import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConfigurationScreenItemEdit(
+fun ConfigurationScreenItemContent(
     modifier: Modifier,
     screenViewModel: IScreenViewModel,
     title: StableStringResource,

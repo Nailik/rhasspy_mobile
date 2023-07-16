@@ -14,7 +14,7 @@ import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
-import org.rhasspy.mobile.ui.main.ConfigurationScreenItemEdit
+import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
@@ -32,7 +32,7 @@ fun RemoteHermesHttpConfigurationScreen() {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
-    ConfigurationScreenItemEdit(
+    ConfigurationScreenItemContent(
         modifier = Modifier,
         screenViewModel = viewModel,
         title = MR.strings.remoteHermesHTTP.stable,

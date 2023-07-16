@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.settings
+package androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.*
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
@@ -32,7 +33,6 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.toText
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.ListElement
-import org.rhasspy.mobile.ui.settings.content.*
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.SettingsScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination

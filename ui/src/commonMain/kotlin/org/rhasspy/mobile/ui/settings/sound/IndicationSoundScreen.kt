@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.settings.content.sound
+package androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.sound
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically

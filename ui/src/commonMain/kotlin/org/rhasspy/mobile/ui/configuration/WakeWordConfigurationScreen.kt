@@ -29,7 +29,7 @@ import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
-import org.rhasspy.mobile.ui.main.ConfigurationScreenItemEdit
+import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
@@ -101,7 +101,7 @@ private fun WakeWordConfigurationEditContent(
     onEvent: (WakeWordConfigurationUiEvent) -> Unit
 ) {
 
-    ConfigurationScreenItemEdit(
+    ConfigurationScreenItemContent(
         modifier = Modifier.testTag(WakeWordConfigurationScreen),
         screenViewModel = viewModel,
         title = MR.strings.wakeWord.stable,

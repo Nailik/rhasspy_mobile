@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.settings.content
+package androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
