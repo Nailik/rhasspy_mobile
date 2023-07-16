@@ -24,7 +24,14 @@ on:
         required: true
 
 jobs:
+  testremove:
+    runs-on: self-hosted
+    steps:
+      - uses: larryjoelane/delete-release-action@v1
+        with:
+          release-name: nightly
   check:
+    needs: testremove
     uses: ./.github/workflows/pullrequest-ci.yml
     with:
       BUILD_TYPE: ${{ inputs.BUILD_TYPE }}
