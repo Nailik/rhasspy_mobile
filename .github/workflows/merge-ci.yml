@@ -24,14 +24,7 @@ on:
         required: true
 
 jobs:
-  testremove:
-    runs-on: self-hosted
-    steps:
-      - uses: larryjoelane/delete-release-action@v1
-        with:
-          release-name: 'nightly'
   check:
-    needs: testremove
     uses: ./.github/workflows/pullrequest-ci.yml
     with:
       BUILD_TYPE: ${{ inputs.BUILD_TYPE }}
@@ -149,10 +142,12 @@ jobs:
     runs-on: self-hosted
     needs: build
     steps:
-      - uses: liudonghua123/delete-release-action@v1
+      - uses: ClementTsang/delete-tag-and-release@v0.3.1
         with:
-          release_name: nightly
-          token: ${{ secrets.GITHUB_TOKEN }}
+          delete_release: true
+          tag_name: nightly
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   upload:
     runs-on: self-hosted
     needs: remove
