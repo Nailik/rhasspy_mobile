@@ -41,7 +41,7 @@ class SettingsScreenTest {
     @Test
     fun testContent() = runTest {
         //each item exists and navigates
-        SettingsScreenDestination.values().forEach { tag ->
+        SettingsScreenDestination.values().filter { it != SettingsScreenDestination.OverviewScreen }.forEach { tag ->
             composeTestRule.onNodeWithTag(TestTag.List).performScrollToNode(hasTestTag(tag))
                 .assertExists()
             composeTestRule.onNodeWithTag(tag).performClick()
