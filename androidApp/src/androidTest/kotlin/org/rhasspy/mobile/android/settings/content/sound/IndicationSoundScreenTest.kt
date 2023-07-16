@@ -17,9 +17,9 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.Rule
 import org.koin.core.component.get
-import org.rhasspy.mobile.MainActivity
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.service.option.AudioOutputOption.Sound
 import org.rhasspy.mobile.data.sounds.SoundOption

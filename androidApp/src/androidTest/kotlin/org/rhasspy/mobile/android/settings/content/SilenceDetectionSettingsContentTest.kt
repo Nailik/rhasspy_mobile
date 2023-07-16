@@ -9,8 +9,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.MainActivity
 import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag

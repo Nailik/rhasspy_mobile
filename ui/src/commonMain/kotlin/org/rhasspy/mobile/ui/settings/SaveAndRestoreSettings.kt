@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -76,6 +77,7 @@ fun SaveAndRestoreSettingsContent() {
  * Save Settings
  * Shows warning Dialog that the file contains sensitive information
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SaveSettings(
     isSaveSettingsToFileDialogVisible: Boolean,
