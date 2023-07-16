@@ -63,7 +63,7 @@ fun WakeWordConfigurationScreen() {
 
     AnimatedContent(targetState = viewState.screen) { targetState ->
         when (targetState) {
-            EditScreen                  ->
+            EditScreen ->
                 WakeWordConfigurationEditContent(
                     viewModel = viewModel,
                     viewState = viewState,
