@@ -231,7 +231,9 @@ class WakeWordConfigurationViewModel(
     }
 
     override fun onBackPressed(): Boolean {
-        return if (viewState.value.porcupineWakeWordScreen == DefaultKeywordScreen) {
+        return if (viewState.value.screen == EditScreen) {
+            super.onBackPressed()
+        } else if (viewState.value.porcupineWakeWordScreen == DefaultKeywordScreen) {
             //pop backstack to remove DefaultKeywordScreen
             navigator.popBackStack()
             //was handled
@@ -241,8 +243,6 @@ class WakeWordConfigurationViewModel(
             navigator.replace(PorcupineKeywordConfigurationScreenDestination::class, DefaultKeywordScreen)
             //was handled
             true
-        } else if (viewState.value.screen == EditScreen) {
-            super.onBackPressed()
         } else {
             //close porcupine language or keyword screen
             false
