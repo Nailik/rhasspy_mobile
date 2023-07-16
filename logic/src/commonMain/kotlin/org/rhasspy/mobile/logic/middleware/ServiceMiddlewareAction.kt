@@ -2,7 +2,7 @@ package org.rhasspy.mobile.logic.middleware
 
 sealed class ServiceMiddlewareAction {
 
-    object PlayStopRecording : ServiceMiddlewareAction()
+    data object PlayStopRecording : ServiceMiddlewareAction()
 
     data class WakeWordError(val description: String) : ServiceMiddlewareAction() {
         override fun toString(): String {
@@ -82,5 +82,6 @@ sealed class ServiceMiddlewareAction {
         override fun toString(): String {
             return "${this::class.simpleName ?: super.toString()} from $source"
         }
+
     }
 }

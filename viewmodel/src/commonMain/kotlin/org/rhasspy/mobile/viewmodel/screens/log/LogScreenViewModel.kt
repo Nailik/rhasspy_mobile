@@ -15,6 +15,7 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.*
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.SaveLogFile
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.ShareLogFile
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Change.ManualListScroll
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Change.ToggleListAutoScroll
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Consumed.ShowSnackBar
 
@@ -31,8 +32,8 @@ class LogScreenViewModel(
 
     fun onEvent(event: LogScreenUiEvent) {
         when (event) {
-            is Change -> onChange(event)
-            is Action -> onAction(event)
+            is Change   -> onChange(event)
+            is Action   -> onAction(event)
             is Consumed -> onConsumed(event)
         }
     }
@@ -40,6 +41,7 @@ class LogScreenViewModel(
     private fun onChange(change: Change) {
         when (change) {
             ToggleListAutoScroll -> AppSetting.isLogAutoscroll.value = !AppSetting.isLogAutoscroll.value
+            ManualListScroll     -> AppSetting.isLogAutoscroll.value = false
         }
     }
 

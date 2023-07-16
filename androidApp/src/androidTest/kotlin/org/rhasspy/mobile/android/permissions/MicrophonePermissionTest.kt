@@ -20,9 +20,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.component.get
-import org.rhasspy.mobile.MainActivity
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
@@ -51,7 +51,7 @@ class MicrophonePermissionTest : FlakyTest() {
     //.google is on devices with google play services and is missing on devices without play services
     private val permissionDialogPackageNameRegex = when {
         Build.VERSION.SDK_INT >= 29 -> ".*permissioncontroller"
-        else -> ".*packageinstaller"
+        else                        -> ".*packageinstaller"
     }
 
     private val indexOffset = 1

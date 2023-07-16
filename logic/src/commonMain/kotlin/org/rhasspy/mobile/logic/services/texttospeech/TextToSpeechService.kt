@@ -7,7 +7,8 @@ import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
@@ -59,20 +60,18 @@ internal class TextToSpeechService(
             TextToSpeechOption.RemoteHTTP -> {
                 val result = httpClientService.textToSpeech(text)
                 _serviceState.value = when (result) {
-                    is HttpClientResult.Error -> ServiceState.Exception(result.exception)
+                    is HttpClientResult.Error   -> ServiceState.Exception(result.exception)
                     is HttpClientResult.Success -> ServiceState.Success
                 }
                 val action = when (result) {
-                    is HttpClientResult.Error -> DialogServiceMiddlewareAction.AsrError(Source.HttpApi)
-                    is HttpClientResult.Success -> {
-                        DialogServiceMiddlewareAction.PlayAudio(Source.HttpApi, result.data)
-                    }
+                    is HttpClientResult.Error   -> AsrError(Source.Local)
+                    is HttpClientResult.Success -> PlayAudio(Source.Local, result.data)
                 }
                 serviceMiddleware.action(action)
             }
 
             TextToSpeechOption.RemoteMQTT -> _serviceState.value = mqttClientService.say(sessionId, text)
-            TextToSpeechOption.Disabled -> {}
+            TextToSpeechOption.Disabled   -> Unit
         }
     }
 

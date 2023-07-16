@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.settings.content
+package androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -20,8 +20,8 @@ import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.data.libraries.StableLibrary
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.resources.icons.RhasspyLogo
 import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.list.ListElement

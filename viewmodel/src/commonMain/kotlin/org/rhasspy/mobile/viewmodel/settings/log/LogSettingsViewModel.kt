@@ -34,12 +34,12 @@ class LogSettingsViewModel(
 
             is SetLogAudioFramesEnabled -> AppSetting.isLogAudioFramesEnabled.value = change.enabled
 
-            is SetLogLevel -> {
+            is SetLogLevel           -> {
                 AppSetting.logLevel.value = change.logLevel
                 Logger.setMinSeverity(AppSetting.logLevel.value.severity)
             }
 
-            is SetShowLogEnabled -> AppSetting.isShowLogEnabled.value = change.enabled
+            is SetShowLogEnabled     -> AppSetting.isShowLogEnabled.value = change.enabled
         }
     }
 

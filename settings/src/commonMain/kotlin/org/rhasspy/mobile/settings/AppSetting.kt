@@ -79,4 +79,5 @@ object AppSetting : KoinComponent {
     val audioRecorderEncoding = ISetting(SettingsEnum.AudioRecorderEncoding, AudioRecorderEncodingType.default)
     val audioRecorderSampleRate = ISetting(SettingsEnum.AudioRecorderSampleRate, AudioRecorderSampleRateType.default)
 
+    val isDialogAutoscroll = ISetting(SettingsEnum.DialogAutoScroll, true)
 }

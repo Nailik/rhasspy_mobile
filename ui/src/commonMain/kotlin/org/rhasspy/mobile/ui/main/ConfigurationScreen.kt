@@ -1,5 +1,8 @@
 package org.rhasspy.mobile.ui.main
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -39,35 +42,38 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 /**
  * configuration screens with list items that open bottom sheet
  */
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ConfigurationScreen() {
 
     val viewModel: ConfigurationScreenViewModel = LocalViewModelFactory.current.getViewModel()
+    val scrollState = rememberScrollState()
 
     Screen(screenViewModel = viewModel) {
         val screen by viewModel.screen.collectAsState()
 
-        with(screen) {
-            when (this) {
-                OverviewScreen -> {
+        AnimatedContent(targetState = screen) { targetState ->
+            when (targetState) {
+                OverviewScreen                       -> {
                     val viewState by viewModel.viewState.collectAsState()
 
                     ConfigurationScreenContent(
+                        scrollState = scrollState,
                         onEvent = viewModel::onEvent,
                         viewState = viewState
                     )
                 }
 
-                AudioPlayingConfigurationScreen -> AudioPlayingConfigurationScreen()
-                DialogManagementConfigurationScreen -> DialogManagementConfigurationScreen()
-                IntentHandlingConfigurationScreen -> IntentHandlingConfigurationScreen()
+                AudioPlayingConfigurationScreen      -> AudioPlayingConfigurationScreen()
+                DialogManagementConfigurationScreen  -> DialogManagementConfigurationScreen()
+                IntentHandlingConfigurationScreen    -> IntentHandlingConfigurationScreen()
                 IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationScreen()
-                MqttConfigurationScreen -> MqttConfigurationScreen()
-                RemoteHermesHttpConfigurationScreen -> RemoteHermesHttpConfigurationScreen()
-                SpeechToTextConfigurationScreen -> SpeechToTextConfigurationScreen()
-                TextToSpeechConfigurationScreen -> TextToSpeechConfigurationScreen()
-                WakeWordConfigurationScreen -> WakeWordConfigurationScreen()
-                WebServerConfigurationScreen -> WebServerConfigurationScreen()
+                MqttConfigurationScreen              -> MqttConfigurationScreen()
+                RemoteHermesHttpConfigurationScreen  -> RemoteHermesHttpConfigurationScreen()
+                SpeechToTextConfigurationScreen      -> SpeechToTextConfigurationScreen()
+                TextToSpeechConfigurationScreen      -> TextToSpeechConfigurationScreen()
+                WakeWordConfigurationScreen          -> WakeWordConfigurationScreen()
+                WebServerConfigurationScreen         -> WebServerConfigurationScreen()
             }
         }
     }
@@ -77,6 +83,7 @@ fun ConfigurationScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfigurationScreenContent(
+    scrollState: ScrollState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit,
     viewState: ConfigurationScreenViewState
 ) {
@@ -92,7 +99,6 @@ fun ConfigurationScreenContent(
         },
     ) { paddingValues ->
 
-        val scrollState = rememberScrollState()
         val coroutineScope = rememberCoroutineScope()
 
         LaunchedEffect(viewState.scrollToError) {
@@ -434,6 +440,7 @@ private fun IntentHandling(
 /**
  * list item
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ConfigurationListItem(
     text: StableStringResource,
@@ -459,6 +466,7 @@ private fun ConfigurationListItem(
 /**
  * list item
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("SameParameterValue")
 @Composable
 private fun ConfigurationListItem(

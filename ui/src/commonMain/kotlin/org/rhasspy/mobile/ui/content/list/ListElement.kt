@@ -2,6 +2,8 @@ package org.rhasspy.mobile.ui.content.list
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
@@ -9,6 +11,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun ListElement(
     modifier: Modifier = Modifier,
+    colors: ListItemColors = ListItemDefaults.colors(),
     icon: @Composable (() -> Unit)? = null,
     secondaryText: @Composable (() -> Unit)? = null,
     overlineText: @Composable (() -> Unit)? = null,
@@ -21,7 +24,8 @@ fun ListElement(
         overlineText = overlineText,
         supportingText = secondaryText,
         leadingContent = icon,
-        trailingContent = trailing
+        trailingContent = trailing,
+        colors = colors,
     )
 }
 

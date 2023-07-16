@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.settings.content
+package androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -6,11 +6,13 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BatteryAlert
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalSnackBarHostState
@@ -23,7 +25,6 @@ import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.InformationListElement
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
-import org.rhasspy.mobile.ui.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.BackgroundServiceSettings
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Action.BackClick
@@ -38,6 +39,7 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
  * listElement to disable battery optimization
  */
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BackgroundServiceSettingsContent() {
     val viewModel: BackgroundServiceSettingsViewModel = LocalViewModelFactory.current.getViewModel()

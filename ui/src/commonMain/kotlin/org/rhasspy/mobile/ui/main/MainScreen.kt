@@ -1,15 +1,14 @@
 package org.rhasspy.mobile.ui.main
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BugReport
-import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Timeline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,16 +17,16 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main.SettingsScreen
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.resources.icons.RhasspyLogo
 import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
-import org.rhasspy.mobile.ui.settings.SettingsScreen
 import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
@@ -99,6 +98,9 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
 }
 
+val CONTENT_ANIMATION_DURATION = 100
+
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun MainScreenContent(
     screen: MainScreenNavigationDestination,
@@ -108,16 +110,36 @@ private fun MainScreenContent(
 
     Column {
         Box(modifier = Modifier.weight(1f)) {
-            when (screen) {
-                HomeScreen -> HomeScreen()
-                ConfigurationScreen -> ConfigurationScreen()
-                SettingsScreen -> SettingsScreen()
-                LogScreen -> LogScreen()
+            AnimatedContent(targetState = screen,
+                transitionSpec = {
+                    if (targetState.ordinal > initialState.ordinal) {
+                        slideInHorizontally(
+                            animationSpec = tween(CONTENT_ANIMATION_DURATION),
+                            initialOffsetX = { fullWidth -> fullWidth }
+                        ) with slideOutHorizontally(
+                            animationSpec = tween(CONTENT_ANIMATION_DURATION),
+                            targetOffsetX = { fullWidth -> -fullWidth })
+                    } else {
+                        slideInHorizontally(
+                            animationSpec = tween(CONTENT_ANIMATION_DURATION),
+                            initialOffsetX = { fullWidth -> -fullWidth }
+                        ) with slideOutHorizontally(
+                            animationSpec = tween(CONTENT_ANIMATION_DURATION),
+                            targetOffsetX = { fullWidth -> fullWidth })
+                    }
+                }) { targetState ->
+                when (targetState) {
+                    HomeScreen          -> HomeScreen()
+                    DialogScreen        -> DialogScreen()
+                    ConfigurationScreen -> ConfigurationScreen()
+                    SettingsScreen      -> SettingsScreen()
+                    LogScreen           -> LogScreen()
+                }
             }
         }
 
 
-        AnimatedVisibility(visible = viewState.isBottomNavigationVisible) {
+        if (viewState.isBottomNavigationVisible) {
             BottomNavigation(
                 isShowLogEnabled = viewState.isShowLogEnabled,
                 activeIndex = viewState.bottomNavigationIndex,
@@ -185,6 +207,29 @@ private fun BottomNavigation(
         )
 
         NavigationBarItem(
+            modifier = Modifier.testTag(DialogScreen),
+            icon = {
+                Icon(
+                    if (activeIndex == 0) {
+                        Icons.Filled.Timeline
+                    } else {
+                        Icons.Outlined.Timeline
+                    },
+                    MR.strings.home.stable
+                )
+            },
+            label = {
+                Text(
+                    resource = MR.strings.dialog.stable,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
+            },
+            selected = activeIndex == 1,
+            onClick = { onEvent(Navigate(DialogScreen)) }
+        )
+
+        NavigationBarItem(
             modifier = Modifier.testTag(ConfigurationScreen),
             icon = {
                 Icon(
@@ -200,7 +245,7 @@ private fun BottomNavigation(
                     maxLines = 1
                 )
             },
-            selected = activeIndex == 1,
+            selected = activeIndex == 2,
             onClick = { onEvent(Navigate(ConfigurationScreen)) }
         )
 
@@ -208,7 +253,7 @@ private fun BottomNavigation(
             modifier = Modifier.testTag(SettingsScreen),
             icon = {
                 Icon(
-                    if (activeIndex == 2) {
+                    if (activeIndex == 3) {
                         Icons.Filled.Settings
                     } else {
                         Icons.Outlined.Settings
@@ -223,7 +268,7 @@ private fun BottomNavigation(
                     maxLines = 1
                 )
             },
-            selected = activeIndex == 2,
+            selected = activeIndex == 3,
             onClick = { onEvent(Navigate(SettingsScreen)) }
         )
 
@@ -240,7 +285,7 @@ private fun BottomNavigation(
                         maxLines = 1
                     )
                 },
-                selected = activeIndex == 3,
+                selected = activeIndex == 4,
                 onClick = { onEvent(Navigate(LogScreen)) }
             )
         }

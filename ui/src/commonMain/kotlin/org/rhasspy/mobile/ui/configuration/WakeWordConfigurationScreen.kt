@@ -1,8 +1,6 @@
 package org.rhasspy.mobile.ui.configuration
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -30,7 +29,7 @@ import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
-import org.rhasspy.mobile.ui.main.ConfigurationScreenItemEdit
+import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
@@ -52,6 +51,7 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWo
 /**
  * Nav Host of Wake word configuration screens
  */
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun WakeWordConfigurationScreen() {
 
@@ -61,27 +61,29 @@ fun WakeWordConfigurationScreen() {
 
     val viewState by viewModel.viewState.collectAsState()
 
-    when (viewState.screen) {
-        EditScreen ->
-            WakeWordConfigurationEditContent(
-                viewModel = viewModel,
-                viewState = viewState,
-                onEvent = viewModel::onEvent,
-                configurationViewState = configurationEditViewState
-            )
+    AnimatedContent(targetState = viewState.screen) { targetState ->
+        when (targetState) {
+            EditScreen ->
+                WakeWordConfigurationEditContent(
+                    viewModel = viewModel,
+                    viewState = viewState,
+                    onEvent = viewModel::onEvent,
+                    configurationViewState = configurationEditViewState
+                )
 
-        EditPorcupineLanguageScreen ->
-            PorcupineLanguageScreen(
-                editData = viewState.editData.wakeWordPorcupineConfigurationData,
-                onEvent = viewModel::onEvent
-            )
+            EditPorcupineLanguageScreen ->
+                PorcupineLanguageScreen(
+                    editData = viewState.editData.wakeWordPorcupineConfigurationData,
+                    onEvent = viewModel::onEvent
+                )
 
-        EditPorcupineWakeWordScreen ->
-            PorcupineKeywordScreen(
-                porcupineScreen = viewState.porcupineWakeWordScreen,
-                editData = viewState.editData.wakeWordPorcupineConfigurationData,
-                onEvent = viewModel::onEvent
-            )
+            EditPorcupineWakeWordScreen ->
+                PorcupineKeywordScreen(
+                    porcupineScreen = viewState.porcupineWakeWordScreen,
+                    editData = viewState.editData.wakeWordPorcupineConfigurationData,
+                    onEvent = viewModel::onEvent
+                )
+        }
     }
 
 }
@@ -99,7 +101,7 @@ private fun WakeWordConfigurationEditContent(
     onEvent: (WakeWordConfigurationUiEvent) -> Unit
 ) {
 
-    ConfigurationScreenItemEdit(
+    ConfigurationScreenItemContent(
         modifier = Modifier.testTag(WakeWordConfigurationScreen),
         screenViewModel = viewModel,
         title = MR.strings.wakeWord.stable,
@@ -154,7 +156,7 @@ private fun WakeWordConfigurationOptionContent(
                     onEvent = onEvent
                 )
 
-            else -> {}
+            else               -> {}
         }
 
     }
@@ -168,6 +170,7 @@ private fun WakeWordConfigurationOptionContent(
  * language selection
  * sensitivity slider
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PorcupineConfiguration(
     editData: WakeWordPorcupineConfigurationData,

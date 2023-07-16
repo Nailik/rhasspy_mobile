@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.resources.icons.RhasspyLogo
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.main.MainScreen
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
@@ -28,7 +28,7 @@ fun MainUi(
 
         Crossfade(targetState = isHasStarted.collectAsState().value) { hasStarted ->
             when (hasStarted) {
-                true -> MainScreen(viewModelFactory)
+                true  -> MainScreen(viewModelFactory)
                 false -> SplashScreen()
             }
         }

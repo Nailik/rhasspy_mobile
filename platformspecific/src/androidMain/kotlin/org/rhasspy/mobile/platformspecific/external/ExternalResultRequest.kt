@@ -103,12 +103,12 @@ internal actual class ExternalResultRequest actual constructor(
 
     private fun <R> intentFromIntention(intention: ExternalResultRequestIntention<R>): Intent {
         return when (intention) {
-            is CreateDocument ->
+            is CreateDocument               ->
                 ActivityResultContracts
                     .CreateDocument(intention.mimeType)
                     .createIntent(nativeApplication, intention.title)
 
-            is OpenDocument ->
+            is OpenDocument                 ->
                 ActivityResultContracts
                     .OpenDocument()
                     .createIntent(nativeApplication, intention.mimeTypes.toTypedArray())
@@ -119,7 +119,7 @@ internal actual class ExternalResultRequest actual constructor(
                         putExtra(Intent.EXTRA_MIME_TYPES, intention.mimeTypes.toTypedArray())
                     }
 
-            is GetContent ->
+            is GetContent                   ->
                 ActivityResultContracts
                     .GetContent()
                     .createIntent(nativeApplication, "*/*")
@@ -143,23 +143,23 @@ internal actual class ExternalResultRequest actual constructor(
                     data = Uri.parse("package:org.rhasspy.mobile.android")
                 }
 
-            is OpenLink ->
+            is OpenLink                     ->
                 Intent().apply {
                     action = Intent.ACTION_VIEW
                     data = Uri.parse(intention.link.url)
                 }
 
-            OpenAppSettings ->
+            OpenAppSettings                 ->
                 Intent().apply {
                     action = Settings.ACTION_SETTINGS
                 }
 
-            OpenOverlaySettings ->
+            OpenOverlaySettings             ->
                 Intent().apply {
                     action = Settings.ACTION_MANAGE_OVERLAY_PERMISSION
                 }
 
-            is ShareFile ->
+            is ShareFile                    ->
                 Intent.createChooser(
                     Intent().apply {
                         action = Intent.ACTION_SEND

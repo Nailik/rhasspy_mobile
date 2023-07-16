@@ -22,17 +22,17 @@ enum class MqttServiceStateType(val serviceState: ServiceState) {
     companion object {
         fun fromMqttStatus(mqttStatus: MqttStatus): MqttServiceStateType {
             return when (mqttStatus) {
-                MqttStatus.SUCCESS -> SUCCESS
-                MqttStatus.UNACCEPTABLE_PROTOCOL -> UNACCEPTABLE_PROTOCOL
-                MqttStatus.IDENTIFIER_REJECTED -> IDENTIFIER_REJECTED
-                MqttStatus.SERVER_UNAVAILABLE -> SERVER_UNAVAILABLE
-                MqttStatus.INVALID_CREDENTIALS -> INVALID_CREDENTIALS
-                MqttStatus.NOT_AUTHORIZED -> NOT_AUTHORIZED
-                MqttStatus.ALREADY_CONNECTED -> ALREADY_CONNECTED
-                MqttStatus.MSG_DELIVERY_FAILED -> MSG_DELIVERY_FAILED
+                MqttStatus.SUCCESS                -> SUCCESS
+                MqttStatus.UNACCEPTABLE_PROTOCOL  -> UNACCEPTABLE_PROTOCOL
+                MqttStatus.IDENTIFIER_REJECTED    -> IDENTIFIER_REJECTED
+                MqttStatus.SERVER_UNAVAILABLE     -> SERVER_UNAVAILABLE
+                MqttStatus.INVALID_CREDENTIALS    -> INVALID_CREDENTIALS
+                MqttStatus.NOT_AUTHORIZED         -> NOT_AUTHORIZED
+                MqttStatus.ALREADY_CONNECTED      -> ALREADY_CONNECTED
+                MqttStatus.MSG_DELIVERY_FAILED    -> MSG_DELIVERY_FAILED
                 MqttStatus.MSG_PERSISTENCE_FAILED -> MSG_PERSISTENCE_FAILED
-                MqttStatus.SUBSCRIBE_FAILED -> SUBSCRIBE_FAILED
-                MqttStatus.UNKNOWN -> UNKNOWN
+                MqttStatus.SUBSCRIBE_FAILED       -> SUBSCRIBE_FAILED
+                MqttStatus.UNKNOWN                -> UNKNOWN
             }
         }
     }

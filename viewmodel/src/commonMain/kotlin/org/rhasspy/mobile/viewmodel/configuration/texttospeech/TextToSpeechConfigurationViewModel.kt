@@ -46,8 +46,8 @@ class TextToSpeechConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SelectTextToSpeechOption -> copy(textToSpeechOption = change.option)
-                    is SetUseCustomHttpEndpoint -> copy(isUseCustomTextToSpeechHttpEndpoint = change.enabled)
+                    is SelectTextToSpeechOption       -> copy(textToSpeechOption = change.option)
+                    is SetUseCustomHttpEndpoint       -> copy(isUseCustomTextToSpeechHttpEndpoint = change.enabled)
                     is UpdateTextToSpeechHttpEndpoint -> copy(textToSpeechHttpEndpoint = change.endpoint)
                 }
             })

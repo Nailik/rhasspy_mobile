@@ -79,12 +79,12 @@ private fun ServiceStateText(serviceState: ServiceState) {
 
     Text(
         resource = when (serviceState) {
-            is Pending -> MR.strings.pending.stable
-            is Loading -> MR.strings.loading.stable
-            is Success -> MR.strings.success.stable
-            is Error -> MR.strings.error.stable
+            is Pending   -> MR.strings.pending.stable
+            is Loading   -> MR.strings.loading.stable
+            is Success   -> MR.strings.success.stable
+            is Error     -> MR.strings.error.stable
             is Exception -> MR.strings.error.stable
-            is Disabled -> MR.strings.disabled.stable
+            is Disabled  -> MR.strings.disabled.stable
         }
     )
 

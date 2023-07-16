@@ -94,10 +94,10 @@ class WakeWordConfigurationViewModel(
 
     fun onEvent(event: WakeWordConfigurationUiEvent) {
         when (event) {
-            is Change -> onChange(event)
-            is Action -> onAction(event)
+            is Change           -> onChange(event)
+            is Action           -> onAction(event)
             is PorcupineUiEvent -> onPorcupineAction(event)
-            is UdpUiEvent -> onUdpAction(event)
+            is UdpUiEvent       -> onUdpAction(event)
         }
     }
 
@@ -114,8 +114,8 @@ class WakeWordConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             RequestMicrophonePermission -> requireMicrophonePermission {}
-            BackClick -> navigator.onBackPressed()
-            is Navigate -> {
+            BackClick                   -> navigator.onBackPressed()
+            is Navigate                 -> {
                 navigator.navigate(action.destination)
             }
         }
@@ -133,17 +133,17 @@ class WakeWordConfigurationViewModel(
             it.copy(editData = with(it.editData) {
                 copy(wakeWordPorcupineConfigurationData = with(wakeWordPorcupineConfigurationData) {
                     when (change) {
-                        is UpdateWakeWordPorcupineAccessToken -> copy(accessToken = change.value)
-                        is ClickPorcupineKeywordCustom -> copy(customOptions = customOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
-                        is ClickPorcupineKeywordDefault -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
-                        is DeletePorcupineKeywordCustom -> copy(deletedCustomOptions = deletedCustomOptions.updateList { add(change.item) })
-                        is SelectWakeWordPorcupineLanguage -> copy(porcupineLanguage = change.option)
-                        is SetPorcupineKeywordCustom -> copy(customOptions = customOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
-                        is SetPorcupineKeywordDefault -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
-                        is UndoCustomKeywordDeleted -> copy(deletedCustomOptions = deletedCustomOptions.updateList { remove(change.item) })
-                        is UpdateWakeWordPorcupineKeywordCustomSensitivity -> copy(customOptions = customOptions.updateListItem(change.item) { copy(sensitivity = change.value) })
+                        is UpdateWakeWordPorcupineAccessToken               -> copy(accessToken = change.value)
+                        is ClickPorcupineKeywordCustom                      -> copy(customOptions = customOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
+                        is ClickPorcupineKeywordDefault                     -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
+                        is DeletePorcupineKeywordCustom                     -> copy(deletedCustomOptions = deletedCustomOptions.updateList { add(change.item) })
+                        is SelectWakeWordPorcupineLanguage                  -> copy(porcupineLanguage = change.option)
+                        is SetPorcupineKeywordCustom                        -> copy(customOptions = customOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
+                        is SetPorcupineKeywordDefault                       -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
+                        is UndoCustomKeywordDeleted                         -> copy(deletedCustomOptions = deletedCustomOptions.updateList { remove(change.item) })
+                        is UpdateWakeWordPorcupineKeywordCustomSensitivity  -> copy(customOptions = customOptions.updateListItem(change.item) { copy(sensitivity = change.value) })
                         is UpdateWakeWordPorcupineKeywordDefaultSensitivity -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(sensitivity = change.value) })
-                        is AddPorcupineKeywordCustom -> copy(customOptions = customOptions.updateList {
+                        is AddPorcupineKeywordCustom                        -> copy(customOptions = customOptions.updateList {
                             add(PorcupineCustomKeyword(fileName = change.path.name, isEnabled = true, sensitivity = 0.5f))
                         })
                     }
@@ -154,12 +154,12 @@ class WakeWordConfigurationViewModel(
 
     private fun onPorcupineAction(action: PorcupineUiEvent.Action) {
         when (action) {
-            AddCustomPorcupineKeyword -> addCustomPorcupineKeyword()
-            DownloadCustomPorcupineKeyword -> openLink(LinkType.PicoVoiceCustomWakeWord)
-            OpenPicoVoiceConsole -> openLink(LinkType.PicoVoiceConsole)
+            AddCustomPorcupineKeyword         -> addCustomPorcupineKeyword()
+            DownloadCustomPorcupineKeyword    -> openLink(LinkType.PicoVoiceCustomWakeWord)
+            OpenPicoVoiceConsole              -> openLink(LinkType.PicoVoiceConsole)
             PorcupineUiEvent.Action.BackClick -> navigator.onBackPressed()
-            PorcupineLanguageClick -> navigator.navigate(EditPorcupineLanguageScreen)
-            is PageClick -> navigator.replace(PorcupineKeywordConfigurationScreenDestination::class, action.screen)
+            PorcupineLanguageClick            -> navigator.navigate(EditPorcupineLanguageScreen)
+            is PageClick                      -> navigator.replace(PorcupineKeywordConfigurationScreenDestination::class, action.screen)
         }
     }
 
@@ -231,7 +231,9 @@ class WakeWordConfigurationViewModel(
     }
 
     override fun onBackPressed(): Boolean {
-        return if (viewState.value.porcupineWakeWordScreen == DefaultKeywordScreen) {
+        return if (viewState.value.screen == EditScreen) {
+            super.onBackPressed()
+        } else if (viewState.value.porcupineWakeWordScreen == DefaultKeywordScreen) {
             //pop backstack to remove DefaultKeywordScreen
             navigator.popBackStack()
             //was handled
@@ -241,8 +243,6 @@ class WakeWordConfigurationViewModel(
             navigator.replace(PorcupineKeywordConfigurationScreenDestination::class, DefaultKeywordScreen)
             //was handled
             true
-        } else if (viewState.value.screen == EditScreen) {
-            super.onBackPressed()
         } else {
             //close porcupine language or keyword screen
             false

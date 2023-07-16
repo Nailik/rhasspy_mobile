@@ -23,9 +23,9 @@ actual object AudioFocusUtil : KoinComponent {
 
     private fun requestTypeInt(audioFocusOption: AudioFocusOption): Int {
         return when (audioFocusOption) {
-            Disabled -> -1
+            Disabled       -> -1
             PauseAndResume -> AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE
-            Duck -> AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK
+            Duck           -> AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK
         }
     }
 

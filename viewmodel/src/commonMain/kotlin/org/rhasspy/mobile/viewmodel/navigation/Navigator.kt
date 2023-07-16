@@ -23,7 +23,6 @@ interface INavigator {
     fun replace(clazz: KClass<out NavigationDestination>, screen: NavigationDestination)
 }
 
-inline fun <reified T : NavigationDestination> INavigator.topScreen(): StateFlow<T?> = navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() }
 inline fun <reified T : NavigationDestination> INavigator.topScreen(default: T): StateFlow<T> = navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() ?: default }
 
 /**

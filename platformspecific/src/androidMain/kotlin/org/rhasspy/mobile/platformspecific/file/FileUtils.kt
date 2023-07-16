@@ -88,7 +88,7 @@ actual object FileUtils : KoinComponent {
     ): String? =
         when (folderType) {
             FolderType.PorcupineFolder -> copyPorcupineFile(uri, folderName, fileName)
-            else -> copyNormalFile(uri, folderName, fileName)
+            else                       -> copyNormalFile(uri, folderName, fileName)
         }
 
 

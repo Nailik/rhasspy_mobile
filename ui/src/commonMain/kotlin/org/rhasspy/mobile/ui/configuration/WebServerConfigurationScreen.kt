@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -21,7 +22,7 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.*
-import org.rhasspy.mobile.ui.main.ConfigurationScreenItemEdit
+import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
@@ -43,7 +44,7 @@ fun WebServerConfigurationScreen() {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
-    ConfigurationScreenItemEdit(
+    ConfigurationScreenItemContent(
         modifier = Modifier,
         screenViewModel = viewModel,
         title = MR.strings.webserver.stable,
@@ -127,6 +128,7 @@ private fun WebServerEditContent(
  * ON/OFF
  * certificate selection
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WebserverSSL(
     isHttpServerSSLEnabled: Boolean,

@@ -109,7 +109,7 @@ internal class LocalAudioService(
                 onFinished
             )
 
-            else -> playAudio(
+            else                     -> playAudio(
                 AudioSource.File(
                     Path.commonInternalPath(
                         nativeApplication = nativeApplication,
@@ -126,14 +126,14 @@ internal class LocalAudioService(
     override fun playRecordedSound() {
         logger.d { "playRecordedSound" }
         when (AppSetting.recordedSound.value) {
-            SoundOption.Disabled.name -> {}
-            SoundOption.Default.name -> playAudio(
+            SoundOption.Disabled.name -> Unit
+            SoundOption.Default.name  -> playAudio(
                 AudioSource.Resource(MR.files.etc_wav_beep_lo),
                 AppSetting.recordedSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             )
 
-            else -> playAudio(
+            else                      -> playAudio(
                 AudioSource.File(
                     Path.commonInternalPath(
                         nativeApplication = nativeApplication,
@@ -149,14 +149,14 @@ internal class LocalAudioService(
     override fun playErrorSound() {
         logger.d { "playErrorSound" }
         when (AppSetting.errorSound.value) {
-            SoundOption.Disabled.name -> {}
-            SoundOption.Default.name -> playAudio(
+            SoundOption.Disabled.name -> Unit
+            SoundOption.Default.name  -> playAudio(
                 AudioSource.Resource(MR.files.etc_wav_beep_error),
                 AppSetting.errorSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             )
 
-            else -> playAudio(
+            else                      -> playAudio(
                 AudioSource.File(
                     Path.commonInternalPath(
                         nativeApplication = nativeApplication,

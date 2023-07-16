@@ -21,7 +21,7 @@ import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
-import org.rhasspy.mobile.ui.main.ConfigurationScreenItemEdit
+import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent
@@ -41,7 +41,7 @@ fun AudioPlayingConfigurationScreen() {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
-    ConfigurationScreenItemEdit(
+    ConfigurationScreenItemContent(
         modifier = Modifier,
         screenViewModel = viewModel,
         title = MR.strings.audioPlaying.stable,

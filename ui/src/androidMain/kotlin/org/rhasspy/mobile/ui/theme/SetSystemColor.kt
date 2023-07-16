@@ -7,6 +7,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import org.rhasspy.mobile.resources.DarkThemeColors
+import org.rhasspy.mobile.resources.LightThemeColors
 
 /**
  * can be used to set system ui colors

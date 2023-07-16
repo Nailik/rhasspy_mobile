@@ -51,13 +51,13 @@ class WebServerConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SetHttpServerEnabled -> copy(isHttpServerEnabled = change.value)
-                    is SetHttpServerSSLEnabled -> copy(isHttpServerSSLEnabled = change.value)
-                    is UpdateHttpSSLKeyAlias -> copy(httpServerSSLKeyAlias = change.value)
-                    is UpdateHttpSSLKeyPassword -> copy(httpServerSSLKeyPassword = change.value)
+                    is SetHttpServerEnabled          -> copy(isHttpServerEnabled = change.value)
+                    is SetHttpServerSSLEnabled       -> copy(isHttpServerSSLEnabled = change.value)
+                    is UpdateHttpSSLKeyAlias         -> copy(httpServerSSLKeyAlias = change.value)
+                    is UpdateHttpSSLKeyPassword      -> copy(httpServerSSLKeyPassword = change.value)
                     is UpdateHttpSSLKeyStorePassword -> copy(httpServerSSLKeyStorePassword = change.value)
-                    is UpdateHttpServerPort -> copy(httpServerPort = change.value.toIntOrNullOrConstant())
-                    is SetHttpServerSSLKeyStoreFile -> copy(httpServerSSLKeyStoreFile = change.value)
+                    is UpdateHttpServerPort          -> copy(httpServerPort = change.value.toIntOrNullOrConstant())
+                    is SetHttpServerSSLKeyStoreFile  -> copy(httpServerSSLKeyStoreFile = change.value)
                 }
             })
         }

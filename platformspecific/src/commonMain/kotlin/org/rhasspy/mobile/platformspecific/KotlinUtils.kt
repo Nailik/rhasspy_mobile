@@ -95,8 +95,8 @@ inline fun <T1 : Any, T2 : Any> notNull(
 
 fun <T> Array<out T>.toImmutableList(): ImmutableList<T> {
     return when (size) {
-        0 -> persistentListOf()
-        1 -> persistentListOf(this[0])
+        0    -> persistentListOf()
+        1    -> persistentListOf(this[0])
         else -> this.toList().toImmutableList()
     }
 }

@@ -57,14 +57,14 @@ internal class IntentHandlingService(
     override suspend fun intentHandling(intentName: String, intent: String) {
         logger.d { "intentHandling intentName: $intentName intent: $intent" }
         when (params.intentHandlingOption) {
-            IntentHandlingOption.HomeAssistant -> _serviceState.value =
+            IntentHandlingOption.HomeAssistant   -> _serviceState.value =
                 homeAssistantService.sendIntent(intentName, intent)
 
-            IntentHandlingOption.RemoteHTTP -> _serviceState.value =
+            IntentHandlingOption.RemoteHTTP      -> _serviceState.value =
                 httpClientService.intentHandling(intent).toServiceState()
 
-            IntentHandlingOption.WithRecognition -> {}
-            IntentHandlingOption.Disabled -> {}
+            IntentHandlingOption.WithRecognition -> Unit
+            IntentHandlingOption.Disabled        -> Unit
         }
     }
 

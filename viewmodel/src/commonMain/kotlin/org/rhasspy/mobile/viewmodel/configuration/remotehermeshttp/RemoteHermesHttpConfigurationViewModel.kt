@@ -46,10 +46,10 @@ class RemoteHermesHttpConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SetHttpSSLVerificationDisabled -> copy(isHttpSSLVerificationDisabled = change.disabled)
+                    is SetHttpSSLVerificationDisabled     -> copy(isHttpSSLVerificationDisabled = change.disabled)
                     is UpdateHttpClientServerEndpointHost -> copy(httpClientServerEndpointHost = change.host)
                     is UpdateHttpClientServerEndpointPort -> copy(httpClientServerEndpointPort = change.port.toIntOrNullOrConstant())
-                    is UpdateHttpClientTimeout -> copy(httpClientTimeout = change.text.toLongOrNullOrConstant())
+                    is UpdateHttpClientTimeout            -> copy(httpClientTimeout = change.text.toLongOrNullOrConstant())
                 }
             })
         }

@@ -30,8 +30,8 @@ class AboutScreenViewModel(
 
     fun onEvent(event: AboutScreenUiEvent) {
         when (event) {
-            is Action -> onAction(event)
-            is Change -> onChange(event)
+            is Action   -> onAction(event)
+            is Change   -> onChange(event)
             is Consumed -> onConsumed(event)
         }
     }
@@ -39,19 +39,19 @@ class AboutScreenViewModel(
     private fun onAction(action: Action) {
         when (action) {
             OpenSourceCode -> openSourceCode()
-            BackClick -> navigator.onBackPressed()
+            BackClick      -> navigator.onBackPressed()
         }
     }
 
     private fun onChange(change: Change) {
         _viewState.update {
             when (change) {
-                CloseChangelog -> it.copy(isChangelogDialogVisible = false)
+                CloseChangelog   -> it.copy(isChangelogDialogVisible = false)
                 CloseDataPrivacy -> it.copy(isPrivacyDialogVisible = false)
-                CloseLibrary -> it.copy(isLibraryDialogVisible = false)
-                OpenChangelog -> it.copy(isChangelogDialogVisible = true)
-                OpenDataPrivacy -> it.copy(isPrivacyDialogVisible = true)
-                is OpenLibrary -> it.copy(
+                CloseLibrary     -> it.copy(isLibraryDialogVisible = false)
+                OpenChangelog    -> it.copy(isChangelogDialogVisible = true)
+                OpenDataPrivacy  -> it.copy(isPrivacyDialogVisible = true)
+                is OpenLibrary   -> it.copy(
                     isLibraryDialogVisible = true,
                     libraryDialogContent = change.library
                 )
@@ -92,7 +92,7 @@ class AboutScreenViewModel(
                 true
             }
 
-            else -> false
+            else                                    -> false
         }
     }
 

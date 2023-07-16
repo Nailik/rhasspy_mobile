@@ -117,14 +117,14 @@ internal class SpeechToTextService(
                 val result = httpClientService.speechToText(speechToTextAudioFile)
                 _serviceState.value = result.toServiceState()
                 val action = when (result) {
-                    is HttpClientResult.Error -> AsrError(Source.HttpApi)
-                    is HttpClientResult.Success -> AsrTextCaptured(Source.HttpApi, result.data)
+                    is HttpClientResult.Error   -> AsrError(Source.Local)
+                    is HttpClientResult.Success -> AsrTextCaptured(Source.Local, result.data)
                 }
                 serviceMiddleware.action(action)
             }
 
             SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value = mqttClientService.stopListening(sessionId)
-            SpeechToTextOption.Disabled -> {}
+            SpeechToTextOption.Disabled   -> Unit
         }
     }
 
@@ -156,7 +156,7 @@ internal class SpeechToTextService(
         _serviceState.value = when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> ServiceState.Success
             SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.startListening(sessionId) else ServiceState.Success
-            SpeechToTextOption.Disabled -> ServiceState.Disabled
+            SpeechToTextOption.Disabled   -> ServiceState.Disabled
         }
     }
 
@@ -168,7 +168,7 @@ internal class SpeechToTextService(
         _serviceState.value = when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> ServiceState.Success
             SpeechToTextOption.RemoteMQTT -> mqttClientService.asrAudioFrame(sessionId, data)
-            SpeechToTextOption.Disabled -> ServiceState.Disabled
+            SpeechToTextOption.Disabled   -> ServiceState.Disabled
         }
 
         scope.launch {

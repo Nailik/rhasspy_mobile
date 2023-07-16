@@ -5,6 +5,7 @@ enum class SettingsEnum {
     CrashlyticsDialog,
     Crashlytics,
     LanguageOption,
+    DialogAutoScroll,
 
     AutomaticSilenceDetection,
     AutomaticSilenceDetectionAudioLevel,

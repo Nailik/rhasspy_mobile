@@ -34,8 +34,8 @@ class BackgroundServiceSettingsViewModel(
 
     fun onEvent(event: BackgroundServiceSettingsUiEvent) {
         when (event) {
-            is Change -> onChange(event)
-            is Action -> onAction(event)
+            is Change   -> onChange(event)
+            is Action   -> onAction(event)
             is Consumed -> onConsumed(event)
         }
     }
@@ -56,7 +56,7 @@ class BackgroundServiceSettingsViewModel(
     private fun onAction(action: Action) {
         when (action) {
             DisableBatteryOptimization -> disableBatteryOptimization()
-            is BackClick -> navigator.onBackPressed()
+            is BackClick               -> navigator.onBackPressed()
         }
     }
 

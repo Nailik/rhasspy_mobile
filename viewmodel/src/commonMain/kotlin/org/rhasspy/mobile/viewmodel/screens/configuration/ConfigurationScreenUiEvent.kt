@@ -12,15 +12,15 @@ sealed interface ConfigurationScreenUiEvent {
 
     sealed interface Action : ConfigurationScreenUiEvent {
 
-        object ScrollToErrorClick : Action
-        object BackClick : Action
+        data object ScrollToErrorClick : Action
+        data object BackClick : Action
         data class Navigate(val destination: ConfigurationScreenNavigationDestination) : Action
 
     }
 
     sealed interface Consumed : ConfigurationScreenUiEvent {
 
-        object ScrollToError : Consumed
+        data object ScrollToError : Consumed
 
     }
 

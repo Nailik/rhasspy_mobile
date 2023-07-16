@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic
 
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.logger.FileLogger
 import org.rhasspy.mobile.logic.logger.IFileLogger
@@ -13,6 +14,10 @@ import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParamsCreator
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerDisabled
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerLocal
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerRemoteMqtt
+import org.rhasspy.mobile.logic.services.dialog.states.*
 import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantServiceParamsCreator
 import org.rhasspy.mobile.logic.services.homeassistant.IHomeAssistantService
@@ -70,7 +75,71 @@ fun logicModule() = module {
     single<IAudioPlayingService> { AudioPlayingService(paramsCreator = get()) }
 
     factory { DialogManagerServiceParamsCreator() }
-    single<IDialogManagerService> { DialogManagerService(paramsCreator = get()) }
+    single<IDialogManagerService> {
+        DialogManagerService(
+            mqttService = get()
+        )
+    }
+
+    single<IStateTransition> {
+        StateTransition(
+            paramsCreator = get(),
+            dispatcherProvider = get(),
+            dialogManagerService = get(),
+            audioFocusService = get(),
+            wakeWordService = get(),
+            intentRecognitionService = get(),
+            audioPlayingService = get(),
+            speechToTextService = get(),
+            indicationService = get(),
+            mqttService = get(),
+        )
+    }
+
+    single<IAudioPlayingStateAction> {
+        AudioPlayingStateAction(
+            dialogManagerService = get(),
+            audioPlayingService = get(),
+            stateTransition = get()
+        )
+    }
+    single<IIdleStateAction> {
+        IdleStateAction(
+            dialogManagerService = get(),
+            dispatcherProvider = get(),
+            stateTransition = get(),
+            wakeWordService = get(),
+            indicationService = get(),
+        )
+    }
+    single<IRecognizingIntentStateAction> {
+        RecognizingIntentStateAction(
+            dialogManagerService = get(),
+            indicationService = get(),
+            stateTransition = get(),
+            intentHandlingService = get(),
+        )
+    }
+    single<IRecordingIntentStateAction> {
+        RecordingIntentStateAction(
+            dialogManagerService = get(),
+            indicationService = get(),
+            stateTransition = get(),
+            speechToTextService = get(),
+        )
+    }
+    single<ITranscribingIntentStateAction> {
+        TranscribingIntentStateAction(
+            dialogManagerService = get(),
+            indicationService = get(),
+            stateTransition = get(),
+        )
+    }
+
+
+    singleOf(::DialogManagerLocal)
+    singleOf(::DialogManagerRemoteMqtt)
+    singleOf(::DialogManagerDisabled)
 
     factory { HomeAssistantServiceParamsCreator() }
     single<IHomeAssistantService> { HomeAssistantService(paramsCreator = get()) }

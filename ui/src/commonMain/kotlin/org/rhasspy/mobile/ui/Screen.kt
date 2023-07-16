@@ -104,14 +104,14 @@ fun Screen(
                 )
             }
 
-            LinkOpenFailed -> {
+            LinkOpenFailed                 -> {
                 SnackBar(
                     title = MR.strings.linkOpenFailed.stable,
                     consumed = { screenViewModel.onEvent(Consumed) },
                 )
             }
 
-            SelectFileFailed -> {
+            SelectFileFailed               -> {
                 SnackBar(
                     title = MR.strings.selectFileFailed.stable,
                     consumed = { screenViewModel.onEvent(Consumed) },

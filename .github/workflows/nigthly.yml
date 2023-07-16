@@ -25,6 +25,7 @@ jobs:
       - uses: liudonghua123/delete-release-action@v1
         with:
           release_name: nightly
+          token: ${{ secrets.GITHUB_TOKEN }}
   upload:
     runs-on: self-hosted
     needs: remove

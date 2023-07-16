@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.theme
+package org.rhasspy.mobile.resources
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
@@ -81,7 +81,10 @@ private val color_info_any = Color(0xFFCDDC39)
 private val color_warn_any = Color(0xFFFF9800)
 private val color_error_any = Color(0xFFF44336)
 private val color_assert_any = Color(0xFF673AB7)
-private val color_unknown_any = Color(0xFF000000)
+
+private val color_http_any = Color(0xFF2196F3)
+private val color_local_any = Color(0xFFF44336)
+private val color_mqtt_any = Color(0xFFFFEB3B)
 
 val ColorScheme.warn: Color
     @Composable
@@ -112,8 +115,13 @@ val ColorScheme.color_error: Color
     get() = color_error_any
 val ColorScheme.color_assert: Color
     get() = color_assert_any
-val ColorScheme.color_unknown: Color
-    get() = color_unknown_any
+
+val ColorScheme.color_http: Color
+    get() = color_http_any
+val ColorScheme.color_local: Color
+    get() = color_local_any
+val ColorScheme.color_mqtt: Color
+    get() = color_mqtt_any
 
 /**
  * colors for light theme

@@ -4,6 +4,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
 enum class SettingsScreenDestination : NavigationDestination {
 
+    OverviewScreen,
     AboutSettings,
     AudioFocusSettings,
     AudioRecorderSettings,
