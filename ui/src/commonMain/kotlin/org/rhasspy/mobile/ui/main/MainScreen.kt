@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.ui.main
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main.SettingsScreen
+import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.theme.horizontalAnimationSpec
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.utils.isDebug
@@ -98,7 +99,7 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
 }
 
-val CONTENT_ANIMATION_DURATION = 100
+
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -112,25 +113,12 @@ private fun MainScreenContent(
         Box(modifier = Modifier.weight(1f)) {
             AnimatedContent(targetState = screen,
                 transitionSpec = {
-                    if (targetState.ordinal > initialState.ordinal) {
-                        slideInHorizontally(
-                            animationSpec = tween(CONTENT_ANIMATION_DURATION),
-                            initialOffsetX = { fullWidth -> fullWidth }
-                        ) with slideOutHorizontally(
-                            animationSpec = tween(CONTENT_ANIMATION_DURATION),
-                            targetOffsetX = { fullWidth -> -fullWidth })
-                    } else {
-                        slideInHorizontally(
-                            animationSpec = tween(CONTENT_ANIMATION_DURATION),
-                            initialOffsetX = { fullWidth -> -fullWidth }
-                        ) with slideOutHorizontally(
-                            animationSpec = tween(CONTENT_ANIMATION_DURATION),
-                            targetOffsetX = { fullWidth -> fullWidth })
-                    }
-                }) { targetState ->
+                    horizontalAnimationSpec(targetState.ordinal, initialState.ordinal)
+                }
+            ) { targetState ->
                 when (targetState) {
                     HomeScreen          -> HomeScreen()
-                    DialogScreen        -> DialogScreen()
+                    DialogScreen -> DialogScreen()
                     ConfigurationScreen -> ConfigurationScreen()
                     SettingsScreen      -> SettingsScreen()
                     LogScreen           -> LogScreen()

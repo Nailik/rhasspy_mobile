@@ -71,7 +71,12 @@ internal class DialogManagerService(
     override fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState) {
         _currentDialogState.value = state
         dialogHistory.update {
-            it.updateList { add(Pair(action, state)) }
+            it.updateList {
+                add(Pair(action, state))
+                while (size > 100) {
+                    removeLast()
+                }
+            }
         }
     }
 
