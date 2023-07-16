@@ -51,7 +51,6 @@ internal class DialogManagerService(
     private val dialogManagerRemoteMqtt by inject<DialogManagerRemoteMqtt>()
     private val dialogManagerDisabled by inject<DialogManagerDisabled>()
 
-
     override val dialogHistory = MutableStateFlow<ImmutableList<Pair<DialogServiceMiddlewareAction, DialogManagerState>>>(persistentListOf())
 
     override val logger = LogType.DialogManagerService.logger()

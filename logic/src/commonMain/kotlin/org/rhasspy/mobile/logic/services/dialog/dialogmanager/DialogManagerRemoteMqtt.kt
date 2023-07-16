@@ -1,60 +1,52 @@
 package org.rhasspy.mobile.logic.services.dialog.dialogmanager
 
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.Source
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.*
+import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
+import org.rhasspy.mobile.logic.services.dialog.states.*
 
-class DialogManagerRemoteMqtt : IDialogManager {
+class DialogManagerRemoteMqtt(
+    private val dialogManagerService: IDialogManagerService,
+    private val idleStateAction: IIdleStateAction,
+    private val recordingIntentStateAction: IRecordingIntentStateAction,
+    private val audioPlayingStateAction: IAudioPlayingStateAction,
+    private val transcribingIntentState: ITranscribingIntentStateAction,
+    private val recognizingIntentStateAction: IRecognizingIntentStateAction,
+) : IDialogManager {
 
     override suspend fun onAction(action: ServiceMiddlewareAction.DialogServiceMiddlewareAction) {
-        TODO("Not yet implemented")
+        with(dialogManagerService.currentDialogState.value) {
+            if (checkIfActionIsAllowed(this, action)) {
+                when (this) {
+                    is IdleState               -> idleStateAction.onAction(action)
+                    is RecordingIntentState    -> recordingIntentStateAction.onAction(action, this)
+                    is TranscribingIntentState -> transcribingIntentState.onAction(action, this)
+                    is RecognizingIntentState  -> recognizingIntentStateAction.onAction(action, this)
+                    is AudioPlayingState       -> audioPlayingStateAction.onAction(action, this)
+                }
+            }
+        }
     }
 
+    private fun checkIfActionIsAllowed(
+        state: DialogManagerState,
+        action: ServiceMiddlewareAction.DialogServiceMiddlewareAction
+    ): Boolean {
+        if (action.source is Source.Local) return true
+        //session id is not null and doesn't match
+        if (action.source is Source.Mqtt && state.sessionData?.sessionId != null && action.source.sessionId != state.sessionData?.sessionId) return false
 
-    /*
-     DialogManagementOption.RemoteMQTT -> {
-                when (action.source) {
-                    //from webserver or local always ignore for now
-                    Source.HttpApi,
-                    Source.Local -> {
-                        val doNotIgnore = when (action) {
-                            is WakeWordDetected -> true
-                            is PlayFinished -> true
-                            is StopListening -> true //maybe called by user clicking button
-                            else -> false
-                        }
+        //is http api
+        return when (action) {
+            is WakeWordDetected,
+            is PlayAudio,
+            is StopAudioPlaying -> true
 
-                        if (doNotIgnore) {
-                            //don't ignore
-                            val result = states.contains(_currentDialogState.value)
-                            if (!result) {
-                                logger.v { "$action called in wrong state ${_currentDialogState.value} expected one of ${states.joinToString()}" }
-                            }
-                            return result
-                        } else {
-                            //from mqtt but session id doesn't match
-                            logger.v { "$action but mqtt dialog management" }
-                            return false
-                        }
-                    }
-                    //from mqtt check session id
-                    is Source.Mqtt -> {
-                        if (sessionId == null) {
-                            //update session id if none is set
-                            sessionId = action.source.sessionId
-                            return true
-                        } else {
-                            //compare session id if one is set
-                            val matches = sessionId == action.source.sessionId
-                            if (!matches) {
-                                logger.v { "$action but session id doesn't match $sessionId != ${action.source.sessionId}" }
-                                return false
-                            }
-                            val result = states.contains(_currentDialogState.value)
-                            if (!result) {
-                                logger.v { "$action called in wrong state ${_currentDialogState.value} expected one of ${states.joinToString()}" }
-                            }
-                            return result
-                        }
-                    }
-                }
-     */
+            else                -> false
+        }
+
+    }
 }

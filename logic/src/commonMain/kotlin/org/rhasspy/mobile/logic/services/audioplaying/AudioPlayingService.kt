@@ -8,7 +8,7 @@ import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.audiofocus.IAudioFocusService
@@ -71,17 +71,17 @@ internal class AudioPlayingService(
                 audioFocusService.request(Sound)
                 _serviceState.value = localAudioService.playAudio(audioSource)
                 audioFocusService.abandon(Sound)
-                serviceMiddleware.action(DialogServiceMiddlewareAction.PlayFinished(Source.Local))
+                serviceMiddleware.action(PlayFinished(Source.Local))
             }
 
             AudioPlayingOption.RemoteHTTP -> {
                 _serviceState.value = httpClientService.playWav(audioSource).toServiceState()
-                serviceMiddleware.action(DialogServiceMiddlewareAction.PlayFinished(Source.HttpApi))
+                serviceMiddleware.action(PlayFinished(Source.Local))
             }
 
             AudioPlayingOption.RemoteMQTT -> {
                 _serviceState.value = mqttClientService.playAudioRemote(audioSource)
-                serviceMiddleware.action(DialogServiceMiddlewareAction.PlayFinished(Source.Local))
+                serviceMiddleware.action(PlayFinished(Source.Local))
             }
 
             AudioPlayingOption.Disabled -> Unit

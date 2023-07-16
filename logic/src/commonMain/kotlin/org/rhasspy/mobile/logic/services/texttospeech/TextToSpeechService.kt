@@ -64,8 +64,8 @@ internal class TextToSpeechService(
                     is HttpClientResult.Success -> ServiceState.Success
                 }
                 val action = when (result) {
-                    is HttpClientResult.Error   -> AsrError(Source.HttpApi)
-                    is HttpClientResult.Success -> PlayAudio(Source.HttpApi, result.data)
+                    is HttpClientResult.Error   -> AsrError(Source.Local)
+                    is HttpClientResult.Success -> PlayAudio(Source.Local, result.data)
                 }
                 serviceMiddleware.action(action)
             }

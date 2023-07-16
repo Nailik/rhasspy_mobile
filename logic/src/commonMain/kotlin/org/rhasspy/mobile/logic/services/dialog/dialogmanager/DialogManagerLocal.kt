@@ -41,7 +41,7 @@ internal class DialogManagerLocal(
         action: DialogServiceMiddlewareAction
     ): Boolean {
         if (action.source !is Mqtt) return true
-        //session id is not nul and doesn't match
+        //session id is not null and doesn't match
         if (state.sessionData?.sessionId != null && action.source.sessionId != state.sessionData?.sessionId) return false
 
         return when (action) {

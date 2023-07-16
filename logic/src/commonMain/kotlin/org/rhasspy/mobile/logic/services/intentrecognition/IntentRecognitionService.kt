@@ -11,7 +11,8 @@ import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionResult
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
@@ -73,18 +74,18 @@ internal class IntentRecognitionService(
                 val result = httpClientService.recognizeIntent(text)
                 _serviceState.value = result.toServiceState()
                 val action = when (result) {
-                    is HttpClientResult.Error   -> DialogServiceMiddlewareAction.IntentRecognitionError(Source.HttpApi)
-                    is HttpClientResult.Success -> DialogServiceMiddlewareAction.IntentRecognitionResult(
-                        Source.HttpApi,
-                        readIntentNameFromJson(result.data),
-                        result.data
+                    is HttpClientResult.Error   -> IntentRecognitionError(Source.Local)
+                    is HttpClientResult.Success -> IntentRecognitionResult(
+                        source = Source.Local,
+                        intentName = readIntentNameFromJson(result.data),
+                        intent = result.data
                     )
                 }
                 serviceMiddleware.action(action)
             }
 
             IntentRecognitionOption.RemoteMQTT -> _serviceState.value = mqttClientService.recognizeIntent(sessionId, text)
-            IntentRecognitionOption.Disabled   -> serviceMiddleware.action(DialogServiceMiddlewareAction.IntentRecognitionResult(Source.Local, "", ""))
+            IntentRecognitionOption.Disabled   -> serviceMiddleware.action(IntentRecognitionResult(Source.Local, "", ""))
         }
     }
 
