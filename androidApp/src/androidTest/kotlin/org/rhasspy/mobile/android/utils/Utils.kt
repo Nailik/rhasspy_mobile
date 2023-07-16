@@ -66,6 +66,12 @@ fun SemanticsNodeInteractionsProvider.onNodeWithTag(
 ): SemanticsNodeInteraction = onNode(hasTestTag(name), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
+    tag1: TestTag, tag2: TestTag,
+    useUnmergedTree: Boolean = false
+): SemanticsNodeInteraction = onNode(hasTestTag("${tag1.name}${tag2.name}"), useUnmergedTree)
+
+
+fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
     testTag: Enum<*>, tag: TestTag,
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag("${testTag.name}${tag.name}"), useUnmergedTree)
@@ -74,6 +80,12 @@ fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
     name: String, tag: TestTag,
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag("$name${tag.name}"), useUnmergedTree)
+
+fun SemanticsNodeInteractionsProvider.onAllNodesWithText(
+    text: StableStringResource,
+    useUnmergedTree: Boolean = false
+): SemanticsNodeInteractionCollection = onAllNodesWithText(getText(text), useUnmergedTree)
+
 
 fun textRes(text: StableStringResource): BySelector {
     return By.text(getText(text))

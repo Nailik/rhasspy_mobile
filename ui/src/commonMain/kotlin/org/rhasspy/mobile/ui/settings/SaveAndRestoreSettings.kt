@@ -114,6 +114,7 @@ private fun SaveSettings(
  * Restore settings
  * shows dialog that current settings will be overwritten
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RestoreSettings(
     isRestoreSettingsFromFileDialogVisible: Boolean,
@@ -148,6 +149,7 @@ private fun RestoreSettings(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ShareSettings(onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit) {
 
