@@ -489,11 +489,12 @@
     <string name="recording_intent_state">RecordingIntentState</string>
     <string name="transcribing_intent_state">TranscribingIntentState</string>
     <!-- DialogManagerStateInformation -->
-    <string name="asr_text">AsrText: \'%s\'</string>
-    <string name="intent">IntentName: \'%s\'</string>
-    <string name="audio_data_size">AudioDataSize: \'%s\'</string>
-    <string name="send_audio_captured">SendAudioCaptured: \'%s\'</string>
-    <string name="wake_word">WakeWord: \'%s\'</string>
+    <string name="session_id">SessionId: %s</string>
+    <string name="asr_text">AsrText: %s</string>
+    <string name="intent">IntentName: %s</string>
+    <string name="audio_data_size">AudioDataSize: %s</string>
+    <string name="send_audio_captured">SendAudioCaptured: %s</string>
+    <string name="wake_word">WakeWord: %s</string>
     <!-- DialogServiceMiddlewareAction -->
     <string name="asr_error">AsrError</string>
     <string name="asr_text_captured">AsrTextCaptured</string>

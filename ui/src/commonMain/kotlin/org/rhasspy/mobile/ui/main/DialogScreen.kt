@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dev.icerock.moko.resources.format
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.resource.stable
@@ -125,13 +126,16 @@ private fun DialogScreenContent(
     LazyColumn(
         modifier = Modifier
             .padding(horizontal = 16.dp)
-            .padding(bottom = 8.dp)
             .fillMaxSize(),
         state = scrollState
     ) {
 
         items(history) { item ->
             DialogTransitionListItem(item)
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
     }
@@ -222,9 +226,9 @@ private fun DialogStateListItem(item: DialogStateViewState) {
 @Composable
 private fun DialogSessionData(sessionData: SessionData) {
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text("id ${sessionData.sessionId}")
-        Text("wakeWord ${sessionData.wakeWord}")
-        Text("sendAudioCaptured: ${sessionData.sendAudioCaptured}")
-        Text("text ${sessionData.recognizedText} ")
+        Text(MR.strings.session_id.format(sessionData.sessionId).stable)
+        Text(MR.strings.wake_word.format(sessionData.wakeWord.toString()).stable)
+        Text(MR.strings.send_audio_captured.format(sessionData.sendAudioCaptured.toString()).stable)
+        Text(MR.strings.asr_text.format(sessionData.recognizedText.toString()).stable)
     }
 }
