@@ -29,7 +29,7 @@ jobs:
     steps:
       - uses: larryjoelane/delete-release-action@v1
         with:
-          release-name: nightly
+          release-name: 'nightly'
   check:
     needs: testremove
     uses: ./.github/workflows/pullrequest-ci.yml
