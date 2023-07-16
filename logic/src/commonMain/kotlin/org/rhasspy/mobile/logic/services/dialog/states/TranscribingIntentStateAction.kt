@@ -46,9 +46,7 @@ internal class TranscribingIntentStateAction(
 
         dialogManagerService.transitionTo(
             action = action,
-            state = stateTransition.transitionToIdleState(
-                state.sessionData
-            )
+            state = stateTransition.transitionToIdleState(state.sessionData)
         )
     }
 

@@ -2,7 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings.indication
 
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination.OverviewScreen
 import org.rhasspy.mobile.viewmodel.navigation.topScreen
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action
@@ -18,7 +18,7 @@ class IndicationSettingsViewModel(
 
     val viewState = viewStateCreator()
 
-    val screen = navigator.topScreen<IndicationSettingsScreenDestination>()
+    val screen = navigator.topScreen(OverviewScreen)
 
     fun onEvent(event: IndicationSettingsUiEvent) {
         when (event) {

@@ -1,5 +1,7 @@
 package org.rhasspy.mobile.ui.settings.content
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -43,6 +45,7 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoun
 /**
  * indication sounds
  */
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun IndicationSettingsContent() {
     val viewModelFactory = LocalViewModelFactory.current
@@ -51,32 +54,35 @@ fun IndicationSettingsContent() {
     Screen(screenViewModel = viewModel) {
         val screen by viewModel.screen.collectAsState()
 
-        when (screen) {
-            null                       -> {
-                val viewState by viewModel.viewState.collectAsState()
-                IndicationSettingsOverview(
-                    viewState = viewState,
-                    onEvent = viewModel::onEvent
+        AnimatedContent(targetState = screen) { targetState ->
+            when (targetState) {
+
+                OverviewScreen                -> {
+                    val viewState by viewModel.viewState.collectAsState()
+                    IndicationSettingsOverview(
+                        viewState = viewState,
+                        onEvent = viewModel::onEvent
+                    )
+                }
+
+                ErrorIndicationSoundScreen    -> IndicationSoundScreen(
+                    viewModel = viewModelFactory.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
+                    screen = ErrorIndicationSoundScreen,
+                    title = MR.strings.errorSound.stable
+                )
+
+                RecordedIndicationSoundScreen -> IndicationSoundScreen(
+                    viewModel = viewModelFactory.getViewModel<RecordedIndicationSoundSettingsViewModel>(),
+                    screen = RecordedIndicationSoundScreen,
+                    title = MR.strings.recordedSound.stable
+                )
+
+                WakeIndicationSoundScreen     -> IndicationSoundScreen(
+                    viewModel = viewModelFactory.getViewModel<WakeIndicationSoundSettingsViewModel>(),
+                    screen = WakeIndicationSoundScreen,
+                    title = MR.strings.wakeSound.stable
                 )
             }
-
-            ErrorIndicationSoundScreen -> IndicationSoundScreen(
-                viewModel = viewModelFactory.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
-                screen = ErrorIndicationSoundScreen,
-                title = MR.strings.errorSound.stable
-            )
-
-            RecordedIndicationSoundScreen -> IndicationSoundScreen(
-                viewModel = viewModelFactory.getViewModel<RecordedIndicationSoundSettingsViewModel>(),
-                screen = RecordedIndicationSoundScreen,
-                title = MR.strings.recordedSound.stable
-            )
-
-            WakeIndicationSoundScreen  -> IndicationSoundScreen(
-                viewModel = viewModelFactory.getViewModel<WakeIndicationSoundSettingsViewModel>(),
-                screen = WakeIndicationSoundScreen,
-                title = MR.strings.wakeSound.stable
-            )
         }
     }
 }

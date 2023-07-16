@@ -33,6 +33,7 @@ import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
@@ -82,6 +83,7 @@ fun viewModelModule() = module {
     factoryOf(::MainScreenViewStateCreator)
     singleOf(::MainScreenViewModel)
 
+    factoryOf(::DialogScreenViewStateCreator)
     singleOf(::DialogScreenViewModel)
 
     factoryOf(::MicrophoneFabViewStateCreator)

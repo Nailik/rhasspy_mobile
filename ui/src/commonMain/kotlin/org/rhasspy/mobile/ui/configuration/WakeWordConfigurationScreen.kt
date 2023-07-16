@@ -1,8 +1,6 @@
 package org.rhasspy.mobile.ui.configuration
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,6 +51,7 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWo
 /**
  * Nav Host of Wake word configuration screens
  */
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun WakeWordConfigurationScreen() {
 
@@ -62,27 +61,29 @@ fun WakeWordConfigurationScreen() {
 
     val viewState by viewModel.viewState.collectAsState()
 
-    when (viewState.screen) {
-        EditScreen ->
-            WakeWordConfigurationEditContent(
-                viewModel = viewModel,
-                viewState = viewState,
-                onEvent = viewModel::onEvent,
-                configurationViewState = configurationEditViewState
-            )
+    AnimatedContent(targetState = viewState.screen) { targetState ->
+        when (targetState) {
+            EditScreen                  ->
+                WakeWordConfigurationEditContent(
+                    viewModel = viewModel,
+                    viewState = viewState,
+                    onEvent = viewModel::onEvent,
+                    configurationViewState = configurationEditViewState
+                )
 
-        EditPorcupineLanguageScreen ->
-            PorcupineLanguageScreen(
-                editData = viewState.editData.wakeWordPorcupineConfigurationData,
-                onEvent = viewModel::onEvent
-            )
+            EditPorcupineLanguageScreen ->
+                PorcupineLanguageScreen(
+                    editData = viewState.editData.wakeWordPorcupineConfigurationData,
+                    onEvent = viewModel::onEvent
+                )
 
-        EditPorcupineWakeWordScreen ->
-            PorcupineKeywordScreen(
-                porcupineScreen = viewState.porcupineWakeWordScreen,
-                editData = viewState.editData.wakeWordPorcupineConfigurationData,
-                onEvent = viewModel::onEvent
-            )
+            EditPorcupineWakeWordScreen ->
+                PorcupineKeywordScreen(
+                    porcupineScreen = viewState.porcupineWakeWordScreen,
+                    editData = viewState.editData.wakeWordPorcupineConfigurationData,
+                    onEvent = viewModel::onEvent
+                )
+        }
     }
 
 }

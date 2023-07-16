@@ -65,6 +65,7 @@ internal class DialogManagerService(
     override val currentDialogState = _currentDialogState.readOnly
 
     init {
+        transitionTo(SessionEnded(Source.Local), IdleState())
         _serviceState.value = ServiceState.Success
     }
 

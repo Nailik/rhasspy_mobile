@@ -17,6 +17,8 @@ import androidx.test.uiautomator.UiSelector
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.StableStringResource.StableResourceFormattedStringDesc
+import org.rhasspy.mobile.data.resource.StableStringResource.StableStringResourceSingle
 import org.rhasspy.mobile.data.service.option.IOption
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
@@ -82,30 +84,25 @@ fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
 fun SemanticsNodeInteractionsProvider.onAllNodesWithText(
     text: StableStringResource,
     useUnmergedTree: Boolean = false
-): SemanticsNodeInteractionCollection = onAllNodesWithText(
-    StringDesc.Resource(text.stringResource).toString(
-        getInstrumentation()
-            .targetContext.applicationContext
-    ), useUnmergedTree
-)
+): SemanticsNodeInteractionCollection = onAllNodesWithText(getText(text), useUnmergedTree)
 
 
 fun textRes(text: StableStringResource): BySelector {
-    return By.text(
-        StringDesc.Resource(text.stringResource).toString(
-            getInstrumentation()
-                .targetContext.applicationContext
-        )
-    )
+    return By.text(getText(text))
+}
+
+private fun getText(text: StableStringResource): String {
+    return when (text) {
+        is StableResourceFormattedStringDesc ->
+            text.stringResource.toString(getInstrumentation().targetContext.applicationContext)
+
+        is StableStringResourceSingle        ->
+            StringDesc.Resource(text.stringResource).toString(getInstrumentation().targetContext.applicationContext)
+    }
 }
 
 fun UiSelector.text(text: StableStringResource): UiSelector {
-    return this.textMatches(
-        StringDesc.Resource(text.stringResource).toString(
-            getInstrumentation()
-                .targetContext.applicationContext
-        )
-    )
+    return this.textMatches(getText(text))
 }
 
 
@@ -157,21 +154,6 @@ fun UiDevice.requestOverlayPermissions(context: Context, overlayPermission: IOve
         requestOverlayPermissionLegacy(context, overlayPermission)
     }
 }
-
-
-fun SemanticsNodeInteraction.assertTextEquals(
-    text: StableStringResource,
-    includeEditableText: Boolean = true
-): SemanticsNodeInteraction =
-    this.assertTextEquals(
-        values = arrayOf(
-            StringDesc.Resource(text.stringResource).toString(
-                getInstrumentation()
-                    .targetContext.applicationContext
-            )
-        ),
-        includeEditableText = includeEditableText
-    )
 
 suspend fun ComposeTestRule.saveBottomAppBar() {
     Espresso.closeSoftKeyboard()

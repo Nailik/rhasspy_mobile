@@ -63,7 +63,7 @@ internal class StateTransition(
             dialogManagerService.informMqtt(sessionData, SessionEnded(Local))
         }
 
-        return DialogManagerState.IdleState()
+        return DialogManagerState.IdleState(sessionData)
     }
 
     override suspend fun transitionToRecordingState(sessionData: SessionData, isSourceMqtt: Boolean): DialogManagerState {

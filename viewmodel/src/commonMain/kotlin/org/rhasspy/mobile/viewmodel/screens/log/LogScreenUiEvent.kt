@@ -6,6 +6,8 @@ sealed interface LogScreenUiEvent {
 
         data object ToggleListAutoScroll : Change
 
+        data object ManualListScroll : Change
+
     }
 
     sealed interface Action : LogScreenUiEvent {

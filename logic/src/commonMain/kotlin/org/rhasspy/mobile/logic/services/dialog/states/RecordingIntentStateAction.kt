@@ -50,9 +50,7 @@ internal class RecordingIntentStateAction(
         indicationService.onError()
         dialogManagerService.transitionTo(
             action = action,
-            state = stateTransition.transitionToIdleState(
-                state.sessionData
-            )
+            state = stateTransition.transitionToIdleState(state.sessionData)
         )
     }
 

@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.ui.main
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -97,6 +98,9 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
 }
 
+val CONTENT_ANIMATION_DURATION = 100
+
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun MainScreenContent(
     screen: MainScreenNavigationDestination,
@@ -106,17 +110,36 @@ private fun MainScreenContent(
 
     Column {
         Box(modifier = Modifier.weight(1f)) {
-            when (screen) {
-                HomeScreen          -> HomeScreen()
-                DialogScreen        -> DialogScreen()
-                ConfigurationScreen -> ConfigurationScreen()
-                SettingsScreen      -> SettingsScreen()
-                LogScreen           -> LogScreen()
+            AnimatedContent(targetState = screen,
+                transitionSpec = {
+                    if (targetState.ordinal > initialState.ordinal) {
+                        slideInHorizontally(
+                            animationSpec = tween(CONTENT_ANIMATION_DURATION),
+                            initialOffsetX = { fullWidth -> fullWidth }
+                        ) with slideOutHorizontally(
+                            animationSpec = tween(CONTENT_ANIMATION_DURATION),
+                            targetOffsetX = { fullWidth -> -fullWidth })
+                    } else {
+                        slideInHorizontally(
+                            animationSpec = tween(CONTENT_ANIMATION_DURATION),
+                            initialOffsetX = { fullWidth -> -fullWidth }
+                        ) with slideOutHorizontally(
+                            animationSpec = tween(CONTENT_ANIMATION_DURATION),
+                            targetOffsetX = { fullWidth -> fullWidth })
+                    }
+                }) { targetState ->
+                when (targetState) {
+                    HomeScreen          -> HomeScreen()
+                    DialogScreen        -> DialogScreen()
+                    ConfigurationScreen -> ConfigurationScreen()
+                    SettingsScreen      -> SettingsScreen()
+                    LogScreen           -> LogScreen()
+                }
             }
         }
 
 
-        AnimatedVisibility(visible = viewState.isBottomNavigationVisible) {
+        if (viewState.isBottomNavigationVisible) {
             BottomNavigation(
                 isShowLogEnabled = viewState.isShowLogEnabled,
                 activeIndex = viewState.bottomNavigationIndex,

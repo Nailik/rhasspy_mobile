@@ -5,6 +5,7 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.logic.services.dialog.SessionData
 
 data class DialogScreenViewState(
+    val isDialogAutoscroll: Boolean,
     val history: ImmutableList<DialogTransitionItem>
 ) {
 
