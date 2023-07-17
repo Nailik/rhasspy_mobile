@@ -41,6 +41,7 @@ data class WakeWordConfigurationViewState internal constructor(
         @Stable
         data class WakeWordPorcupineConfigurationData internal constructor(
             val accessToken: String = ConfigurationSetting.wakeWordPorcupineAccessToken.value,
+            val isUseAudioRecorderSettings: Boolean = ConfigurationSetting.wakeWordPorcupineAudioRecorderSettings.value,
             val porcupineLanguage: PorcupineLanguageOption = ConfigurationSetting.wakeWordPorcupineLanguage.value,
             val defaultOptions: ImmutableList<PorcupineDefaultKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value,
             val customOptions: ImmutableList<PorcupineCustomKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value,

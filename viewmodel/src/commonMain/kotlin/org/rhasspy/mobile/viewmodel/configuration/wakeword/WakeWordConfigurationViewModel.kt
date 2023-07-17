@@ -134,6 +134,7 @@ class WakeWordConfigurationViewModel(
                 copy(wakeWordPorcupineConfigurationData = with(wakeWordPorcupineConfigurationData) {
                     when (change) {
                         is UpdateWakeWordPorcupineAccessToken               -> copy(accessToken = change.value)
+                        is SetPorcupineAudioRecorderSettings                -> copy(isUseAudioRecorderSettings = change.enabled)
                         is ClickPorcupineKeywordCustom                      -> copy(customOptions = customOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
                         is ClickPorcupineKeywordDefault                     -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
                         is DeletePorcupineKeywordCustom                     -> copy(deletedCustomOptions = deletedCustomOptions.updateList { add(change.item) })

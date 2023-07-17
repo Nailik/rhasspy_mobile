@@ -70,6 +70,7 @@ enum class TestTag {
     PorcupineAccessToken,
     PorcupineOpenConsole,
     PorcupineKeyword,
+    PorcupineCustomAudio,
     PorcupineLanguage,
     PorcupineKeywordScreen,
     PorcupineLanguageScreen,

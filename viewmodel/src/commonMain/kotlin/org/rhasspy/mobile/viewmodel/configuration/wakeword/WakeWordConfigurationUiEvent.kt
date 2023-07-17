@@ -18,8 +18,8 @@ sealed interface WakeWordConfigurationUiEvent {
 
     sealed interface Action : WakeWordConfigurationUiEvent {
 
-        object RequestMicrophonePermission : Action
-        object BackClick : Action
+        data object RequestMicrophonePermission : Action
+        data object BackClick : Action
         data class Navigate(val destination: WakeWordConfigurationScreenDestination) : Action
 
     }
@@ -39,6 +39,7 @@ sealed interface WakeWordConfigurationUiEvent {
             data class UndoCustomKeywordDeleted(val item: PorcupineCustomKeyword) : Change
             data class AddPorcupineKeywordCustom(val path: Path) : Change
             data class DeletePorcupineKeywordCustom(val item: PorcupineCustomKeyword) : Change
+            data class SetPorcupineAudioRecorderSettings(val enabled: Boolean) : Change
         }
 
         sealed interface Action : PorcupineUiEvent {

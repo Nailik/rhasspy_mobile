@@ -36,6 +36,7 @@
     <string name="remoteURL">Entfernte URL</string>
     <string name="checkConnection">Verbindung prüfen</string>
     <string name="localPorcupine">Porcupine (lokal)</string>
+    <string name="porcupineAudioRecorderSettings">Audiorecorder Einstellungen</string>
     <string name="local">Lokal</string>
     <string name="remote">Ferngesteuert</string>
     <string name="disabled">Deaktiviert</string>

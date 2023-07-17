@@ -25,10 +25,7 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
-import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
-import org.rhasspy.mobile.ui.content.list.ListElement
-import org.rhasspy.mobile.ui.content.list.TextFieldListItem
-import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
+import org.rhasspy.mobile.ui.content.list.*
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
@@ -38,6 +35,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.RequestMicrophonePermission
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SetPorcupineAudioRecorderSettings
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
@@ -226,6 +224,14 @@ private fun PorcupineConfiguration(
                 .clickable { onEvent(Navigate(EditPorcupineWakeWordScreen)) },
             text = { Text(MR.strings.wakeWord.stable) },
             secondaryText = { Text("${editData.keywordCount} ${translate(MR.strings.active.stable)}") }
+        )
+
+        //button to enabled microphone
+        SwitchListItem(
+            text = MR.strings.porcupineAudioRecorderSettings.stable,
+            modifier = Modifier.testTag(TestTag.PorcupineCustomAudio),
+            isChecked = editData.isUseAudioRecorderSettings,
+            onCheckedChange = { onEvent(SetPorcupineAudioRecorderSettings(it)) }
         )
 
         //button to enabled microphone

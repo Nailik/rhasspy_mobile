@@ -51,6 +51,7 @@ object ConfigurationSetting {
 
     val wakeWordOption = ISetting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled)
     val wakeWordPorcupineAccessToken = ISetting(SettingsEnum.WakeWordPorcupineAccessToken, "")
+    val wakeWordPorcupineAudioRecorderSettings = ISetting(SettingsEnum.WakeWordPorcupineAudioRecorderSettings, false)
     val wakeWordPorcupineKeywordDefaultOptions = ISetting(
         SettingsEnum.WakeWordPorcupineKeywordDefaultSelectedOptions,
         PorcupineKeywordOption.values().map { PorcupineDefaultKeyword(it, false, 0.5f) }.toImmutableList(),
