@@ -6,6 +6,7 @@ import com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
 import groovy.json.JsonSlurper
 import org.apache.commons.io.output.ByteArrayOutputStream
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.jetbrains.compose.experimental.uikit.tasks.SyncComposeResourcesForIosTask
 
 plugins {
     kotlin("multiplatform")
@@ -97,6 +98,7 @@ aboutLibraries {
     duplicationRule = SIMPLE
 }
 
+
 android {
     namespace = "org.rhasspy.mobile.resources"
     sourceSets {
@@ -133,6 +135,12 @@ tasks.findByPath("preBuild")!!.doFirst {
             "-PaboutLibraries.exportPath=${projectDir}/src/commonMain/resources/MR/files"
         )
     }
+}
+
+tasks.withType<SyncComposeResourcesForIosTask> {
+    dependsOn(tasks.findByName("generateMRcommonMain"))
+    dependsOn(tasks.findByName("generateMRiosArm64Main"))
+    dependsOn(tasks.findByName("generateMRiosSimulatorArm64Main"))
 }
 
 fun generateChangelog(): String {
