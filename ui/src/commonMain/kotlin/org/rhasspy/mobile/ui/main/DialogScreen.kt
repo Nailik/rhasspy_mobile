@@ -63,7 +63,6 @@ import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogT
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogActionViewState.SourceViewState.SourceType.MQTT
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogStateViewState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialogScreen() {
     val viewModel: DialogScreenViewModel = LocalViewModelFactory.current.getViewModel()
@@ -233,7 +232,6 @@ private fun DialogActionListItem(item: DialogActionViewState) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DialogStateListItem(item: DialogStateViewState) {
     ListElement(

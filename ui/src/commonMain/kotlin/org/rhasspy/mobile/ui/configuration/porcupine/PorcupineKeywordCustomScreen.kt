@@ -19,7 +19,6 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -130,7 +129,6 @@ private fun KeywordListItem(
  * sensitivity
  * delete keyword
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CustomKeywordListItem(
     modifier: Modifier = Modifier,
@@ -179,7 +177,6 @@ private fun CustomKeywordListItem(
  * list item for deleted custom keywords but not yet saved
  * contains quick action to undo deletion
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CustomKeywordDeletedListItem(
     modifier: Modifier = Modifier,

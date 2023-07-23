@@ -74,7 +74,7 @@ internal class IntentRecognitionService(
                 val result = httpClientService.recognizeIntent(text)
                 _serviceState.value = result.toServiceState()
                 val action = when (result) {
-                    is HttpClientResult.Error -> IntentRecognitionError(Source.Local)
+                    is HttpClientResult.Error   -> IntentRecognitionError(Source.Local)
                     is HttpClientResult.Success -> IntentRecognitionResult(
                         source = Source.Local,
                         intentName = readIntentNameFromJson(result.data),

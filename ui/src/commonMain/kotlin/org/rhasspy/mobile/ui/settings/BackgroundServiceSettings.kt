@@ -6,7 +6,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BatteryAlert
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,7 +38,6 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
  * listElement to disable battery optimization
  */
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BackgroundServiceSettingsContent() {
     val viewModel: BackgroundServiceSettingsViewModel = LocalViewModelFactory.current.getViewModel()

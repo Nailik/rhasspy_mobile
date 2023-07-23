@@ -50,8 +50,8 @@ class SpeechToTextConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SelectSpeechToTextOption -> copy(speechToTextOption = change.option)
-                    is SetUseCustomHttpEndpoint -> copy(
+                    is SelectSpeechToTextOption               -> copy(speechToTextOption = change.option)
+                    is SetUseCustomHttpEndpoint               -> copy(
                         isUseCustomSpeechToTextHttpEndpoint = change.enabled
                     )
 
@@ -59,7 +59,7 @@ class SpeechToTextConfigurationViewModel(
                         isUseSpeechToTextMqttSilenceDetection = change.enabled
                     )
 
-                    is UpdateSpeechToTextHttpEndpoint -> copy(speechToTextHttpEndpoint = change.endpoint)
+                    is UpdateSpeechToTextHttpEndpoint         -> copy(speechToTextHttpEndpoint = change.endpoint)
                 }
             })
         }

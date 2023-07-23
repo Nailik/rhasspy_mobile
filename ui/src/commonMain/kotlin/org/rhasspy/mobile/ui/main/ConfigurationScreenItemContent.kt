@@ -18,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
@@ -53,7 +52,6 @@ import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 /**
  * configuration screen where settings are edited
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfigurationScreenItemContent(
     modifier: Modifier,
@@ -202,11 +200,8 @@ private fun AppBar(
 
     TopAppBar(
         colors = topAppBarColors(
-        containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp),
-        scrolledContainerColor = MaterialTheme.colorScheme.applyTonalElevation(
-    backgroundColor = containerColor,
-    elevation = TopAppBarSmallTokens.OnScrollContainerElevation
-)
+            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp),
+            scrolledContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
         ),
         title = {
             Text(

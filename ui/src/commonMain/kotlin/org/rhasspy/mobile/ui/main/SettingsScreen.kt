@@ -391,7 +391,6 @@ private fun About(onEvent: (event: SettingsScreenUiEvent) -> Unit) {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsListItem(
     text: StableStringResource,
@@ -409,7 +408,6 @@ private fun SettingsListItem(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsListItem(
     text: StableStringResource,

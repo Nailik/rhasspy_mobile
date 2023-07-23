@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.ui.configuration.porcupine
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -45,7 +44,6 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcup
  *  page with custom options
  *  bottom bar to switch between pages
  */
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun PorcupineKeywordScreen(
     porcupineScreen: PorcupineKeywordConfigurationScreenDestination,

@@ -26,7 +26,6 @@ import org.rhasspy.mobile.ui.testTag
 /**
  * content of a settings screen page
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreenItemContent(
     modifier: Modifier = Modifier,

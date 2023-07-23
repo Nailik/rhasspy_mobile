@@ -68,7 +68,6 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSe
 /**
  * screen to choose indication sound
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IndicationSoundScreen(
     viewModel: IIndicationSoundSettingsViewModel,

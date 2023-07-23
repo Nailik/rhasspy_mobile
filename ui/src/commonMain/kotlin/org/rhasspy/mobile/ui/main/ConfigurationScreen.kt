@@ -494,7 +494,6 @@ private fun IntentHandling(
 /**
  * list item
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ConfigurationListItem(
     text: StableStringResource,
@@ -520,7 +519,6 @@ private fun ConfigurationListItem(
 /**
  * list item
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("SameParameterValue")
 @Composable
 private fun ConfigurationListItem(

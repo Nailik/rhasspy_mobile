@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -200,7 +199,6 @@ private fun MqttConnectionSettings(
  * switch to enable mqtt ssl
  * button to select certificate
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MqttSSL(
     isMqttSSLEnabled: Boolean,

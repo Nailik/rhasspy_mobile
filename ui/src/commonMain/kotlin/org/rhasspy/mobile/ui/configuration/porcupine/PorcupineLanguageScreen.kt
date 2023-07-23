@@ -34,7 +34,6 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 /**
  *  list of porcupine languages
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PorcupineLanguageScreen(
     editData: WakeWordPorcupineConfigurationData,

@@ -3,7 +3,6 @@ package androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,7 +25,6 @@ import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettings
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Change.SelectAudioRecorderSampleRateType
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AudioRecorderSettingsContent() {
     val viewModel: AudioRecorderSettingsViewModel = LocalViewModelFactory.current.getViewModel()

@@ -52,8 +52,6 @@ import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
 /**
  * show log information
  */
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogScreen() {
     val viewModel: LogScreenViewModel = LocalViewModelFactory.current.getViewModel()
