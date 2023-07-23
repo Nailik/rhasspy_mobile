@@ -1,9 +1,6 @@
 package org.rhasspy.mobile.ui.configuration.porcupine
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +16,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.theme.horizontalAnimationSpec
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
@@ -83,22 +81,9 @@ fun PorcupineKeywordScreen(
                 AnimatedContent(
                     targetState = porcupineScreen,
                     transitionSpec = {
-                        if (targetState.ordinal > initialState.ordinal) {
-                            slideInHorizontally(
-                                animationSpec = tween(CONTENT_ANIMATION_DURATION),
-                                initialOffsetX = { fullWidth -> fullWidth }
-                            ) togetherWith slideOutHorizontally(
-                                animationSpec = tween(CONTENT_ANIMATION_DURATION),
-                                targetOffsetX = { fullWidth -> -fullWidth })
-                        } else {
-                            slideInHorizontally(
-                                animationSpec = tween(CONTENT_ANIMATION_DURATION),
-                                initialOffsetX = { fullWidth -> -fullWidth }
-                            ) togetherWith slideOutHorizontally(
-                                animationSpec = tween(CONTENT_ANIMATION_DURATION),
-                                targetOffsetX = { fullWidth -> fullWidth })
-                        }
-                    }) { targetState ->
+                        horizontalAnimationSpec(targetState.ordinal, initialState.ordinal)
+                    }
+                ) { targetState ->
                     when (targetState) {
                         DefaultKeywordScreen -> PorcupineKeywordDefaultScreen(
                             editData = editData,
