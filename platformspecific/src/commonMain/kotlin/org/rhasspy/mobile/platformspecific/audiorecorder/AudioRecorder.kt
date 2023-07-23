@@ -8,7 +8,7 @@ import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 
 interface IAudioRecorder {
 
-    val output: Flow<ByteArray>
+    val output: Flow<ByteArray> //TODO maybe hold byte and short array for convenience
     val maxVolume: StateFlow<Float>
     val isRecording: StateFlow<Boolean>
     val absoluteMaxVolume: Float

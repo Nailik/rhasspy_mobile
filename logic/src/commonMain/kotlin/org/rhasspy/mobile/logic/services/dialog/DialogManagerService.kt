@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
@@ -21,6 +22,7 @@ import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.IdleState
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerDisabled
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerLocal
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerRemoteMqtt
+import org.rhasspy.mobile.logic.services.dialog.states.IStateTransition
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
@@ -33,6 +35,7 @@ interface IDialogManagerService : IService {
     override val serviceState: StateFlow<ServiceState>
     val currentDialogState: StateFlow<DialogManagerState>
 
+    fun start()
     fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState)
 
     fun onAction(action: DialogServiceMiddlewareAction)
@@ -63,9 +66,11 @@ internal class DialogManagerService(
     private val _currentDialogState = MutableStateFlow<DialogManagerState>(IdleState())
     override val currentDialogState = _currentDialogState.readOnly
 
-    init {
-        transitionTo(SessionEnded(Source.Local), IdleState())
+    override fun start() {
         _serviceState.value = ServiceState.Success
+        coroutineScope.launch {
+            transitionTo(SessionEnded(Source.Local), get<IStateTransition>().transitionToIdleState(null))
+        }
     }
 
     override fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState) {

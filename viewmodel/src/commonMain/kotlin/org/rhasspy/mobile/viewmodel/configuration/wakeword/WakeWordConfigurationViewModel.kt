@@ -200,6 +200,7 @@ class WakeWordConfigurationViewModel(
             ConfigurationSetting.wakeWordOption.value = wakeWordOption
 
             with(wakeWordPorcupineConfigurationData) {
+                ConfigurationSetting.wakeWordPorcupineAudioRecorderSettings.value = isUseAudioRecorderSettings
                 ConfigurationSetting.wakeWordPorcupineAccessToken.value = accessToken
                 ConfigurationSetting.wakeWordPorcupineLanguage.value = porcupineLanguage
                 ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value = defaultOptions

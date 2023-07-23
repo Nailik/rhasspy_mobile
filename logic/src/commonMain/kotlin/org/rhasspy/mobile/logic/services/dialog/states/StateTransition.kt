@@ -63,6 +63,8 @@ internal class StateTransition(
             dialogManagerService.informMqtt(sessionData, SessionEnded(Local))
         }
 
+        wakeWordService.startDetection()
+
         return DialogManagerState.IdleState(sessionData)
     }
 

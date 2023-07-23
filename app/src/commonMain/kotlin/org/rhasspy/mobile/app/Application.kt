@@ -134,7 +134,7 @@ class Application : NativeApplication(), KoinComponent {
     private fun startServices() {
         get<IWebServerService>()
         get<IMqttService>()
-        get<IDialogManagerService>()
+        get<IDialogManagerService>().start()
     }
 
 }
