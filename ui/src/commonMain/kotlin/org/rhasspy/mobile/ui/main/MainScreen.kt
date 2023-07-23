@@ -99,11 +99,13 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
                                 val viewState by viewModel.viewState.collectAsState()
 
                                 if (viewState.isShowCrashlyticsDialog) {
-                                    CrashlyticsDialog(onResult = {
-                                        viewModel.onEvent(
-                                            CrashlyticsDialogResult(it)
-                                        )
-                                    })
+                                    CrashlyticsDialog(
+                                        onResult = {
+                                            viewModel.onEvent(
+                                                CrashlyticsDialogResult(it)
+                                            )
+                                        }
+                                    )
                                 }
 
                                 MainScreenContent(
@@ -135,7 +137,7 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
 }
 
-val CONTENT_ANIMATION_DURATION = 100
+const val CONTENT_ANIMATION_DURATION = 100
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable

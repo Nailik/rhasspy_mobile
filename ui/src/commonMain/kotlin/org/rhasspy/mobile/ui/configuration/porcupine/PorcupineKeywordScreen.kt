@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,7 +26,6 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
-import org.rhasspy.mobile.ui.main.CONTENT_ANIMATION_DURATION
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.BackClick
@@ -82,7 +80,8 @@ fun PorcupineKeywordScreen(
             //horizontal pager to slide between pages
             Surface(modifier = Modifier.padding(paddingValues)) {
 
-                AnimatedContent(targetState = porcupineScreen,
+                AnimatedContent(
+                    targetState = porcupineScreen,
                     transitionSpec = {
                         if (targetState.ordinal > initialState.ordinal) {
                             slideInHorizontally(

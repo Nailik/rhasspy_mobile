@@ -81,6 +81,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         //user clicks porcupine
         composeTestRule.onNodeWithTag(WakeWordOption.Porcupine).performClick()
         //porcupine options visible
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.PorcupineWakeWordSettings).assertIsDisplayed()
 
         //user clicks save
