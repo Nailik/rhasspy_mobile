@@ -55,7 +55,7 @@ kotlin {
                 implementation(Firebase.analyticsKtx)
                 implementation(Firebase.crashlyticsKtx)
                 implementation(platform(Firebase.bom))
-                implementation(files("libs/androidresampler-release.aar"))
+                implementation(project(":androidresampler"))
             }
         }
         val androidUnitTest by getting {

@@ -26,3 +26,6 @@ include(":settings")
 include(":platformspecific")
 include(":data")
 include(":resources")
+
+include(":androidresampler")
+
