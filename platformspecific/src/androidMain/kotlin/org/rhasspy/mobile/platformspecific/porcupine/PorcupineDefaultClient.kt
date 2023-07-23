@@ -18,7 +18,6 @@ class PorcupineDefaultClient(
 
     private var porcupineManager = PorcupineManager.Builder()
         .setAccessKey(wakeWordPorcupineAccessToken)
-        //keyword paths can not be used with keywords, therefore also the built in keywords are copied to a usable file location
         .setKeywordPaths(getKeywordPaths())
         .setSensitivities(getSensitivities())
         .setModelPath(copyModelFile())

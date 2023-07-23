@@ -37,6 +37,9 @@
     <string name="checkConnection">Verbindung prüfen</string>
     <string name="localPorcupine">Porcupine (lokal)</string>
     <string name="porcupineAudioRecorderSettings">Audiorecorder Einstellungen</string>
+    <string name="porcupineAudioRecorderSettingsInformation">Audio wird in ein Porcupine-kompatibles
+        Format konvertiert. Benötigt PCM 16 Bit.
+    </string>
     <string name="local">Lokal</string>
     <string name="remote">Ferngesteuert</string>
     <string name="disabled">Deaktiviert</string>
@@ -393,9 +396,9 @@
     <string name="channel_type_mono">Mono</string>
     <string name="channel_type_stereo">Stereo</string>
     <string name="encoding_type_default">Default</string>
-    <string name="encoding_type_PCM8Bit">PCM8Bit</string>
-    <string name="encoding_type_PCM16Bit">PCM16Bit</string>
-    <string name="encoding_type_PCM_32BIT">PCM_32BIT</string>
+    <string name="encoding_type_PCM8Bit">PCM 8 Bit</string>
+    <string name="encoding_type_PCM16Bit">PCM 16 Bit</string>
+    <string name="encoding_type_PCM_32BIT">PCM 32 Bit</string>
     <string name="sample_rate_type_11025">11025 Hz</string>
     <string name="sample_rate_type_12000">12000 Hz</string>
     <string name="sample_rate_type_16000">16000 Hz</string>

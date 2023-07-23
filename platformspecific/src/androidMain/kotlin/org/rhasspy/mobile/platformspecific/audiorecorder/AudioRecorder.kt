@@ -21,8 +21,6 @@ import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.readOnly
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
     private val logger = Logger.withTag("AudioRecorder")
@@ -32,7 +30,6 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
      */
     private val _output = MutableSharedFlow<ByteArray>()
     actual override val output = _output.readOnly
-
     /**
      * max volume since start recording
      */
@@ -64,13 +61,11 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
         audioRecorderEncodingType: AudioRecorderEncodingType
     ) {
 
-        val bufferSizeFactor = 2
         val tempBufferSize = AudioRecord.getMinBufferSize(
             audioRecorderSampleRateType.value,
             audioRecorderChannelType.value,
             audioRecorderEncodingType.value
-        ) * bufferSizeFactor
-
+        ) * 2
 
         logger.v { "startRecording" }
 
@@ -81,7 +76,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
 
         try {
             if (recorder == null) {
-                logger.v { "initializing recorder $1024" }
+                logger.v { "initializing recorder" }
                 recorder = AudioRecord.Builder()
                     .setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
                     .setAudioFormat(
@@ -91,13 +86,13 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
                             .setEncoding(audioRecorderEncodingType.value)
                             .build()
                     )
-                    .setBufferSizeInBytes(1024)
+                    .setBufferSizeInBytes(tempBufferSize)
                     .build()
             }
 
             _isRecording.value = true
             recorder?.startRecording()
-            read(1024)
+            read(tempBufferSize)
         } catch (e: Exception) {
             _isRecording.value = false
             logger.e(e) { "native start recording error" }
@@ -127,22 +122,23 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
                 while (it.recordingState == AudioRecord.RECORDSTATE_RECORDING) {
                     val byteArray = ByteArray(bufferSize)
                     if (it.read(byteArray, 0, byteArray.size) == bufferSize) {
-                        coroutineScope.launch {
-                            var max: Short = 0
-                            for (i in 0..byteArray.size step 2) {
-                                if (i < byteArray.size) {
-                                    val bb = ByteBuffer.wrap(byteArray.copyOfRange(i, i + 2))
-                                    bb.order(ByteOrder.nativeOrder())
-                                    val short = bb.short
 
-                                    if (short > max) {
-                                        max = short
-                                    }
-                                }
-                            }
-                            _maxVolume.value = max.toFloat()
-                        }
+                        /* coroutineScope.launch {
+                             var max: Short = 0
+                             for (i in 0..byteArray.size step 2) {
+                                 if (i < byteArray.size) {
+                                     val bb = ByteBuffer.wrap(byteArray.copyOfRange(i, i + 2))
+                                     bb.order(ByteOrder.nativeOrder())
+                                     val short = bb.short
 
+                                     if (short > max) {
+                                         max = short
+                                     }
+                                 }
+                             }
+                             _maxVolume.value = max.toFloat()
+                         }
+ */
                         _output.emit(byteArray)
                     }
                 }
