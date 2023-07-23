@@ -42,22 +42,25 @@ class SaveAndRestoreSettingsViewModel(
         viewModelScope.launch(dispatcher.IO) {
             _viewState.update {
                 when (action) {
-                    ExportSettingsFile                -> it.copy(isSaveSettingsToFileDialogVisible = true)
-                    RestoreSettingsFromFile           -> it.copy(
+                    ExportSettingsFile                     -> it.copy(
+                        isSaveSettingsToFileDialogVisible = true
+                    )
+
+                    RestoreSettingsFromFile                -> it.copy(
                         isRestoreSettingsFromFileDialogVisible = true
                     )
 
-                    ShareSettingsFile                 ->
+                    ShareSettingsFile                      ->
                         if (!settingsUtils.shareSettingsFile()) {
                             it.copy(snackBarText = MR.strings.shareSettingsFileFailed.stable)
                         } else it
 
-                    is BackClick                      -> {
+                    is BackClick                           -> {
                         navigator.onBackPressed()
                         it
                     }
 
-                    is ExportSettingsFileDialogResult -> {
+                    is ExportSettingsFileDialogResult      -> {
                         if (action.confirmed) {
                             if (!settingsUtils.exportSettingsFile()) {
                                 it.copy(

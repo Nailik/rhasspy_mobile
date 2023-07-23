@@ -1,13 +1,27 @@
 package org.rhasspy.mobile.android.configuration
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.utils.FlakyTest
+import org.rhasspy.mobile.android.utils.TestContentProvider
+import org.rhasspy.mobile.android.utils.onListItemRadioButton
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.ui.TestTag
@@ -64,14 +78,20 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
         val textInputTest = "endpointTestInput"
 
         //option disable is set
-        composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled).onListItemRadioButton()
+            .assertIsSelected()
 
         //User clicks option remote http
-        composeTestRule.onNodeWithTag(AudioPlayingOption.RemoteHTTP).onListItemRadioButton().performClick()
+        composeTestRule.onNodeWithTag(AudioPlayingOption.RemoteHTTP).onListItemRadioButton()
+            .performClick()
         //new option is selected
         composeTestRule.awaitIdle()
-        assertEquals(AudioPlayingOption.RemoteHTTP, viewModel.viewState.value.editData.audioPlayingOption)
-        composeTestRule.onNodeWithTag(AudioPlayingOption.RemoteHTTP).onListItemRadioButton().assertIsSelected()
+        assertEquals(
+            AudioPlayingOption.RemoteHTTP,
+            viewModel.viewState.value.editData.audioPlayingOption
+        )
+        composeTestRule.onNodeWithTag(AudioPlayingOption.RemoteHTTP).onListItemRadioButton()
+            .assertIsSelected()
 
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
@@ -79,7 +99,8 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).assertExists()
 
         //switch is off
-        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performScrollTo().onListItemSwitch().assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performScrollTo()
+            .onListItemSwitch().assertIsOff()
         //endpoint cannot be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsNotEnabled()
 
@@ -136,7 +157,8 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
         assertEquals(AudioOutputOption.Sound, viewModel.viewState.value.editData.audioOutputOption)
 
         //option disable is set
-        composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled, true).performScrollTo().onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled, true).performScrollTo()
+            .onListItemRadioButton().assertIsSelected()
         //output options not visible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertDoesNotExist()
 
@@ -144,17 +166,22 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(AudioPlayingOption.Local).performClick()
         //new option is selected
         composeTestRule.awaitIdle()
-        assertEquals(AudioPlayingOption.Local, viewModel.viewState.value.editData.audioPlayingOption)
+        assertEquals(
+            AudioPlayingOption.Local,
+            viewModel.viewState.value.editData.audioPlayingOption
+        )
 
         //output options visible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertIsDisplayed()
         //option sound is set
-        composeTestRule.onNodeWithTag(AudioOutputOption.Sound, true).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioOutputOption.Sound, true).onListItemRadioButton()
+            .assertIsSelected()
 
         //user clicks option notification
         composeTestRule.onNodeWithTag(AudioOutputOption.Notification).performClick()
         //option notification is selected
-        composeTestRule.onNodeWithTag(AudioOutputOption.Notification, true).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioOutputOption.Notification, true).onListItemRadioButton()
+            .assertIsSelected()
 
         //User clicks save
         composeTestRule.saveBottomAppBar()

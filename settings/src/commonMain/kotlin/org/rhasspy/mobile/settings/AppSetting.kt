@@ -23,13 +23,16 @@ object AppSetting : KoinComponent {
 
     val didShowCrashlyticsDialog = ISetting(SettingsEnum.CrashlyticsDialog, false)
 
-    val languageType = ISetting(SettingsEnum.LanguageOption, get<ILanguageUtils>().getDeviceLanguage())
+    val languageType =
+        ISetting(SettingsEnum.LanguageOption, get<ILanguageUtils>().getDeviceLanguage())
 
     val isAutomaticSilenceDetectionEnabled = ISetting(SettingsEnum.AutomaticSilenceDetection, false)
     val automaticSilenceDetectionAudioLevel =
         ISetting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
-    val automaticSilenceDetectionTime = ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
-    val automaticSilenceDetectionMinimumTime = ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000)
+    val automaticSilenceDetectionTime =
+        ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
+    val automaticSilenceDetectionMinimumTime =
+        ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000)
 
     val isBackgroundServiceEnabled = ISetting(SettingsEnum.BackgroundEnabled, false)
     val microphoneOverlaySizeOption =
@@ -59,9 +62,12 @@ object AppSetting : KoinComponent {
     val errorSound = ISetting(SettingsEnum.ErrorSound, SoundOption.Default.name)
 
     //saves sound as pair, first is fileName as String, second is used and indicates if this custom sound file is used
-    val customWakeSounds = ISetting(SettingsEnum.CustomWakeSounds, persistentListOf(), StringListSerializer)
-    val customRecordedSounds = ISetting(SettingsEnum.CustomRecordedSounds, persistentListOf(), StringListSerializer)
-    val customErrorSounds = ISetting(SettingsEnum.CustomErrorSounds, persistentListOf(), StringListSerializer)
+    val customWakeSounds =
+        ISetting(SettingsEnum.CustomWakeSounds, persistentListOf(), StringListSerializer)
+    val customRecordedSounds =
+        ISetting(SettingsEnum.CustomRecordedSounds, persistentListOf(), StringListSerializer)
+    val customErrorSounds =
+        ISetting(SettingsEnum.CustomErrorSounds, persistentListOf(), StringListSerializer)
 
     val isCrashlyticsEnabled = ISetting(SettingsEnum.Crashlytics, false)
     val isShowLogEnabled = ISetting(SettingsEnum.ShowLog, isDebug())
@@ -75,9 +81,12 @@ object AppSetting : KoinComponent {
     val isAudioFocusOnRecord = ISetting(SettingsEnum.AudioFocusOnRecord, false)
     val isAudioFocusOnDialog = ISetting(SettingsEnum.AudioFocusOnDialog, false)
 
-    val audioRecorderChannel = ISetting(SettingsEnum.AudioRecorderChannel, AudioRecorderChannelType.default)
-    val audioRecorderEncoding = ISetting(SettingsEnum.AudioRecorderEncoding, AudioRecorderEncodingType.default)
-    val audioRecorderSampleRate = ISetting(SettingsEnum.AudioRecorderSampleRate, AudioRecorderSampleRateType.default)
+    val audioRecorderChannel =
+        ISetting(SettingsEnum.AudioRecorderChannel, AudioRecorderChannelType.default)
+    val audioRecorderEncoding =
+        ISetting(SettingsEnum.AudioRecorderEncoding, AudioRecorderEncodingType.default)
+    val audioRecorderSampleRate =
+        ISetting(SettingsEnum.AudioRecorderSampleRate, AudioRecorderSampleRateType.default)
 
     val isDialogAutoscroll = ISetting(SettingsEnum.DialogAutoScroll, true)
 }

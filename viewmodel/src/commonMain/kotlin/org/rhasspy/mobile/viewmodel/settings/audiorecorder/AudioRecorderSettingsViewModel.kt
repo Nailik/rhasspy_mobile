@@ -7,7 +7,9 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Change
-import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Change.SelectAudioRecorderChannelType
+import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Change.SelectAudioRecorderEncodingType
+import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Change.SelectAudioRecorderSampleRateType
 
 @Stable
 class AudioRecorderSettingsViewModel(
@@ -25,9 +27,14 @@ class AudioRecorderSettingsViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            is SelectAudioRecorderChannelType    -> AppSetting.audioRecorderChannel.value = change.audioRecorderChannelType
-            is SelectAudioRecorderEncodingType   -> AppSetting.audioRecorderEncoding.value = change.audioRecorderEncodingType
-            is SelectAudioRecorderSampleRateType -> AppSetting.audioRecorderSampleRate.value = change.audioRecorderSampleRateType
+            is SelectAudioRecorderChannelType    -> AppSetting.audioRecorderChannel.value =
+                change.audioRecorderChannelType
+
+            is SelectAudioRecorderEncodingType   -> AppSetting.audioRecorderEncoding.value =
+                change.audioRecorderEncodingType
+
+            is SelectAudioRecorderSampleRateType -> AppSetting.audioRecorderSampleRate.value =
+                change.audioRecorderSampleRateType
         }
     }
 

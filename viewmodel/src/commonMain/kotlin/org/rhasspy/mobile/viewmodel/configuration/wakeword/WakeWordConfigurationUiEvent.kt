@@ -30,12 +30,28 @@ sealed interface WakeWordConfigurationUiEvent {
 
             data class UpdateWakeWordPorcupineAccessToken(val value: String) : Change
             data class SelectWakeWordPorcupineLanguage(val option: PorcupineLanguageOption) : Change
-            data class UpdateWakeWordPorcupineKeywordDefaultSensitivity(val item: PorcupineDefaultKeyword, val value: Float) : Change
+            data class UpdateWakeWordPorcupineKeywordDefaultSensitivity(
+                val item: PorcupineDefaultKeyword,
+                val value: Float
+            ) : Change
+
             data class ClickPorcupineKeywordDefault(val item: PorcupineDefaultKeyword) : Change
-            data class SetPorcupineKeywordDefault(val item: PorcupineDefaultKeyword, val value: Boolean) : Change
-            data class UpdateWakeWordPorcupineKeywordCustomSensitivity(val item: PorcupineCustomKeyword, val value: Float) : Change
+            data class SetPorcupineKeywordDefault(
+                val item: PorcupineDefaultKeyword,
+                val value: Boolean
+            ) : Change
+
+            data class UpdateWakeWordPorcupineKeywordCustomSensitivity(
+                val item: PorcupineCustomKeyword,
+                val value: Float
+            ) : Change
+
             data class ClickPorcupineKeywordCustom(val item: PorcupineCustomKeyword) : Change
-            data class SetPorcupineKeywordCustom(val item: PorcupineCustomKeyword, val value: Boolean) : Change
+            data class SetPorcupineKeywordCustom(
+                val item: PorcupineCustomKeyword,
+                val value: Boolean
+            ) : Change
+
             data class UndoCustomKeywordDeleted(val item: PorcupineCustomKeyword) : Change
             data class AddPorcupineKeywordCustom(val path: Path) : Change
             data class DeletePorcupineKeywordCustom(val item: PorcupineCustomKeyword) : Change
@@ -49,7 +65,8 @@ sealed interface WakeWordConfigurationUiEvent {
             object OpenPicoVoiceConsole : Action
             object BackClick : Action
             object PorcupineLanguageClick : Action
-            data class PageClick(val screen: PorcupineKeywordConfigurationScreenDestination) : Action
+            data class PageClick(val screen: PorcupineKeywordConfigurationScreenDestination) :
+                Action
 
         }
     }

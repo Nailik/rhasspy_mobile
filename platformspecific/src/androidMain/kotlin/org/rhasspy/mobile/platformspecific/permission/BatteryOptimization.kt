@@ -15,7 +15,8 @@ actual class BatteryOptimization actual constructor(
      * check if battery optimization is disabled
      */
     actual fun isBatteryOptimizationDisabled(): Boolean {
-        return nativeApplication.getSystemService<PowerManager>()?.isIgnoringBatteryOptimizations(nativeApplication.packageName)
+        return nativeApplication.getSystemService<PowerManager>()
+            ?.isIgnoringBatteryOptimizations(nativeApplication.packageName)
             ?: run {
                 logger.e { "isBatteryOptimizationDisabled powerManager is null" }
                 false

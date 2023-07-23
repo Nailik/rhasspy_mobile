@@ -72,32 +72,37 @@ class ScreenViewModelTest : AppTest() {
     }
 
     @Test
-    fun `when the microphone permission is required abd given the function is executed`() = runTest {
-        var wasCalled = false
-        every { microphonePermission.granted } returns MutableStateFlow(true).readOnly
+    fun `when the microphone permission is required abd given the function is executed`() =
+        runTest {
+            var wasCalled = false
+            every { microphonePermission.granted } returns MutableStateFlow(true).readOnly
 
-        screenViewModel.requireMicrophonePermission {
-            wasCalled = true
+            screenViewModel.requireMicrophonePermission {
+                wasCalled = true
+            }
+
+            coVerify { repeat(0) { microphonePermission.request() } }
+            assertTrue(wasCalled)
         }
 
-        coVerify { repeat(0) { microphonePermission.request() } }
-        assertTrue(wasCalled)
-    }
-
     @Test
-    fun `when microphone permission dialog is shown onBackPressClick doesn't close screen`() = runTest {
-        every { microphonePermission.granted } returns MutableStateFlow(false).readOnly
-        every { microphonePermission.shouldShowInformationDialog() } returns true
+    fun `when microphone permission dialog is shown onBackPressClick doesn't close screen`() =
+        runTest {
+            every { microphonePermission.granted } returns MutableStateFlow(false).readOnly
+            every { microphonePermission.shouldShowInformationDialog() } returns true
 
-        screenViewModel.requireMicrophonePermission { }
+            screenViewModel.requireMicrophonePermission { }
 
-        assertEquals(MicrophonePermissionInfo, screenViewModel.screenViewState.value.dialogState)
+            assertEquals(
+                MicrophonePermissionInfo,
+                screenViewModel.screenViewState.value.dialogState
+            )
 
-        screenViewModel.onBackPressedClick()
+            screenViewModel.onBackPressedClick()
 
-        assertNull(screenViewModel.screenViewState.value.dialogState)
-        coVerify { repeat(0) { navigator.onBackPressed() } }
-    }
+            assertNull(screenViewModel.screenViewState.value.dialogState)
+            coVerify { repeat(0) { navigator.onBackPressed() } }
+        }
 
     @Test
     fun `when the overlay permission is required but not given it's requested`() = runTest {
@@ -124,17 +129,18 @@ class ScreenViewModelTest : AppTest() {
     }
 
     @Test
-    fun `when overlay permission dialog is shown onBackPressClick doesn't close screen`() = runTest {
-        every { navigator.onBackPressed() } returns Unit
-        every { overlayPermission.granted } returns MutableStateFlow(false).readOnly
-        screenViewModel.requireOverlayPermission { }
+    fun `when overlay permission dialog is shown onBackPressClick doesn't close screen`() =
+        runTest {
+            every { navigator.onBackPressed() } returns Unit
+            every { overlayPermission.granted } returns MutableStateFlow(false).readOnly
+            screenViewModel.requireOverlayPermission { }
 
-        assertEquals(OverlayPermissionInfo, screenViewModel.screenViewState.value.dialogState)
+            assertEquals(OverlayPermissionInfo, screenViewModel.screenViewState.value.dialogState)
 
-        screenViewModel.onBackPressedClick()
+            screenViewModel.onBackPressedClick()
 
-        assertNull(screenViewModel.screenViewState.value.dialogState)
-        coVerify { repeat(0) { navigator.onBackPressed() } }
-    }
+            assertNull(screenViewModel.screenViewState.value.dialogState)
+            coVerify { repeat(0) { navigator.onBackPressed() } }
+        }
 
 }

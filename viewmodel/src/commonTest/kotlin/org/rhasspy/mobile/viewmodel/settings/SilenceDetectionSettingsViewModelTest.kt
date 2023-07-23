@@ -59,8 +59,15 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
         assertEquals(0f, AppSetting.automaticSilenceDetectionAudioLevel.value)
 
         arrayOf(0.25f, 0.5f, 0.75f, 1f).forEach { percentage ->
-            silenceDetectionSettingsViewModel.onEvent(UpdateSilenceDetectionAudioLevelLogarithm(percentage))
-            assertEquals(audioRecorder.absoluteMaxVolume.pow(percentage), AppSetting.automaticSilenceDetectionAudioLevel.value)
+            silenceDetectionSettingsViewModel.onEvent(
+                UpdateSilenceDetectionAudioLevelLogarithm(
+                    percentage
+                )
+            )
+            assertEquals(
+                audioRecorder.absoluteMaxVolume.pow(percentage),
+                AppSetting.automaticSilenceDetectionAudioLevel.value
+            )
         }
     }
 

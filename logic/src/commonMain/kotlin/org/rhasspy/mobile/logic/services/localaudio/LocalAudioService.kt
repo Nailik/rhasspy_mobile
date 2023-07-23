@@ -1,8 +1,12 @@
 package org.rhasspy.mobile.logic.services.localaudio
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import okio.Path
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Notification
@@ -65,33 +69,34 @@ internal class LocalAudioService(
         }
     }
 
-    override suspend fun playAudio(audioSource: AudioSource): ServiceState = suspendCancellableCoroutine { continuation ->
-        if (AppSetting.isAudioOutputEnabled.value) {
-            logger.d { "playAudio $audioSource" }
-            playAudio(
-                audioSource = audioSource,
-                volume = AppSetting.volume.data,
-                audioOutputOption = params.audioOutputOption,
-                onFinished = { exception ->
-                    exception?.also {
-                        logger.e(exception) { "onError" }
-                        if (!continuation.isCompleted) {
-                            continuation.resume(ServiceState.Exception(exception))
+    override suspend fun playAudio(audioSource: AudioSource): ServiceState =
+        suspendCancellableCoroutine { continuation ->
+            if (AppSetting.isAudioOutputEnabled.value) {
+                logger.d { "playAudio $audioSource" }
+                playAudio(
+                    audioSource = audioSource,
+                    volume = AppSetting.volume.data,
+                    audioOutputOption = params.audioOutputOption,
+                    onFinished = { exception ->
+                        exception?.also {
+                            logger.e(exception) { "onError" }
+                            if (!continuation.isCompleted) {
+                                continuation.resume(ServiceState.Exception(exception))
+                            }
+                        } ?: run {
+                            logger.e { "onFinished" }
+                            if (!continuation.isCompleted) {
+                                continuation.resume(ServiceState.Success)
+                            }
                         }
-                    } ?: run {
-                        logger.e { "onFinished" }
-                        if (!continuation.isCompleted) {
-                            continuation.resume(ServiceState.Success)
-                        }
-                    }
-                },
-            )
-        } else {
-            if (!continuation.isCompleted) {
-                continuation.resume(ServiceState.Success)
+                    },
+                )
+            } else {
+                if (!continuation.isCompleted) {
+                    continuation.resume(ServiceState.Success)
+                }
             }
         }
-    }
 
     override fun playWakeSoundWithoutParameter() = playWakeSound {}
 
@@ -102,14 +107,14 @@ internal class LocalAudioService(
                 onFinished(null)
             }
 
-            SoundOption.Default.name -> playAudio(
+            SoundOption.Default.name  -> playAudio(
                 AudioSource.Resource(MR.files.etc_wav_beep_hi),
                 AppSetting.wakeSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value,
                 onFinished
             )
 
-            else                     -> playAudio(
+            else                      -> playAudio(
                 AudioSource.File(
                     Path.commonInternalPath(
                         nativeApplication = nativeApplication,

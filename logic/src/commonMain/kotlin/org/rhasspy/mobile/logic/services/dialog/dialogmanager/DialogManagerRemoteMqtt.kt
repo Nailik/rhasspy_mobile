@@ -1,12 +1,22 @@
 package org.rhasspy.mobile.logic.services.dialog.dialogmanager
 
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopAudioPlaying
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.*
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.AudioPlayingState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.IdleState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecognizingIntentState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecordingIntentState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.TranscribingIntentState
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
-import org.rhasspy.mobile.logic.services.dialog.states.*
+import org.rhasspy.mobile.logic.services.dialog.states.IAudioPlayingStateAction
+import org.rhasspy.mobile.logic.services.dialog.states.IIdleStateAction
+import org.rhasspy.mobile.logic.services.dialog.states.IRecognizingIntentStateAction
+import org.rhasspy.mobile.logic.services.dialog.states.IRecordingIntentStateAction
+import org.rhasspy.mobile.logic.services.dialog.states.ITranscribingIntentStateAction
 
 class DialogManagerRemoteMqtt(
     private val dialogManagerService: IDialogManagerService,
@@ -24,7 +34,11 @@ class DialogManagerRemoteMqtt(
                     is IdleState               -> idleStateAction.onAction(action)
                     is RecordingIntentState    -> recordingIntentStateAction.onAction(action, this)
                     is TranscribingIntentState -> transcribingIntentState.onAction(action, this)
-                    is RecognizingIntentState  -> recognizingIntentStateAction.onAction(action, this)
+                    is RecognizingIntentState  -> recognizingIntentStateAction.onAction(
+                        action,
+                        this
+                    )
+
                     is AudioPlayingState       -> audioPlayingStateAction.onAction(action, this)
                 }
             }

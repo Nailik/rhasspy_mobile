@@ -23,7 +23,9 @@ import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.ChangeIntentRecognitionHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SetUseCustomHttpEndpoint
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewState.IntentRecognitionConfigurationData
 
@@ -35,7 +37,8 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 @Composable
 fun IntentRecognitionConfigurationScreen() {
 
-    val viewModel: IntentRecognitionConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: IntentRecognitionConfigurationViewModel =
+        LocalViewModelFactory.current.getViewModel()
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
@@ -101,7 +104,7 @@ private fun IntentRecognitionOptionContent(
                     onEvent = onEvent
                 )
 
-            else -> Unit
+            else                               -> Unit
         }
 
     }
@@ -135,7 +138,10 @@ private fun IntentRecognitionHTTP(
                 .padding(bottom = 8.dp),
             value = intentRecognitionHttpEndpointText,
             onValueChange = { onEvent(ChangeIntentRecognitionHttpEndpoint(it)) },
-            label = translate(MR.strings.rhasspyTextToIntentURL.stable, HttpClientPath.TextToIntent.path)
+            label = translate(
+                MR.strings.rhasspyTextToIntentURL.stable,
+                HttpClientPath.TextToIntent.path
+            )
         )
     }
 

@@ -74,7 +74,7 @@ internal class IntentRecognitionService(
                 val result = httpClientService.recognizeIntent(text)
                 _serviceState.value = result.toServiceState()
                 val action = when (result) {
-                    is HttpClientResult.Error   -> IntentRecognitionError(Source.Local)
+                    is HttpClientResult.Error -> IntentRecognitionError(Source.Local)
                     is HttpClientResult.Success -> IntentRecognitionResult(
                         source = Source.Local,
                         intentName = readIntentNameFromJson(result.data),
@@ -84,8 +84,16 @@ internal class IntentRecognitionService(
                 serviceMiddleware.action(action)
             }
 
-            IntentRecognitionOption.RemoteMQTT -> _serviceState.value = mqttClientService.recognizeIntent(sessionId, text)
-            IntentRecognitionOption.Disabled   -> serviceMiddleware.action(IntentRecognitionResult(Source.Local, "", ""))
+            IntentRecognitionOption.RemoteMQTT -> _serviceState.value =
+                mqttClientService.recognizeIntent(sessionId, text)
+
+            IntentRecognitionOption.Disabled   -> serviceMiddleware.action(
+                IntentRecognitionResult(
+                    Source.Local,
+                    "",
+                    ""
+                )
+            )
         }
     }
 
@@ -94,7 +102,8 @@ internal class IntentRecognitionService(
      */
     private fun readIntentNameFromJson(intent: String): String {
         return try {
-            Json.decodeFromString<JsonObject>(intent).jsonObject["intent"]?.jsonObject?.get("name")?.jsonPrimitive?.content ?: ""
+            Json.decodeFromString<JsonObject>(intent).jsonObject["intent"]?.jsonObject?.get("name")?.jsonPrimitive?.content
+                ?: ""
         } catch (e: Exception) {
             ""
         }

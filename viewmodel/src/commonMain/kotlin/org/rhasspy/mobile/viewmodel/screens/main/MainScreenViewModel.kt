@@ -6,7 +6,9 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigation
 import org.rhasspy.mobile.viewmodel.navigation.topScreen
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action
-import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.CrashlyticsDialogResult
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.Navigate
 
 class MainScreenViewModel(
     viewStateCreator: MainScreenViewStateCreator
@@ -24,7 +26,11 @@ class MainScreenViewModel(
     private fun onAction(action: Action) {
         when (action) {
             BackClick                  -> navigator.onBackPressed()
-            is Navigate                -> navigator.replace(MainScreenNavigationDestination::class, action.destination)
+            is Navigate                -> navigator.replace(
+                MainScreenNavigationDestination::class,
+                action.destination
+            )
+
             is CrashlyticsDialogResult -> {
                 AppSetting.isCrashlyticsEnabled.value = action.result
                 AppSetting.didShowCrashlyticsDialog.value = true

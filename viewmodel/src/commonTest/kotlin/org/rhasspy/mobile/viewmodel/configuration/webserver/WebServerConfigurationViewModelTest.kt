@@ -8,7 +8,13 @@ import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLKeyStoreFile
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyAlias
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyPassword
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyStorePassword
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpServerPort
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewState.WebServerConfigurationData
 import org.rhasspy.mobile.viewmodel.getRandomString
 import kotlin.test.BeforeTest
@@ -55,45 +61,87 @@ class WebServerConfigurationViewModelTest : AppTest() {
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(initialWebServerConfigurationData, webServerConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            initialWebServerConfigurationData,
+            webServerConfigurationViewModel.viewState.value.editData
+        )
 
         with(webServerConfigurationData) {
             webServerConfigurationViewModel.onEvent(SetHttpServerEnabled(isHttpServerEnabled))
             webServerConfigurationViewModel.onEvent(SetHttpServerSSLEnabled(isHttpServerSSLEnabled))
             webServerConfigurationViewModel.onEvent(UpdateHttpSSLKeyAlias(httpServerSSLKeyAlias))
-            webServerConfigurationViewModel.onEvent(UpdateHttpSSLKeyPassword(httpServerSSLKeyPassword))
-            webServerConfigurationViewModel.onEvent(UpdateHttpSSLKeyStorePassword(httpServerSSLKeyStorePassword))
+            webServerConfigurationViewModel.onEvent(
+                UpdateHttpSSLKeyPassword(
+                    httpServerSSLKeyPassword
+                )
+            )
+            webServerConfigurationViewModel.onEvent(
+                UpdateHttpSSLKeyStorePassword(
+                    httpServerSSLKeyStorePassword
+                )
+            )
             webServerConfigurationViewModel.onEvent(UpdateHttpServerPort(httpServerPort.toString()))
-            webServerConfigurationViewModel.onEvent(SetHttpServerSSLKeyStoreFile(httpServerSSLKeyStoreFile!!))
+            webServerConfigurationViewModel.onEvent(
+                SetHttpServerSSLKeyStoreFile(
+                    httpServerSSLKeyStoreFile!!
+                )
+            )
         }
 
-        assertEquals(webServerConfigurationData, webServerConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            webServerConfigurationData,
+            webServerConfigurationViewModel.viewState.value.editData
+        )
 
         webServerConfigurationViewModel.onEvent(Save)
 
-        assertEquals(webServerConfigurationData, webServerConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            webServerConfigurationData,
+            webServerConfigurationViewModel.viewState.value.editData
+        )
         assertEquals(webServerConfigurationData, WebServerConfigurationData())
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
-        assertEquals(initialWebServerConfigurationData, webServerConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            initialWebServerConfigurationData,
+            webServerConfigurationViewModel.viewState.value.editData
+        )
 
         with(webServerConfigurationData) {
             webServerConfigurationViewModel.onEvent(SetHttpServerEnabled(isHttpServerEnabled))
             webServerConfigurationViewModel.onEvent(SetHttpServerSSLEnabled(isHttpServerSSLEnabled))
             webServerConfigurationViewModel.onEvent(UpdateHttpSSLKeyAlias(httpServerSSLKeyAlias))
-            webServerConfigurationViewModel.onEvent(UpdateHttpSSLKeyPassword(httpServerSSLKeyPassword))
-            webServerConfigurationViewModel.onEvent(UpdateHttpSSLKeyStorePassword(httpServerSSLKeyStorePassword))
+            webServerConfigurationViewModel.onEvent(
+                UpdateHttpSSLKeyPassword(
+                    httpServerSSLKeyPassword
+                )
+            )
+            webServerConfigurationViewModel.onEvent(
+                UpdateHttpSSLKeyStorePassword(
+                    httpServerSSLKeyStorePassword
+                )
+            )
             webServerConfigurationViewModel.onEvent(UpdateHttpServerPort(httpServerPort.toString()))
-            webServerConfigurationViewModel.onEvent(SetHttpServerSSLKeyStoreFile(httpServerSSLKeyStoreFile!!))
+            webServerConfigurationViewModel.onEvent(
+                SetHttpServerSSLKeyStoreFile(
+                    httpServerSSLKeyStoreFile!!
+                )
+            )
         }
 
-        assertEquals(webServerConfigurationData, webServerConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            webServerConfigurationData,
+            webServerConfigurationViewModel.viewState.value.editData
+        )
 
         webServerConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(initialWebServerConfigurationData, webServerConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            initialWebServerConfigurationData,
+            webServerConfigurationViewModel.viewState.value.editData
+        )
         assertEquals(initialWebServerConfigurationData, WebServerConfigurationData())
     }
 }

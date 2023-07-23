@@ -13,9 +13,17 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.option.DialogManagementOption.*
+import org.rhasspy.mobile.data.service.option.DialogManagementOption.Disabled
+import org.rhasspy.mobile.data.service.option.DialogManagementOption.Local
+import org.rhasspy.mobile.data.service.option.DialogManagementOption.RemoteMQTT
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionEnded
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionStarted
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.IdleState
@@ -54,7 +62,10 @@ internal class DialogManagerService(
     private val dialogManagerRemoteMqtt by inject<DialogManagerRemoteMqtt>()
     private val dialogManagerDisabled by inject<DialogManagerDisabled>()
 
-    override val dialogHistory = MutableStateFlow<ImmutableList<Pair<DialogServiceMiddlewareAction, DialogManagerState>>>(persistentListOf())
+    override val dialogHistory =
+        MutableStateFlow<ImmutableList<Pair<DialogServiceMiddlewareAction, DialogManagerState>>>(
+            persistentListOf()
+        )
 
     override val logger = LogType.DialogManagerService.logger()
 
@@ -69,7 +80,10 @@ internal class DialogManagerService(
     override fun start() {
         _serviceState.value = ServiceState.Success
         coroutineScope.launch {
-            transitionTo(SessionEnded(Source.Local), get<IStateTransition>().transitionToIdleState(null))
+            transitionTo(
+                SessionEnded(Source.Local),
+                get<IStateTransition>().transitionToIdleState(null)
+            )
         }
     }
 
@@ -98,7 +112,11 @@ internal class DialogManagerService(
             if (sessionData != null) {
                 when (action) {
                     is AsrError               -> mqttService.asrError(sessionData.sessionId)
-                    is AsrTextCaptured        -> mqttService.asrTextCaptured(sessionData.sessionId, action.text)
+                    is AsrTextCaptured        -> mqttService.asrTextCaptured(
+                        sessionData.sessionId,
+                        action.text
+                    )
+
                     is WakeWordDetected       -> mqttService.hotWordDetected(action.wakeWord)
                     is IntentRecognitionError -> mqttService.intentNotRecognized(sessionData.sessionId)
                     is SessionEnded           -> mqttService.sessionEnded(sessionData.sessionId)

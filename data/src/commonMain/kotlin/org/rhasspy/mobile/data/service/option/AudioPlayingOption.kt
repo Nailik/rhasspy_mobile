@@ -4,7 +4,8 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 
-enum class AudioPlayingOption(override val text: StableStringResource) : IOption<AudioPlayingOption> {
+enum class AudioPlayingOption(override val text: StableStringResource) :
+    IOption<AudioPlayingOption> {
     Local(MR.strings.local.stable),
     RemoteHTTP(MR.strings.remoteHTTP.stable),
     RemoteMQTT(MR.strings.remoteMQTT.stable),

@@ -52,8 +52,14 @@ fun MicrophoneFab(
             }
         },
         isEnabled = viewState.isUserActionEnabled,
-        containerColor = getContainerColorForMicrophoneFab(viewState.isUserActionEnabled, viewState.isRecording),
-        contentColor = getContentColorForMicrophoneFab(viewState.isUserActionEnabled, viewState.isRecording),
+        containerColor = getContainerColorForMicrophoneFab(
+            viewState.isUserActionEnabled,
+            viewState.isRecording
+        ),
+        contentColor = getContentColorForMicrophoneFab(
+            viewState.isUserActionEnabled,
+            viewState.isRecording
+        ),
         icon = {
             Icon(
                 modifier = Modifier.size(iconSize),

@@ -1,7 +1,11 @@
 package org.rhasspy.mobile.logic.services.dialog.states
 
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.EndSession
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SilenceDetected
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopListening
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecordingIntentState
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
@@ -30,12 +34,12 @@ internal class RecordingIntentStateAction(
     ) {
 
         when (action) {
-            is AsrError        -> onAsrErrorAction(action, state)
+            is AsrError -> onAsrErrorAction(action, state)
             is AsrTextCaptured -> onAsrTextCapturedAction(action, state)
-            is EndSession      -> onEndSessionAction(action, state)
+            is EndSession -> onEndSessionAction(action, state)
             is SilenceDetected -> onSilenceDetectedAction(action, state)
-            is StopListening   -> onStopListeningAction(action, state)
-            else               -> Unit
+            is StopListening -> onStopListeningAction(action, state)
+            else -> Unit
         }
 
     }
@@ -61,7 +65,10 @@ internal class RecordingIntentStateAction(
         state.timeoutJob.cancel()
         dialogManagerService.informMqtt(state.sessionData, action)
 
-        speechToTextService.endSpeechToText(state.sessionData.sessionId, action.source is Source.Mqtt)
+        speechToTextService.endSpeechToText(
+            state.sessionData.sessionId,
+            action.source is Source.Mqtt
+        )
         dialogManagerService.transitionTo(
             action = action,
             state = stateTransition.transitionToRecognizingIntentState(
@@ -77,7 +84,10 @@ internal class RecordingIntentStateAction(
         state.timeoutJob.cancel()
         dialogManagerService.informMqtt(state.sessionData, action)
 
-        speechToTextService.endSpeechToText(state.sessionData.sessionId, action.source is Source.Mqtt)
+        speechToTextService.endSpeechToText(
+            state.sessionData.sessionId,
+            action.source is Source.Mqtt
+        )
 
         dialogManagerService.transitionTo(
             action = action,
@@ -92,7 +102,10 @@ internal class RecordingIntentStateAction(
         state.timeoutJob.cancel()
         dialogManagerService.informMqtt(state.sessionData, action)
 
-        speechToTextService.endSpeechToText(state.sessionData.sessionId, action.source is Source.Mqtt)
+        speechToTextService.endSpeechToText(
+            state.sessionData.sessionId,
+            action.source is Source.Mqtt
+        )
 
         dialogManagerService.transitionTo(
             action = action,
@@ -107,7 +120,10 @@ internal class RecordingIntentStateAction(
         state.timeoutJob.cancel()
         dialogManagerService.informMqtt(state.sessionData, action)
 
-        speechToTextService.endSpeechToText(state.sessionData.sessionId, action.source is Source.Mqtt)
+        speechToTextService.endSpeechToText(
+            state.sessionData.sessionId,
+            action.source is Source.Mqtt
+        )
 
         dialogManagerService.transitionTo(
             action = action,

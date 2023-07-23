@@ -25,14 +25,25 @@ class PorcupineAudioConverter(
         val codecs =
             MediaCodecList(ALL_CODECS).codecInfos
         println("codecs $codecs")
-        val inputFormat = MediaFormat.createAudioFormat("audio/raw", audioRecorderSampleRateType.value, audioRecorderChannelType.count)
+        val inputFormat = MediaFormat.createAudioFormat(
+            "audio/raw",
+            audioRecorderSampleRateType.value,
+            audioRecorderChannelType.count
+        )
         inputFormat.setInteger(MediaFormat.KEY_PCM_ENCODING, audioRecorderEncodingType.value)
         val inputCodec = MediaCodec.createDecoderByType("audio/raw")
         inputCodec.configure(inputFormat, null, null, 0)
         inputCodec.start()
 
-        val outputFormat = MediaFormat.createAudioFormat("audio/raw", AudioRecorderSampleRateType.SR12000.value, AudioRecorderChannelType.Mono.count)
-        outputFormat.setInteger(MediaFormat.KEY_PCM_ENCODING, AudioRecorderEncodingType.PCM16Bit.value)
+        val outputFormat = MediaFormat.createAudioFormat(
+            "audio/raw",
+            AudioRecorderSampleRateType.SR12000.value,
+            AudioRecorderChannelType.Mono.count
+        )
+        outputFormat.setInteger(
+            MediaFormat.KEY_PCM_ENCODING,
+            AudioRecorderEncodingType.PCM16Bit.value
+        )
         val outputCodec = MediaCodec.createEncoderByType("audio/mp4a-latm")
         outputCodec.configure(outputFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
         outputCodec.start()

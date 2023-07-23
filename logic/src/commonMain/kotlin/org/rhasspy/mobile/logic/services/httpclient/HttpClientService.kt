@@ -13,9 +13,13 @@ import io.ktor.client.utils.buildHeaders
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMessageBuilder
 import io.ktor.http.contentType
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.httpclient.HttpClientPath
@@ -27,7 +31,9 @@ import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
-import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.*
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.Data
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.File
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.Resource
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.ktor.configureEngine
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -224,8 +230,8 @@ internal class HttpClientService(
         logger.d { "playWav size: $audioSource" }
         @Suppress("DEPRECATION")
         val body = when (audioSource) {
-            is Data     -> audioSource.data
-            is File     -> StreamContent(audioSource.path)
+            is Data -> audioSource.data
+            is File -> StreamContent(audioSource.path)
             is Resource -> audioSource.fileResource.commonData(nativeApplication)
         }
         return post(audioPlayingUrl) {
@@ -262,7 +268,10 @@ internal class HttpClientService(
     /**
      * send intent as Event to Home Assistant
      */
-    override suspend fun homeAssistantEvent(json: String, intentName: String): HttpClientResult<String> {
+    override suspend fun homeAssistantEvent(
+        json: String,
+        intentName: String
+    ): HttpClientResult<String> {
         logger.d { "homeAssistantEvent json: $json intentName: $intentName" }
         return post("$hassEventUrl$intentName") {
             buildHeaders {

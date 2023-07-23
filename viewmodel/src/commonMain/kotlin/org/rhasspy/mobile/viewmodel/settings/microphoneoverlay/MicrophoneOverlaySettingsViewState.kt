@@ -11,6 +11,7 @@ data class MicrophoneOverlaySettingsViewState internal constructor(
     val isMicrophoneOverlayWhileAppEnabled: Boolean
 ) {
 
-    val microphoneOverlaySizeOptions: ImmutableList<MicrophoneOverlaySizeOption> = MicrophoneOverlaySizeOption.values().toImmutableList()
+    val microphoneOverlaySizeOptions: ImmutableList<MicrophoneOverlaySizeOption> =
+        MicrophoneOverlaySizeOption.values().toImmutableList()
 
 }

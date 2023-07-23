@@ -8,7 +8,16 @@ import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttConnectionTimeout
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttHost
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeepAliveInterval
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeyStoreFile
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPassword
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPort
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttRetryInterval
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttUserName
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewState.MqttConfigurationData
 import org.rhasspy.mobile.viewmodel.getRandomString
 import kotlin.test.BeforeTest
@@ -61,7 +70,10 @@ class MqttConfigurationViewModelTest : AppTest() {
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(initialMqttConfigurationData, mqttConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            initialMqttConfigurationData,
+            mqttConfigurationViewModel.viewState.value.editData
+        )
 
         with(mqttConfigurationData) {
             mqttConfigurationViewModel.onEvent(SetMqttEnabled(isMqttEnabled))
@@ -86,7 +98,10 @@ class MqttConfigurationViewModelTest : AppTest() {
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
-        assertEquals(initialMqttConfigurationData, mqttConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            initialMqttConfigurationData,
+            mqttConfigurationViewModel.viewState.value.editData
+        )
 
         with(mqttConfigurationData) {
             mqttConfigurationViewModel.onEvent(SetMqttEnabled(isMqttEnabled))
@@ -105,7 +120,10 @@ class MqttConfigurationViewModelTest : AppTest() {
 
         mqttConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(initialMqttConfigurationData, mqttConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            initialMqttConfigurationData,
+            mqttConfigurationViewModel.viewState.value.editData
+        )
         assertEquals(initialMqttConfigurationData, MqttConfigurationData())
     }
 }

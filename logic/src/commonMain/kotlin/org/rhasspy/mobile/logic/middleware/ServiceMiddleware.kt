@@ -7,9 +7,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import okio.Path
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioOutputToggle
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.HotWordToggle
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.IntentHandlingToggle
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopListening
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.Mqtt
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.PlayStopRecording
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.SayText
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.WakeWordError
 import org.rhasspy.mobile.logic.middleware.Source.Local
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.IdleState
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecordingIntentState
@@ -54,11 +64,17 @@ internal class ServiceMiddleware(
 
     private val _isPlayingRecording = MutableStateFlow(false)
     override val isPlayingRecording = _isPlayingRecording.readOnly
-    override val isPlayingRecordingEnabled = combineState(_isPlayingRecording, dialogManagerService.currentDialogState) { playing, state ->
+    override val isPlayingRecordingEnabled = combineState(
+        _isPlayingRecording,
+        dialogManagerService.currentDialogState
+    ) { playing, state ->
         playing || (state is IdleState)
     }
 
-    override val isUserActionEnabled = combineState(_isPlayingRecording, dialogManagerService.currentDialogState) { playingRecording, dialogState ->
+    override val isUserActionEnabled = combineState(
+        _isPlayingRecording,
+        dialogManagerService.currentDialogState
+    ) { playingRecording, dialogState ->
         !playingRecording && (dialogState is IdleState || dialogState is RecordingIntentState)
     }
     private var shouldResumeHotWordService = false
@@ -88,11 +104,19 @@ internal class ServiceMiddleware(
                     }
                 }
 
-                is WakeWordError                      -> mqttService.wakeWordError(serviceMiddlewareAction.description)
+                is WakeWordError                      -> mqttService.wakeWordError(
+                    serviceMiddlewareAction.description
+                )
+
                 is AppSettingsServiceMiddlewareAction -> {
                     when (serviceMiddlewareAction) {
-                        is AudioOutputToggle    -> appSettingsService.audioOutputToggle(serviceMiddlewareAction.enabled)
-                        is AudioVolumeChange    -> appSettingsService.setAudioVolume(serviceMiddlewareAction.volume)
+                        is AudioOutputToggle    -> appSettingsService.audioOutputToggle(
+                            serviceMiddlewareAction.enabled
+                        )
+
+                        is AudioVolumeChange    -> appSettingsService.setAudioVolume(
+                            serviceMiddlewareAction.volume
+                        )
 
                         is HotWordToggle        -> {
                             appSettingsService.hotWordToggle(serviceMiddlewareAction.enabled)
@@ -103,13 +127,25 @@ internal class ServiceMiddleware(
                             }
                         }
 
-                        is IntentHandlingToggle -> appSettingsService.intentHandlingToggle(serviceMiddlewareAction.enabled)
+                        is IntentHandlingToggle -> appSettingsService.intentHandlingToggle(
+                            serviceMiddlewareAction.enabled
+                        )
                     }
                 }
 
-                is SayText                            -> textToSpeechService.textToSpeech("", serviceMiddlewareAction.text)
-                is DialogServiceMiddlewareAction      -> dialogManagerService.onAction(serviceMiddlewareAction)
-                is Mqtt                               -> mqttService.onMessageReceived(serviceMiddlewareAction.topic, serviceMiddlewareAction.payload)
+                is SayText                            -> textToSpeechService.textToSpeech(
+                    "",
+                    serviceMiddlewareAction.text
+                )
+
+                is DialogServiceMiddlewareAction      -> dialogManagerService.onAction(
+                    serviceMiddlewareAction
+                )
+
+                is Mqtt                               -> mqttService.onMessageReceived(
+                    serviceMiddlewareAction.topic,
+                    serviceMiddlewareAction.payload
+                )
             }
         }
     }

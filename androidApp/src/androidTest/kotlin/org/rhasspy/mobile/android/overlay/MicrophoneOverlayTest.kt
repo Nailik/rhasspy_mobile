@@ -26,7 +26,8 @@ class MicrophoneOverlayTest : FlakyTest() {
 
     @get: Rule(order = 0)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
-    private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private val device: UiDevice =
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     @Before
     fun setUp() {

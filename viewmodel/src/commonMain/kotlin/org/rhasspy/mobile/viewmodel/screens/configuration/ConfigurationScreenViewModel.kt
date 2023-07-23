@@ -8,9 +8,13 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.topScreen
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.*
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToErrorClick
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Consumed
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Consumed.ScrollToError
 
 @Stable

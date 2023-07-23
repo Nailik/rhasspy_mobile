@@ -21,7 +21,10 @@ import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeIntentRecognitionTimeout
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeRecordingTimeout
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeTextAsrTimeout
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewState.DialogManagementConfigurationData
 
@@ -31,7 +34,8 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
 @Composable
 fun DialogManagementConfigurationScreen() {
 
-    val viewModel: DialogManagementConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: DialogManagementConfigurationViewModel =
+        LocalViewModelFactory.current.getViewModel()
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
@@ -99,7 +103,7 @@ private fun DialogManagementOptionContent(
                     onEvent = onEvent
                 )
 
-            else -> Unit
+            else                         -> Unit
         }
 
     }

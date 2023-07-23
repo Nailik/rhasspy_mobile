@@ -24,7 +24,11 @@ import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.ChangeIntentHandlingHomeAssistantAccessToken
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.ChangeIntentHandlingHomeAssistantEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.ChangeIntentHandlingHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingHomeAssistantOption
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewState.IntentHandlingConfigurationData
 
@@ -37,7 +41,8 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
 @Composable
 fun IntentHandlingConfigurationScreen() {
 
-    val viewModel: IntentHandlingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: IntentHandlingConfigurationViewModel =
+        LocalViewModelFactory.current.getViewModel()
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
@@ -103,12 +108,12 @@ private fun IntentHandlingOptionContent(
                 onEvent = onEvent
             )
 
-            IntentHandlingOption.RemoteHTTP -> RemoteHTTPOption(
+            IntentHandlingOption.RemoteHTTP    -> RemoteHTTPOption(
                 intentHandlingHttpEndpoint = editData.intentHandlingHttpEndpoint,
                 onEvent = onEvent
             )
 
-            else                            -> Unit
+            else                               -> Unit
         }
 
     }

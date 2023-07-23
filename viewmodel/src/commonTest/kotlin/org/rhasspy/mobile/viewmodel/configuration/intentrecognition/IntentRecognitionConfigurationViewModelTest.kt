@@ -59,37 +59,79 @@ class IntentRecognitionConfigurationViewModelTest : AppTest() {
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(initialIntentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            initialIntentHandlingConfigurationData,
+            intentRecognitionConfigurationViewModel.viewState.value.editData
+        )
 
         with(intentHandlingConfigurationData) {
-            intentRecognitionConfigurationViewModel.onEvent(ChangeIntentRecognitionHttpEndpoint(intentRecognitionHttpEndpoint))
-            intentRecognitionConfigurationViewModel.onEvent(SelectIntentRecognitionOption(intentRecognitionOption))
-            intentRecognitionConfigurationViewModel.onEvent(SetUseCustomHttpEndpoint(isUseCustomIntentRecognitionHttpEndpoint))
+            intentRecognitionConfigurationViewModel.onEvent(
+                ChangeIntentRecognitionHttpEndpoint(
+                    intentRecognitionHttpEndpoint
+                )
+            )
+            intentRecognitionConfigurationViewModel.onEvent(
+                SelectIntentRecognitionOption(
+                    intentRecognitionOption
+                )
+            )
+            intentRecognitionConfigurationViewModel.onEvent(
+                SetUseCustomHttpEndpoint(
+                    isUseCustomIntentRecognitionHttpEndpoint
+                )
+            )
         }
 
-        assertEquals(intentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            intentHandlingConfigurationData,
+            intentRecognitionConfigurationViewModel.viewState.value.editData
+        )
 
         intentRecognitionConfigurationViewModel.onEvent(Save)
 
-        assertEquals(intentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            intentHandlingConfigurationData,
+            intentRecognitionConfigurationViewModel.viewState.value.editData
+        )
         assertEquals(intentHandlingConfigurationData, IntentRecognitionConfigurationData())
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
-        assertEquals(initialIntentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            initialIntentHandlingConfigurationData,
+            intentRecognitionConfigurationViewModel.viewState.value.editData
+        )
 
         with(intentHandlingConfigurationData) {
-            intentRecognitionConfigurationViewModel.onEvent(ChangeIntentRecognitionHttpEndpoint(intentRecognitionHttpEndpoint))
-            intentRecognitionConfigurationViewModel.onEvent(SelectIntentRecognitionOption(intentRecognitionOption))
-            intentRecognitionConfigurationViewModel.onEvent(SetUseCustomHttpEndpoint(isUseCustomIntentRecognitionHttpEndpoint))
+            intentRecognitionConfigurationViewModel.onEvent(
+                ChangeIntentRecognitionHttpEndpoint(
+                    intentRecognitionHttpEndpoint
+                )
+            )
+            intentRecognitionConfigurationViewModel.onEvent(
+                SelectIntentRecognitionOption(
+                    intentRecognitionOption
+                )
+            )
+            intentRecognitionConfigurationViewModel.onEvent(
+                SetUseCustomHttpEndpoint(
+                    isUseCustomIntentRecognitionHttpEndpoint
+                )
+            )
         }
 
-        assertEquals(intentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            intentHandlingConfigurationData,
+            intentRecognitionConfigurationViewModel.viewState.value.editData
+        )
 
         intentRecognitionConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(initialIntentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            initialIntentHandlingConfigurationData,
+            intentRecognitionConfigurationViewModel.viewState.value.editData
+        )
         assertEquals(initialIntentHandlingConfigurationData, IntentRecognitionConfigurationData())
     }
 }

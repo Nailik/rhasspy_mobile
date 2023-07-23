@@ -33,7 +33,10 @@ fun UiDevice.resetOverlayPermission(context: Context, overlayPermission: IOverla
     overlayPermission.update()
 }
 
-fun UiDevice.requestOverlayPermissionLegacy(context: Context, overlayPermission: IOverlayPermission) {
+fun UiDevice.requestOverlayPermissionLegacy(
+    context: Context,
+    overlayPermission: IOverlayPermission
+) {
     if (Settings.canDrawOverlays(context)) {
         return
     }

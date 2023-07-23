@@ -6,7 +6,14 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlin.math.roundToInt
 
 fun <T1, T2, R> combineState(
@@ -41,7 +48,11 @@ fun <T1, T2, T3, T4, R> combineState(
     transform: (T1, T2, T3, T4) -> R
 ): StateFlow<R> = combine(flow1, flow2, flow3, flow4) { o1, o2, o3, o4 ->
     transform.invoke(o1, o2, o3, o4)
-}.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value, flow3.value, flow4.value))
+}.stateIn(
+    scope,
+    sharingStarted,
+    transform.invoke(flow1.value, flow2.value, flow3.value, flow4.value)
+)
 
 fun <T1, T2, T3, T4, T5, R> combineState(
     flow1: StateFlow<T1>,
@@ -54,7 +65,11 @@ fun <T1, T2, T3, T4, T5, R> combineState(
     transform: (T1, T2, T3, T4, T5) -> R
 ): StateFlow<R> = combine(flow1, flow2, flow3, flow4, flow5) { o1, o2, o3, o4, o5 ->
     transform.invoke(o1, o2, o3, o4, o5)
-}.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value, flow3.value, flow4.value, flow5.value))
+}.stateIn(
+    scope,
+    sharingStarted,
+    transform.invoke(flow1.value, flow2.value, flow3.value, flow4.value, flow5.value)
+)
 
 inline fun <reified T> combineStateFlow(
     vararg flows: StateFlow<T>,
@@ -95,8 +110,8 @@ inline fun <T1 : Any, T2 : Any> notNull(
 
 fun <T> Array<out T>.toImmutableList(): ImmutableList<T> {
     return when (size) {
-        0    -> persistentListOf()
-        1    -> persistentListOf(this[0])
+        0 -> persistentListOf()
+        1 -> persistentListOf(this[0])
         else -> this.toList().toImmutableList()
     }
 }
@@ -106,10 +121,15 @@ fun Long?.toLongOrZero(): Long = this ?: 0
 fun Int?.toStringOrEmpty(): String = this?.toString() ?: ""
 fun Long?.toStringOrEmpty(): String = this?.toString() ?: ""
 fun String?.toLongOrNullOrConstant(): Long? =
-    this?.let { if (it.length > 10) this.substring(0..9).toLong() else it.trimTrailingZeros()?.toLongOrNull() }
+    this?.let {
+        if (it.length > 10) this.substring(0..9).toLong() else it.trimTrailingZeros()
+            ?.toLongOrNull()
+    }
 
 fun String?.toIntOrNullOrConstant(): Int? =
-    this?.let { if (it.length > 10) this.substring(0..9).toInt() else it.trimTrailingZeros()?.toIntOrNull() }
+    this?.let {
+        if (it.length > 10) this.substring(0..9).toInt() else it.trimTrailingZeros()?.toIntOrNull()
+    }
 
 fun String?.trimTrailingZeros() = this?.replaceFirst(Regex("^0*"), "")
 

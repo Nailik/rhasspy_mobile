@@ -66,7 +66,8 @@ class PorcupineCustomClient(
                 outputSampleRate = porcupine.sampleRate
             )
         )
-        Logger.withTag("PorcupineCustomClient").d { "porcupine.getSampleRate() ${porcupine.sampleRate}" }
+        Logger.withTag("PorcupineCustomClient")
+            .d { "porcupine.getSampleRate() ${porcupine.sampleRate}" }
 
         collection = coroutineScope.launch {
 
@@ -84,7 +85,8 @@ class PorcupineCustomClient(
                             //get a sized chunk
                             val chunk = recordedData.take(512).toShortArray()
                             //cut remaining data
-                            recordedData = recordedData.takeLast(recordedData.size - 512).toShortArray()
+                            recordedData =
+                                recordedData.takeLast(recordedData.size - 512).toShortArray()
 
                             val keywordIndex = porcupine.process(chunk)
                             if (keywordIndex != -1) {

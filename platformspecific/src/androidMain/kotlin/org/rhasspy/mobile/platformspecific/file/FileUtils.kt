@@ -38,7 +38,8 @@ actual object FileUtils : KoinComponent {
                     val uri = path.toUri()
 
                     queryFile(uri)?.also { fileName ->
-                        val finalFileName = renameFileWhileExists(context.filesDir, folderType.toString(), fileName)
+                        val finalFileName =
+                            renameFileWhileExists(context.filesDir, folderType.toString(), fileName)
                         //create folder if it doesn't exist yet
                         File(context.filesDir, folderType.toString()).mkdirs()
                         val result = copyFile(folderType, uri, folderType.toString(), finalFileName)
@@ -138,7 +139,8 @@ actual object FileUtils : KoinComponent {
 
                             if (!ze.isDirectory) {
                                 if (ze.name.endsWith(".ppn")) {
-                                    val fileName = renameFileWhileExists(context.filesDir, folderName, ze.name)
+                                    val fileName =
+                                        renameFileWhileExists(context.filesDir, folderName, ze.name)
 
                                     File(
                                         context.filesDir,
@@ -161,7 +163,8 @@ actual object FileUtils : KoinComponent {
 
                     selectedFileName.endsWith(".ppn") -> {
                         //use this file
-                        val fileName = renameFileWhileExists(context.filesDir, folderName, selectedFileName)
+                        val fileName =
+                            renameFileWhileExists(context.filesDir, folderName, selectedFileName)
 
                         File(context.filesDir, "$folderName/$fileName").apply {
                             this.outputStream().apply {

@@ -14,6 +14,7 @@ data class AudioFocusSettingsViewState(
     val isAudioFocusOnDialog: Boolean
 ) {
 
-    val audioFocusOptions: PersistentList<AudioFocusOption> = AudioFocusOption.values().toMutableList().toPersistentList()
+    val audioFocusOptions: PersistentList<AudioFocusOption> =
+        AudioFocusOption.values().toMutableList().toPersistentList()
 
 }

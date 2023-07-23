@@ -7,7 +7,10 @@ import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SetUseCustomHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SetUseSpeechToTextMqttSilenceDetection
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.UpdateSpeechToTextHttpEndpoint
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData
 import org.rhasspy.mobile.viewmodel.getRandomString
 import kotlin.test.BeforeTest
@@ -48,39 +51,81 @@ class SpeechToTextConfigurationViewModelTest : AppTest() {
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(initialSpeechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            initialSpeechToTextConfigurationData,
+            speechToTextConfigurationViewModel.viewState.value.editData
+        )
 
         with(speechToTextConfigurationData) {
             speechToTextConfigurationViewModel.onEvent(SelectSpeechToTextOption(speechToTextOption))
-            speechToTextConfigurationViewModel.onEvent(SetUseCustomHttpEndpoint(isUseCustomSpeechToTextHttpEndpoint))
-            speechToTextConfigurationViewModel.onEvent(SetUseSpeechToTextMqttSilenceDetection(isUseSpeechToTextMqttSilenceDetection))
-            speechToTextConfigurationViewModel.onEvent(UpdateSpeechToTextHttpEndpoint(speechToTextHttpEndpoint))
+            speechToTextConfigurationViewModel.onEvent(
+                SetUseCustomHttpEndpoint(
+                    isUseCustomSpeechToTextHttpEndpoint
+                )
+            )
+            speechToTextConfigurationViewModel.onEvent(
+                SetUseSpeechToTextMqttSilenceDetection(
+                    isUseSpeechToTextMqttSilenceDetection
+                )
+            )
+            speechToTextConfigurationViewModel.onEvent(
+                UpdateSpeechToTextHttpEndpoint(
+                    speechToTextHttpEndpoint
+                )
+            )
         }
 
-        assertEquals(speechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            speechToTextConfigurationData,
+            speechToTextConfigurationViewModel.viewState.value.editData
+        )
 
         speechToTextConfigurationViewModel.onEvent(Save)
 
-        assertEquals(speechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            speechToTextConfigurationData,
+            speechToTextConfigurationViewModel.viewState.value.editData
+        )
         assertEquals(speechToTextConfigurationData, SpeechToTextConfigurationData())
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
-        assertEquals(initialSpeechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            initialSpeechToTextConfigurationData,
+            speechToTextConfigurationViewModel.viewState.value.editData
+        )
 
         with(speechToTextConfigurationData) {
             speechToTextConfigurationViewModel.onEvent(SelectSpeechToTextOption(speechToTextOption))
-            speechToTextConfigurationViewModel.onEvent(SetUseCustomHttpEndpoint(isUseCustomSpeechToTextHttpEndpoint))
-            speechToTextConfigurationViewModel.onEvent(SetUseSpeechToTextMqttSilenceDetection(isUseSpeechToTextMqttSilenceDetection))
-            speechToTextConfigurationViewModel.onEvent(UpdateSpeechToTextHttpEndpoint(speechToTextHttpEndpoint))
+            speechToTextConfigurationViewModel.onEvent(
+                SetUseCustomHttpEndpoint(
+                    isUseCustomSpeechToTextHttpEndpoint
+                )
+            )
+            speechToTextConfigurationViewModel.onEvent(
+                SetUseSpeechToTextMqttSilenceDetection(
+                    isUseSpeechToTextMqttSilenceDetection
+                )
+            )
+            speechToTextConfigurationViewModel.onEvent(
+                UpdateSpeechToTextHttpEndpoint(
+                    speechToTextHttpEndpoint
+                )
+            )
         }
 
-        assertEquals(speechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            speechToTextConfigurationData,
+            speechToTextConfigurationViewModel.viewState.value.editData
+        )
 
         speechToTextConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(initialSpeechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            initialSpeechToTextConfigurationData,
+            speechToTextConfigurationViewModel.viewState.value.editData
+        )
         assertEquals(initialSpeechToTextConfigurationData, SpeechToTextConfigurationData())
     }
 }

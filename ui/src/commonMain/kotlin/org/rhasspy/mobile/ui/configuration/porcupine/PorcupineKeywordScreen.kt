@@ -1,14 +1,24 @@
 package org.rhasspy.mobile.ui.configuration.porcupine
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,7 +31,9 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.main.CONTENT_ANIMATION_DURATION
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.PageClick
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.PorcupineLanguageClick
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.CustomKeywordScreen
@@ -78,14 +90,14 @@ fun PorcupineKeywordScreen(
                             slideInHorizontally(
                                 animationSpec = tween(CONTENT_ANIMATION_DURATION),
                                 initialOffsetX = { fullWidth -> fullWidth }
-                            ) with slideOutHorizontally(
+                            ) togetherWith slideOutHorizontally(
                                 animationSpec = tween(CONTENT_ANIMATION_DURATION),
                                 targetOffsetX = { fullWidth -> -fullWidth })
                         } else {
                             slideInHorizontally(
                                 animationSpec = tween(CONTENT_ANIMATION_DURATION),
                                 initialOffsetX = { fullWidth -> -fullWidth }
-                            ) with slideOutHorizontally(
+                            ) togetherWith slideOutHorizontally(
                                 animationSpec = tween(CONTENT_ANIMATION_DURATION),
                                 targetOffsetX = { fullWidth -> fullWidth })
                         }

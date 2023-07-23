@@ -36,44 +36,48 @@ class SaveAndRestoreSettingsViewModelTest : AppTest() {
     }
 
     @Test
-    fun `when the user wants to share a settings file and it returns false a snack bar is shown`() = runTest {
-        coEvery { settingsUtils.shareSettingsFile() } returns false
+    fun `when the user wants to share a settings file and it returns false a snack bar is shown`() =
+        runTest {
+            coEvery { settingsUtils.shareSettingsFile() } returns false
 
-        saveAndRestoreSettingsViewModel.onEvent(ShareSettingsFile)
+            saveAndRestoreSettingsViewModel.onEvent(ShareSettingsFile)
 
-        assertNotNull(saveAndRestoreSettingsViewModel.viewState.value.snackBarText)
-    }
-
-    @Test
-    fun `when the user wants to share a settings file and it returns true no snack bar is shown`() = runTest {
-        coEvery { settingsUtils.shareSettingsFile() } returns true
-
-        saveAndRestoreSettingsViewModel.onEvent(ShareSettingsFile)
-
-        assertNull(saveAndRestoreSettingsViewModel.viewState.value.snackBarText)
-    }
+            assertNotNull(saveAndRestoreSettingsViewModel.viewState.value.snackBarText)
+        }
 
     @Test
-    fun `when a user wants to export the settings file a dialog is shown and the user accepts the dialog the file export is started and when it returns false a dialog is shown`() = runTest {
-        coEvery { settingsUtils.exportSettingsFile() } returns false
+    fun `when the user wants to share a settings file and it returns true no snack bar is shown`() =
+        runTest {
+            coEvery { settingsUtils.shareSettingsFile() } returns true
 
-        saveAndRestoreSettingsViewModel.onEvent(ExportSettingsFile)
-        saveAndRestoreSettingsViewModel.onEvent(ExportSettingsFileDialogResult(true))
+            saveAndRestoreSettingsViewModel.onEvent(ShareSettingsFile)
 
-        coVerify { settingsUtils.exportSettingsFile() }
-        assertNotNull(saveAndRestoreSettingsViewModel.viewState.value.snackBarText)
-    }
+            assertNull(saveAndRestoreSettingsViewModel.viewState.value.snackBarText)
+        }
 
     @Test
-    fun `when a user wants to export the settings file a dialog is shown and when the user declines the dialog the export is not started and no snack bar is shown`() = runTest {
-        coEvery { settingsUtils.exportSettingsFile() } returns true
+    fun `when a user wants to export the settings file a dialog is shown and the user accepts the dialog the file export is started and when it returns false a dialog is shown`() =
+        runTest {
+            coEvery { settingsUtils.exportSettingsFile() } returns false
 
-        saveAndRestoreSettingsViewModel.onEvent(ExportSettingsFile)
-        saveAndRestoreSettingsViewModel.onEvent(ExportSettingsFileDialogResult(false))
+            saveAndRestoreSettingsViewModel.onEvent(ExportSettingsFile)
+            saveAndRestoreSettingsViewModel.onEvent(ExportSettingsFileDialogResult(true))
 
-        coVerify { repeat(0) { settingsUtils.exportSettingsFile() } }
-        assertNull(saveAndRestoreSettingsViewModel.viewState.value.snackBarText)
-    }
+            coVerify { settingsUtils.exportSettingsFile() }
+            assertNotNull(saveAndRestoreSettingsViewModel.viewState.value.snackBarText)
+        }
+
+    @Test
+    fun `when a user wants to export the settings file a dialog is shown and when the user declines the dialog the export is not started and no snack bar is shown`() =
+        runTest {
+            coEvery { settingsUtils.exportSettingsFile() } returns true
+
+            saveAndRestoreSettingsViewModel.onEvent(ExportSettingsFile)
+            saveAndRestoreSettingsViewModel.onEvent(ExportSettingsFileDialogResult(false))
+
+            coVerify { repeat(0) { settingsUtils.exportSettingsFile() } }
+            assertNull(saveAndRestoreSettingsViewModel.viewState.value.snackBarText)
+        }
 
     @Test
     fun `when a user wants to restore the settings from a file a dialog is shown and only when the user accepts the dialog the file import is started when it returns false a snack bar is shown`() =
@@ -88,14 +92,15 @@ class SaveAndRestoreSettingsViewModelTest : AppTest() {
         }
 
     @Test
-    fun `when a user wants to restore the settings from a file a dialog is shown and when the user declines the dialog a snack bar is shown and the import is not started`() = runTest {
-        coEvery { settingsUtils.restoreSettingsFromFile() } returns true
+    fun `when a user wants to restore the settings from a file a dialog is shown and when the user declines the dialog a snack bar is shown and the import is not started`() =
+        runTest {
+            coEvery { settingsUtils.restoreSettingsFromFile() } returns true
 
-        saveAndRestoreSettingsViewModel.onEvent(RestoreSettingsFromFile)
-        saveAndRestoreSettingsViewModel.onEvent(RestoreSettingsFromFileDialogResult(false))
+            saveAndRestoreSettingsViewModel.onEvent(RestoreSettingsFromFile)
+            saveAndRestoreSettingsViewModel.onEvent(RestoreSettingsFromFileDialogResult(false))
 
-        coVerify { repeat(0) { settingsUtils.restoreSettingsFromFile() } }
-        assertNull(saveAndRestoreSettingsViewModel.viewState.value.snackBarText)
-    }
+            coVerify { repeat(0) { settingsUtils.restoreSettingsFromFile() } }
+            assertNull(saveAndRestoreSettingsViewModel.viewState.value.snackBarText)
+        }
 
 }

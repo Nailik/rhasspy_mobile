@@ -4,7 +4,9 @@ import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartSession
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.SessionData
@@ -49,7 +51,7 @@ internal class IdleStateAction(
                 onWakeWordDetectedAction(sessionData, action)
             }
 
-            is StartSession -> {
+            is StartSession     -> {
                 val sessionData = SessionData(
                     sessionId = newSessionId,
                     sendAudioCaptured = false,
@@ -60,7 +62,7 @@ internal class IdleStateAction(
                 onStartAction(sessionData, action)
             }
 
-            is PlayAudio    -> {
+            is PlayAudio        -> {
                 val sessionData = SessionData(
                     sessionId = newSessionId,
                     sendAudioCaptured = false,
@@ -71,7 +73,7 @@ internal class IdleStateAction(
                 onPlayAudio(sessionData, action)
             }
 
-            else            -> Unit
+            else                -> Unit
         }
 
     }
@@ -117,7 +119,10 @@ internal class IdleStateAction(
         dialogManagerService.informMqtt(sessionData, action)
 
         @Suppress("DEPRECATION")
-        dialogManagerService.transitionTo(action, stateTransition.transitionToAudioPlayingState(Data(action.byteArray)))
+        dialogManagerService.transitionTo(
+            action,
+            stateTransition.transitionToAudioPlayingState(Data(action.byteArray))
+        )
     }
 
 }

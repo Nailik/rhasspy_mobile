@@ -12,7 +12,8 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.serializer
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 
-internal object PorcupineCustomKeywordSerializer : KSerializer<ImmutableList<PorcupineCustomKeyword>> {
+internal object PorcupineCustomKeywordSerializer :
+    KSerializer<ImmutableList<PorcupineCustomKeyword>> {
 
     @OptIn(InternalSerializationApi::class)
     private val delegatedSerializer = ListSerializer(PorcupineCustomKeyword::class.serializer())

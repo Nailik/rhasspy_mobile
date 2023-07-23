@@ -70,7 +70,11 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
 
         logger.v { "startRecording" }
 
-        if (ActivityCompat.checkSelfPermission(get<NativeApplication>() as Context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                get<NativeApplication>() as Context,
+                Manifest.permission.RECORD_AUDIO
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             logger.e { "missing recording permission" }
             return
         }

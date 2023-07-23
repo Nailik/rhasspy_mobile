@@ -32,9 +32,15 @@ class SilenceDetectionSettingsViewStateCreator(
             silenceDetectionMinimumTimeText = AppSetting.automaticSilenceDetectionMinimumTime.value.toString(),
             isSilenceDetectionEnabled = AppSetting.isAutomaticSilenceDetectionEnabled.value,
             silenceDetectionAudioLevel = AppSetting.automaticSilenceDetectionAudioLevel.value,
-            silenceDetectionAudioLevelPercentage = (log(AppSetting.automaticSilenceDetectionAudioLevel.value, audioRecorder.absoluteMaxVolume)),
+            silenceDetectionAudioLevelPercentage = (log(
+                AppSetting.automaticSilenceDetectionAudioLevel.value,
+                audioRecorder.absoluteMaxVolume
+            )),
             currentVolume = audioRecorder.maxVolume.value.toString(),
-            audioLevelPercentage = (log(audioRecorder.maxVolume.value, audioRecorder.absoluteMaxVolume)),
+            audioLevelPercentage = (log(
+                audioRecorder.maxVolume.value,
+                audioRecorder.absoluteMaxVolume
+            )),
             isAudioLevelBiggerThanMax = audioRecorder.maxVolume.value > AppSetting.automaticSilenceDetectionAudioLevel.value,
             isRecording = audioRecorder.isRecording.value
         )
