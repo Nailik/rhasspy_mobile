@@ -114,7 +114,7 @@ private fun AudioPlayingOptionContent(
                 onEvent = onEvent
             )
 
-            else -> {}
+            else -> Unit
         }
 
     }

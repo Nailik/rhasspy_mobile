@@ -61,7 +61,7 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
                     Lifecycle.Event.ON_START  -> currentlyAppInBackground.value = false
                     Lifecycle.Event.ON_STOP   -> currentlyAppInBackground.value = true
                     Lifecycle.Event.ON_RESUME -> resume()
-                    else                      -> {}
+                    else                      -> Unit
                 }
             }
         })

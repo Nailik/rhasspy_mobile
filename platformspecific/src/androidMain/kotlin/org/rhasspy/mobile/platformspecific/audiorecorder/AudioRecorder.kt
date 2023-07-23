@@ -30,6 +30,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
      */
     private val _output = MutableSharedFlow<ByteArray>()
     actual override val output = _output.readOnly
+
     /**
      * max volume since start recording
      */

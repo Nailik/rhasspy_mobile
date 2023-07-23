@@ -101,7 +101,7 @@ private fun IntentRecognitionOptionContent(
                     onEvent = onEvent
                 )
 
-            else -> {}
+            else -> Unit
         }
 
     }

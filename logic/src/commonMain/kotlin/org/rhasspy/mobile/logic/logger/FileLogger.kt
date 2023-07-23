@@ -64,7 +64,7 @@ internal class FileLogger(
             message,
             throwable?.message
         )
-      // file.commonReadWrite().appendingSink().buffer().writeUtf8("\n,${Json.encodeToString(element)}").flush()
+        // file.commonReadWrite().appendingSink().buffer().writeUtf8("\n,${Json.encodeToString(element)}").flush()
         coroutineScope.launch {
             _flow.emit(element)
         }

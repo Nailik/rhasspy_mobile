@@ -48,7 +48,7 @@ fun Indication(indicationState: IndicationState) {
     ) {
 
         when (indicationState) {
-            Idle      -> {}
+            Idle      -> Unit
             WakeUp    -> WakeupIndication()
             Recording -> RecordingIndication()
             Thinking  -> ThinkingIndication()

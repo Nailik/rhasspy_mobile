@@ -147,5 +147,4 @@ actual class PorcupineWakeWordClient actual constructor(
     }
 
 
-
 }

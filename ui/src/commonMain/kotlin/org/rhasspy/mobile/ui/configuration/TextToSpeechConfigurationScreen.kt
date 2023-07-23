@@ -99,7 +99,7 @@ private fun TextToSpeechOptionContent(
                 onAction = onEvent
             )
 
-            else -> {}
+            else -> Unit
         }
 
     }

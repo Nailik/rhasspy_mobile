@@ -104,7 +104,7 @@ private fun SpeechToTextOption(
                 onEvent = onEvent
             )
 
-            else -> {}
+            else -> Unit
         }
 
     }
