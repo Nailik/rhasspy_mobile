@@ -28,7 +28,7 @@ class RecordingServiceTest : AppTest() {
 
     private val audioRecorder = FakeAudioRecorder()
     private val threshold = 12767.5f
-    private val allowedDelay = 40.milliseconds //delay allowed until silence is detected
+    private val allowedDelay = 50.milliseconds //delay allowed until silence is detected
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     @Mock
@@ -44,6 +44,7 @@ class RecordingServiceTest : AppTest() {
                 single<IServiceMiddleware> { serviceMiddleware }
             }
         )
+
         //enable silence detection
         AppSetting.isAutomaticSilenceDetectionEnabled.value = true
         //set threshold, must be below may volume

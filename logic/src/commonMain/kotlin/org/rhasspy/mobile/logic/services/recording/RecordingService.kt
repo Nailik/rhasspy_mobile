@@ -1,8 +1,6 @@
 package org.rhasspy.mobile.logic.services.recording
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -19,6 +17,7 @@ import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SilenceDetected
 import org.rhasspy.mobile.logic.middleware.Source.Local
 import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
@@ -43,6 +42,7 @@ interface IRecordingService : IService {
  * recording is started and stopped automatically when output is observed
  */
 internal class RecordingService(
+    dispatcherProvider: IDispatcherProvider,
     private val audioRecorder: IAudioRecorder
 ) : IRecordingService {
 
@@ -53,7 +53,7 @@ internal class RecordingService(
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(dispatcherProvider.IO)
     private var silenceStartTime: Instant? = null
     private var recordingTillSilenceStartTime: Instant? = null
 

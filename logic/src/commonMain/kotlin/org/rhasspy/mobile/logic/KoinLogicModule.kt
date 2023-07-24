@@ -169,7 +169,12 @@ fun logicModule() = module {
     factory { LocalAudioServiceParamsCreator() }
     single<ILocalAudioService> { LocalAudioService(paramsCreator = get()) }
 
-    single<IRecordingService> { RecordingService(audioRecorder = get()) }
+    single<IRecordingService> {
+        RecordingService(
+            dispatcherProvider = get(),
+            audioRecorder = get()
+        )
+    }
 
     single<IAppSettingsService> { AppSettingsService() }
 
