@@ -21,6 +21,8 @@ import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.readOnly
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
     private val logger = Logger.withTag("AudioRecorder")
@@ -128,22 +130,22 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
                     val byteArray = ByteArray(bufferSize)
                     if (it.read(byteArray, 0, byteArray.size) == bufferSize) {
 
-                        /* coroutineScope.launch {
-                             var max: Short = 0
-                             for (i in 0..byteArray.size step 2) {
-                                 if (i < byteArray.size) {
-                                     val bb = ByteBuffer.wrap(byteArray.copyOfRange(i, i + 2))
-                                     bb.order(ByteOrder.nativeOrder())
-                                     val short = bb.short
+                        coroutineScope.launch {
+                            var max: Short = 0
+                            for (i in 0..byteArray.size step 2) {
+                                if (i < byteArray.size) {
+                                    val bb = ByteBuffer.wrap(byteArray.copyOfRange(i, i + 2))
+                                    bb.order(ByteOrder.nativeOrder())
+                                    val short = bb.short
 
-                                     if (short > max) {
-                                         max = short
-                                     }
+                                    if (short > max) {
+                                        max = short
+                                    }
                                  }
                              }
                              _maxVolume.value = max.toFloat()
                          }
- */
+
                         _output.emit(byteArray)
                     }
                 }

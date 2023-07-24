@@ -18,6 +18,7 @@ import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performClick
@@ -41,13 +42,13 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
 
 fun SemanticsNodeInteraction.onListItemSwitch(): SemanticsNodeInteraction {
-    return this.onChildren().filter(isToggleable()).onFirst()
-    //return this.onChildAt(0).onChildren().filter(isToggleable()).onFirst()
+    //return this.onChildren().filter(isToggleable()).onFirst()
+    return this.onChildAt(0).onChildren().filter(isToggleable()).onFirst()
 }
 
 fun SemanticsNodeInteraction.onListItemRadioButton(): SemanticsNodeInteraction {
-    return this.onChildren().filter(isSelectable()).onFirst()
-    //return this.onChildAt(0).onChildren().filter(isSelectable()).onFirst()
+    //return this.onChildren().filter(isSelectable()).onFirst()
+    return this.onChildAt(0).onChildren().filter(isSelectable()).onFirst()
 }
 
 fun hasTestTag(testTag: Enum<*>): SemanticsMatcher =
