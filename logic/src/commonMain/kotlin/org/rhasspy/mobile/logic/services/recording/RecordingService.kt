@@ -1,8 +1,6 @@
 package org.rhasspy.mobile.logic.services.recording
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -16,9 +14,10 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.Source
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SilenceDetected
+import org.rhasspy.mobile.logic.middleware.Source.Local
 import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
@@ -43,6 +42,7 @@ interface IRecordingService : IService {
  * recording is started and stopped automatically when output is observed
  */
 internal class RecordingService(
+    dispatcherProvider: IDispatcherProvider,
     private val audioRecorder: IAudioRecorder
 ) : IRecordingService {
 
@@ -53,9 +53,9 @@ internal class RecordingService(
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(dispatcherProvider.IO)
     private var silenceStartTime: Instant? = null
-    private var recordingStartTime: Instant? = null
+    private var recordingTillSilenceStartTime: Instant? = null
 
     private val _isRecording = MutableStateFlow(false)
     override val isRecording = _isRecording.readOnly
@@ -94,47 +94,53 @@ internal class RecordingService(
 
     private fun silenceDetection(volume: Float) {
         val automaticSilenceDetectionTime = AppSetting.automaticSilenceDetectionTime.value ?: 0
+        val automaticSilenceDetectionMinimumTime =
+            AppSetting.automaticSilenceDetectionMinimumTime.value ?: 0
         //check enabled
-        if (AppSetting.isAutomaticSilenceDetectionEnabled.value) {
+        if (!AppSetting.isAutomaticSilenceDetectionEnabled.value) return
 
-            //check minimum recording time
-            val currentTime = Clock.System.now()
-            val timeSinceStart = recordingStartTime?.let { currentTime.minus(it) } ?: 0.milliseconds
-            if (timeSinceStart > automaticSilenceDetectionTime.milliseconds) {
-
-                //volume below threshold
-                if (volume < AppSetting.automaticSilenceDetectionAudioLevel.value) {
-
-                    //not initial silence
-                    if (silenceStartTime != null) {
-
-                        //silence duration
-                        val timeSinceSilenceDetected =
-                            silenceStartTime?.let { currentTime.minus(it) } ?: 0.milliseconds
-                        //check if silence was detected for x milliseconds
-                        if (timeSinceSilenceDetected > automaticSilenceDetectionTime.milliseconds) {
-                            serviceMiddleware.action(
-                                ServiceMiddlewareAction.DialogServiceMiddlewareAction.SilenceDetected(
-                                    Source.Local
-                                )
-                            )
-                        }
-
-                    } else {
-                        //first time silence was detected
-                        silenceStartTime = Clock.System.now()
-                    }
-
-                } else {
-                    //reset silence time (was above threshold)
-                    silenceStartTime = null
-                }
-            }
+        //check minimum recording time
+        val currentTime = Clock.System.now()
+        //if recordingTillSilenceStartTime is null there is an issue therefore timeSinceStart is set to 0
+        val timeSinceStart = currentTime.minus(recordingTillSilenceStartTime ?: currentTime)
+        if (recordingTillSilenceStartTime == null) {
+            logger.e { "recordingTillSilenceStartTime is null but isAutomaticSilenceDetectionEnabled is true" }
         }
+
+        //minimum recording time not reached
+        if (timeSinceStart < automaticSilenceDetectionMinimumTime.milliseconds) return
+
+        //volume above threshold
+        if (volume > AppSetting.automaticSilenceDetectionAudioLevel.value) {
+            //reset silence time (was above threshold)
+            silenceStartTime = null
+            return
+        }
+
+        //volume below threshold
+
+        //not initial silence
+        silenceStartTime?.also { silenceStart ->
+            //silence duration
+            val timeSinceSilenceDetected = currentTime.minus(silenceStart)
+            //check if silence was detected for x milliseconds
+            if (timeSinceSilenceDetected >= automaticSilenceDetectionTime.milliseconds) {
+                serviceMiddleware.action(SilenceDetected(Local))
+            }
+        } ?: run {
+            //first time silence was detected
+            silenceStartTime = Clock.System.now()
+        }
+
     }
 
     override fun toggleSilenceDetectionEnabled(enabled: Boolean) {
         isSilenceDetectionEnabled = enabled
+        recordingTillSilenceStartTime = if (enabled) {
+            Clock.System.now()
+        } else {
+            null
+        }
     }
 
     private fun startRecording() {
@@ -146,7 +152,6 @@ internal class RecordingService(
             audioRecorderEncodingType = AppSetting.audioRecorderEncoding.value,
             audioRecorderSampleRateType = AppSetting.audioRecorderSampleRate.value
         )
-        recordingStartTime = Clock.System.now()
     }
 
     private fun stopRecording() {
@@ -154,7 +159,7 @@ internal class RecordingService(
         isSilenceDetectionEnabled = false
         logger.d { "stopRecording" }
         _isRecording.value = false
-        recordingStartTime = null
+        recordingTillSilenceStartTime = null
         audioRecorder.stopRecording()
     }
 
