@@ -41,15 +41,16 @@ class SettingsScreenTest {
     @Test
     fun testContent() = runTest {
         //each item exists and navigates
-        SettingsScreenDestination.values().filter { it != SettingsScreenDestination.OverviewScreen }.forEach { tag ->
-            composeTestRule.onNodeWithTag(TestTag.List).performScrollToNode(hasTestTag(tag))
-                .assertExists()
-            composeTestRule.onNodeWithTag(tag).performClick()
-            //content exists
-            composeTestRule.onNodeWithTag(tag).assertExists()
-            //press toolbar back button
-            composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
-        }
+        SettingsScreenDestination.values().filter { it != SettingsScreenDestination.OverviewScreen }
+            .forEach { tag ->
+                composeTestRule.onNodeWithTag(TestTag.List).performScrollToNode(hasTestTag(tag))
+                    .assertExists()
+                composeTestRule.onNodeWithTag(tag).performClick()
+                //content exists
+                composeTestRule.onNodeWithTag(tag).assertExists()
+                //press toolbar back button
+                composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
+            }
     }
 
 }

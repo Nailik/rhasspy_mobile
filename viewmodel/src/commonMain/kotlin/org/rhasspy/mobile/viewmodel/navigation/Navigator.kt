@@ -23,7 +23,8 @@ interface INavigator {
     fun replace(clazz: KClass<out NavigationDestination>, screen: NavigationDestination)
 }
 
-inline fun <reified T : NavigationDestination> INavigator.topScreen(default: T): StateFlow<T> = navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() ?: default }
+inline fun <reified T : NavigationDestination> INavigator.topScreen(default: T): StateFlow<T> =
+    navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() ?: default }
 
 /**
  * top viewmodel
@@ -33,7 +34,8 @@ internal class Navigator(
     private val nativeApplication: NativeApplication
 ) : INavigator {
 
-    override val navStack = MutableStateFlow<ImmutableList<NavigationDestination>>(persistentListOf(HomeScreen))
+    override val navStack =
+        MutableStateFlow<ImmutableList<NavigationDestination>>(persistentListOf(HomeScreen))
 
     private val _viewModelStack = mutableListOf<IScreenViewModel>()
 

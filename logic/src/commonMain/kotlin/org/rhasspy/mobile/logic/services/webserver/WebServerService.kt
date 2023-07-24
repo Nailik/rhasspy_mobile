@@ -30,14 +30,21 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.HotWordToggle
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartListening
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopListening
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.Mqtt
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.PlayStopRecording
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.SayText
 import org.rhasspy.mobile.logic.middleware.Source.HttpApi
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
-import org.rhasspy.mobile.logic.services.webserver.WebServerResult.*
+import org.rhasspy.mobile.logic.services.webserver.WebServerResult.Accepted
+import org.rhasspy.mobile.logic.services.webserver.WebServerResult.Error
+import org.rhasspy.mobile.logic.services.webserver.WebServerResult.Ok
 import org.rhasspy.mobile.logic.services.webserver.WebServerServiceErrorType.WakeOptionInvalid
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.file.FolderType
@@ -192,7 +199,7 @@ internal class WebServerService(
                         evaluateCall(path, call)
                     }
 
-                    WebServerPath.WebServerCallType.GET -> get(path.path) {
+                    WebServerPath.WebServerCallType.GET  -> get(path.path) {
                         evaluateCall(path, call)
                     }
                 }
@@ -224,16 +231,16 @@ internal class WebServerService(
                     call.respond(HttpStatusCode.Accepted)
                 }
 
-                is Error -> {
+                is Error    -> {
                     logger.d { "evaluateCall BadRequest ${result.errorType.description}" }
                     call.respond(HttpStatusCode.BadRequest, result.errorType.description)
                 }
 
-                Ok       -> {
+                Ok          -> {
                     call.respond(HttpStatusCode.OK)
                 }
 
-                else     -> {
+                else        -> {
 
                 }
             }

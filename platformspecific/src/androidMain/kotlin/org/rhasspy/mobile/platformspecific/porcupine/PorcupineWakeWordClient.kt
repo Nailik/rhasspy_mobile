@@ -1,15 +1,13 @@
 package org.rhasspy.mobile.platformspecific.porcupine
 
 import ai.picovoice.porcupine.PorcupineException
-import ai.picovoice.porcupine.PorcupineManager
-import ai.picovoice.porcupine.PorcupineManagerCallback
-import android.Manifest
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
@@ -22,17 +20,22 @@ import java.io.File
  * checks for audio permission
  */
 actual class PorcupineWakeWordClient actual constructor(
+    private val isUseCustomRecorder: Boolean,
+    private val audioRecorderSampleRateType: AudioRecorderSampleRateType,
+    private val audioRecorderChannelType: AudioRecorderChannelType,
+    private val audioRecorderEncodingType: AudioRecorderEncodingType,
     private val wakeWordPorcupineAccessToken: String,
     private val wakeWordPorcupineKeywordDefaultOptions: ImmutableList<PorcupineDefaultKeyword>,
     private val wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
     private val wakeWordPorcupineLanguage: PorcupineLanguageOption,
     private val onKeywordDetected: (hotWord: String) -> Unit,
     private val onError: (Exception) -> Unit
-) : PorcupineManagerCallback, KoinComponent {
+) : KoinComponent {
+
     private val logger = Logger.withTag("PorcupineWakeWordClient")
 
     //manager to stop start and reload porcupine
-    private var porcupineManager: PorcupineManager? = null
+    private var porcupineClient: IPorcupineClient? = null
 
     private val context = get<NativeApplication>()
 
@@ -43,55 +46,33 @@ actual class PorcupineWakeWordClient actual constructor(
      * create porcupine client
      */
     actual fun initialize(): Exception? {
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.RECORD_AUDIO
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            logger.e { "missing recording permission" }
-            return Exception("MicrophonePermissionMissing")
-        }
 
         return try {
-            val porcupineBuilder = PorcupineManager.Builder()
-                .setAccessKey(wakeWordPorcupineAccessToken)
-                //keyword paths can not be used with keywords, therefore also the built in keywords are copied to a usable file location
-                .setKeywordPaths(
-                    wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
-                        .map {
-                            copyBuildInKeywordFile(it)
-                        }.toMutableList().also { list ->
-                            list.addAll(
-                                wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
-                                    File(
-                                        context.filesDir,
-                                        "porcupine/${it.fileName}"
-                                    ).absolutePath
-                                }
-                            )
-                        }.toTypedArray()
-                )
-                .setSensitivities(
-                    wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
-                        .map {
-                            it.sensitivity
-                        }.toMutableList().also { list ->
-                            list.addAll(
-                                wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
-                                    it.sensitivity
-                                }
-                            )
-                        }.toTypedArray().toFloatArray()
-                )
-                .setModelPath(copyModelFile())
-                .setErrorCallback {
-                    onError(it)
-                }
-
 
             File(context.filesDir, "sounds").mkdirs()
 
-            porcupineManager = porcupineBuilder.build(context, this)
+            porcupineClient = if (isUseCustomRecorder) {
+                PorcupineCustomClient(
+                    audioRecorderSampleRateType = audioRecorderSampleRateType,
+                    audioRecorderChannelType = audioRecorderChannelType,
+                    audioRecorderEncodingType = audioRecorderEncodingType,
+                    wakeWordPorcupineAccessToken = wakeWordPorcupineAccessToken,
+                    wakeWordPorcupineKeywordDefaultOptions = wakeWordPorcupineKeywordDefaultOptions,
+                    wakeWordPorcupineKeywordCustomOptions = wakeWordPorcupineKeywordCustomOptions,
+                    wakeWordPorcupineLanguage = wakeWordPorcupineLanguage,
+                    onKeywordDetected = ::onKeywordDetected,
+                    onError = onError
+                )
+            } else {
+                PorcupineDefaultClient(
+                    wakeWordPorcupineAccessToken = wakeWordPorcupineAccessToken,
+                    wakeWordPorcupineKeywordDefaultOptions = wakeWordPorcupineKeywordDefaultOptions,
+                    wakeWordPorcupineKeywordCustomOptions = wakeWordPorcupineKeywordCustomOptions,
+                    wakeWordPorcupineLanguage = wakeWordPorcupineLanguage,
+                    onKeywordDetected = ::onKeywordDetected,
+                    onError = onError
+                )
+            }
 
             initialized = true
             null//no error
@@ -115,7 +96,7 @@ actual class PorcupineWakeWordClient actual constructor(
      * tries to start porcupine
      */
     actual fun start(): Exception? {
-        return porcupineManager?.let {
+        return porcupineClient?.let {
             return try {
                 it.start()
                 null
@@ -132,13 +113,13 @@ actual class PorcupineWakeWordClient actual constructor(
      * stop wake word detected
      */
     actual fun stop() {
-        porcupineManager?.stop()
+        porcupineClient?.stop()
     }
 
     /**
      * invoked when a WakeWord is detected, informs listening service
      */
-    override fun invoke(keywordIndex: Int) {
+    private fun onKeywordDetected(keywordIndex: Int) {
         logger.d { "invoke - keyword detected" }
 
         val allKeywords = wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled }.map {
@@ -149,52 +130,21 @@ actual class PorcupineWakeWordClient actual constructor(
             }.toMutableList())
         }
 
-        if (allKeywords.size > keywordIndex) {
+        if (keywordIndex in 0..allKeywords.size) { //TODO index might be negative
             onKeywordDetected(allKeywords[keywordIndex])
-        } else {
-            onKeywordDetected("Unknown")
+        } else if (keywordIndex > 0) {
+            onKeywordDetected("UnknownIndex $keywordIndex")
         }
-    }
-
-    /**
-     * copies a model file from the file resources to app storage directory, else cannot be used by porcupine
-     */
-    private fun copyModelFile(): String {
-        val folder = File(context.filesDir, "porcupine")
-        folder.mkdirs()
-        val file = File(folder, "model_${wakeWordPorcupineLanguage.name.lowercase()}.pv")
-
-        file.outputStream().write(
-            context.resources.openRawResource(wakeWordPorcupineLanguage.file.rawResId)
-                .readBytes()
-        )
-
-        return file.absolutePath
-    }
-
-    /**
-     * copies a keyword file from the file resources to app storage directory, else cannot be used by porcupine
-     */
-    private fun copyBuildInKeywordFile(defaultKeyword: PorcupineDefaultKeyword): String {
-        val folder = File(context.filesDir, "porcupine")
-        folder.mkdirs()
-        val file = File(folder, "keyword_${defaultKeyword.option.name.lowercase()}.ppn")
-
-        file.outputStream().write(
-            context.resources.openRawResource(defaultKeyword.option.file.rawResId)
-                .readBytes()
-        )
-
-        return file.absolutePath
     }
 
     /**
      * deletes the porcupine manager
      */
     actual fun close() {
-        porcupineManager?.stop()
-        porcupineManager?.delete()
-        porcupineManager = null
+        porcupineClient?.stop()
+        porcupineClient?.close()
+        porcupineClient = null
     }
+
 
 }

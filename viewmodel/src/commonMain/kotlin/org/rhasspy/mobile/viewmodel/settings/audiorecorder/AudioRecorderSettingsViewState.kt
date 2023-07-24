@@ -15,8 +15,11 @@ data class AudioRecorderSettingsViewState internal constructor(
     val audioRecorderSampleRateType: AudioRecorderSampleRateType
 ) {
 
-    val audioRecorderChannelTypes: ImmutableList<AudioRecorderChannelType> = AudioRecorderChannelType.values().toImmutableList()
-    val audioRecorderEncodingTypes: ImmutableList<AudioRecorderEncodingType> = AudioRecorderEncodingType.supportedValues().toImmutableList()
-    val audioRecorderSampleRateTypes: ImmutableList<AudioRecorderSampleRateType> = AudioRecorderSampleRateType.values().toImmutableList()
+    val audioRecorderChannelTypes: ImmutableList<AudioRecorderChannelType> =
+        AudioRecorderChannelType.values().toImmutableList()
+    val audioRecorderEncodingTypes: ImmutableList<AudioRecorderEncodingType> =
+        AudioRecorderEncodingType.supportedValues().toImmutableList()
+    val audioRecorderSampleRateTypes: ImmutableList<AudioRecorderSampleRateType> =
+        AudioRecorderSampleRateType.values().toImmutableList()
 
 }

@@ -23,7 +23,14 @@ import org.junit.Before
 import org.junit.Rule
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.test.R
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.utils.FlakyTest
+import org.rhasspy.mobile.android.utils.TestContentProvider
+import org.rhasspy.mobile.android.utils.hasTag
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithCombinedTag
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.requestExternalStoragePermissions
+import org.rhasspy.mobile.android.utils.waitUntilExists
 import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.porcupine.PorcupineKeywordCustomScreen

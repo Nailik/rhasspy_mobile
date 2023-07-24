@@ -51,7 +51,9 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
         }
         if (isDebug()) {
             try {
-                StrictMode.setVmPolicy(Builder(StrictMode.getVmPolicy()).detectAll().detectAll().build())
+                StrictMode.setVmPolicy(
+                    Builder(StrictMode.getVmPolicy()).detectAll().detectAll().build()
+                )
             } catch (_: Exception) {
             }
         }
@@ -61,7 +63,7 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
                     Lifecycle.Event.ON_START  -> currentlyAppInBackground.value = false
                     Lifecycle.Event.ON_STOP   -> currentlyAppInBackground.value = true
                     Lifecycle.Event.ON_RESUME -> resume()
-                    else                      -> {}
+                    else                      -> Unit
                 }
             }
         })

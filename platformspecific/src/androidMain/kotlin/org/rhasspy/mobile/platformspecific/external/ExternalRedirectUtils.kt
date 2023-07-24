@@ -6,7 +6,8 @@ import org.rhasspy.mobile.platformspecific.file.FolderType
 
 object ExternalRedirectUtils : KoinComponent {
 
-    suspend fun openDocument(folder: String, folderType: FolderType): String? = openDocument(folder, folderType.fileTypes)
+    suspend fun openDocument(folder: String, folderType: FolderType): String? =
+        openDocument(folder, folderType.fileTypes)
 
     suspend fun openDocument(folder: String, mimeTypes: Array<String>): String? {
         var result = get<IExternalResultRequest>().launchForResult(

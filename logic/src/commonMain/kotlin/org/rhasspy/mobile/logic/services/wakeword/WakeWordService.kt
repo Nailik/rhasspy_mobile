@@ -68,7 +68,7 @@ internal class WakeWordService(
         scope.launch {
             paramsFlow.collect {
                 stop()
-                start()
+                initialize()
                 if (isDetectionRunning) {
                     startDetection()
                 }
@@ -76,13 +76,17 @@ internal class WakeWordService(
         }
     }
 
-    private fun start() {
+    private fun initialize() {
         logger.d { "initialization" }
         _serviceState.value = when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
                 _serviceState.value = ServiceState.Loading
                 //when porcupine is used for hotWord then start local service
                 porcupineWakeWordClient = PorcupineWakeWordClient(
+                    params.isUseCustomRecorder,
+                    params.audioRecorderSampleRateType,
+                    params.audioRecorderChannelType,
+                    params.audioRecorderEncodingType,
                     params.wakeWordPorcupineAccessToken,
                     params.wakeWordPorcupineKeywordDefaultOptions,
                     params.wakeWordPorcupineKeywordCustomOptions,
@@ -131,7 +135,7 @@ internal class WakeWordService(
             WakeWordOption.Porcupine -> {
 
                 if (porcupineWakeWordClient == null) {
-                    start()
+                    initialize()
                 }
 
                 porcupineWakeWordClient?.also {

@@ -5,7 +5,10 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 
-enum class PorcupineLanguageOption(override val text: StableStringResource, val file: FileResource) :
+enum class PorcupineLanguageOption(
+    override val text: StableStringResource,
+    val file: FileResource
+) :
     IOption<PorcupineLanguageOption> {
     EN(MR.strings.english.stable, MR.files.porcupine_params),
     AR(MR.strings.arabic.stable, MR.files.porcupine_params_ar),

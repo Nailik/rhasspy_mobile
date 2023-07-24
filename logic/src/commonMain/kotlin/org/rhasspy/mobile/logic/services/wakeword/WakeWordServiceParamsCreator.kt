@@ -3,6 +3,7 @@ package org.rhasspy.mobile.logic.services.wakeword
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 internal class WakeWordServiceParamsCreator {
@@ -10,6 +11,10 @@ internal class WakeWordServiceParamsCreator {
     operator fun invoke(): StateFlow<WakeWordServiceParams> {
 
         return combineStateFlow(
+            AppSetting.audioRecorderSampleRate.data,
+            AppSetting.audioRecorderChannel.data,
+            AppSetting.audioRecorderEncoding.data,
+            ConfigurationSetting.wakeWordPorcupineAudioRecorderSettings.data,
             ConfigurationSetting.wakeWordOption.data,
             ConfigurationSetting.wakeWordPorcupineAccessToken.data,
             ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.data,
@@ -25,7 +30,11 @@ internal class WakeWordServiceParamsCreator {
 
     private fun getParams(): WakeWordServiceParams {
         return WakeWordServiceParams(
+            audioRecorderSampleRateType = AppSetting.audioRecorderSampleRate.value,
+            audioRecorderChannelType = AppSetting.audioRecorderChannel.value,
+            audioRecorderEncodingType = AppSetting.audioRecorderEncoding.value,
             wakeWordOption = ConfigurationSetting.wakeWordOption.value,
+            isUseCustomRecorder = ConfigurationSetting.wakeWordPorcupineAudioRecorderSettings.value,
             wakeWordPorcupineAccessToken = ConfigurationSetting.wakeWordPorcupineAccessToken.value,
             wakeWordPorcupineKeywordDefaultOptions = ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value,
             wakeWordPorcupineKeywordCustomOptions = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value,

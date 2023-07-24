@@ -20,9 +20,17 @@ import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ISetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.*
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.ChooseSoundFile
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.ToggleAudioPlayerActive
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.AddSoundFile
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.DeleteSoundFile
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.SetSoundFile
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.SetSoundIndicationOption
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.UpdateSoundVolume
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Consumed
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Consumed.ShowSnackBar
 import kotlin.reflect.KFunction1
 
@@ -36,7 +44,8 @@ abstract class IIndicationSoundSettingsViewModel(
     private val soundFolderType: FolderType,
 ) : ScreenViewModel() {
 
-    val viewStateCreator: IIndicationSoundSettingsViewStateCreator = get { parametersOf(customSoundOptions, soundSetting, soundVolume) }
+    val viewStateCreator: IIndicationSoundSettingsViewStateCreator =
+        get { parametersOf(customSoundOptions, soundSetting, soundVolume) }
     abstract val playSound: KFunction1<ILocalAudioService, Unit>
 
     private val _viewState: MutableStateFlow<IIndicationSoundSettingsViewState> = viewStateCreator()
@@ -80,7 +89,7 @@ abstract class IIndicationSoundSettingsViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            ChooseSoundFile -> {
+            ChooseSoundFile         -> {
                 viewModelScope.launch {
                     FileUtils.selectFile(soundFolderType)?.also { path ->
                         onEvent(AddSoundFile(path.name))
@@ -93,9 +102,11 @@ abstract class IIndicationSoundSettingsViewModel(
             }
 
             ToggleAudioPlayerActive ->
-                if (localAudioService.isPlayingState.value) localAudioService.stop() else playSound(localAudioService)
+                if (localAudioService.isPlayingState.value) localAudioService.stop() else playSound(
+                    localAudioService
+                )
 
-            BackClick       -> navigator.onBackPressed()
+            BackClick               -> navigator.onBackPressed()
         }
     }
 

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,7 +20,9 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.SliderListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.ClickPorcupineKeywordDefault
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SetPorcupineKeywordDefault
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineKeywordDefaultSensitivity
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
 
 /**
@@ -44,7 +45,14 @@ fun PorcupineKeywordDefaultScreen(
                 element = option,
                 onClick = { onEvent(ClickPorcupineKeywordDefault(option)) },
                 onToggle = { onEvent(SetPorcupineKeywordDefault(option, it)) },
-                onUpdateSensitivity = { onEvent(UpdateWakeWordPorcupineKeywordDefaultSensitivity(option, it)) }
+                onUpdateSensitivity = {
+                    onEvent(
+                        UpdateWakeWordPorcupineKeywordDefaultSensitivity(
+                            option,
+                            it
+                        )
+                    )
+                }
             )
 
             CustomDivider()
@@ -58,7 +66,6 @@ fun PorcupineKeywordDefaultScreen(
  * enabled/disabled
  * sensitivity
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DefaultKeywordListItem(
     element: PorcupineDefaultKeyword,

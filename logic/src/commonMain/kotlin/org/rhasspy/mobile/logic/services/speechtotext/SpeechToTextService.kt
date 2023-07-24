@@ -1,8 +1,12 @@
 package org.rhasspy.mobile.logic.services.speechtotext
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
@@ -63,7 +67,8 @@ internal class SpeechToTextService(
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
     override val serviceState = _serviceState.readOnly
 
-    override val speechToTextAudioFile: Path = Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
+    override val speechToTextAudioFile: Path =
+        Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private var collector: Job? = null
@@ -107,7 +112,8 @@ internal class SpeechToTextService(
             speechToTextAudioFile.commonSize() ?: 0
         )
 
-        speechToTextAudioFile.commonReadWrite().write(0, header, 0, header.size)
+        speechToTextAudioFile.commonReadWrite()
+            .write(0, header.map { it.toByte() }.toByteArray(), 0, header.size)
 
         recordingService.toggleSilenceDetectionEnabled(false)
 
@@ -123,7 +129,9 @@ internal class SpeechToTextService(
                 serviceMiddleware.action(action)
             }
 
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value = mqttClientService.stopListening(sessionId)
+            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value =
+                mqttClientService.stopListening(sessionId)
+
             SpeechToTextOption.Disabled   -> Unit
         }
     }
@@ -155,7 +163,10 @@ internal class SpeechToTextService(
 
         _serviceState.value = when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> ServiceState.Success
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.startListening(sessionId) else ServiceState.Success
+            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.startListening(
+                sessionId
+            ) else ServiceState.Success
+
             SpeechToTextOption.Disabled   -> ServiceState.Disabled
         }
     }
@@ -175,7 +186,7 @@ internal class SpeechToTextService(
             //write async after data was send
             speechToTextAudioFile.commonReadWrite().write(
                 fileOffset = speechToTextAudioFile.commonSize() ?: 0,
-                array = data,
+                array = data.map { it.toByte() }.toByteArray(),
                 arrayOffset = 0,
                 byteCount = data.size
             )

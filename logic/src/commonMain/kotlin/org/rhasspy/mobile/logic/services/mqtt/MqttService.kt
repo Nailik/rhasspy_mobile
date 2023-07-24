@@ -3,11 +3,26 @@ package org.rhasspy.mobile.logic.services.mqtt
 import com.benasher44.uuid.uuid4
 import com.benasher44.uuid.variant
 import io.ktor.utils.io.core.toByteArray
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonObjectBuilder
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.floatOrNull
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
 import okio.Path
 import okio.buffer
 import org.koin.core.component.inject
@@ -18,7 +33,19 @@ import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioOutputToggle
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.EndSession
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionResult
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionEnded
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionStarted
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartListening
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartSession
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopListening
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
@@ -26,7 +53,13 @@ import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.extensions.commonSource
-import org.rhasspy.mobile.platformspecific.mqtt.*
+import org.rhasspy.mobile.platformspecific.mqtt.MqttClient
+import org.rhasspy.mobile.platformspecific.mqtt.MqttMessage
+import org.rhasspy.mobile.platformspecific.mqtt.MqttParams
+import org.rhasspy.mobile.platformspecific.mqtt.MqttPersistence
+import org.rhasspy.mobile.platformspecific.mqtt.MqttTopicPlaceholder
+import org.rhasspy.mobile.platformspecific.mqtt.MqttTopicsPublish
+import org.rhasspy.mobile.platformspecific.mqtt.MqttTopicsSubscription
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
@@ -175,7 +208,8 @@ internal class MqttService(
                 //connect to server
                 it.connect(params.mqttServiceConnectionOptions)?.also { error ->
                     logger.e { "connectClient error $error" }
-                    _serviceState.value = MqttServiceStateType.fromMqttStatus(error.statusCode).serviceState
+                    _serviceState.value =
+                        MqttServiceStateType.fromMqttStatus(error.statusCode).serviceState
                 }
             } else {
                 _serviceState.value = ServiceState.Success
@@ -249,7 +283,7 @@ internal class MqttService(
     private fun regexTopic(topic: String, payload: ByteArray): Boolean {
         logger.d { "regexTopic $topic" }
         when {
-            MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> {
+            MqttTopicsSubscription.HotWordDetected.topic.matches(topic)         -> {
                 hotWordDetectedCalled(topic)
             }
 
@@ -260,11 +294,11 @@ internal class MqttService(
 
             MqttTopicsSubscription.PlayBytes.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                .matches(topic)                                         -> {
+                .matches(topic)                                                 -> {
                 playBytes(payload)
             }
 
-            else                                                        -> return false
+            else                                                                -> return false
         }
         return true
     }
@@ -297,12 +331,18 @@ internal class MqttService(
                         MqttTopicsSubscription.AsrStopListening        -> stopListening(jsonObject)
                         MqttTopicsSubscription.AsrTextCaptured         -> asrTextCaptured(jsonObject)
                         MqttTopicsSubscription.AsrError                -> asrError(jsonObject)
-                        MqttTopicsSubscription.IntentNotRecognized     -> intentNotRecognized(jsonObject)
+                        MqttTopicsSubscription.IntentNotRecognized     -> intentNotRecognized(
+                            jsonObject
+                        )
+
                         MqttTopicsSubscription.IntentHandlingToggleOn  -> intentHandlingToggleOn()
                         MqttTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff()
                         MqttTopicsSubscription.AudioOutputToggleOff    -> audioOutputToggleOff()
                         MqttTopicsSubscription.AudioOutputToggleOn     -> audioOutputToggleOn()
-                        MqttTopicsSubscription.HotWordDetected         -> hotWordDetectedCalled(topic)
+                        MqttTopicsSubscription.HotWordDetected         -> hotWordDetectedCalled(
+                            topic
+                        )
+
                         MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(
                             jsonObject
                         )
@@ -337,7 +377,7 @@ internal class MqttService(
                     playFinishedCall()
                 }
 
-                else -> {
+                else                -> {
                     logger.d { "siteId in Topic mqttTopic notFound $topic" }
                 }
             }
@@ -786,7 +826,8 @@ internal class MqttService(
         serviceMiddleware.action(
             IntentRecognitionResult(
                 source = jsonObject.getSource(),
-                intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content ?: "",
+                intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content
+                    ?: "",
                 intent = jsonObject.toString()
             )
         )
@@ -884,7 +925,9 @@ internal class MqttService(
                 @Suppress("DEPRECATION")
                 when (audioSource) {
                     is AudioSource.Data     -> audioSource.data
-                    is AudioSource.File     -> audioSource.path.commonSource().buffer().readByteArray()
+                    is AudioSource.File     -> audioSource.path.commonSource().buffer()
+                        .readByteArray()
+
                     is AudioSource.Resource -> audioSource.fileResource.commonData(nativeApplication)
                 }
             )
@@ -974,7 +1017,9 @@ internal class MqttService(
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
                 .matches(topic)                                                 -> MqttTopicsSubscription.IntentRecognitionResult
 
-            else                                                                -> MqttTopicsSubscription.fromTopic(topic)
+            else                                                                -> MqttTopicsSubscription.fromTopic(
+                topic
+            )
         }
     }
 

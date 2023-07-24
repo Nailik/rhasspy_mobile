@@ -8,7 +8,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.utils.FlakyTest
+import org.rhasspy.mobile.android.utils.TestContentProvider
+import org.rhasspy.mobile.android.utils.onListItemRadioButton
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.ui.configuration.DialogManagementConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
@@ -49,12 +53,14 @@ class DialogManagementConfigurationContentTest : FlakyTest() {
         composeTestRule.awaitIdle()
 
         //option disable is set
-        composeTestRule.onNodeWithTag(DialogManagementOption.Disabled, true).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(DialogManagementOption.Disabled, true).onListItemRadioButton()
+            .assertIsSelected()
         //User clicks option local
         composeTestRule.onNodeWithTag(DialogManagementOption.Local).performClick()
         composeTestRule.awaitIdle()
         //new option is selected
-        composeTestRule.onNodeWithTag(DialogManagementOption.Local, true).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(DialogManagementOption.Local, true).onListItemRadioButton()
+            .assertIsSelected()
 
         //User clicks save
         composeTestRule.saveBottomAppBar()

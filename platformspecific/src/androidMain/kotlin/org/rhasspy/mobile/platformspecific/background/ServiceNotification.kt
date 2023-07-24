@@ -62,7 +62,8 @@ object ServiceNotification : KoinComponent {
     }
 
     private fun createPendingIntent(): PendingIntent {
-        val launchIntent: Intent = context.packageManager.getLaunchIntentForPackage(context.packageName)!!
+        val launchIntent: Intent =
+            context.packageManager.getLaunchIntentForPackage(context.packageName)!!
 
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE

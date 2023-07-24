@@ -1,6 +1,10 @@
 package org.rhasspy.mobile.ui.configuration
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,9 +13,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.data.resource.stable
@@ -27,6 +34,7 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.ui.content.list.ListElement
+import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
@@ -38,6 +46,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.RequestMicrophonePermission
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SetPorcupineAudioRecorderSettings
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
@@ -46,7 +55,9 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordUdpConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditPorcupineWakeWordScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditScreen
 
 /**
  * Nav Host of Wake word configuration screens
@@ -149,14 +160,14 @@ private fun WakeWordConfigurationOptionContent(
                     onEvent = onEvent
                 )
 
-            WakeWordOption.Udp ->
+            WakeWordOption.Udp       ->
                 UdpSettings(
                     editData = viewState.editData.wakeWordUdpConfigurationData,
                     isMicrophonePermissionRequestVisible = viewState.isMicrophonePermissionRequestVisible,
                     onEvent = onEvent
                 )
 
-            else               -> {}
+            else                     -> Unit
         }
 
     }
@@ -170,7 +181,6 @@ private fun WakeWordConfigurationOptionContent(
  * language selection
  * sensitivity slider
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PorcupineConfiguration(
     editData: WakeWordPorcupineConfigurationData,
@@ -226,6 +236,15 @@ private fun PorcupineConfiguration(
                 .clickable { onEvent(Navigate(EditPorcupineWakeWordScreen)) },
             text = { Text(MR.strings.wakeWord.stable) },
             secondaryText = { Text("${editData.keywordCount} ${translate(MR.strings.active.stable)}") }
+        )
+
+        //button to enabled microphone
+        SwitchListItem(
+            text = MR.strings.porcupineAudioRecorderSettings.stable,
+            secondaryText = MR.strings.porcupineAudioRecorderSettingsInformation.stable,
+            modifier = Modifier.testTag(TestTag.PorcupineCustomAudio),
+            isChecked = editData.isUseAudioRecorderSettings,
+            onCheckedChange = { onEvent(SetPorcupineAudioRecorderSettings(it)) }
         )
 
         //button to enabled microphone

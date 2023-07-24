@@ -8,7 +8,10 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change
-import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.SetCrashlyticsEnabled
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.SetLogAudioFramesEnabled
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.SetLogLevel
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.SetShowLogEnabled
 
 @Stable
 class LogSettingsViewModel(
@@ -27,19 +30,19 @@ class LogSettingsViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            is SetCrashlyticsEnabled -> {
+            is SetCrashlyticsEnabled    -> {
                 AppSetting.isCrashlyticsEnabled.value = change.enabled
                 crashlytics.setEnabled(change.enabled)
             }
 
             is SetLogAudioFramesEnabled -> AppSetting.isLogAudioFramesEnabled.value = change.enabled
 
-            is SetLogLevel           -> {
+            is SetLogLevel              -> {
                 AppSetting.logLevel.value = change.logLevel
                 Logger.setMinSeverity(AppSetting.logLevel.value.severity)
             }
 
-            is SetShowLogEnabled     -> AppSetting.isShowLogEnabled.value = change.enabled
+            is SetShowLogEnabled        -> AppSetting.isShowLogEnabled.value = change.enabled
         }
     }
 

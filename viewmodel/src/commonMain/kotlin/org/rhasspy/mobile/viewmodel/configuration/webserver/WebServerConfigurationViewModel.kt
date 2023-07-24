@@ -15,9 +15,17 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLKeyStoreFile
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyAlias
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyPassword
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyStorePassword
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpServerPort
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewState.WebServerConfigurationData
 
 @Stable
@@ -27,7 +35,8 @@ class WebServerConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState = MutableStateFlow(WebServerConfigurationViewState(WebServerConfigurationData()))
+    private val _viewState =
+        MutableStateFlow(WebServerConfigurationViewState(WebServerConfigurationData()))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
@@ -71,7 +80,7 @@ class WebServerConfigurationViewModel(
                 onEvent(SetHttpServerSSLKeyStoreFile(path))
             }
 
-            BackClick -> navigator.onBackPressed()
+            BackClick            -> navigator.onBackPressed()
         }
     }
 

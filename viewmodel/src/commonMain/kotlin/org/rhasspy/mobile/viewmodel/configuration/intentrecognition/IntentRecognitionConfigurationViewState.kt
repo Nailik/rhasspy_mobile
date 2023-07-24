@@ -21,10 +21,12 @@ data class IntentRecognitionConfigurationViewState internal constructor(
         val intentRecognitionHttpEndpoint: String = ConfigurationSetting.intentRecognitionHttpEndpoint.value
     ) : IConfigurationData {
 
-        val intentRecognitionOptionList: ImmutableList<IntentRecognitionOption> = IntentRecognitionOption.values().toImmutableList()
+        val intentRecognitionOptionList: ImmutableList<IntentRecognitionOption> =
+            IntentRecognitionOption.values().toImmutableList()
 
-        val intentRecognitionHttpEndpointText: String = if (isUseCustomIntentRecognitionHttpEndpoint) intentRecognitionHttpEndpoint else
-            "${ConfigurationSetting.httpClientServerEndpointHost.value}:${ConfigurationSetting.httpClientServerEndpointPort.value}/${HttpClientPath.TextToIntent.path}"
+        val intentRecognitionHttpEndpointText: String =
+            if (isUseCustomIntentRecognitionHttpEndpoint) intentRecognitionHttpEndpoint else
+                "${ConfigurationSetting.httpClientServerEndpointHost.value}:${ConfigurationSetting.httpClientServerEndpointPort.value}/${HttpClientPath.TextToIntent.path}"
 
     }
 

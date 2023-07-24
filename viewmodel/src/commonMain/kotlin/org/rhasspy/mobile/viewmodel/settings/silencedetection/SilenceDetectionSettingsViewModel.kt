@@ -13,7 +13,10 @@ import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSe
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.ToggleAudioLevelTest
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.SetSilenceDetectionEnabled
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.UpdateSilenceDetectionAudioLevelLogarithm
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.UpdateSilenceDetectionMinimumTime
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.UpdateSilenceDetectionTime
 import kotlin.math.pow
 
 @Stable
@@ -51,18 +54,19 @@ class SilenceDetectionSettingsViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            is SetSilenceDetectionEnabled        ->
+            is SetSilenceDetectionEnabled                ->
                 AppSetting.isAutomaticSilenceDetectionEnabled.value = change.enabled
 
             is UpdateSilenceDetectionAudioLevelLogarithm ->
-                AppSetting.automaticSilenceDetectionAudioLevel.value = if (change.percentage != 0f) {
-                    audioRecorder.absoluteMaxVolume.pow(change.percentage)
-                } else 0f
+                AppSetting.automaticSilenceDetectionAudioLevel.value =
+                    if (change.percentage != 0f) {
+                        audioRecorder.absoluteMaxVolume.pow(change.percentage)
+                    } else 0f
 
-            is UpdateSilenceDetectionMinimumTime ->
+            is UpdateSilenceDetectionMinimumTime         ->
                 AppSetting.automaticSilenceDetectionMinimumTime.value = change.time.toLongOrNull()
 
-            is UpdateSilenceDetectionTime        ->
+            is UpdateSilenceDetectionTime                ->
                 AppSetting.automaticSilenceDetectionTime.value = change.time.toLongOrNull()
         }
     }
@@ -78,7 +82,7 @@ class SilenceDetectionSettingsViewModel(
                 )
             }
 
-            is BackClick -> navigator.onBackPressed()
+            is BackClick         -> navigator.onBackPressed()
         }
     }
 

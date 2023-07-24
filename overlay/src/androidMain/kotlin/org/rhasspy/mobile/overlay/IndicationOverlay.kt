@@ -6,7 +6,12 @@ import android.os.Build
 import android.os.Looper
 import android.view.Gravity
 import android.view.WindowManager
-import android.view.WindowManager.LayoutParams.*
+import android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+import android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+import android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+import android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+import android.view.WindowManager.LayoutParams.TYPE_PHONE
+import android.view.WindowManager.LayoutParams.WRAP_CONTENT
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.getSystemService
 import androidx.lifecycle.Lifecycle

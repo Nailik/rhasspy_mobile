@@ -57,16 +57,17 @@ class HomeScreenViewModelTest : AppTest() {
     }
 
     @Test
-    fun `when user clicks microphone fab and no microphone permission is given it's requested`() = runTest {
-        coEvery { microphonePermission.request() } returns Unit
-        every { microphonePermission.shouldShowInformationDialog() } returns false
-        every { microphonePermission.granted } returns MutableStateFlow(false).readOnly
+    fun `when user clicks microphone fab and no microphone permission is given it's requested`() =
+        runTest {
+            coEvery { microphonePermission.request() } returns Unit
+            every { microphonePermission.shouldShowInformationDialog() } returns false
+            every { microphonePermission.granted } returns MutableStateFlow(false).readOnly
 
-        homeScreenViewModel = get()
-        homeScreenViewModel.onEvent(MicrophoneFabClick)
+            homeScreenViewModel = get()
+            homeScreenViewModel.onEvent(MicrophoneFabClick)
 
-        coVerify { microphonePermission.request() }
-    }
+            coVerify { microphonePermission.request() }
+        }
 
     @Test
     fun `when user clicks microphone fab and microphone permission is given session is toggled`() {

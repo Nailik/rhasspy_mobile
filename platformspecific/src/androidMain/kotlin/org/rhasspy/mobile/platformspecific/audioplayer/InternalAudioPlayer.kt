@@ -63,7 +63,7 @@ class InternalAudioPlayer(
         setAudioAttributes(
             AudioAttributes.Builder().apply {
                 when (audioOutputOption) {
-                    AudioOutputOption.Sound -> {
+                    AudioOutputOption.Sound        -> {
                         this.setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                         this.setUsage(AudioAttributes.USAGE_MEDIA)
                     }

@@ -8,7 +8,10 @@ import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeIntentRecognitionTimeout
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeRecordingTimeout
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeTextAsrTimeout
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewState.DialogManagementConfigurationData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -48,39 +51,81 @@ class DialogActionStateActionStateManagementConfigurationViewModelTest : AppTest
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(initialDialogManagementConfigurationData, dialogManagementConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            initialDialogManagementConfigurationData,
+            dialogManagementConfigurationViewModel.viewState.value.editData
+        )
 
         with(dialogManagementConfigurationData) {
-            dialogManagementConfigurationViewModel.onEvent(ChangeIntentRecognitionTimeout(recordingTimeout.toStringOrEmpty()))
-            dialogManagementConfigurationViewModel.onEvent(ChangeRecordingTimeout(intentRecognitionTimeout.toStringOrEmpty()))
+            dialogManagementConfigurationViewModel.onEvent(
+                ChangeIntentRecognitionTimeout(
+                    recordingTimeout.toStringOrEmpty()
+                )
+            )
+            dialogManagementConfigurationViewModel.onEvent(
+                ChangeRecordingTimeout(
+                    intentRecognitionTimeout.toStringOrEmpty()
+                )
+            )
             dialogManagementConfigurationViewModel.onEvent(ChangeTextAsrTimeout(textAsrTimeout.toStringOrEmpty()))
-            dialogManagementConfigurationViewModel.onEvent(SelectDialogManagementOption(dialogManagementOption))
+            dialogManagementConfigurationViewModel.onEvent(
+                SelectDialogManagementOption(
+                    dialogManagementOption
+                )
+            )
         }
 
-        assertEquals(dialogManagementConfigurationData, dialogManagementConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            dialogManagementConfigurationData,
+            dialogManagementConfigurationViewModel.viewState.value.editData
+        )
 
         dialogManagementConfigurationViewModel.onEvent(Save)
 
-        assertEquals(dialogManagementConfigurationData, dialogManagementConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            dialogManagementConfigurationData,
+            dialogManagementConfigurationViewModel.viewState.value.editData
+        )
         assertEquals(dialogManagementConfigurationData, DialogManagementConfigurationData())
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
-        assertEquals(initialDialogManagementConfigurationData, dialogManagementConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            initialDialogManagementConfigurationData,
+            dialogManagementConfigurationViewModel.viewState.value.editData
+        )
 
         with(dialogManagementConfigurationData) {
-            dialogManagementConfigurationViewModel.onEvent(ChangeIntentRecognitionTimeout(recordingTimeout.toStringOrEmpty()))
-            dialogManagementConfigurationViewModel.onEvent(ChangeRecordingTimeout(intentRecognitionTimeout.toStringOrEmpty()))
+            dialogManagementConfigurationViewModel.onEvent(
+                ChangeIntentRecognitionTimeout(
+                    recordingTimeout.toStringOrEmpty()
+                )
+            )
+            dialogManagementConfigurationViewModel.onEvent(
+                ChangeRecordingTimeout(
+                    intentRecognitionTimeout.toStringOrEmpty()
+                )
+            )
             dialogManagementConfigurationViewModel.onEvent(ChangeTextAsrTimeout(textAsrTimeout.toStringOrEmpty()))
-            dialogManagementConfigurationViewModel.onEvent(SelectDialogManagementOption(dialogManagementOption))
+            dialogManagementConfigurationViewModel.onEvent(
+                SelectDialogManagementOption(
+                    dialogManagementOption
+                )
+            )
         }
 
-        assertEquals(dialogManagementConfigurationData, dialogManagementConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            dialogManagementConfigurationData,
+            dialogManagementConfigurationViewModel.viewState.value.editData
+        )
 
         dialogManagementConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(initialDialogManagementConfigurationData, dialogManagementConfigurationViewModel.viewState.value.editData)
+        assertEquals(
+            initialDialogManagementConfigurationData,
+            dialogManagementConfigurationViewModel.viewState.value.editData
+        )
         assertEquals(initialDialogManagementConfigurationData, DialogManagementConfigurationData())
     }
 }

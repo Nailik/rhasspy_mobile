@@ -14,7 +14,11 @@ import org.rhasspy.mobile.platformspecific.intent.IIntentAction
 import org.rhasspy.mobile.platformspecific.intent.IntentAction
 import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
 import org.rhasspy.mobile.platformspecific.language.LanguageUtils
-import org.rhasspy.mobile.platformspecific.permission.*
+import org.rhasspy.mobile.platformspecific.permission.BatteryOptimization
+import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
+import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.platformspecific.settings.ISettingsUtils
 import org.rhasspy.mobile.platformspecific.settings.SettingsUtils
 import org.rhasspy.mobile.platformspecific.utils.IOpenLinkUtils

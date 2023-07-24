@@ -65,11 +65,13 @@ class PorcupineLanguageScreenTest : FlakyTest() {
         assertEquals(PorcupineLanguageOption.EN, editData.porcupineLanguage)
 
         //english is selected
-        composeTestRule.onNodeWithTag(PorcupineLanguageOption.EN).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(PorcupineLanguageOption.EN).onListItemRadioButton()
+            .assertIsSelected()
 
         //user clicks german
         composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).performClick()
         //german is selected
-        composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).onListItemRadioButton()
+            .assertIsSelected()
     }
 }

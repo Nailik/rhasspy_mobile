@@ -1,13 +1,22 @@
 package org.rhasspy.mobile.android.configuration
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.utils.FlakyTest
+import org.rhasspy.mobile.android.utils.TestContentProvider
+import org.rhasspy.mobile.android.utils.onListItemRadioButton
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.ui.TestTag
@@ -56,13 +65,17 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
 
         val textInputTest = "endpointTestInput"
         //option disable is set
-        composeTestRule.onNodeWithTag(IntentHandlingOption.Disabled, true).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(IntentHandlingOption.Disabled, true).onListItemRadioButton()
+            .assertIsSelected()
 
         //User clicks option remote http
         composeTestRule.onNodeWithTag(IntentHandlingOption.RemoteHTTP, true).performClick()
         //new option is selected
         composeTestRule.awaitIdle()
-        assertEquals(IntentHandlingOption.RemoteHTTP, viewModel.viewState.value.editData.intentHandlingOption)
+        assertEquals(
+            IntentHandlingOption.RemoteHTTP,
+            viewModel.viewState.value.editData.intentHandlingOption
+        )
         composeTestRule.awaitIdle()
 
         //Endpoint visible
@@ -121,13 +134,17 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
         val textInputTestToken = "tokenTestInput"
 
         //option disable is set
-        composeTestRule.onNodeWithTag(IntentHandlingOption.Disabled, true).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(IntentHandlingOption.Disabled, true).onListItemRadioButton()
+            .assertIsSelected()
 
         //User clicks option HomeAssistant
         composeTestRule.onNodeWithTag(IntentHandlingOption.HomeAssistant).performClick()
         //new option is selected
         composeTestRule.awaitIdle()
-        assertEquals(IntentHandlingOption.HomeAssistant, viewModel.viewState.value.editData.intentHandlingOption)
+        assertEquals(
+            IntentHandlingOption.HomeAssistant,
+            viewModel.viewState.value.editData.intentHandlingOption
+        )
 
         //endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
@@ -171,7 +188,10 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
             //access token is saved
             assertEquals(textInputTestToken, it.intentHandlingHomeAssistantAccessToken)
             //send events is saved
-            assertEquals(HomeAssistantIntentHandlingOption.Event, it.intentHandlingHomeAssistantOption)
+            assertEquals(
+                HomeAssistantIntentHandlingOption.Event,
+                it.intentHandlingHomeAssistantOption
+            )
         }
     }
 

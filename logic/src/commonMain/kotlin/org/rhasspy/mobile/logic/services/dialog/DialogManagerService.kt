@@ -9,18 +9,28 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.option.DialogManagementOption.*
+import org.rhasspy.mobile.data.service.option.DialogManagementOption.Disabled
+import org.rhasspy.mobile.data.service.option.DialogManagementOption.Local
+import org.rhasspy.mobile.data.service.option.DialogManagementOption.RemoteMQTT
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionEnded
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionStarted
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.IdleState
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerDisabled
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerLocal
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerRemoteMqtt
+import org.rhasspy.mobile.logic.services.dialog.states.IStateTransition
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
@@ -33,6 +43,7 @@ interface IDialogManagerService : IService {
     override val serviceState: StateFlow<ServiceState>
     val currentDialogState: StateFlow<DialogManagerState>
 
+    fun start()
     fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState)
 
     fun onAction(action: DialogServiceMiddlewareAction)
@@ -51,7 +62,10 @@ internal class DialogManagerService(
     private val dialogManagerRemoteMqtt by inject<DialogManagerRemoteMqtt>()
     private val dialogManagerDisabled by inject<DialogManagerDisabled>()
 
-    override val dialogHistory = MutableStateFlow<ImmutableList<Pair<DialogServiceMiddlewareAction, DialogManagerState>>>(persistentListOf())
+    override val dialogHistory =
+        MutableStateFlow<ImmutableList<Pair<DialogServiceMiddlewareAction, DialogManagerState>>>(
+            persistentListOf()
+        )
 
     override val logger = LogType.DialogManagerService.logger()
 
@@ -63,9 +77,14 @@ internal class DialogManagerService(
     private val _currentDialogState = MutableStateFlow<DialogManagerState>(IdleState())
     override val currentDialogState = _currentDialogState.readOnly
 
-    init {
-        transitionTo(SessionEnded(Source.Local), IdleState())
+    override fun start() {
         _serviceState.value = ServiceState.Success
+        coroutineScope.launch {
+            transitionTo(
+                SessionEnded(Source.Local),
+                get<IStateTransition>().transitionToIdleState(null)
+            )
+        }
     }
 
     override fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState) {
@@ -98,7 +117,11 @@ internal class DialogManagerService(
             if (sessionData != null) {
                 when (action) {
                     is AsrError               -> mqttService.asrError(sessionData.sessionId)
-                    is AsrTextCaptured        -> mqttService.asrTextCaptured(sessionData.sessionId, action.text)
+                    is AsrTextCaptured        -> mqttService.asrTextCaptured(
+                        sessionData.sessionId,
+                        action.text
+                    )
+
                     is WakeWordDetected       -> mqttService.hotWordDetected(action.wakeWord)
                     is IntentRecognitionError -> mqttService.intentNotRecognized(sessionData.sessionId)
                     is SessionEnded           -> mqttService.sessionEnded(sessionData.sessionId)

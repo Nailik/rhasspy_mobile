@@ -6,7 +6,10 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change
-import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.SetAudioOutputEnabled
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.SetHotWordEnabled
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.SetIntentHandlingEnabled
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.UpdateVolume
 
 @Stable
 class DeviceSettingsViewModel(

@@ -4,13 +4,30 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -20,14 +37,37 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.*
-import org.rhasspy.mobile.ui.content.elements.*
+import org.rhasspy.mobile.ui.configuration.AudioPlayingConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.DialogManagementConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.IntentHandlingConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.IntentRecognitionConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.MqttConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.RemoteHermesHttpConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.SpeechToTextConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.TextToSpeechConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.WakeWordConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.WebServerConfigurationScreen
+import org.rhasspy.mobile.ui.content.elements.CustomDivider
+import org.rhasspy.mobile.ui.content.elements.Icon
+import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.content.elements.toText
+import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.item.EventStateIconTinted
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.DialogManagementConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.IntentHandlingConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.IntentRecognitionConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.MqttConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.OverviewScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.RemoteHermesHttpConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.SpeechToTextConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.TextToSpeechConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WebServerConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.ConfigurationScreen
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.Navigate
@@ -36,7 +76,17 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiE
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Consumed.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.AudioPlayingViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.DialogManagementViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentHandlingViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentRecognitionViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.MqttViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.RemoteHermesHttpViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SiteIdViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SpeechToTextViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.TextToSpeechViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.WakeWordViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.WebServerViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 /**
@@ -247,7 +297,11 @@ private fun RemoteHermesHttp(
 
     ConfigurationListItem(
         text = MR.strings.remoteHermesHTTP.stable,
-        secondaryText = "${translate(MR.strings.sslValidation.stable)} ${translate(viewState.isHttpSSLVerificationEnabled.not().toText())}",
+        secondaryText = "${translate(MR.strings.sslValidation.stable)} ${
+            translate(
+                viewState.isHttpSSLVerificationEnabled.not().toText()
+            )
+        }",
         viewState = viewState.serviceState,
         destination = RemoteHermesHttpConfigurationScreen,
         onEvent = onEvent
@@ -440,7 +494,6 @@ private fun IntentHandling(
 /**
  * list item
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ConfigurationListItem(
     text: StableStringResource,
@@ -466,7 +519,6 @@ private fun ConfigurationListItem(
 /**
  * list item
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("SameParameterValue")
 @Composable
 private fun ConfigurationListItem(

@@ -7,7 +7,8 @@ enum class IntentActionType(val param: String) {
     StartRecording("START_RECORDING")
 }
 
-internal actual class IntentAction actual constructor(private val nativeApplication: NativeApplication) : IIntentAction {
+internal actual class IntentAction actual constructor(private val nativeApplication: NativeApplication) :
+    IIntentAction {
 
     actual override fun startRecording() {
         nativeApplication.currentActivity?.also {

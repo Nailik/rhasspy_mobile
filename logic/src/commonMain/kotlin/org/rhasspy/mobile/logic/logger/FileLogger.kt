@@ -14,13 +14,13 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import okio.Path
-import okio.buffer
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.extensions.*
+import org.rhasspy.mobile.platformspecific.extensions.commonDecodeLogList
+import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
+import org.rhasspy.mobile.platformspecific.extensions.commonSave
+import org.rhasspy.mobile.platformspecific.extensions.commonShare
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toImmutableList
@@ -64,7 +64,7 @@ internal class FileLogger(
             message,
             throwable?.message
         )
-        file.commonReadWrite().appendingSink().buffer().writeUtf8("\n,${Json.encodeToString(element)}").flush()
+        // file.commonReadWrite().appendingSink().buffer().writeUtf8("\n,${Json.encodeToString(element)}").flush()
         coroutineScope.launch {
             _flow.emit(element)
         }

@@ -68,7 +68,11 @@ internal actual class ExternalResultRequest actual constructor(
         suspendCancellableCoroutine { continuation ->
             logger.v { "launchForResult $intention" }
             launching<R> {
-                activityResultCallback = { continuation.resume(getResult(it) as ExternalRedirectResult<R>) { cause -> Error<R>(cause) } }
+                activityResultCallback = {
+                    continuation.resume(getResult(it) as ExternalRedirectResult<R>) { cause ->
+                        Error<R>(cause)
+                    }
+                }
                 someActivityResultLauncher.launch(intentFromIntention(intention))
             }
         }
@@ -103,12 +107,12 @@ internal actual class ExternalResultRequest actual constructor(
 
     private fun <R> intentFromIntention(intention: ExternalResultRequestIntention<R>): Intent {
         return when (intention) {
-            is CreateDocument               ->
+            is CreateDocument                     ->
                 ActivityResultContracts
                     .CreateDocument(intention.mimeType)
                     .createIntent(nativeApplication, intention.title)
 
-            is OpenDocument                 ->
+            is OpenDocument                       ->
                 ActivityResultContracts
                     .OpenDocument()
                     .createIntent(nativeApplication, intention.mimeTypes.toTypedArray())
@@ -119,7 +123,7 @@ internal actual class ExternalResultRequest actual constructor(
                         putExtra(Intent.EXTRA_MIME_TYPES, intention.mimeTypes.toTypedArray())
                     }
 
-            is GetContent                   ->
+            is GetContent                         ->
                 ActivityResultContracts
                     .GetContent()
                     .createIntent(nativeApplication, "*/*")
@@ -130,7 +134,7 @@ internal actual class ExternalResultRequest actual constructor(
                         putExtra(Intent.EXTRA_MIME_TYPES, intention.mimeTypes.toTypedArray())
                     }
 
-            OpenBatteryOptimizationSettings ->
+            OpenBatteryOptimizationSettings       ->
                 Intent().apply {
                     @SuppressLint("BatteryLife")
                     action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
@@ -143,23 +147,23 @@ internal actual class ExternalResultRequest actual constructor(
                     data = Uri.parse("package:org.rhasspy.mobile.android")
                 }
 
-            is OpenLink                     ->
+            is OpenLink                           ->
                 Intent().apply {
                     action = Intent.ACTION_VIEW
                     data = Uri.parse(intention.link.url)
                 }
 
-            OpenAppSettings                 ->
+            OpenAppSettings                       ->
                 Intent().apply {
                     action = Settings.ACTION_SETTINGS
                 }
 
-            OpenOverlaySettings             ->
+            OpenOverlaySettings                   ->
                 Intent().apply {
                     action = Settings.ACTION_MANAGE_OVERLAY_PERMISSION
                 }
 
-            is ShareFile                    ->
+            is ShareFile                          ->
                 Intent.createChooser(
                     Intent().apply {
                         action = Intent.ACTION_SEND

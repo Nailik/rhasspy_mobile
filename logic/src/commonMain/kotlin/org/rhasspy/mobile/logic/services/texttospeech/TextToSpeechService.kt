@@ -70,7 +70,9 @@ internal class TextToSpeechService(
                 serviceMiddleware.action(action)
             }
 
-            TextToSpeechOption.RemoteMQTT -> _serviceState.value = mqttClientService.say(sessionId, text)
+            TextToSpeechOption.RemoteMQTT -> _serviceState.value =
+                mqttClientService.say(sessionId, text)
+
             TextToSpeechOption.Disabled   -> Unit
         }
     }

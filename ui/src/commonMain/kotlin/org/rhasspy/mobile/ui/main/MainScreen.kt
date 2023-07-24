@@ -1,16 +1,36 @@
 package org.rhasspy.mobile.ui.main
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Timeline
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -24,21 +44,28 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.resources.icons.RhasspyLogo
-import org.rhasspy.mobile.ui.*
+import org.rhasspy.mobile.ui.LocalSnackBarHostState
+import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.Screen
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.ConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.DialogScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.LogScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.SettingsScreen
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.CrashlyticsDialogResult
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModelFactory: ViewModelFactory) {
 
@@ -61,13 +88,20 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
                         Box(modifier = Modifier.padding(paddingValues)) {
 
-                            val viewModel: MainScreenViewModel = LocalViewModelFactory.current.getViewModel()
+                            val viewModel: MainScreenViewModel =
+                                LocalViewModelFactory.current.getViewModel()
                             Screen(screenViewModel = viewModel) {
                                 val screen by viewModel.screen.collectAsState()
                                 val viewState by viewModel.viewState.collectAsState()
 
                                 if (viewState.isShowCrashlyticsDialog) {
-                                    CrashlyticsDialog(onResult = { viewModel.onEvent(CrashlyticsDialogResult(it)) })
+                                    CrashlyticsDialog(
+                                        onResult = {
+                                            viewModel.onEvent(
+                                                CrashlyticsDialogResult(it)
+                                            )
+                                        }
+                                    )
                                 }
 
                                 MainScreenContent(
@@ -100,8 +134,6 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 }
 
 
-
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun MainScreenContent(
     screen: MainScreenNavigationDestination,
@@ -111,7 +143,8 @@ private fun MainScreenContent(
 
     Column {
         Box(modifier = Modifier.weight(1f)) {
-            AnimatedContent(targetState = screen,
+            AnimatedContent(
+                targetState = screen,
                 transitionSpec = {
                     horizontalAnimationSpec(targetState.ordinal, initialState.ordinal)
                 }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,11 +30,17 @@ import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.IndicationSettings
-import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination.ErrorIndicationSoundScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination.OverviewScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination.RecordedIndicationSoundScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination.WakeIndicationSoundScreen
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.Navigate
-import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SelectSoundIndicationOutputOption
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetSoundIndicationEnabled
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetWakeWordDetectionTurnOnDisplay
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetWakeWordLightIndicationEnabled
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewState
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSoundSettingsViewModel
@@ -155,7 +160,6 @@ fun IndicationSettingsOverview(
 /**
  * overview page for indication settings
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SoundIndicationSettingsOverview(
     soundIndicationOutputOption: AudioOutputOption,

@@ -40,63 +40,66 @@ internal actual class SettingsUtils actual constructor(
 
             val result = externalResultRequest.launchForResult(
                 ExternalResultRequestIntention.CreateDocument(
-                    title = "rhasspy_settings_${Clock.System.now().toLocalDateTime(TimeZone.UTC)}.zip",
+                    title = "rhasspy_settings_${
+                        Clock.System.now().toLocalDateTime(TimeZone.UTC)
+                    }.zip",
                     mimeType = "application/zip"
                 )
             )
 
             return when (result) {
                 is ExternalRedirectResult.Result -> {
-                    return nativeApplication.contentResolver.openOutputStream(result.data.toUri())?.let { outputStream ->
+                    return nativeApplication.contentResolver.openOutputStream(result.data.toUri())
+                        ?.let { outputStream ->
 
-                        //create output for zip file
-                        val zipOutputStream =
-                            ZipOutputStream(BufferedOutputStream(outputStream))
+                            //create output for zip file
+                            val zipOutputStream =
+                                ZipOutputStream(BufferedOutputStream(outputStream))
 
-                        //shared Prefs file
-                        zipOutputStream.putNextEntry(ZipEntry("shared_prefs/"))
+                            //shared Prefs file
+                            zipOutputStream.putNextEntry(ZipEntry("shared_prefs/"))
 
-                        //copy org.rhasspy.mobile.android_prefenrences.xml
-                        val sharedPreferencesFile = File(
-                            nativeApplication.filesDir.parent,
-                            "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
-                        )
-                        if (sharedPreferencesFile.exists()) {
-                            zipOutputStream.putNextEntry(ZipEntry("shared_prefs/${sharedPreferencesFile.name}"))
-                            zipOutputStream.write(sharedPreferencesFile.readBytes())
-                        }
+                            //copy org.rhasspy.mobile.android_prefenrences.xml
+                            val sharedPreferencesFile = File(
+                                nativeApplication.filesDir.parent,
+                                "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
+                            )
+                            if (sharedPreferencesFile.exists()) {
+                                zipOutputStream.putNextEntry(ZipEntry("shared_prefs/${sharedPreferencesFile.name}"))
+                                zipOutputStream.write(sharedPreferencesFile.readBytes())
+                            }
 
-                        zipOutputStream.closeEntry()
-                        zipOutputStream.putNextEntry(ZipEntry("files/"))
+                            zipOutputStream.closeEntry()
+                            zipOutputStream.putNextEntry(ZipEntry("files/"))
 
-                        //all custom files
-                        val files = nativeApplication.filesDir
-                        FolderType.values().forEach { folderType ->
-                            File(files, folderType.toString()).walkTopDown().forEach { file ->
-                                if (file.exists()) {
-                                    if (file.isDirectory) {
-                                        zipOutputStream.putNextEntry(ZipEntry("files/${folderType}/"))
-                                        zipOutputStream.closeEntry()
-                                    } else {
-                                        zipOutputStream.putNextEntry(ZipEntry("files/${folderType}/${file.name}"))
-                                        zipOutputStream.write(file.readBytes())
-                                        zipOutputStream.closeEntry()
+                            //all custom files
+                            val files = nativeApplication.filesDir
+                            FolderType.values().forEach { folderType ->
+                                File(files, folderType.toString()).walkTopDown().forEach { file ->
+                                    if (file.exists()) {
+                                        if (file.isDirectory) {
+                                            zipOutputStream.putNextEntry(ZipEntry("files/${folderType}/"))
+                                            zipOutputStream.closeEntry()
+                                        } else {
+                                            zipOutputStream.putNextEntry(ZipEntry("files/${folderType}/${file.name}"))
+                                            zipOutputStream.write(file.readBytes())
+                                            zipOutputStream.closeEntry()
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        zipOutputStream.flush()
-                        outputStream.flush()
+                            zipOutputStream.flush()
+                            outputStream.flush()
 
-                        zipOutputStream.close()
-                        outputStream.close()
+                            zipOutputStream.close()
+                            outputStream.close()
 
-                        true
-                    } ?: false
+                            true
+                        } ?: false
                 }
 
-                else -> false
+                else                             -> false
             }
 
 

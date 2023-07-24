@@ -6,7 +6,6 @@ import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -15,15 +14,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.*
+import org.rhasspy.mobile.ui.LocalSnackBarHostState
+import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.Screen
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.ListElement
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.SaveAndRestoreSettings
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent
-import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.ExportSettingsFile
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.ExportSettingsFileDialogResult
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.RestoreSettingsFromFile
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.RestoreSettingsFromFileDialogResult
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.ShareSettingsFile
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsViewModel
 
@@ -77,7 +85,6 @@ fun SaveAndRestoreSettingsContent() {
  * Save Settings
  * Shows warning Dialog that the file contains sensitive information
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SaveSettings(
     isSaveSettingsToFileDialogVisible: Boolean,
@@ -114,7 +121,6 @@ private fun SaveSettings(
  * Restore settings
  * shows dialog that current settings will be overwritten
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RestoreSettings(
     isRestoreSettingsFromFileDialogVisible: Boolean,
@@ -149,7 +155,6 @@ private fun RestoreSettings(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ShareSettings(onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit) {
 

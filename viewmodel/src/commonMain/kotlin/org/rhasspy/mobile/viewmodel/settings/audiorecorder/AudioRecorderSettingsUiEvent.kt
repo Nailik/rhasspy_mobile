@@ -12,9 +12,14 @@ sealed interface AudioRecorderSettingsUiEvent {
 
     sealed interface Change : AudioRecorderSettingsUiEvent {
 
-        data class SelectAudioRecorderChannelType(val audioRecorderChannelType: AudioRecorderChannelType) : Change
-        data class SelectAudioRecorderEncodingType(val audioRecorderEncodingType: AudioRecorderEncodingType) : Change
-        data class SelectAudioRecorderSampleRateType(val audioRecorderSampleRateType: AudioRecorderSampleRateType) : Change
+        data class SelectAudioRecorderChannelType(val audioRecorderChannelType: AudioRecorderChannelType) :
+            Change
+
+        data class SelectAudioRecorderEncodingType(val audioRecorderEncodingType: AudioRecorderEncodingType) :
+            Change
+
+        data class SelectAudioRecorderSampleRateType(val audioRecorderSampleRateType: AudioRecorderSampleRateType) :
+            Change
 
     }
 

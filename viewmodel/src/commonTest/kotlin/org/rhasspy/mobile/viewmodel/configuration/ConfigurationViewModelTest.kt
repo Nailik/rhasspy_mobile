@@ -67,15 +67,16 @@ class ConfigurationViewModelTest : AppTest() {
     }
 
     @Test
-    fun `when there are no unsaved changes and user presses back then navigator is popped back`() = runTest {
-        every { navigator.onBackPressed() } returns Unit
-        every { navigator.popBackStack() } returns Unit
-        configurationViewState.update { it.copy(hasUnsavedChanges = false) }
+    fun `when there are no unsaved changes and user presses back then navigator is popped back`() =
+        runTest {
+            every { navigator.onBackPressed() } returns Unit
+            every { navigator.popBackStack() } returns Unit
+            configurationViewState.update { it.copy(hasUnsavedChanges = false) }
 
-        configurationViewModel.onEvent(BackClick)
+            configurationViewModel.onEvent(BackClick)
 
-        nVerify { navigator.onBackPressed() }
-    }
+            nVerify { navigator.onBackPressed() }
+        }
 
     @Test
     fun `when there are unsaved changes and user presses back then dialog is shown`() = runTest {
@@ -96,37 +97,42 @@ class ConfigurationViewModelTest : AppTest() {
 
         configurationViewModel.onEvent(BackClick)
 
-        assertEquals(UnsavedChangesDialogState, configurationViewModel.configurationViewState.value.dialogState)
+        assertEquals(
+            UnsavedChangesDialogState,
+            configurationViewModel.configurationViewState.value.dialogState
+        )
         assertFalse { onSave }
         assertFalse { onDiscard }
     }
 
     @Test
-    fun `when unsaved changes dialog is shown and confirm is clicked then data is saved`() = runTest(get<IDispatcherProvider>().IO) {
-        every { navigator.popBackStack() } returns Unit
-        assertFalse { onSave }
-        assertFalse { onDiscard }
-        configurationViewState.update { it.copy(dialogState = UnsavedChangesDialogState) }
+    fun `when unsaved changes dialog is shown and confirm is clicked then data is saved`() =
+        runTest(get<IDispatcherProvider>().IO) {
+            every { navigator.popBackStack() } returns Unit
+            assertFalse { onSave }
+            assertFalse { onDiscard }
+            configurationViewState.update { it.copy(dialogState = UnsavedChangesDialogState) }
 
-        configurationViewModel.onEvent(Confirm(UnsavedChangesDialogState))
+            configurationViewModel.onEvent(Confirm(UnsavedChangesDialogState))
 
-        assertEquals(null, configurationViewModel.configurationViewState.value.dialogState)
-        assertTrue { onSave }
-        assertFalse { onDiscard }
-    }
+            assertEquals(null, configurationViewModel.configurationViewState.value.dialogState)
+            assertTrue { onSave }
+            assertFalse { onDiscard }
+        }
 
     @Test
-    fun `when unsaved changes dialog is shown and dismiss is clicked then data is discarded`() = runTest {
-        every { navigator.popBackStack() } returns Unit
-        assertFalse { onSave }
-        assertFalse { onDiscard }
-        configurationViewState.update { it.copy(dialogState = UnsavedChangesDialogState) }
+    fun `when unsaved changes dialog is shown and dismiss is clicked then data is discarded`() =
+        runTest {
+            every { navigator.popBackStack() } returns Unit
+            assertFalse { onSave }
+            assertFalse { onDiscard }
+            configurationViewState.update { it.copy(dialogState = UnsavedChangesDialogState) }
 
-        configurationViewModel.onEvent(Dismiss(UnsavedChangesDialogState))
+            configurationViewModel.onEvent(Dismiss(UnsavedChangesDialogState))
 
-        assertEquals(null, configurationViewModel.configurationViewState.value.dialogState)
-        assertFalse { onSave }
-        assertTrue { onDiscard }
-    }
+            assertEquals(null, configurationViewModel.configurationViewState.value.dialogState)
+            assertFalse { onSave }
+            assertTrue { onDiscard }
+        }
 
 }

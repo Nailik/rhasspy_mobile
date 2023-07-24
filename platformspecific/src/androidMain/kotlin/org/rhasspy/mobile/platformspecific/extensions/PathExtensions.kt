@@ -8,7 +8,11 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
-import okio.*
+import okio.FileHandle
+import okio.FileSystem
+import okio.Path
+import okio.Source
+import okio.source
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Result
@@ -20,7 +24,10 @@ import java.io.InputStream
 import java.io.SequenceInputStream
 import java.util.Collections
 
-actual fun Path.Companion.commonInternalPath(nativeApplication: NativeApplication, fileName: String): Path = "${nativeApplication.filesDir}/$fileName".toPath()
+actual fun Path.Companion.commonInternalPath(
+    nativeApplication: NativeApplication,
+    fileName: String
+): Path = "${nativeApplication.filesDir}/$fileName".toPath()
 
 actual fun Path.commonDelete() {
     FileSystem.SYSTEM.delete(this)
@@ -30,7 +37,8 @@ actual fun Path.commonSize(): Long? = FileSystem.SYSTEM.metadata(this).size
 
 actual fun Path.commonSource(): Source = this.toNioPath().source()
 
-actual fun Path.commonReadWrite(): FileHandle = FileSystem.SYSTEM.openReadWrite(this, !FileSystem.SYSTEM.exists(this))
+actual fun Path.commonReadWrite(): FileHandle =
+    FileSystem.SYSTEM.openReadWrite(this, !FileSystem.SYSTEM.exists(this))
 
 @OptIn(ExperimentalSerializationApi::class)
 actual inline fun <reified T> Path.commonDecodeLogList(): T =
@@ -83,7 +91,12 @@ actual suspend fun Path.commonSave(
     fileType: String
 ): Boolean {
 
-    val result = externalResultRequest.launchForResult(ExternalResultRequestIntention.CreateDocument(fileName, fileType))
+    val result = externalResultRequest.launchForResult(
+        ExternalResultRequestIntention.CreateDocument(
+            fileName,
+            fileType
+        )
+    )
 
     return if (result is Result) {
         nativeApplication.contentResolver.openOutputStream(result.data.toUri())

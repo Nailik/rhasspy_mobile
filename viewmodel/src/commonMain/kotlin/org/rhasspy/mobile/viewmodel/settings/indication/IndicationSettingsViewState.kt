@@ -16,6 +16,7 @@ data class IndicationSettingsViewState internal constructor(
     val errorSound: String
 ) {
 
-    val audioOutputOptionList: ImmutableList<AudioOutputOption> = AudioOutputOption.values().toImmutableList()
+    val audioOutputOptionList: ImmutableList<AudioOutputOption> =
+        AudioOutputOption.values().toImmutableList()
 
 }

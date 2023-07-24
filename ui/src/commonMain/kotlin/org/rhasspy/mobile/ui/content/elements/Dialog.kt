@@ -1,9 +1,27 @@
 package org.rhasspy.mobile.ui.content.elements
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -175,7 +193,9 @@ private fun Dialog(
                         if (supportingText != null) {
                             CompositionLocalProvider(
                                 LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant,
-                                LocalTextStyle provides MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Start)
+                                LocalTextStyle provides MaterialTheme.typography.bodyMedium.copy(
+                                    textAlign = TextAlign.Start
+                                )
                             ) {
                                 //Supporting text
                                 supportingText()

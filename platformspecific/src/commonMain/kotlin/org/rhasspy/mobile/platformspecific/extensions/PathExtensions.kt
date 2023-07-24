@@ -6,7 +6,10 @@ import okio.Source
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 
-expect fun Path.Companion.commonInternalPath(nativeApplication: NativeApplication, fileName: String): Path
+expect fun Path.Companion.commonInternalPath(
+    nativeApplication: NativeApplication,
+    fileName: String
+): Path
 
 expect fun Path.commonDelete()
 

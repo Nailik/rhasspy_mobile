@@ -40,20 +40,21 @@ class MicrophoneFabViewModelTest : AppTest() {
     }
 
     @Test
-    fun `when user clicks microphone fab and no microphone permission is given it's requested`() = runTest {
-        every { serviceMiddleware.isUserActionEnabled } returns MutableStateFlow(true).readOnly
-        every { serviceMiddleware.isPlayingRecording } returns MutableStateFlow(false).readOnly
-        every { serviceMiddleware.isPlayingRecordingEnabled } returns MutableStateFlow(false).readOnly
+    fun `when user clicks microphone fab and no microphone permission is given it's requested`() =
+        runTest {
+            every { serviceMiddleware.isUserActionEnabled } returns MutableStateFlow(true).readOnly
+            every { serviceMiddleware.isPlayingRecording } returns MutableStateFlow(false).readOnly
+            every { serviceMiddleware.isPlayingRecordingEnabled } returns MutableStateFlow(false).readOnly
 
-        coEvery { microphonePermission.request() } returns Unit
-        every { microphonePermission.shouldShowInformationDialog() } returns false
-        every { microphonePermission.granted } returns MutableStateFlow(false).readOnly
+            coEvery { microphonePermission.request() } returns Unit
+            every { microphonePermission.shouldShowInformationDialog() } returns false
+            every { microphonePermission.granted } returns MutableStateFlow(false).readOnly
 
-        microphoneFabViewModel = get()
-        microphoneFabViewModel.onEvent(MicrophoneFabClick)
+            microphoneFabViewModel = get()
+            microphoneFabViewModel.onEvent(MicrophoneFabClick)
 
-        coVerify { microphonePermission.request() }
-    }
+            coVerify { microphonePermission.request() }
+        }
 
     @Test
     fun `when user clicks microphone fab and microphone permission is given session is toggled`() {

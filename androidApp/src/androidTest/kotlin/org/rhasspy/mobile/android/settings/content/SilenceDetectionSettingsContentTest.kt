@@ -1,15 +1,26 @@
 package org.rhasspy.mobile.android.settings.content
 
 import androidx.activity.compose.setContent
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.SilenceDetectionSettingsContent
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.utils.FlakyTest
+import org.rhasspy.mobile.android.utils.TestContentProvider
+import org.rhasspy.mobile.android.utils.hasTestTag
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.requestMicrophonePermissions
+import org.rhasspy.mobile.android.utils.waitUntilExists
 import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.settings.AppSetting
@@ -119,7 +130,8 @@ class SilenceDetectionSettingsContentTest : FlakyTest() {
             .assertDoesNotExist()
 
         //user clicks audio level test
-        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTest).performScrollTo().performClick()
+        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTest)
+            .performScrollTo().performClick()
         composeTestRule.awaitIdle()
         //audio level indication shown
         composeTestRule.waitUntilExists(hasTestTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest))

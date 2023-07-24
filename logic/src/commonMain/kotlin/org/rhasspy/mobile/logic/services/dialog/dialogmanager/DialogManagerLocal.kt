@@ -5,12 +5,26 @@ import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionResult
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopAudioPlaying
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source.Mqtt
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.*
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.AudioPlayingState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.IdleState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecognizingIntentState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecordingIntentState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.TranscribingIntentState
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
-import org.rhasspy.mobile.logic.services.dialog.states.*
+import org.rhasspy.mobile.logic.services.dialog.states.IAudioPlayingStateAction
+import org.rhasspy.mobile.logic.services.dialog.states.IIdleStateAction
+import org.rhasspy.mobile.logic.services.dialog.states.IRecognizingIntentStateAction
+import org.rhasspy.mobile.logic.services.dialog.states.IRecordingIntentStateAction
+import org.rhasspy.mobile.logic.services.dialog.states.ITranscribingIntentStateAction
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 internal class DialogManagerLocal(
@@ -29,7 +43,11 @@ internal class DialogManagerLocal(
                     is IdleState               -> idleStateAction.onAction(action)
                     is RecordingIntentState    -> recordingIntentStateAction.onAction(action, this)
                     is TranscribingIntentState -> transcribingIntentState.onAction(action, this)
-                    is RecognizingIntentState  -> recognizingIntentStateAction.onAction(action, this)
+                    is RecognizingIntentState  -> recognizingIntentStateAction.onAction(
+                        action,
+                        this
+                    )
+
                     is AudioPlayingState       -> audioPlayingStateAction.onAction(action, this)
                 }
             }
@@ -45,13 +63,13 @@ internal class DialogManagerLocal(
         if (state.sessionData?.sessionId != null && action.source.sessionId != state.sessionData?.sessionId) return false
 
         return when (action) {
-            is WakeWordDetected -> {
+            is WakeWordDetected        -> {
                 val wakeWordOption = ConfigurationSetting.wakeWordOption.value
                 return wakeWordOption == WakeWordOption.MQTT || wakeWordOption == WakeWordOption.Udp
             }
 
             is AsrError,
-            is AsrTextCaptured  ->
+            is AsrTextCaptured         ->
                 ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteMQTT
 
             is IntentRecognitionError,
@@ -59,9 +77,9 @@ internal class DialogManagerLocal(
                 ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.RemoteMQTT
 
             is PlayAudio,
-            is StopAudioPlaying -> true
+            is StopAudioPlaying        -> true
 
-            else                -> false
+            else                       -> false
         }
 
     }

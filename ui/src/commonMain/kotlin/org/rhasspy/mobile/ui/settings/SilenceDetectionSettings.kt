@@ -6,14 +6,20 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,13 +40,20 @@ import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
-import org.rhasspy.mobile.ui.content.list.*
+import org.rhasspy.mobile.ui.content.list.InformationListElement
+import org.rhasspy.mobile.ui.content.list.ListElement
+import org.rhasspy.mobile.ui.content.list.SliderListItem
+import org.rhasspy.mobile.ui.content.list.SwitchListItem
+import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.SilenceDetectionSettings
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.ToggleAudioLevelTest
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.SetSilenceDetectionEnabled
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.UpdateSilenceDetectionAudioLevelLogarithm
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.UpdateSilenceDetectionMinimumTime
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.UpdateSilenceDetectionTime
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 
 /**
@@ -162,7 +175,6 @@ private fun AudioLevel(
 /**
  * testing of audio level
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CurrentAudioLevel(
     isRecording: Boolean,
@@ -216,7 +228,6 @@ private fun CurrentAudioLevel(
 /**
  * button to start automatic silence detection test
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StartTestButton(
     isRecording: Boolean,

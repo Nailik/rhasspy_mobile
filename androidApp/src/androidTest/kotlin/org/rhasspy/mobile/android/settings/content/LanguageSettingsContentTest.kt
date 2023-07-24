@@ -64,7 +64,8 @@ class LanguageSettingsContentTest : FlakyTest() {
         //language is english
         assertEquals(LanguageType.English, viewModel.viewState.value.languageOption)
         //english is selected
-        composeTestRule.onNodeWithTag(LanguageType.English, true).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(LanguageType.English, true).onListItemRadioButton()
+            .assertIsSelected()
         //StringDesc is English
         composeTestRule.awaitIdle()
         assertEquals(LanguageType.English.code, StringDesc.localeType.systemLocale!!.language)
@@ -79,7 +80,8 @@ class LanguageSettingsContentTest : FlakyTest() {
             timeoutMillis = 5000
         )
         //german is selected
-        composeTestRule.onNodeWithTag(LanguageType.German, true).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(LanguageType.German, true).onListItemRadioButton()
+            .assertIsSelected()
         //StringDesc is German
         composeTestRule.awaitIdle()
         assertEquals(LanguageType.German.code, StringDesc.localeType.systemLocale!!.language)
@@ -93,7 +95,8 @@ class LanguageSettingsContentTest : FlakyTest() {
         //language is english
         assertEquals(LanguageType.English, viewModel.viewState.value.languageOption)
         //english is selected
-        composeTestRule.onNodeWithTag(LanguageType.English, true).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(LanguageType.English, true).onListItemRadioButton()
+            .assertIsSelected()
         //StringDesc is English
         assertEquals(LanguageType.English.code, StringDesc.localeType.systemLocale!!.language)
         //language english is saved

@@ -27,7 +27,8 @@ sealed class ServiceMiddlewareAction {
 
     sealed class DialogServiceMiddlewareAction(val source: Source) : ServiceMiddlewareAction() {
 
-        class WakeWordDetected(source: Source, val wakeWord: String) : DialogServiceMiddlewareAction(source) {
+        class WakeWordDetected(source: Source, val wakeWord: String) :
+            DialogServiceMiddlewareAction(source) {
             override fun toString(): String {
                 return "${super.toString()} wakeWord: $wakeWord"
             }
@@ -52,7 +53,8 @@ sealed class ServiceMiddlewareAction {
 
         class StopListening(source: Source) : DialogServiceMiddlewareAction(source)
 
-        class AsrTextCaptured(source: Source, val text: String?) : DialogServiceMiddlewareAction(source) {
+        class AsrTextCaptured(source: Source, val text: String?) :
+            DialogServiceMiddlewareAction(source) {
             override fun toString(): String {
                 return "${super.toString()} text: $text"
             }
@@ -69,7 +71,8 @@ sealed class ServiceMiddlewareAction {
 
         class IntentRecognitionError(source: Source) : DialogServiceMiddlewareAction(source)
 
-        class PlayAudio(source: Source, val byteArray: ByteArray) : DialogServiceMiddlewareAction(source) {
+        class PlayAudio(source: Source, val byteArray: ByteArray) :
+            DialogServiceMiddlewareAction(source) {
             override fun toString(): String {
                 return "${super.toString()} size: ${byteArray.size}"
             }

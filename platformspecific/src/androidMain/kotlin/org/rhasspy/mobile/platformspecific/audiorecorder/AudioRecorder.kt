@@ -64,16 +64,19 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
         audioRecorderEncodingType: AudioRecorderEncodingType
     ) {
 
-        val bufferSizeFactor = 2
-        val bufferSize = AudioRecord.getMinBufferSize(
+        val tempBufferSize = AudioRecord.getMinBufferSize(
             audioRecorderSampleRateType.value,
             audioRecorderChannelType.value,
             audioRecorderEncodingType.value
-        ) * bufferSizeFactor
+        ) * 2
 
         logger.v { "startRecording" }
 
-        if (ActivityCompat.checkSelfPermission(get<NativeApplication>() as Context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                get<NativeApplication>() as Context,
+                Manifest.permission.RECORD_AUDIO
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             logger.e { "missing recording permission" }
             return
         }
@@ -90,13 +93,13 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
                             .setEncoding(audioRecorderEncodingType.value)
                             .build()
                     )
-                    .setBufferSizeInBytes(bufferSize) //8000
+                    .setBufferSizeInBytes(tempBufferSize)
                     .build()
             }
 
             _isRecording.value = true
             recorder?.startRecording()
-            read(bufferSize)
+            read(tempBufferSize)
         } catch (e: Exception) {
             _isRecording.value = false
             logger.e(e) { "native start recording error" }
@@ -125,25 +128,26 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
             recorder?.also {
                 while (it.recordingState == AudioRecord.RECORDSTATE_RECORDING) {
                     val byteArray = ByteArray(bufferSize)
-                    it.read(byteArray, 0, byteArray.size)
+                    if (it.read(byteArray, 0, byteArray.size) == bufferSize) {
 
-                    coroutineScope.launch {
-                        var max: Short = 0
-                        for (i in 0..byteArray.size step 2) {
-                            if (i < byteArray.size) {
-                                val bb = ByteBuffer.wrap(byteArray.copyOfRange(i, i + 2))
-                                bb.order(ByteOrder.nativeOrder())
-                                val short = bb.short
+                        coroutineScope.launch {
+                            var max: Short = 0
+                            for (i in 0..byteArray.size step 2) {
+                                if (i < byteArray.size) {
+                                    val bb = ByteBuffer.wrap(byteArray.copyOfRange(i, i + 2))
+                                    bb.order(ByteOrder.nativeOrder())
+                                    val short = bb.short
 
-                                if (short > max) {
-                                    max = short
-                                }
-                            }
-                        }
-                        _maxVolume.value = max.toFloat()
+                                    if (short > max) {
+                                        max = short
+                                    }
+                                 }
+                             }
+                             _maxVolume.value = max.toFloat()
+                         }
+
+                        _output.emit(byteArray)
                     }
-
-                    _output.emit(byteArray)
                 }
             }
         }

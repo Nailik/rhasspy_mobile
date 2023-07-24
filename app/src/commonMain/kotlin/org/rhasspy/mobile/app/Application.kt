@@ -81,7 +81,8 @@ class Application : NativeApplication(), KoinComponent {
             )
 
             //setup language
-            AppSetting.languageType.value = get<ILanguageUtils>().setupLanguage(AppSetting.languageType.value)
+            AppSetting.languageType.value =
+                get<ILanguageUtils>().setupLanguage(AppSetting.languageType.value)
             StringDesc.localeType = StringDesc.LocaleType.Custom(AppSetting.languageType.value.code)
 
             //start foreground service if enabled
@@ -134,7 +135,7 @@ class Application : NativeApplication(), KoinComponent {
     private fun startServices() {
         get<IWebServerService>()
         get<IMqttService>()
-        get<IDialogManagerService>()
+        get<IDialogManagerService>().start()
     }
 
 }

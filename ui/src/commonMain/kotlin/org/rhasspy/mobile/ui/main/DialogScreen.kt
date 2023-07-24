@@ -2,7 +2,14 @@ package org.rhasspy.mobile.ui.main
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -10,8 +17,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LowPriority
 import androidx.compose.material.icons.filled.PlaylistRemove
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Badge
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,10 +58,11 @@ import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change.To
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogActionViewState
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogActionViewState.SourceViewState.SourceType.*
+import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogActionViewState.SourceViewState.SourceType.Http
+import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogActionViewState.SourceViewState.SourceType.Local
+import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogActionViewState.SourceViewState.SourceType.MQTT
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogStateViewState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialogScreen() {
     val viewModel: DialogScreenViewModel = LocalViewModelFactory.current.getViewModel()
@@ -212,7 +232,6 @@ private fun DialogActionListItem(item: DialogActionViewState) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DialogStateListItem(item: DialogStateViewState) {
     ListElement(

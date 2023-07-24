@@ -17,7 +17,17 @@ import org.rhasspy.mobile.logic.services.webserver.IWebServerService
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.AudioPlayingViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.DialogManagementViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentHandlingViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentRecognitionViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.MqttViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.RemoteHermesHttpViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SiteIdViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SpeechToTextViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.TextToSpeechViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.WakeWordViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.WebServerViewState
 
 class ConfigurationScreenViewStateCreator(
     private val httpClientService: IHttpClientService,
@@ -44,10 +54,12 @@ class ConfigurationScreenViewStateCreator(
         dialogManagerService.serviceState,
         intentHandlingService.serviceState
     )
-    private val firstErrorIndex = serviceStateFlow.mapReadonlyState(sharingStarted = SharingStarted.Eagerly) { array ->
-        val index = array.indexOfFirst { it is ServiceState.Error || it is ServiceState.Exception }
-        return@mapReadonlyState if (index != -1) index else null
-    }
+    private val firstErrorIndex =
+        serviceStateFlow.mapReadonlyState(sharingStarted = SharingStarted.Eagerly) { array ->
+            val index =
+                array.indexOfFirst { it is ServiceState.Error || it is ServiceState.Exception }
+            return@mapReadonlyState if (index != -1) index else null
+        }
     private val hasError = firstErrorIndex.mapReadonlyState { it != null }
 
     private val viewState = MutableStateFlow(getViewState(null))
