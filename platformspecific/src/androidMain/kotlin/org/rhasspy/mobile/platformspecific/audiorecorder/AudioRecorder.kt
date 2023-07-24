@@ -129,27 +129,29 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
                 while (it.recordingState == AudioRecord.RECORDSTATE_RECORDING) {
                     val byteArray = ByteArray(bufferSize)
                     if (it.read(byteArray, 0, byteArray.size) == bufferSize) {
-
-                        coroutineScope.launch {
-                            var max: Short = 0
-                            for (i in 0..byteArray.size step 2) {
-                                if (i < byteArray.size) {
-                                    val bb = ByteBuffer.wrap(byteArray.copyOfRange(i, i + 2))
-                                    bb.order(ByteOrder.nativeOrder())
-                                    val short = bb.short
-
-                                    if (short > max) {
-                                        max = short
-                                    }
-                                 }
-                             }
-                             _maxVolume.value = max.toFloat()
-                         }
-
+                        updateMaxVolume(byteArray.clone())
                         _output.emit(byteArray)
                     }
                 }
             }
+        }
+    }
+
+    private fun updateMaxVolume(data: ByteArray) {
+        coroutineScope.launch {
+            var max: Short = 0
+            for (i in 0..data.size step 2) {
+                if (i < data.size) {
+                    val bb = ByteBuffer.wrap(data.copyOfRange(i, i + 2))
+                    bb.order(ByteOrder.nativeOrder())
+                    val short = bb.short
+
+                    if (short > max) {
+                        max = short
+                    }
+                }
+            }
+            _maxVolume.value = max.toFloat()
         }
     }
 

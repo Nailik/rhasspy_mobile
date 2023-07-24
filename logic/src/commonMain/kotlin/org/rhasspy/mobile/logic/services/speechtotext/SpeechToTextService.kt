@@ -113,7 +113,7 @@ internal class SpeechToTextService(
         )
 
         speechToTextAudioFile.commonReadWrite()
-            .write(0, header.map { it.toByte() }.toByteArray(), 0, header.size)
+            .write(0, header, 0, header.size)
 
         recordingService.toggleSilenceDetectionEnabled(false)
 
@@ -186,7 +186,7 @@ internal class SpeechToTextService(
             //write async after data was send
             speechToTextAudioFile.commonReadWrite().write(
                 fileOffset = speechToTextAudioFile.commonSize() ?: 0,
-                array = data.map { it.toByte() }.toByteArray(),
+                array = data,
                 arrayOffset = 0,
                 byteCount = data.size
             )
