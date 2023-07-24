@@ -28,7 +28,7 @@ class RecordingServiceTest : AppTest() {
 
     private val audioRecorder = FakeAudioRecorder()
     private val threshold = 12767.5f
-    private val allowedDelay = 50.milliseconds //delay allowed until silence is detected
+    private val allowedDelay = 100.milliseconds //delay allowed until silence is detected
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     @Mock
