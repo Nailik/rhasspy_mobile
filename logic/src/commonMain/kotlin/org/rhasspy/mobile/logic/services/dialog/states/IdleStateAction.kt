@@ -4,9 +4,7 @@ import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartSession
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.SessionData
@@ -51,7 +49,7 @@ internal class IdleStateAction(
                 onWakeWordDetectedAction(sessionData, action)
             }
 
-            is StartSession     -> {
+            is StartSession   -> {
                 val sessionData = SessionData(
                     sessionId = newSessionId,
                     sendAudioCaptured = false,
@@ -59,10 +57,10 @@ internal class IdleStateAction(
                     recognizedText = null
                 )
 
-                onStartAction(sessionData, action)
+                onStartSessionAction(sessionData, action)
             }
 
-            is PlayAudio        -> {
+            is StartListening -> {
                 val sessionData = SessionData(
                     sessionId = newSessionId,
                     sendAudioCaptured = false,
@@ -70,10 +68,11 @@ internal class IdleStateAction(
                     recognizedText = null
                 )
 
-                onPlayAudio(sessionData, action)
+                onStartListeningAction(sessionData, action)
             }
 
-            else                -> Unit
+            is PlayAudio      -> onPlayAudio(action)
+            else              -> Unit
         }
 
     }
@@ -97,7 +96,7 @@ internal class IdleStateAction(
         }
     }
 
-    private suspend fun onStartAction(
+    private suspend fun onStartSessionAction(
         sessionData: SessionData,
         action: StartSession
     ) {
@@ -112,16 +111,30 @@ internal class IdleStateAction(
         )
     }
 
-    private suspend fun onPlayAudio(
+    private suspend fun onStartListeningAction(
         sessionData: SessionData,
-        action: PlayAudio
+        action: StartListening
     ) {
         dialogManagerService.informMqtt(sessionData, action)
 
+        dialogManagerService.transitionTo(
+            action = action,
+            state = stateTransition.transitionToRecordingState(
+                sessionData = sessionData,
+                isSourceMqtt = action.source is Source.Mqtt
+            )
+        )
+    }
+
+    private suspend fun onPlayAudio(
+        action: PlayAudio
+    ) {
+        dialogManagerService.informMqtt(null, action)
+
         @Suppress("DEPRECATION")
         dialogManagerService.transitionTo(
-            action,
-            stateTransition.transitionToAudioPlayingState(Data(action.byteArray))
+            action = action,
+            state = stateTransition.transitionToAudioPlayingState(Data(action.byteArray))
         )
     }
 

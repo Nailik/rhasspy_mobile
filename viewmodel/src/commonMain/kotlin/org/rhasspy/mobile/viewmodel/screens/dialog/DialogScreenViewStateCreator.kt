@@ -6,31 +6,11 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.EndSession
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionResult
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionEnded
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionStarted
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SilenceDetected
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartListening
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartSession
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopAudioPlaying
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopListening
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source
-import org.rhasspy.mobile.logic.middleware.Source.HttpApi
-import org.rhasspy.mobile.logic.middleware.Source.Local
-import org.rhasspy.mobile.logic.middleware.Source.Mqtt
+import org.rhasspy.mobile.logic.middleware.Source.*
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.AudioPlayingState
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.IdleState
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecognizingIntentState
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecordingIntentState
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.TranscribingIntentState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.*
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
@@ -77,7 +57,7 @@ class DialogScreenViewStateCreator(
 
     private fun DialogManagerState.toText(): StableStringResource {
         return when (this) {
-            is AudioPlayingState       -> MR.strings.audio_playing_state.stable
+            is PlayingAudioState       -> MR.strings.audio_playing_state.stable
             is IdleState               -> MR.strings.idle_state.stable
             is RecognizingIntentState  -> MR.strings.recognizing_intent_state.stable
             is RecordingIntentState    -> MR.strings.recording_intent_state.stable

@@ -5,14 +5,14 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogService
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopAudioPlaying
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.AudioPlayingState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.PlayingAudioState
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 
 interface IAudioPlayingStateAction {
 
     suspend fun onAction(
         action: DialogServiceMiddlewareAction,
-        state: AudioPlayingState
+        state: PlayingAudioState
     )
 
 }
@@ -25,7 +25,7 @@ internal class AudioPlayingStateAction(
 
     override suspend fun onAction(
         action: DialogServiceMiddlewareAction,
-        state: AudioPlayingState
+        state: PlayingAudioState
     ) {
 
         when (action) {
@@ -38,7 +38,7 @@ internal class AudioPlayingStateAction(
 
     private suspend fun onPlayFinishedAction(
         action: PlayFinished,
-        state: AudioPlayingState
+        state: PlayingAudioState
     ) {
         dialogManagerService.informMqtt(state.sessionData, action)
 
@@ -50,7 +50,7 @@ internal class AudioPlayingStateAction(
 
     private suspend fun onStopAudioPlayingAction(
         action: StopAudioPlaying,
-        state: AudioPlayingState
+        state: PlayingAudioState
     ) {
         audioPlayingService.stopPlayAudio()
 

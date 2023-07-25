@@ -1,9 +1,7 @@
 package org.rhasspy.mobile.logic.services.dialog.states
 
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.EndSession
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionResult
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecognizingIntentState
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.services.indication.IIndicationService
@@ -31,9 +29,9 @@ internal class RecognizingIntentStateAction(
     ) {
 
         when (action) {
-            is EndSession              -> onEndSessionAction(action, state)
-            is IntentRecognitionError  -> onIntentRecognitionErrorAction(action, state)
             is IntentRecognitionResult -> onIntentRecognitionResultAction(action, state)
+            is IntentRecognitionError  -> onIntentRecognitionErrorAction(action, state)
+            is EndSession              -> onEndSessionAction(action, state)
             else                       -> Unit
         }
 

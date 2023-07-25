@@ -29,6 +29,6 @@ sealed interface DialogManagerState {
         val timeoutJob: Job,
     ) : DialogManagerState
 
-    data class AudioPlayingState(override val sessionData: SessionData? = null) : DialogManagerState
+    data class PlayingAudioState(override val sessionData: SessionData? = null) : DialogManagerState
 
 }

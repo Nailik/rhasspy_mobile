@@ -5,19 +5,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionEnded
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source.Local
 import org.rhasspy.mobile.logic.services.audiofocus.IAudioFocusService
 import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParams
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParamsCreator
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerState
+import org.rhasspy.mobile.logic.services.dialog.*
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecordingIntentState
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.TranscribingIntentState
-import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
-import org.rhasspy.mobile.logic.services.dialog.SessionData
 import org.rhasspy.mobile.logic.services.indication.IIndicationService
 import org.rhasspy.mobile.logic.services.intentrecognition.IIntentRecognitionService
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
@@ -121,8 +115,8 @@ internal class StateTransition(
         indicationService.onThinking()
 
         intentRecognitionService.recognizeIntent(
-            sessionData.sessionId,
-            sessionData.recognizedText ?: ""
+            sessionId = sessionData.sessionId,
+            text = sessionData.recognizedText ?: ""
         )
 
         return DialogManagerState.RecognizingIntentState(
@@ -139,7 +133,7 @@ internal class StateTransition(
         audioPlayingService.stopPlayAudio()
         audioPlayingService.playAudio(audioSource)
 
-        return DialogManagerState.AudioPlayingState()
+        return DialogManagerState.PlayingAudioState()
     }
 
 }
