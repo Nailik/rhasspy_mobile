@@ -1,7 +1,9 @@
 # Dialog Management
 
 The Dialog Management handles that the services are called in order to create a Flow from wake word
-to intent recognition and handling.
+to intent recognition and handling. <br />
+Events can either be trigger by doing Actions in the app or by using the [[Http Api]]
+pr [[MQTT Api]]
 
 ## Options
 

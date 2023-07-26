@@ -22,8 +22,8 @@ enum class MqttTopicsSubscription(override val topic: String) : MqttTopic {
     IntentHandlingToggleOff("hermes/handle/toggleOff"),
     PlayBytes("hermes/audioServer/${MqttTopicPlaceholder.SiteId}/playBytes/+"),
     PlayFinished("hermes/audioServer/${MqttTopicPlaceholder.SiteId}/playFinished"),
-    AudioOutputToggleOff("hermes/audioServer/toggleOff"),
     AudioOutputToggleOn("hermes/audioServer/toggleOn"),
+    AudioOutputToggleOff("hermes/audioServer/toggleOff"),
     SetVolume("rhasspy/audioServer/setVolume");
 
     override fun toString(): String {

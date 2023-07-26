@@ -3,26 +3,11 @@ package org.rhasspy.mobile.logic.services.mqtt
 import com.benasher44.uuid.uuid4
 import com.benasher44.uuid.variant
 import io.ktor.utils.io.core.toByteArray
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonObjectBuilder
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.booleanOrNull
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.floatOrNull
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.put
+import kotlinx.serialization.json.*
 import okio.Path
 import okio.buffer
 import org.koin.core.component.inject
@@ -33,19 +18,7 @@ import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioOutputToggle
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.EndSession
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionResult
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionEnded
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionStarted
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartListening
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartSession
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopListening
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
@@ -53,13 +26,7 @@ import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.extensions.commonSource
-import org.rhasspy.mobile.platformspecific.mqtt.MqttClient
-import org.rhasspy.mobile.platformspecific.mqtt.MqttMessage
-import org.rhasspy.mobile.platformspecific.mqtt.MqttParams
-import org.rhasspy.mobile.platformspecific.mqtt.MqttPersistence
-import org.rhasspy.mobile.platformspecific.mqtt.MqttTopicPlaceholder
-import org.rhasspy.mobile.platformspecific.mqtt.MqttTopicsPublish
-import org.rhasspy.mobile.platformspecific.mqtt.MqttTopicsSubscription
+import org.rhasspy.mobile.platformspecific.mqtt.*
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
@@ -331,22 +298,13 @@ internal class MqttService(
                         MqttTopicsSubscription.AsrStopListening        -> stopListening(jsonObject)
                         MqttTopicsSubscription.AsrTextCaptured         -> asrTextCaptured(jsonObject)
                         MqttTopicsSubscription.AsrError                -> asrError(jsonObject)
-                        MqttTopicsSubscription.IntentNotRecognized     -> intentNotRecognized(
-                            jsonObject
-                        )
-
+                        MqttTopicsSubscription.IntentNotRecognized     -> intentNotRecognized(jsonObject)
                         MqttTopicsSubscription.IntentHandlingToggleOn  -> intentHandlingToggleOn()
                         MqttTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff()
-                        MqttTopicsSubscription.AudioOutputToggleOff    -> audioOutputToggleOff()
                         MqttTopicsSubscription.AudioOutputToggleOn     -> audioOutputToggleOn()
-                        MqttTopicsSubscription.HotWordDetected         -> hotWordDetectedCalled(
-                            topic
-                        )
-
-                        MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(
-                            jsonObject
-                        )
-
+                        MqttTopicsSubscription.AudioOutputToggleOff    -> audioOutputToggleOff()
+                        MqttTopicsSubscription.HotWordDetected         -> hotWordDetectedCalled(topic)
+                        MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(jsonObject)
                         MqttTopicsSubscription.SetVolume               -> setVolume(jsonObject)
                         else                                           -> {
                             logger.d { "isThisSiteId mqttTopic notFound $topic" }
@@ -560,13 +518,11 @@ internal class MqttService(
      * Chunk of WAV audio data for session
      * wav_bytes: bytes - WAV data to play (message payload)
      * siteId: string - Hermes site ID (part of topic)
-     * sessionId: string - session ID (part of topic)
      */
     override suspend fun asrAudioFrame(sessionId: String, byteArray: ByteArray) =
         publishMessage(
             MqttTopicsPublish.AsrAudioFrame.topic
-                .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                .set(MqttTopicPlaceholder.SessionId, sessionId),
+                .set(MqttTopicPlaceholder.SiteId, params.siteId),
             MqttMessage(
                 byteArray.appendWavHeader(
                     AppSetting.audioRecorderChannel.value,
@@ -607,12 +563,7 @@ internal class MqttService(
         topic.split("/").let {
             if (it.size > 2) {
                 scope.launch {
-                    serviceMiddleware.action(
-                        WakeWordDetected(
-                            Source.Mqtt(null),
-                            it[2]
-                        )
-                    )
+                    serviceMiddleware.action(WakeWordDetected(Source.Mqtt(null), it[2]))
                 }
                 true
             } else {
@@ -627,6 +578,7 @@ internal class MqttService(
      *
      * currentSensitivity: float = 1.0 - sensitivity of wake word detection (service specific)
      * siteId: string = "default" - Hermes site ID
+     * modelId: string = "keyword" - Wake Word
      */
     override suspend fun hotWordDetected(keyword: String) =
         publishMessage(
@@ -934,20 +886,20 @@ internal class MqttService(
         )
 
     /**
-     * hermes/audioServer/toggleOff (JSON)
-     * Disable audio output
-     * siteId: string = "default" - Hermes site ID
-     */
-    private fun audioOutputToggleOff() =
-        serviceMiddleware.action(AudioOutputToggle(false))
-
-    /**
      * hermes/audioServer/toggleOn (JSON)
      * Enable audio output
      * siteId: string = "default" - Hermes site ID
      */
     private fun audioOutputToggleOn() =
         serviceMiddleware.action(AudioOutputToggle(true))
+
+    /**
+     * hermes/audioServer/toggleOff (JSON)
+     * Disable audio output
+     * siteId: string = "default" - Hermes site ID
+     */
+    private fun audioOutputToggleOff() =
+        serviceMiddleware.action(AudioOutputToggle(false))
 
     /**
      * hermes/audioServer/<siteId>/playFinished
