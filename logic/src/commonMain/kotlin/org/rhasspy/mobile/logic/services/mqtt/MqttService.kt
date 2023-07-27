@@ -19,6 +19,7 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsSe
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioOutputToggle
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.SayText
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
@@ -306,7 +307,9 @@ internal class MqttService(
                         MqttTopicsSubscription.HotWordDetected         -> hotWordDetectedCalled(topic)
                         MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(jsonObject)
                         MqttTopicsSubscription.SetVolume               -> setVolume(jsonObject)
-                        else                                           -> {
+                        MqttTopicsSubscription.Say                     -> say(jsonObject)
+                        MqttTopicsSubscription.PlayBytes,
+                        MqttTopicsSubscription.PlayFinished            -> {
                             logger.d { "isThisSiteId mqttTopic notFound $topic" }
                         }
                     }
@@ -831,6 +834,26 @@ internal class MqttService(
                 put(MqttParams.Text, JsonPrimitive(text))
             }
         )
+
+    /**
+     * hermes/tts/say (JSON)
+     * Generate spoken audio for a sentence using the configured text to speech system
+     * Automatically sends playBytes
+     *
+     * text: string - sentence to speak (required)
+     *
+     * volume: float? = null - volume level to speak with (0 = off, 1 = full volume)
+     *
+     * siteId: string = "default" - Hermes site ID
+     * sessionId: string? = null - current session ID
+     *
+     * Response(s)
+     * hermes/tts/sayFinished (JSON)
+     */
+    private fun say(jsonObject: JsonObject) =
+        jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content?.let {
+            serviceMiddleware.action(SayText(it))
+        }
 
 
     /**
