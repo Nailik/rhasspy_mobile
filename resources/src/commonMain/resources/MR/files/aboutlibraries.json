@@ -1,6 +1,6 @@
 {
     "metadata": {
-        "generated": "2023-07-24T16:18:26.091Z"
+        "generated": "2023-07-26T22:06:06.776Z"
     },
     "libraries": [
         {
@@ -1468,14 +1468,13 @@
         {
             "uniqueId": "org.jetbrains.compose.animation:animation",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Compose animation library",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -1490,14 +1489,13 @@
         {
             "uniqueId": "org.jetbrains.compose.animation:animation-core",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Animation engine and animation primitives that are the building blocks of the Compose animation library",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -1512,14 +1510,13 @@
         {
             "uniqueId": "org.jetbrains.compose.foundation:foundation",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Higher level abstractions of the Compose UI primitives. This library is design system agnostic, providing the high-level building blocks for both application and design-system developers",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -1534,14 +1531,13 @@
         {
             "uniqueId": "org.jetbrains.compose.foundation:foundation-layout",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Compose layout implementations",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -1556,14 +1552,13 @@
         {
             "uniqueId": "org.jetbrains.compose.material3:material3",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Compose Material You Design Components library",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -1578,14 +1573,13 @@
         {
             "uniqueId": "org.jetbrains.compose.material:material",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Compose Material Design Components library",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -1600,14 +1594,13 @@
         {
             "uniqueId": "org.jetbrains.compose.material:material-icons-core",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Compose Material Design core icons. This module contains the most commonly used set of Material icons.",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -1622,14 +1615,13 @@
         {
             "uniqueId": "org.jetbrains.compose.material:material-ripple",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Material ripple used to build interactive components",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -1644,14 +1636,13 @@
         {
             "uniqueId": "org.jetbrains.compose.runtime:runtime",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Tree composition support for code generated by the Compose compiler plugin and corresponding public API",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -1666,14 +1657,13 @@
         {
             "uniqueId": "org.jetbrains.compose.runtime:runtime-saveable",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Compose components that allow saving and restoring the local ui state",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -1688,14 +1678,13 @@
         {
             "uniqueId": "org.jetbrains.compose.ui:ui",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Compose UI primitives. This library contains the primitives that form the Compose UI Toolkit, such as drawing, measurement and layout.",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -1710,14 +1699,13 @@
         {
             "uniqueId": "org.jetbrains.compose.ui:ui-geometry",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Compose classes related to dimensions without units",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -1732,14 +1720,13 @@
         {
             "uniqueId": "org.jetbrains.compose.ui:ui-graphics",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Compose graphics",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -1754,14 +1741,13 @@
         {
             "uniqueId": "org.jetbrains.compose.ui:ui-text",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Compose Text primitives and utilities",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -1776,14 +1762,13 @@
         {
             "uniqueId": "org.jetbrains.compose.ui:ui-unit",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Compose classes for simple units",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -1798,14 +1783,13 @@
         {
             "uniqueId": "org.jetbrains.compose.ui:ui-util",
             "funding": [
-                
             ],
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
-            "artifactVersion": "1.5.0-dev1114",
+            "artifactVersion": "1.5.0-dev1128",
             "description": "Internal Compose utilities used by other modules",
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
@@ -2100,7 +2084,6 @@
         {
             "uniqueId": "org.jetbrains.skiko:skiko",
             "funding": [
-                
             ],
             "developers": [
                 {
@@ -2108,7 +2091,7 @@
                     "name": "Compose Multiplatform Team"
                 }
             ],
-            "artifactVersion": "0.7.69",
+            "artifactVersion": "0.7.72",
             "description": "Kotlin Skia bindings",
             "scm": {
                 "connection": "scm:git:https://www.github.com/JetBrains/skiko.git",
