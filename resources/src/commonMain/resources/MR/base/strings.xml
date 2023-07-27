@@ -260,7 +260,7 @@
     <string name="startRecordAudio">Start Record Audio</string>
     <string name="stopRecordAudio">Stop Record Audio</string>
     <string name="useMqttSilenceDetection">Use Mqtt Silence Detection</string>
-    <string name="textToSpeechText">Text To Speech Text</string>
+    <string name="textToSpeechText">Text To Speech</string>
     <string name="executeTextToSpeechText">Transcribe Text to Speech</string>
     <string name="textIntentRecognitionText">Text To Recognize Intent</string>
     <string name="executeIntentRecognition">Recognize Intent</string>
@@ -283,7 +283,7 @@
     <string name="serviceStatusErrorText">Service error occurred</string>
     <string name="executeTestHttpConnection">Test Http Connection</string>
     <string name="porcupineLanguageInformation">All active activation words must match the selected
-        language and be compatible with the current Porcupine version (2.2)!
+        language and be compatible with the current Porcupine version (2.2.2)!
     </string>
     <string name="backgroundServiceInformation">Background service will enable the app to stay
         active in the background and prevent it from being closed by the system.

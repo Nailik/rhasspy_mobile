@@ -269,7 +269,7 @@
     <string name="startRecordAudio">Audioaufnahme starten</string>
     <string name="stopRecordAudio">Audioaufnahme stoppen</string>
     <string name="useMqttSilenceDetection">Nutze MQTT-Stille-Erkennung</string>
-    <string name="textToSpeechText">Text-zu-Sprache-Text</string>
+    <string name="textToSpeechText">Text-zu-Sprache</string>
     <string name="executeTextToSpeechText">Text in Sprache übersetzten</string>
     <string name="textIntentRecognitionText">Text zur Erkennung des Intent</string>
     <string name="executeIntentRecognition">Intent erkennen</string>
@@ -292,7 +292,7 @@
     <string name="serviceStatusErrorText">Dienstfehler ist aufgetreten</string>
     <string name="executeTestHttpConnection">Teste HTTP-Verbindung</string>
     <string name="porcupineLanguageInformation">Alle aktiven Aktivierungswörter müssen mit der
-        ausgewählten Sprache übereinstimmen und der aktuellen Porcupine Version (2.2) kompatibel
+        ausgewählten Sprache übereinstimmen und der aktuellen Porcupine Version (2.2.2) kompatibel
         sein!
     </string>
     <string name="backgroundServiceInformation">Der Hintergrunddienst ermöglicht es, der App im
