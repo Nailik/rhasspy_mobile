@@ -1,7 +1,7 @@
 # Http Api
 
-The HTTP API consits of a WebServer receiving calls and a Client making calls to various
-endpoints. < br/> More information can be
+The HTTP API consists of a WebServer receiving calls and a Client making calls to various
+endpoints. <br/> More information can be
 found on
 the [rhasspy http api documentation](https://rhasspy.readthedocs.io/en/latest/reference/#http-api).
 
@@ -28,6 +28,8 @@ defined in [[MQTT Api]]
 
 The urls for the outgoing calls can set to custom endpoints as well and will be used by different
 services.
+<br/>
+Default Endpoint is defined in [[Remote Hermes HTTP]]
 
 | Path                                  | Type   | Data                             | Service                     |
 |---------------------------------------|--------|----------------------------------|-----------------------------|

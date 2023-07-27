@@ -16,28 +16,29 @@ The
 official [rhasspy mqtt api documentation](https://rhasspy.readthedocs.io/en/latest/reference/#mqtt-api)
 contains more data, those that is not listed here is currently being ignored.
 
-| Topic                                               | Data                                                       | Event                     | Settings                        |
-|-----------------------------------------------------|------------------------------------------------------------|---------------------------|---------------------------------|
-| `hermes/dialogueManager/startSession`               | siteId: String                                             | `StartSession`            |                                 |
-| `hermes/dialogueManager/endSession`                 | siteId: String </br> sessionId: String                     | `EndSession`              |                                 |
-| `hermes/dialogueManager/sessionStarted`             | siteId: String </br> sessionId: String                     | `SessionStarted`          |                                 |
-| `hermes/dialogueManager/sessionEnded`               | siteId: String </br> sessionId: String                     | `SessionEnded`            |                                 |
-| `hermes/hotword/toggleOn`                           | siteId: String                                             |                           | enable Wake Word Service        |
-| `hermes/hotword/toggleOff`                          | siteId: String                                             |                           | disabled Wake Word Service      |
-| `hermes/hotword/<wakewordId>/detected`              | siteId: String                                             | `WakeWordDetected`        |                                 |
-| `hermes/asr/startListening`                         | siteId: String </br> sendAudioCaptured: Boolean            | `StartListening`          |                                 |
-| `hermes/asr/stopListening`                          | siteId: String </br> sessionId: String                     | `StopListening`           |                                 |
-| `hermes/asr/textCaptured`                           | siteId: String </br> sessionId: String  </br> text: String | `AsrTextCaptured`         |                                 |
-| `hermes/error/asr`                                  | siteId: String </br> sessionId: String                     | `AsrError`                |                                 |
-| `hermes/intent/<intentName>`                        | siteId: String </br> sessionId: String                     | `IntentRecognitionResult` |                                 |
-| `hermes/nlu/intentNotRecognized`                    | siteId: String </br> sessionId: String                     | `IntentRecognitionError`  |                                 |
-| `hermes/handle/toggleOn`                            | siteId: String                                             |                           | enable Intent Handling Service  |
-| `hermes/handle/toggleOff`                           | siteId: String                                             |                           | disable Intent Handling Service |
-| `hermes/audioServer/<siteId>/playBytes/<requestId>` |                                                            | `PlayAudio`               |                                 |
-| `hermes/audioServer/<siteId>/playFinished`          |                                                            | `PlayFinished`            |                                 |
-| `hermes/audioServer/toggleOn`                       | siteId: String                                             |                           | enable Audio Playing Service    |
-| `hermes/audioServer/toggleOff`                      | siteId: String                                             |                           | disable Audio Playing Service   |
-| `rhasspy/audioServer/setVolume`                     | siteId: String </br> volume: Float                         |                           | set App Audio Volume            |
+| Topic                                               | Data                                                       | Event                     | Settings                                       |
+|-----------------------------------------------------|------------------------------------------------------------|---------------------------|------------------------------------------------|
+| `hermes/dialogueManager/startSession`               | siteId: String                                             | `StartSession`            |                                                |
+| `hermes/dialogueManager/endSession`                 | siteId: String </br> sessionId: String                     | `EndSession`              |                                                |
+| `hermes/dialogueManager/sessionStarted`             | siteId: String </br> sessionId: String                     | `SessionStarted`          |                                                |
+| `hermes/dialogueManager/sessionEnded`               | siteId: String </br> sessionId: String                     | `SessionEnded`            |                                                |
+| `hermes/hotword/toggleOn`                           | siteId: String                                             |                           | enable Wake Word Service                       |
+| `hermes/hotword/toggleOff`                          | siteId: String                                             |                           | disabled Wake Word Service                     |
+| `hermes/hotword/<wakewordId>/detected`              | siteId: String                                             | `WakeWordDetected`        |                                                |
+| `hermes/asr/startListening`                         | siteId: String </br> sendAudioCaptured: Boolean            | `StartListening`          |                                                |
+| `hermes/asr/stopListening`                          | siteId: String </br> sessionId: String                     | `StopListening`           |                                                |
+| `hermes/asr/textCaptured`                           | siteId: String </br> sessionId: String  </br> text: String | `AsrTextCaptured`         |                                                |
+| `hermes/error/asr`                                  | siteId: String </br> sessionId: String                     | `AsrError`                |                                                |
+| `hermes/intent/<intentName>`                        | siteId: String </br> sessionId: String                     | `IntentRecognitionResult` |                                                |
+| `hermes/nlu/intentNotRecognized`                    | siteId: String </br> sessionId: String                     | `IntentRecognitionError`  |                                                |
+| `hermes/handle/toggleOn`                            | siteId: String                                             |                           | enable Intent Handling Service                 |
+| `hermes/handle/toggleOff`                           | siteId: String                                             |                           | disable Intent Handling Service                |
+| `hermes/audioServer/<siteId>/playBytes/<requestId>` |                                                            | `PlayAudio`               |                                                |
+| `hermes/audioServer/<siteId>/playFinished`          |                                                            | `PlayFinished`            |                                                |
+| `hermes/audioServer/toggleOn`                       | siteId: String                                             |                           | enable Audio Playing Service                   |
+| `hermes/audioServer/toggleOff`                      | siteId: String                                             |                           | disable Audio Playing Service                  |
+| `hermes/tts/say`                                    | siteId: String </br> sessionId: String? </br> text: String |                           | use `TextToSpeech Service` and then play audio |
+| `rhasspy/audioServer/setVolume`                     | siteId: String </br> volume: Float                         |                           | set App Audio Volume                           |
 
 ## Publish Topics
 
