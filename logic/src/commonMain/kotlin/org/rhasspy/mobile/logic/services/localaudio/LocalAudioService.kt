@@ -1,12 +1,8 @@
 package org.rhasspy.mobile.logic.services.localaudio
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import okio.Path
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Notification
@@ -77,17 +73,10 @@ internal class LocalAudioService(
                     audioSource = audioSource,
                     volume = AppSetting.volume.data,
                     audioOutputOption = params.audioOutputOption,
-                    onFinished = { exception ->
-                        exception?.also {
-                            logger.e(exception) { "onError" }
-                            if (!continuation.isCompleted) {
-                                continuation.resume(ServiceState.Exception(exception))
-                            }
-                        } ?: run {
-                            logger.e { "onFinished" }
-                            if (!continuation.isCompleted) {
-                                continuation.resume(ServiceState.Success)
-                            }
+                    onFinished = {
+                        logger.e { "onFinished" }
+                        if (!continuation.isCompleted) {
+                            continuation.resume(ServiceState.Success)
                         }
                     },
                 )
