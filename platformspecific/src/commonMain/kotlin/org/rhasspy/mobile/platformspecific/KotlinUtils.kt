@@ -6,14 +6,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlin.math.roundToInt
 
 fun <T1, T2, R> combineState(
@@ -128,10 +121,19 @@ fun String?.toLongOrNullOrConstant(): Long? =
 
 fun String?.toIntOrNullOrConstant(): Int? =
     this?.let {
-        if (it.length > 10) this.substring(0..9).toInt() else it.trimTrailingZeros()?.toIntOrNull()
+        if (it.length > 10) this.substring(0..9).toInt() else it.trimTrailingZeros()
+            ?.toIntOrNull()
     }
 
-fun String?.trimTrailingZeros() = this?.replaceFirst(Regex("^0*"), "")
+fun String?.trimTrailingZeros(): String? {
+    if (this == null) return null
+    val result = this.replaceFirst(Regex("^0*"), "")
+    return if (result.isEmpty() && this.isNotEmpty()) {
+        return "0"
+    } else {
+        result
+    }
+}
 
 fun <E> ImmutableList<E>.updateList(block: MutableList<E>.() -> Unit): ImmutableList<E> {
     return this.toMutableList().apply(block).toImmutableList()
