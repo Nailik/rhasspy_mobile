@@ -97,7 +97,8 @@ internal class WakeWordService(
                 checkPorcupineInitialized()
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
-            WakeWordOption.MQTT      -> {
+            WakeWordOption.MQTT      -> ServiceState.Success
+            WakeWordOption.Udp       -> {
                 _serviceState.value = ServiceState.Loading
 
                 udpConnection = UdpConnection(
@@ -108,7 +109,6 @@ internal class WakeWordService(
                 checkUdpConnection()
             }
 
-            WakeWordOption.Udp       -> ServiceState.Success
             WakeWordOption.Disabled  -> ServiceState.Disabled
         }
     }
@@ -151,6 +151,11 @@ internal class WakeWordService(
 
             WakeWordOption.MQTT      -> Unit //nothing will wait for mqtt message
             WakeWordOption.Udp       -> {
+
+                if (udpConnection == null) {
+                    initialize()
+                }
+
                 _isRecording.value = true
                 //collect audio from recorder
                 if (recording == null) {
@@ -172,6 +177,10 @@ internal class WakeWordService(
             WakeWordOption.Porcupine -> Unit
             WakeWordOption.MQTT      -> Unit //nothing will wait for mqtt message
             WakeWordOption.Udp       -> {
+
+                if (udpConnection == null) {
+                    initialize()
+                }
 
                 _serviceState.value = checkUdpConnection()
 
@@ -200,11 +209,16 @@ internal class WakeWordService(
     }
 
     private fun checkUdpConnection(): ServiceState {
-        return if (udpConnection?.isConnected == false) {
-            udpConnection?.connect()?.let {
-                ServiceState.Exception(it)
-            } ?: ServiceState.Success
-        } else ServiceState.Exception(Exception("udp not connected"))
+        return udpConnection?.let { connection ->
+            if (!connection.isConnected) {
+                connection.connect()?.let {
+                    ServiceState.Exception(it)
+                } ?: ServiceState.Success
+            } else ServiceState.Success
+        } ?: run {
+            logger.e { "udpConnection not initialized" }
+            ServiceState.Exception(Exception("udpConnection not initialized"))
+        }
     }
 
     private fun checkPorcupineInitialized(): ServiceState {
@@ -217,7 +231,10 @@ internal class WakeWordService(
                     ServiceState.Exception(exception)
                 } ?: ServiceState.Success
             } else ServiceState.Success
-        } ?: ServiceState.Exception(Exception("porcupineWakeWordClient null"))
+        } ?: run {
+            logger.e { "porcupineWakeWordClient not initialized" }
+            ServiceState.Exception(Exception("porcupineWakeWordClient not initialized"))
+        }
     }
 
 }

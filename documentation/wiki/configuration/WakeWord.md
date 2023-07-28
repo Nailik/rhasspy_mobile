@@ -10,7 +10,7 @@ This service is is used to listen to a WakeWord while in `Idle` State.
 | Disabled           | Nothing                                                    | 
 
 <br/>
-<br/>
+
 ## Porcupine (local)
 
 Porcupine recognized the Wake Word locally on your device without sending data to the internet.<br/>
@@ -41,7 +41,7 @@ Internet access is once required to verify the AccessKey.
    AccessKey is checked by Porcupine
 
 <br/>
-<br/>
+
 ## MQTT
 
 The MQTT option doesn't record audio, it awaits that some external device sends a message on the
@@ -51,7 +51,7 @@ There is more information in the
 official [Rhasspy Docs](https://rhasspy.readthedocs.io/en/latest/wake-word/#:~:text=no-,MQTT/Hermes,-Rhasspy%20listens%20for).
 
 <br/>
-<br/>
+
 ## UDP-Audio (Output)
 
 In this configuration the audio is send in small packets to a Udp Port on a specific IP.
