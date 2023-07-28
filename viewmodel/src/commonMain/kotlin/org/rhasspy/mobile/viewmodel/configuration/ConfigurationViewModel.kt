@@ -45,14 +45,7 @@ abstract class ConfigurationViewModel(
         when (action) {
             Discard                -> discard(false)
             Save                   -> save(false)
-            OpenServiceStateDialog -> _configurationViewState.update {
-                it.copy(
-                    dialogState = ServiceStateDialogState(
-                        service.serviceState.value
-                    )
-                )
-            }
-
+            OpenServiceStateDialog -> _configurationViewState.update { it.copy(dialogState = ServiceStateDialogState(service.serviceState.value.getText())) }
             BackClick              -> navigator.onBackPressed()
         }
     }
