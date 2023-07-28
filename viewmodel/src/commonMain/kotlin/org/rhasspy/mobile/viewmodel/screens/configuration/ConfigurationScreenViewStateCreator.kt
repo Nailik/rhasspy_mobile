@@ -22,7 +22,7 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
 
 class ConfigurationScreenViewStateCreator(
-    private val dispatcherProvider: IDispatcherProvider,
+    dispatcherProvider: IDispatcherProvider,
     private val httpClientService: IHttpClientService,
     private val webServerService: IWebServerService,
     private val mqttService: IMqttService,
