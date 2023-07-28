@@ -208,13 +208,13 @@ internal class WakeWordService(
     }
 
     private fun checkPorcupineInitialized(): ServiceState {
-        return porcupineWakeWordClient?.let {
-            if (!it.isInitialized) {
+        return porcupineWakeWordClient?.let { client ->
+            if (!client.isInitialized) {
                 val error = porcupineWakeWordClient?.initialize()
-                error?.let {
-                    logger.e(it) { "porcupine error" }
+                error?.let { exception ->
+                    logger.e(exception) { "porcupine error" }
                     porcupineWakeWordClient = null
-                    ServiceState.Exception(it)
+                    ServiceState.Exception(exception)
                 } ?: ServiceState.Success
             } else ServiceState.Success
         } ?: ServiceState.Exception(Exception("porcupineWakeWordClient null"))
