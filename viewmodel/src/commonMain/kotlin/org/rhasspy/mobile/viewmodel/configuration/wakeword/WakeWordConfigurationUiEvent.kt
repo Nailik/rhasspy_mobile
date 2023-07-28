@@ -60,13 +60,12 @@ sealed interface WakeWordConfigurationUiEvent {
 
         sealed interface Action : PorcupineUiEvent {
 
-            object DownloadCustomPorcupineKeyword : Action
-            object AddCustomPorcupineKeyword : Action
-            object OpenPicoVoiceConsole : Action
-            object BackClick : Action
-            object PorcupineLanguageClick : Action
-            data class PageClick(val screen: PorcupineKeywordConfigurationScreenDestination) :
-                Action
+            data object DownloadCustomPorcupineKeyword : Action
+            data object AddCustomPorcupineKeyword : Action
+            data object OpenPicoVoiceConsole : Action
+            data object BackClick : Action
+            data object PorcupineLanguageClick : Action
+            data class PageClick(val screen: PorcupineKeywordConfigurationScreenDestination) : Action
 
         }
     }

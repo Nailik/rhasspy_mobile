@@ -14,10 +14,7 @@ import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeIntentRecognitionTimeout
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeRecordingTimeout
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeTextAsrTimeout
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewState.DialogManagementConfigurationData
 
 /**
@@ -33,8 +30,7 @@ class DialogManagementConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState =
-        MutableStateFlow(DialogManagementConfigurationViewState(DialogManagementConfigurationData()))
+    private val _viewState = MutableStateFlow(DialogManagementConfigurationViewState(DialogManagementConfigurationData()))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
@@ -81,8 +77,7 @@ class DialogManagementConfigurationViewModel(
         with(_viewState.value.editData) {
             ConfigurationSetting.dialogManagementOption.value = dialogManagementOption
             ConfigurationSetting.textAsrTimeout.value = textAsrTimeout.toLongOrZero()
-            ConfigurationSetting.intentRecognitionTimeout.value =
-                intentRecognitionTimeout.toLongOrZero()
+            ConfigurationSetting.intentRecognitionTimeout.value = intentRecognitionTimeout.toLongOrZero()
             ConfigurationSetting.recordingTimeout.value = recordingTimeout.toLongOrZero()
         }
     }

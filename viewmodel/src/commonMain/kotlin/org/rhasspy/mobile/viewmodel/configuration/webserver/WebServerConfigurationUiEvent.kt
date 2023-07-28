@@ -18,9 +18,9 @@ sealed interface WebServerConfigurationUiEvent {
 
     sealed interface Action : WebServerConfigurationUiEvent {
 
-        object OpenWebServerSSLWiki : Action
-        object SelectSSLCertificate : Action
-        object BackClick : Action
+        data object OpenWebServerSSLWiki : Action
+        data object SelectSSLCertificate : Action
+        data object BackClick : Action
 
     }
 

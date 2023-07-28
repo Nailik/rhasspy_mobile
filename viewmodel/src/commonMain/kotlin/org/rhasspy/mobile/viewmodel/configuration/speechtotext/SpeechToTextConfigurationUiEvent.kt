@@ -13,7 +13,7 @@ sealed interface SpeechToTextConfigurationUiEvent {
 
     sealed interface Action : SpeechToTextConfigurationUiEvent {
 
-        object BackClick : Action
+        data object BackClick : Action
 
     }
 

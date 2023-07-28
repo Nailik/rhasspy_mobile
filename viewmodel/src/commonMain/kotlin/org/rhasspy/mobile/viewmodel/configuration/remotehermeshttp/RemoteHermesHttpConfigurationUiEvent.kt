@@ -13,7 +13,7 @@ sealed interface RemoteHermesHttpConfigurationUiEvent {
 
     sealed interface Action : RemoteHermesHttpConfigurationUiEvent {
 
-        object BackClick : Action
+        data object BackClick : Action
 
     }
 

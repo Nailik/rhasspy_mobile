@@ -14,7 +14,7 @@ sealed interface TextToSpeechConfigurationUiEvent {
 
     sealed interface Action : TextToSpeechConfigurationUiEvent {
 
-        object BackClick : Action
+        data object BackClick : Action
 
     }
 

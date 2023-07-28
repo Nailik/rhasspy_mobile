@@ -10,14 +10,13 @@ sealed interface IntentHandlingConfigurationUiEvent {
         data class ChangeIntentHandlingHttpEndpoint(val endpoint: String) : Change
         data class ChangeIntentHandlingHomeAssistantEndpoint(val endpoint: String) : Change
         data class ChangeIntentHandlingHomeAssistantAccessToken(val token: String) : Change
-        data class SelectIntentHandlingHomeAssistantOption(val option: HomeAssistantIntentHandlingOption) :
-            Change
+        data class SelectIntentHandlingHomeAssistantOption(val option: HomeAssistantIntentHandlingOption) : Change
 
     }
 
     sealed interface Action : IntentHandlingConfigurationUiEvent {
 
-        object BackClick : Action
+        data object BackClick : Action
 
     }
 

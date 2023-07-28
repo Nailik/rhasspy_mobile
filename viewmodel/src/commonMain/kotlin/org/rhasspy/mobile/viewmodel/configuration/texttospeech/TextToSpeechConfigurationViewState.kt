@@ -21,16 +21,11 @@ data class TextToSpeechConfigurationViewState internal constructor(
         val textToSpeechHttpEndpoint: String = ConfigurationSetting.textToSpeechHttpEndpoint.value,
     ) : IConfigurationData {
 
-        val textToSpeechOptions: ImmutableList<TextToSpeechOption> =
-            TextToSpeechOption.values().toImmutableList()
+        val textToSpeechOptions: ImmutableList<TextToSpeechOption> = TextToSpeechOption.values().toImmutableList()
 
         val textToSpeechHttpEndpointText: String
-            get() = if (isUseCustomTextToSpeechHttpEndpoint) textToSpeechHttpEndpoint else
-                "${ConfigurationSetting.httpClientServerEndpointHost.value}:${ConfigurationSetting.httpClientServerEndpointPort.value}/${HttpClientPath.SpeechToText.path}"
+            get() = if (isUseCustomTextToSpeechHttpEndpoint) textToSpeechHttpEndpoint else "${ConfigurationSetting.httpClientServerEndpointHost.value}:${ConfigurationSetting.httpClientServerEndpointPort.value}/${HttpClientPath.SpeechToText.path}"
 
     }
 
 }
-
-//val testTextToSpeechText: String = "",
-// override val isTestingEnabled: Boolean get() = textToSpeechOption != TextToSpeechOption.Disabled

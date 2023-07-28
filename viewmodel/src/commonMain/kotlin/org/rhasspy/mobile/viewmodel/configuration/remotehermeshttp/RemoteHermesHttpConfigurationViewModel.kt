@@ -5,21 +5,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
-import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.toIntOrNullOrConstant
-import org.rhasspy.mobile.platformspecific.toIntOrZero
-import org.rhasspy.mobile.platformspecific.toLongOrNullOrConstant
-import org.rhasspy.mobile.platformspecific.toLongOrZero
+import org.rhasspy.mobile.platformspecific.*
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.SetHttpSSLVerificationDisabled
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.UpdateHttpClientServerEndpointHost
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.UpdateHttpClientServerEndpointPort
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.UpdateHttpClientTimeout
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewState.RemoteHermesHttpConfigurationData
 
 @Stable
@@ -29,8 +22,7 @@ class RemoteHermesHttpConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState =
-        MutableStateFlow(RemoteHermesHttpConfigurationViewState(RemoteHermesHttpConfigurationData()))
+    private val _viewState = MutableStateFlow(RemoteHermesHttpConfigurationViewState(RemoteHermesHttpConfigurationData()))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
@@ -76,10 +68,8 @@ class RemoteHermesHttpConfigurationViewModel(
     override fun onSave() {
         with(_viewState.value.editData) {
             ConfigurationSetting.httpClientServerEndpointHost.value = httpClientServerEndpointHost
-            ConfigurationSetting.httpClientServerEndpointPort.value =
-                httpClientServerEndpointPort.toIntOrZero()
-            ConfigurationSetting.isHttpClientSSLVerificationDisabled.value =
-                isHttpSSLVerificationDisabled
+            ConfigurationSetting.httpClientServerEndpointPort.value = httpClientServerEndpointPort.toIntOrZero()
+            ConfigurationSetting.isHttpClientSSLVerificationDisabled.value = isHttpSSLVerificationDisabled
             ConfigurationSetting.httpClientTimeout.value = httpClientTimeout.toLongOrZero()
         }
     }

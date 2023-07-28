@@ -23,10 +23,8 @@ data class AudioPlayingConfigurationViewState internal constructor(
         val audioPlayingMqttSiteId: String = ConfigurationSetting.audioPlayingMqttSiteId.value
     ) : IConfigurationData {
 
-        val audioPlayingOptionList: ImmutableList<AudioPlayingOption> =
-            AudioPlayingOption.values().toImmutableList()
-        val audioOutputOptionList: ImmutableList<AudioOutputOption> =
-            AudioOutputOption.values().toImmutableList()
+        val audioPlayingOptionList: ImmutableList<AudioPlayingOption> = AudioPlayingOption.values().toImmutableList()
+        val audioOutputOptionList: ImmutableList<AudioOutputOption> = AudioOutputOption.values().toImmutableList()
 
     }
 

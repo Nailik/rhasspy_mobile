@@ -12,11 +12,7 @@ import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.ChangeIntentHandlingHomeAssistantAccessToken
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.ChangeIntentHandlingHomeAssistantEndpoint
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.ChangeIntentHandlingHttpEndpoint
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingHomeAssistantOption
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewState.IntentHandlingConfigurationData
 
 @Stable
@@ -26,8 +22,7 @@ class IntentHandlingConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState =
-        MutableStateFlow(IntentHandlingConfigurationViewState(IntentHandlingConfigurationData()))
+    private val _viewState = MutableStateFlow(IntentHandlingConfigurationViewState(IntentHandlingConfigurationData()))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
@@ -51,22 +46,10 @@ class IntentHandlingConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is ChangeIntentHandlingHomeAssistantAccessToken -> copy(
-                        intentHandlingHomeAssistantAccessToken = change.token
-                    )
-
-                    is ChangeIntentHandlingHomeAssistantEndpoint    -> copy(
-                        intentHandlingHomeAssistantEndpoint = change.endpoint
-                    )
-
-                    is ChangeIntentHandlingHttpEndpoint             -> copy(
-                        intentHandlingHttpEndpoint = change.endpoint
-                    )
-
-                    is SelectIntentHandlingHomeAssistantOption      -> copy(
-                        intentHandlingHomeAssistantOption = change.option
-                    )
-
+                    is ChangeIntentHandlingHomeAssistantAccessToken -> copy(intentHandlingHomeAssistantAccessToken = change.token)
+                    is ChangeIntentHandlingHomeAssistantEndpoint    -> copy(intentHandlingHomeAssistantEndpoint = change.endpoint)
+                    is ChangeIntentHandlingHttpEndpoint             -> copy(intentHandlingHttpEndpoint = change.endpoint)
+                    is SelectIntentHandlingHomeAssistantOption      -> copy(intentHandlingHomeAssistantOption = change.option)
                     is SelectIntentHandlingOption                   -> copy(intentHandlingOption = change.option)
                 }
             })
@@ -87,12 +70,9 @@ class IntentHandlingConfigurationViewModel(
         with(_viewState.value.editData) {
             ConfigurationSetting.intentHandlingOption.value = intentHandlingOption
             ConfigurationSetting.intentHandlingHttpEndpoint.value = intentHandlingHttpEndpoint
-            ConfigurationSetting.intentHandlingHomeAssistantEndpoint.value =
-                intentHandlingHomeAssistantEndpoint
-            ConfigurationSetting.intentHandlingHomeAssistantAccessToken.value =
-                intentHandlingHomeAssistantAccessToken
-            ConfigurationSetting.intentHandlingHomeAssistantOption.value =
-                intentHandlingHomeAssistantOption
+            ConfigurationSetting.intentHandlingHomeAssistantEndpoint.value = intentHandlingHomeAssistantEndpoint
+            ConfigurationSetting.intentHandlingHomeAssistantAccessToken.value = intentHandlingHomeAssistantAccessToken
+            ConfigurationSetting.intentHandlingHomeAssistantOption.value = intentHandlingHomeAssistantOption
         }
     }
 
