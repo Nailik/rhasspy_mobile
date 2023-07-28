@@ -83,7 +83,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
 
         try {
             if (recorder == null) {
-                logger.v { "initializing recorder" }
+                logger.v { "initializing recorder $tempBufferSize" }
                 recorder = AudioRecord.Builder()
                     .setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
                     .setAudioFormat(
@@ -127,10 +127,14 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
         coroutineScope.launch {
             recorder?.also {
                 while (it.recordingState == AudioRecord.RECORDSTATE_RECORDING) {
-                    val byteArray = ByteArray(bufferSize)
-                    if (it.read(byteArray, 0, byteArray.size) == bufferSize) {
-                        updateMaxVolume(byteArray.clone())
-                        _output.emit(byteArray)
+                    try {
+                        val byteArray = ByteArray(bufferSize)
+                        if (it.read(byteArray, 0, byteArray.size) == bufferSize) {
+                            updateMaxVolume(byteArray.clone())
+                            _output.emit(byteArray)
+                        }
+                    } catch (e: Exception) {
+                        logger.e(e) { "recording exception" }
                     }
                 }
             }
