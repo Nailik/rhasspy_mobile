@@ -94,6 +94,7 @@ internal class WakeWordService(
                     ::onKeywordDetected,
                     ::onClientError
                 )
+
                 checkPorcupineInitialized()
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored

@@ -30,7 +30,7 @@ interface ILocalAudioService : IService {
 
     suspend fun playAudio(audioSource: AudioSource): ServiceState
     fun playWakeSoundWithoutParameter()
-    fun playWakeSound(onFinished: (exception: Exception?) -> Unit)
+    fun playWakeSound(onFinished: () -> Unit)
     fun playRecordedSound()
     fun playErrorSound()
     fun stop()
@@ -89,11 +89,11 @@ internal class LocalAudioService(
 
     override fun playWakeSoundWithoutParameter() = playWakeSound {}
 
-    override fun playWakeSound(onFinished: (exception: Exception?) -> Unit) {
+    override fun playWakeSound(onFinished: () -> Unit) {
         logger.d { "playWakeSound" }
         when (AppSetting.wakeSound.value) {
             SoundOption.Disabled.name -> {
-                onFinished(null)
+                onFinished()
             }
 
             SoundOption.Default.name  -> playAudio(
@@ -167,13 +167,13 @@ internal class LocalAudioService(
         audioSource: AudioSource,
         volume: StateFlow<Float>,
         audioOutputOption: AudioOutputOption,
-        onFinished: ((exception: Exception?) -> Unit)? = null
+        onFinished: (() -> Unit)? = null
     ) {
         audioFocusService.request(Notification)
 
         audioPlayer.playAudio(audioSource, volume, audioOutputOption) {
             audioFocusService.abandon(Notification)
-            onFinished?.invoke(it)
+            onFinished?.invoke()
         }
 
     }
