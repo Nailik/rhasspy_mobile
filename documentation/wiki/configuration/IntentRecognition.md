@@ -1,5 +1,3 @@
-# Intent Recognition Service
-
 This service is recognizing intents from text for the Event `AsrTextCaptured`.
 <br/>The following options are available:
 

@@ -1,5 +1,3 @@
-# Http Api
-
 The HTTP API consists of a WebServer receiving calls and a Client making calls to various
 endpoints. <br/> More information can be
 found on
@@ -14,11 +12,11 @@ defined in [[MQTT Api]]
 | Path                      | Type | Data                             | Event              | Settings                                                 |
 |---------------------------|------|----------------------------------|--------------------|----------------------------------------------------------|
 | `/api/listen-for-command` | POST |                                  | `WakeWordDetected` |                                                          |
-| `/api/listen-for-wake`    | POST | String ("on"/"off")              |                    | enable/disable Wake Word Service                         |
+| `/api/listen-for-wake`    | POST | String ("on"/"off")              |                    | enable/disable WakeWord [[Device]]                       |
 | `/api/play-recording`     | POST |                                  |                    | Play or Stop Playing latest recording                    |
 | `/api/play-recording`     | GET  |                                  |                    | return latest recording WAV Audio with Header: ByteArray |
 | `/api/play-wav`           | POST | WAV Audio with Header: ByteArray | `PlayAudio`        |                                                          |
-| `/api/set-volume`         | POST |                                  |                    | set App Audio Volume                                     |
+| `/api/set-volume`         | POST |                                  |                    | set App Audio Volume [[Device]]                          |
 | `/api/start-recording`    | POST |                                  | `StartListening`   |                                                          |
 | `/api/stop-recording`     | POST |                                  | `StopListening`    |                                                          |
 | `/api/say`                | POST | text: String                     |                    | trigger `TextToSpeech Service`                           |

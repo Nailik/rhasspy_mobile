@@ -1,6 +1,5 @@
-# WakeWord Service
-
 This service is is used to listen to a WakeWord while in `Idle` State.
+<br/>Best used with [[Background]] Services enabled to ensure WakeWord is running in background.
 <br/>The following options are available:
 
 | Option             | Information                                                | 

@@ -1,5 +1,3 @@
-# Webserver Service
-
 This service handles incoming messages as defined in [[Http Api]].
 <br/>The following settings are available:
 

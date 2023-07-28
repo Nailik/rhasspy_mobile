@@ -1,9 +1,7 @@
-# MQTT Api
-
-The MQTT API subscribes and publishes to a given in MQTT Broker. <br /> More information can be
+The MQTT API subscribes and publishes to a given in MQTT Broker.<br/>More information can be
 found on
-the [rhasspy mqtt api documentation](https://rhasspy.readthedocs.io/en/latest/reference/#mqtt-api).
-<br /> Some topics limited in functionality, Unsupported means that those values are ignored.
+the [rhasspy mqtt api documentation](https://rhasspy.readthedocs.io/en/latest/reference/#mqtt-api).<br/>
+Some topics limited in functionality, Unsupported means that those values are ignored.
 SiteId has to match the siteId in the App Configuration in order for any topic to be recognized.
 If there is a running session also the sessionId has to mach the current session depending on the
 selected Dialog Management.
@@ -22,8 +20,8 @@ contains more data, those that is not listed here is currently being ignored.
 | `hermes/dialogueManager/endSession`                 | siteId: String </br> sessionId: String                     | `EndSession`              |                                                |
 | `hermes/dialogueManager/sessionStarted`             | siteId: String </br> sessionId: String                     | `SessionStarted`          |                                                |
 | `hermes/dialogueManager/sessionEnded`               | siteId: String </br> sessionId: String                     | `SessionEnded`            |                                                |
-| `hermes/hotword/toggleOn`                           | siteId: String                                             |                           | enable Wake Word Service                       |
-| `hermes/hotword/toggleOff`                          | siteId: String                                             |                           | disabled Wake Word Service                     |
+| `hermes/hotword/toggleOn`                           | siteId: String                                             |                           | enable WakeWord [[Device]]                     |
+| `hermes/hotword/toggleOff`                          | siteId: String                                             |                           | disabled WakeWord [[Device]]                   |
 | `hermes/hotword/<wakewordId>/detected`              | siteId: String                                             | `WakeWordDetected`        |                                                |
 | `hermes/asr/startListening`                         | siteId: String </br> sendAudioCaptured: Boolean            | `StartListening`          |                                                |
 | `hermes/asr/stopListening`                          | siteId: String </br> sessionId: String                     | `StopListening`           |                                                |
@@ -31,14 +29,14 @@ contains more data, those that is not listed here is currently being ignored.
 | `hermes/error/asr`                                  | siteId: String </br> sessionId: String                     | `AsrError`                |                                                |
 | `hermes/intent/<intentName>`                        | siteId: String </br> sessionId: String                     | `IntentRecognitionResult` |                                                |
 | `hermes/nlu/intentNotRecognized`                    | siteId: String </br> sessionId: String                     | `IntentRecognitionError`  |                                                |
-| `hermes/handle/toggleOn`                            | siteId: String                                             |                           | enable Intent Handling Service                 |
-| `hermes/handle/toggleOff`                           | siteId: String                                             |                           | disable Intent Handling Service                |
+| `hermes/handle/toggleOn`                            | siteId: String                                             |                           | enable Intent Handling [[Device]]              |
+| `hermes/handle/toggleOff`                           | siteId: String                                             |                           | disable Intent Handling [[Device]]             |
 | `hermes/audioServer/<siteId>/playBytes/<requestId>` |                                                            | `PlayAudio`               |                                                |
 | `hermes/audioServer/<siteId>/playFinished`          |                                                            | `PlayFinished`            |                                                |
-| `hermes/audioServer/toggleOn`                       | siteId: String                                             |                           | enable Audio Playing Service                   |
-| `hermes/audioServer/toggleOff`                      | siteId: String                                             |                           | disable Audio Playing Service                  |
+| `hermes/audioServer/toggleOn`                       | siteId: String                                             |                           | enable Audio Output [[Device]]                 |
+| `hermes/audioServer/toggleOff`                      | siteId: String                                             |                           | disable Audio Output [[Device]]                |
 | `hermes/tts/say`                                    | siteId: String </br> sessionId: String? </br> text: String |                           | use `TextToSpeech Service` and then play audio |
-| `rhasspy/audioServer/setVolume`                     | siteId: String </br> volume: Float                         |                           | set App Audio Volume                           |
+| `rhasspy/audioServer/setVolume`                     | siteId: String </br> volume: Float                         |                           | set App Audio Volume [[Device]]                |
 
 ## Publish Topics
 

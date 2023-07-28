@@ -1,5 +1,3 @@
-# Mqtt Service
-
 This service handles incoming and outgoing messages as defined in [[Mqtt Api]].
 <br/>The following settings are available:
 

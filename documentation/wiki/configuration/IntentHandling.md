@@ -1,5 +1,3 @@
-# Intent Handling Service
-
 This service is handles intents for the Event `IntentRecognitionResult`.
 <br/>The following options are available:
 

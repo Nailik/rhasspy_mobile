@@ -1,5 +1,3 @@
-# Audio Playing Service
-
 This service is playing audio for the Event `PlayAudio`.
 <br/>The following options are available:
 

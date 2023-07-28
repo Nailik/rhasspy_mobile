@@ -1,5 +1,3 @@
-# Speech To Text Service
-
 This service is recognizing intents from text for the Event `SilenceDetected` or `StopListening`.
 <br/>The following options are available:
 

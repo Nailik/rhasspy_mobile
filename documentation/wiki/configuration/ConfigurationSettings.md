@@ -1,5 +1,3 @@
-# Audio Playing Service
-
 ## site ID
 
 The site ID is used for [[Mqtt]] and [[Dialog Management]].

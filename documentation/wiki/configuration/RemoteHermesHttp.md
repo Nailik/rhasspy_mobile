@@ -1,5 +1,3 @@
-# Http Client Service
-
 This service handles outgoing messages as defined in [[HTTP Api]].
 <br/>The following settings are available:
 
