@@ -100,8 +100,13 @@ class InternalAudioPlayer(
             volumeChange.start()
             val duration = mediaPlayer.duration
             timeoutJob = coroutineScope.launch {
-                delay(duration.toLong() + 100)
-                onMediaPlayerCompletion()
+                try {
+                    delay(duration.toLong() + 100)
+                    onMediaPlayerCompletion()
+                } catch (exception: Exception) {
+                    logger.e(exception) { "start exception" }
+                    onFinished(exception)
+                }
             }
             mediaPlayer.start()
         } catch (exception: Exception) {
