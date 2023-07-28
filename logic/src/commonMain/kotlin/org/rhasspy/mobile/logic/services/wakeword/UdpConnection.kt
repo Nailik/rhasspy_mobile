@@ -68,13 +68,14 @@ internal class UdpConnection(
             try {
                 sendChannel?.send(
                     Datagram(
-                        ByteReadPacket(
+                        packet = ByteReadPacket(
                             data.appendWavHeader(
                                 AppSetting.audioRecorderChannel.value,
                                 AppSetting.audioRecorderSampleRate.value,
                                 AppSetting.audioRecorderEncoding.value
                             )
-                        ), it
+                        ),
+                        address = it
                     )
                 )
             } catch (exception: Exception) {
