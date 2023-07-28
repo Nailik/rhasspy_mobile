@@ -83,7 +83,7 @@ internal class IdleStateAction(
     ) {
         dialogManagerService.informMqtt(sessionData, action)
 
-        indicationService.onWakeWordDetected {
+        indicationService.onSessionStarted {
             CoroutineScope(dispatcherProvider.IO).launch {
                 dialogManagerService.transitionTo(
                     action = action,
@@ -102,13 +102,17 @@ internal class IdleStateAction(
     ) {
         dialogManagerService.informMqtt(sessionData, action)
 
-        dialogManagerService.transitionTo(
-            action = action,
-            state = stateTransition.transitionToRecordingState(
-                sessionData = sessionData,
-                isSourceMqtt = action.source is Source.Mqtt
-            )
-        )
+        indicationService.onSessionStarted {
+            CoroutineScope(dispatcherProvider.IO).launch {
+                dialogManagerService.transitionTo(
+                    action = action,
+                    state = stateTransition.transitionToRecordingState(
+                        sessionData = sessionData,
+                        isSourceMqtt = action.source is Source.Mqtt
+                    )
+                )
+            }
+        }
     }
 
     private suspend fun onStartListeningAction(

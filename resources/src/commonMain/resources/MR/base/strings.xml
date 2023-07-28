@@ -65,7 +65,7 @@
     <string name="enableBackground">Enable Background Services</string>
     <string name="backgroundWakeWordDetectionTurnOnDisplay">Wake Up Display</string>
     <string name="wakeWordIndication">WakeWord Indication</string>
-    <string name="wakeWordSoundIndication">Sound</string>
+    <string name="wakeWordAudioIndication">Audio</string>
     <string name="wakeWordLightIndication">Visual</string>
     <string name="enableSSL">Enable SSL</string>
     <string name="enabled">Enabled</string>
@@ -311,9 +311,8 @@
     <string name="intentRecognitionTimeoutText">Intent Recognition Timeout (MS)</string>
     <string name="recordingTimeoutText">Recording Timeout (MS)</string>
     <string name="audioFocus">Audio Focus</string>
-    <string name="audioFocusInformation">Audio Focus allows the Rhasspy to pause and resume or
-        decrease the volume of other audio streams such as music or videos. Decrease the volume of
-        other audio streams such as music or videos.
+    <string name="audioFocusInformation">Audio Focus allows Rhasspy to pause and resume or
+        decrease the volume of other audio streams such as music or videos.
     </string>
     <string name="pauseAndResume">Pause and Resume</string>
     <string name="duck">Duck (lower Volume)</string>
@@ -335,7 +334,7 @@
     <string name="restoreSettingsFromFileFailed">restore setting from file failed</string>
     <string name="shareSettingsFileFailed">share setting file failed</string>
     <string name="selectFileFailed">unable to open file chooser</string>
-    <string name="audioRecorder">Audio recorder</string>
+    <string name="audioRecorder">Audio Recorder</string>
     <string name="sampleRate">Sample rate</string>
     <string name="channel">Channel</string>
     <string name="encoding">Encoding</string>
