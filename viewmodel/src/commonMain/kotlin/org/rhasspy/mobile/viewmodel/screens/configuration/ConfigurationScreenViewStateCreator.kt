@@ -1,8 +1,9 @@
 package org.rhasspy.mobile.viewmodel.screens.configuration
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
@@ -14,22 +15,14 @@ import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
 import org.rhasspy.mobile.logic.services.texttospeech.ITextToSpeechService
 import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
 import org.rhasspy.mobile.logic.services.webserver.IWebServerService
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.AudioPlayingViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.DialogManagementViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentHandlingViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentRecognitionViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.MqttViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.RemoteHermesHttpViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SiteIdViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SpeechToTextViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.TextToSpeechViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.WakeWordViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.WebServerViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
 
 class ConfigurationScreenViewStateCreator(
+    private val dispatcherProvider: IDispatcherProvider,
     private val httpClientService: IHttpClientService,
     private val webServerService: IWebServerService,
     private val mqttService: IMqttService,
@@ -64,25 +57,27 @@ class ConfigurationScreenViewStateCreator(
 
     private val viewState = MutableStateFlow(getViewState(null))
 
-    operator fun invoke(): MutableStateFlow<ConfigurationScreenViewState> {
-        combine(
-            ConfigurationSetting.siteId.data,
-            ConfigurationSetting.isHttpClientSSLVerificationDisabled.data,
-            ConfigurationSetting.isHttpServerEnabled.data,
-            ConfigurationSetting.wakeWordOption.data,
-            ConfigurationSetting.speechToTextOption.data,
-            ConfigurationSetting.intentRecognitionOption.data,
-            ConfigurationSetting.textToSpeechOption.data,
-            ConfigurationSetting.audioPlayingOption.data,
-            ConfigurationSetting.dialogManagementOption.data,
-            ConfigurationSetting.intentHandlingOption.data,
-            mqttService.isConnected
-        ) {
-            viewState.value = getViewState(viewState.value.scrollToError)
+    init {
+        CoroutineScope(dispatcherProvider.IO).launch {
+            combineStateFlow(
+                ConfigurationSetting.siteId.data,
+                ConfigurationSetting.isHttpClientSSLVerificationDisabled.data,
+                ConfigurationSetting.isHttpServerEnabled.data,
+                ConfigurationSetting.wakeWordOption.data,
+                ConfigurationSetting.speechToTextOption.data,
+                ConfigurationSetting.intentRecognitionOption.data,
+                ConfigurationSetting.textToSpeechOption.data,
+                ConfigurationSetting.audioPlayingOption.data,
+                ConfigurationSetting.dialogManagementOption.data,
+                ConfigurationSetting.intentHandlingOption.data,
+                mqttService.isConnected
+            ).collect {
+                viewState.value = getViewState(viewState.value.scrollToError)
+            }
         }
-
-        return viewState
     }
+
+    operator fun invoke(): MutableStateFlow<ConfigurationScreenViewState> = viewState
 
     private fun getViewState(scrollToError: Int?): ConfigurationScreenViewState {
         return ConfigurationScreenViewState(
