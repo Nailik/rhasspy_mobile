@@ -35,11 +35,8 @@ interface IDialogManagerService : IService {
     override val serviceState: StateFlow<ServiceState>
     val currentDialogState: StateFlow<DialogManagerState>
 
-    fun start()
     fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState)
-
     fun onAction(action: DialogServiceMiddlewareAction)
-
     suspend fun informMqtt(sessionData: SessionData?, action: DialogServiceMiddlewareAction)
 }
 
@@ -69,7 +66,7 @@ internal class DialogManagerService(
     private val _currentDialogState = MutableStateFlow<DialogManagerState>(IdleState())
     override val currentDialogState = _currentDialogState.readOnly
 
-    override fun start() {
+    init {
         _serviceState.value = ServiceState.Success
         coroutineScope.launch {
             transitionTo(
@@ -78,7 +75,6 @@ internal class DialogManagerService(
             )
         }
     }
-
     override fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState) {
         _currentDialogState.value = state
         dialogHistory.update {
