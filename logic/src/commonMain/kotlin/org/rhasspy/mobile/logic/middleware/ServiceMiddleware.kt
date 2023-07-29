@@ -87,15 +87,7 @@ internal class ServiceMiddleware(
         when (action) {
             is AudioOutputToggle    -> appSettingsService.audioOutputToggle(action.enabled)
             is AudioVolumeChange    -> appSettingsService.setAudioVolume(action.volume)
-            is HotWordToggle        -> {
-                appSettingsService.hotWordToggle(action.enabled)
-                if (action.enabled) {
-                    wakeWordService.startDetection()
-                } else {
-                    wakeWordService.stopDetection()
-                }
-            }
-
+            is HotWordToggle        -> appSettingsService.hotWordToggle(action.enabled)
             is IntentHandlingToggle -> appSettingsService.intentHandlingToggle(action.enabled)
         }
     }

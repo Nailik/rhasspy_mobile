@@ -8,7 +8,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
@@ -17,6 +19,7 @@ import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.recording.IRecordingService
 import org.rhasspy.mobile.platformspecific.porcupine.PorcupineWakeWordClient
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
 
 interface IWakeWordService : IService {
@@ -94,10 +97,10 @@ internal class WakeWordService(
                     ::onClientError
                 )
 
-                checkPorcupineInitialized()
+                Success
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
-            WakeWordOption.MQTT      -> ServiceState.Success
+            WakeWordOption.MQTT      -> Success
             WakeWordOption.Udp       -> {
                 _serviceState.value = ServiceState.Loading
 
@@ -106,7 +109,7 @@ internal class WakeWordService(
                     params.wakeWordUdpOutputPort
                 )
 
-                checkUdpConnection()
+                Success
             }
 
             WakeWordOption.Disabled  -> ServiceState.Disabled
@@ -139,18 +142,17 @@ internal class WakeWordService(
 
                 if (porcupineWakeWordClient == null) {
                     initialize()
-                } else {
-                    checkPorcupineInitialized()
                 }
 
-                porcupineWakeWordClient?.also {
+                _serviceState.value = porcupineWakeWordClient?.let { client ->
                     _isRecording.value = true
-                    val error = porcupineWakeWordClient?.start()
-                    _serviceState.value = error?.let {
+
+                    val error = client.start()
+                    error?.let {
                         logger.e(it) { "porcupineError" }
                         ServiceState.Exception(it)
-                    } ?: ServiceState.Success
-                }
+                    } ?: Success
+                } ?: ServiceState.Error(MR.strings.notInitialized.stable)
 
             }
 
@@ -159,15 +161,23 @@ internal class WakeWordService(
 
                 if (udpConnection == null) {
                     initialize()
-                } else {
-                    checkUdpConnection()
                 }
 
-                _isRecording.value = true
-                //collect audio from recorder
-                if (recording == null) {
-                    recording = scope.launch {
-                        recordingService.output.collect(::hotWordAudioFrame)
+                _serviceState.value = udpConnection?.let { client ->
+                    _isRecording.value = true
+
+                    val error = client.connect()
+                    error?.let {
+                        logger.e(it) { "porcupineError" }
+                        ServiceState.Exception(it)
+                    } ?: Success
+                } ?: ServiceState.Error(MR.strings.notInitialized.stable)
+
+                if (_serviceState.value == Success) {
+                    if (recording == null) {
+                        recording = scope.launch {
+                            recordingService.output.collect(::hotWordAudioFrame)
+                        }
                     }
                 }
             }
@@ -183,20 +193,7 @@ internal class WakeWordService(
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> Unit
             WakeWordOption.MQTT      -> Unit //nothing will wait for mqtt message
-            WakeWordOption.Udp       -> {
-
-                if (udpConnection == null) {
-                    initialize()
-                }
-
-                _serviceState.value = checkUdpConnection()
-
-                scope.launch {
-                    //needs to be called async else native Audio Recorder stops working
-                    udpConnection?.streamAudio(data)
-                }
-            }
-
+            WakeWordOption.Udp       -> udpConnection?.streamAudio(data)
             WakeWordOption.Disabled  -> Unit
         }
     }
@@ -221,35 +218,6 @@ internal class WakeWordService(
     private fun onKeywordDetected(hotWord: String) {
         logger.d { "onKeywordDetected $hotWord" }
         serviceMiddleware.action(WakeWordDetected(Source.Local, hotWord))
-    }
-
-    private fun checkUdpConnection(): ServiceState {
-        return udpConnection?.let { connection ->
-            if (!connection.isConnected) {
-                connection.connect()?.let {
-                    ServiceState.Exception(it)
-                } ?: ServiceState.Success
-            } else ServiceState.Success
-        } ?: run {
-            logger.e { "udpConnection not initialized" }
-            ServiceState.Exception(Exception("udpConnection not initialized"))
-        }
-    }
-
-    private fun checkPorcupineInitialized(): ServiceState {
-        return porcupineWakeWordClient?.let { client ->
-            if (!client.isInitialized) {
-                val error = porcupineWakeWordClient?.initialize()
-                error?.let { exception ->
-                    logger.e(exception) { "porcupine error" }
-                    porcupineWakeWordClient = null
-                    ServiceState.Exception(exception)
-                } ?: ServiceState.Success
-            } else ServiceState.Success
-        } ?: run {
-            logger.e { "porcupineWakeWordClient not initialized" }
-            ServiceState.Exception(Exception("porcupineWakeWordClient not initialized"))
-        }
     }
 
 }
