@@ -71,7 +71,7 @@ class DialogScreenViewStateCreator(
 
         val information = when (this) {
             is AsrTextCaptured         -> MR.strings.asr_text.format(text ?: "").stable
-            is IntentRecognitionResult -> MR.strings.intent.format("$intentName\n$intent").stable
+            is IntentRecognitionResult -> MR.strings.intent.format(intentName, intent).stable
             is PlayAudio               -> MR.strings.audio_data_size.format(byteArray.size).stable
             is StartListening          -> MR.strings.send_audio_captured.format(sendAudioCaptured).stable
             is WakeWordDetected        -> MR.strings.wake_word.format(wakeWord).stable
