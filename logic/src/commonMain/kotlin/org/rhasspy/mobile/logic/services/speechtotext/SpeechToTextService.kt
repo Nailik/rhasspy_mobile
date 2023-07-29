@@ -9,6 +9,8 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.Disabled
+import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
@@ -60,7 +62,7 @@ internal class SpeechToTextService(
     private val paramsFlow: StateFlow<SpeechToTextServiceParams> = paramsCreator()
     private val params: SpeechToTextServiceParams get() = paramsFlow.value
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
+    private val _serviceState = MutableStateFlow<ServiceState>(Success)
     override val serviceState = _serviceState.readOnly
 
     override val speechToTextAudioFile: Path = Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
@@ -74,6 +76,11 @@ internal class SpeechToTextService(
             paramsFlow.collect {
                 collector?.cancel()
                 collector = null
+                _serviceState.value = if (it.speechToTextOption != SpeechToTextOption.Disabled) {
+                    Success
+                } else {
+                    Disabled
+                }
             }
         }
     }
@@ -159,10 +166,10 @@ internal class SpeechToTextService(
         }
 
         _serviceState.value = when (params.speechToTextOption) {
-            SpeechToTextOption.RemoteHTTP -> ServiceState.Success
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.startListening(sessionId) else ServiceState.Success
+            SpeechToTextOption.RemoteHTTP -> Success
+            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.startListening(sessionId) else Success
 
-            SpeechToTextOption.Disabled   -> ServiceState.Disabled
+            SpeechToTextOption.Disabled   -> Disabled
         }
     }
 
@@ -172,9 +179,9 @@ internal class SpeechToTextService(
         }
 
         _serviceState.value = when (params.speechToTextOption) {
-            SpeechToTextOption.RemoteHTTP -> ServiceState.Success
+            SpeechToTextOption.RemoteHTTP -> Success
             SpeechToTextOption.RemoteMQTT -> mqttClientService.asrAudioFrame(sessionId, data)
-            SpeechToTextOption.Disabled   -> ServiceState.Disabled
+            SpeechToTextOption.Disabled   -> Disabled
         }
 
         scope.launch {
