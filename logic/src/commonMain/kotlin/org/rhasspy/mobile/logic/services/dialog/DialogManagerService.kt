@@ -36,7 +36,7 @@ interface IDialogManagerService : IService {
     val currentDialogState: StateFlow<DialogManagerState>
 
     fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState)
-    fun onAction(action: DialogServiceMiddlewareAction)
+    suspend fun onAction(action: DialogServiceMiddlewareAction)
     suspend fun informMqtt(sessionData: SessionData?, action: DialogServiceMiddlewareAction)
 }
 
@@ -51,24 +51,19 @@ internal class DialogManagerService(
     private val dialogManagerRemoteMqtt by inject<DialogManagerRemoteMqtt>()
     private val dialogManagerDisabled by inject<DialogManagerDisabled>()
 
-    override val dialogHistory =
-        MutableStateFlow<ImmutableList<Pair<DialogServiceMiddlewareAction, DialogManagerState>>>(
-            persistentListOf()
-        )
+    override val dialogHistory = MutableStateFlow<ImmutableList<Pair<DialogServiceMiddlewareAction, DialogManagerState>>>(persistentListOf())
 
     override val logger = LogType.DialogManagerService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
 
-    private var coroutineScope = CoroutineScope(Dispatchers.IO)
-
     private val _currentDialogState = MutableStateFlow<DialogManagerState>(IdleState())
     override val currentDialogState = _currentDialogState.readOnly
 
     init {
         _serviceState.value = ServiceState.Success
-        coroutineScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             transitionTo(
                 SessionEnded(Source.Local),
                 get<IStateTransition>().transitionToIdleState(null)
@@ -87,13 +82,11 @@ internal class DialogManagerService(
         }
     }
 
-    override fun onAction(action: DialogServiceMiddlewareAction) {
-        coroutineScope.launch {
-            when (ConfigurationSetting.dialogManagementOption.value) {
-                Local      -> dialogManagerLocal.onAction(action)
-                RemoteMQTT -> dialogManagerRemoteMqtt.onAction(action)
-                Disabled   -> dialogManagerDisabled.onAction(action)
-            }
+    override suspend fun onAction(action: DialogServiceMiddlewareAction) {
+        when (ConfigurationSetting.dialogManagementOption.value) {
+            Local      -> dialogManagerLocal.onAction(action)
+            RemoteMQTT -> dialogManagerRemoteMqtt.onAction(action)
+            Disabled   -> dialogManagerDisabled.onAction(action)
         }
     }
 
