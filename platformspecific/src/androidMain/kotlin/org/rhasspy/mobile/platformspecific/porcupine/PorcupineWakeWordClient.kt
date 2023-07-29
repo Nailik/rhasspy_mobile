@@ -77,8 +77,6 @@ actual class PorcupineWakeWordClient actual constructor(
      */
     actual fun stop() {
         porcupineClient?.stop()
-        porcupineClient?.close()
-        porcupineClient = null
         isStarted = false
     }
 
@@ -86,7 +84,6 @@ actual class PorcupineWakeWordClient actual constructor(
      * deletes the porcupine manager
      */
     actual fun close() {
-        porcupineClient?.stop()
         porcupineClient?.close()
         porcupineClient = null
         isStarted = false

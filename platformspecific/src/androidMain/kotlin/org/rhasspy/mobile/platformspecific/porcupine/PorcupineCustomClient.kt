@@ -158,6 +158,7 @@ class PorcupineCustomClient(
     }
 
     override fun close() {
+        stop()
         isStarted = false
         resampler.dispose()
         collection?.cancel()
