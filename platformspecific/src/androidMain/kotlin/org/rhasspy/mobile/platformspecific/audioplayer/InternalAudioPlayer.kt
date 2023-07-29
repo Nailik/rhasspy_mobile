@@ -100,8 +100,7 @@ class InternalAudioPlayer(
                 try {
                     delay(duration.toLong() + 100)
                     onMediaPlayerCompletion()
-                } catch (exception: Exception) {
-                    logger.e(exception) { "coroutineScope onMediaPlayerCompletion exception" }
+                } catch (_: Exception) {
                     callOnFinish()
                 }
             }
