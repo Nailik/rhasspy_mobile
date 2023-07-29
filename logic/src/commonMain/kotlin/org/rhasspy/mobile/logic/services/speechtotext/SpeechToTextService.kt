@@ -76,11 +76,13 @@ internal class SpeechToTextService(
             paramsFlow.collect {
                 collector?.cancel()
                 collector = null
-                _serviceState.value = if (it.speechToTextOption != SpeechToTextOption.Disabled) {
-                    Success
-                } else {
-                    Disabled
-                }
+
+                _serviceState.value =
+                    when (it.speechToTextOption) {
+                        SpeechToTextOption.RemoteHTTP -> Success
+                        SpeechToTextOption.RemoteMQTT -> Success
+                        SpeechToTextOption.Disabled   -> Disabled
+                    }
             }
         }
     }

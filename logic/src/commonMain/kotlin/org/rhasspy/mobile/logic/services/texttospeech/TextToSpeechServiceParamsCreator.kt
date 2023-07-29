@@ -8,13 +8,11 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 internal class TextToSpeechServiceParamsCreator {
 
     operator fun invoke(): StateFlow<TextToSpeechServiceParams> {
-
         return combineStateFlow(
             ConfigurationSetting.textToSpeechOption.data
         ).mapReadonlyState {
             getParams()
         }
-
     }
 
     private fun getParams(): TextToSpeechServiceParams {

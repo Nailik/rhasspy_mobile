@@ -65,8 +65,8 @@ fun <T1, T2, T3, T4, T5, R> combineState(
 
 inline fun <reified T> combineStateFlow(
     vararg flows: StateFlow<T>,
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    sharingStarted: SharingStarted = SharingStarted.Lazily
+    scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+    sharingStarted: SharingStarted = SharingStarted.Eagerly
 ): StateFlow<Array<T>> = combine(flows = flows) {
     it
 }.stateIn(
@@ -79,7 +79,7 @@ inline fun <reified T> combineStateFlow(
 
 fun <T, R> StateFlow<T>.mapReadonlyState(
     scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
-    sharingStarted: SharingStarted = SharingStarted.Lazily,
+    sharingStarted: SharingStarted = SharingStarted.Eagerly,
     transform: (T) -> R
 ): StateFlow<R> = this.map {
     transform(it)

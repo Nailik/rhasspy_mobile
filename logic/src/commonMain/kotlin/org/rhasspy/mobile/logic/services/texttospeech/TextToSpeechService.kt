@@ -1,10 +1,16 @@
 package org.rhasspy.mobile.logic.services.texttospeech
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.Disabled
+import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
@@ -42,8 +48,24 @@ internal class TextToSpeechService(
     private val paramsFlow: StateFlow<TextToSpeechServiceParams> = paramsCreator()
     private val params: TextToSpeechServiceParams get() = paramsFlow.value
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
+    private val _serviceState = MutableStateFlow<ServiceState>(Success)
     override val serviceState = _serviceState.readOnly
+
+    private val scope = CoroutineScope(Dispatchers.IO)
+
+    init {
+        scope.launch {
+            paramsFlow.collect {
+                _serviceState.value =
+                    when (it.textToSpeechOption) {
+                        TextToSpeechOption.RemoteHTTP -> Success
+                        TextToSpeechOption.RemoteMQTT -> Success
+                        TextToSpeechOption.Disabled   -> Disabled
+                    }
+            }
+        }
+    }
+
 
     /**
      * hermes/tts/say
@@ -61,7 +83,7 @@ internal class TextToSpeechService(
                 val result = httpClientService.textToSpeech(text)
                 _serviceState.value = when (result) {
                     is HttpClientResult.Error   -> ServiceState.Exception(result.exception)
-                    is HttpClientResult.Success -> ServiceState.Success
+                    is HttpClientResult.Success -> Success
                 }
                 val action = when (result) {
                     is HttpClientResult.Error   -> AsrError(Source.Local)
@@ -70,10 +92,8 @@ internal class TextToSpeechService(
                 serviceMiddleware.action(action)
             }
 
-            TextToSpeechOption.RemoteMQTT -> _serviceState.value =
-                mqttClientService.say(sessionId, text)
-
-            TextToSpeechOption.Disabled   -> Unit
+            TextToSpeechOption.RemoteMQTT -> _serviceState.value = mqttClientService.say(sessionId, text)
+            TextToSpeechOption.Disabled   -> _serviceState.value = Disabled
         }
     }
 
