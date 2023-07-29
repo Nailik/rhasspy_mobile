@@ -17,18 +17,7 @@ import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerDisabled
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerLocal
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerRemoteMqtt
-import org.rhasspy.mobile.logic.services.dialog.states.AudioPlayingStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.IAudioPlayingStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.IIdleStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.IRecognizingIntentStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.IRecordingIntentStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.IStateTransition
-import org.rhasspy.mobile.logic.services.dialog.states.ITranscribingIntentStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.IdleStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.RecognizingIntentStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.RecordingIntentStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.StateTransition
-import org.rhasspy.mobile.logic.services.dialog.states.TranscribingIntentStateAction
+import org.rhasspy.mobile.logic.services.dialog.states.*
 import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantServiceParamsCreator
 import org.rhasspy.mobile.logic.services.homeassistant.IHomeAssistantService
@@ -117,7 +106,6 @@ fun logicModule() = module {
     single<IIdleStateAction> {
         IdleStateAction(
             dialogManagerService = get(),
-            dispatcherProvider = get(),
             stateTransition = get(),
             wakeWordService = get(),
             indicationService = get(),

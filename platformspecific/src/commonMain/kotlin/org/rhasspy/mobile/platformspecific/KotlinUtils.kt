@@ -3,10 +3,9 @@ package org.rhasspy.mobile.platformspecific
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlin.coroutines.resume
 import kotlin.math.roundToInt
 
 fun <T1, T2, R> combineState(
@@ -158,4 +157,17 @@ fun Float.roundToDecimals(decimals: Int): Float {
     repeat(decimals) { dotAt *= 10 }
     val roundedValue = (this * dotAt).roundToInt()
     return (roundedValue / dotAt) + (roundedValue % dotAt).toFloat() / dotAt
+}
+
+fun <T> CancellableContinuation<T>.resumeSave(value: T) {
+    if (!this.isCompleted) {
+        this.resume(value)
+    }
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+fun <T> CancellableContinuation<T>.resumeSave(value: T, onCancellation: ((cause: Throwable) -> Unit)?) {
+    if (!this.isCompleted) {
+        this.resume(value, onCancellation)
+    }
 }

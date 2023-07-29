@@ -6,17 +6,17 @@ import androidx.core.net.toUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import okio.Path
 import okio.Path.Companion.toPath
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectUtils
+import org.rhasspy.mobile.platformspecific.resumeSave
 import java.io.BufferedInputStream
 import java.io.File
 import java.util.zip.ZipInputStream
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * to open file selection or delete file from local app storage
@@ -29,7 +29,7 @@ actual object FileUtils : KoinComponent {
      * open file selection and copy file to specific folder and return selected file name
      */
     actual suspend fun selectFile(folderType: FolderType): Path? =
-        suspendCoroutine { continuation ->
+        suspendCancellableCoroutine { continuation ->
             CoroutineScope(Dispatchers.IO).launch {
                 ExternalRedirectUtils.openDocument(
                     folder = SystemFolderType.Download.folder,
@@ -43,13 +43,13 @@ actual object FileUtils : KoinComponent {
                         //create folder if it doesn't exist yet
                         File(context.filesDir, folderType.toString()).mkdirs()
                         val result = copyFile(folderType, uri, folderType.toString(), finalFileName)
-                        continuation.resume(result?.toPath())
+                        continuation.resumeSave(result?.toPath())
                     } ?: run {
-                        continuation.resume(null)
+                        continuation.resumeSave(null)
                     }
 
                 } ?: run {
-                    continuation.resume(null)
+                    continuation.resumeSave(null)
                 }
             }
         }
@@ -58,7 +58,7 @@ actual object FileUtils : KoinComponent {
     /**
      * read file from system
      */
-    private suspend fun queryFile(uri: Uri): String? = suspendCoroutine { continuation ->
+    private suspend fun queryFile(uri: Uri): String? = suspendCancellableCoroutine { continuation ->
         context.contentResolver.query(uri, null, null, null, null)
             ?.also { cursor ->
                 if (cursor.moveToFirst()) {
@@ -67,14 +67,14 @@ actual object FileUtils : KoinComponent {
                         //file found
                         val fileName = cursor.getString(index)
                         cursor.close()
-                        continuation.resume(fileName)
-                        return@suspendCoroutine
+                        continuation.resumeSave(fileName)
+                        return@suspendCancellableCoroutine
                     }
                 }
                 //didn't work
                 cursor.close()
-                continuation.resume(null)
-                return@suspendCoroutine
+                continuation.resumeSave(null)
+                return@suspendCancellableCoroutine
             }
     }
 
@@ -97,7 +97,7 @@ actual object FileUtils : KoinComponent {
      * open normal file and copy
      */
     private suspend fun copyNormalFile(uri: Uri, folderName: String, fileName: String): String? =
-        suspendCoroutine { continuation ->
+        suspendCancellableCoroutine { continuation ->
             context.contentResolver.openInputStream(uri)?.also { inputStream ->
                 File(context.filesDir, "$folderName/$fileName").apply {
                     this.outputStream().apply {
@@ -109,9 +109,9 @@ actual object FileUtils : KoinComponent {
                         inputStream.close()
                     }
                 }
-                continuation.resume(fileName)
+                continuation.resumeSave(fileName)
             } ?: run {
-                continuation.resume(null)
+                continuation.resumeSave(null)
             }
         }
 
@@ -122,67 +122,66 @@ actual object FileUtils : KoinComponent {
         uri: Uri,
         folderName: String,
         selectedFileName: String
-    ): String? =
-        suspendCoroutine { continuation ->
-            context.contentResolver.openInputStream(uri)?.also { inputStream ->
+    ): String? = suspendCancellableCoroutine { continuation ->
+        context.contentResolver.openInputStream(uri)?.also { inputStream ->
 
-                when {
-                    selectedFileName.endsWith(".zip") -> {
+            when {
+                selectedFileName.endsWith(".zip") -> {
 
-                        //check if file contains .ppn file
-                        val zipInputStream =
-                            ZipInputStream(BufferedInputStream(inputStream))
+                    //check if file contains .ppn file
+                    val zipInputStream =
+                        ZipInputStream(BufferedInputStream(inputStream))
 
-                        var ze = zipInputStream.nextEntry
+                    var ze = zipInputStream.nextEntry
 
-                        while (ze != null) {
+                    while (ze != null) {
 
-                            if (!ze.isDirectory) {
-                                if (ze.name.endsWith(".ppn")) {
-                                    val fileName =
-                                        renameFileWhileExists(context.filesDir, folderName, ze.name)
+                        if (!ze.isDirectory) {
+                            if (ze.name.endsWith(".ppn")) {
+                                val fileName =
+                                    renameFileWhileExists(context.filesDir, folderName, ze.name)
 
-                                    File(
-                                        context.filesDir,
-                                        "$folderName/$fileName"
-                                    ).outputStream().apply {
-                                        zipInputStream.copyTo(this)
-                                        flush()
-                                        close()
-                                    }
-                                    inputStream.close()
-                                    continuation.resume(fileName)
-                                    return@suspendCoroutine
+                                File(
+                                    context.filesDir,
+                                    "$folderName/$fileName"
+                                ).outputStream().apply {
+                                    zipInputStream.copyTo(this)
+                                    flush()
+                                    close()
                                 }
-                            }
-                            ze = zipInputStream.nextEntry
-                        }
-
-                        inputStream.close()
-                    }
-
-                    selectedFileName.endsWith(".ppn") -> {
-                        //use this file
-                        val fileName =
-                            renameFileWhileExists(context.filesDir, folderName, selectedFileName)
-
-                        File(context.filesDir, "$folderName/$fileName").apply {
-                            this.outputStream().apply {
-                                inputStream.copyTo(this)
-                                this.flush()
-                                this.close()
                                 inputStream.close()
+                                continuation.resumeSave(fileName)
+                                return@suspendCancellableCoroutine
                             }
                         }
-                        continuation.resume(fileName)
-                        return@suspendCoroutine
+                        ze = zipInputStream.nextEntry
                     }
+
+                    inputStream.close()
+                }
+
+                selectedFileName.endsWith(".ppn") -> {
+                    //use this file
+                    val fileName =
+                        renameFileWhileExists(context.filesDir, folderName, selectedFileName)
+
+                    File(context.filesDir, "$folderName/$fileName").apply {
+                        this.outputStream().apply {
+                            inputStream.copyTo(this)
+                            this.flush()
+                            this.close()
+                            inputStream.close()
+                        }
+                    }
+                    continuation.resumeSave(fileName)
+                    return@suspendCancellableCoroutine
                 }
             }
-
-            //when not yet returned, then there is an issue
-            continuation.resume(null)
         }
+
+        //when not yet returned, then there is an issue
+        continuation.resumeSave(null)
+    }
 
     /**
      *  rename file while it already exists

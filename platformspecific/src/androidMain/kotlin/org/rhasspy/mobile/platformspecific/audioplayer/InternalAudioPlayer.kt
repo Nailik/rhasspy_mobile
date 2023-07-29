@@ -41,10 +41,7 @@ class InternalAudioPlayer(
             mediaPlayer.release()
         } catch (exception: Exception) {
             logger.e(exception) { "stop exception" }
-            if (!finishCalled) {
-                finishCalled = true
-                onFinished()
-            }
+            callOnFinish()
         }
     }
 
@@ -105,13 +102,13 @@ class InternalAudioPlayer(
                     onMediaPlayerCompletion()
                 } catch (exception: Exception) {
                     logger.e(exception) { "coroutineScope onMediaPlayerCompletion exception" }
-                    onFinished()
+                    callOnFinish()
                 }
             }
             mediaPlayer.start()
         } catch (exception: Exception) {
             logger.e(exception) { "start exception" }
-            onFinished()
+            callOnFinish()
         }
     }
 
@@ -126,10 +123,7 @@ class InternalAudioPlayer(
         timeoutJob = null
         mediaPlayer.stop()
         mediaPlayer.release()
-        if (!finishCalled) {
-            finishCalled = true
-            onFinished()
-        }
+        callOnFinish()
     }
 
     private fun onMediaPlayerError() {
@@ -143,10 +137,7 @@ class InternalAudioPlayer(
         timeoutJob = null
         mediaPlayer.stop()
         mediaPlayer.release()
-        if (!finishCalled) {
-            finishCalled = true
-            onFinished()
-        }
+        callOnFinish()
     }
 
     @Throws(Resources.NotFoundException::class)
@@ -167,6 +158,13 @@ class InternalAudioPlayer(
         }
         soundFile.writeBytes(data)
         return Uri.fromFile(soundFile)
+    }
+
+    private fun callOnFinish() {
+        if (!finishCalled) {
+            finishCalled = true
+            onFinished()
+        }
     }
 
 }
