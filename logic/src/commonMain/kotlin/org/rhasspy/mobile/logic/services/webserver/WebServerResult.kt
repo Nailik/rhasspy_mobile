@@ -2,7 +2,7 @@ package org.rhasspy.mobile.logic.services.webserver
 
 sealed interface WebServerResult {
 
-    object Ok : WebServerResult
+    data object Ok : WebServerResult
 
     class Accepted(val data: String) : WebServerResult
 

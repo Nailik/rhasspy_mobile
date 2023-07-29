@@ -50,8 +50,15 @@ actual class PorcupineWakeWordClient actual constructor(
     actual fun initialize(): Exception? {
         isStarted = false
         return try {
+            initialized = true
 
             File(context.filesDir, "sounds").mkdirs()
+
+            porcupineClient?.apply {
+                logger.d { "initialize but exists $porcupineClient" }
+                stop()
+                close()
+            }
 
             porcupineClient = if (isUseCustomRecorder) {
                 PorcupineCustomClient(
@@ -76,7 +83,6 @@ actual class PorcupineWakeWordClient actual constructor(
                 )
             }
 
-            initialized = true
             null//no error
         } catch (exception: PorcupineException) {
             initialized = false
@@ -102,10 +108,11 @@ actual class PorcupineWakeWordClient actual constructor(
 
         return porcupineClient?.let {
             return try {
-                it.start()
                 isStarted = true
+                it.start()
                 null
             } catch (exception: Exception) {
+                isStarted = false
                 exception
             }
         } ?: run {
@@ -146,6 +153,7 @@ actual class PorcupineWakeWordClient actual constructor(
      * deletes the porcupine manager
      */
     actual fun close() {
+        initialized = false
         porcupineClient?.stop()
         porcupineClient?.close()
         porcupineClient = null

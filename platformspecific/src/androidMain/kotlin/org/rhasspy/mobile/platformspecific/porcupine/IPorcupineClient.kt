@@ -64,7 +64,6 @@ abstract class IPorcupineClient : KoinComponent {
         file.outputStream().apply {
             val inputStream = context.resources.openRawResource(wakeWordPorcupineLanguage.file.rawResId)
             write(inputStream.readBytes())
-            flush()
             close()
             inputStream.close()
         }
@@ -84,7 +83,6 @@ abstract class IPorcupineClient : KoinComponent {
         file.outputStream().apply {
             val inputStream = context.resources.openRawResource(defaultKeyword.option.file.rawResId)
             write(inputStream.readBytes())
-            flush()
             close()
             inputStream.close()
         }

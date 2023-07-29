@@ -130,7 +130,10 @@ internal class WakeWordService(
     }
 
     override fun startDetection() {
+        logger.d { "startDetection $isDetectionRunning" }
         isDetectionRunning = true
+
+        if (!params.isEnabled) return
 
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
@@ -202,12 +205,14 @@ internal class WakeWordService(
     override fun stopDetection() {
         if (!isDetectionRunning) return
 
-        isDetectionRunning = false
         logger.d { "stopDetection" }
         _isRecording.value = false
         recording?.cancel()
         recording = null
         porcupineWakeWordClient?.stop()
+        porcupineWakeWordClient?.close()
+        porcupineWakeWordClient = null
+        isDetectionRunning = false
     }
 
     private fun onKeywordDetected(hotWord: String) {

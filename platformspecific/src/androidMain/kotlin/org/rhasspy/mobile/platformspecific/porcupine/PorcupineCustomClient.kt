@@ -59,11 +59,11 @@ class PorcupineCustomClient(
         }
     }
 
-    override fun start() {
-        if (isStarted) return
-
-        isStarted = true
-        resampler = Resampler(
+    private fun getResampler(): Resampler {
+        resampler?.let {
+            return it
+        }
+        val resample = Resampler(
             ResamplerConfiguration(
                 quality = ResamplerQuality.BEST,
                 inputChannel = audioRecorderChannelType.toResamplerChannel(),
@@ -72,6 +72,15 @@ class PorcupineCustomClient(
                 outputSampleRate = porcupine.sampleRate
             )
         )
+        this.resampler = resample
+        return resample
+    }
+
+    override fun start() {
+        if (isStarted) return
+        isStarted = true
+
+        getResampler()
         logger.d { "porcupine.getSampleRate() ${porcupine.sampleRate}" }
 
         collection = coroutineScope.launch {
@@ -79,15 +88,15 @@ class PorcupineCustomClient(
             var oldData = ShortArray(0)
             try {
                 audioRecorder.output.collectLatest { data ->
-                    if (resampler == null) {
-                        logger.e("resampler is null")
+                    if (!isStarted) {
                         return@collectLatest
                     }
+
                     try {
                         //    logger.d { "resample ${data.size}" }
                         //resample the data
                         val toResample: ByteArray = data
-                        val resampled = resampler!!.resample(toResample)
+                        val resampled = getResampler().resample(toResample)
                         //convert ByteArray to ShortArray as required by porcupine and add to data
                         var currentRecording = oldData + byteArrayToShortArray(resampled)
 
@@ -106,11 +115,11 @@ class PorcupineCustomClient(
 
                         oldData = currentRecording
                     } catch (e: Exception) {
-                        logger.e("", e)
+                        logger.d("audioRecorder.output.collectLatest", e)
                     }
                 }
             } catch (e: Exception) {
-                logger.e("", e)
+                logger.d("coroutineScope.launch", e)
             }
         }
 
@@ -131,13 +140,16 @@ class PorcupineCustomClient(
     override fun stop() {
         isStarted = false
         resampler?.dispose()
+        resampler = null
         collection?.cancel()
+        collection = null
         audioRecorder.stopRecording()
     }
 
     override fun close() {
         isStarted = false
         resampler?.dispose()
+        resampler = null
         collection?.cancel()
         porcupine.delete()
     }
