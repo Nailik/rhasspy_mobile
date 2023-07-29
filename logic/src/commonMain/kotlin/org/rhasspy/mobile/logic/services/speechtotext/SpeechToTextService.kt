@@ -36,8 +36,8 @@ interface ISpeechToTextService : IService {
 
     val speechToTextAudioFile: Path
 
-    suspend fun endSpeechToText(sessionId: String, fromMqtt: Boolean)
-    suspend fun startSpeechToText(sessionId: String, fromMqtt: Boolean)
+    fun endSpeechToText(sessionId: String, fromMqtt: Boolean)
+    fun startSpeechToText(sessionId: String, fromMqtt: Boolean)
 
 }
 
@@ -100,7 +100,7 @@ internal class SpeechToTextService(
      *
      * fromMqtt is used to check if silence was detected by remote mqtt device
      */
-    override suspend fun endSpeechToText(sessionId: String, fromMqtt: Boolean) {
+    override fun endSpeechToText(sessionId: String, fromMqtt: Boolean) {
         logger.d { "endSpeechToText sessionId: $sessionId fromMqtt $fromMqtt" }
 
         //stop collection
@@ -127,21 +127,28 @@ internal class SpeechToTextService(
         //evaluate result
         when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> {
-                val result = httpClientService.speechToText(speechToTextAudioFile)
-                _serviceState.value = result.toServiceState()
-                val action = when (result) {
-                    is HttpClientResult.Error   -> AsrError(Source.Local)
-                    is HttpClientResult.Success -> AsrTextCaptured(Source.Local, result.data)
+                httpClientService.speechToText(speechToTextAudioFile) { result ->
+                    _serviceState.value = result.toServiceState()
+                    val action = when (result) {
+                        is HttpClientResult.Error   -> AsrError(Source.Local)
+                        is HttpClientResult.Success -> AsrTextCaptured(Source.Local, result.data)
+                    }
+                    serviceMiddleware.action(action)
                 }
-                serviceMiddleware.action(action)
+
             }
 
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value = mqttClientService.stopListening(sessionId)
+            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) {
+                mqttClientService.stopListening(sessionId) {
+                    _serviceState.value = it
+                }
+            }
+
             SpeechToTextOption.Disabled   -> Unit
         }
     }
 
-    override suspend fun startSpeechToText(sessionId: String, fromMqtt: Boolean) {
+    override fun startSpeechToText(sessionId: String, fromMqtt: Boolean) {
         logger.d { "startSpeechToText sessionId: $sessionId fromMqtt $fromMqtt" }
 
         if (collector?.isActive == true) {
@@ -168,11 +175,10 @@ internal class SpeechToTextService(
             }
         }
 
-        _serviceState.value = when (params.speechToTextOption) {
-            SpeechToTextOption.RemoteHTTP -> Success
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.startListening(sessionId) else Success
-
-            SpeechToTextOption.Disabled   -> Disabled
+        when (params.speechToTextOption) {
+            SpeechToTextOption.RemoteHTTP -> _serviceState.value = Success
+            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.startListening(sessionId) { _serviceState.value = it }
+            SpeechToTextOption.Disabled   -> _serviceState.value = Disabled
         }
     }
 
@@ -181,10 +187,10 @@ internal class SpeechToTextService(
             logger.d { "audioFrame dataSize: ${data.size}" }
         }
 
-        _serviceState.value = when (params.speechToTextOption) {
-            SpeechToTextOption.RemoteHTTP -> Success
-            SpeechToTextOption.RemoteMQTT -> mqttClientService.asrAudioFrame(sessionId, data)
-            SpeechToTextOption.Disabled   -> Disabled
+        when (params.speechToTextOption) {
+            SpeechToTextOption.RemoteHTTP -> _serviceState.value = Success
+            SpeechToTextOption.RemoteMQTT -> mqttClientService.asrAudioFrame(sessionId, data) { _serviceState.value = it }
+            SpeechToTextOption.Disabled   -> _serviceState.value = Disabled
         }
 
         scope.launch {

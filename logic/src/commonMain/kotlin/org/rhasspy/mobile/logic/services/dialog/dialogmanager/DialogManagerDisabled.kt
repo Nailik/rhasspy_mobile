@@ -16,7 +16,7 @@ class DialogManagerDisabled(
     private val intentHandlingService: IIntentHandlingService,
 ) : IDialogManager {
 
-    override suspend fun onAction(action: DialogServiceMiddlewareAction) {
+    override fun onAction(action: DialogServiceMiddlewareAction) {
         when (action) {
             is AsrError                -> Unit
             is AsrTextCaptured         -> intentRecognitionService.recognizeIntent((action.source as? Mqtt?)?.sessionId ?: "", action.text ?: "")

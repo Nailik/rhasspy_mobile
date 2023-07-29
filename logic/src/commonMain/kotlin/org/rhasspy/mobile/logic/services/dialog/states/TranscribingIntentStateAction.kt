@@ -1,16 +1,14 @@
 package org.rhasspy.mobile.logic.services.dialog.states
 
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.EndSession
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.TranscribingIntentState
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.services.indication.IIndicationService
 
 interface ITranscribingIntentStateAction {
 
-    suspend fun onAction(
+    fun onAction(
         action: DialogServiceMiddlewareAction,
         state: TranscribingIntentState
     )
@@ -23,7 +21,7 @@ internal class TranscribingIntentStateAction(
     private val stateTransition: IStateTransition
 ) : ITranscribingIntentStateAction {
 
-    override suspend fun onAction(
+    override fun onAction(
         action: DialogServiceMiddlewareAction,
         state: TranscribingIntentState
     ) {
@@ -37,7 +35,7 @@ internal class TranscribingIntentStateAction(
 
     }
 
-    private suspend fun onAsrErrorAction(
+    private fun onAsrErrorAction(
         state: TranscribingIntentState,
         action: AsrError
     ) {
@@ -52,7 +50,7 @@ internal class TranscribingIntentStateAction(
         )
     }
 
-    private suspend fun onAsrTextCapturedAction(
+    private fun onAsrTextCapturedAction(
         state: TranscribingIntentState,
         action: AsrTextCaptured
     ) {
@@ -67,7 +65,7 @@ internal class TranscribingIntentStateAction(
         )
     }
 
-    private suspend fun onEndSessionAction(
+    private fun onEndSessionAction(
         state: TranscribingIntentState,
         action: EndSession
     ) {

@@ -22,7 +22,7 @@ internal class DialogManagerLocal(
     private val recognizingIntentStateAction: IRecognizingIntentStateAction,
 ) : IDialogManager, KoinComponent {
 
-    override suspend fun onAction(action: DialogServiceMiddlewareAction) {
+    override fun onAction(action: DialogServiceMiddlewareAction) {
         with(dialogManagerService.currentDialogState.value) {
             if (checkIfActionIsAllowed(this, action)) {
                 when (this) {

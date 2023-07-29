@@ -10,7 +10,7 @@ import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 
 interface IAudioPlayingStateAction {
 
-    suspend fun onAction(
+    fun onAction(
         action: DialogServiceMiddlewareAction,
         state: PlayingAudioState
     )
@@ -23,7 +23,7 @@ internal class AudioPlayingStateAction(
     private val stateTransition: IStateTransition
 ) : IAudioPlayingStateAction {
 
-    override suspend fun onAction(
+    override fun onAction(
         action: DialogServiceMiddlewareAction,
         state: PlayingAudioState
     ) {
@@ -36,7 +36,7 @@ internal class AudioPlayingStateAction(
 
     }
 
-    private suspend fun onPlayFinishedAction(
+    private fun onPlayFinishedAction(
         action: PlayFinished,
         state: PlayingAudioState
     ) {
@@ -48,7 +48,7 @@ internal class AudioPlayingStateAction(
         )
     }
 
-    private suspend fun onStopAudioPlayingAction(
+    private fun onStopAudioPlayingAction(
         action: StopAudioPlaying,
         state: PlayingAudioState
     ) {

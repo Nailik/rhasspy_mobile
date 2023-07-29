@@ -4,7 +4,7 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogService
 
 interface IDialogManager {
 
-    suspend fun onAction(action: DialogServiceMiddlewareAction)
+    fun onAction(action: DialogServiceMiddlewareAction)
 
 }
 

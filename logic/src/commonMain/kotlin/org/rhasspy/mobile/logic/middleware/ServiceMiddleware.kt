@@ -97,7 +97,7 @@ internal class ServiceMiddleware(
         }
     }
 
-    private suspend fun playStopRecordingAction() {
+    private fun playStopRecordingAction() {
         if (_isPlayingRecording.value) {
             _isPlayingRecording.value = false
             action(PlayFinished(Local))
@@ -105,11 +105,13 @@ internal class ServiceMiddleware(
             if (dialogManagerService.currentDialogState.value is IdleState) {
                 _isPlayingRecording.value = true
                 //suspend coroutine
-                localAudioService.playAudio(AudioSource.File(speechToTextService.speechToTextAudioFile))
-                //resumes when play finished
-                if (_isPlayingRecording.value) {
-                    action(PlayStopRecording)
+                localAudioService.playAudio(AudioSource.File(speechToTextService.speechToTextAudioFile)) {
+                    //resumes when play finished
+                    if (_isPlayingRecording.value) {
+                        action(PlayStopRecording)
+                    }
                 }
+
             }
         }
     }

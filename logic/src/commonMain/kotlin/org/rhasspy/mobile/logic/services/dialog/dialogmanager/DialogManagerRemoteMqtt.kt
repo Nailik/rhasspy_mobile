@@ -17,7 +17,7 @@ class DialogManagerRemoteMqtt(
     private val recognizingIntentStateAction: IRecognizingIntentStateAction,
 ) : IDialogManager {
 
-    override suspend fun onAction(action: DialogServiceMiddlewareAction) {
+    override fun onAction(action: DialogServiceMiddlewareAction) {
         with(dialogManagerService.currentDialogState.value) {
             if (checkIfActionIsAllowed(this, action)) {
                 when (this) {

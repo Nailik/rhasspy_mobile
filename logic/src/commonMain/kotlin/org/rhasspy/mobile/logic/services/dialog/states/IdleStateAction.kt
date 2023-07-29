@@ -14,7 +14,7 @@ import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.Data
 
 interface IIdleStateAction {
 
-    suspend fun onAction(action: DialogServiceMiddlewareAction)
+    fun onAction(action: DialogServiceMiddlewareAction)
 
 }
 
@@ -25,7 +25,7 @@ internal class IdleStateAction(
     private val indicationService: IIndicationService,
 ) : IIdleStateAction {
 
-    override suspend fun onAction(action: DialogServiceMiddlewareAction) {
+    override fun onAction(action: DialogServiceMiddlewareAction) {
 
 
         val newSessionId = when (action.source) {
@@ -76,7 +76,6 @@ internal class IdleStateAction(
 
             is PlayAudio        -> {
                 wakeWordService.stopDetection()
-
                 onPlayAudio(action)
             }
 
@@ -85,43 +84,43 @@ internal class IdleStateAction(
 
     }
 
-    private suspend fun onWakeWordDetectedAction(
+    private fun onWakeWordDetectedAction(
         sessionData: SessionData,
         action: WakeWordDetected
     ) {
         dialogManagerService.informMqtt(sessionData, action)
         dialogManagerService.informMqtt(sessionData, SessionStarted(Local))
 
-        indicationService.onSessionStarted()
-
-        dialogManagerService.transitionTo(
-            action = action,
-            state = stateTransition.transitionToRecordingState(
-                sessionData = sessionData,
-                isSourceMqtt = action.source is Source.Mqtt
+        indicationService.onSessionStarted {
+            dialogManagerService.transitionTo(
+                action = action,
+                state = stateTransition.transitionToRecordingState(
+                    sessionData = sessionData,
+                    isSourceMqtt = action.source is Source.Mqtt
+                )
             )
-        )
+        }
     }
 
-    private suspend fun onStartSessionAction(
+    private fun onStartSessionAction(
         sessionData: SessionData,
         action: StartSession
     ) {
         dialogManagerService.informMqtt(sessionData, action)
 
-        indicationService.onSessionStarted()
-
-        dialogManagerService.transitionTo(
-            action = action,
-            state = stateTransition.transitionToRecordingState(
-                sessionData = sessionData,
-                isSourceMqtt = action.source is Source.Mqtt
+        indicationService.onSessionStarted {
+            dialogManagerService.transitionTo(
+                action = action,
+                state = stateTransition.transitionToRecordingState(
+                    sessionData = sessionData,
+                    isSourceMqtt = action.source is Source.Mqtt
+                )
             )
-        )
+        }
 
     }
 
-    private suspend fun onStartListeningAction(
+    private fun onStartListeningAction(
         sessionData: SessionData,
         action: StartListening
     ) {
@@ -137,7 +136,7 @@ internal class IdleStateAction(
         )
     }
 
-    private suspend fun onPlayAudio(
+    private fun onPlayAudio(
         action: PlayAudio
     ) {
         dialogManagerService.informMqtt(null, action)

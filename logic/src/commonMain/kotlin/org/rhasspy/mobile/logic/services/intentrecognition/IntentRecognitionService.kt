@@ -24,7 +24,7 @@ interface IIntentRecognitionService : IService {
 
     override val serviceState: StateFlow<ServiceState>
 
-    suspend fun recognizeIntent(sessionId: String, text: String)
+    fun recognizeIntent(sessionId: String, text: String)
 
 }
 
@@ -67,25 +67,27 @@ internal class IntentRecognitionService(
      * - calls default site to recognize intent
      * - later eventually intentRecognized or intentNotRecognized will be called with received data
      */
-    override suspend fun recognizeIntent(sessionId: String, text: String) {
+    override fun recognizeIntent(sessionId: String, text: String) {
         logger.d { "recognizeIntent sessionId: $sessionId text: $text" }
         when (params.intentRecognitionOption) {
             IntentRecognitionOption.RemoteHTTP -> {
-                val result = httpClientService.recognizeIntent(text)
-                _serviceState.value = result.toServiceState()
-                val action = when (result) {
-                    is HttpClientResult.Error   -> IntentRecognitionError(Source.Local)
-                    is HttpClientResult.Success -> IntentRecognitionResult(
-                        source = Source.Local,
-                        intentName = readIntentNameFromJson(result.data),
-                        intent = result.data
-                    )
+                httpClientService.recognizeIntent(text) { result ->
+                    _serviceState.value = result.toServiceState()
+                    val action = when (result) {
+                        is HttpClientResult.Error   -> IntentRecognitionError(Source.Local)
+                        is HttpClientResult.Success -> IntentRecognitionResult(
+                            source = Source.Local,
+                            intentName = readIntentNameFromJson(result.data),
+                            intent = result.data
+                        )
+                    }
+                    serviceMiddleware.action(action)
                 }
-                serviceMiddleware.action(action)
             }
 
-            IntentRecognitionOption.RemoteMQTT -> _serviceState.value =
-                mqttClientService.recognizeIntent(sessionId, text)
+            IntentRecognitionOption.RemoteMQTT -> mqttClientService.recognizeIntent(sessionId, text) {
+                _serviceState.value = it
+            }
 
             IntentRecognitionOption.Disabled   -> serviceMiddleware.action(
                 IntentRecognitionResult(

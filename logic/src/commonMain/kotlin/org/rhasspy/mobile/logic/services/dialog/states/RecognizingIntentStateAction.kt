@@ -9,7 +9,7 @@ import org.rhasspy.mobile.logic.services.intenthandling.IIntentHandlingService
 
 interface IRecognizingIntentStateAction {
 
-    suspend fun onAction(
+    fun onAction(
         action: DialogServiceMiddlewareAction,
         state: RecognizingIntentState
     )
@@ -23,7 +23,7 @@ internal class RecognizingIntentStateAction(
     private val intentHandlingService: IIntentHandlingService,
 ) : IRecognizingIntentStateAction {
 
-    override suspend fun onAction(
+    override fun onAction(
         action: DialogServiceMiddlewareAction,
         state: RecognizingIntentState
     ) {
@@ -37,7 +37,7 @@ internal class RecognizingIntentStateAction(
 
     }
 
-    private suspend fun onEndSessionAction(
+    private fun onEndSessionAction(
         action: EndSession,
         state: RecognizingIntentState
     ) {
@@ -50,7 +50,7 @@ internal class RecognizingIntentStateAction(
         )
     }
 
-    private suspend fun onIntentRecognitionErrorAction(
+    private fun onIntentRecognitionErrorAction(
         action: IntentRecognitionError,
         state: RecognizingIntentState
     ) {
@@ -64,7 +64,7 @@ internal class RecognizingIntentStateAction(
         )
     }
 
-    private suspend fun onIntentRecognitionResultAction(
+    private fun onIntentRecognitionResultAction(
         action: IntentRecognitionResult,
         state: RecognizingIntentState
     ) {

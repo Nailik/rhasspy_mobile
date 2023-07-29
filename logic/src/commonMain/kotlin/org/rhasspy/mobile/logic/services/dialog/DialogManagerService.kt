@@ -37,7 +37,7 @@ interface IDialogManagerService : IService {
 
     fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState)
     suspend fun onAction(action: DialogServiceMiddlewareAction)
-    suspend fun informMqtt(sessionData: SessionData?, action: DialogServiceMiddlewareAction)
+    fun informMqtt(sessionData: SessionData?, action: DialogServiceMiddlewareAction)
 }
 
 /**
@@ -90,7 +90,7 @@ internal class DialogManagerService(
         }
     }
 
-    override suspend fun informMqtt(
+    override fun informMqtt(
         sessionData: SessionData?,
         action: DialogServiceMiddlewareAction
     ) {

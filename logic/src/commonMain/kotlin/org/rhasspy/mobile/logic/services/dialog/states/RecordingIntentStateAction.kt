@@ -10,7 +10,7 @@ import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
 
 interface IRecordingIntentStateAction {
 
-    suspend fun onAction(
+    fun onAction(
         action: DialogServiceMiddlewareAction,
         state: RecordingIntentState
     )
@@ -24,7 +24,7 @@ internal class RecordingIntentStateAction(
     private val speechToTextService: ISpeechToTextService
 ) : IRecordingIntentStateAction {
 
-    override suspend fun onAction(
+    override fun onAction(
         action: DialogServiceMiddlewareAction,
         state: RecordingIntentState,
     ) {
@@ -40,7 +40,7 @@ internal class RecordingIntentStateAction(
 
     }
 
-    private suspend fun onAsrErrorAction(
+    private fun onAsrErrorAction(
         action: AsrError,
         state: RecordingIntentState
     ) {
@@ -59,7 +59,7 @@ internal class RecordingIntentStateAction(
         )
     }
 
-    private suspend fun onAsrTextCapturedAction(
+    private fun onAsrTextCapturedAction(
         action: AsrTextCaptured,
         state: RecordingIntentState
     ) {
@@ -78,7 +78,7 @@ internal class RecordingIntentStateAction(
         )
     }
 
-    private suspend fun onEndSessionAction(
+    private fun onEndSessionAction(
         action: EndSession,
         state: RecordingIntentState
     ) {
@@ -96,7 +96,7 @@ internal class RecordingIntentStateAction(
         )
     }
 
-    private suspend fun onSilenceDetectedAction(
+    private fun onSilenceDetectedAction(
         action: SilenceDetected,
         state: RecordingIntentState
     ) {
@@ -116,7 +116,7 @@ internal class RecordingIntentStateAction(
         )
     }
 
-    private suspend fun onStopListeningAction(
+    private fun onStopListeningAction(
         action: StopListening,
         state: RecordingIntentState
     ) {

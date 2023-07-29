@@ -26,7 +26,7 @@ interface ITextToSpeechService : IService {
 
     override val serviceState: StateFlow<ServiceState>
 
-    suspend fun textToSpeech(text: String, volume: Float?, siteId: String, sessionId: String?)
+    fun textToSpeech(text: String, volume: Float?, siteId: String, sessionId: String?)
 
 }
 
@@ -77,27 +77,28 @@ internal class TextToSpeechService(
      * hermes/tts/sayFinished (JSON)
      * is called when playing audio is finished
      */
-    override suspend fun textToSpeech(text: String, volume: Float?, siteId: String, sessionId: String?) {
+    override fun textToSpeech(text: String, volume: Float?, siteId: String, sessionId: String?) {
         if (siteId != params.siteId) return
 
         logger.d { "textToSpeech sessionId: $sessionId text: $text" }
         when (params.textToSpeechOption) {
             TextToSpeechOption.RemoteHTTP -> {
-                val result = httpClientService.textToSpeech(text, volume, null)
-                _serviceState.value = when (result) {
-                    is HttpClientResult.Error   -> ServiceState.Exception(result.exception)
-                    is HttpClientResult.Success -> Success
+                httpClientService.textToSpeech(text, volume, null) { result ->
+                    _serviceState.value = when (result) {
+                        is HttpClientResult.Error   -> ServiceState.Exception(result.exception)
+                        is HttpClientResult.Success -> Success
+                    }
+                    val action = when (result) {
+                        is HttpClientResult.Error   -> AsrError(Source.Local)
+                        is HttpClientResult.Success -> PlayAudio(Source.Local, result.data)
+                    }
+                    serviceMiddleware.action(action)
                 }
-                val action = when (result) {
-                    is HttpClientResult.Error   -> AsrError(Source.Local)
-                    is HttpClientResult.Success -> PlayAudio(Source.Local, result.data)
-                }
-                serviceMiddleware.action(action)
             }
 
             TextToSpeechOption.RemoteMQTT -> {
                 if (sessionId == mqttSessionId) return
-                _serviceState.value = mqttClientService.say(mqttSessionId, text, siteId)
+                mqttClientService.say(mqttSessionId, text, siteId) { _serviceState.value = it }
             }
 
             TextToSpeechOption.Disabled   -> _serviceState.value = Disabled

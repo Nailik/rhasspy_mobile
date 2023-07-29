@@ -1,8 +1,11 @@
 package org.rhasspy.mobile.logic.services.localaudio
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Notification
@@ -18,7 +21,6 @@ import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.resumeSave
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
 
@@ -28,7 +30,7 @@ interface ILocalAudioService : IService {
 
     val isPlayingState: StateFlow<Boolean>
 
-    suspend fun playAudio(audioSource: AudioSource): ServiceState
+    fun playAudio(audioSource: AudioSource, onFinished: (result: ServiceState) -> Unit)
     fun playWakeSoundWithoutParameter()
     fun playWakeSound(onFinished: () -> Unit)
     fun playRecordedSound()
@@ -65,23 +67,22 @@ internal class LocalAudioService(
         }
     }
 
-    override suspend fun playAudio(audioSource: AudioSource): ServiceState =
-        suspendCancellableCoroutine { continuation ->
-            if (AppSetting.isAudioOutputEnabled.value) {
-                logger.d { "playAudio $audioSource" }
-                playAudio(
-                    audioSource = audioSource,
-                    volume = AppSetting.volume.data,
-                    audioOutputOption = params.audioOutputOption,
-                    onFinished = {
-                        logger.d { "onFinished" }
-                        continuation.resumeSave(ServiceState.Success)
-                    },
-                )
-            } else {
-                continuation.resumeSave(ServiceState.Success)
-            }
+    override fun playAudio(audioSource: AudioSource, onFinished: (result: ServiceState) -> Unit) {
+        if (AppSetting.isAudioOutputEnabled.value) {
+            logger.d { "playAudio $audioSource" }
+            playAudio(
+                audioSource = audioSource,
+                volume = AppSetting.volume.data,
+                audioOutputOption = params.audioOutputOption,
+                onFinished = {
+                    logger.d { "onFinished" }
+                    onFinished(ServiceState.Success)
+                },
+            )
+        } else {
+            onFinished(ServiceState.Success)
         }
+    }
 
     override fun playWakeSoundWithoutParameter() = playWakeSound {}
 

@@ -25,18 +25,15 @@ import kotlin.time.toDuration
 
 interface IStateTransition {
 
-    suspend fun transitionToIdleState(sessionData: SessionData?): DialogManagerState
+    fun transitionToIdleState(sessionData: SessionData?): DialogManagerState
 
-    suspend fun transitionToRecordingState(
-        sessionData: SessionData,
-        isSourceMqtt: Boolean
-    ): DialogManagerState
+    fun transitionToRecordingState(sessionData: SessionData, isSourceMqtt: Boolean): DialogManagerState
 
-    suspend fun transitionToTranscribingIntentState(sessionData: SessionData): DialogManagerState
+    fun transitionToTranscribingIntentState(sessionData: SessionData): DialogManagerState
 
-    suspend fun transitionToRecognizingIntentState(sessionData: SessionData): DialogManagerState
+    fun transitionToRecognizingIntentState(sessionData: SessionData): DialogManagerState
 
-    suspend fun transitionToAudioPlayingState(audioSource: AudioSource): DialogManagerState
+    fun transitionToAudioPlayingState(audioSource: AudioSource): DialogManagerState
 
 }
 
@@ -58,7 +55,7 @@ internal class StateTransition(
 
     private var coroutineScope = CoroutineScope(dispatcherProvider.IO)
 
-    override suspend fun transitionToIdleState(sessionData: SessionData?): DialogManagerState {
+    override fun transitionToIdleState(sessionData: SessionData?): DialogManagerState {
 
         audioFocusService.abandon(AudioFocusRequestReason.Dialog)
         indicationService.onIdle()
@@ -73,7 +70,7 @@ internal class StateTransition(
         return DialogManagerState.IdleState(sessionData)
     }
 
-    override suspend fun transitionToRecordingState(
+    override fun transitionToRecordingState(
         sessionData: SessionData,
         isSourceMqtt: Boolean
     ): DialogManagerState {
@@ -92,7 +89,7 @@ internal class StateTransition(
         )
     }
 
-    override suspend fun transitionToTranscribingIntentState(sessionData: SessionData): DialogManagerState {
+    override fun transitionToTranscribingIntentState(sessionData: SessionData): DialogManagerState {
         indicationService.onThinking()
 
         if (sessionData.sendAudioCaptured) {
@@ -111,7 +108,7 @@ internal class StateTransition(
         )
     }
 
-    override suspend fun transitionToRecognizingIntentState(sessionData: SessionData): DialogManagerState {
+    override fun transitionToRecognizingIntentState(sessionData: SessionData): DialogManagerState {
         indicationService.onThinking()
 
         intentRecognitionService.recognizeIntent(
@@ -128,7 +125,7 @@ internal class StateTransition(
         )
     }
 
-    override suspend fun transitionToAudioPlayingState(audioSource: AudioSource): DialogManagerState {
+    override fun transitionToAudioPlayingState(audioSource: AudioSource): DialogManagerState {
         indicationService.onPlayAudio()
         audioPlayingService.stopPlayAudio()
         audioPlayingService.playAudio(audioSource)
