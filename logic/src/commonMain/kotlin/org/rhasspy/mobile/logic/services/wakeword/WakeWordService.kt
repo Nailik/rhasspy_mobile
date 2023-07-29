@@ -115,7 +115,7 @@ internal class WakeWordService(
     }
 
     private fun stop() {
-        logger.d { "onClose" }
+        logger.d { "stop" }
         recording?.cancel()
         recording = null
         porcupineWakeWordClient?.close()
@@ -137,6 +137,8 @@ internal class WakeWordService(
 
                 if (porcupineWakeWordClient == null) {
                     initialize()
+                } else {
+                    checkPorcupineInitialized()
                 }
 
                 porcupineWakeWordClient?.also {
@@ -155,6 +157,8 @@ internal class WakeWordService(
 
                 if (udpConnection == null) {
                     initialize()
+                } else {
+                    checkUdpConnection()
                 }
 
                 _isRecording.value = true
@@ -196,6 +200,8 @@ internal class WakeWordService(
     }
 
     override fun stopDetection() {
+        if (!isDetectionRunning) return
+
         isDetectionRunning = false
         logger.d { "stopDetection" }
         _isRecording.value = false
