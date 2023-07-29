@@ -26,7 +26,7 @@ interface ITextToSpeechService : IService {
 
     override val serviceState: StateFlow<ServiceState>
 
-    suspend fun textToSpeech(sessionId: String, text: String)
+    suspend fun textToSpeech(text: String, volume: Float?, siteId: String, sessionId: String?)
 
 }
 
@@ -52,6 +52,7 @@ internal class TextToSpeechService(
     override val serviceState = _serviceState.readOnly
 
     private val scope = CoroutineScope(Dispatchers.IO)
+    private val mqttSessionId = "ITextToSpeechService"
 
     init {
         scope.launch {
@@ -76,11 +77,13 @@ internal class TextToSpeechService(
      * hermes/tts/sayFinished (JSON)
      * is called when playing audio is finished
      */
-    override suspend fun textToSpeech(sessionId: String, text: String) {
+    override suspend fun textToSpeech(text: String, volume: Float?, siteId: String, sessionId: String?) {
+        if (siteId != params.siteId) return
+
         logger.d { "textToSpeech sessionId: $sessionId text: $text" }
         when (params.textToSpeechOption) {
             TextToSpeechOption.RemoteHTTP -> {
-                val result = httpClientService.textToSpeech(text)
+                val result = httpClientService.textToSpeech(text, volume, null)
                 _serviceState.value = when (result) {
                     is HttpClientResult.Error   -> ServiceState.Exception(result.exception)
                     is HttpClientResult.Success -> Success
@@ -92,7 +95,11 @@ internal class TextToSpeechService(
                 serviceMiddleware.action(action)
             }
 
-            TextToSpeechOption.RemoteMQTT -> _serviceState.value = mqttClientService.say(sessionId, text)
+            TextToSpeechOption.RemoteMQTT -> {
+                if (sessionId == mqttSessionId) return
+                _serviceState.value = mqttClientService.say(mqttSessionId, text, siteId)
+            }
+
             TextToSpeechOption.Disabled   -> _serviceState.value = Disabled
         }
     }

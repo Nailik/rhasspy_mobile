@@ -13,13 +13,9 @@ import io.ktor.client.utils.buildHeaders
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMessageBuilder
 import io.ktor.http.contentType
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.httpclient.HttpClientPath
@@ -31,9 +27,7 @@ import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
-import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.Data
-import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.File
-import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.Resource
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.*
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.ktor.configureEngine
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -44,7 +38,7 @@ interface IHttpClientService : IService {
 
     suspend fun speechToText(audioFilePath: Path): HttpClientResult<String>
     suspend fun recognizeIntent(text: String): HttpClientResult<String>
-    suspend fun textToSpeech(text: String): HttpClientResult<ByteArray>
+    suspend fun textToSpeech(text: String, volume: Float?, siteId: String?): HttpClientResult<ByteArray>
     suspend fun playWav(audioSource: AudioSource): HttpClientResult<String>
     suspend fun intentHandling(intent: String): HttpClientResult<String>
     suspend fun homeAssistantEvent(json: String, intentName: String): HttpClientResult<String>
@@ -212,9 +206,9 @@ internal class HttpClientService(
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    override suspend fun textToSpeech(text: String): HttpClientResult<ByteArray> {
+    override suspend fun textToSpeech(text: String, volume: Float?, siteId: String?): HttpClientResult<ByteArray> {
         logger.d { "textToSpeech text: $text" }
-        return post(textToSpeechUrl) {
+        return post("$textToSpeechUrl${volume?.let { "?volume=$it" } ?: ""}${siteId?.let { "?siteId=$it" } ?: ""}") {
             setBody(text)
         }
     }
@@ -327,7 +321,6 @@ internal class HttpClientService(
 
             }
         } ?: run {
-
             logger.a { "post client not initialized" }
             _serviceState.value = ServiceState.Exception()
             HttpClientResult.Error(Exception())

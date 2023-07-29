@@ -366,7 +366,14 @@ internal class WebServerService(
      * just like using say in the ui start screen but remote
      */
     private suspend fun say(call: ApplicationCall): WebServerResult {
-        serviceMiddleware.action(SayText(call.receive()))
+        serviceMiddleware.action(
+            SayText(
+                text = call.receive(),
+                volume = null,
+                siteId = params.siteId,
+                sessionId = null
+            )
+        )
         return Ok
     }
 

@@ -74,7 +74,14 @@ internal class ServiceMiddleware(
                 is PlayStopRecording                  -> playStopRecordingAction()
                 is WakeWordError                      -> mqttService.wakeWordError(serviceMiddlewareAction.description)
                 is AppSettingsServiceMiddlewareAction -> appSettingsAction(serviceMiddlewareAction)
-                is SayText                            -> textToSpeechService.textToSpeech("", serviceMiddlewareAction.text)
+                is SayText                            ->
+                    textToSpeechService.textToSpeech(
+                        text = serviceMiddlewareAction.text,
+                        volume = serviceMiddlewareAction.volume,
+                        siteId = serviceMiddlewareAction.siteId,
+                        sessionId = serviceMiddlewareAction.sessionId
+                    )
+
                 is DialogServiceMiddlewareAction      -> dialogManagerService.onAction(serviceMiddlewareAction)
                 is Mqtt                               -> mqttService.onMessageReceived(serviceMiddlewareAction.topic, serviceMiddlewareAction.payload)
             }

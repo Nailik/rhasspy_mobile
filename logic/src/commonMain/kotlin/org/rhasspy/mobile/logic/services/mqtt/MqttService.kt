@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.logic.services.mqtt
 
 import com.benasher44.uuid.uuid4
-import com.benasher44.uuid.variant
 import io.ktor.utils.io.core.toByteArray
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +14,6 @@ import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.SayText
@@ -30,6 +28,7 @@ import org.rhasspy.mobile.platformspecific.mqtt.*
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
+import kotlin.random.Random
 
 interface IMqttService : IService {
 
@@ -51,7 +50,7 @@ interface IMqttService : IService {
     suspend fun asrError(sessionId: String): ServiceState
     suspend fun audioCaptured(sessionId: String, audioFilePath: Path): ServiceState
     suspend fun recognizeIntent(sessionId: String, text: String): ServiceState
-    suspend fun say(sessionId: String, text: String): ServiceState
+    suspend fun say(sessionId: String, text: String, siteId: String): ServiceState
     suspend fun playAudioRemote(audioSource: AudioSource): ServiceState
     suspend fun playFinished(): ServiceState
 
@@ -78,7 +77,7 @@ internal class MqttService(
 
     private var client: MqttClient? = null
     private var retryJob: Job? = null
-    private val id = uuid4().variant
+    private val id = Random.nextInt()
 
     private val _isConnected = MutableStateFlow(false)
     override val isConnected = _isConnected.readOnly
@@ -824,11 +823,11 @@ internal class MqttService(
      * Response(s)
      * hermes/tts/sayFinished (JSON)
      */
-    override suspend fun say(sessionId: String, text: String) =
+    override suspend fun say(sessionId: String, text: String, siteId: String) =
         publishMessage(
             MqttTopicsPublish.Say,
             createMqttMessage {
-                put(MqttParams.SiteId, params.siteId)
+                put(MqttParams.SiteId, siteId)
                 put(MqttParams.SessionId, sessionId)
                 put(MqttParams.Text, JsonPrimitive(text))
             }
@@ -851,7 +850,14 @@ internal class MqttService(
      */
     private fun say(jsonObject: JsonObject) =
         jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content?.let {
-            serviceMiddleware.action(SayText(it))
+            serviceMiddleware.action(
+                SayText(
+                    text = it,
+                    volume = jsonObject[MqttParams.Volume.value]?.jsonPrimitive?.floatOrNull,
+                    siteId = jsonObject.getSiteId() ?: "default",
+                    sessionId = jsonObject.getSessionId()
+                )
+            )
         }
 
 

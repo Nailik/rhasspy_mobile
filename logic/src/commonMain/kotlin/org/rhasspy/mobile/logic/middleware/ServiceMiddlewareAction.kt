@@ -10,7 +10,12 @@ sealed class ServiceMiddlewareAction {
         }
     }
 
-    class SayText(val text: String) : ServiceMiddlewareAction() {
+    class SayText(
+        val text: String,
+        val volume: Float?,
+        val siteId: String,
+        val sessionId: String?
+    ) : ServiceMiddlewareAction() {
         override fun toString(): String {
             return "${super.toString()} text: $text"
         }

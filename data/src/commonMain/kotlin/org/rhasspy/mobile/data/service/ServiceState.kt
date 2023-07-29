@@ -2,6 +2,7 @@ package org.rhasspy.mobile.data.service
 
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 
 @Stable
@@ -23,12 +24,12 @@ sealed class ServiceState {
 
     fun getText(): Any {
         return when (this) {
-            Disabled     -> MR.strings.disabled
+            Disabled     -> MR.strings.disabled.stable
             is Error     -> this.information
-            is Exception -> this.exception?.message ?: MR.strings.error
-            Loading      -> MR.strings.loading
-            Pending      -> MR.strings.pending
-            Success      -> MR.strings.success
+            is Exception -> this.exception?.message ?: MR.strings.error.stable
+            Loading      -> MR.strings.loading.stable
+            Pending      -> MR.strings.pending.stable
+            Success      -> MR.strings.success.stable
         }
     }
 
