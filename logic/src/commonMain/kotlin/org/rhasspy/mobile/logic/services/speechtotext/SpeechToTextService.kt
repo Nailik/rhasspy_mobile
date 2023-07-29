@@ -169,10 +169,8 @@ internal class SpeechToTextService(
 
         //start collection
         collector = scope.launch {
-            logger.e { "  localAudioService.isPlayingState.first { false }" }
             //await until audio playing is finished
             localAudioService.isPlayingState.first { !it }
-            logger.e { "  localAudioService.isPlayingState.first { false } DONE" }
 
             if (params.speechToTextOption != SpeechToTextOption.Disabled) {
                 recordingService.toggleSilenceDetectionEnabled(true)
