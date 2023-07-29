@@ -16,8 +16,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioOutputToggle
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.SayText
 import org.rhasspy.mobile.logic.middleware.Source
@@ -542,7 +541,7 @@ internal class MqttService(
      * reason: string = "" - Reason for toggle on
      */
     private fun hotWordToggleOn() =
-        serviceMiddleware.action(AppSettingsServiceMiddlewareAction.HotWordToggle(true))
+        serviceMiddleware.action(HotWordToggle(true))
 
     /**
      * hermes/hotword/toggleOff (JSON)
@@ -551,7 +550,7 @@ internal class MqttService(
      * reason: string = "" - Reason for toggle off
      */
     private fun hotWordToggleOff() =
-        serviceMiddleware.action(AppSettingsServiceMiddlewareAction.HotWordToggle(false))
+        serviceMiddleware.action(HotWordToggle(false))
 
 
     /**
@@ -801,14 +800,14 @@ internal class MqttService(
      * Enable intent handling
      */
     private fun intentHandlingToggleOn() =
-        serviceMiddleware.action(AppSettingsServiceMiddlewareAction.IntentHandlingToggle(true))
+        serviceMiddleware.action(IntentHandlingToggle(true))
 
     /**
      * hermes/handle/toggleOff
      * Disable intent handling
      */
     private fun intentHandlingToggleOff() =
-        serviceMiddleware.action(AppSettingsServiceMiddlewareAction.IntentHandlingToggle(false))
+        serviceMiddleware.action(IntentHandlingToggle(false))
 
     /**
      * hermes/tts/say (JSON)

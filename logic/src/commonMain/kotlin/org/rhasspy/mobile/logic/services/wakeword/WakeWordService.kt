@@ -72,10 +72,10 @@ internal class WakeWordService(
     init {
         scope.launch {
             paramsFlow.collect {
-                if (isDetectionRunning) {
+                if (isDetectionRunning && params.isEnabled) {
                     startDetection()
                 } else {
-                    stopDetection()
+                    stop()
                 }
             }
         }
@@ -96,9 +96,14 @@ internal class WakeWordService(
     }
 
     override fun stopDetection() {
+        logger.d { "stopDetection $isDetectionRunning" }
         if (!isDetectionRunning) return
+        stop()
+        isDetectionRunning = false
+    }
 
-        logger.d { "stopDetection" }
+    private fun stop() {
+        logger.d { "stop" }
         _isRecording.value = false
         recording?.cancel()
         recording = null
@@ -108,7 +113,6 @@ internal class WakeWordService(
             logger.e(e) { "porcupineWakeWordClient stop" }
         }
         porcupineWakeWordClient = null
-        isDetectionRunning = false
     }
 
 

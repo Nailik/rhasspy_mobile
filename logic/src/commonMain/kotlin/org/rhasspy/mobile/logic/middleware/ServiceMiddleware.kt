@@ -20,7 +20,6 @@ import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.settings.AppSetting
 
 interface IServiceMiddleware {
 
@@ -65,7 +64,6 @@ internal class ServiceMiddleware(
     ) { playingRecording, dialogState ->
         !playingRecording && (dialogState is IdleState || dialogState is RecordingIntentState)
     }
-    private var shouldResumeHotWordService = false
 
     override fun action(serviceMiddlewareAction: ServiceMiddlewareAction) {
         val previousJob = currentJob
@@ -95,15 +93,10 @@ internal class ServiceMiddleware(
     private suspend fun playStopRecordingAction() {
         if (_isPlayingRecording.value) {
             _isPlayingRecording.value = false
-            if (shouldResumeHotWordService) {
-                action(HotWordToggle(true))
-            }
             action(PlayFinished(Local))
         } else {
             if (dialogManagerService.currentDialogState.value is IdleState) {
                 _isPlayingRecording.value = true
-                shouldResumeHotWordService = AppSetting.isHotWordEnabled.value
-                action(HotWordToggle(false))
                 //suspend coroutine
                 localAudioService.playAudio(AudioSource.File(speechToTextService.speechToTextAudioFile))
                 //resumes when play finished
