@@ -7,19 +7,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import okio.Path
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioOutputToggle
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.HotWordToggle
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.IntentHandlingToggle
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopListening
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.Mqtt
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.PlayStopRecording
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.SayText
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.WakeWordError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source.Local
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.IdleState
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecordingIntentState
@@ -82,70 +72,51 @@ internal class ServiceMiddleware(
     override fun action(serviceMiddlewareAction: ServiceMiddlewareAction) {
         coroutineScope.launch {
             when (serviceMiddlewareAction) {
-                is PlayStopRecording                  -> {
-                    if (_isPlayingRecording.value) {
-                        _isPlayingRecording.value = false
-                        if (shouldResumeHotWordService) {
-                            action(HotWordToggle(true))
-                        }
-                        action(PlayFinished(Local))
-                    } else {
-                        if (dialogManagerService.currentDialogState.value is IdleState) {
-                            _isPlayingRecording.value = true
-                            shouldResumeHotWordService = AppSetting.isHotWordEnabled.value
-                            action(HotWordToggle(false))
-                            //suspend coroutine
-                            localAudioService.playAudio(AudioSource.File(speechToTextService.speechToTextAudioFile))
-                            //resumes when play finished
-                            if (_isPlayingRecording.value) {
-                                action(PlayStopRecording)
-                            }
-                        }
-                    }
+                is PlayStopRecording                  -> playStopRecordingAction()
+                is WakeWordError                      -> mqttService.wakeWordError(serviceMiddlewareAction.description)
+                is AppSettingsServiceMiddlewareAction -> appSettingsAction(serviceMiddlewareAction)
+                is SayText                            -> textToSpeechService.textToSpeech("", serviceMiddlewareAction.text)
+                is DialogServiceMiddlewareAction      -> dialogManagerService.onAction(serviceMiddlewareAction)
+                is Mqtt                               -> mqttService.onMessageReceived(serviceMiddlewareAction.topic, serviceMiddlewareAction.payload)
+            }
+        }
+    }
+
+    private fun appSettingsAction(action: AppSettingsServiceMiddlewareAction) {
+        when (action) {
+            is AudioOutputToggle    -> appSettingsService.audioOutputToggle(action.enabled)
+            is AudioVolumeChange    -> appSettingsService.setAudioVolume(action.volume)
+            is HotWordToggle        -> {
+                appSettingsService.hotWordToggle(action.enabled)
+                if (action.enabled) {
+                    wakeWordService.startDetection()
+                } else {
+                    wakeWordService.stopDetection()
                 }
+            }
 
-                is WakeWordError                      -> mqttService.wakeWordError(
-                    serviceMiddlewareAction.description
-                )
+            is IntentHandlingToggle -> appSettingsService.intentHandlingToggle(action.enabled)
+        }
+    }
 
-                is AppSettingsServiceMiddlewareAction -> {
-                    when (serviceMiddlewareAction) {
-                        is AudioOutputToggle    -> appSettingsService.audioOutputToggle(
-                            serviceMiddlewareAction.enabled
-                        )
-
-                        is AudioVolumeChange    -> appSettingsService.setAudioVolume(
-                            serviceMiddlewareAction.volume
-                        )
-
-                        is HotWordToggle        -> {
-                            appSettingsService.hotWordToggle(serviceMiddlewareAction.enabled)
-                            if (serviceMiddlewareAction.enabled) {
-                                wakeWordService.startDetection()
-                            } else {
-                                wakeWordService.stopDetection()
-                            }
-                        }
-
-                        is IntentHandlingToggle -> appSettingsService.intentHandlingToggle(
-                            serviceMiddlewareAction.enabled
-                        )
-                    }
+    private suspend fun playStopRecordingAction() {
+        if (_isPlayingRecording.value) {
+            _isPlayingRecording.value = false
+            if (shouldResumeHotWordService) {
+                action(HotWordToggle(true))
+            }
+            action(PlayFinished(Local))
+        } else {
+            if (dialogManagerService.currentDialogState.value is IdleState) {
+                _isPlayingRecording.value = true
+                shouldResumeHotWordService = AppSetting.isHotWordEnabled.value
+                action(HotWordToggle(false))
+                //suspend coroutine
+                localAudioService.playAudio(AudioSource.File(speechToTextService.speechToTextAudioFile))
+                //resumes when play finished
+                if (_isPlayingRecording.value) {
+                    action(PlayStopRecording)
                 }
-
-                is SayText                            -> textToSpeechService.textToSpeech(
-                    "",
-                    serviceMiddlewareAction.text
-                )
-
-                is DialogServiceMiddlewareAction      -> dialogManagerService.onAction(
-                    serviceMiddlewareAction
-                )
-
-                is Mqtt                               -> mqttService.onMessageReceived(
-                    serviceMiddlewareAction.topic,
-                    serviceMiddlewareAction.payload
-                )
             }
         }
     }
