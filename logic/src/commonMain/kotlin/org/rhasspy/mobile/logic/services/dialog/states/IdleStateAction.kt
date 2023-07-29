@@ -91,15 +91,15 @@ internal class IdleStateAction(
         dialogManagerService.informMqtt(sessionData, action)
         dialogManagerService.informMqtt(sessionData, SessionStarted(Local))
 
-        indicationService.onSessionStarted {
-            dialogManagerService.transitionTo(
-                action = action,
-                state = stateTransition.transitionToRecordingState(
-                    sessionData = sessionData,
-                    isSourceMqtt = action.source is Source.Mqtt
-                )
+        indicationService.onSessionStarted()
+
+        dialogManagerService.transitionTo(
+            action = action,
+            state = stateTransition.transitionToRecordingState(
+                sessionData = sessionData,
+                isSourceMqtt = action.source is Source.Mqtt
             )
-        }
+        )
     }
 
     private fun onStartSessionAction(
@@ -108,16 +108,15 @@ internal class IdleStateAction(
     ) {
         dialogManagerService.informMqtt(sessionData, action)
 
-        indicationService.onSessionStarted {
-            dialogManagerService.transitionTo(
-                action = action,
-                state = stateTransition.transitionToRecordingState(
-                    sessionData = sessionData,
-                    isSourceMqtt = action.source is Source.Mqtt
-                )
-            )
-        }
+        indicationService.onSessionStarted()
 
+        dialogManagerService.transitionTo(
+            action = action,
+            state = stateTransition.transitionToRecordingState(
+                sessionData = sessionData,
+                isSourceMqtt = action.source is Source.Mqtt
+            )
+        )
     }
 
     private fun onStartListeningAction(

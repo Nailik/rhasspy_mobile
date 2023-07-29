@@ -18,7 +18,7 @@ interface IIndicationService : IService {
     val indicationState: StateFlow<IndicationState>
 
     fun onIdle()
-    fun onSessionStarted(onFinished: () -> Unit)
+    fun onSessionStarted()
     fun onRecording()
     fun onSilenceDetected()
     fun onThinking()
@@ -53,7 +53,7 @@ internal class IndicationService : IIndicationService {
     /**
      * wake up screen when hotword is detected and play sound eventually
      */
-    override fun onSessionStarted(onFinished: () -> Unit) {
+    override fun onSessionStarted() {
         logger.d { "onWakeWordDetected" }
         if (AppSetting.isWakeWordDetectionTurnOnDisplayEnabled.value) {
             NativeIndication.wakeUpScreen()
@@ -63,9 +63,7 @@ internal class IndicationService : IIndicationService {
         }
         _indicationState.value = IndicationState.WakeUp
         if (AppSetting.isSoundIndicationEnabled.value) {
-            localAudioService.playWakeSound { onFinished() }
-        } else {
-            onFinished()
+            localAudioService.playWakeSound { }
         }
     }
 

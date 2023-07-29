@@ -3,6 +3,7 @@ package org.rhasspy.mobile.logic.services.speechtotext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import okio.FileHandle
 import okio.Path
 import org.koin.core.component.inject
@@ -20,6 +21,7 @@ import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.audiofocus.IAudioFocusService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
 import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.services.localaudio.ILocalAudioService
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.logic.services.recording.IRecordingService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
@@ -58,6 +60,7 @@ internal class SpeechToTextService(
     private val recordingService by inject<IRecordingService>()
     private val nativeApplication by inject<NativeApplication>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
+    private val localAudioService by inject<ILocalAudioService>()
 
     private val paramsFlow: StateFlow<SpeechToTextServiceParams> = paramsCreator()
     private val params: SpeechToTextServiceParams get() = paramsFlow.value
@@ -154,7 +157,6 @@ internal class SpeechToTextService(
         if (collector?.isActive == true) {
             return
         }
-        audioFocusService.request(Record)
 
         //clear data and start recording
         collector?.cancel()
@@ -165,11 +167,18 @@ internal class SpeechToTextService(
         speechToTextAudioFile.commonDelete()
         fileHandle = speechToTextAudioFile.commonReadWrite()
 
-        if (params.speechToTextOption != SpeechToTextOption.Disabled) {
-            recordingService.toggleSilenceDetectionEnabled(true)
-        }
         //start collection
         collector = scope.launch {
+            logger.e { "  localAudioService.isPlayingState.first { false }" }
+            //await until audio playing is finished
+            localAudioService.isPlayingState.first { !it }
+            logger.e { "  localAudioService.isPlayingState.first { false } DONE" }
+
+            if (params.speechToTextOption != SpeechToTextOption.Disabled) {
+                recordingService.toggleSilenceDetectionEnabled(true)
+            }
+            audioFocusService.request(Record)
+
             recordingService.output.collect {
                 audioFrame(sessionId, it)
             }
@@ -182,7 +191,7 @@ internal class SpeechToTextService(
         }
     }
 
-    private suspend fun audioFrame(sessionId: String, data: ByteArray) {
+    private fun audioFrame(sessionId: String, data: ByteArray) {
         if (AppSetting.isLogAudioFramesEnabled.value) {
             logger.d { "audioFrame dataSize: ${data.size}" }
         }
