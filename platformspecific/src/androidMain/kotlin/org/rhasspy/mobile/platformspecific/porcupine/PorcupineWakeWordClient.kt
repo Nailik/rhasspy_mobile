@@ -42,11 +42,13 @@ actual class PorcupineWakeWordClient actual constructor(
     private var initialized: Boolean = false
     actual val isInitialized: Boolean = initialized
 
+    private var isStarted = false
+
     /**
      * create porcupine client
      */
     actual fun initialize(): Exception? {
-
+        isStarted = false
         return try {
 
             File(context.filesDir, "sounds").mkdirs()
@@ -96,9 +98,12 @@ actual class PorcupineWakeWordClient actual constructor(
      * tries to start porcupine
      */
     actual fun start(): Exception? {
+        if (isStarted) return null
+
         return porcupineClient?.let {
             return try {
                 it.start()
+                isStarted = true
                 null
             } catch (exception: Exception) {
                 exception
