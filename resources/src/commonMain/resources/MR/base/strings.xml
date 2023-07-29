@@ -496,7 +496,7 @@
     <!-- DialogManagerStateInformation -->
     <string name="session_id">SessionId: %s</string>
     <string name="asr_text">AsrText: %s</string>
-    <string name="intent">IntentName: %s</string>
+    <string name="intent">IntentName: %s\nIntent: %s</string>
     <string name="audio_data_size">AudioDataSize: %s</string>
     <string name="send_audio_captured">SendAudioCaptured: %s</string>
     <string name="wake_word">WakeWord: %s</string>
