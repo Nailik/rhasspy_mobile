@@ -1,16 +1,15 @@
 package org.rhasspy.mobile.logic.services.dialog.states
 
 import com.benasher44.uuid.uuid4
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source
+import org.rhasspy.mobile.logic.middleware.Source.HttpApi
+import org.rhasspy.mobile.logic.middleware.Source.Local
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.SessionData
 import org.rhasspy.mobile.logic.services.indication.IIndicationService
 import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
-import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.Data
 
 interface IIdleStateAction {
@@ -21,7 +20,6 @@ interface IIdleStateAction {
 
 internal class IdleStateAction(
     private val dialogManagerService: IDialogManagerService,
-    private val dispatcherProvider: IDispatcherProvider,
     private val stateTransition: IStateTransition,
     private val wakeWordService: IWakeWordService,
     private val indicationService: IIndicationService,
@@ -32,8 +30,8 @@ internal class IdleStateAction(
         wakeWordService.stopDetection()
 
         val newSessionId = when (action.source) {
-            Source.HttpApi -> uuid4().toString()
-            Source.Local   -> uuid4().toString()
+            HttpApi        -> uuid4().toString()
+            Local          -> uuid4().toString()
             is Source.Mqtt -> action.source.sessionId ?: uuid4().toString()
         }
 
@@ -82,18 +80,17 @@ internal class IdleStateAction(
         action: WakeWordDetected
     ) {
         dialogManagerService.informMqtt(sessionData, action)
+        dialogManagerService.informMqtt(sessionData, SessionStarted(Local))
 
-        indicationService.onSessionStarted {
-            CoroutineScope(dispatcherProvider.IO).launch {
-                dialogManagerService.transitionTo(
-                    action = action,
-                    state = stateTransition.transitionToRecordingState(
-                        sessionData = sessionData,
-                        isSourceMqtt = action.source is Source.Mqtt
-                    )
-                )
-            }
-        }
+        indicationService.onSessionStarted()
+
+        dialogManagerService.transitionTo(
+            action = action,
+            state = stateTransition.transitionToRecordingState(
+                sessionData = sessionData,
+                isSourceMqtt = action.source is Source.Mqtt
+            )
+        )
     }
 
     private suspend fun onStartSessionAction(
@@ -102,17 +99,16 @@ internal class IdleStateAction(
     ) {
         dialogManagerService.informMqtt(sessionData, action)
 
-        indicationService.onSessionStarted {
-            CoroutineScope(dispatcherProvider.IO).launch {
-                dialogManagerService.transitionTo(
-                    action = action,
-                    state = stateTransition.transitionToRecordingState(
-                        sessionData = sessionData,
-                        isSourceMqtt = action.source is Source.Mqtt
-                    )
-                )
-            }
-        }
+        indicationService.onSessionStarted()
+
+        dialogManagerService.transitionTo(
+            action = action,
+            state = stateTransition.transitionToRecordingState(
+                sessionData = sessionData,
+                isSourceMqtt = action.source is Source.Mqtt
+            )
+        )
+
     }
 
     private suspend fun onStartListeningAction(
@@ -120,6 +116,7 @@ internal class IdleStateAction(
         action: StartListening
     ) {
         dialogManagerService.informMqtt(sessionData, action)
+        dialogManagerService.informMqtt(sessionData, SessionStarted(Local))
 
         dialogManagerService.transitionTo(
             action = action,
