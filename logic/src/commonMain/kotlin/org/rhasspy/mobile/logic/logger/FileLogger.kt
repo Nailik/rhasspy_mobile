@@ -44,6 +44,7 @@ internal class FileLogger(
 
     //create new file when logfile is 2 MB
     private val file = Path.commonInternalPath(nativeApplication, "logfile.json")
+    private val fileHandle = file.commonReadWrite()
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val _flow = MutableSharedFlow<LogElement>()
@@ -64,7 +65,7 @@ internal class FileLogger(
             message,
             throwable?.message
         )
-        file.commonReadWrite().appendingSink().buffer().writeUtf8("\n,${Json.encodeToString(element)}").flush()
+        fileHandle.appendingSink().buffer().writeUtf8("\n,${Json.encodeToString(element)}").flush()
         coroutineScope.launch {
             _flow.emit(element)
         }
