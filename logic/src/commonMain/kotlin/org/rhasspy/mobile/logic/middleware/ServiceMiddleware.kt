@@ -1,11 +1,8 @@
 package org.rhasspy.mobile.logic.middleware
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import okio.Path
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
@@ -51,6 +48,7 @@ internal class ServiceMiddleware(
 ) : IServiceMiddleware {
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
+    private var currentJob: Job? = null
 
     private val _isPlayingRecording = MutableStateFlow(false)
     override val isPlayingRecording = _isPlayingRecording.readOnly
@@ -70,7 +68,10 @@ internal class ServiceMiddleware(
     private var shouldResumeHotWordService = false
 
     override fun action(serviceMiddlewareAction: ServiceMiddlewareAction) {
-        coroutineScope.launch {
+        val previousJob = currentJob
+        currentJob = coroutineScope.launch {
+            previousJob?.join()
+
             when (serviceMiddlewareAction) {
                 is PlayStopRecording                  -> playStopRecordingAction()
                 is WakeWordError                      -> mqttService.wakeWordError(serviceMiddlewareAction.description)
