@@ -120,6 +120,7 @@ internal class SpeechToTextService(
         fileHandle?.write(0, header, 0, header.size)
         fileHandle?.flush()
         fileHandle?.close()
+        fileHandle = null
 
         recordingService.toggleSilenceDetectionEnabled(false)
 
