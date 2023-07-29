@@ -27,7 +27,6 @@ internal class IdleStateAction(
 
     override suspend fun onAction(action: DialogServiceMiddlewareAction) {
 
-        wakeWordService.stopDetection()
 
         val newSessionId = when (action.source) {
             HttpApi        -> uuid4().toString()
@@ -37,6 +36,8 @@ internal class IdleStateAction(
 
         when (action) {
             is WakeWordDetected -> {
+                wakeWordService.stopDetection()
+
                 val sessionData = SessionData(
                     sessionId = newSessionId,
                     sendAudioCaptured = false,
@@ -48,6 +49,8 @@ internal class IdleStateAction(
             }
 
             is StartSession   -> {
+                wakeWordService.stopDetection()
+
                 val sessionData = SessionData(
                     sessionId = newSessionId,
                     sendAudioCaptured = false,
@@ -59,6 +62,8 @@ internal class IdleStateAction(
             }
 
             is StartListening -> {
+                wakeWordService.stopDetection()
+
                 val sessionData = SessionData(
                     sessionId = newSessionId,
                     sendAudioCaptured = false,
@@ -69,8 +74,13 @@ internal class IdleStateAction(
                 onStartListeningAction(sessionData, action)
             }
 
-            is PlayAudio      -> onPlayAudio(action)
-            else              -> Unit
+            is PlayAudio        -> {
+                wakeWordService.stopDetection()
+
+                onPlayAudio(action)
+            }
+
+            else                -> Unit
         }
 
     }

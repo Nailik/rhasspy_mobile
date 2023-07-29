@@ -3,6 +3,7 @@ package org.rhasspy.mobile.logic.services.speechtotext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import okio.FileHandle
 import okio.Path
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
@@ -21,6 +22,7 @@ import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.logic.services.recording.IRecordingService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeader
+import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -62,7 +64,7 @@ internal class SpeechToTextService(
     override val serviceState = _serviceState.readOnly
 
     override val speechToTextAudioFile: Path = Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
-    private val fileHandle = speechToTextAudioFile.commonReadWrite()
+    private var fileHandle: FileHandle? = null
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private var collector: Job? = null
@@ -103,10 +105,12 @@ internal class SpeechToTextService(
             AppSetting.audioRecorderChannel.value,
             AppSetting.audioRecorderSampleRate.value,
             AppSetting.audioRecorderEncoding.value,
-            fileHandle.size()
+            fileHandle?.size() ?: 0
         )
 
-        fileHandle.write(0, header, 0, header.size)
+        fileHandle?.write(0, header, 0, header.size)
+        fileHandle?.flush()
+        fileHandle?.close()
 
         recordingService.toggleSilenceDetectionEnabled(false)
 
@@ -122,9 +126,7 @@ internal class SpeechToTextService(
                 serviceMiddleware.action(action)
             }
 
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value =
-                mqttClientService.stopListening(sessionId)
-
+            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value = mqttClientService.stopListening(sessionId)
             SpeechToTextOption.Disabled   -> Unit
         }
     }
@@ -141,7 +143,10 @@ internal class SpeechToTextService(
         collector?.cancel()
         collector = null
 
-        fileHandle.resize(0)
+        fileHandle?.flush()
+        fileHandle?.close()
+        speechToTextAudioFile.commonDelete()
+        fileHandle = speechToTextAudioFile.commonReadWrite()
 
         if (params.speechToTextOption != SpeechToTextOption.Disabled) {
             recordingService.toggleSilenceDetectionEnabled(true)
@@ -155,9 +160,7 @@ internal class SpeechToTextService(
 
         _serviceState.value = when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> ServiceState.Success
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.startListening(
-                sessionId
-            ) else ServiceState.Success
+            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.startListening(sessionId) else ServiceState.Success
 
             SpeechToTextOption.Disabled   -> ServiceState.Disabled
         }
@@ -176,8 +179,8 @@ internal class SpeechToTextService(
 
         scope.launch {
             //write async after data was send
-            fileHandle.write(
-                fileOffset = fileHandle.size(),
+            fileHandle?.write(
+                fileOffset = fileHandle?.size() ?: 0,
                 array = data,
                 arrayOffset = 0,
                 byteCount = data.size

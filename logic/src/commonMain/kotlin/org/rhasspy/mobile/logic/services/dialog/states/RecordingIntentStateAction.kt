@@ -48,6 +48,11 @@ internal class RecordingIntentStateAction(
         dialogManagerService.informMqtt(state.sessionData, action)
 
         indicationService.onError()
+
+        speechToTextService.endSpeechToText(
+            state.sessionData.sessionId,
+            action.source is Source.Mqtt
+        )
         dialogManagerService.transitionTo(
             action = action,
             state = stateTransition.transitionToIdleState(state.sessionData)
