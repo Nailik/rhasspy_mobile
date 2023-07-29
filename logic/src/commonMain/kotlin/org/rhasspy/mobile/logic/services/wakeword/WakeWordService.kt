@@ -68,7 +68,6 @@ internal class WakeWordService(
         scope.launch {
             paramsFlow.collect {
                 stop()
-                initialize()
                 if (isDetectionRunning) {
                     startDetection()
                 }
@@ -209,8 +208,12 @@ internal class WakeWordService(
         _isRecording.value = false
         recording?.cancel()
         recording = null
-        porcupineWakeWordClient?.stop()
-        porcupineWakeWordClient?.close()
+        try {
+            porcupineWakeWordClient?.stop()
+            porcupineWakeWordClient?.close()
+        } catch (e: Exception) {
+            logger.e(e) { "porcupineWakeWordClient stop and close" }
+        }
         porcupineWakeWordClient = null
         isDetectionRunning = false
     }

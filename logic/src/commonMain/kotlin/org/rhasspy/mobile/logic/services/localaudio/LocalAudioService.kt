@@ -74,7 +74,7 @@ internal class LocalAudioService(
                     volume = AppSetting.volume.data,
                     audioOutputOption = params.audioOutputOption,
                     onFinished = {
-                        logger.e { "onFinished" }
+                        logger.d { "onFinished" }
                         continuation.resumeSave(ServiceState.Success)
                     },
                 )

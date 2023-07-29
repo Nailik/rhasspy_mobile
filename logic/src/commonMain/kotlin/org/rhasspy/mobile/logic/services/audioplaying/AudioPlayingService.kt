@@ -65,7 +65,7 @@ internal class AudioPlayingService(
      * - calls default site to play audio
      */
     override suspend fun playAudio(audioSource: AudioSource) {
-        logger.d { "playAudio dataSize: $audioSource" }
+        logger.d { "playAudio" }
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local      -> {
                 audioFocusService.request(Sound)
