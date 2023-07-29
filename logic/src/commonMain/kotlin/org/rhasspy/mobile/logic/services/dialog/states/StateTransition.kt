@@ -78,8 +78,6 @@ internal class StateTransition(
         wakeWordService.stopDetection()
         indicationService.onRecording()
 
-        indicationService.onRecording()
-
         audioFocusService.request(AudioFocusRequestReason.Dialog)
         speechToTextService.startSpeechToText(sessionData.sessionId, isSourceMqtt)
 
