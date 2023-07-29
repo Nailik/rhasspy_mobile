@@ -19,6 +19,7 @@ import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
 import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
+import org.rhasspy.mobile.settings.AppSetting
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
@@ -66,6 +67,7 @@ internal class StateTransition(
             dialogManagerService.informMqtt(sessionData, SessionEnded(Local))
         }
 
+        AppSetting.isHotWordEnabled.value = true
         wakeWordService.startDetection()
 
         return DialogManagerState.IdleState(sessionData)
