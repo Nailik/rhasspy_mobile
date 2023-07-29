@@ -18,9 +18,9 @@ import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.platformspecific.resumeSave
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
-import kotlin.coroutines.resume
 
 interface ILocalAudioService : IService {
 
@@ -75,15 +75,11 @@ internal class LocalAudioService(
                     audioOutputOption = params.audioOutputOption,
                     onFinished = {
                         logger.e { "onFinished" }
-                        if (!continuation.isCompleted) {
-                            continuation.resume(ServiceState.Success)
-                        }
+                        continuation.resumeSave(ServiceState.Success)
                     },
                 )
             } else {
-                if (!continuation.isCompleted) {
-                    continuation.resume(ServiceState.Success)
-                }
+                continuation.resumeSave(ServiceState.Success)
             }
         }
 

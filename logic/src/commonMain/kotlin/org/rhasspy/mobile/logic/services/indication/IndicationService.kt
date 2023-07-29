@@ -2,6 +2,7 @@ package org.rhasspy.mobile.logic.services.indication
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.indication.IndicationState
 import org.rhasspy.mobile.data.log.LogType
@@ -10,6 +11,7 @@ import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.localaudio.ILocalAudioService
 import org.rhasspy.mobile.platformspecific.indication.NativeIndication
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.platformspecific.resumeSave
 import org.rhasspy.mobile.settings.AppSetting
 
 interface IIndicationService : IService {
@@ -18,7 +20,7 @@ interface IIndicationService : IService {
     val indicationState: StateFlow<IndicationState>
 
     fun onIdle()
-    fun onSessionStarted(onFinished: () -> Unit)
+    suspend fun onSessionStarted()
     fun onRecording()
     fun onSilenceDetected()
     fun onThinking()
@@ -53,7 +55,7 @@ internal class IndicationService : IIndicationService {
     /**
      * wake up screen when hotword is detected and play sound eventually
      */
-    override fun onSessionStarted(onFinished: () -> Unit) {
+    override suspend fun onSessionStarted() = suspendCancellableCoroutine { continuation ->
         logger.d { "onWakeWordDetected" }
         if (AppSetting.isWakeWordDetectionTurnOnDisplayEnabled.value) {
             NativeIndication.wakeUpScreen()
@@ -63,9 +65,9 @@ internal class IndicationService : IIndicationService {
         }
         _indicationState.value = IndicationState.WakeUp
         if (AppSetting.isSoundIndicationEnabled.value) {
-            localAudioService.playWakeSound { onFinished() }
+            localAudioService.playWakeSound { continuation.resumeSave(Unit) }
         } else {
-            onFinished()
+            continuation.resumeSave(Unit)
         }
     }
 
@@ -73,7 +75,7 @@ internal class IndicationService : IIndicationService {
      * update indication state
      */
     override fun onRecording() {
-        logger.d { "onListening" }
+        logger.d { "onRecording" }
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true
         }

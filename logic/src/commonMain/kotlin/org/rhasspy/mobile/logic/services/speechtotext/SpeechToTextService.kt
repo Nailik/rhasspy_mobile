@@ -1,12 +1,8 @@
 package org.rhasspy.mobile.logic.services.speechtotext
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
@@ -25,10 +21,8 @@ import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.logic.services.recording.IRecordingService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeader
-import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
-import org.rhasspy.mobile.platformspecific.extensions.commonSize
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 
@@ -67,8 +61,8 @@ internal class SpeechToTextService(
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
     override val serviceState = _serviceState.readOnly
 
-    override val speechToTextAudioFile: Path =
-        Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
+    override val speechToTextAudioFile: Path = Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
+    private val fileHandle = speechToTextAudioFile.commonReadWrite()
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private var collector: Job? = null
@@ -109,11 +103,10 @@ internal class SpeechToTextService(
             AppSetting.audioRecorderChannel.value,
             AppSetting.audioRecorderSampleRate.value,
             AppSetting.audioRecorderEncoding.value,
-            speechToTextAudioFile.commonSize() ?: 0
+            fileHandle.size()
         )
 
-        speechToTextAudioFile.commonReadWrite()
-            .write(0, header, 0, header.size)
+        fileHandle.write(0, header, 0, header.size)
 
         recordingService.toggleSilenceDetectionEnabled(false)
 
@@ -148,8 +141,7 @@ internal class SpeechToTextService(
         collector?.cancel()
         collector = null
 
-        speechToTextAudioFile.commonDelete()
-        speechToTextAudioFile.commonReadWrite().write(0, ByteArray(0), 0, 0)
+        fileHandle.resize(0)
 
         if (params.speechToTextOption != SpeechToTextOption.Disabled) {
             recordingService.toggleSilenceDetectionEnabled(true)
@@ -184,8 +176,8 @@ internal class SpeechToTextService(
 
         scope.launch {
             //write async after data was send
-            speechToTextAudioFile.commonReadWrite().write(
-                fileOffset = speechToTextAudioFile.commonSize() ?: 0,
+            fileHandle.write(
+                fileOffset = fileHandle.size(),
                 array = data,
                 arrayOffset = 0,
                 byteCount = data.size
