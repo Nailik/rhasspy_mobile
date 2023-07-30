@@ -753,12 +753,15 @@ internal class MqttService(
      * Only sent if sendAudioCaptured = true in startListening
      */
     override fun audioCaptured(sessionId: String, audioFilePath: Path) {
-        publishMessage(
-            MqttTopicsPublish.AudioCaptured.topic
-                .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                .set(MqttTopicPlaceholder.SessionId, sessionId),
-            MqttMessage(audioFilePath.commonSource().buffer().readByteArray())
-        )
+        with(audioFilePath.commonSource().buffer()) {
+            publishMessage(
+                MqttTopicsPublish.AudioCaptured.topic
+                    .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                    .set(MqttTopicPlaceholder.SessionId, sessionId),
+                MqttMessage(this.readByteArray())
+            )
+            this.close()
+        }
     }
 
     /**
