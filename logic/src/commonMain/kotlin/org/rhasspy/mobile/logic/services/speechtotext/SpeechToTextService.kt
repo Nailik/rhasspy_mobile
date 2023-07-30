@@ -37,6 +37,7 @@ interface ISpeechToTextService : IService {
     override val serviceState: StateFlow<ServiceState>
 
     val speechToTextAudioFile: Path
+    val isActive: Boolean
 
     fun endSpeechToText(sessionId: String, fromMqtt: Boolean)
     fun startSpeechToText(sessionId: String, fromMqtt: Boolean)
@@ -69,6 +70,7 @@ internal class SpeechToTextService(
     override val serviceState = _serviceState.readOnly
 
     override val speechToTextAudioFile: Path = Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
+    override var isActive: Boolean = false
     private var fileHandle: FileHandle? = null
 
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -104,6 +106,8 @@ internal class SpeechToTextService(
      * fromMqtt is used to check if silence was detected by remote mqtt device
      */
     override fun endSpeechToText(sessionId: String, fromMqtt: Boolean) {
+        if (!isActive) return
+        isActive = false
         logger.d { "endSpeechToText sessionId: $sessionId fromMqtt $fromMqtt" }
 
         //stop collection
@@ -152,11 +156,9 @@ internal class SpeechToTextService(
     }
 
     override fun startSpeechToText(sessionId: String, fromMqtt: Boolean) {
+        if (isActive) return
+        isActive = true
         logger.d { "startSpeechToText sessionId: $sessionId fromMqtt $fromMqtt" }
-
-        if (collector?.isActive == true) {
-            return
-        }
 
         //clear data and start recording
         collector?.cancel()

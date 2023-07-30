@@ -9,7 +9,7 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsSe
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source.Local
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.IdleState
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecordingIntentState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.SessionState.RecordingIntentState
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.services.localaudio.ILocalAudioService
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService

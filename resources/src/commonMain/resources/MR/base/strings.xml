@@ -516,6 +516,8 @@
     <string name="stop_audio_playing">StopAudioPlaying</string>
     <string name="stop_listening">StopListening</string>
     <string name="wake_word_detected">WakeWordDetected</string>
+    <string name="asr_timeout_error">AsrTimeoutError</string>
+    <string name="intent_recognition_timeout_error">IntentRecognitionTimeoutError</string>
     <!-- Source -->
     <string name="http_api">HttpApi</string>
     <string name="local">Local</string>

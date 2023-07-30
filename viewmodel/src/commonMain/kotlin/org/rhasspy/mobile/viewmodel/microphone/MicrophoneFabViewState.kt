@@ -2,7 +2,7 @@ package org.rhasspy.mobile.viewmodel.microphone
 
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecordingIntentState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.SessionState.RecordingIntentState
 
 @Stable
 data class MicrophoneFabViewState internal constructor(

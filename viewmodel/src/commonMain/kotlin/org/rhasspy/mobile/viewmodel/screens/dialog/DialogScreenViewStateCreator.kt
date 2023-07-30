@@ -11,6 +11,7 @@ import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.middleware.Source.*
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.*
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.SessionState.*
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
@@ -42,7 +43,7 @@ class DialogScreenViewStateCreator(
             history = dialogManagerService.dialogHistory.value.map { item ->
                 DialogTransitionItem(
                     action = item.first.toDialogActionViewState(),
-                    state = item.second.toDialogStateViewState()
+                    state = item.second?.toDialogStateViewState()
                 )
             }.toImmutableList()
         )
@@ -51,7 +52,7 @@ class DialogScreenViewStateCreator(
     private fun DialogManagerState.toDialogStateViewState(): DialogStateViewState {
         return DialogStateViewState(
             name = this.toText(),
-            sessionData = this.sessionData
+            sessionData = if (this is SessionState) this.sessionData else null
         )
     }
 
@@ -87,21 +88,23 @@ class DialogScreenViewStateCreator(
 
     private fun DialogServiceMiddlewareAction.toText(): StableStringResource {
         return when (this) {
-            is AsrError                -> MR.strings.asr_error.stable
-            is AsrTextCaptured         -> MR.strings.asr_text_captured.stable
-            is EndSession              -> MR.strings.end_session.stable
-            is IntentRecognitionError  -> MR.strings.intent_recognition_error.stable
-            is IntentRecognitionResult -> MR.strings.intent_recognition_result.stable
-            is PlayAudio               -> MR.strings.play_audio.stable
-            is PlayFinished            -> MR.strings.play_finished.stable
-            is SessionEnded            -> MR.strings.session_ended.stable
-            is SessionStarted          -> MR.strings.session_started.stable
-            is SilenceDetected         -> MR.strings.silence_detected.stable
-            is StartListening          -> MR.strings.start_listening.stable
-            is StartSession            -> MR.strings.start_session.stable
-            is StopAudioPlaying        -> MR.strings.stop_audio_playing.stable
-            is StopListening           -> MR.strings.stop_listening.stable
-            is WakeWordDetected        -> MR.strings.wake_word_detected.stable
+            is AsrError                      -> MR.strings.asr_error.stable
+            is AsrTextCaptured               -> MR.strings.asr_text_captured.stable
+            is EndSession                    -> MR.strings.end_session.stable
+            is IntentRecognitionError        -> MR.strings.intent_recognition_error.stable
+            is IntentRecognitionResult       -> MR.strings.intent_recognition_result.stable
+            is PlayAudio                     -> MR.strings.play_audio.stable
+            is PlayFinished                  -> MR.strings.play_finished.stable
+            is SessionEnded                  -> MR.strings.session_ended.stable
+            is SessionStarted                -> MR.strings.session_started.stable
+            is SilenceDetected               -> MR.strings.silence_detected.stable
+            is StartListening                -> MR.strings.start_listening.stable
+            is StartSession                  -> MR.strings.start_session.stable
+            is StopAudioPlaying              -> MR.strings.stop_audio_playing.stable
+            is StopListening                 -> MR.strings.stop_listening.stable
+            is WakeWordDetected              -> MR.strings.wake_word_detected.stable
+            is AsrTimeoutError               -> MR.strings.asr_timeout_error.stable
+            is IntentRecognitionTimeoutError -> MR.strings.intent_recognition_timeout_error.stable
         }
     }
 

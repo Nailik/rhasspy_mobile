@@ -12,7 +12,7 @@ data class DialogScreenViewState(
 
     data class DialogTransitionItem(
         val action: DialogActionViewState,
-        val state: DialogStateViewState
+        val state: DialogStateViewState?
     ) {
 
         data class DialogStateViewState(

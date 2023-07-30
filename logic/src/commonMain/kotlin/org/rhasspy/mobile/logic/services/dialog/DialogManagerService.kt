@@ -19,9 +19,9 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogService
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.IdleState
-import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerDisabled
-import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerLocal
-import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerRemoteMqtt
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.disabled.DialogManagerDisabled
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.local.DialogManagerLocal
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.mqtt.DialogManagerMqtt
 import org.rhasspy.mobile.logic.services.dialog.states.IStateTransition
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -30,12 +30,12 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface IDialogManagerService : IService {
 
-    val dialogHistory: StateFlow<List<Pair<DialogServiceMiddlewareAction, DialogManagerState>>>
+    val dialogHistory: StateFlow<List<Pair<DialogServiceMiddlewareAction, DialogManagerState?>>>
 
     override val serviceState: StateFlow<ServiceState>
     val currentDialogState: StateFlow<DialogManagerState>
 
-    fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState)
+    fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState?)
     suspend fun onAction(action: DialogServiceMiddlewareAction)
     fun informMqtt(sessionData: SessionData?, action: DialogServiceMiddlewareAction)
 }
@@ -48,17 +48,17 @@ internal class DialogManagerService(
 ) : IDialogManagerService {
 
     private val dialogManagerLocal by inject<DialogManagerLocal>()
-    private val dialogManagerRemoteMqtt by inject<DialogManagerRemoteMqtt>()
+    private val dialogManagerMqtt by inject<DialogManagerMqtt>()
     private val dialogManagerDisabled by inject<DialogManagerDisabled>()
 
-    override val dialogHistory = MutableStateFlow<ImmutableList<Pair<DialogServiceMiddlewareAction, DialogManagerState>>>(persistentListOf())
+    override val dialogHistory = MutableStateFlow<ImmutableList<Pair<DialogServiceMiddlewareAction, DialogManagerState?>>>(persistentListOf())
 
     override val logger = LogType.DialogManagerService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
 
-    private val _currentDialogState = MutableStateFlow<DialogManagerState>(IdleState())
+    private val _currentDialogState = MutableStateFlow<DialogManagerState>(IdleState)
     override val currentDialogState = _currentDialogState.readOnly
 
     init {
@@ -66,12 +66,16 @@ internal class DialogManagerService(
         CoroutineScope(Dispatchers.IO).launch {
             transitionTo(
                 SessionEnded(Source.Local),
-                get<IStateTransition>().transitionToIdleState(null)
+                //settings true to source mqtt results in no initial data being send to mqtt
+                get<IStateTransition>().transitionToIdleState(null, true)
             )
         }
     }
-    override fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState) {
-        _currentDialogState.value = state
+
+    override fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState?) {
+        if (state != null) {
+            _currentDialogState.value = state
+        }
         dialogHistory.update {
             it.updateList {
                 add(Pair(action, state))
@@ -85,7 +89,7 @@ internal class DialogManagerService(
     override suspend fun onAction(action: DialogServiceMiddlewareAction) {
         when (ConfigurationSetting.dialogManagementOption.value) {
             Local      -> dialogManagerLocal.onAction(action)
-            RemoteMQTT -> dialogManagerRemoteMqtt.onAction(action)
+            RemoteMQTT -> dialogManagerMqtt.onAction(action)
             Disabled   -> dialogManagerDisabled.onAction(action)
         }
     }

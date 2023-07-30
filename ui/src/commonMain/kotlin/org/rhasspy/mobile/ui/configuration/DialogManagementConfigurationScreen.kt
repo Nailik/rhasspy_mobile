@@ -21,10 +21,7 @@ import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeIntentRecognitionTimeout
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeRecordingTimeout
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeTextAsrTimeout
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewState.DialogManagementConfigurationData
 
@@ -95,15 +92,16 @@ private fun DialogManagementOptionContent(
     ) { option ->
 
         when (option) {
-            DialogManagementOption.Local ->
-                LocalDialogManagementSettings(
+            DialogManagementOption.Local,
+            DialogManagementOption.RemoteMQTT ->
+                DialogManagementSettings(
                     textAsrTimeoutText = editData.textAsrTimeoutText,
                     intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
                     recordingTimeoutText = editData.recordingTimeoutText,
                     onEvent = onEvent
                 )
 
-            else                         -> Unit
+            else                              -> Unit
         }
 
     }
@@ -115,7 +113,7 @@ private fun DialogManagementOptionContent(
  * field to set endpoint
  */
 @Composable
-private fun LocalDialogManagementSettings(
+private fun DialogManagementSettings(
     textAsrTimeoutText: String,
     intentRecognitionTimeoutText: String,
     recordingTimeoutText: String,

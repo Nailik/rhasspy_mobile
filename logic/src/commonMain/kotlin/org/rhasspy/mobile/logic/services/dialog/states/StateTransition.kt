@@ -8,24 +8,23 @@ import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source.Local
 import org.rhasspy.mobile.logic.services.audiofocus.IAudioFocusService
-import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
 import org.rhasspy.mobile.logic.services.dialog.*
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.RecordingIntentState
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.TranscribingIntentState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.IdleState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.PlayingAudioState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.SessionState.*
 import org.rhasspy.mobile.logic.services.indication.IIndicationService
 import org.rhasspy.mobile.logic.services.intentrecognition.IIntentRecognitionService
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
 import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
-import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.settings.AppSetting
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
 interface IStateTransition {
 
-    fun transitionToIdleState(sessionData: SessionData?): DialogManagerState
+    fun transitionToIdleState(sessionData: SessionData?, isSourceMqtt: Boolean): DialogManagerState
 
     fun transitionToRecordingState(sessionData: SessionData, isSourceMqtt: Boolean): DialogManagerState
 
@@ -33,7 +32,7 @@ interface IStateTransition {
 
     fun transitionToRecognizingIntentState(sessionData: SessionData): DialogManagerState
 
-    fun transitionToAudioPlayingState(audioSource: AudioSource): DialogManagerState
+    fun transitionToAudioPlayingState(): DialogManagerState
 
 }
 
@@ -44,7 +43,6 @@ internal class StateTransition(
     private val audioFocusService: IAudioFocusService,
     private val wakeWordService: IWakeWordService,
     private val intentRecognitionService: IIntentRecognitionService,
-    private val audioPlayingService: IAudioPlayingService,
     private val speechToTextService: ISpeechToTextService,
     private val indicationService: IIndicationService,
     private val mqttService: IMqttService
@@ -55,25 +53,29 @@ internal class StateTransition(
 
     private var coroutineScope = CoroutineScope(dispatcherProvider.IO)
 
-    override fun transitionToIdleState(sessionData: SessionData?): DialogManagerState {
+    override fun transitionToIdleState(
+        sessionData: SessionData?,
+        isSourceMqtt: Boolean
+    ): DialogManagerState {
 
         audioFocusService.abandon(AudioFocusRequestReason.Dialog)
         indicationService.onIdle()
 
-        if (sessionData != null) {
+        if (!isSourceMqtt && sessionData != null) {
             dialogManagerService.informMqtt(sessionData, SessionEnded(Local))
         }
 
         AppSetting.isHotWordEnabled.value = true
         wakeWordService.startDetection()
 
-        return DialogManagerState.IdleState(sessionData)
+        return IdleState
     }
 
     override fun transitionToRecordingState(
         sessionData: SessionData,
         isSourceMqtt: Boolean
     ): DialogManagerState {
+
         wakeWordService.stopDetection()
         indicationService.onRecording()
 
@@ -83,13 +85,15 @@ internal class StateTransition(
         return RecordingIntentState(
             sessionData = sessionData,
             timeoutJob = coroutineScope.launch {
+                if (params.recordingTimeout == 0L) return@launch
                 delay(params.recordingTimeout.toDuration(DurationUnit.MILLISECONDS))
-                dialogManagerService.onAction(AsrError(Local))
+                dialogManagerService.onAction(AsrTimeoutError(Local))
             }
         )
     }
 
     override fun transitionToTranscribingIntentState(sessionData: SessionData): DialogManagerState {
+
         indicationService.onThinking()
 
         if (sessionData.sendAudioCaptured) {
@@ -102,13 +106,15 @@ internal class StateTransition(
         return TranscribingIntentState(
             sessionData = sessionData,
             timeoutJob = coroutineScope.launch {
+                if (params.asrTimeout == 0L) return@launch
                 delay(params.asrTimeout.toDuration(DurationUnit.MILLISECONDS))
-                dialogManagerService.onAction(AsrError(Local))
+                dialogManagerService.onAction(AsrTimeoutError(Local))
             }
         )
     }
 
     override fun transitionToRecognizingIntentState(sessionData: SessionData): DialogManagerState {
+
         indicationService.onThinking()
 
         intentRecognitionService.recognizeIntent(
@@ -116,21 +122,18 @@ internal class StateTransition(
             text = sessionData.recognizedText ?: ""
         )
 
-        return DialogManagerState.RecognizingIntentState(
+        return RecognizingIntentState(
             sessionData = sessionData,
             timeoutJob = coroutineScope.launch {
+                if (params.intentRecognitionTimeout == 0L) return@launch
                 delay(params.intentRecognitionTimeout.toDuration(DurationUnit.MILLISECONDS))
-                dialogManagerService.onAction(IntentRecognitionError(Local))
+                dialogManagerService.onAction(IntentRecognitionTimeoutError(Local))
             }
         )
     }
 
-    override fun transitionToAudioPlayingState(audioSource: AudioSource): DialogManagerState {
-        indicationService.onPlayAudio()
-        audioPlayingService.stopPlayAudio()
-        audioPlayingService.playAudio(audioSource)
-
-        return DialogManagerState.PlayingAudioState()
+    override fun transitionToAudioPlayingState(): DialogManagerState {
+        return PlayingAudioState
     }
 
 }

@@ -233,6 +233,8 @@ internal class MqttService(
             //regex topic
             if (!regexTopic(topic, payload)) {
                 compareTopic(topic, payload)
+            } else {
+                logger.d { "regexTopic matched $topic" }
             }
 
         } catch (e: Exception) {
@@ -316,7 +318,7 @@ internal class MqttService(
                         MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
                         MqttTopicsSubscription.AsrError        -> asrError(jsonObject)
                         else                                   -> {
-                            logger.d { "isNotThisSiteId mqttTopic notFound $topic" }
+                            logger.d { "isNotThisSiteId mqttTopic notFound $topic $jsonObject" }
                         }
                     }
                 }
