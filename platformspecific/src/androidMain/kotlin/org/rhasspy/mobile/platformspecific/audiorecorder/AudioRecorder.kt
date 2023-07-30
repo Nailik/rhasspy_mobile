@@ -124,6 +124,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
      * reads from audio and emits buffer onto output
      */
     private fun read(bufferSize: Int) {
+        var firstBuffer = true
         coroutineScope.launch {
             recorder?.also {
                 while (it.recordingState == AudioRecord.RECORDSTATE_RECORDING) {
@@ -131,7 +132,13 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
                         val byteArray = ByteArray(bufferSize)
                         if (it.read(byteArray, 0, byteArray.size) == bufferSize) {
                             updateMaxVolume(byteArray.clone())
-                            _output.emit(byteArray)
+
+                            //throw away first buffer to get rid of leading zeros
+                            if (firstBuffer) {
+                                firstBuffer = false
+                            } else {
+                                _output.emit(byteArray)
+                            }
                         }
                     } catch (e: Exception) {
                         logger.e(e) { "recording exception" }
