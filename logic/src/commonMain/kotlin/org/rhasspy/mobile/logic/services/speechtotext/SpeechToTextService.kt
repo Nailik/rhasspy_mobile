@@ -12,6 +12,7 @@ import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.ServiceState.Success
+import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
@@ -198,7 +199,16 @@ internal class SpeechToTextService(
 
         when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> _serviceState.value = Success
-            SpeechToTextOption.RemoteMQTT -> mqttClientService.asrAudioFrame(sessionId, data) { _serviceState.value = it }
+            SpeechToTextOption.RemoteMQTT -> {
+                when (params.dialogManagementOption) {
+                    DialogManagementOption.Disabled,
+                    DialogManagementOption.Local      -> mqttClientService.asrAudioFrame(data) { _serviceState.value = it }
+
+                    DialogManagementOption.RemoteMQTT -> mqttClientService.asrAudioSessionFrame(sessionId, data) { _serviceState.value = it }
+                }
+
+            }
+
             SpeechToTextOption.Disabled   -> _serviceState.value = Disabled
         }
 

@@ -41,7 +41,8 @@ interface IMqttService : IService {
     fun sessionStarted(sessionId: String)
     fun sessionEnded(sessionId: String)
     fun intentNotRecognized(sessionId: String)
-    fun asrAudioFrame(sessionId: String, byteArray: ByteArray, onResult: (result: ServiceState) -> Unit)
+    fun asrAudioFrame(byteArray: ByteArray, onResult: (result: ServiceState) -> Unit)
+    fun asrAudioSessionFrame(sessionId: String, byteArray: ByteArray, onResult: (result: ServiceState) -> Unit)
     fun hotWordDetected(keyword: String)
     fun wakeWordError(description: String)
     fun startListening(sessionId: String, onResult: (result: ServiceState) -> Unit)
@@ -524,14 +525,36 @@ internal class MqttService(
     }
 
     /**
-     * Chunk of WAV audio data for session
+     * Chunk of WAV audio for site
      * wav_bytes: bytes - WAV data to play (message payload)
      * siteId: string - Hermes site ID (part of topic)
      */
-    override fun asrAudioFrame(sessionId: String, byteArray: ByteArray, onResult: (result: ServiceState) -> Unit) {
+    override fun asrAudioFrame(byteArray: ByteArray, onResult: (result: ServiceState) -> Unit) {
         publishMessage(
             MqttTopicsPublish.AsrAudioFrame.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId),
+            MqttMessage(
+                byteArray.appendWavHeader(
+                    AppSetting.audioRecorderChannel.value,
+                    AppSetting.audioRecorderSampleRate.value,
+                    AppSetting.audioRecorderEncoding.value
+                )
+            ),
+            onResult
+        )
+    }
+
+    /**
+     * Chunk of WAV audio data for session
+     * wav_bytes: bytes - WAV data to play (message payload)
+     * siteId: string - Hermes site ID (part of topic)
+     * sessionId: string - session ID (part of topic)
+     */
+    override fun asrAudioSessionFrame(sessionId: String, byteArray: ByteArray, onResult: (result: ServiceState) -> Unit) {
+        publishMessage(
+            MqttTopicsPublish.AsrAudioSessionFrame.topic
+                .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                .set(MqttTopicPlaceholder.SessionId, sessionId),
             MqttMessage(
                 byteArray.appendWavHeader(
                     AppSetting.audioRecorderChannel.value,

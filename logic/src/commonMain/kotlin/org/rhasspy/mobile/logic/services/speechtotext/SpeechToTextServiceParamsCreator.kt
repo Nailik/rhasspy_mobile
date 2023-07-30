@@ -10,7 +10,8 @@ internal class SpeechToTextServiceParamsCreator {
     operator fun invoke(): StateFlow<SpeechToTextServiceParams> {
 
         return combineStateFlow(
-            ConfigurationSetting.speechToTextOption.data
+            ConfigurationSetting.speechToTextOption.data,
+            ConfigurationSetting.dialogManagementOption.data,
         ).mapReadonlyState {
             getParams()
         }
@@ -19,7 +20,8 @@ internal class SpeechToTextServiceParamsCreator {
 
     private fun getParams(): SpeechToTextServiceParams {
         return SpeechToTextServiceParams(
-            speechToTextOption = ConfigurationSetting.speechToTextOption.value
+            speechToTextOption = ConfigurationSetting.speechToTextOption.value,
+            dialogManagementOption = ConfigurationSetting.dialogManagementOption.value
         )
     }
 

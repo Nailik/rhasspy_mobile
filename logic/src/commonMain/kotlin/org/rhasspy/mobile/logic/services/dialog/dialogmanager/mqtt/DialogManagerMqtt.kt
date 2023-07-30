@@ -33,18 +33,18 @@ class DialogManagerMqtt(
         with(dialogManagerService.currentDialogState.value) {
             logger.d { "action $action on state $this" }
             when (action) {
-                is AsrError                      -> Unit
-                is AsrTextCaptured               -> Unit
-                is EndSession                    -> Unit
-                is IntentRecognitionError        -> Unit
+                is AsrError                      -> dialogManagerService.transitionTo(action = action, null)
+                is AsrTextCaptured               -> dialogManagerService.transitionTo(action = action, null)
+                is EndSession                    -> dialogManagerService.transitionTo(action = action, null)
+                is IntentRecognitionError        -> dialogManagerService.transitionTo(action = action, null)
                 is IntentRecognitionResult       -> onIntentRecognitionResult(action, this)
                 is PlayAudio                     -> onPlayAudio(action)
                 is PlayFinished                  -> onPlayFinished(action)
                 is SessionEnded                  -> onSessionEnded(action, this)
-                is SessionStarted                -> Unit
+                is SessionStarted                -> dialogManagerService.transitionTo(action = action, null)
                 is SilenceDetected               -> onSilenceDetected(action, this)
                 is StartListening                -> onStartListening(action)
-                is StartSession                  -> Unit
+                is StartSession                  -> dialogManagerService.transitionTo(action = action, null)
                 is StopAudioPlaying              -> onStopAudioPlaying(action)
                 is StopListening                 -> onStopListening(action, this)
                 is WakeWordDetected              -> onWakeWordDetected(action)
@@ -80,12 +80,9 @@ class DialogManagerMqtt(
     }
 
     private fun onPlayFinished(action: PlayFinished) {
-        dialogManagerService.informMqtt(null, action)
-
-        dialogManagerService.transitionTo(
-            action = action,
-            state = null
-        )
+        if (action.source == Source.Local) {
+            dialogManagerService.informMqtt(null, action)
+        }
     }
 
     private fun onSessionEnded(action: SessionEnded, state: DialogManagerState) {
