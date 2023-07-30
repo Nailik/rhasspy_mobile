@@ -8,10 +8,7 @@ import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeIntentRecognitionTimeout
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeRecordingTimeout
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeTextAsrTimeout
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewState.DialogManagementConfigurationData
 import kotlin.test.BeforeTest
 import kotlin.test.Test

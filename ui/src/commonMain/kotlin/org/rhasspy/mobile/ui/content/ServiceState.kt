@@ -1,10 +1,6 @@
 package org.rhasspy.mobile.ui.content
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
@@ -14,12 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.Disabled
-import org.rhasspy.mobile.data.service.ServiceState.Error
-import org.rhasspy.mobile.data.service.ServiceState.Exception
-import org.rhasspy.mobile.data.service.ServiceState.Loading
-import org.rhasspy.mobile.data.service.ServiceState.Pending
-import org.rhasspy.mobile.data.service.ServiceState.Success
+import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Dialog

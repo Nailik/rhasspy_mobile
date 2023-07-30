@@ -4,12 +4,7 @@ import co.touchlab.kermit.Severity
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import okio.FileHandle
-import okio.FileSystem
-import okio.Path
-import okio.Source
-import okio.buffer
-import okio.use
+import okio.*
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest

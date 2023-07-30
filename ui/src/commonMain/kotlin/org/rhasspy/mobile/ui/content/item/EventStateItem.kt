@@ -1,10 +1,6 @@
 package org.rhasspy.mobile.ui.content.item
 
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -26,12 +22,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.Disabled
-import org.rhasspy.mobile.data.service.ServiceState.Error
-import org.rhasspy.mobile.data.service.ServiceState.Exception
-import org.rhasspy.mobile.data.service.ServiceState.Loading
-import org.rhasspy.mobile.data.service.ServiceState.Pending
-import org.rhasspy.mobile.data.service.ServiceState.Success
+import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.content.elements.Icon
 

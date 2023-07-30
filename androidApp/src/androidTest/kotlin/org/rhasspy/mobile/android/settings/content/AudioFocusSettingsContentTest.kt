@@ -1,12 +1,7 @@
 package org.rhasspy.mobile.android.settings.content
 
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.AudioFocusSettingsContent
 import kotlinx.coroutines.test.runTest
 import org.junit.Before

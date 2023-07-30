@@ -2,10 +2,7 @@ package org.rhasspy.mobile.logic.services.audiofocus
 
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason
-import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Dialog
-import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Notification
-import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
-import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Sound
+import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.*
 import org.rhasspy.mobile.platformspecific.media.AudioFocusUtil
 import org.rhasspy.mobile.settings.AppSetting
 

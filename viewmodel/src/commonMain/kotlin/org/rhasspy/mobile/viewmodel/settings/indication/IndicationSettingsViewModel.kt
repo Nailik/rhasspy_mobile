@@ -9,10 +9,7 @@ import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEven
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change
-import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SelectSoundIndicationOutputOption
-import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetSoundIndicationEnabled
-import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetWakeWordDetectionTurnOnDisplay
-import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetWakeWordLightIndicationEnabled
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
 
 @Stable
 class IndicationSettingsViewModel(

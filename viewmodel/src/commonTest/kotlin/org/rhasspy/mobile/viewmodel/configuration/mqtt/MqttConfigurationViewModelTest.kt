@@ -8,16 +8,7 @@ import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttConnectionTimeout
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttHost
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeepAliveInterval
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeyStoreFile
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPassword
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPort
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttRetryInterval
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttUserName
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewState.MqttConfigurationData
 import org.rhasspy.mobile.viewmodel.getRandomString
 import kotlin.test.BeforeTest

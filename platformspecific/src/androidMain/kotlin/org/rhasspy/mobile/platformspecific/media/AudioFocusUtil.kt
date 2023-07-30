@@ -5,18 +5,14 @@ import android.media.AudioAttributes.CONTENT_TYPE_SPEECH
 import android.media.AudioAttributes.USAGE_VOICE_COMMUNICATION
 import android.media.AudioFocusRequest.Builder
 import android.media.AudioManager
-import android.media.AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE
-import android.media.AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK
-import android.media.AudioManager.STREAM_MUSIC
+import android.media.AudioManager.*
 import android.os.Build
 import androidx.core.content.getSystemService
 import co.touchlab.kermit.Logger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
-import org.rhasspy.mobile.data.audiofocus.AudioFocusOption.Disabled
-import org.rhasspy.mobile.data.audiofocus.AudioFocusOption.Duck
-import org.rhasspy.mobile.data.audiofocus.AudioFocusOption.PauseAndResume
+import org.rhasspy.mobile.data.audiofocus.AudioFocusOption.*
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 

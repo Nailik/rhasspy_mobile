@@ -8,13 +8,7 @@ import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLKeyStoreFile
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyAlias
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyPassword
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyStorePassword
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpServerPort
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewState.WebServerConfigurationData
 import org.rhasspy.mobile.viewmodel.getRandomString
 import kotlin.test.BeforeTest

@@ -6,11 +6,7 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change
-import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.SelectAudioFocusOption
-import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.SetAudioFocusOnDialog
-import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.SetAudioFocusOnNotification
-import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.SetAudioFocusOnRecord
-import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.SetAudioFocusOnSound
+import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.*
 
 class AudioFocusSettingsViewModel(
     viewStateCreator: AudioFocusSettingsViewStateCreator

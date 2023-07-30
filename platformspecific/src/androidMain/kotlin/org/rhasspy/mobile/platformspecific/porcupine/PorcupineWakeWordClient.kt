@@ -128,7 +128,6 @@ actual class PorcupineWakeWordClient actual constructor(
     }
 
 
-
     /**
      * invoked when a WakeWord is detected, informs listening service
      */

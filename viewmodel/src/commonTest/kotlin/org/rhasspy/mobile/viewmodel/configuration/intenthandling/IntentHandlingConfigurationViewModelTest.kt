@@ -8,11 +8,7 @@ import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.ChangeIntentHandlingHomeAssistantAccessToken
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.ChangeIntentHandlingHomeAssistantEndpoint
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.ChangeIntentHandlingHttpEndpoint
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingHomeAssistantOption
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewState.IntentHandlingConfigurationData
 import org.rhasspy.mobile.viewmodel.getRandomString
 import kotlin.test.BeforeTest

@@ -12,13 +12,11 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.*
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.SaveLogFile
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.ShareLogFile
-import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Change
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Change.ManualListScroll
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Change.ToggleListAutoScroll
-import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Consumed
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Consumed.ShowSnackBar
 
 @Stable

@@ -951,8 +951,8 @@ internal class MqttService(
             MqttMessage(
                 @Suppress("DEPRECATION")
                 when (audioSource) {
-                    is AudioSource.Data -> audioSource.data
-                    is AudioSource.File -> audioSource.path.commonSource().buffer().readByteArray()
+                    is AudioSource.Data     -> audioSource.data
+                    is AudioSource.File     -> audioSource.path.commonSource().buffer().readByteArray()
                     is AudioSource.Resource -> audioSource.fileResource.commonData(nativeApplication)
                 }
             ),

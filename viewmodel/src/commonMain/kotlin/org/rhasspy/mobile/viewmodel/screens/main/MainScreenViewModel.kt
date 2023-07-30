@@ -6,9 +6,7 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigation
 import org.rhasspy.mobile.viewmodel.navigation.topScreen
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action
-import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.CrashlyticsDialogResult
-import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.*
 
 class MainScreenViewModel(
     viewStateCreator: MainScreenViewStateCreator
