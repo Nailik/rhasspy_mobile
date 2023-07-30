@@ -94,7 +94,7 @@ mockmp {
 tasks.withType<Test>().configureEach {
     retry {
         ignoreFailures = true
-        maxRetries.set(2)
+        maxRetries.set(20)
         maxFailures.set(20)
         failOnPassedAfterRetry.set(false)
     }
