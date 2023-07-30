@@ -66,7 +66,6 @@ fun logicModule() = module {
             appSettingsService = get(),
             localAudioService = get(),
             mqttService = get(),
-            wakeWordService = get()
         )
     }
 

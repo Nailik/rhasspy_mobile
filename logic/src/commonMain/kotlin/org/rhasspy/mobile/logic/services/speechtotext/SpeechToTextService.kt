@@ -206,7 +206,7 @@ internal class SpeechToTextService(
             SpeechToTextOption.RemoteMQTT -> {
                 when (params.dialogManagementOption) {
                     DialogManagementOption.Disabled,
-                    DialogManagementOption.Local      -> mqttClientService.asrAudioFrame(data) { _serviceState.value = it }
+                    DialogManagementOption.Local -> mqttClientService.asrAudioSessionFrame(sessionId, data) { _serviceState.value = it }
 
                     DialogManagementOption.RemoteMQTT -> mqttClientService.asrAudioSessionFrame(sessionId, data) { _serviceState.value = it }
                 }

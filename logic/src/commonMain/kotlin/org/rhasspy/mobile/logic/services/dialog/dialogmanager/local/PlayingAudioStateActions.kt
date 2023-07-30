@@ -3,6 +3,7 @@ package org.rhasspy.mobile.logic.services.dialog.dialogmanager.local
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopAudioPlaying
+import org.rhasspy.mobile.logic.middleware.Source.Mqtt
 import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.states.IStateTransition
@@ -28,12 +29,28 @@ internal class PlayingAudioStateActions(
 
     private fun onPlayFinished(action: PlayFinished) {
         dialogManagerService.informMqtt(null, action)
+
+        dialogManagerService.transitionTo(
+            action = action,
+            state = stateTransition.transitionToIdleState(
+                sessionData = null,
+                isSourceMqtt = action.source is Mqtt
+            )
+        )
     }
 
     private fun onStopAudioPlaying(action: StopAudioPlaying) {
         audioPlayingService.stopPlayAudio()
 
         dialogManagerService.informMqtt(null, PlayFinished(action.source))
+
+        dialogManagerService.transitionTo(
+            action = action,
+            state = stateTransition.transitionToIdleState(
+                sessionData = null,
+                isSourceMqtt = action.source is Mqtt
+            )
+        )
     }
 
 }

@@ -16,7 +16,6 @@ import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.logic.services.settings.IAppSettingsService
 import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
 import org.rhasspy.mobile.logic.services.texttospeech.ITextToSpeechService
-import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -42,8 +41,7 @@ internal class ServiceMiddleware(
     private val textToSpeechService: ITextToSpeechService,
     private val appSettingsService: IAppSettingsService,
     private val localAudioService: ILocalAudioService,
-    private val mqttService: IMqttService,
-    private val wakeWordService: IWakeWordService
+    private val mqttService: IMqttService
 ) : IServiceMiddleware {
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
