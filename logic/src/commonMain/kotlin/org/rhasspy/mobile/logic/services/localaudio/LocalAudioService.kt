@@ -6,7 +6,6 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import okio.Path
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Notification
@@ -24,7 +23,6 @@ import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
-import kotlin.coroutines.resume
 
 interface ILocalAudioService : IService {
 
@@ -32,9 +30,9 @@ interface ILocalAudioService : IService {
 
     val isPlayingState: StateFlow<Boolean>
 
-    suspend fun playAudio(audioSource: AudioSource): ServiceState
+    fun playAudio(audioSource: AudioSource, onFinished: (result: ServiceState) -> Unit)
     fun playWakeSoundWithoutParameter()
-    fun playWakeSound(onFinished: (exception: Exception?) -> Unit)
+    fun playWakeSound(onFinished: () -> Unit)
     fun playRecordedSound()
     fun playErrorSound()
     fun stop()
@@ -69,42 +67,30 @@ internal class LocalAudioService(
         }
     }
 
-    override suspend fun playAudio(audioSource: AudioSource): ServiceState =
-        suspendCancellableCoroutine { continuation ->
-            if (AppSetting.isAudioOutputEnabled.value) {
-                logger.d { "playAudio $audioSource" }
-                playAudio(
-                    audioSource = audioSource,
-                    volume = AppSetting.volume.data,
-                    audioOutputOption = params.audioOutputOption,
-                    onFinished = { exception ->
-                        exception?.also {
-                            logger.e(exception) { "onError" }
-                            if (!continuation.isCompleted) {
-                                continuation.resume(ServiceState.Exception(exception))
-                            }
-                        } ?: run {
-                            logger.e { "onFinished" }
-                            if (!continuation.isCompleted) {
-                                continuation.resume(ServiceState.Success)
-                            }
-                        }
-                    },
-                )
-            } else {
-                if (!continuation.isCompleted) {
-                    continuation.resume(ServiceState.Success)
-                }
-            }
+    override fun playAudio(audioSource: AudioSource, onFinished: (result: ServiceState) -> Unit) {
+        if (AppSetting.isAudioOutputEnabled.value) {
+            logger.d { "playAudio $audioSource" }
+            playAudio(
+                audioSource = audioSource,
+                volume = AppSetting.volume.data,
+                audioOutputOption = params.audioOutputOption,
+                onFinished = {
+                    logger.d { "onFinished" }
+                    onFinished(ServiceState.Success)
+                },
+            )
+        } else {
+            onFinished(ServiceState.Success)
         }
+    }
 
     override fun playWakeSoundWithoutParameter() = playWakeSound {}
 
-    override fun playWakeSound(onFinished: (exception: Exception?) -> Unit) {
+    override fun playWakeSound(onFinished: () -> Unit) {
         logger.d { "playWakeSound" }
         when (AppSetting.wakeSound.value) {
             SoundOption.Disabled.name -> {
-                onFinished(null)
+                onFinished()
             }
 
             SoundOption.Default.name  -> playAudio(
@@ -178,13 +164,13 @@ internal class LocalAudioService(
         audioSource: AudioSource,
         volume: StateFlow<Float>,
         audioOutputOption: AudioOutputOption,
-        onFinished: ((exception: Exception?) -> Unit)? = null
+        onFinished: (() -> Unit)? = null
     ) {
         audioFocusService.request(Notification)
 
         audioPlayer.playAudio(audioSource, volume, audioOutputOption) {
             audioFocusService.abandon(Notification)
-            onFinished?.invoke(it)
+            onFinished?.invoke()
         }
 
     }

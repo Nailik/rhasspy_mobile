@@ -23,8 +23,7 @@ data class IntentHandlingConfigurationViewState internal constructor(
         val intentHandlingHomeAssistantOption: HomeAssistantIntentHandlingOption = ConfigurationSetting.intentHandlingHomeAssistantOption.value,
     ) : IConfigurationData {
 
-        val intentHandlingOptionList: ImmutableList<IntentHandlingOption> =
-            IntentHandlingOption.values().toList().toImmutableList()
+        val intentHandlingOptionList: ImmutableList<IntentHandlingOption> = IntentHandlingOption.values().toList().toImmutableList()
 
     }
 

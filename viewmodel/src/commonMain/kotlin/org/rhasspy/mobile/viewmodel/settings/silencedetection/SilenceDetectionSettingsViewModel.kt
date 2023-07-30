@@ -13,10 +13,7 @@ import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSe
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.ToggleAudioLevelTest
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.SetSilenceDetectionEnabled
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.UpdateSilenceDetectionAudioLevelLogarithm
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.UpdateSilenceDetectionMinimumTime
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.UpdateSilenceDetectionTime
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.*
 import kotlin.math.pow
 
 @Stable
@@ -36,11 +33,6 @@ class SilenceDetectionSettingsViewModel(
                 if (isAppInBackground) {
                     audioRecorder.stopRecording()
                 }
-            }
-        }
-        viewModelScope.launch(dispatcher.IO) {
-            audioRecorder.isRecording.collect { isAppInBackground ->
-                println(isAppInBackground)
             }
         }
     }

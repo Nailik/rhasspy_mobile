@@ -3,14 +3,7 @@ package org.rhasspy.mobile.logic.services.homeassistant
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.*
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
@@ -24,7 +17,7 @@ interface IHomeAssistantService : IService {
 
     override val serviceState: StateFlow<ServiceState>
 
-    suspend fun sendIntent(intentName: String, intent: String): ServiceState
+    fun sendIntent(intentName: String, intent: String, onResult: (result: ServiceState) -> Unit)
 
 }
 
@@ -51,7 +44,7 @@ internal class HomeAssistantService(
     /**
      * simplified conversion from intent to hass event or hass intent
      */
-    override suspend fun sendIntent(intentName: String, intent: String): ServiceState {
+    override fun sendIntent(intentName: String, intent: String, onResult: (result: ServiceState) -> Unit) {
         logger.d { "sendIntent name: $intentName json: $intent" }
         try {
             val slots = mutableMapOf<String, JsonElement?>()
@@ -83,14 +76,18 @@ internal class HomeAssistantService(
 
             val intentRes = Json.encodeToString(slots)
 
-            val result = when (params.intentHandlingHomeAssistantOption) {
-                Event  -> httpClientService.homeAssistantEvent(intentRes, intentName)
-                Intent -> httpClientService.homeAssistantIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
+            when (params.intentHandlingHomeAssistantOption) {
+                Event  -> httpClientService.homeAssistantEvent(intentRes, intentName) {
+                    onResult(it.toServiceState())
+                }
+
+                Intent -> httpClientService.homeAssistantIntent("{\"name\" : \"$intentName\", \"data\": $intent }") {
+                    onResult(it.toServiceState())
+                }
             }
-            return result.toServiceState()
         } catch (exception: Exception) {
             logger.e(exception) { "sendIntent error" }
-            return ServiceState.Exception(exception)
+            onResult(ServiceState.Exception(exception))
         }
     }
 }

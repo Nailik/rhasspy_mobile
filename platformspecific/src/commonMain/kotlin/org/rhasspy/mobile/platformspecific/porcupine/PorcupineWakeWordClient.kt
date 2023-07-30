@@ -27,13 +27,6 @@ expect class PorcupineWakeWordClient(
     onError: (Exception) -> Unit
 ) {
 
-    val isInitialized: Boolean
-
-    /**
-     * create porcupine client
-     */
-    fun initialize(): Exception?
-
     /**
      * start wake word detected
      */

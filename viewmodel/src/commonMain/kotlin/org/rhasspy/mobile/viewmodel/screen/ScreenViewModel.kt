@@ -20,21 +20,15 @@ import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.utils.IOpenLinkUtils
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.*
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.RequestMicrophonePermission
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.RequestOverlayPermission
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Confirm
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Dismiss
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar.Consumed
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.MicrophonePermissionInfo
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.OverlayPermissionInfo
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.LinkOpenFailed
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.MicrophonePermissionRequestDenied
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.MicrophonePermissionRequestFailed
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.OverlayPermissionRequestFailed
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.SelectFileFailed
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.*
 
 abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
 

@@ -6,11 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
@@ -24,11 +20,7 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar.Actio
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar.Consumed
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.MicrophonePermissionInfo
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.OverlayPermissionInfo
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.LinkOpenFailed
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.MicrophonePermissionRequestDenied
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.MicrophonePermissionRequestFailed
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.OverlayPermissionRequestFailed
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.SelectFileFailed
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.*
 
 
 val LocalSnackBarHostState = compositionLocalOf<SnackbarHostState> {

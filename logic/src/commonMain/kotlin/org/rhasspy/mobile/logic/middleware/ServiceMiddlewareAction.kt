@@ -10,7 +10,12 @@ sealed class ServiceMiddlewareAction {
         }
     }
 
-    class SayText(val text: String) : ServiceMiddlewareAction() {
+    class SayText(
+        val text: String,
+        val volume: Float?,
+        val siteId: String,
+        val sessionId: String?
+    ) : ServiceMiddlewareAction() {
         override fun toString(): String {
             return "${super.toString()} text: $text"
         }
@@ -61,6 +66,7 @@ sealed class ServiceMiddlewareAction {
         }
 
         class AsrError(source: Source) : DialogServiceMiddlewareAction(source)
+        class AsrTimeoutError(source: Source) : DialogServiceMiddlewareAction(source)
 
         class IntentRecognitionResult(source: Source, val intentName: String, val intent: String) :
             DialogServiceMiddlewareAction(source) {
@@ -70,6 +76,7 @@ sealed class ServiceMiddlewareAction {
         }
 
         class IntentRecognitionError(source: Source) : DialogServiceMiddlewareAction(source)
+        class IntentRecognitionTimeoutError(source: Source) : DialogServiceMiddlewareAction(source)
 
         class PlayAudio(source: Source, val byteArray: ByteArray) :
             DialogServiceMiddlewareAction(source) {

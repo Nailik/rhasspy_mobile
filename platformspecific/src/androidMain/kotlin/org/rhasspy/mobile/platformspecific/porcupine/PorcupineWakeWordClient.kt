@@ -37,18 +37,63 @@ actual class PorcupineWakeWordClient actual constructor(
     //manager to stop start and reload porcupine
     private var porcupineClient: IPorcupineClient? = null
 
+    private var isStarted = false
     private val context = get<NativeApplication>()
 
-    private var initialized: Boolean = false
-    actual val isInitialized: Boolean = initialized
+    /**
+     * start wake word detected
+     *
+     * start listening to wake words
+     * requires internet to activate porcupine the very first time
+     *
+     * checks for audio permission
+     * tries to start porcupine
+     */
+    actual fun start(): Exception? {
+        if (isStarted) return null
+
+        if (porcupineClient == null) {
+            val exception = initialize()
+            if (exception != null) return exception
+        }
+
+        return porcupineClient?.let {
+            return try {
+                isStarted = true
+                it.start()
+                null
+            } catch (exception: Exception) {
+                isStarted = false
+                exception
+            }
+        } ?: run {
+            logger.a { "Porcupine start but porcupineManager not initialized" }
+            Exception("notInitialized")
+        }
+    }
+
+    /**
+     * stop wake word detected
+     */
+    actual fun stop() {
+        porcupineClient?.stop()
+        isStarted = false
+    }
+
+    /**
+     * deletes the porcupine manager
+     */
+    actual fun close() {
+        porcupineClient?.close()
+        porcupineClient = null
+        isStarted = false
+    }
 
     /**
      * create porcupine client
      */
-    actual fun initialize(): Exception? {
-
+    private fun initialize(): Exception? {
         return try {
-
             File(context.filesDir, "sounds").mkdirs()
 
             porcupineClient = if (isUseCustomRecorder) {
@@ -74,47 +119,14 @@ actual class PorcupineWakeWordClient actual constructor(
                 )
             }
 
-            initialized = true
             null//no error
         } catch (exception: PorcupineException) {
-            initialized = false
             return Exception(exception.localizedMessage)
         } catch (exception: Exception) {
-            initialized = false
             return exception
         }
     }
 
-
-    /**
-     * start wake word detected
-     *
-     * start listening to wake words
-     * requires internet to activate porcupine the very first time
-     *
-     * checks for audio permission
-     * tries to start porcupine
-     */
-    actual fun start(): Exception? {
-        return porcupineClient?.let {
-            return try {
-                it.start()
-                null
-            } catch (exception: Exception) {
-                exception
-            }
-        } ?: run {
-            logger.a { "Porcupine start but porcupineManager not initialized" }
-            Exception("notInitialized")
-        }
-    }
-
-    /**
-     * stop wake word detected
-     */
-    actual fun stop() {
-        porcupineClient?.stop()
-    }
 
     /**
      * invoked when a WakeWord is detected, informs listening service
@@ -135,15 +147,6 @@ actual class PorcupineWakeWordClient actual constructor(
         } else if (keywordIndex > 0) {
             onKeywordDetected("UnknownIndex $keywordIndex")
         }
-    }
-
-    /**
-     * deletes the porcupine manager
-     */
-    actual fun close() {
-        porcupineClient?.stop()
-        porcupineClient?.close()
-        porcupineClient = null
     }
 
 

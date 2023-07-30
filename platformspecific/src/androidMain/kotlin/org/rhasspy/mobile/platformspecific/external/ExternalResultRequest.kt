@@ -13,13 +13,12 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.*
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.*
-import kotlin.coroutines.resume
+import org.rhasspy.mobile.platformspecific.resumeSave
 
 internal actual class ExternalResultRequest actual constructor(
     private val nativeApplication: NativeApplication
@@ -63,13 +62,12 @@ internal actual class ExternalResultRequest actual constructor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    @OptIn(ExperimentalCoroutinesApi::class)
     actual override suspend fun <R> launchForResult(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> =
         suspendCancellableCoroutine { continuation ->
             logger.v { "launchForResult $intention" }
             launching<R> {
                 activityResultCallback = {
-                    continuation.resume(getResult(it) as ExternalRedirectResult<R>) { cause ->
+                    continuation.resumeSave(getResult(it) as ExternalRedirectResult<R>) { cause ->
                         Error<R>(cause)
                     }
                 }
@@ -80,7 +78,7 @@ internal actual class ExternalResultRequest actual constructor(
     actual override suspend fun launchForPermission(permission: String): Boolean =
         suspendCancellableCoroutine { continuation ->
             logger.v { "launchForResult $permission" }
-            permissionResultCallback = { continuation.resume(it) }
+            permissionResultCallback = { continuation.resumeSave(it) }
             somePermissionResultLauncher.launch(permission)
         }
 

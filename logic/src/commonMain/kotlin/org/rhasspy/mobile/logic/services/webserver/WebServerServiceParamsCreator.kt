@@ -10,6 +10,7 @@ internal class WebServerServiceParamsCreator {
     operator fun invoke(): StateFlow<WebServerServiceParams> {
 
         return combineStateFlow(
+            ConfigurationSetting.siteId.data,
             ConfigurationSetting.isHttpServerEnabled.data,
             ConfigurationSetting.httpServerPort.data,
             ConfigurationSetting.isHttpServerSSLEnabledEnabled.data,
@@ -25,6 +26,7 @@ internal class WebServerServiceParamsCreator {
 
     private fun getParams(): WebServerServiceParams {
         return WebServerServiceParams(
+            siteId = ConfigurationSetting.siteId.value,
             isHttpServerEnabled = ConfigurationSetting.isHttpServerEnabled.value,
             httpServerPort = ConfigurationSetting.httpServerPort.value,
             isHttpServerSSLEnabled = ConfigurationSetting.isHttpServerSSLEnabledEnabled.value,

@@ -3,8 +3,6 @@ package org.rhasspy.mobile.logic.services.dialog
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -13,82 +11,74 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.option.DialogManagementOption.Disabled
-import org.rhasspy.mobile.data.service.option.DialogManagementOption.Local
-import org.rhasspy.mobile.data.service.option.DialogManagementOption.RemoteMQTT
+import org.rhasspy.mobile.data.service.option.DialogManagementOption.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionEnded
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionStarted
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.IdleState
-import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerDisabled
-import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerLocal
-import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerRemoteMqtt
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.disabled.DialogManagerDisabled
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.local.DialogManagerLocal
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.mqtt.DialogManagerMqtt
 import org.rhasspy.mobile.logic.services.dialog.states.IStateTransition
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface IDialogManagerService : IService {
 
-    val dialogHistory: StateFlow<List<Pair<DialogServiceMiddlewareAction, DialogManagerState>>>
+    val dialogHistory: StateFlow<List<Pair<DialogServiceMiddlewareAction, DialogManagerState?>>>
 
     override val serviceState: StateFlow<ServiceState>
     val currentDialogState: StateFlow<DialogManagerState>
 
-    fun start()
-    fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState)
+    fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState?)
+    suspend fun onAction(action: DialogServiceMiddlewareAction)
+    fun informMqtt(sessionData: SessionData?, action: DialogServiceMiddlewareAction)
 
-    fun onAction(action: DialogServiceMiddlewareAction)
+    fun clearHistory()
 
-    suspend fun informMqtt(sessionData: SessionData?, action: DialogServiceMiddlewareAction)
 }
 
 /**
  * The Dialog Manager handles the various states and goes to the next state according to the function that is called
  */
 internal class DialogManagerService(
+    dispatcherProvider: IDispatcherProvider,
     private val mqttService: IMqttService
 ) : IDialogManagerService {
 
     private val dialogManagerLocal by inject<DialogManagerLocal>()
-    private val dialogManagerRemoteMqtt by inject<DialogManagerRemoteMqtt>()
+    private val dialogManagerMqtt by inject<DialogManagerMqtt>()
     private val dialogManagerDisabled by inject<DialogManagerDisabled>()
 
-    override val dialogHistory =
-        MutableStateFlow<ImmutableList<Pair<DialogServiceMiddlewareAction, DialogManagerState>>>(
-            persistentListOf()
-        )
+    override val dialogHistory = MutableStateFlow<ImmutableList<Pair<DialogServiceMiddlewareAction, DialogManagerState?>>>(persistentListOf())
 
     override val logger = LogType.DialogManagerService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
 
-    private var coroutineScope = CoroutineScope(Dispatchers.IO)
-
-    private val _currentDialogState = MutableStateFlow<DialogManagerState>(IdleState())
+    private val _currentDialogState = MutableStateFlow<DialogManagerState>(IdleState)
     override val currentDialogState = _currentDialogState.readOnly
 
-    override fun start() {
+    init {
         _serviceState.value = ServiceState.Success
-        coroutineScope.launch {
+        CoroutineScope(dispatcherProvider.IO).launch {
             transitionTo(
                 SessionEnded(Source.Local),
-                get<IStateTransition>().transitionToIdleState(null)
+                //settings true to source mqtt results in no initial data being send to mqtt
+                get<IStateTransition>().transitionToIdleState(null, true)
             )
         }
     }
 
-    override fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState) {
-        _currentDialogState.value = state
+    override fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState?) {
+        if (state != null) {
+            _currentDialogState.value = state
+        }
         dialogHistory.update {
             it.updateList {
                 add(Pair(action, state))
@@ -99,17 +89,15 @@ internal class DialogManagerService(
         }
     }
 
-    override fun onAction(action: DialogServiceMiddlewareAction) {
-        coroutineScope.launch {
-            when (ConfigurationSetting.dialogManagementOption.value) {
-                Local      -> dialogManagerLocal.onAction(action)
-                RemoteMQTT -> dialogManagerRemoteMqtt.onAction(action)
-                Disabled   -> dialogManagerDisabled.onAction(action)
-            }
+    override suspend fun onAction(action: DialogServiceMiddlewareAction) {
+        when (ConfigurationSetting.dialogManagementOption.value) {
+            Local      -> dialogManagerLocal.onAction(action)
+            RemoteMQTT -> dialogManagerMqtt.onAction(action)
+            Disabled   -> dialogManagerDisabled.onAction(action)
         }
     }
 
-    override suspend fun informMqtt(
+    override fun informMqtt(
         sessionData: SessionData?,
         action: DialogServiceMiddlewareAction
     ) {
@@ -117,11 +105,7 @@ internal class DialogManagerService(
             if (sessionData != null) {
                 when (action) {
                     is AsrError               -> mqttService.asrError(sessionData.sessionId)
-                    is AsrTextCaptured        -> mqttService.asrTextCaptured(
-                        sessionData.sessionId,
-                        action.text
-                    )
-
+                    is AsrTextCaptured        -> mqttService.asrTextCaptured(sessionData.sessionId, action.text)
                     is WakeWordDetected       -> mqttService.hotWordDetected(action.wakeWord)
                     is IntentRecognitionError -> mqttService.intentNotRecognized(sessionData.sessionId)
                     is SessionEnded           -> mqttService.sessionEnded(sessionData.sessionId)
@@ -138,6 +122,10 @@ internal class DialogManagerService(
             }
         }
 
+    }
+
+    override fun clearHistory() {
+        dialogHistory.value = persistentListOf()
     }
 
 }

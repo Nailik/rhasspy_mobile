@@ -1,8 +1,6 @@
 package org.rhasspy.mobile.data.audiorecorder
 
-import android.media.AudioFormat.CHANNEL_IN_DEFAULT
-import android.media.AudioFormat.CHANNEL_IN_MONO
-import android.media.AudioFormat.CHANNEL_IN_STEREO
+import android.media.AudioFormat.*
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.IOption

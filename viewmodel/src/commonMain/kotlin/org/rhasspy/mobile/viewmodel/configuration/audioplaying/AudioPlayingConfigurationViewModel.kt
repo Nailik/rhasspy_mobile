@@ -12,11 +12,7 @@ import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.ChangeEditAudioPlayingHttpEndpoint
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.ChangeEditAudioPlayingMqttSiteId
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.SelectAudioOutputOption
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.SelectEditAudioPlayingOption
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.SetUseCustomHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewState.AudioPlayingConfigurationData
 
 /**
@@ -34,8 +30,7 @@ class AudioPlayingConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState =
-        MutableStateFlow(AudioPlayingConfigurationViewState(AudioPlayingConfigurationData()))
+    private val _viewState = MutableStateFlow(AudioPlayingConfigurationViewState(AudioPlayingConfigurationData()))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
@@ -61,10 +56,7 @@ class AudioPlayingConfigurationViewModel(
                 when (change) {
                     is SelectEditAudioPlayingOption       -> copy(audioPlayingOption = change.option)
                     is SelectAudioOutputOption            -> copy(audioOutputOption = change.option)
-                    is SetUseCustomHttpEndpoint           -> copy(
-                        isUseCustomAudioPlayingHttpEndpoint = change.enabled
-                    )
-
+                    is SetUseCustomHttpEndpoint           -> copy(isUseCustomAudioPlayingHttpEndpoint = change.enabled)
                     is ChangeEditAudioPlayingHttpEndpoint -> copy(audioPlayingHttpEndpoint = change.enabled)
                     is ChangeEditAudioPlayingMqttSiteId   -> copy(audioPlayingMqttSiteId = change.siteId)
                 }
@@ -86,8 +78,7 @@ class AudioPlayingConfigurationViewModel(
         with(_viewState.value.editData) {
             ConfigurationSetting.audioPlayingOption.value = audioPlayingOption
             ConfigurationSetting.audioOutputOption.value = audioOutputOption
-            ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value =
-                isUseCustomAudioPlayingHttpEndpoint
+            ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value = isUseCustomAudioPlayingHttpEndpoint
             ConfigurationSetting.audioPlayingHttpEndpoint.value = audioPlayingHttpEndpoint
             ConfigurationSetting.audioPlayingMqttSiteId.value = audioPlayingMqttSiteId
         }

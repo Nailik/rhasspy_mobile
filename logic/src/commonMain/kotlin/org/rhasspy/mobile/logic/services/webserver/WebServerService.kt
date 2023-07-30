@@ -30,21 +30,14 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.HotWordToggle
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartListening
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopListening
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.Mqtt
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.PlayStopRecording
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.SayText
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source.HttpApi
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
-import org.rhasspy.mobile.logic.services.webserver.WebServerResult.Accepted
-import org.rhasspy.mobile.logic.services.webserver.WebServerResult.Error
-import org.rhasspy.mobile.logic.services.webserver.WebServerResult.Ok
+import org.rhasspy.mobile.logic.services.webserver.WebServerResult.*
 import org.rhasspy.mobile.logic.services.webserver.WebServerServiceErrorType.WakeOptionInvalid
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.file.FolderType
@@ -227,22 +220,15 @@ internal class WebServerService(
             }
 
             when (result) {
-                is Accepted -> {
-                    call.respond(HttpStatusCode.Accepted)
-                }
+                is Accepted -> call.respond(HttpStatusCode.Accepted, result.data)
 
                 is Error    -> {
                     logger.d { "evaluateCall BadRequest ${result.errorType.description}" }
                     call.respond(HttpStatusCode.BadRequest, result.errorType.description)
                 }
 
-                Ok          -> {
-                    call.respond(HttpStatusCode.OK)
-                }
-
-                else        -> {
-
-                }
+                Ok          -> call.respond(HttpStatusCode.OK)
+                else        -> Unit
             }
             _serviceState.value = ServiceState.Success
 
@@ -273,7 +259,8 @@ internal class WebServerService(
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     private suspend fun listenForWake(call: ApplicationCall): WebServerResult {
-        val action = when (call.receive<String>()) {
+        val value = call.receive<String>()
+        val action = when (value) {
             "on"  -> true
             "off" -> false
             else  -> null
@@ -281,7 +268,7 @@ internal class WebServerService(
 
         return action?.let {
             serviceMiddleware.action(HotWordToggle(it))
-            Accepted(it.toString())
+            Accepted(value)
         } ?: Error(WakeOptionInvalid)
     }
 
@@ -379,7 +366,14 @@ internal class WebServerService(
      * just like using say in the ui start screen but remote
      */
     private suspend fun say(call: ApplicationCall): WebServerResult {
-        serviceMiddleware.action(SayText(call.receive()))
+        serviceMiddleware.action(
+            SayText(
+                text = call.receive(),
+                volume = null,
+                siteId = params.siteId,
+                sessionId = null
+            )
+        )
         return Ok
     }
 

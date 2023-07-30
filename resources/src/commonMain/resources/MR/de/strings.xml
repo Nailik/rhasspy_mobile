@@ -65,7 +65,7 @@
     <string name="enableBackground">Hintergrunddienste aktivieren</string>
     <string name="backgroundWakeWordDetectionTurnOnDisplay">Display aufwecken</string>
     <string name="wakeWordIndication">Aktivierungswort-Indikation</string>
-    <string name="wakeWordSoundIndication">Ton</string>
+    <string name="wakeWordAudioIndication">Audio</string>
     <string name="wakeWordLightIndication">Visual</string>
     <string name="enableSSL">SSL aktivieren</string>
     <string name="enabled">Aktiviert</string>
@@ -269,7 +269,7 @@
     <string name="startRecordAudio">Audioaufnahme starten</string>
     <string name="stopRecordAudio">Audioaufnahme stoppen</string>
     <string name="useMqttSilenceDetection">Nutze MQTT-Stille-Erkennung</string>
-    <string name="textToSpeechText">Text-zu-Sprache-Text</string>
+    <string name="textToSpeechText">Text-zu-Sprache</string>
     <string name="executeTextToSpeechText">Text in Sprache übersetzten</string>
     <string name="textIntentRecognitionText">Text zur Erkennung des Intent</string>
     <string name="executeIntentRecognition">Intent erkennen</string>
@@ -292,7 +292,7 @@
     <string name="serviceStatusErrorText">Dienstfehler ist aufgetreten</string>
     <string name="executeTestHttpConnection">Teste HTTP-Verbindung</string>
     <string name="porcupineLanguageInformation">Alle aktiven Aktivierungswörter müssen mit der
-        ausgewählten Sprache übereinstimmen und der aktuellen Porcupine Version (2.2) kompatibel
+        ausgewählten Sprache übereinstimmen und der aktuellen Porcupine Version (2.2.2) kompatibel
         sein!
     </string>
     <string name="backgroundServiceInformation">Der Hintergrunddienst ermöglicht es, der App im
@@ -325,9 +325,8 @@
     </string>
     <string name="recordingTimeoutText">Aufnahmezeitüberschreitung (MS)</string>
     <string name="audioFocus">Audio-Fokus</string>
-    <string name="audioFocusInformation">Durch Audio Focus kann der Rhasspy andere Audiostreams wie
-        Musik oder Videos anhalten und wieder aufnehmen oder die Lautstärke verringern. die
-        Lautstärke anderer Audiostreams wie Musik oder Videos verringern.
+    <string name="audioFocusInformation">Durch Audio Focus kann Rhasspy andere Audiostreams wie
+        Musik oder Videos anhalten und wieder aufnehmen oder die Lautstärke verringern.
     </string>
     <string name="pauseAndResume">Pause und Wiederaufnahme</string>
     <string name="duck">Duck (Lautstärke senken)</string>
@@ -361,6 +360,8 @@
     <string name="channel">Channel</string>
     <string name="encoding">Encoding</string>
     <string name="dialog">Dialog</string>
+    <string name="notInitialized">nicht initialisiert</string>
+    <string name="clear_text">leeren</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>
@@ -517,7 +518,7 @@
     <!-- DialogManagerStateInformation -->
     <string name="session_id">SessionId: %s</string>
     <string name="asr_text">AsrText: %s</string>
-    <string name="intent">IntentName: %s</string>
+    <string name="intent">IntentName: %s\nIntent: %s</string>
     <string name="audio_data_size">AudioDataSize: %s</string>
     <string name="send_audio_captured">SendAudioCaptured: %s</string>
     <string name="wake_word">WakeWord: %s</string>
@@ -537,6 +538,8 @@
     <string name="stop_audio_playing">StopAudioPlaying</string>
     <string name="stop_listening">StopListening</string>
     <string name="wake_word_detected">WakeWordDetected</string>
+    <string name="asr_timeout_error">AsrTimeoutError</string>
+    <string name="intent_recognition_timeout_error">IntentRecognitionTimeoutError</string>
     <!-- Source -->
     <string name="http_api">HttpApi</string>
     <string name="local">Local</string>

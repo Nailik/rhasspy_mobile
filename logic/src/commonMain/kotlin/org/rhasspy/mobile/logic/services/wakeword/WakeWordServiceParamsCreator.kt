@@ -14,6 +14,7 @@ internal class WakeWordServiceParamsCreator {
             AppSetting.audioRecorderSampleRate.data,
             AppSetting.audioRecorderChannel.data,
             AppSetting.audioRecorderEncoding.data,
+            AppSetting.isHotWordEnabled.data,
             ConfigurationSetting.wakeWordPorcupineAudioRecorderSettings.data,
             ConfigurationSetting.wakeWordOption.data,
             ConfigurationSetting.wakeWordPorcupineAccessToken.data,
@@ -30,6 +31,7 @@ internal class WakeWordServiceParamsCreator {
 
     private fun getParams(): WakeWordServiceParams {
         return WakeWordServiceParams(
+            isEnabled = AppSetting.isHotWordEnabled.value,
             audioRecorderSampleRateType = AppSetting.audioRecorderSampleRate.value,
             audioRecorderChannelType = AppSetting.audioRecorderChannel.value,
             audioRecorderEncodingType = AppSetting.audioRecorderEncoding.value,

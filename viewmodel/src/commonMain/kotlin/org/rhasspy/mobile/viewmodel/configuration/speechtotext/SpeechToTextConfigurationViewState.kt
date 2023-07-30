@@ -22,12 +22,10 @@ data class SpeechToTextConfigurationViewState internal constructor(
         val speechToTextHttpEndpoint: String = ConfigurationSetting.speechToTextHttpEndpoint.value
     ) : IConfigurationData {
 
-        val speechToTextOptions: ImmutableList<SpeechToTextOption> =
-            SpeechToTextOption.values().toImmutableList()
+        val speechToTextOptions: ImmutableList<SpeechToTextOption> = SpeechToTextOption.values().toImmutableList()
 
         val speechToTextHttpEndpointText: String
-            get() = if (isUseCustomSpeechToTextHttpEndpoint) speechToTextHttpEndpoint else
-                "${ConfigurationSetting.httpClientServerEndpointHost.value}:${ConfigurationSetting.httpClientServerEndpointPort.value}/${HttpClientPath.SpeechToText.path}"
+            get() = if (isUseCustomSpeechToTextHttpEndpoint) speechToTextHttpEndpoint else "${ConfigurationSetting.httpClientServerEndpointHost.value}:${ConfigurationSetting.httpClientServerEndpointPort.value}/${HttpClientPath.SpeechToText.path}"
 
     }
 

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,10 +38,7 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationS
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.Navigate
-import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SelectSoundIndicationOutputOption
-import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetSoundIndicationEnabled
-import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetWakeWordDetectionTurnOnDisplay
-import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetWakeWordLightIndicationEnabled
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewState
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSoundSettingsViewModel
@@ -131,7 +129,7 @@ fun IndicationSettingsOverview(
             //sound indication
             SwitchListItem(
                 modifier = Modifier.testTag(TestTag.SoundIndicationEnabled),
-                text = MR.strings.wakeWordSoundIndication.stable,
+                text = MR.strings.wakeWordAudioIndication.stable,
                 isChecked = viewState.isSoundIndicationEnabled,
                 onCheckedChange = { onEvent(SetSoundIndicationEnabled(it)) }
             )
@@ -153,13 +151,14 @@ fun IndicationSettingsOverview(
 
         }
 
-
     }
+
 }
 
 /**
  * overview page for indication settings
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SoundIndicationSettingsOverview(
     soundIndicationOutputOption: AudioOutputOption,

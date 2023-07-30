@@ -1,7 +1,6 @@
 package androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,17 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.AboutScreen
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.AudioFocusSettingsContent
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.AudioRecorderSettingsContent
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.BackgroundServiceSettingsContent
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.DeviceSettingsContent
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.IndicationSettingsContent
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.LanguageSettingsScreenItemContent
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.LogSettingsContent
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.MicrophoneOverlaySettingsContent
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.SaveAndRestoreSettingsContent
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.SilenceDetectionSettingsContent
+import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.*
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
@@ -46,24 +35,12 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.SettingsScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.AboutSettings
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.AudioFocusSettings
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.AudioRecorderSettings
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.BackgroundServiceSettings
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.DeviceSettings
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.IndicationSettings
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.LanguageSettingsScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.LogSettings
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.MicrophoneOverlaySettings
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.OverviewScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.SaveAndRestoreSettings
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.SilenceDetectionSettings
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.*
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewState
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SettingsScreen() {
 

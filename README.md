@@ -1,6 +1,6 @@
 # Rhasspy mobile
 
-This will be a Rhasspy satellite on a mobile phone. The original idea is
+This is a Rhasspy satellite on a mobile phone. The original idea is
 from [rhasspy-mobile-app](https://github.com/razzo04/rhasspy-mobile-app). The latest Version can be
 found on the [PlayStore](https://play.google.com/store/apps/details?id=org.rhasspy.mobile.android)
 or in [Releases](https://github.com/Nailik/rhasspy_mobile/releases).
@@ -35,7 +35,7 @@ of [Rhasspy](https://rhasspy.readthedocs.io/en/latest/tutorials/#server-with-sat
 
 | Feature                           | Description                                                                                                                                                                 |
 |-----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Local wake-word                   | Uses [Porcupine](https://picovoice.ai/platform/porcupine/) to enable local wake-word processing                                                                             |
+| Local Wake Word                   | Uses [Porcupine](https://picovoice.ai/platform/porcupine/) to enable local wake-word processing                                                                             |
 | Background Service                | Allows to run the app continuously in Background, listening for wake word and processing audio.                                                                             |
 | Microphone Overlay and Widget     | Quick access to voice commands without using a wake-word.                                                                                                                   |
 | Indication                        | Indicate different Rhasspy states<br/><ul><li>Wake up display when wake-word is detected</li><li>Sound indication like Rhasspy</li><li>Overlay animation</li></ul>          |

@@ -12,9 +12,7 @@ import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SelectTextToSpeechOption
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SetUseCustomHttpEndpoint
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.UpdateTextToSpeechHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewState.TextToSpeechConfigurationData
 
 @Stable
@@ -24,8 +22,7 @@ class TextToSpeechConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState =
-        MutableStateFlow(TextToSpeechConfigurationViewState(TextToSpeechConfigurationData()))
+    private val _viewState = MutableStateFlow(TextToSpeechConfigurationViewState(TextToSpeechConfigurationData()))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
@@ -70,8 +67,7 @@ class TextToSpeechConfigurationViewModel(
     override fun onSave() {
         with(_viewState.value.editData) {
             ConfigurationSetting.textToSpeechOption.value = textToSpeechOption
-            ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value =
-                isUseCustomTextToSpeechHttpEndpoint
+            ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value = isUseCustomTextToSpeechHttpEndpoint
             ConfigurationSetting.textToSpeechHttpEndpoint.value = textToSpeechHttpEndpoint
         }
     }

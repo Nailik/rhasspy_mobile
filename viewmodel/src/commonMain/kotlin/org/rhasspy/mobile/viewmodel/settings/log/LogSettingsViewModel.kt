@@ -8,10 +8,7 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change
-import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.SetCrashlyticsEnabled
-import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.SetLogAudioFramesEnabled
-import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.SetLogLevel
-import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.SetShowLogEnabled
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.*
 
 @Stable
 class LogSettingsViewModel(

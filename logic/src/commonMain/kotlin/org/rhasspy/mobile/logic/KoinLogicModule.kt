@@ -14,21 +14,11 @@ import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParamsCreator
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
-import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerDisabled
-import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerLocal
-import org.rhasspy.mobile.logic.services.dialog.dialogmanager.DialogManagerRemoteMqtt
-import org.rhasspy.mobile.logic.services.dialog.states.AudioPlayingStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.IAudioPlayingStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.IIdleStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.IRecognizingIntentStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.IRecordingIntentStateAction
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.disabled.DialogManagerDisabled
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.local.*
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.mqtt.DialogManagerMqtt
 import org.rhasspy.mobile.logic.services.dialog.states.IStateTransition
-import org.rhasspy.mobile.logic.services.dialog.states.ITranscribingIntentStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.IdleStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.RecognizingIntentStateAction
-import org.rhasspy.mobile.logic.services.dialog.states.RecordingIntentStateAction
 import org.rhasspy.mobile.logic.services.dialog.states.StateTransition
-import org.rhasspy.mobile.logic.services.dialog.states.TranscribingIntentStateAction
 import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantServiceParamsCreator
 import org.rhasspy.mobile.logic.services.homeassistant.IHomeAssistantService
@@ -76,7 +66,6 @@ fun logicModule() = module {
             appSettingsService = get(),
             localAudioService = get(),
             mqttService = get(),
-            wakeWordService = get()
         )
     }
 
@@ -88,6 +77,7 @@ fun logicModule() = module {
     factory { DialogManagerServiceParamsCreator() }
     single<IDialogManagerService> {
         DialogManagerService(
+            dispatcherProvider = get(),
             mqttService = get()
         )
     }
@@ -100,56 +90,43 @@ fun logicModule() = module {
             audioFocusService = get(),
             wakeWordService = get(),
             intentRecognitionService = get(),
-            audioPlayingService = get(),
             speechToTextService = get(),
             indicationService = get(),
             mqttService = get(),
         )
     }
 
-    single<IAudioPlayingStateAction> {
-        AudioPlayingStateAction(
-            dialogManagerService = get(),
-            audioPlayingService = get(),
-            stateTransition = get()
-        )
-    }
-    single<IIdleStateAction> {
-        IdleStateAction(
-            dialogManagerService = get(),
-            dispatcherProvider = get(),
-            stateTransition = get(),
-            wakeWordService = get(),
-            indicationService = get(),
-        )
-    }
-    single<IRecognizingIntentStateAction> {
-        RecognizingIntentStateAction(
-            dialogManagerService = get(),
-            indicationService = get(),
-            stateTransition = get(),
-            intentHandlingService = get(),
-        )
-    }
-    single<IRecordingIntentStateAction> {
-        RecordingIntentStateAction(
+    single<ISessionStateActions> {
+        SessionStateActions(
             dialogManagerService = get(),
             indicationService = get(),
             stateTransition = get(),
             speechToTextService = get(),
+            intentHandlingService = get(),
+
+            )
+    }
+
+    single<IIdleStateActions> {
+        IdleStateActions(
+            dialogManagerService = get(),
+            stateTransition = get(),
+            wakeWordService = get(),
+            indicationService = get(),
+            audioPlayingService = get(),
         )
     }
-    single<ITranscribingIntentStateAction> {
-        TranscribingIntentStateAction(
+
+    single<IPlayingAudioStateActions> {
+        PlayingAudioStateActions(
             dialogManagerService = get(),
-            indicationService = get(),
+            audioPlayingService = get(),
             stateTransition = get(),
         )
     }
 
-
     singleOf(::DialogManagerLocal)
-    singleOf(::DialogManagerRemoteMqtt)
+    singleOf(::DialogManagerMqtt)
     singleOf(::DialogManagerDisabled)
 
     factory { HomeAssistantServiceParamsCreator() }

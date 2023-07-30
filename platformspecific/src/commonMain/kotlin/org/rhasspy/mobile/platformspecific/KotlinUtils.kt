@@ -3,17 +3,9 @@ package org.rhasspy.mobile.platformspecific
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import kotlin.coroutines.resume
 import kotlin.math.roundToInt
 
 fun <T1, T2, R> combineState(
@@ -73,8 +65,8 @@ fun <T1, T2, T3, T4, T5, R> combineState(
 
 inline fun <reified T> combineStateFlow(
     vararg flows: StateFlow<T>,
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    sharingStarted: SharingStarted = SharingStarted.Lazily
+    scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+    sharingStarted: SharingStarted = SharingStarted.Eagerly
 ): StateFlow<Array<T>> = combine(flows = flows) {
     it
 }.stateIn(
@@ -87,7 +79,7 @@ inline fun <reified T> combineStateFlow(
 
 fun <T, R> StateFlow<T>.mapReadonlyState(
     scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
-    sharingStarted: SharingStarted = SharingStarted.Lazily,
+    sharingStarted: SharingStarted = SharingStarted.Eagerly,
     transform: (T) -> R
 ): StateFlow<R> = this.map {
     transform(it)
@@ -128,10 +120,19 @@ fun String?.toLongOrNullOrConstant(): Long? =
 
 fun String?.toIntOrNullOrConstant(): Int? =
     this?.let {
-        if (it.length > 10) this.substring(0..9).toInt() else it.trimTrailingZeros()?.toIntOrNull()
+        if (it.length > 10) this.substring(0..9).toInt() else it.trimTrailingZeros()
+            ?.toIntOrNull()
     }
 
-fun String?.trimTrailingZeros() = this?.replaceFirst(Regex("^0*"), "")
+fun String?.trimTrailingZeros(): String? {
+    if (this == null) return null
+    val result = this.replaceFirst(Regex("^0*"), "")
+    return if (result.isEmpty() && this.isNotEmpty()) {
+        return "0"
+    } else {
+        result
+    }
+}
 
 fun <E> ImmutableList<E>.updateList(block: MutableList<E>.() -> Unit): ImmutableList<E> {
     return this.toMutableList().apply(block).toImmutableList()
@@ -156,4 +157,17 @@ fun Float.roundToDecimals(decimals: Int): Float {
     repeat(decimals) { dotAt *= 10 }
     val roundedValue = (this * dotAt).roundToInt()
     return (roundedValue / dotAt) + (roundedValue % dotAt).toFloat() / dotAt
+}
+
+fun <T> CancellableContinuation<T>.resumeSave(value: T) {
+    if (!this.isCompleted) {
+        this.resume(value)
+    }
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+fun <T> CancellableContinuation<T>.resumeSave(value: T, onCancellation: ((cause: Throwable) -> Unit)?) {
+    if (!this.isCompleted) {
+        this.resume(value, onCancellation)
+    }
 }

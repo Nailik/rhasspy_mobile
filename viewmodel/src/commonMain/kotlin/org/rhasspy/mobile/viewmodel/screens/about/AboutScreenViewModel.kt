@@ -10,17 +10,10 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.utils.IOpenLinkUtils
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.*
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.OpenSourceCode
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Change
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Change.CloseChangelog
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Change.CloseDataPrivacy
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Change.CloseLibrary
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Change.OpenChangelog
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Change.OpenDataPrivacy
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Change.OpenLibrary
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Consumed
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Consumed.ShowSnackBar
 
 /**

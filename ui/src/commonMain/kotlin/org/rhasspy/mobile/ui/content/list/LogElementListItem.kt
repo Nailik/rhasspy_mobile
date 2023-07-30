@@ -13,12 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Severity
 import org.rhasspy.mobile.data.log.LogElement
-import org.rhasspy.mobile.resources.color_assert
-import org.rhasspy.mobile.resources.color_debug
-import org.rhasspy.mobile.resources.color_error
-import org.rhasspy.mobile.resources.color_info
-import org.rhasspy.mobile.resources.color_verbose
-import org.rhasspy.mobile.resources.color_warn
+import org.rhasspy.mobile.resources.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

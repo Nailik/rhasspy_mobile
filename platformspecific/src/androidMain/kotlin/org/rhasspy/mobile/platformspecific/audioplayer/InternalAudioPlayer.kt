@@ -22,7 +22,7 @@ class InternalAudioPlayer(
     audioSource: AudioSource,
     private val volume: StateFlow<Float>,
     private val audioOutputOption: AudioOutputOption,
-    private val onFinished: (exception: Exception?) -> Unit
+    private val onFinished: () -> Unit
 ) : KoinComponent {
 
     private val nativeApplication = get<NativeApplication>()
@@ -41,10 +41,7 @@ class InternalAudioPlayer(
             mediaPlayer.release()
         } catch (exception: Exception) {
             logger.e(exception) { "stop exception" }
-            if (!finishCalled) {
-                finishCalled = true
-                onFinished(exception)
-            }
+            callOnFinish()
         }
     }
 
@@ -100,40 +97,46 @@ class InternalAudioPlayer(
             volumeChange.start()
             val duration = mediaPlayer.duration
             timeoutJob = coroutineScope.launch {
-                delay(duration.toLong() + 100)
-                onMediaPlayerCompletion()
+                try {
+                    delay(duration.toLong() + 100)
+                    onMediaPlayerCompletion()
+                } catch (_: Exception) {
+                    callOnFinish()
+                }
             }
             mediaPlayer.start()
         } catch (exception: Exception) {
             logger.e(exception) { "start exception" }
-            onFinished(exception)
+            callOnFinish()
         }
     }
 
     private fun onMediaPlayerCompletion() {
         logger.v { "onMediaPlayerCompletion" }
-        timeoutJob?.cancel()
-        volumeChange.cancel()
+        if (timeoutJob?.isActive == true) {
+            timeoutJob?.cancel()
+        }
+        if (volumeChange.isActive) {
+            volumeChange.cancel()
+        }
         timeoutJob = null
         mediaPlayer.stop()
         mediaPlayer.release()
-        if (!finishCalled) {
-            finishCalled = true
-            onFinished(null)
-        }
+        callOnFinish()
     }
 
     private fun onMediaPlayerError() {
         logger.v { "onMediaPlayerError" }
-        timeoutJob?.cancel()
-        volumeChange.cancel()
+        if (timeoutJob?.isActive == true) {
+            timeoutJob?.cancel()
+        }
+        if (volumeChange.isActive) {
+            volumeChange.cancel()
+        }
         timeoutJob = null
         mediaPlayer.stop()
         mediaPlayer.release()
-        if (!finishCalled) {
-            finishCalled = true
-            onFinished(RuntimeException())
-        }
+        callOnFinish()
     }
 
     @Throws(Resources.NotFoundException::class)
@@ -154,6 +157,13 @@ class InternalAudioPlayer(
         }
         soundFile.writeBytes(data)
         return Uri.fromFile(soundFile)
+    }
+
+    private fun callOnFinish() {
+        if (!finishCalled) {
+            finishCalled = true
+            onFinished()
+        }
     }
 
 }

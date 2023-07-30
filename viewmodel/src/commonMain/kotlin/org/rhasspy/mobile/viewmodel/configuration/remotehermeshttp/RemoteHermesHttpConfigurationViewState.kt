@@ -19,8 +19,7 @@ data class RemoteHermesHttpConfigurationViewState internal constructor(
         val isHttpSSLVerificationDisabled: Boolean = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value
     ) : IConfigurationData {
 
-        val httpClientServerEndpointPortText: String =
-            httpClientServerEndpointPort.toStringOrEmpty()
+        val httpClientServerEndpointPortText: String = httpClientServerEndpointPort.toStringOrEmpty()
         val httpClientTimeoutText: String = httpClientTimeout.toStringOrEmpty()
 
     }

@@ -12,9 +12,7 @@ import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.ChangeIntentRecognitionHttpEndpoint
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SetUseCustomHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewState.IntentRecognitionConfigurationData
 
 @Stable
@@ -24,8 +22,7 @@ class IntentRecognitionConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState =
-        MutableStateFlow(IntentRecognitionConfigurationViewState(IntentRecognitionConfigurationData()))
+    private val _viewState = MutableStateFlow(IntentRecognitionConfigurationViewState(IntentRecognitionConfigurationData()))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
@@ -51,9 +48,7 @@ class IntentRecognitionConfigurationViewModel(
                 when (change) {
                     is ChangeIntentRecognitionHttpEndpoint -> copy(intentRecognitionHttpEndpoint = change.endpoint)
                     is SelectIntentRecognitionOption       -> copy(intentRecognitionOption = change.option)
-                    is SetUseCustomHttpEndpoint            -> copy(
-                        isUseCustomIntentRecognitionHttpEndpoint = change.enabled
-                    )
+                    is SetUseCustomHttpEndpoint            -> copy(isUseCustomIntentRecognitionHttpEndpoint = change.enabled)
                 }
             })
         }
@@ -72,8 +67,7 @@ class IntentRecognitionConfigurationViewModel(
     override fun onSave() {
         with(_viewState.value.editData) {
             ConfigurationSetting.intentRecognitionOption.value = intentRecognitionOption
-            ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value =
-                isUseCustomIntentRecognitionHttpEndpoint
+            ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value = isUseCustomIntentRecognitionHttpEndpoint
             ConfigurationSetting.intentRecognitionHttpEndpoint.value = intentRecognitionHttpEndpoint
         }
     }

@@ -2,13 +2,7 @@ package org.rhasspy.mobile.viewmodel.screens.configuration
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.service.option.AudioPlayingOption
-import org.rhasspy.mobile.data.service.option.DialogManagementOption
-import org.rhasspy.mobile.data.service.option.IntentHandlingOption
-import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
-import org.rhasspy.mobile.data.service.option.SpeechToTextOption
-import org.rhasspy.mobile.data.service.option.TextToSpeechOption
-import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.data.service.option.*
 
 @Stable
 data class ConfigurationScreenViewState internal constructor(

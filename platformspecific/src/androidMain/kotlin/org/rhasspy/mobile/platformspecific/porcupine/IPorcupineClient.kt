@@ -61,10 +61,12 @@ abstract class IPorcupineClient : KoinComponent {
         folder.mkdirs()
         val file = File(folder, "model_${wakeWordPorcupineLanguage.name.lowercase()}.pv")
 
-        file.outputStream().write(
-            context.resources.openRawResource(wakeWordPorcupineLanguage.file.rawResId)
-                .readBytes()
-        )
+        file.outputStream().apply {
+            val inputStream = context.resources.openRawResource(wakeWordPorcupineLanguage.file.rawResId)
+            write(inputStream.readBytes())
+            close()
+            inputStream.close()
+        }
 
         return file.absolutePath
     }
@@ -78,10 +80,12 @@ abstract class IPorcupineClient : KoinComponent {
         folder.mkdirs()
         val file = File(folder, "keyword_${defaultKeyword.option.name.lowercase()}.ppn")
 
-        file.outputStream().write(
-            context.resources.openRawResource(defaultKeyword.option.file.rawResId)
-                .readBytes()
-        )
+        file.outputStream().apply {
+            val inputStream = context.resources.openRawResource(defaultKeyword.option.file.rawResId)
+            write(inputStream.readBytes())
+            close()
+            inputStream.close()
+        }
 
         return file.absolutePath
     }

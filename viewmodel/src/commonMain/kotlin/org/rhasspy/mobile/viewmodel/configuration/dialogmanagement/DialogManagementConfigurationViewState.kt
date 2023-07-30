@@ -22,8 +22,7 @@ data class DialogManagementConfigurationViewState internal constructor(
         val recordingTimeout: Long? = ConfigurationSetting.recordingTimeout.value
     ) : IConfigurationData {
 
-        val dialogManagementOptionList: ImmutableList<DialogManagementOption> =
-            DialogManagementOption.values().toImmutableList()
+        val dialogManagementOptionList: ImmutableList<DialogManagementOption> = DialogManagementOption.values().toImmutableList()
 
         val textAsrTimeoutText: String = textAsrTimeout.toStringOrEmpty()
         val intentRecognitionTimeoutText: String = intentRecognitionTimeout.toStringOrEmpty()

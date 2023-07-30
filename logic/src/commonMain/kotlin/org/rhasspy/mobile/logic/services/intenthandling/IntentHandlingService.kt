@@ -15,7 +15,7 @@ interface IIntentHandlingService : IService {
 
     override val serviceState: StateFlow<ServiceState>
 
-    suspend fun intentHandling(intentName: String, intent: String)
+    fun intentHandling(intentName: String, intent: String)
 
 }
 
@@ -54,14 +54,18 @@ internal class IntentHandlingService(
      *
      * if local dialogue management it will end the session
      */
-    override suspend fun intentHandling(intentName: String, intent: String) {
+    override fun intentHandling(intentName: String, intent: String) {
         logger.d { "intentHandling intentName: $intentName intent: $intent" }
         when (params.intentHandlingOption) {
-            IntentHandlingOption.HomeAssistant   -> _serviceState.value =
-                homeAssistantService.sendIntent(intentName, intent)
+            IntentHandlingOption.HomeAssistant   ->
+                homeAssistantService.sendIntent(intentName, intent) {
+                    _serviceState.value = it
+                }
 
-            IntentHandlingOption.RemoteHTTP      -> _serviceState.value =
-                httpClientService.intentHandling(intent).toServiceState()
+            IntentHandlingOption.RemoteHTTP      ->
+                httpClientService.intentHandling(intent) {
+                    _serviceState.value = it.toServiceState()
+                }
 
             IntentHandlingOption.WithRecognition -> Unit
             IntentHandlingOption.Disabled        -> Unit

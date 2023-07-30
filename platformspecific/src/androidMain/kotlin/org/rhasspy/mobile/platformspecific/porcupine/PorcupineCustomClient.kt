@@ -7,11 +7,8 @@ import io.github.nailik.androidresampler.ResamplerConfiguration
 import io.github.nailik.androidresampler.data.ResamplerChannel
 import io.github.nailik.androidresampler.data.ResamplerQuality
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
@@ -35,6 +32,8 @@ class PorcupineCustomClient(
     override val onError: (Exception) -> Unit
 ) : IPorcupineClient() {
 
+    private val logger = Logger.withTag("PorcupineCustomClient")
+
     private val porcupine = Porcupine.Builder()
         .setAccessKey(wakeWordPorcupineAccessToken)
         .setKeywordPaths(getKeywordPaths())
@@ -46,7 +45,7 @@ class PorcupineCustomClient(
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private var collection: Job? = null
-    private var resampler: Resampler? = null
+    private var isStarted = false
 
     private fun AudioRecorderChannelType.toResamplerChannel(): ResamplerChannel {
         return when (this) {
@@ -56,54 +55,87 @@ class PorcupineCustomClient(
         }
     }
 
-    override fun start() {
-        resampler = Resampler(
-            ResamplerConfiguration(
-                quality = ResamplerQuality.BEST,
-                inputChannel = audioRecorderChannelType.toResamplerChannel(),
-                inputSampleRate = audioRecorderSampleRateType.value,
-                outputChannel = ResamplerChannel.MONO,
-                outputSampleRate = porcupine.sampleRate
-            )
+    private var resampler = Resampler(
+        ResamplerConfiguration(
+            quality = ResamplerQuality.BEST,
+            inputChannel = audioRecorderChannelType.toResamplerChannel(),
+            inputSampleRate = audioRecorderSampleRateType.value,
+            outputChannel = ResamplerChannel.MONO,
+            outputSampleRate = porcupine.sampleRate
         )
-        Logger.withTag("PorcupineCustomClient")
-            .d { "porcupine.getSampleRate() ${porcupine.sampleRate}" }
+    )
 
-        collection = coroutineScope.launch {
 
-            var recordedData = ShortArray(0)
-            try {
-                audioRecorder.output.collectLatest { data ->
-                    try {
-                        //resample the data
-                        val resampled = resampler!!.resample(data)
-                        //convert ByteArray to ShortArray as required by porcupine and add to data
-                        recordedData += byteArrayToShortArray(resampled)
+    override fun start() {
+        if (isStarted) return
+        isStarted = true
 
-                        //send to porcupine
-                        while (recordedData.size >= 512) {
-                            //get a sized chunk
-                            val chunk = recordedData.take(512).toShortArray()
-                            //cut remaining data
-                            recordedData =
-                                recordedData.takeLast(recordedData.size - 512).toShortArray()
+        logger.d { "porcupine.getSampleRate() ${porcupine.sampleRate}" }
 
-                            val keywordIndex = porcupine.process(chunk)
-                            if (keywordIndex != -1) {
-                                onKeywordDetected(keywordIndex)
-                            }
+        try {
+            collection = coroutineScope.launch {
 
+                var oldData = ShortArray(0)
+                try {
+
+                    audioRecorder.output.collectLatest { data ->
+                        if (!isStarted) {
+                            this.cancel()
+                            return@collectLatest
                         }
 
+                        try {
+                            //resample the data
+                            val toResample: ByteArray = data
+                            val resampled = resampler.resample(toResample)
+                            //convert ByteArray to ShortArray as required by porcupine and add to data
+                            var currentRecording = oldData + byteArrayToShortArray(resampled)
 
-                    } catch (e: Exception) {
-                        Logger.withTag("PorcupineCustomClient").e("", e)
+                            //send to porcupine
+                            while (currentRecording.size >= 512) {
+                                //get a sized chunk
+                                val chunk = currentRecording.take(512).toShortArray()
+                                //cut remaining data
+                                currentRecording = currentRecording.takeLast(currentRecording.size - 512).toShortArray()
+
+                                val keywordIndex = porcupine.process(chunk)
+                                if (keywordIndex != -1) {
+                                    onKeywordDetected(keywordIndex)
+                                }
+                            }
+
+                            oldData = currentRecording
+
+                        } catch (e: IllegalArgumentException) {
+                            //restart
+                            logger.d("audioRecorder collection", e)
+
+                            oldData = ShortArray(0)
+                            resampler.dispose()
+                            resampler = Resampler(
+                                ResamplerConfiguration(
+                                    quality = ResamplerQuality.BEST,
+                                    inputChannel = audioRecorderChannelType.toResamplerChannel(),
+                                    inputSampleRate = audioRecorderSampleRateType.value,
+                                    outputChannel = ResamplerChannel.MONO,
+                                    outputSampleRate = porcupine.sampleRate
+                                )
+                            )
+
+                            start()
+                        } catch (e: Exception) {
+                            //restart
+                            logger.d("audioRecorder collection", e)
+                        }
                     }
+                } catch (e: Exception) {
+                    logger.d("coroutineScope", e)
                 }
-            } catch (e: Exception) {
-                Logger.withTag("PorcupineCustomClient").e("", e)
             }
+        } catch (e: Exception) {
+            logger.d("start collection", e)
         }
+
         audioRecorder.startRecording(
             audioRecorderChannelType = audioRecorderChannelType,
             audioRecorderEncodingType = audioRecorderEncodingType,
@@ -119,13 +151,16 @@ class PorcupineCustomClient(
     }
 
     override fun stop() {
-        resampler?.dispose()
+        isStarted = false
         collection?.cancel()
+        collection = null
         audioRecorder.stopRecording()
     }
 
     override fun close() {
-        resampler?.dispose()
+        stop()
+        isStarted = false
+        resampler.dispose()
         collection?.cancel()
         porcupine.delete()
     }
