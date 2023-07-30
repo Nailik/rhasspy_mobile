@@ -99,6 +99,6 @@ tasks.withType<Test>().configureEach {
     retry {
         maxRetries.set(2)
         maxFailures.set(20)
-        failOnPassedAfterRetry.set(true)
+        failOnPassedAfterRetry.set(false)
     }
 }

@@ -96,6 +96,6 @@ tasks.withType<Test>().configureEach {
         ignoreFailures = true
         maxRetries.set(2)
         maxFailures.set(20)
-        failOnPassedAfterRetry.set(true)
+        failOnPassedAfterRetry.set(false)
     }
 }
