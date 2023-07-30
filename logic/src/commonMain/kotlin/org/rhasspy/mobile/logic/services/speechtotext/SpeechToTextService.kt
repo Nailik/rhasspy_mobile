@@ -181,7 +181,9 @@ internal class SpeechToTextService(
             audioFocusService.request(Record)
 
             recordingService.output.collect {
-                audioFrame(sessionId, it)
+                if (!localAudioService.isPlayingState.value) {
+                    audioFrame(sessionId, it)
+                }
             }
         }
 
@@ -202,9 +204,15 @@ internal class SpeechToTextService(
             SpeechToTextOption.RemoteMQTT -> {
                 when (params.dialogManagementOption) {
                     DialogManagementOption.Disabled,
-                    DialogManagementOption.Local      -> mqttClientService.asrAudioFrame(data) { _serviceState.value = it }
+                    DialogManagementOption.Local      -> {
+                        logger.d { "asrAudioFrame" }
+                        mqttClientService.asrAudioFrame(data) { _serviceState.value = it }
+                    }
 
-                    DialogManagementOption.RemoteMQTT -> mqttClientService.asrAudioSessionFrame(sessionId, data) { _serviceState.value = it }
+                    DialogManagementOption.RemoteMQTT -> {
+                        logger.d { "asrAudioSessionFrame $sessionId" }
+                        mqttClientService.asrAudioSessionFrame(sessionId, data) { _serviceState.value = it }
+                    }
                 }
 
             }

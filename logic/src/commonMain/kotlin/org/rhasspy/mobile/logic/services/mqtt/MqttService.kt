@@ -157,9 +157,7 @@ internal class MqttService(
             persistenceType = MqttPersistence.MEMORY,
             onDelivered = { },
             onMessageReceived = { topic, message ->
-                scope.launch {
-                    onMessageInternalReceived(topic, message)
-                }
+                onMessageInternalReceived(topic, message)
             },
             onDisconnect = { error -> onDisconnect(error) },
         )

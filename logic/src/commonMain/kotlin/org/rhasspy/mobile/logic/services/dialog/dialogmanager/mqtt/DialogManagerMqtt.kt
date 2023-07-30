@@ -9,6 +9,7 @@ import org.rhasspy.mobile.logic.middleware.Source.Mqtt
 import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.SessionState
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.SessionState.RecordingIntentState
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.SessionData
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.IDialogManager
@@ -151,10 +152,17 @@ class DialogManagerMqtt(
 
         stopSpeechToTextService(action, state)
 
-        dialogManagerService.transitionTo(
-            action = action,
-            state = stateTransition.transitionToTranscribingIntentState(state.sessionDataOrDummy())
-        )
+        if (state is RecordingIntentState) {
+            dialogManagerService.transitionTo(
+                action = action,
+                state = stateTransition.transitionToTranscribingIntentState(state.sessionData)
+            )
+        } else {
+            dialogManagerService.transitionTo(
+                action = action,
+                state = null
+            )
+        }
     }
 
     private fun onWakeWordDetected(action: WakeWordDetected) {
