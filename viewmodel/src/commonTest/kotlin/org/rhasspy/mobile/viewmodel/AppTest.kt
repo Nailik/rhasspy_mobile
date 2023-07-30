@@ -39,6 +39,7 @@ abstract class AppTest : IAppTest(), KoinTest {
         }
 
         Dispatchers.setMain(Dispatchers.Unconfined)
+
         startKoin {
             modules(
                 platformSpecificModule,

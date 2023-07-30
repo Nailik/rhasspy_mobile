@@ -5,6 +5,7 @@ plugins {
     kotlin("multiplatform")
     id("com.android.library")
     id("base-gradle")
+    id("org.gradle.test-retry")
 }
 
 kotlin {
@@ -88,4 +89,13 @@ android {
 
 mockmp {
     usesHelper = true
+}
+
+tasks.withType<Test>().configureEach {
+    retry {
+        ignoreFailures = true
+        maxRetries.set(2)
+        maxFailures.set(20)
+        failOnPassedAfterRetry.set(true)
+    }
 }

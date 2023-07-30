@@ -3,8 +3,6 @@ package org.rhasspy.mobile.logic.services.dialog
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -24,6 +22,7 @@ import org.rhasspy.mobile.logic.services.dialog.dialogmanager.local.DialogManage
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.mqtt.DialogManagerMqtt
 import org.rhasspy.mobile.logic.services.dialog.states.IStateTransition
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -47,6 +46,7 @@ interface IDialogManagerService : IService {
  * The Dialog Manager handles the various states and goes to the next state according to the function that is called
  */
 internal class DialogManagerService(
+    dispatcherProvider: IDispatcherProvider,
     private val mqttService: IMqttService
 ) : IDialogManagerService {
 
@@ -66,7 +66,7 @@ internal class DialogManagerService(
 
     init {
         _serviceState.value = ServiceState.Success
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(dispatcherProvider.IO).launch {
             transitionTo(
                 SessionEnded(Source.Local),
                 //settings true to source mqtt results in no initial data being send to mqtt

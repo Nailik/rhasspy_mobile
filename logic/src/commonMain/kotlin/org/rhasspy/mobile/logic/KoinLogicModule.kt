@@ -77,6 +77,7 @@ fun logicModule() = module {
     factory { DialogManagerServiceParamsCreator() }
     single<IDialogManagerService> {
         DialogManagerService(
+            dispatcherProvider = get(),
             mqttService = get()
         )
     }

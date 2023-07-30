@@ -116,7 +116,7 @@ buildkonfig {
     exposeObjectWithName = "BuildKonfig"
 
     defaultConfigs {
-        buildConfigField(FieldSpec.Type.STRING, "changelog", generateChangelog())
+        buildConfigField(FieldSpec.Type.STRING, "changelog", "")
         buildConfigField(FieldSpec.Type.INT, "versionCode", Version.code.toString())
         buildConfigField(FieldSpec.Type.STRING, "versionName", Version.toString())
     }
