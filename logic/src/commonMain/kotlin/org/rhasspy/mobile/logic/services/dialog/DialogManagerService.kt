@@ -38,6 +38,9 @@ interface IDialogManagerService : IService {
     fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState?)
     suspend fun onAction(action: DialogServiceMiddlewareAction)
     fun informMqtt(sessionData: SessionData?, action: DialogServiceMiddlewareAction)
+
+    fun clearHistory()
+
 }
 
 /**
@@ -119,6 +122,10 @@ internal class DialogManagerService(
             }
         }
 
+    }
+
+    override fun clearHistory() {
+        dialogHistory.value = persistentListOf()
     }
 
 }

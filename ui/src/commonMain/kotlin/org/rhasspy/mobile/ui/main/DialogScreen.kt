@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LowPriority
 import androidx.compose.material.icons.filled.PlaylistRemove
 import androidx.compose.material3.*
@@ -34,8 +35,7 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.DialogScreen
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change.ManualListScroll
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change.ToggleListAutoScroll
+import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogActionViewState
@@ -90,6 +90,12 @@ private fun AppBar(
                 Icon(
                     imageVector = if (isLogAutoscroll) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
                     contentDescription = MR.strings.autoscrollList.stable
+                )
+            }
+            IconButton(onClick = { onEvent(ClearHistory) }) {
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = MR.strings.clear_text.stable
                 )
             }
         }

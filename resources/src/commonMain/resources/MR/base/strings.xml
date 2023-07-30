@@ -340,6 +340,7 @@
     <string name="encoding">Encoding</string>
     <string name="dialog">Dialog</string>
     <string name="notInitialized">not Initialized</string>
+    <string name="clear_text">clear</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>

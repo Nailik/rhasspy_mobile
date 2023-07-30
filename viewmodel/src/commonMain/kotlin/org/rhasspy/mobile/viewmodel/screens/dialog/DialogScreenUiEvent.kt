@@ -6,6 +6,7 @@ sealed interface DialogScreenUiEvent {
 
         data object ToggleListAutoScroll : Change
         data object ManualListScroll : Change
+        data object ClearHistory : Change
 
     }
 
