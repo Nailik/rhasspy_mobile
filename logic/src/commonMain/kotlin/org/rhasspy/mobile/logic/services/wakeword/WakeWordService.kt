@@ -72,11 +72,16 @@ internal class WakeWordService(
     init {
         scope.launch {
             paramsFlow.collect {
-                if (isDetectionRunning && params.isEnabled) {
+                if (it != initializedParams?.copy(isEnabled = it.isEnabled)) {
+                    stop()
+                    disposeOld()
+                }
+                if (isDetectionRunning && it.isEnabled) {
                     startDetection()
                 } else {
                     stop()
                 }
+
             }
         }
     }
