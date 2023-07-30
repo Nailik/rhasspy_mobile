@@ -5,6 +5,7 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogService
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source.Mqtt
 import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
+import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.IDialogManager
 import org.rhasspy.mobile.logic.services.intenthandling.IIntentHandlingService
 import org.rhasspy.mobile.logic.services.intentrecognition.IIntentRecognitionService
@@ -16,12 +17,14 @@ class DialogManagerDisabled(
     private val speechToTextService: ISpeechToTextService,
     private val intentRecognitionService: IIntentRecognitionService,
     private val intentHandlingService: IIntentHandlingService,
+    private val dialogManagerService: IDialogManagerService,
 ) : IDialogManager {
 
     private val logger = Logger.withTag("DialogManagerDisabled")
 
     override fun onAction(action: DialogServiceMiddlewareAction) {
         logger.d { "action $action" }
+        dialogManagerService.transitionTo(action = action, null)
         when (action) {
             is AsrError                      -> Unit
             is AsrTextCaptured               -> intentRecognitionService.recognizeIntent((action.source as? Mqtt?)?.sessionId ?: "", action.text ?: "")
