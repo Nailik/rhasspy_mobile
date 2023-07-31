@@ -3,7 +3,6 @@ package org.rhasspy.mobile.data.service.option
 import dev.icerock.moko.resources.FileResource
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.resources.MR
 
 enum class PorcupineKeywordOption(
     override val text: StableStringResource,
@@ -162,6 +161,23 @@ enum class PorcupineKeywordOption(
         MR.strings.murcielago_es.stable,
         MR.files.murciC3A9lago_android,
         PorcupineLanguageOption.ES
+    ),
+
+    //fa
+    HEDGEHOG(
+        MR.strings.hedgehog_fa.stable,
+        MR.files.D8ACD988D8ACD98720D8AADB8CD8BADB8C_android,
+        PorcupineLanguageOption.FA
+    ),
+    BYE(
+        MR.strings.bye_fa.stable,
+        MR.files.D8AED8AFD8A7D8ADD8A7D981D8B8_android,
+        PorcupineLanguageOption.FA
+    ),
+    GOOD_MORNING(
+        MR.strings.good_morning_fa.stable,
+        MR.files.D8B5D8A8D8AD20D8A8D8AEDB8CD8B1_android,
+        PorcupineLanguageOption.FA
     ),
 
     //fr

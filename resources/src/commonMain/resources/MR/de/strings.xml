@@ -181,6 +181,7 @@
     <string name="arabic">Arabisch</string>
     <string name="german">Deutsch</string>
     <string name="spanish">Spanisch</string>
+    <string name="farsi">Farsi</string>
     <string name="french">Französisch</string>
     <string name="hindi">Hindi</string>
     <string name="italian">Italienisch</string>
@@ -453,6 +454,10 @@
     <string name="leopardo_es">Leopardo</string>
     <string name="manzana_es">Manzana</string>
     <string name="murcielago_es">Murciélago</string>
+    <!-- fa wake words -->
+    <string name="hedgehog_fa">جوجه تیغی</string>
+    <string name="bye_fa">خداحافظ</string>
+    <string name="good_morning_fa">صبح بخیر</string>
     <!-- fr wake words -->
     <string name="framboise_fr">Framboise</string>
     <string name="mon_chouchou_fr">Mon Chouchou</string>
