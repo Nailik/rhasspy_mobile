@@ -54,8 +54,8 @@ internal class SessionStateActions(
 
         stopSpeechToTextService(action, state)
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToIdleState(
                 sessionData = state.sessionData,
                 isSourceMqtt = action.source is Source.Mqtt
@@ -71,8 +71,8 @@ internal class SessionStateActions(
 
         stopSpeechToTextService(action, state)
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToRecognizingIntentState(
                 state.sessionData.copy(recognizedText = action.text)
             )
@@ -86,8 +86,8 @@ internal class SessionStateActions(
 
         stopSpeechToTextService(action, state)
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToIdleState(
                 sessionData = state.sessionData,
                 isSourceMqtt = action.source is Source.Mqtt
@@ -103,8 +103,8 @@ internal class SessionStateActions(
         indicationService.onError()
         dialogManagerService.informMqtt(state.sessionData, action)
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToIdleState(
                 sessionData = state.sessionData,
                 isSourceMqtt = action.source is Source.Mqtt
@@ -120,8 +120,8 @@ internal class SessionStateActions(
         dialogManagerService.informMqtt(state.sessionData, action)
         intentHandlingService.intentHandling(action.intentName, action.intent)
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToIdleState(
                 sessionData = state.sessionData,
                 isSourceMqtt = action.source is Source.Mqtt
@@ -137,8 +137,8 @@ internal class SessionStateActions(
         indicationService.onSilenceDetected()
         dialogManagerService.informMqtt(state.sessionData, action)
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToTranscribingIntentState(state.sessionData)
         )
     }
@@ -152,8 +152,8 @@ internal class SessionStateActions(
 
         stopSpeechToTextService(action, state)
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToTranscribingIntentState(state.sessionData)
         )
     }
@@ -161,8 +161,11 @@ internal class SessionStateActions(
     private fun onAsrTimeoutError(action: AsrTimeoutError, state: SessionState) {
         stopSpeechToTextService(action, state)
 
+        indicationService.onError()
+        dialogManagerService.informMqtt(state.sessionData, AsrError(Source.Local))
+
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToIdleState(
                 sessionData = state.sessionData,
                 isSourceMqtt = action.source is Source.Mqtt
@@ -173,8 +176,11 @@ internal class SessionStateActions(
     private fun onIntentRecognitionTimeoutError(action: IntentRecognitionTimeoutError, state: SessionState) {
         stopSpeechToTextService(action, state)
 
+        indicationService.onError()
+        dialogManagerService.informMqtt(state.sessionData, IntentRecognitionError(Source.Local))
+
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToIdleState(
                 sessionData = state.sessionData,
                 isSourceMqtt = action.source is Source.Mqtt
