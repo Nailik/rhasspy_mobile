@@ -123,6 +123,7 @@ class SilenceDetectionSettingsContentTest : FlakyTestNew() {
 
         //user clicks stop test
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTest).performClick()
+        composeTestRule.waitUntilNotExists(hasTestTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest))
         composeTestRule.awaitIdle()
         //audio level indication invisible
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest)
