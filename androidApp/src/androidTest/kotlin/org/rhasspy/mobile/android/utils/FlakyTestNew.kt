@@ -28,6 +28,9 @@ abstract class FlakyTestNew : KoinComponent {
     @Before
     fun setup() {
         scenario = ActivityScenario.launch(ComponentActivity::class.java)
+    }
+
+    fun setupContent() {
         scenario.onActivity { activity ->
             activity.setContent {
                 TestContentProvider {

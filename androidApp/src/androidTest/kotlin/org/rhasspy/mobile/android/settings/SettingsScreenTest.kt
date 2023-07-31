@@ -36,6 +36,8 @@ class SettingsScreenTest : FlakyTestNew() {
     @Test
     @AllowFlaky
     fun testContent() = runTest {
+        setupContent()
+
         //each item exists and navigates
         SettingsScreenDestination.values().filter { it != SettingsScreenDestination.OverviewScreen }
             .forEach { tag ->

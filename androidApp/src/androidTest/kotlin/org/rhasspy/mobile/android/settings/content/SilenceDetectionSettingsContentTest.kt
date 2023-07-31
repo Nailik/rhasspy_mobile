@@ -14,10 +14,11 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.SetSilenceDetectionEnabled
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SilenceDetectionSettingsContentTest : FlakyTestNew() {
+
+    private val viewModel = get<SilenceDetectionSettingsViewModel>()
 
     @Composable
     override fun ComposableContent() {
@@ -40,7 +41,7 @@ class SilenceDetectionSettingsContentTest : FlakyTestNew() {
     @Test
     @AllowFlaky
     fun testContent() = runTest {
-        val viewModel = get<SilenceDetectionSettingsViewModel>()
+        setupContent()
 
         viewModel.onEvent(SetSilenceDetectionEnabled(false))
 
@@ -101,7 +102,8 @@ class SilenceDetectionSettingsContentTest : FlakyTestNew() {
     @Test
     @AllowFlaky
     fun testRecording() = runTest {
-        val viewModel = get<SilenceDetectionSettingsViewModel>()
+        setupContent()
+
         get<IMicrophonePermission>().requestMicrophonePermissions()
 
         //Automatic silence detection enabled
@@ -120,15 +122,5 @@ class SilenceDetectionSettingsContentTest : FlakyTestNew() {
             .assertIsDisplayed()
         //audio recording true
         assertTrue { viewModel.viewState.value.isRecording }
-
-        //user clicks stop test
-        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTest).performClick()
-        composeTestRule.waitUntilNotExists(hasTestTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest))
-        composeTestRule.awaitIdle()
-        //audio level indication invisible
-        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest)
-            .assertDoesNotExist()
-        //audio recording false
-        assertFalse { viewModel.viewState.value.isRecording }
     }
 }

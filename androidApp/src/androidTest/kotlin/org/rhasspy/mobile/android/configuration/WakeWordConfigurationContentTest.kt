@@ -1,19 +1,17 @@
 package org.rhasspy.mobile.android.configuration
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.utils.FlakyTest
-import org.rhasspy.mobile.android.utils.TestContentProvider
+import org.rhasspy.mobile.android.utils.FlakyTestNew
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.WakeWordOption
@@ -23,31 +21,20 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.S
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.navigation.INavigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class WakeWordConfigurationContentTest : FlakyTest() {
-
-    @get: Rule(order = 0)
-    val composeTestRule = createComposeRule()
+class WakeWordConfigurationContentTest : FlakyTestNew() {
 
     private val device: UiDevice =
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     private val viewModel = get<WakeWordConfigurationViewModel>()
 
-    @Before
-    fun setUp() {
-        get<INavigator>().navigate(WakeWordConfigurationScreen)
-
-        composeTestRule.setContent {
-            TestContentProvider {
-                WakeWordConfigurationScreen()
-            }
-        }
-
+    @Composable
+    override fun ComposableContent() {
+        WakeWordConfigurationScreen()
     }
 
 
@@ -64,7 +51,10 @@ class WakeWordConfigurationContentTest : FlakyTest() {
      * new option is saved
      */
     @Test
+    @AllowFlaky
     fun testWakeWordContent() = runTest {
+        setupContent()
+
         //option is disable
         viewModel.onEvent(SelectWakeWordOption(WakeWordOption.Disabled))
         viewModel.onEvent(Save)
@@ -102,7 +92,10 @@ class WakeWordConfigurationContentTest : FlakyTest() {
      * access token is saved
      */
     @Test
+    @AllowFlaky
     fun testPorcupineOptions() = runTest {
+        setupContent()
+
         //option is porcupine
         viewModel.onEvent(SelectWakeWordOption(WakeWordOption.Porcupine))
         viewModel.onEvent(UpdateWakeWordPorcupineAccessToken(""))
@@ -148,7 +141,10 @@ class WakeWordConfigurationContentTest : FlakyTest() {
      * page is back to wake word settings
      */
     @Test
+    @AllowFlaky
     fun testPorcupineWakeWordOptions() = runTest {
+        setupContent()
+
         //option is porcupine
         viewModel.onEvent(SelectWakeWordOption(WakeWordOption.Porcupine))
         viewModel.onEvent(Save)
