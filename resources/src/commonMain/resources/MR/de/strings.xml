@@ -131,7 +131,8 @@
     <string name="share">Teilen</string>
     <string name="reset">Zurücksetzen</string>
     <string name="device">Gerät</string>
-    <string name="deviceSettingsInformation">Diese Einstellungen können mit MQTT-Befehlen geändert
+    <string name="deviceSettingsInformation">Diese Einstellungen können durch die MQTT-Api oder
+        Http-Api geändert
         werden.
     </string>
     <string name="volume">Lautstärke</string>
@@ -298,9 +299,11 @@
     <string name="backgroundServiceInformation">Der Hintergrunddienst ermöglicht es, der App im
         Hintergrund aktiv zu bleiben und dadurch nicht vom System beendet zu werden.
     </string>
-    <string name="deviceSettingsLongInformation">Diese Einstellungen können durch das Aufrufen des
-        Webservers (HTTP-API) oder MQTT-Nachrichten geändert werden.
+    <string name="isMqttApiDeviceChangeEnabled">Änderungen über MQTT Api aktiviert</string>
+    <string name="isMqttApiDeviceChangeEnabledInformation">Sollte bei Verwendung von Dialog
+        Management Entferntes Hermes-MQTT aktiviert sein
     </string>
+    <string name="isHttpApiDeviceChangeEnabled">Änderungen über HTTP Api aktiviert</string>
     <string name="intentName">Intent-Name</string>
     <string name="intentText">Intent-JSON</string>
     <string name="executePlayTestAudio">Testaudio abspielen</string>

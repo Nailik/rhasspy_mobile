@@ -128,7 +128,7 @@
     <string name="share">Share</string>
     <string name="reset">Reset</string>
     <string name="device">Device</string>
-    <string name="deviceSettingsInformation">This settings can be changed with MQTT commands.
+    <string name="deviceSettingsInformation">This settings can be changed via MQTT-Api or Http-Api.
     </string>
     <string name="volume">Volume</string>
     <string name="hotWord">HotWord (WakeWord)</string>
@@ -288,9 +288,11 @@
     <string name="backgroundServiceInformation">Background service will enable the app to stay
         active in the background and prevent it from being closed by the system.
     </string>
-    <string name="deviceSettingsLongInformation">This settings can be changed by calling the
-        Webserver (HTTP API) or by publishing MQTT Messages.
+    <string name="isMqttApiDeviceChangeEnabled">changes via MQTT Api enabled</string>
+    <string name="isMqttApiDeviceChangeEnabledInformation">Should be enabled when using Dialog
+        Management Remote Hermes MQTT
     </string>
+    <string name="isHttpApiDeviceChangeEnabled">changes via HTTP Api enabled</string>
     <string name="intentName">Intent Name</string>
     <string name="intentText">Intent Json</string>
     <string name="executePlayTestAudio">play Test Audio</string>

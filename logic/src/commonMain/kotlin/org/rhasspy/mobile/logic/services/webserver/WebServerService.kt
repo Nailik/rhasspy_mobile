@@ -267,7 +267,7 @@ internal class WebServerService(
         }
 
         return action?.let {
-            serviceMiddleware.action(HotWordToggle(it))
+            serviceMiddleware.action(HotWordToggle(it, HttpApi))
             Accepted(value)
         } ?: Error(WakeOptionInvalid)
     }
@@ -319,7 +319,7 @@ internal class WebServerService(
         val result = call.receive<String>()
         return result.toFloatOrNull()?.let {
             if (it in 0f..1f) {
-                serviceMiddleware.action(AudioVolumeChange(it))
+                serviceMiddleware.action(AudioVolumeChange(it, HttpApi))
                 Accepted(it.toString())
             } else {
                 logger.w { "setVolume VolumeValueOutOfRange $it" }

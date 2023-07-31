@@ -17,7 +17,7 @@ import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.SayText
-import org.rhasspy.mobile.logic.middleware.Source
+import org.rhasspy.mobile.logic.middleware.Source.Mqtt
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
@@ -571,7 +571,7 @@ internal class MqttService(
      * reason: string = "" - Reason for toggle on
      */
     private fun hotWordToggleOn() =
-        serviceMiddleware.action(HotWordToggle(true))
+        serviceMiddleware.action(HotWordToggle(true, Mqtt(null)))
 
     /**
      * hermes/hotword/toggleOff (JSON)
@@ -580,7 +580,7 @@ internal class MqttService(
      * reason: string = "" - Reason for toggle off
      */
     private fun hotWordToggleOff() =
-        serviceMiddleware.action(HotWordToggle(false))
+        serviceMiddleware.action(HotWordToggle(false, Mqtt(null)))
 
 
     /**
@@ -595,7 +595,7 @@ internal class MqttService(
         topic.split("/").let {
             if (it.size > 2) {
                 scope.launch {
-                    serviceMiddleware.action(WakeWordDetected(Source.Mqtt(null), it[2]))
+                    serviceMiddleware.action(WakeWordDetected(Mqtt(null), it[2]))
                 }
                 true
             } else {
@@ -747,7 +747,7 @@ internal class MqttService(
      * sessionId: string? = null - current session ID
      */
     private fun asrError(jsonObject: JsonObject) =
-        serviceMiddleware.action(AsrError(Source.Mqtt(jsonObject.getSessionId())))
+        serviceMiddleware.action(AsrError(Mqtt(jsonObject.getSessionId())))
 
 
     /**
@@ -844,14 +844,14 @@ internal class MqttService(
      * Enable intent handling
      */
     private fun intentHandlingToggleOn() =
-        serviceMiddleware.action(IntentHandlingToggle(true))
+        serviceMiddleware.action(IntentHandlingToggle(true, Mqtt(null)))
 
     /**
      * hermes/handle/toggleOff
      * Disable intent handling
      */
     private fun intentHandlingToggleOff() =
-        serviceMiddleware.action(IntentHandlingToggle(false))
+        serviceMiddleware.action(IntentHandlingToggle(false, Mqtt(null)))
 
     /**
      * hermes/tts/say (JSON)
@@ -919,7 +919,7 @@ internal class MqttService(
      * hermes/audioServer/<siteId>/playFinished (JSON)
      */
     private fun playBytes(byteArray: ByteArray) {
-        serviceMiddleware.action(PlayAudio(Source.Mqtt(null), byteArray))
+        serviceMiddleware.action(PlayAudio(Mqtt(null), byteArray))
     }
 
     /**
@@ -930,7 +930,7 @@ internal class MqttService(
      * id: string = "" - requestId from request message
      */
     private fun playFinishedCall() =
-        serviceMiddleware.action(PlayFinished(Source.Mqtt(null)))
+        serviceMiddleware.action(PlayFinished(Mqtt(null)))
 
     /**
      * hermes/audioServer/<siteId>/playBytes/<requestId> (JSON)
@@ -966,7 +966,7 @@ internal class MqttService(
      * siteId: string = "default" - Hermes site ID
      */
     private fun audioOutputToggleOn() =
-        serviceMiddleware.action(AudioOutputToggle(true))
+        serviceMiddleware.action(AudioOutputToggle(true, Mqtt(null)))
 
     /**
      * hermes/audioServer/toggleOff (JSON)
@@ -974,7 +974,7 @@ internal class MqttService(
      * siteId: string = "default" - Hermes site ID
      */
     private fun audioOutputToggleOff() =
-        serviceMiddleware.action(AudioOutputToggle(false))
+        serviceMiddleware.action(AudioOutputToggle(false, Mqtt(null)))
 
     /**
      * hermes/audioServer/<siteId>/playFinished
@@ -999,11 +999,11 @@ internal class MqttService(
      */
     private fun setVolume(jsonObject: JsonObject) =
         jsonObject[MqttParams.Volume.value]?.jsonPrimitive?.floatOrNull?.let {
-            serviceMiddleware.action(AudioVolumeChange(it))
+            serviceMiddleware.action(AudioVolumeChange(it, Mqtt(null)))
         }
 
 
-    private fun JsonObject.getSource() = Source.Mqtt(jsonObject.getSessionId())
+    private fun JsonObject.getSource() = Mqtt(jsonObject.getSessionId())
 
     /**
      * check if site id is this id

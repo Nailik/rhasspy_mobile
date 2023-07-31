@@ -28,10 +28,12 @@ enum class SettingsEnum {
     WakeWordLightIndication,
     SoundIndicationOutput,
 
+    MqttApiDeviceChangeEnabled,
+    HttpApiDeviceChangeEnabled,
+    Volume,
     HotWordEnabled,
     AudioOutputEnabled,
     IntentHandlingEnabled,
-    Volume,
 
     WakeSoundVolume,
     RecordedSoundVolume,

@@ -24,6 +24,8 @@ class DeviceSettingsViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
+            is SetMqttApiChangesEnabled -> AppSetting.isMqttApiDeviceChangeEnabled.value = change.enabled
+            is SetHttpApiChangesEnabled -> AppSetting.isHttpApiDeviceChangeEnabled.value = change.enabled
             is SetAudioOutputEnabled    -> AppSetting.isAudioOutputEnabled.value = change.enabled
             is SetHotWordEnabled        -> AppSetting.isHotWordEnabled.value = change.enabled
             is SetIntentHandlingEnabled -> AppSetting.isIntentHandlingEnabled.value = change.enabled
