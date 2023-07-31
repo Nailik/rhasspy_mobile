@@ -4,7 +4,6 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec
 import com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
 import com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
 import groovy.json.JsonSlurper
-import org.apache.commons.io.output.ByteArrayOutputStream
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.jetbrains.compose.experimental.uikit.tasks.SyncComposeResourcesForIosTask
 
@@ -116,7 +115,6 @@ buildkonfig {
     exposeObjectWithName = "BuildKonfig"
 
     defaultConfigs {
-        buildConfigField(FieldSpec.Type.STRING, "changelog", "")
         buildConfigField(FieldSpec.Type.INT, "versionCode", Version.code.toString())
         buildConfigField(FieldSpec.Type.STRING, "versionName", Version.toString())
     }
@@ -141,40 +139,6 @@ tasks.withType<SyncComposeResourcesForIosTask> {
     dependsOn(tasks.findByName("generateMRcommonMain"))
     dependsOn(tasks.findByName("generateMRiosArm64Main"))
     dependsOn(tasks.findByName("generateMRiosSimulatorArm64Main"))
-}
-
-fun generateChangelog(): String {
-    try {
-        var os = ByteArrayOutputStream()
-
-        exec {
-            standardOutput = os
-            commandLine = listOf("git")
-            args = listOf("describe", "--tags", "--abbrev=0")
-        }
-
-        val lastTag = String(os.toByteArray()).trim()
-        os.close()
-
-        os = ByteArrayOutputStream()
-        exec {
-            standardOutput = os
-            commandLine = listOf("git")
-            args = listOf(
-                "log",
-                "$lastTag..develop",
-                "--merges",
-                "--first-parent",
-                "--pretty=format:\"%b\"\\\\"
-            )
-        }
-        val changelog = String(os.toByteArray()).trim()
-        os.close()
-
-        return changelog
-    } catch (e: Exception) {
-        return ""
-    }
 }
 
 @Suppress("UNCHECKED_CAST")

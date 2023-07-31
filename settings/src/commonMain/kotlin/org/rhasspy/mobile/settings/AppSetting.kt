@@ -22,6 +22,7 @@ import org.rhasspy.mobile.settings.serializer.StringListSerializer
 object AppSetting : KoinComponent {
 
     val didShowCrashlyticsDialog = ISetting(SettingsEnum.CrashlyticsDialog, false)
+    val didShowChangelogDialog = ISetting(SettingsEnum.ChangelogDialog, 0)
 
     val languageType =
         ISetting(SettingsEnum.LanguageOption, get<ILanguageUtils>().getDeviceLanguage())

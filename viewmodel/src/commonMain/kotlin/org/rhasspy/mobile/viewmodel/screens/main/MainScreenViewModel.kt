@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.screens.main
 
+import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
@@ -33,6 +34,8 @@ class MainScreenViewModel(
                 AppSetting.isCrashlyticsEnabled.value = action.result
                 AppSetting.didShowCrashlyticsDialog.value = true
             }
+
+            CloseChangelog             -> AppSetting.didShowChangelogDialog.value = BuildKonfig.versionCode
         }
     }
 

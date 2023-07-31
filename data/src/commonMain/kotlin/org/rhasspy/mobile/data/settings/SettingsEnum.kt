@@ -3,6 +3,7 @@ package org.rhasspy.mobile.data.settings
 enum class SettingsEnum {
     //App Settings
     CrashlyticsDialog,
+    ChangelogDialog,
     Crashlytics,
     LanguageOption,
     DialogAutoScroll,
