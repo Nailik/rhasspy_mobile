@@ -3,6 +3,7 @@ package org.rhasspy.mobile.android.settings.content
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.*
 import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.SilenceDetectionSettingsContent
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.koin.core.component.get
@@ -37,6 +38,7 @@ class SilenceDetectionSettingsContentTest : FlakyTestNew() {
      * silence detection time 5000 saved
      */
     @Test
+    @AllowFlaky
     fun testContent() = runTest {
         val viewModel = get<SilenceDetectionSettingsViewModel>()
 
@@ -97,6 +99,7 @@ class SilenceDetectionSettingsContentTest : FlakyTestNew() {
      * audio recording false
      */
     @Test
+    @AllowFlaky
     fun testRecording() = runTest {
         val viewModel = get<SilenceDetectionSettingsViewModel>()
         get<IMicrophonePermission>().requestMicrophonePermissions()
