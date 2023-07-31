@@ -171,3 +171,11 @@ fun ComposeTestRule.waitUntilExists(
 ) {
     return this.waitUntilNodeCount(matcher, 1, timeoutMillis)
 }
+
+@OptIn(ExperimentalTestApi::class)
+fun ComposeTestRule.waitUntilNotExists(
+    matcher: SemanticsMatcher,
+    timeoutMillis: Long = 5000
+) {
+    return this.waitUntilNodeCount(matcher, 0, timeoutMillis)
+}

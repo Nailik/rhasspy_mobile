@@ -3,6 +3,8 @@ package org.rhasspy.mobile.ui.main
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Mic
@@ -19,6 +21,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main.SettingsScreen
 import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.theme.horizontalAnimationSpec
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
+import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.resources.MR
@@ -27,13 +31,13 @@ import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent
-import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.CrashlyticsDialogResult
-import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewState
 
@@ -75,6 +79,13 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
                                     )
                                 }
 
+                                if (viewState.isChangelogDialogVisible) {
+                                    ChangelogDialog(
+                                        changelog = viewState.changelog,
+                                        onDismissRequest = { viewModel.onEvent(CloseChangelog) }
+                                    )
+                                }
+
                                 MainScreenContent(
                                     screen = screen,
                                     viewState = viewState,
@@ -104,6 +115,32 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
 }
 
+
+/**
+ * Displays changelog as text in a dialog
+ */
+@Composable
+private fun ChangelogDialog(
+    changelog: ImmutableList<String>,
+    onDismissRequest: () -> Unit
+) {
+
+    Dialog(
+        testTag = TestTag.DialogChangelog,
+        title = "${translate(MR.strings.changelog.stable)} - ${BuildKonfig.versionName}",
+        supportingText = {
+            LazyColumn {
+                items(changelog) { item ->
+                    Text(text = item)
+                }
+            }
+        },
+        confirmLabel = MR.strings.close.stable,
+        onConfirm = onDismissRequest,
+        onDismiss = onDismissRequest
+    )
+
+}
 
 @Composable
 private fun MainScreenContent(

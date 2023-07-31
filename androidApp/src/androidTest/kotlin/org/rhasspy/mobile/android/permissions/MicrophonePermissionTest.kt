@@ -27,6 +27,7 @@ import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
@@ -86,6 +87,7 @@ class MicrophonePermissionTest : FlakyTest() {
     @Before
     fun setUp() {
         //set english
+        AppSetting.didShowChangelogDialog.value = BuildConfig.VERSION_CODE
         LanguageSettingsViewModel(get()).onEvent(SelectLanguageOption(LanguageType.English))
     }
 

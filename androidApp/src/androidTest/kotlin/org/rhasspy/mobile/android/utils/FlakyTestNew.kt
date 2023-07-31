@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.android.utils
 
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.test.core.app.ActivityScenario
 import com.adevinta.android.barista.rule.flaky.FlakyTestRule
@@ -20,9 +22,22 @@ abstract class FlakyTestNew : KoinComponent {
 
     lateinit var scenario: ActivityScenario<ComponentActivity>
 
+    @Composable
+    abstract fun ComposableContent()
+
     @Before
     fun setup() {
         scenario = ActivityScenario.launch(ComponentActivity::class.java)
+    }
+
+    fun setupContent() {
+        scenario.onActivity { activity ->
+            activity.setContent {
+                TestContentProvider {
+                    ComposableContent()
+                }
+            }
+        }
     }
 
     @After

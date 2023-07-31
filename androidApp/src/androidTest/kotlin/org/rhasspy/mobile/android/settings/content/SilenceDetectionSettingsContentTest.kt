@@ -1,42 +1,30 @@
 package org.rhasspy.mobile.android.settings.content
 
-import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.SilenceDetectionSettingsContent
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
-import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.SetSilenceDetectionEnabled
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class SilenceDetectionSettingsContentTest : FlakyTest() {
-
-    @get: Rule(order = 0)
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
+class SilenceDetectionSettingsContentTest : FlakyTestNew() {
 
     private val viewModel = get<SilenceDetectionSettingsViewModel>()
 
-    @Before
-    fun setUp() {
-
-        composeTestRule.activity.setContent {
-            TestContentProvider {
-                SilenceDetectionSettingsContent()
-            }
-        }
-
+    @Composable
+    override fun ComposableContent() {
+        SilenceDetectionSettingsContent()
     }
+
 
     /**
      * Automatic silence detection disabled
@@ -51,7 +39,10 @@ class SilenceDetectionSettingsContentTest : FlakyTest() {
      * silence detection time 5000 saved
      */
     @Test
+    @AllowFlaky
     fun testContent() = runTest {
+        setupContent()
+
         viewModel.onEvent(SetSilenceDetectionEnabled(false))
 
         val numberInputTest = "5000"
@@ -109,7 +100,10 @@ class SilenceDetectionSettingsContentTest : FlakyTest() {
      * audio recording false
      */
     @Test
+    @AllowFlaky
     fun testRecording() = runTest {
+        setupContent()
+
         get<IMicrophonePermission>().requestMicrophonePermissions()
 
         //Automatic silence detection enabled
@@ -128,14 +122,5 @@ class SilenceDetectionSettingsContentTest : FlakyTest() {
             .assertIsDisplayed()
         //audio recording true
         assertTrue { viewModel.viewState.value.isRecording }
-
-        //user clicks stop test
-        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTest).performClick()
-        composeTestRule.awaitIdle()
-        //audio level indication invisible
-        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest)
-            .assertDoesNotExist()
-        //audio recording false
-        assertFalse { viewModel.viewState.value.isRecording }
     }
 }

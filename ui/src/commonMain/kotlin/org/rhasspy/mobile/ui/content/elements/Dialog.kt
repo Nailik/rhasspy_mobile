@@ -99,6 +99,53 @@ fun Dialog(
 }
 
 @Composable
+fun Dialog(
+    testTag: TestTag,
+    icon: ImageVector? = null,
+    title: String,
+    supportingText: (@Composable () -> Unit),
+    confirmLabel: StableStringResource,
+    dismissLabel: StableStringResource? = null,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    onClose: () -> Unit = onDismiss //outside click
+) {
+    Dialog(
+        modifier = Modifier.testTag(testTag),
+        onDismissRequest = onClose,
+        headline = title.let { { Text(it) } },
+        supportingText = supportingText,
+        icon =
+        icon?.let {
+            {
+                Icon(
+                    imageVector = it,
+                    contentDescription = MR.strings.icon.stable
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                modifier = Modifier.testTag(TestTag.DialogOk)
+            ) {
+                Text(confirmLabel)
+            }
+        },
+        dismissButton = dismissLabel?.let {
+            {
+                OutlinedButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.testTag(TestTag.DialogCancel)
+                ) {
+                    Text(it)
+                }
+            }
+        }
+    )
+}
+
+@Composable
 private fun Dialog(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,

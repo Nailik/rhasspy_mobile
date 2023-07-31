@@ -248,7 +248,7 @@ private fun ChangelogDialog(
 
     Dialog(
         testTag = TestTag.DialogChangelog,
-        title = MR.strings.changelog.stable,
+        title = "${translate(MR.strings.changelog.stable)} - ${BuildKonfig.versionName}",
         supportingText = {
             LazyColumn {
                 items(changelog) { item ->

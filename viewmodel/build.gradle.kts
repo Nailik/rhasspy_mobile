@@ -20,6 +20,7 @@ kotlin {
                 implementation(Touchlab.kermit)
                 implementation(Jetbrains.Kotlinx.coroutines)
                 implementation(Jetbrains.Kotlinx.immutable)
+                implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Compose.foundation)
                 implementation(Jetbrains.Compose.materialIconsExtended)
