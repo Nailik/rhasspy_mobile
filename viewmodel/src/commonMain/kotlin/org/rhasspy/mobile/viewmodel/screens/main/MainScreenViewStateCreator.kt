@@ -15,8 +15,6 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.HomeScreen
-import org.rhasspy.mobile.viewmodel.navigation.topScreen
 
 class MainScreenViewStateCreator(
     private val navigator: INavigator,
@@ -26,7 +24,7 @@ class MainScreenViewStateCreator(
     operator fun invoke(): StateFlow<MainScreenViewState> {
 
         return combineStateFlow(
-            navigator.navStack,
+            navigator.topScreen,
             AppSetting.isShowLogEnabled.data,
             AppSetting.didShowCrashlyticsDialog.data,
             AppSetting.didShowChangelogDialog.data,
@@ -38,8 +36,8 @@ class MainScreenViewStateCreator(
 
     private fun getViewState(): MainScreenViewState {
         return MainScreenViewState(
-            isBottomNavigationVisible = navigator.navStack.value.lastOrNull() is MainScreenNavigationDestination,
-            bottomNavigationIndex = navigator.topScreen(HomeScreen).value.ordinal,
+            isBottomNavigationVisible = navigator.topScreen.value is MainScreenNavigationDestination,
+            bottomNavigationIndex = (navigator.topScreen.value as? MainScreenNavigationDestination?)?.ordinal ?: 0,
             isShowLogEnabled = AppSetting.isShowLogEnabled.value,
             isShowCrashlyticsDialog = !AppSetting.didShowCrashlyticsDialog.value && !isDebug(),
             changelog = Json.decodeFromString<JsonArray>(MR.files.changelog.readToString(nativeApplication))

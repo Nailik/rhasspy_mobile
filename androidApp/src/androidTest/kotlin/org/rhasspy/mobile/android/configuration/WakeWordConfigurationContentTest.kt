@@ -16,13 +16,12 @@ import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.WakeWordConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.WakeWordConfigurationOverviewScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.navigation.INavigator
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -35,7 +34,7 @@ class WakeWordConfigurationContentTest : FlakyTestNew() {
 
     @Composable
     override fun ComposableContent() {
-        WakeWordConfigurationScreen()
+        WakeWordConfigurationOverviewScreen()
     }
 
 

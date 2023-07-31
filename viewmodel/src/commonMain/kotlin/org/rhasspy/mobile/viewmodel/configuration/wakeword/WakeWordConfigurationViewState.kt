@@ -13,12 +13,10 @@ import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination
 
 @Stable
 data class WakeWordConfigurationViewState internal constructor(
     override val editData: WakeWordConfigurationData,
-    val screen: WakeWordConfigurationScreenDestination,
     val porcupineWakeWordScreen: Int,
     val isMicrophonePermissionRequestVisible: Boolean
 ) : IConfigurationViewState {

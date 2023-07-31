@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.navigation.topScreen
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.*
@@ -19,8 +18,6 @@ class ConfigurationScreenViewModel(
 
     private val _viewState: MutableStateFlow<ConfigurationScreenViewState> = viewStateCreator()
     val viewState = _viewState.readOnly
-
-    val screen = navigator.topScreen(ConfigurationScreenNavigationDestination.OverviewScreen)
 
     fun onEvent(event: ConfigurationScreenUiEvent) {
         when (event) {

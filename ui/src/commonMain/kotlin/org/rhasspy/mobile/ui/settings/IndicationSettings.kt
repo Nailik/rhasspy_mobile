@@ -1,7 +1,5 @@
 package androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -30,17 +28,13 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination.*
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.IndicationSettings
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.settings.IndicationSettingsScreenDestination.ErrorIndicationSoundScreen
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.settings.IndicationSettingsScreenDestination.OverviewScreen
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.settings.IndicationSettingsScreenDestination.RecordedIndicationSoundScreen
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.settings.IndicationSettingsScreenDestination.WakeIndicationSoundScreen
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewState
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.RecordedIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoundSettingsViewModel
@@ -48,111 +42,97 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoun
 /**
  * indication sounds
  */
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun IndicationSettingsContent() {
-    val viewModelFactory = LocalViewModelFactory.current
-    val viewModel: IndicationSettingsViewModel = viewModelFactory.getViewModel()
+fun IndicationErrorScreen() {
+    IndicationSoundScreen(
+        viewModel = LocalViewModelFactory.current.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
+        screen = ErrorIndicationSoundScreen,
+        title = MR.strings.errorSound.stable
+    )
+}
 
-    Screen(screenViewModel = viewModel) {
-        val screen by viewModel.screen.collectAsState()
+@Composable
+fun IndicationRecordedScreen() {
+    IndicationSoundScreen(
+        viewModel = LocalViewModelFactory.current.getViewModel<RecordedIndicationSoundSettingsViewModel>(),
+        screen = RecordedIndicationSoundScreen,
+        title = MR.strings.recordedSound.stable
+    )
+}
 
-        AnimatedContent(targetState = screen) { targetState ->
-            when (targetState) {
-
-                OverviewScreen                -> {
-                    val viewState by viewModel.viewState.collectAsState()
-                    IndicationSettingsOverview(
-                        viewState = viewState,
-                        onEvent = viewModel::onEvent
-                    )
-                }
-
-                ErrorIndicationSoundScreen    -> IndicationSoundScreen(
-                    viewModel = viewModelFactory.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
-                    screen = ErrorIndicationSoundScreen,
-                    title = MR.strings.errorSound.stable
-                )
-
-                RecordedIndicationSoundScreen -> IndicationSoundScreen(
-                    viewModel = viewModelFactory.getViewModel<RecordedIndicationSoundSettingsViewModel>(),
-                    screen = RecordedIndicationSoundScreen,
-                    title = MR.strings.recordedSound.stable
-                )
-
-                WakeIndicationSoundScreen     -> IndicationSoundScreen(
-                    viewModel = viewModelFactory.getViewModel<WakeIndicationSoundSettingsViewModel>(),
-                    screen = WakeIndicationSoundScreen,
-                    title = MR.strings.wakeSound.stable
-                )
-            }
-        }
-    }
+@Composable
+fun IndicationWakeScreen() {
+    IndicationSoundScreen(
+        viewModel = LocalViewModelFactory.current.getViewModel<WakeIndicationSoundSettingsViewModel>(),
+        screen = WakeIndicationSoundScreen,
+        title = MR.strings.wakeSound.stable
+    )
 }
 
 /**
  * wake word indication settings
  */
 @Composable
-fun IndicationSettingsOverview(
-    viewState: IndicationSettingsViewState,
-    onEvent: (IndicationSettingsUiEvent) -> Unit
-) {
+fun IndicationSettingsOverviewScreen() {
+    val viewModel: IndicationSettingsViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewState by viewModel.viewState.collectAsState()
 
-    SettingsScreenItemContent(
-        modifier = Modifier.testTag(IndicationSettings),
-        title = MR.strings.indication.stable,
-        onBackClick = { onEvent(BackClick) }
-    ) {
+    Screen(screenViewModel = viewModel) {
 
-        Card(
-            modifier = Modifier.padding(8.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        SettingsScreenItemContent(
+            modifier = Modifier.testTag(IndicationSettings),
+            title = MR.strings.indication.stable,
+            onBackClick = { viewModel.onEvent(BackClick) }
         ) {
 
-            //turn on display
-            SwitchListItem(
-                modifier = Modifier.testTag(TestTag.WakeWordDetectionTurnOnDisplay),
-                text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay.stable,
-                isChecked = viewState.isWakeWordDetectionTurnOnDisplayEnabled,
-                onCheckedChange = { onEvent(SetWakeWordDetectionTurnOnDisplay(it)) }
-            )
+            Card(
+                modifier = Modifier.padding(8.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            ) {
 
-            //light indication
-            SwitchListItem(
-                modifier = Modifier.testTag(TestTag.WakeWordLightIndicationEnabled),
-                text = MR.strings.wakeWordLightIndication.stable,
-                isChecked = viewState.isWakeWordLightIndicationEnabled,
-                onCheckedChange = { onEvent(SetWakeWordLightIndicationEnabled(it)) }
-            )
-
-            //sound indication
-            SwitchListItem(
-                modifier = Modifier.testTag(TestTag.SoundIndicationEnabled),
-                text = MR.strings.wakeWordAudioIndication.stable,
-                isChecked = viewState.isSoundIndicationEnabled,
-                onCheckedChange = { onEvent(SetSoundIndicationEnabled(it)) }
-            )
-
-
-            //visibility of sounds settings
-            SecondaryContent(visible = viewState.isSoundIndicationEnabled) {
-
-                SoundIndicationSettingsOverview(
-                    soundIndicationOutputOption = viewState.soundIndicationOutputOption,
-                    audioOutputOptionList = viewState.audioOutputOptionList,
-                    wakeSound = viewState.wakeSound,
-                    recordedSound = viewState.recordedSound,
-                    errorSound = viewState.errorSound,
-                    onEvent = onEvent
+                //turn on display
+                SwitchListItem(
+                    modifier = Modifier.testTag(TestTag.WakeWordDetectionTurnOnDisplay),
+                    text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay.stable,
+                    isChecked = viewState.isWakeWordDetectionTurnOnDisplayEnabled,
+                    onCheckedChange = { viewModel.onEvent(SetWakeWordDetectionTurnOnDisplay(it)) }
                 )
+
+                //light indication
+                SwitchListItem(
+                    modifier = Modifier.testTag(TestTag.WakeWordLightIndicationEnabled),
+                    text = MR.strings.wakeWordLightIndication.stable,
+                    isChecked = viewState.isWakeWordLightIndicationEnabled,
+                    onCheckedChange = { viewModel.onEvent(SetWakeWordLightIndicationEnabled(it)) }
+                )
+
+                //sound indication
+                SwitchListItem(
+                    modifier = Modifier.testTag(TestTag.SoundIndicationEnabled),
+                    text = MR.strings.wakeWordAudioIndication.stable,
+                    isChecked = viewState.isSoundIndicationEnabled,
+                    onCheckedChange = { viewModel.onEvent(SetSoundIndicationEnabled(it)) }
+                )
+
+
+                //visibility of sounds settings
+                SecondaryContent(visible = viewState.isSoundIndicationEnabled) {
+
+                    SoundIndicationSettingsOverview(
+                        soundIndicationOutputOption = viewState.soundIndicationOutputOption,
+                        audioOutputOptionList = viewState.audioOutputOptionList,
+                        wakeSound = viewState.wakeSound,
+                        recordedSound = viewState.recordedSound,
+                        errorSound = viewState.errorSound,
+                        onEvent = viewModel::onEvent
+                    )
+
+                }
 
             }
 
         }
-
     }
-
 }
 
 /**

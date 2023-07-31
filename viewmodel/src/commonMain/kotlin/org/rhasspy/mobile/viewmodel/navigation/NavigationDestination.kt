@@ -14,7 +14,6 @@ sealed interface NavigationDestination {
 
     enum class ConfigurationScreenNavigationDestination : NavigationDestination {
 
-        OverviewScreen,
         AudioPlayingConfigurationScreen,
         DialogManagementConfigurationScreen,
         IntentHandlingConfigurationScreen,
@@ -30,7 +29,6 @@ sealed interface NavigationDestination {
 
     enum class SettingsScreenDestination : NavigationDestination {
 
-        OverviewScreen,
         AboutSettings,
         AudioFocusSettings,
         AudioRecorderSettings,
@@ -47,9 +45,16 @@ sealed interface NavigationDestination {
 
     enum class WakeWordConfigurationScreenDestination : NavigationDestination {
 
-        OverviewScreen,
         EditPorcupineLanguageScreen,
         EditPorcupineWakeWordScreen
+
+    }
+
+    enum class IndicationSettingsScreenDestination : NavigationDestination {
+
+        WakeIndicationSoundScreen,
+        RecordedIndicationSoundScreen,
+        ErrorIndicationSoundScreen
 
     }
 

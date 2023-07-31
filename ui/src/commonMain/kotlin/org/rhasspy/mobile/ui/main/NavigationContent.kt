@@ -19,33 +19,12 @@ fun NavigationContent(
     screen: NavigationDestination
 ) {
     AnimatedContent(targetState = screen) { targetState ->
-        when (screen) {
-            is ConfigurationScreenNavigationDestination       -> ConfigurationNavigationContent(screen)
-            is MainScreenNavigationDestination                -> MainNavigationContent(screen)
-            is PorcupineKeywordConfigurationScreenDestination -> PorcupineNavigationContent(screen)
-            is SettingsScreenDestination                      -> SettingsNavigationContent(screen)
-            is WakeWordConfigurationScreenDestination         -> WakeWordNavigationContent(screen)
-        }
-    }
-}
-
-@Composable
-private fun ConfigurationNavigationContent(
-    screen: ConfigurationScreenNavigationDestination
-) {
-    AnimatedContent(targetState = screen) { targetState ->
         when (targetState) {
-            ConfigurationScreenNavigationDestination.OverviewScreen                       -> ConfigurationScreen()
-            ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen      -> AudioPlayingConfigurationScreen()
-            ConfigurationScreenNavigationDestination.DialogManagementConfigurationScreen  -> DialogManagementConfigurationScreen()
-            ConfigurationScreenNavigationDestination.IntentHandlingConfigurationScreen    -> IntentHandlingConfigurationScreen()
-            ConfigurationScreenNavigationDestination.IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationScreen()
-            ConfigurationScreenNavigationDestination.MqttConfigurationScreen              -> MqttConfigurationScreen()
-            ConfigurationScreenNavigationDestination.RemoteHermesHttpConfigurationScreen  -> RemoteHermesHttpConfigurationScreen()
-            ConfigurationScreenNavigationDestination.SpeechToTextConfigurationScreen      -> SpeechToTextConfigurationScreen()
-            ConfigurationScreenNavigationDestination.TextToSpeechConfigurationScreen      -> TextToSpeechConfigurationScreen()
-            ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen          -> WakeWordConfigurationScreen()
-            ConfigurationScreenNavigationDestination.WebServerConfigurationScreen         -> WebServerConfigurationScreen()
+            is ConfigurationScreenNavigationDestination -> ConfigurationNavigationContent(targetState)
+            is MainScreenNavigationDestination          -> MainNavigationContent(targetState)
+            is SettingsScreenDestination                -> SettingsNavigationContent(targetState)
+            is WakeWordConfigurationScreenDestination   -> WakeWordNavigationContent(targetState)
+            is IndicationSettingsScreenDestination      -> IndicationNavigationContent(targetState)
         }
     }
 }
@@ -72,19 +51,39 @@ private fun MainNavigationContent(
 }
 
 @Composable
+private fun ConfigurationNavigationContent(
+    screen: ConfigurationScreenNavigationDestination
+) {
+    AnimatedContent(targetState = screen) { targetState ->
+        when (targetState) {
+            ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen      -> AudioPlayingConfigurationScreen()
+            ConfigurationScreenNavigationDestination.DialogManagementConfigurationScreen  -> DialogManagementConfigurationScreen()
+            ConfigurationScreenNavigationDestination.IntentHandlingConfigurationScreen    -> IntentHandlingConfigurationScreen()
+            ConfigurationScreenNavigationDestination.IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationScreen()
+            ConfigurationScreenNavigationDestination.MqttConfigurationScreen              -> MqttConfigurationScreen()
+            ConfigurationScreenNavigationDestination.RemoteHermesHttpConfigurationScreen  -> RemoteHermesHttpConfigurationScreen()
+            ConfigurationScreenNavigationDestination.SpeechToTextConfigurationScreen      -> SpeechToTextConfigurationScreen()
+            ConfigurationScreenNavigationDestination.TextToSpeechConfigurationScreen      -> TextToSpeechConfigurationScreen()
+            ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen          -> WakeWordConfigurationOverviewScreen()
+            ConfigurationScreenNavigationDestination.WebServerConfigurationScreen         -> WebServerConfigurationScreen()
+        }
+    }
+}
+
+
+@Composable
 private fun SettingsNavigationContent(
     screen: SettingsScreenDestination
 ) {
     AnimatedContent(targetState = screen) { targetState ->
         when (targetState) {
-            SettingsScreenDestination.OverviewScreen            -> SettingsScreen()
             SettingsScreenDestination.AboutSettings             -> AboutScreen()
             SettingsScreenDestination.AudioFocusSettings        -> AudioFocusSettingsContent()
             SettingsScreenDestination.AudioRecorderSettings     -> AudioRecorderSettingsContent()
             SettingsScreenDestination.SilenceDetectionSettings  -> SilenceDetectionSettingsContent()
             SettingsScreenDestination.BackgroundServiceSettings -> BackgroundServiceSettingsContent()
             SettingsScreenDestination.DeviceSettings            -> DeviceSettingsContent()
-            SettingsScreenDestination.IndicationSettings        -> IndicationSettingsContent()
+            SettingsScreenDestination.IndicationSettings        -> IndicationSettingsOverviewScreen()
             SettingsScreenDestination.LanguageSettingsScreen    -> LanguageSettingsScreenItemContent()
             SettingsScreenDestination.LogSettings               -> LogSettingsContent()
             SettingsScreenDestination.MicrophoneOverlaySettings -> MicrophoneOverlaySettingsContent()
@@ -99,11 +98,21 @@ private fun WakeWordNavigationContent(
 ) {
     AnimatedContent(targetState = screen) { targetState ->
         when (targetState) {
-            WakeWordConfigurationScreenDestination.OverviewScreen              -> WakeWordConfigurationOverviewScreen()
             WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen -> PorcupineLanguageScreen()
             WakeWordConfigurationScreenDestination.EditPorcupineWakeWordScreen -> PorcupineKeywordScreen()
         }
     }
 }
 
-
+@Composable
+private fun IndicationNavigationContent(
+    screen: IndicationSettingsScreenDestination
+) {
+    AnimatedContent(targetState = screen) { targetState ->
+        when (targetState) {
+            IndicationSettingsScreenDestination.WakeIndicationSoundScreen     -> IndicationErrorScreen()
+            IndicationSettingsScreenDestination.RecordedIndicationSoundScreen -> IndicationRecordedScreen()
+            IndicationSettingsScreenDestination.ErrorIndicationSoundScreen    -> IndicationWakeScreen()
+        }
+    }
+}

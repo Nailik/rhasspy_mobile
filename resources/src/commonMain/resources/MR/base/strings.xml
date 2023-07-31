@@ -204,6 +204,7 @@
     <string name="mqttConnectionError">Error during connection:</string>
     <string name="mqttConnectionLostError">Lost connection error:</string>
     <string name="close">Close</string>
+    <string name="closeAppInformation">press back to close</string>
     <string name="backup">Backup Settings and Configuration</string>
     <string name="unsavedChanges">Unsaved changes</string>
     <string name="unsavedChangesInformation">Do you want to save the changes?</string>

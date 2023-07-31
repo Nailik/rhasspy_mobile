@@ -29,14 +29,8 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.PorcupineKeywordConfigurationScreenDestination
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.PorcupineKeywordConfigurationScreenDestination.CustomKeywordScreen
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.PorcupineKeywordConfigurationScreenDestination.DefaultKeywordScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.AudioRecorderSettings
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.OverviewScreen
-import org.rhasspy.mobile.viewmodel.navigation.topScreen
 
 @Stable
 class WakeWordConfigurationViewModel(
@@ -52,8 +46,7 @@ class WakeWordConfigurationViewModel(
     private val _viewState = MutableStateFlow(
         WakeWordConfigurationViewState(
             editData = initialData,
-            screen = navigator.topScreen(OverviewScreen).value,
-            porcupineWakeWordScreen = navigator.topScreen(DefaultKeywordScreen).value,
+            porcupineWakeWordScreen = 0,
             isMicrophonePermissionRequestVisible = !microphonePermission.granted.value && (initialData.wakeWordOption == WakeWordOption.Porcupine || initialData.wakeWordOption == WakeWordOption.Udp),
         )
     )
@@ -72,26 +65,14 @@ class WakeWordConfigurationViewModel(
     init {
         viewModelScope.launch(dispatcher.IO) {
             combineStateFlow(
-                navigator.topScreen(OverviewScreen),
-                navigator.topScreen(DefaultKeywordScreen),
                 microphonePermission.granted
             ).collect { data ->
-                val screen: WakeWordConfigurationScreenDestination =
-                    data[0] as WakeWordConfigurationScreenDestination
-                val porcupineWakeWordScreen: PorcupineKeywordConfigurationScreenDestination =
-                    data[1] as PorcupineKeywordConfigurationScreenDestination
-                val isMicrophonePermissionGranted = data[2] as Boolean
-
                 _viewState.update {
                     it.copy(
-                        screen = screen,
-                        porcupineWakeWordScreen = porcupineWakeWordScreen,
-                        isMicrophonePermissionRequestVisible = !isMicrophonePermissionGranted && (it.editData.wakeWordOption == WakeWordOption.Porcupine || it.editData.wakeWordOption == WakeWordOption.Udp)
+                        isMicrophonePermissionRequestVisible = !data[0] && (it.editData.wakeWordOption == WakeWordOption.Porcupine || it.editData.wakeWordOption == WakeWordOption.Udp)
                     )
                 }
             }
-
-
         }
     }
 
@@ -239,28 +220,6 @@ class WakeWordConfigurationViewModel(
         newFiles.clear()
         filesToDelete.clear()
         _viewState.update { it.copy(editData = WakeWordConfigurationData()) }
-    }
-
-    override fun onBackPressed(): Boolean {
-        return if (viewState.value.screen == OverviewScreen) {
-            super.onBackPressed()
-        } else if (viewState.value.porcupineWakeWordScreen == DefaultKeywordScreen) {
-            //pop backstack to remove DefaultKeywordScreen
-            navigator.popBackStack()
-            //was handled
-            true
-        } else if (viewState.value.porcupineWakeWordScreen == CustomKeywordScreen) {
-            //navigate to DefaultKeywordScreen
-            navigator.replace(
-                PorcupineKeywordConfigurationScreenDestination::class,
-                DefaultKeywordScreen
-            )
-            //was handled
-            true
-        } else {
-            //close porcupine language or keyword screen
-            false
-        }
     }
 
 }
