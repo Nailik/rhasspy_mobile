@@ -8,14 +8,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.CustomDivider
 import org.rhasspy.mobile.ui.content.elements.Icon
@@ -25,16 +24,16 @@ import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeWordPorcupineLanguage
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 
 /**
  *  list of porcupine languages
  */
 @Composable
-fun PorcupineLanguageScreen(
-    editData: WakeWordPorcupineConfigurationData,
-    onEvent: (PorcupineUiEvent) -> Unit
-) {
+fun PorcupineLanguageScreen() {
+    val viewModel: WakeWordConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewState by viewModel.viewState.collectAsState()
+    val editData = viewState.editData.wakeWordPorcupineConfigurationData
 
     Scaffold(
         modifier = Modifier
@@ -43,7 +42,7 @@ fun PorcupineLanguageScreen(
         topBar = {
             AppBar(
                 title = MR.strings.language.stable,
-                onEvent = onEvent
+                onEvent = viewModel::onEvent
             )
         }
     ) { paddingValues ->
@@ -68,7 +67,7 @@ fun PorcupineLanguageScreen(
                         modifier = Modifier.testTag(option = option),
                         text = option.text,
                         isChecked = editData.porcupineLanguage == option,
-                        onClick = { onEvent(SelectWakeWordPorcupineLanguage(option)) }
+                        onClick = { viewModel.onEvent(SelectWakeWordPorcupineLanguage(option)) }
                     )
 
                     CustomDivider()

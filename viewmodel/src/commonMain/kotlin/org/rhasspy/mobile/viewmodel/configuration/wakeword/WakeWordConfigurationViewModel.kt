@@ -29,12 +29,13 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.CustomKeywordScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.DefaultKeywordScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.PorcupineKeywordConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.PorcupineKeywordConfigurationScreenDestination.CustomKeywordScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.PorcupineKeywordConfigurationScreenDestination.DefaultKeywordScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.AudioRecorderSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.OverviewScreen
 import org.rhasspy.mobile.viewmodel.navigation.topScreen
 
 @Stable
@@ -51,7 +52,7 @@ class WakeWordConfigurationViewModel(
     private val _viewState = MutableStateFlow(
         WakeWordConfigurationViewState(
             editData = initialData,
-            screen = navigator.topScreen(EditScreen).value,
+            screen = navigator.topScreen(OverviewScreen).value,
             porcupineWakeWordScreen = navigator.topScreen(DefaultKeywordScreen).value,
             isMicrophonePermissionRequestVisible = !microphonePermission.granted.value && (initialData.wakeWordOption == WakeWordOption.Porcupine || initialData.wakeWordOption == WakeWordOption.Udp),
         )
@@ -71,7 +72,7 @@ class WakeWordConfigurationViewModel(
     init {
         viewModelScope.launch(dispatcher.IO) {
             combineStateFlow(
-                navigator.topScreen(EditScreen),
+                navigator.topScreen(OverviewScreen),
                 navigator.topScreen(DefaultKeywordScreen),
                 microphonePermission.granted
             ).collect { data ->
@@ -120,6 +121,8 @@ class WakeWordConfigurationViewModel(
             is Navigate                 -> {
                 navigator.navigate(action.destination)
             }
+
+            OpenAudioRecorderSettings   -> navigator.navigate(AudioRecorderSettings)
         }
     }
 
@@ -168,7 +171,7 @@ class WakeWordConfigurationViewModel(
             OpenPicoVoiceConsole              -> openLink(LinkType.PicoVoiceConsole)
             PorcupineUiEvent.Action.BackClick -> navigator.onBackPressed()
             PorcupineLanguageClick            -> navigator.navigate(EditPorcupineLanguageScreen)
-            is PageClick                      -> navigator.replace(PorcupineKeywordConfigurationScreenDestination::class, action.screen)
+            is PageClick                      -> _viewState.update { it.copy(porcupineWakeWordScreen = action.screen) }
         }
     }
 
@@ -239,7 +242,7 @@ class WakeWordConfigurationViewModel(
     }
 
     override fun onBackPressed(): Boolean {
-        return if (viewState.value.screen == EditScreen) {
+        return if (viewState.value.screen == OverviewScreen) {
             super.onBackPressed()
         } else if (viewState.value.porcupineWakeWordScreen == DefaultKeywordScreen) {
             //pop backstack to remove DefaultKeywordScreen

@@ -18,7 +18,7 @@ import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.AudioRecorderSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.AudioRecorderSettings
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsViewModel

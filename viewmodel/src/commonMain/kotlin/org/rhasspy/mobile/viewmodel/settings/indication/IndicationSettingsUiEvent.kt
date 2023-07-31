@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.viewmodel.settings.indication
 
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
-import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.settings.IndicationSettingsScreenDestination
 
 sealed interface IndicationSettingsUiEvent {
 

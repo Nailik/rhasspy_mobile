@@ -16,7 +16,7 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.list.SliderListItem
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.DeviceSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.DeviceSettings
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsViewModel

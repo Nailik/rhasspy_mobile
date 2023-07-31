@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.updateList
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.HomeScreen
 import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 import kotlin.reflect.KClass
 

@@ -6,11 +6,10 @@ import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.nVerify
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WebServerConfigurationScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.ConfigurationScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WebServerConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.ConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.HomeScreen
 import org.rhasspy.mobile.viewmodel.screens.home.IHomeScreeViewModel
 import kotlin.test.BeforeTest
 import kotlin.test.Test

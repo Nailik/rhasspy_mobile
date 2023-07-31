@@ -9,11 +9,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.theme.horizontalAnimationSpec
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -21,10 +24,7 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.CustomKeywordScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.DefaultKeywordScreen
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 
 /**
  *  screen for porcupine keyword option
@@ -33,11 +33,11 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcup
  *  bottom bar to switch between pages
  */
 @Composable
-fun PorcupineKeywordScreen(
-    porcupineScreen: PorcupineKeywordConfigurationScreenDestination,
-    editData: WakeWordPorcupineConfigurationData,
-    onEvent: (PorcupineUiEvent) -> Unit
-) {
+fun PorcupineKeywordScreen() {
+    val viewModel: WakeWordConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewState by viewModel.viewState.collectAsState()
+    val editData = viewState.editData.wakeWordPorcupineConfigurationData
+
     Surface(tonalElevation = 3.dp) {
         Scaffold(
             modifier = Modifier
@@ -45,12 +45,12 @@ fun PorcupineKeywordScreen(
                 .fillMaxSize(),
             topBar = {
                 Column {
-                    AppBar(onEvent)
+                    AppBar(viewModel::onEvent)
                     //opens page for porcupine language selection
                     ListElement(
                         modifier = Modifier
                             .testTag(TestTag.PorcupineLanguage)
-                            .clickable { onEvent(PorcupineLanguageClick) },
+                            .clickable { viewModel.onEvent(PorcupineLanguageClick) },
                         text = { Text(MR.strings.language.stable) },
                         secondaryText = { Text(editData.porcupineLanguage.text) }
                     )
@@ -60,8 +60,8 @@ fun PorcupineKeywordScreen(
                 Surface(tonalElevation = 3.dp) {
                     //bottom tab bar with pages tabs
                     BottomTabBar(
-                        selectedIndex = porcupineScreen.index,
-                        onSelectedScreen = { onEvent(PageClick(it)) }
+                        selectedIndex = viewState.porcupineWakeWordScreen,
+                        onSelectedScreen = { viewModel.onEvent(PageClick(it)) }
                     )
                 }
             }
@@ -71,20 +71,20 @@ fun PorcupineKeywordScreen(
             Surface(modifier = Modifier.padding(paddingValues)) {
 
                 AnimatedContent(
-                    targetState = porcupineScreen,
+                    targetState = viewState.porcupineWakeWordScreen,
                     transitionSpec = {
-                        horizontalAnimationSpec(targetState.ordinal, initialState.ordinal)
+                        horizontalAnimationSpec(targetState, initialState)
                     }
                 ) { targetState ->
                     when (targetState) {
-                        DefaultKeywordScreen -> PorcupineKeywordDefaultScreen(
+                        0 -> PorcupineKeywordDefaultScreen(
                             editData = editData,
-                            onEvent = onEvent
+                            onEvent = viewModel::onEvent
                         )
 
-                        CustomKeywordScreen  -> PorcupineKeywordCustomScreen(
+                        1 -> PorcupineKeywordCustomScreen(
                             editData = editData,
-                            onEvent = onEvent
+                            onEvent = viewModel::onEvent
                         )
                     }
                 }
@@ -126,7 +126,7 @@ private fun AppBar(onEvent: (PorcupineUiEvent) -> Unit) {
 @Composable
 private fun BottomTabBar(
     selectedIndex: Int,
-    onSelectedScreen: (screen: PorcupineKeywordConfigurationScreenDestination) -> Unit
+    onSelectedScreen: (screen: Int) -> Unit
 ) {
 
     Column {
@@ -136,13 +136,13 @@ private fun BottomTabBar(
             Tab(
                 selected = selectedIndex == 0,
                 modifier = Modifier.testTag(TestTag.TabDefault),
-                onClick = { onSelectedScreen(DefaultKeywordScreen) },
+                onClick = { onSelectedScreen(0) },
                 text = { Text(MR.strings.textDefault.stable) }
             )
             Tab(
                 selected = selectedIndex == 1,
                 modifier = Modifier.testTag(TestTag.TabCustom),
-                onClick = { onSelectedScreen(CustomKeywordScreen) },
+                onClick = { onSelectedScreen(1) },
                 text = { Text(MR.strings.textCustom.stable) }
             )
         }

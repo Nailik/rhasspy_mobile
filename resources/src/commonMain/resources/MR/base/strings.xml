@@ -40,6 +40,7 @@
     <string name="porcupineAudioRecorderSettingsInformation">Audio will be converted to Porcupine
         compatible format. Requires PCM 16 Bit.
     </string>
+    <string name="openAudioRecorderSettings">open Audio Recorder Settings</string>
     <string name="local">Local</string>
     <string name="remote">Remote</string>
     <string name="disabled">Disabled</string>

@@ -2,8 +2,8 @@ package org.rhasspy.mobile.viewmodel.screens.main
 
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.HomeScreen
 import org.rhasspy.mobile.viewmodel.navigation.topScreen
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action

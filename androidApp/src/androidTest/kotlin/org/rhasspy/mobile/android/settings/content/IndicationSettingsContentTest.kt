@@ -19,7 +19,7 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.settings.IndicationSettingsScreenDestination
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
 import kotlin.test.assertEquals

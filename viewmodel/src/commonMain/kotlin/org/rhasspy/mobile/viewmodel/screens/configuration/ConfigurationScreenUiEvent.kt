@@ -1,7 +1,5 @@
 package org.rhasspy.mobile.viewmodel.screens.configuration
 
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
-
 sealed interface ConfigurationScreenUiEvent {
 
     sealed interface Change : ConfigurationScreenUiEvent {

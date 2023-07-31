@@ -20,7 +20,7 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.ListElement
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.SaveAndRestoreSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.SaveAndRestoreSettings
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Consumed.ShowSnackBar

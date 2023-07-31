@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.viewmodel.screens.main
 
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination
 
 sealed interface MainScreenUiEvent {
 

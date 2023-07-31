@@ -25,7 +25,7 @@ import org.rhasspy.mobile.ui.content.list.InformationListElement
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.BackgroundServiceSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.BackgroundServiceSettings
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Action.DisableBatteryOptimization
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Change.SetBackgroundServiceSettingsEnabled

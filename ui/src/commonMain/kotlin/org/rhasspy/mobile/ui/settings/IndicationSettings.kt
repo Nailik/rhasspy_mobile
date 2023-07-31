@@ -30,11 +30,11 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.IndicationSettings
-import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination.ErrorIndicationSoundScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination.OverviewScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination.RecordedIndicationSoundScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination.WakeIndicationSoundScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.IndicationSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.settings.IndicationSettingsScreenDestination.ErrorIndicationSoundScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.settings.IndicationSettingsScreenDestination.OverviewScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.settings.IndicationSettingsScreenDestination.RecordedIndicationSoundScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.settings.IndicationSettingsScreenDestination.WakeIndicationSoundScreen
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.Navigate

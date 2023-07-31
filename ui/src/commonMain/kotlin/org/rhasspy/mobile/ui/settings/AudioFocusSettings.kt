@@ -16,7 +16,7 @@ import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.list.CheckBoxListItem
 import org.rhasspy.mobile.ui.content.list.InformationListElement
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.AudioFocusSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.AudioFocusSettings
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.*

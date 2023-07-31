@@ -11,7 +11,7 @@ import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.LanguageSettingsScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.LanguageSettingsScreen
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel

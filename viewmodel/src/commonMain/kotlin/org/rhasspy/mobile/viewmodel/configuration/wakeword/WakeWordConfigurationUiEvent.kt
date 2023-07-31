@@ -5,8 +5,7 @@ import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination
 
 sealed interface WakeWordConfigurationUiEvent {
 
@@ -19,6 +18,7 @@ sealed interface WakeWordConfigurationUiEvent {
     sealed interface Action : WakeWordConfigurationUiEvent {
 
         data object RequestMicrophonePermission : Action
+        data object OpenAudioRecorderSettings : Action
         data object BackClick : Action
         data class Navigate(val destination: WakeWordConfigurationScreenDestination) : Action
 
@@ -65,7 +65,7 @@ sealed interface WakeWordConfigurationUiEvent {
             data object OpenPicoVoiceConsole : Action
             data object BackClick : Action
             data object PorcupineLanguageClick : Action
-            data class PageClick(val screen: PorcupineKeywordConfigurationScreenDestination) : Action
+            data class PageClick(val screen: Int) : Action
 
         }
     }

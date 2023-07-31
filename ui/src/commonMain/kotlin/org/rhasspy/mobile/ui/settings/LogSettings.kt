@@ -13,7 +13,7 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.LogSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.LogSettings
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel

@@ -1,7 +1,5 @@
 package org.rhasspy.mobile.ui.main
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,15 +18,13 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.*
 import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.item.EventStateIconTinted
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.*
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.ConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToErrorClick
@@ -42,7 +38,6 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 /**
  * configuration screens with list items that open bottom sheet
  */
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ConfigurationScreen() {
 
@@ -50,34 +45,14 @@ fun ConfigurationScreen() {
     val scrollState = rememberScrollState()
 
     Screen(screenViewModel = viewModel) {
-        val screen by viewModel.screen.collectAsState()
+        val viewState by viewModel.viewState.collectAsState()
 
-        AnimatedContent(targetState = screen) { targetState ->
-            when (targetState) {
-                OverviewScreen                       -> {
-                    val viewState by viewModel.viewState.collectAsState()
-
-                    ConfigurationScreenContent(
-                        scrollState = scrollState,
-                        onEvent = viewModel::onEvent,
-                        viewState = viewState
-                    )
-                }
-
-                AudioPlayingConfigurationScreen      -> AudioPlayingConfigurationScreen()
-                DialogManagementConfigurationScreen  -> DialogManagementConfigurationScreen()
-                IntentHandlingConfigurationScreen    -> IntentHandlingConfigurationScreen()
-                IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationScreen()
-                MqttConfigurationScreen              -> MqttConfigurationScreen()
-                RemoteHermesHttpConfigurationScreen  -> RemoteHermesHttpConfigurationScreen()
-                SpeechToTextConfigurationScreen      -> SpeechToTextConfigurationScreen()
-                TextToSpeechConfigurationScreen      -> TextToSpeechConfigurationScreen()
-                WakeWordConfigurationScreen          -> WakeWordConfigurationScreen()
-                WebServerConfigurationScreen         -> WebServerConfigurationScreen()
-            }
-        }
+        ConfigurationScreenContent(
+            scrollState = scrollState,
+            onEvent = viewModel::onEvent,
+            viewState = viewState
+        )
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,7 +65,7 @@ fun ConfigurationScreenContent(
 
     Scaffold(
         modifier = Modifier
-            .testTag(ConfigurationScreen)
+            .testTag(OverviewScreen)
             .fillMaxSize(),
         topBar = {
             TopAppBar(

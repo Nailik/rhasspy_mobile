@@ -3,6 +3,7 @@ package org.rhasspy.mobile.data.service.option
 import dev.icerock.moko.resources.FileResource
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.resources.MR
 
 enum class PorcupineKeywordOption(
     override val text: StableStringResource,

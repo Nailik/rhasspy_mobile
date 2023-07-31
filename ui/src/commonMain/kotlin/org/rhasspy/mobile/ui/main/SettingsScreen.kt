@@ -1,6 +1,5 @@
 package androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.*
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
@@ -33,9 +31,9 @@ import org.rhasspy.mobile.ui.content.elements.toText
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.SettingsScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.SettingsScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.*
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
@@ -47,33 +45,12 @@ fun SettingsScreen() {
     val viewModel: SettingsScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
     Screen(screenViewModel = viewModel) {
-        val screen by viewModel.screen.collectAsState()
+        val viewState by viewModel.viewState.collectAsState()
 
-        AnimatedContent(targetState = screen) { targetState ->
-            when (targetState) {
-                OverviewScreen            -> {
-                    val viewState by viewModel.viewState.collectAsState()
-
-                    SettingsScreenContent(
-                        viewState = viewState,
-                        onEvent = viewModel::onEvent
-                    )
-                }
-
-                AboutSettings             -> AboutScreen()
-                AudioFocusSettings        -> AudioFocusSettingsContent()
-                AudioRecorderSettings     -> AudioRecorderSettingsContent()
-                SilenceDetectionSettings  -> SilenceDetectionSettingsContent()
-                BackgroundServiceSettings -> BackgroundServiceSettingsContent()
-                DeviceSettings            -> DeviceSettingsContent()
-                IndicationSettings        -> IndicationSettingsContent()
-                LanguageSettingsScreen    -> LanguageSettingsScreenItemContent()
-                LogSettings               -> LogSettingsContent()
-                MicrophoneOverlaySettings -> MicrophoneOverlaySettingsContent()
-                SaveAndRestoreSettings    -> SaveAndRestoreSettingsContent()
-            }
-        }
-
+        SettingsScreenContent(
+            viewState = viewState,
+            onEvent = viewModel::onEvent
+        )
     }
 
 }

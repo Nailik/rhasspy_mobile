@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.ui.main
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,8 +17,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main.SettingsScreen
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.theme.horizontalAnimationSpec
+import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main.NavigationContent
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.BuildKonfig
@@ -34,8 +32,8 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
@@ -144,29 +142,15 @@ private fun ChangelogDialog(
 
 @Composable
 private fun MainScreenContent(
-    screen: MainScreenNavigationDestination,
+    screen: NavigationDestination,
     viewState: MainScreenViewState,
     onEvent: (event: MainScreenUiEvent) -> Unit
 ) {
 
     Column {
         Box(modifier = Modifier.weight(1f)) {
-            AnimatedContent(
-                targetState = screen,
-                transitionSpec = {
-                    horizontalAnimationSpec(targetState.ordinal, initialState.ordinal)
-                }
-            ) { targetState ->
-                when (targetState) {
-                    HomeScreen          -> HomeScreen()
-                    DialogScreen        -> DialogScreen()
-                    ConfigurationScreen -> ConfigurationScreen()
-                    SettingsScreen      -> SettingsScreen()
-                    LogScreen           -> LogScreen()
-                }
-            }
+            NavigationContent(screen)
         }
-
 
         if (viewState.isBottomNavigationVisible) {
             BottomNavigation(
@@ -179,7 +163,6 @@ private fun MainScreenContent(
     }
 
 }
-
 
 /**
  * dialog if user wants to enable crashlytics

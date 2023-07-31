@@ -11,7 +11,7 @@ import org.rhasspy.mobile.android.utils.FlakyTestNew
 import org.rhasspy.mobile.android.utils.hasTestTag
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination
 
 /**
  * Test Settings Screen
