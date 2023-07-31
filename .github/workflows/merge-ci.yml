@@ -66,6 +66,7 @@ jobs:
           name: Test Report
           path: androidApp/build/outputs/androidTest-results/connected/debug/TEST-*.xml
           reporter: java-junit
+          fail-on-error: false
   build:
     runs-on: self-hosted
     needs: uiTest

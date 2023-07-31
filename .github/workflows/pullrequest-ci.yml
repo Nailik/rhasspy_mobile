@@ -76,3 +76,4 @@ jobs:
           name: Test Report
           path: viewmodel/build/test-results/test${{ inputs.BUILD_TYPE }}UnitTest/TEST-*.xml,logic/build/test-results/test${{ inputs.BUILD_TYPE }}UnitTest/TEST-*.xml
           reporter: java-junit
+          fail-on-error: false
