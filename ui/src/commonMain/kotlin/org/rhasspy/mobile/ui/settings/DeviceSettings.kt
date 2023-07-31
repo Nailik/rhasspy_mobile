@@ -1,15 +1,18 @@
 package androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main.SettingsScreenItemContent
+import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.list.InformationListElement
 import org.rhasspy.mobile.ui.content.list.SliderListItem
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.testTag
@@ -37,7 +40,29 @@ fun DeviceSettingsContent() {
         onBackClick = { viewModel.onEvent(DeviceSettingsUiEvent.Action.BackClick) }
     ) {
 
-        InformationListElement(text = MR.strings.deviceSettingsLongInformation.stable)
+        Card(
+            modifier = Modifier.padding(8.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+
+            //mqtt api
+            SwitchListItem(
+                modifier = Modifier.testTag(TestTag.MqttApi),
+                text = MR.strings.isMqttApiDeviceChangeEnabled.stable,
+                secondaryText = MR.strings.isMqttApiDeviceChangeEnabledInformation.stable,
+                isChecked = viewState.isMqttApiDeviceChangeEnabled,
+                onCheckedChange = { viewModel.onEvent(SetMqttApiChangesEnabled(it)) }
+            )
+
+            //http api
+            SwitchListItem(
+                modifier = Modifier.testTag(TestTag.HttpApi),
+                text = MR.strings.isHttpApiDeviceChangeEnabled.stable,
+                isChecked = viewState.isHttpApiDeviceChangeEnabled,
+                onCheckedChange = { viewModel.onEvent(SetHttpApiChangesEnabled(it)) }
+            )
+        }
+
 
         //volume slider
         SliderListItem(

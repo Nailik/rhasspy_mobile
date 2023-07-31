@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -59,7 +60,7 @@ internal class FileLogger(
      */
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
         val element = LogElement(
-            Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
+            Clock.System.now().toLocalDateTime(currentSystemDefault()).toString(),
             severity,
             tag,
             message,

@@ -25,14 +25,11 @@ enum class TestTag {
     AudioPlayingOptions,
     AudioOutputOptions,
     Endpoint,
-    TextToSpeechText,
     AccessToken,
     SendEvents,
     SendIntents,
     AudioRecordingUdpHost,
     AudioRecordingUdpPort,
-    IntentNameText,
-    IntentText,
 
     ConfigurationScreenItemContent,
     ConfigurationSiteId,
@@ -113,6 +110,8 @@ enum class TestTag {
     AudioRecorderSampleRateType,
 
     Volume,
+    MqttApi,
+    HttpApi,
     HotWord,
     AudioOutput,
     IntentHandling,
@@ -124,10 +123,6 @@ enum class TestTag {
     CrashlyticsEnabled,
     ShowLogEnabled,
     AudioFramesEnabled,
-
-
-    OpenConfigScreen,
-
 
     DialogManagementOptions,
 

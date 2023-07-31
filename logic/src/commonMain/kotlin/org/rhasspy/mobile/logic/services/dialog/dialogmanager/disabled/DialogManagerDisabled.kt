@@ -24,7 +24,7 @@ class DialogManagerDisabled(
 
     override fun onAction(action: DialogServiceMiddlewareAction) {
         logger.d { "action $action" }
-        dialogManagerService.transitionTo(action = action, null)
+        dialogManagerService.addToHistory(action)
         when (action) {
             is AsrError                      -> Unit
             is AsrTextCaptured               -> intentRecognitionService.recognizeIntent((action.source as? Mqtt?)?.sessionId ?: "", action.text ?: "")

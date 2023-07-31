@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.format
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
+import kotlinx.datetime.toLocalDateTime
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.dialog.SessionData
 import org.rhasspy.mobile.resources.MR
@@ -34,13 +36,13 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.DialogScreen
+import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem
+import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogActionViewState
+import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogActionViewState.SourceViewState.SourceType.*
+import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogStateViewState
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogActionViewState
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogActionViewState.SourceViewState.SourceType.*
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogStateViewState
 
 @Composable
 fun DialogScreen() {
@@ -105,7 +107,7 @@ private fun AppBar(
 @Composable
 private fun DialogScreenContent(
     isLogAutoscroll: Boolean,
-    history: ImmutableList<DialogTransitionItem>,
+    history: ImmutableList<DialogInformationItem>,
     onEvent: (DialogScreenUiEvent) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -148,7 +150,7 @@ private fun DialogScreenContent(
 }
 
 @Composable
-fun DialogTransitionListItem(item: DialogTransitionItem) {
+fun DialogTransitionListItem(item: DialogInformationItem) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -160,17 +162,9 @@ fun DialogTransitionListItem(item: DialogTransitionItem) {
                 .width(1.dp)
         )
 
-        DialogActionListItem(item.action)
-
-        item.state?.also {
-            Divider(
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                modifier = Modifier
-                    .height(10.dp)
-                    .width(1.dp)
-            )
-
-            DialogStateListItem(it)
+        when (item) {
+            is DialogActionViewState -> DialogActionListItem(item)
+            is DialogStateViewState  -> DialogStateListItem(item)
         }
 
     }
@@ -220,6 +214,9 @@ private fun DialogActionListItem(item: DialogActionViewState) {
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
+        },
+        overlineText = {
+            Text(item.timeStamp.toLocalDateTime(currentSystemDefault()).toString())
         }
     )
 }
@@ -230,7 +227,8 @@ private fun DialogStateListItem(item: DialogStateViewState) {
         colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         modifier = Modifier.clip(RoundedCornerShape(5.dp)),
         text = { Text(item.name) },
-        secondaryText = item.sessionData?.let { { DialogSessionData(it) } }
+        secondaryText = item.sessionData?.let { { DialogSessionData(it) } },
+        overlineText = { Text(item.timeStamp.toLocalDateTime(currentSystemDefault()).toString()) }
     )
 }
 

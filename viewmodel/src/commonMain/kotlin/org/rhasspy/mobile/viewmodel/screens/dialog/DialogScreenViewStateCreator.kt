@@ -9,6 +9,8 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogService
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.middleware.Source.*
+import org.rhasspy.mobile.logic.services.dialog.DialogInformation.Action
+import org.rhasspy.mobile.logic.services.dialog.DialogInformation.State
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.*
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.SessionState.*
@@ -17,12 +19,10 @@ import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogActionViewState
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogActionViewState.SourceViewState
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogActionViewState.SourceViewState.SourceType
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewState.DialogTransitionItem.DialogStateViewState
-
+import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogActionViewState
+import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogActionViewState.SourceViewState
+import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogActionViewState.SourceViewState.SourceType
+import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogStateViewState
 
 class DialogScreenViewStateCreator(
     private val dialogManagerService: IDialogManagerService
@@ -41,18 +41,19 @@ class DialogScreenViewStateCreator(
         return DialogScreenViewState(
             isDialogAutoscroll = AppSetting.isDialogAutoscroll.value,
             history = dialogManagerService.dialogHistory.value.map { item ->
-                DialogTransitionItem(
-                    action = item.first.toDialogActionViewState(),
-                    state = item.second?.toDialogStateViewState()
-                )
+                when (item) {
+                    is Action -> item.toDialogActionViewState()
+                    is State  -> item.toDialogStateViewState()
+                }
             }.toImmutableList()
         )
     }
 
-    private fun DialogManagerState.toDialogStateViewState(): DialogStateViewState {
+    private fun State.toDialogStateViewState(): DialogStateViewState {
         return DialogStateViewState(
-            name = this.toText(),
-            sessionData = if (this is SessionState) this.sessionData else null
+            name = this.value.toText(),
+            timeStamp = this.timeStamp,
+            sessionData = (this.value as? SessionState?)?.sessionData
         )
     }
 
@@ -66,21 +67,23 @@ class DialogScreenViewStateCreator(
         }
     }
 
-    private fun DialogServiceMiddlewareAction.toDialogActionViewState(): DialogActionViewState {
-        val name = this.toText()
-        val source = this.source.toSourceViewState()
+    private fun Action.toDialogActionViewState(): DialogActionViewState {
+        val source = this.value.source.toSourceViewState()
 
-        val information = when (this) {
-            is AsrTextCaptured         -> MR.strings.asr_text.format(text ?: "").stable
-            is IntentRecognitionResult -> MR.strings.intent.format(intentName, intent).stable
-            is PlayAudio               -> MR.strings.audio_data_size.format(byteArray.size).stable
-            is StartListening          -> MR.strings.send_audio_captured.format(sendAudioCaptured).stable
-            is WakeWordDetected        -> MR.strings.wake_word.format(wakeWord).stable
-            else                       -> null
+        val information = with(this.value) {
+            when (this) {
+                is AsrTextCaptured         -> MR.strings.asr_text.format(text ?: "").stable
+                is IntentRecognitionResult -> MR.strings.intent.format(intentName, intent).stable
+                is PlayAudio               -> MR.strings.audio_data_size.format(byteArray.size).stable
+                is StartListening          -> MR.strings.send_audio_captured.format(sendAudioCaptured).stable
+                is WakeWordDetected        -> MR.strings.wake_word.format(wakeWord).stable
+                else                       -> null
+            }
         }
 
         return DialogActionViewState(
-            name = name,
+            name = this.value.toText(),
+            timeStamp = this.timeStamp,
             source = source,
             information = information
         )

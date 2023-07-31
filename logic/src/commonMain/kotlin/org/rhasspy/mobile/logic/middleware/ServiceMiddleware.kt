@@ -88,10 +88,10 @@ internal class ServiceMiddleware(
 
     private fun appSettingsAction(action: AppSettingsServiceMiddlewareAction) {
         when (action) {
-            is AudioOutputToggle    -> appSettingsService.audioOutputToggle(action.enabled)
-            is AudioVolumeChange    -> appSettingsService.setAudioVolume(action.volume)
-            is HotWordToggle        -> appSettingsService.hotWordToggle(action.enabled)
-            is IntentHandlingToggle -> appSettingsService.intentHandlingToggle(action.enabled)
+            is AudioOutputToggle    -> appSettingsService.audioOutputToggle(action.enabled, action.source)
+            is AudioVolumeChange    -> appSettingsService.setAudioVolume(action.volume, action.source)
+            is HotWordToggle        -> appSettingsService.hotWordToggle(action.enabled, action.source)
+            is IntentHandlingToggle -> appSettingsService.intentHandlingToggle(action.enabled, action.source)
         }
     }
 

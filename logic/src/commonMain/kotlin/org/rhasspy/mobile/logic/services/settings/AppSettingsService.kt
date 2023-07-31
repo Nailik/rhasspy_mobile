@@ -4,6 +4,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.logic.middleware.Source
+import org.rhasspy.mobile.logic.middleware.Source.*
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
@@ -12,10 +14,10 @@ interface IAppSettingsService : IService {
 
     override val serviceState: StateFlow<ServiceState>
 
-    fun hotWordToggle(value: Boolean)
-    fun intentHandlingToggle(value: Boolean)
-    fun audioOutputToggle(value: Boolean)
-    fun setAudioVolume(volume: Float)
+    fun hotWordToggle(value: Boolean, source: Source)
+    fun intentHandlingToggle(value: Boolean, source: Source)
+    fun audioOutputToggle(value: Boolean, source: Source)
+    fun setAudioVolume(volume: Float, source: Source)
 
 }
 
@@ -29,22 +31,50 @@ internal class AppSettingsService : IAppSettingsService {
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
     override val serviceState = _serviceState.readOnly
 
-    override fun hotWordToggle(value: Boolean) {
+    override fun hotWordToggle(value: Boolean, source: Source) {
+
+        when (source) {
+            HttpApi -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
+            Local   -> Unit
+            is Mqtt -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
+        }
+
         logger.d { "hotWordToggle value: $value" }
         AppSetting.isHotWordEnabled.value = value
     }
 
-    override fun intentHandlingToggle(value: Boolean) {
+    override fun intentHandlingToggle(value: Boolean, source: Source) {
+
+        when (source) {
+            HttpApi -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
+            Local   -> Unit
+            is Mqtt -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
+        }
+
         logger.d { "intentHandlingToggle value: $value" }
         AppSetting.isIntentHandlingEnabled.value = value
     }
 
-    override fun audioOutputToggle(value: Boolean) {
+    override fun audioOutputToggle(value: Boolean, source: Source) {
+
+        when (source) {
+            HttpApi -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
+            Local   -> Unit
+            is Mqtt -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
+        }
+
         logger.d { "audioOutputToggle value: $value" }
         AppSetting.isAudioOutputEnabled.value = value
     }
 
-    override fun setAudioVolume(volume: Float) {
+    override fun setAudioVolume(volume: Float, source: Source) {
+
+        when (source) {
+            HttpApi -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
+            Local   -> Unit
+            is Mqtt -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
+        }
+
         logger.d { "setAudioVolume volume: $volume" }
         AppSetting.volume.value = volume
     }
