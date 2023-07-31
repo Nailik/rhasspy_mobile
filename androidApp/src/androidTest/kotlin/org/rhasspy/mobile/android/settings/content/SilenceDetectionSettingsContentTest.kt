@@ -1,16 +1,12 @@
 package org.rhasspy.mobile.android.settings.content
 
-import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.SilenceDetectionSettingsContent
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
-import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
@@ -20,23 +16,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class SilenceDetectionSettingsContentTest : FlakyTest() {
+class SilenceDetectionSettingsContentTest : FlakyTestNew() {
 
-    @get: Rule(order = 0)
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
-
-    private val viewModel = get<SilenceDetectionSettingsViewModel>()
-
-    @Before
-    fun setUp() {
-
-        composeTestRule.activity.setContent {
-            TestContentProvider {
-                SilenceDetectionSettingsContent()
-            }
-        }
-
+    @Composable
+    override fun ComposableContent() {
+        SilenceDetectionSettingsContent()
     }
+
 
     /**
      * Automatic silence detection disabled
@@ -52,6 +38,8 @@ class SilenceDetectionSettingsContentTest : FlakyTest() {
      */
     @Test
     fun testContent() = runTest {
+        val viewModel = get<SilenceDetectionSettingsViewModel>()
+
         viewModel.onEvent(SetSilenceDetectionEnabled(false))
 
         val numberInputTest = "5000"
@@ -110,6 +98,7 @@ class SilenceDetectionSettingsContentTest : FlakyTest() {
      */
     @Test
     fun testRecording() = runTest {
+        val viewModel = get<SilenceDetectionSettingsViewModel>()
         get<IMicrophonePermission>().requestMicrophonePermissions()
 
         //Automatic silence detection enabled
