@@ -5,9 +5,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
@@ -16,11 +14,12 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogService
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.logic.services.dialog.DialogInformation.Action
+import org.rhasspy.mobile.logic.services.dialog.DialogInformation.State
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.IdleState
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.disabled.DialogManagerDisabled
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.local.DialogManagerLocal
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.mqtt.DialogManagerMqtt
-import org.rhasspy.mobile.logic.services.dialog.states.IStateTransition
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -29,15 +28,16 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface IDialogManagerService : IService {
 
-    val dialogHistory: StateFlow<List<Pair<DialogServiceMiddlewareAction, DialogManagerState?>>>
+    val dialogHistory: StateFlow<List<DialogInformation>>
 
     override val serviceState: StateFlow<ServiceState>
     val currentDialogState: StateFlow<DialogManagerState>
 
-    fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState?)
     suspend fun onAction(action: DialogServiceMiddlewareAction)
     fun informMqtt(sessionData: SessionData?, action: DialogServiceMiddlewareAction)
 
+    fun transitionTo(state: DialogManagerState)
+    fun addToHistory(action: DialogServiceMiddlewareAction)
     fun clearHistory()
 
 }
@@ -54,7 +54,7 @@ internal class DialogManagerService(
     private val dialogManagerMqtt by inject<DialogManagerMqtt>()
     private val dialogManagerDisabled by inject<DialogManagerDisabled>()
 
-    override val dialogHistory = MutableStateFlow<ImmutableList<Pair<DialogServiceMiddlewareAction, DialogManagerState?>>>(persistentListOf())
+    override val dialogHistory = MutableStateFlow<ImmutableList<DialogInformation>>(persistentListOf())
 
     override val logger = LogType.DialogManagerService.logger()
 
@@ -67,24 +67,25 @@ internal class DialogManagerService(
     init {
         _serviceState.value = ServiceState.Success
         CoroutineScope(dispatcherProvider.IO).launch {
-            transitionTo(
-                SessionEnded(Source.Local),
-                //settings true to source mqtt results in no initial data being send to mqtt
-                get<IStateTransition>().transitionToIdleState(null, true)
-            )
+            transitionTo(IdleState)
         }
     }
 
-    override fun transitionTo(action: DialogServiceMiddlewareAction, state: DialogManagerState?) {
-        if (state != null) {
-            _currentDialogState.value = state
+    override fun transitionTo(state: DialogManagerState) {
+        _currentDialogState.value = state
+        dialogHistory.value = dialogHistory.value.updateList {
+            add(State(state))
+            while (size > 100) {
+                removeLast()
+            }
         }
-        dialogHistory.update {
-            it.updateList {
-                add(Pair(action, state))
-                while (size > 100) {
-                    removeLast()
-                }
+    }
+
+    override fun addToHistory(action: DialogServiceMiddlewareAction) {
+        dialogHistory.value = dialogHistory.value.updateList {
+            add(Action(action))
+            while (size > 100) {
+                removeLast()
             }
         }
     }

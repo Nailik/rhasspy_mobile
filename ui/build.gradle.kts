@@ -33,6 +33,7 @@ kotlin {
                 implementation(Jetbrains.Compose.runtime)
                 implementation(Jetbrains.Compose.materialIconsExtended)
                 implementation(Mikepenz.aboutLibrariesCore)
+                implementation(Jetbrains.Kotlinx.dateTime)
             }
         }
         val commonTest by getting {

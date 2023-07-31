@@ -34,18 +34,18 @@ class DialogManagerMqtt(
         with(dialogManagerService.currentDialogState.value) {
             logger.d { "action $action on state $this" }
             when (action) {
-                is AsrError                      -> dialogManagerService.transitionTo(action = action, null)
-                is AsrTextCaptured               -> dialogManagerService.transitionTo(action = action, null)
-                is EndSession                    -> dialogManagerService.transitionTo(action = action, null)
-                is IntentRecognitionError        -> dialogManagerService.transitionTo(action = action, null)
+                is AsrError                      -> dialogManagerService.addToHistory(action)
+                is AsrTextCaptured               -> dialogManagerService.addToHistory(action)
+                is EndSession                    -> dialogManagerService.addToHistory(action)
+                is IntentRecognitionError        -> dialogManagerService.addToHistory(action)
                 is IntentRecognitionResult       -> onIntentRecognitionResult(action, this)
                 is PlayAudio                     -> onPlayAudio(action)
                 is PlayFinished                  -> onPlayFinished(action)
                 is SessionEnded                  -> onSessionEnded(action, this)
-                is SessionStarted                -> dialogManagerService.transitionTo(action = action, null)
+                is SessionStarted                -> dialogManagerService.addToHistory(action)
                 is SilenceDetected               -> onSilenceDetected(action, this)
                 is StartListening                -> onStartListening(action)
-                is StartSession                  -> dialogManagerService.transitionTo(action = action, null)
+                is StartSession                  -> dialogManagerService.addToHistory(action)
                 is StopAudioPlaying              -> onStopAudioPlaying(action)
                 is StopListening                 -> onStopListening(action, this)
                 is WakeWordDetected              -> onWakeWordDetected(action)
@@ -64,10 +64,7 @@ class DialogManagerMqtt(
 
         intentHandlingService.intentHandling(action.intentName, action.intent)
 
-        dialogManagerService.transitionTo(
-            action = action,
-            state = null
-        )
+        dialogManagerService.addToHistory(action)
     }
 
     private fun onPlayAudio(action: PlayAudio) {
@@ -78,12 +75,14 @@ class DialogManagerMqtt(
 
         @Suppress("DEPRECATION")
         audioPlayingService.playAudio(AudioSource.Data(action.byteArray))
+        dialogManagerService.addToHistory(action)
     }
 
     private fun onPlayFinished(action: PlayFinished) {
         if (action.source == Source.Local) {
             dialogManagerService.informMqtt(null, action)
         }
+        dialogManagerService.addToHistory(action)
     }
 
     private fun onSessionEnded(action: SessionEnded, state: DialogManagerState) {
@@ -91,8 +90,8 @@ class DialogManagerMqtt(
 
         stopSpeechToTextService(action, state)
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToIdleState(
                 sessionData = state.sessionDataOrNull(),
                 isSourceMqtt = action.source is Mqtt
@@ -108,8 +107,8 @@ class DialogManagerMqtt(
 
         stopSpeechToTextService(action, state)
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToTranscribingIntentState(state.sessionDataOrDummy())
         )
     }
@@ -124,8 +123,8 @@ class DialogManagerMqtt(
 
         indicationService.onSessionStarted()
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToRecordingState(
                 sessionData = sessionData,
                 isSourceMqtt = action.source is Mqtt
@@ -138,10 +137,7 @@ class DialogManagerMqtt(
 
         dialogManagerService.informMqtt(null, PlayFinished(action.source))
 
-        dialogManagerService.transitionTo(
-            action = action,
-            state = null
-        )
+        dialogManagerService.addToHistory(action)
     }
 
     private fun onStopListening(action: StopListening, state: DialogManagerState) {
@@ -152,15 +148,10 @@ class DialogManagerMqtt(
 
         stopSpeechToTextService(action, state)
 
+        dialogManagerService.addToHistory(action)
         if (state is RecordingIntentState) {
             dialogManagerService.transitionTo(
-                action = action,
                 state = stateTransition.transitionToTranscribingIntentState(state.sessionData)
-            )
-        } else {
-            dialogManagerService.transitionTo(
-                action = action,
-                state = null
             )
         }
     }
@@ -181,8 +172,8 @@ class DialogManagerMqtt(
 
         stopSpeechToTextService(action, state)
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToIdleState(
                 sessionData = state.sessionDataOrNull(),
                 isSourceMqtt = action.source is Mqtt
@@ -195,8 +186,8 @@ class DialogManagerMqtt(
 
         stopSpeechToTextService(action, state)
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToIdleState(
                 sessionData = state.sessionDataOrNull(),
                 isSourceMqtt = action.source is Mqtt

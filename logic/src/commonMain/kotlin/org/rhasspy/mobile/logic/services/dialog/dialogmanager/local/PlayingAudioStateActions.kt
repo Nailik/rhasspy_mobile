@@ -30,8 +30,8 @@ internal class PlayingAudioStateActions(
     private fun onPlayFinished(action: PlayFinished) {
         dialogManagerService.informMqtt(null, action)
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToIdleState(
                 sessionData = null,
                 isSourceMqtt = action.source is Mqtt
@@ -44,8 +44,8 @@ internal class PlayingAudioStateActions(
 
         dialogManagerService.informMqtt(null, PlayFinished(action.source))
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToIdleState(
                 sessionData = null,
                 isSourceMqtt = action.source is Mqtt

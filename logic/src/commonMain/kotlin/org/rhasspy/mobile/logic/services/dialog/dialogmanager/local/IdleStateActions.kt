@@ -50,8 +50,8 @@ internal class IdleStateActions(
 
         indicationService.onSessionStarted()
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToRecordingState(
                 sessionData = sessionData,
                 isSourceMqtt = action.source is Source.Mqtt
@@ -73,8 +73,8 @@ internal class IdleStateActions(
 
         indicationService.onSessionStarted()
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToRecordingState(
                 sessionData = sessionData,
                 isSourceMqtt = action.source is Source.Mqtt
@@ -97,8 +97,8 @@ internal class IdleStateActions(
 
         indicationService.onSessionStarted()
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToRecordingState(
                 sessionData = sessionData,
                 isSourceMqtt = action.source is Source.Mqtt
@@ -115,8 +115,8 @@ internal class IdleStateActions(
         @Suppress("DEPRECATION")
         audioPlayingService.playAudio(AudioSource.Data(action.byteArray))
 
+        dialogManagerService.addToHistory(action)
         dialogManagerService.transitionTo(
-            action = action,
             state = stateTransition.transitionToAudioPlayingState()
         )
     }
