@@ -10,6 +10,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
@@ -94,9 +95,9 @@ internal class WakeWordService(
 
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> startPorcupine()
-            WakeWordOption.MQTT      -> Unit //nothing will wait for mqtt message
+            WakeWordOption.MQTT      -> _serviceState.value = Success //nothing will wait for mqtt message
             WakeWordOption.Udp       -> startUdp()
-            WakeWordOption.Disabled  -> Unit
+            WakeWordOption.Disabled  -> _serviceState.value = Disabled
         }
     }
 
@@ -209,7 +210,7 @@ internal class WakeWordService(
                 Success
             }
 
-            WakeWordOption.Disabled  -> ServiceState.Disabled
+            WakeWordOption.Disabled -> Disabled
         }
     }
 
