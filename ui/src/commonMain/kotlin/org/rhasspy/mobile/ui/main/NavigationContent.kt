@@ -18,13 +18,14 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.*
 fun NavigationContent(
     screen: NavigationDestination
 ) {
-    AnimatedContent(targetState = screen) { targetState ->
-        when (targetState) {
-            is ConfigurationScreenNavigationDestination -> ConfigurationNavigationContent(targetState)
-            is MainScreenNavigationDestination          -> MainNavigationContent(targetState)
-            is SettingsScreenDestination                -> SettingsNavigationContent(targetState)
-            is WakeWordConfigurationScreenDestination   -> WakeWordNavigationContent(targetState)
-            is IndicationSettingsScreenDestination      -> IndicationNavigationContent(targetState)
+    //only animates when the type changes
+    AnimatedContent(targetState = screen::class) {
+        when (screen) {
+            is ConfigurationScreenNavigationDestination -> ConfigurationNavigationContent(screen)
+            is MainScreenNavigationDestination          -> MainNavigationContent(screen)
+            is SettingsScreenDestination                -> SettingsNavigationContent(screen)
+            is WakeWordConfigurationScreenDestination   -> WakeWordNavigationContent(screen)
+            is IndicationSettingsScreenDestination      -> IndicationNavigationContent(screen)
         }
     }
 }

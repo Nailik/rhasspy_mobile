@@ -197,16 +197,7 @@ private fun BottomNavigation(
 
         NavigationBarItem(
             modifier = Modifier.testTag(HomeScreen),
-            icon = {
-                Icon(
-                    if (activeIndex == 0) {
-                        Icons.Filled.Mic
-                    } else {
-                        Icons.Outlined.Mic
-                    },
-                    MR.strings.home.stable
-                )
-            },
+            icon = { Icon(Icons.Filled.Mic, MR.strings.home.stable) },
             label = {
                 Text(
                     resource = MR.strings.home.stable,
@@ -220,16 +211,7 @@ private fun BottomNavigation(
 
         NavigationBarItem(
             modifier = Modifier.testTag(DialogScreen),
-            icon = {
-                Icon(
-                    if (activeIndex == 0) {
-                        Icons.Filled.Timeline
-                    } else {
-                        Icons.Outlined.Timeline
-                    },
-                    MR.strings.home.stable
-                )
-            },
+            icon = { Icon(Icons.Filled.Timeline, MR.strings.home.stable) },
             label = {
                 Text(
                     resource = MR.strings.dialog.stable,
@@ -263,16 +245,7 @@ private fun BottomNavigation(
 
         NavigationBarItem(
             modifier = Modifier.testTag(SettingsScreen),
-            icon = {
-                Icon(
-                    if (activeIndex == 3) {
-                        Icons.Filled.Settings
-                    } else {
-                        Icons.Outlined.Settings
-                    },
-                    MR.strings.settings.stable
-                )
-            },
+            icon = { Icon(Icons.Filled.Settings, MR.strings.settings.stable) },
             label = {
                 Text(
                     resource = MR.strings.settings.stable,
@@ -287,9 +260,7 @@ private fun BottomNavigation(
         if (isShowLogEnabled) {
             NavigationBarItem(
                 modifier = Modifier.testTag(LogScreen),
-                icon = {
-                    Icon(Icons.Filled.Code, MR.strings.log.stable)
-                },
+                icon = { Icon(Icons.Filled.Code, MR.strings.log.stable) },
                 label = {
                     Text(
                         resource = MR.strings.log.stable,
