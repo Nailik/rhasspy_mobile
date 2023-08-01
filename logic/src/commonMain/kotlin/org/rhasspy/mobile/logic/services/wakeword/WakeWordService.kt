@@ -10,8 +10,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.Disabled
-import org.rhasspy.mobile.data.service.ServiceState.Success
+import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
@@ -22,6 +21,7 @@ import org.rhasspy.mobile.platformspecific.porcupine.PorcupineWakeWordClient
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
+import kotlin.Exception
 
 interface IWakeWordService : IService {
 
@@ -45,7 +45,7 @@ internal class WakeWordService(
 
     override val logger = LogType.WakeWordService.logger()
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
+    private val _serviceState = MutableStateFlow<ServiceState>(Pending)
     override val serviceState = _serviceState.readOnly
 
     private val recordingService by inject<IRecordingService>()
@@ -71,8 +71,10 @@ internal class WakeWordService(
      * starts the service
      */
     init {
+
         scope.launch {
             paramsFlow.collect {
+                updateState()
                 if (it != initializedParams?.copy(isEnabled = it.isEnabled)) {
                     stop()
                     disposeOld()
@@ -82,8 +84,16 @@ internal class WakeWordService(
                 } else {
                     stop()
                 }
-
             }
+        }
+    }
+
+    private fun updateState() {
+        _serviceState.value = when (params.wakeWordOption) {
+            WakeWordOption.Porcupine -> Pending
+            WakeWordOption.MQTT      -> Success
+            WakeWordOption.Udp       -> Pending
+            WakeWordOption.Disabled  -> Disabled
         }
     }
 
@@ -95,9 +105,8 @@ internal class WakeWordService(
 
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> startPorcupine()
-            WakeWordOption.MQTT      -> _serviceState.value = Success //nothing will wait for mqtt message
             WakeWordOption.Udp       -> startUdp()
-            WakeWordOption.Disabled  -> _serviceState.value = Disabled
+            else                     -> Unit
         }
     }
 
@@ -133,7 +142,7 @@ internal class WakeWordService(
                 logger.e(it) { "porcupineError" }
                 ServiceState.Exception(it)
             } ?: Success
-        } ?: ServiceState.Error(MR.strings.notInitialized.stable)
+        } ?: Error(MR.strings.notInitialized.stable)
     }
 
 
@@ -148,7 +157,7 @@ internal class WakeWordService(
                 logger.e(it) { "porcupineError" }
                 ServiceState.Exception(it)
             } ?: Success
-        } ?: ServiceState.Error(MR.strings.notInitialized.stable)
+        } ?: Error(MR.strings.notInitialized.stable)
 
         if (_serviceState.value == Success) {
             if (recording == null) {
@@ -180,7 +189,7 @@ internal class WakeWordService(
         logger.d { "initialization" }
         _serviceState.value = when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
-                _serviceState.value = ServiceState.Loading
+                _serviceState.value = Loading
                 //when porcupine is used for hotWord then start local service
                 porcupineWakeWordClient = PorcupineWakeWordClient(
                     params.isUseCustomRecorder,
@@ -200,7 +209,7 @@ internal class WakeWordService(
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
             WakeWordOption.MQTT      -> Success
             WakeWordOption.Udp       -> {
-                _serviceState.value = ServiceState.Loading
+                _serviceState.value = Loading
 
                 udpConnection = UdpConnection(
                     params.wakeWordUdpOutputHost,
