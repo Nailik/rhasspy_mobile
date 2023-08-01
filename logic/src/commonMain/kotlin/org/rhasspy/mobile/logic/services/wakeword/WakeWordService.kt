@@ -1,11 +1,8 @@
 package org.rhasspy.mobile.logic.services.wakeword
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.resource.stable
@@ -62,7 +59,7 @@ internal class WakeWordService(
 
     private var isDetectionRunning = false
 
-    private val scope = CoroutineScope(Dispatchers.Default)
+    private val scope = CoroutineScope(Dispatchers.IO)
     private var recording: Job? = null
 
     private var initializedParams: WakeWordServiceParams? = null
@@ -71,7 +68,6 @@ internal class WakeWordService(
      * starts the service
      */
     init {
-
         scope.launch {
             paramsFlow.collect {
                 updateState()

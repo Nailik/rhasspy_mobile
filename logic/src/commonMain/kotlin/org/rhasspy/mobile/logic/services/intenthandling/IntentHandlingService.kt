@@ -1,10 +1,15 @@
 package org.rhasspy.mobile.logic.services.intenthandling
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.homeassistant.IHomeAssistantService
@@ -33,11 +38,30 @@ internal class IntentHandlingService(
     private val httpClientService by inject<IHttpClientService>()
     private val homeAssistantService by inject<IHomeAssistantService>()
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
+    private val _serviceState = MutableStateFlow<ServiceState>(Pending)
     override val serviceState = _serviceState.readOnly
 
     private val paramsFlow: StateFlow<IntentHandlingServiceParams> = paramsCreator()
     private val params get() = paramsFlow.value
+
+    private val scope = CoroutineScope(Dispatchers.IO)
+
+    init {
+        scope.launch {
+            paramsFlow.collect {
+                updateState()
+            }
+        }
+    }
+
+    private fun updateState() {
+        _serviceState.value = when (params.intentHandlingOption) {
+            IntentHandlingOption.HomeAssistant   -> Success
+            IntentHandlingOption.RemoteHTTP      -> Success
+            IntentHandlingOption.WithRecognition -> Success
+            IntentHandlingOption.Disabled        -> Disabled
+        }
+    }
 
     /**
      * Only does something if intent handling is enabled

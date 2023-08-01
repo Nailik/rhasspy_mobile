@@ -15,8 +15,11 @@ import org.koin.core.context.startKoin
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.logic.logger.IFileLogger
 import org.rhasspy.mobile.logic.logicModule
+import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.services.intenthandling.IIntentHandlingService
+import org.rhasspy.mobile.logic.services.intentrecognition.IIntentRecognitionService
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.logic.services.recording.IRecordingService
 import org.rhasspy.mobile.logic.services.webserver.IWebServerService
@@ -140,6 +143,9 @@ class Application : NativeApplication(), KoinComponent {
         get<IWebServerService>()
         get<IMqttService>()
         get<IDialogManagerService>()
+        get<IIntentRecognitionService>()
+        get<IIntentHandlingService>()
+        get<IAudioPlayingService>()
     }
 
 }
