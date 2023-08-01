@@ -96,7 +96,8 @@ internal class WakeWordService(
                     stop()
                     disposeOld()
                 }
-                if (isDetectionRunning && it.isEnabled) {
+
+                if (isDetectionRunning && it.isEnabled && it.isMicrophonePermissionEnabled) {
                     startDetection()
                 } else {
                     stop()

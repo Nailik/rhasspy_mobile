@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic
 
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.logger.FileLogger
@@ -127,29 +128,31 @@ fun logicModule() = module {
     singleOf(::DialogManagerMqtt)
     singleOf(::DialogManagerDisabled)
 
-    factory { HomeAssistantServiceParamsCreator() }
+    factoryOf(::HomeAssistantServiceParamsCreator)
     single<IHomeAssistantService> { HomeAssistantService(paramsCreator = get()) }
 
-    factory { HttpClientServiceParamsCreator() }
+    factoryOf(::HttpClientServiceParamsCreator)
     single<IHttpClientService> { HttpClientService(paramsCreator = get()) }
 
-    single<IIndicationService> { IndicationService() }
+    single<IIndicationService> {
+        IndicationService()
+    }
 
-    factory { IntentHandlingServiceParamsCreator() }
+    factoryOf(::IntentHandlingServiceParamsCreator)
     single<IIntentHandlingService> { IntentHandlingService(paramsCreator = get()) }
 
-    factory { IntentRecognitionServiceParamsCreator() }
+    factoryOf(::IntentRecognitionServiceParamsCreator)
     single<IIntentRecognitionService> { IntentRecognitionService(paramsCreator = get()) }
 
-    factory { LocalAudioServiceParamsCreator() }
+    factoryOf(::LocalAudioServiceParamsCreator)
     single<ILocalAudioService> { LocalAudioService(paramsCreator = get()) }
 
     single<IAppSettingsService> { AppSettingsService() }
 
-    factory { MqttServiceParamsCreator() }
+    factoryOf(::MqttServiceParamsCreator)
     single<IMqttService> { MqttService(paramsCreator = get()) }
 
-    factory { SpeechToTextServiceParamsCreator() }
+    factoryOf(::SpeechToTextServiceParamsCreator)
     single<ISpeechToTextService> {
         SpeechToTextService(
             paramsCreator = get(),
@@ -157,10 +160,10 @@ fun logicModule() = module {
         )
     }
 
-    factory { TextToSpeechServiceParamsCreator() }
+    factoryOf(::TextToSpeechServiceParamsCreator)
     single<ITextToSpeechService> { TextToSpeechService(paramsCreator = get()) }
 
-    factory { WakeWordServiceParamsCreator() }
+    factoryOf(::WakeWordServiceParamsCreator)
     single<IWakeWordService> {
         WakeWordService(
             paramsCreator = get(),
@@ -168,7 +171,7 @@ fun logicModule() = module {
         )
     }
 
-    factory { WebServerServiceParamsCreator() }
+    factoryOf(::WebServerServiceParamsCreator)
     single<IWebServerService> { WebServerService(paramsCreator = get()) }
 
     factory { params -> UdpConnection(params[0], params[1]) }

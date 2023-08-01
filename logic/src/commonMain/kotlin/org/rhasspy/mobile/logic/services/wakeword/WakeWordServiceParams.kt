@@ -10,6 +10,7 @@ import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 
 internal data class WakeWordServiceParams(
+    val isMicrophonePermissionEnabled: Boolean,
     val isEnabled: Boolean,
     val audioRecorderSampleRateType: AudioFormatSampleRateType,
     val audioRecorderChannelType: AudioFormatChannelType,

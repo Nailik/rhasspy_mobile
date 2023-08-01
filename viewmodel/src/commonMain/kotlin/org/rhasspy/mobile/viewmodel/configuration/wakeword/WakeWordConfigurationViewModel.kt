@@ -69,11 +69,13 @@ class WakeWordConfigurationViewModel(
     init {
         viewModelScope.launch(dispatcher.IO) {
             combineStateFlow(
-                microphonePermission.granted
-            ).collect { data ->
+                microphonePermission.granted,
+                viewState
+            ).collect {
                 _viewState.update {
                     it.copy(
-                        isMicrophonePermissionRequestVisible = !data[0] && (it.editData.wakeWordOption == WakeWordOption.Porcupine || it.editData.wakeWordOption == WakeWordOption.Udp),
+                        isMicrophonePermissionRequestVisible = !microphonePermission.granted.value
+                                && (it.editData.wakeWordOption == WakeWordOption.Porcupine || it.editData.wakeWordOption == WakeWordOption.Udp),
                     )
                 }
             }

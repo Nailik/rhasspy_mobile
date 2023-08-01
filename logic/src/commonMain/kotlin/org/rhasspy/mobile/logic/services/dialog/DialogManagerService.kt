@@ -70,20 +70,27 @@ internal class DialogManagerService(
 
     init {
         _serviceState.value = Success
-        scope.launch {
-            transitionTo(IdleState)
-        }
+
         scope.launch {
             ConfigurationSetting.dialogManagementOption.data.collect {
-                updateState(it)
+                updateOptionAndInitServiceState(it)
             }
         }
     }
 
-    private fun updateState(dialogManagementOption: DialogManagementOption) {
+    private fun updateOptionAndInitServiceState(dialogManagementOption: DialogManagementOption) {
+        dialogHistory.value = persistentListOf()
         _serviceState.value = when (dialogManagementOption) {
-            DialogManagementOption.Local      -> Success
-            DialogManagementOption.RemoteMQTT -> Success
+            DialogManagementOption.Local      -> {
+                dialogManagerLocal.onInit()
+                Success
+            }
+
+            DialogManagementOption.RemoteMQTT -> {
+                dialogManagerMqtt.onInit()
+                Success
+            }
+
             DialogManagementOption.Disabled   -> Disabled
         }
     }

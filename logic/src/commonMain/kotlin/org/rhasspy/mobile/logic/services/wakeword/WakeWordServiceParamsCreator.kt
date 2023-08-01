@@ -3,14 +3,18 @@ package org.rhasspy.mobile.logic.services.wakeword
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-internal class WakeWordServiceParamsCreator {
+internal class WakeWordServiceParamsCreator(
+    private val microphonePermission: IMicrophonePermission
+) {
 
     operator fun invoke(): StateFlow<WakeWordServiceParams> {
 
         return combineStateFlow(
+            microphonePermission.granted,
             AppSetting.isHotWordEnabled.data,
             ConfigurationSetting.wakeWordAudioRecorderChannel.data,
             ConfigurationSetting.wakeWordAudioRecorderEncoding.data,
@@ -33,6 +37,7 @@ internal class WakeWordServiceParamsCreator {
 
     private fun getParams(): WakeWordServiceParams {
         return WakeWordServiceParams(
+            isMicrophonePermissionEnabled = microphonePermission.granted.value,
             isEnabled = AppSetting.isHotWordEnabled.value,
             audioRecorderChannelType = ConfigurationSetting.wakeWordAudioRecorderChannel.value,
             audioRecorderEncodingType = ConfigurationSetting.wakeWordAudioRecorderEncoding.value,
