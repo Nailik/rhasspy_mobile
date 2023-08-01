@@ -1,6 +1,9 @@
 package org.rhasspy.mobile.viewmodel.configuration.wakeword
 
 import okio.Path
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
@@ -18,7 +21,8 @@ sealed interface WakeWordConfigurationUiEvent {
     sealed interface Action : WakeWordConfigurationUiEvent {
 
         data object RequestMicrophonePermission : Action
-        data object OpenAudioRecorderSettings : Action
+        data object OpenAudioRecorderFormat : Action
+        data object OpenAudioOutputFormat : Action
         data object BackClick : Action
         data class Navigate(val destination: WakeWordConfigurationScreenDestination) : Action
 
@@ -55,7 +59,7 @@ sealed interface WakeWordConfigurationUiEvent {
             data class UndoCustomKeywordDeleted(val item: PorcupineCustomKeyword) : Change
             data class AddPorcupineKeywordCustom(val path: Path) : Change
             data class DeletePorcupineKeywordCustom(val item: PorcupineCustomKeyword) : Change
-            data class SetPorcupineAudioRecorderSettings(val enabled: Boolean) : Change
+
         }
 
         sealed interface Action : PorcupineUiEvent {
@@ -76,6 +80,30 @@ sealed interface WakeWordConfigurationUiEvent {
 
             data class UpdateUdpOutputHost(val value: String) : Change
             data class UpdateUdpOutputPort(val value: String) : Change
+        }
+
+
+    }
+
+    sealed interface AudioRecorderFormatUiEvent : WakeWordConfigurationUiEvent {
+
+        sealed interface Change : AudioRecorderFormatUiEvent {
+
+            data class SelectAudioRecorderChannelType(val value: AudioFormatChannelType) : Change
+            data class SelectAudioRecorderEncodingType(val value: AudioFormatEncodingType) : Change
+            data class SelectAudioRecorderSampleRateType(val value: AudioFormatSampleRateType) : Change
+        }
+
+
+    }
+
+    sealed interface AudioOutputFormatUiEvent : WakeWordConfigurationUiEvent {
+
+        sealed interface Change : AudioOutputFormatUiEvent {
+
+            data class SelectAudioOutputChannelType(val value: AudioFormatChannelType) : Change
+            data class SelectAudioOutputEncodingType(val value: AudioFormatEncodingType) : Change
+            data class SelectAudioOutputSampleRateType(val value: AudioFormatSampleRateType) : Change
         }
 
 

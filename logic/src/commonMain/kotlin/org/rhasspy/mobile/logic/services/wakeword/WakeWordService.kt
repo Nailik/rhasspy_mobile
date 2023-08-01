@@ -13,9 +13,11 @@ import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.logic.services.recording.IRecordingService
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
+import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.porcupine.PorcupineWakeWordClient
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.platformspecific.resampler.Resampler
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
 import kotlin.Exception
@@ -38,6 +40,7 @@ interface IWakeWordService : IService {
  */
 internal class WakeWordService(
     paramsCreator: WakeWordServiceParamsCreator,
+    private val audioRecorder: IAudioRecorder
 ) : IWakeWordService {
 
     override val logger = LogType.WakeWordService.logger()
@@ -45,7 +48,6 @@ internal class WakeWordService(
     private val _serviceState = MutableStateFlow<ServiceState>(Pending)
     override val serviceState = _serviceState.readOnly
 
-    private val recordingService by inject<IRecordingService>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val paramsFlow: StateFlow<WakeWordServiceParams> = paramsCreator()
@@ -64,12 +66,31 @@ internal class WakeWordService(
 
     private var initializedParams: WakeWordServiceParams? = null
 
+
+    private var resampler: Resampler? = null
+
+    private fun getResampler(): Resampler {
+        return resampler ?: Resampler(
+            inputChannelType = params.audioRecorderChannelType,
+            inputEncodingType = params.audioRecorderEncodingType,
+            inputSampleRateType = params.audioRecorderSampleRateType,
+            outputChannelType = params.audioOutputChannelType,
+            outputEncodingType = params.audioOutputEncodingType,
+            outputSampleRateType = params.audioOutputSampleRateType,
+        ).also {
+            resampler = it
+        }
+    }
+
     /**
      * starts the service
      */
     init {
         scope.launch {
             paramsFlow.collect {
+                resampler?.dispose()
+                resampler = null
+
                 updateState()
                 if (it != initializedParams?.copy(isEnabled = it.isEnabled)) {
                     stop()
@@ -157,8 +178,14 @@ internal class WakeWordService(
 
         if (_serviceState.value == Success) {
             if (recording == null) {
+                audioRecorder.startRecording(
+                    audioRecorderChannelType = params.audioRecorderChannelType,
+                    audioRecorderEncodingType = params.audioRecorderEncodingType,
+                    audioRecorderSampleRateType = params.audioRecorderSampleRateType,
+                )
+
                 recording = scope.launch {
-                    recordingService.output.collect(::hotWordAudioFrame)
+                    audioRecorder.output.collect(::hotWordAudioFrame)
                 }
             }
         }
@@ -188,10 +215,8 @@ internal class WakeWordService(
                 _serviceState.value = Loading
                 //when porcupine is used for hotWord then start local service
                 porcupineWakeWordClient = PorcupineWakeWordClient(
-                    params.isUseCustomRecorder,
                     params.audioRecorderSampleRateType,
                     params.audioRecorderChannelType,
-                    params.audioRecorderEncodingType,
                     params.wakeWordPorcupineAccessToken,
                     params.wakeWordPorcupineKeywordDefaultOptions,
                     params.wakeWordPorcupineKeywordCustomOptions,
@@ -245,10 +270,20 @@ internal class WakeWordService(
         if (AppSetting.isLogAudioFramesEnabled.value) {
             logger.d { "hotWordAudioFrame dataSize: ${data.size}" }
         }
+
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> Unit
             WakeWordOption.MQTT      -> Unit //nothing will wait for mqtt message
-            WakeWordOption.Udp       -> udpConnection?.streamAudio(data)
+            WakeWordOption.Udp       -> udpConnection?.streamAudio(
+                data = getResampler()
+                    .resample(data)
+                    .appendWavHeader(
+                        audioRecorderChannelType = params.audioOutputChannelType,
+                        audioRecorderEncodingType = params.audioOutputEncodingType,
+                        audioRecorderSampleRateType = params.audioOutputSampleRateType,
+                    )
+            )
+
             WakeWordOption.Disabled  -> Unit
         }
     }

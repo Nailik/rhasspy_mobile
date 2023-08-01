@@ -5,20 +5,20 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.IOption
 import org.rhasspy.mobile.resources.MR
 
-actual enum class AudioRecorderChannelType(
+actual enum class AudioFormatChannelType(
     override val text: StableStringResource,
     actual val value: Int,
     actual val count: Int
-) : IOption<AudioRecorderChannelType> {
+) : IOption<AudioFormatChannelType> {
     //TODO("Not yet implemented")
     Default(MR.strings.defaultText.stable, 1, 1);
 
-    override fun findValue(value: String): AudioRecorderChannelType {
-        return AudioRecorderChannelType.valueOf(value)
+    override fun findValue(value: String): AudioFormatChannelType {
+        return AudioFormatChannelType.valueOf(value)
     }
 
     actual companion object {
-        actual val default: AudioRecorderChannelType get() = Default
+        actual val default: AudioFormatChannelType get() = Default
     }
 
 }

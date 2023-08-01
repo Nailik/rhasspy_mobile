@@ -16,9 +16,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.readOnly
 import java.nio.ByteBuffer
@@ -59,9 +59,9 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
      */
     @SuppressLint("MissingPermission")
     actual override fun startRecording(
-        audioRecorderSampleRateType: AudioRecorderSampleRateType,
-        audioRecorderChannelType: AudioRecorderChannelType,
-        audioRecorderEncodingType: AudioRecorderEncodingType
+        audioRecorderChannelType: AudioFormatChannelType,
+        audioRecorderEncodingType: AudioFormatEncodingType,
+        audioRecorderSampleRateType: AudioFormatSampleRateType,
     ) {
 
         val tempBufferSize = AudioRecord.getMinBufferSize(

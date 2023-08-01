@@ -10,6 +10,10 @@ import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.*
 import org.rhasspy.mobile.ui.configuration.*
 import org.rhasspy.mobile.ui.configuration.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.ui.configuration.porcupine.PorcupineLanguageScreen
+import org.rhasspy.mobile.ui.configuration.speechtotext.SpeechToTextAudioOutputFormatScreen
+import org.rhasspy.mobile.ui.configuration.speechtotext.SpeechToTextAudioRecorderFormatScreen
+import org.rhasspy.mobile.ui.configuration.wakeword.WakeWordAudioOutputFormatScreen
+import org.rhasspy.mobile.ui.configuration.wakeword.WakeWordAudioRecorderFormatScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.*
 
@@ -21,11 +25,12 @@ fun NavigationContent(
     //only animates when the type changes
     Crossfade(targetState = screen) {
         when (it) {
-            is ConfigurationScreenNavigationDestination -> ConfigurationNavigationContent(it)
-            is MainScreenNavigationDestination          -> MainNavigationContent(it, bottomNavigation)
-            is SettingsScreenDestination                -> SettingsNavigationContent(it)
-            is WakeWordConfigurationScreenDestination   -> WakeWordNavigationContent(it)
-            is IndicationSettingsScreenDestination      -> IndicationNavigationContent(it)
+            is ConfigurationScreenNavigationDestination   -> ConfigurationNavigationContent(it)
+            is MainScreenNavigationDestination            -> MainNavigationContent(it, bottomNavigation)
+            is SettingsScreenDestination                  -> SettingsNavigationContent(it)
+            is WakeWordConfigurationScreenDestination     -> WakeWordNavigationContent(it)
+            is IndicationSettingsScreenDestination        -> IndicationNavigationContent(it)
+            is SpeechToTextConfigurationScreenDestination -> SpeechToTextConfigurationNavigationContent(it)
         }
     }
 }
@@ -77,7 +82,6 @@ private fun SettingsNavigationContent(
     when (screen) {
         SettingsScreenDestination.AboutSettings             -> AboutScreen()
         SettingsScreenDestination.AudioFocusSettings        -> AudioFocusSettingsContent()
-        SettingsScreenDestination.AudioRecorderSettings     -> AudioRecorderSettingsContent()
         SettingsScreenDestination.SilenceDetectionSettings  -> SilenceDetectionSettingsContent()
         SettingsScreenDestination.BackgroundServiceSettings -> BackgroundServiceSettingsContent()
         SettingsScreenDestination.DeviceSettings            -> DeviceSettingsContent()
@@ -96,6 +100,18 @@ private fun WakeWordNavigationContent(
     when (screen) {
         WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen -> PorcupineLanguageScreen()
         WakeWordConfigurationScreenDestination.EditPorcupineWakeWordScreen -> PorcupineKeywordScreen()
+        WakeWordConfigurationScreenDestination.AudioRecorderFormatScreen   -> WakeWordAudioRecorderFormatScreen()
+        WakeWordConfigurationScreenDestination.AudioOutputFormatScreen     -> WakeWordAudioOutputFormatScreen()
+    }
+}
+
+@Composable
+private fun SpeechToTextConfigurationNavigationContent(
+    screen: SpeechToTextConfigurationScreenDestination
+) {
+    when (screen) {
+        SpeechToTextConfigurationScreenDestination.AudioRecorderFormatScreen -> SpeechToTextAudioRecorderFormatScreen()
+        SpeechToTextConfigurationScreenDestination.AudioOutputFormatScreen   -> SpeechToTextAudioOutputFormatScreen()
     }
 }
 

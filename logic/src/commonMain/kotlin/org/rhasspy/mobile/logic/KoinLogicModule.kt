@@ -39,8 +39,6 @@ import org.rhasspy.mobile.logic.services.localaudio.LocalAudioServiceParamsCreat
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParamsCreator
-import org.rhasspy.mobile.logic.services.recording.IRecordingService
-import org.rhasspy.mobile.logic.services.recording.RecordingService
 import org.rhasspy.mobile.logic.services.settings.AppSettingsService
 import org.rhasspy.mobile.logic.services.settings.IAppSettingsService
 import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
@@ -146,26 +144,29 @@ fun logicModule() = module {
     factory { LocalAudioServiceParamsCreator() }
     single<ILocalAudioService> { LocalAudioService(paramsCreator = get()) }
 
-    single<IRecordingService> {
-        RecordingService(
-            dispatcherProvider = get(),
-            audioRecorder = get()
-        )
-    }
-
     single<IAppSettingsService> { AppSettingsService() }
 
     factory { MqttServiceParamsCreator() }
     single<IMqttService> { MqttService(paramsCreator = get()) }
 
     factory { SpeechToTextServiceParamsCreator() }
-    single<ISpeechToTextService> { SpeechToTextService(paramsCreator = get()) }
+    single<ISpeechToTextService> {
+        SpeechToTextService(
+            paramsCreator = get(),
+            audioRecorder = get()
+        )
+    }
 
     factory { TextToSpeechServiceParamsCreator() }
     single<ITextToSpeechService> { TextToSpeechService(paramsCreator = get()) }
 
     factory { WakeWordServiceParamsCreator() }
-    single<IWakeWordService> { WakeWordService(paramsCreator = get()) }
+    single<IWakeWordService> {
+        WakeWordService(
+            paramsCreator = get(),
+            audioRecorder = get()
+        )
+    }
 
     factory { WebServerServiceParamsCreator() }
     single<IWebServerService> { WebServerService(paramsCreator = get()) }

@@ -14,9 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
@@ -122,16 +119,6 @@ fun SettingsScreenContent(
             item {
                 AudioFocus(
                     viewState.audioFocusOption,
-                    onEvent
-                )
-                CustomDivider()
-            }
-
-            item {
-                AudioRecorderSettings(
-                    audioRecorderChannelType = viewState.audioRecorderChannelType,
-                    audioRecorderEncodingType = viewState.audioRecorderEncodingType,
-                    audioRecorderSampleRateType = viewState.audioRecorderSampleRateType,
                     onEvent
                 )
                 CustomDivider()
@@ -263,28 +250,6 @@ private fun AudioFocus(
         text = MR.strings.audioFocus.stable,
         secondaryText = audioFocusOption.text,
         destination = AudioFocusSettings,
-        onEvent = onEvent
-    )
-
-}
-
-
-@Composable
-private fun AudioRecorderSettings(
-    audioRecorderChannelType: AudioRecorderChannelType,
-    audioRecorderEncodingType: AudioRecorderEncodingType,
-    audioRecorderSampleRateType: AudioRecorderSampleRateType,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
-) {
-
-    SettingsListItem(
-        text = MR.strings.audioRecorder.stable,
-        secondaryText = "${translate(audioRecorderChannelType.text)} | ${
-            translate(
-                audioRecorderEncodingType.text
-            )
-        } | ${translate(audioRecorderSampleRateType.text)}",
-        destination = AudioRecorderSettings,
         onEvent = onEvent
     )
 

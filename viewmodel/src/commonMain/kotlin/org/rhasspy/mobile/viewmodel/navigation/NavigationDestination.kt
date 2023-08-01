@@ -31,7 +31,6 @@ sealed interface NavigationDestination {
 
         AboutSettings,
         AudioFocusSettings,
-        AudioRecorderSettings,
         SilenceDetectionSettings,
         BackgroundServiceSettings,
         DeviceSettings,
@@ -46,7 +45,16 @@ sealed interface NavigationDestination {
     enum class WakeWordConfigurationScreenDestination : NavigationDestination {
 
         EditPorcupineLanguageScreen,
-        EditPorcupineWakeWordScreen
+        EditPorcupineWakeWordScreen,
+        AudioRecorderFormatScreen,
+        AudioOutputFormatScreen
+
+    }
+
+    enum class SpeechToTextConfigurationScreenDestination : NavigationDestination {
+
+        AudioRecorderFormatScreen,
+        AudioOutputFormatScreen,
 
     }
 

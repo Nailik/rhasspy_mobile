@@ -5,25 +5,27 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.IOption
 import org.rhasspy.mobile.resources.MR
 
-actual enum class AudioRecorderEncodingType(
+actual enum class AudioFormatEncodingType(
     override val text: StableStringResource,
     actual val value: Int,
     actual val bitRate: Int
-) : IOption<AudioRecorderEncodingType> {
+) : IOption<AudioFormatEncodingType> {
 
     //TODO("Not yet implemented")
     Default(MR.strings.defaultText.stable, 1, 1);
 
-    override fun findValue(value: String): AudioRecorderEncodingType {
-        return AudioRecorderEncodingType.valueOf(value)
+    override fun findValue(value: String): AudioFormatEncodingType {
+        return AudioFormatEncodingType.valueOf(value)
     }
 
     actual companion object {
-        actual val default: AudioRecorderEncodingType get() = Default
-        actual fun supportedValues(): List<AudioRecorderEncodingType> {
+        actual val default: AudioFormatEncodingType = Default
+        actual val porcupine: AudioFormatEncodingType = Default
+        actual fun supportedValues(): List<AudioFormatEncodingType> {
             //TODO("Not yet implemented")
             return listOf()
         }
+
     }
 
 }

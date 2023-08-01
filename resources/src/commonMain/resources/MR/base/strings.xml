@@ -36,11 +36,8 @@
     <string name="remoteURL">Remote URL</string>
     <string name="checkConnection">Check Connection</string>
     <string name="localPorcupine">Porcupine (local)</string>
-    <string name="porcupineAudioRecorderSettings">Audio Recorder Settings</string>
-    <string name="porcupineAudioRecorderSettingsInformation">Audio will be converted to Porcupine
-        compatible format. Requires PCM 16 Bit.
-    </string>
-    <string name="openAudioRecorderSettings">open Audio Recorder Settings</string>
+    <string name="audioRecorderFormat">Audio Recorder Format</string>
+    <string name="audioOutputFormat">Audio Output Format</string>
     <string name="local">Local</string>
     <string name="remote">Remote</string>
     <string name="disabled">Disabled</string>
@@ -58,6 +55,10 @@
     <string name="homeAssistantEvents">Send *events* to Home Assistant\n(/api/events)</string>
     <string name="homeAssistantIntents">Send *intents* to Home Assistant\n(/api/intent/handle)
     </string>
+    <string name="speechToTextAudioRecorderFormat">SpeechToText Audio Recorder Format</string>
+    <string name="speechToTextAudioOutputFormat">SpeechToText Audio Output Format</string>
+    <string name="wakeWordAudioRecorderFormat">Wake Word Audio Recorder Format</string>
+    <string name="wakeWordAudioOutputFormat">Wake Word Audio Output Format</string>
     <string name="refresh">Refresh</string>
     <string name="de">Deutsch</string>
     <string name="en">English</string>

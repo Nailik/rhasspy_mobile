@@ -4,9 +4,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 
 class FakeAudioRecorder : IAudioRecorder {
@@ -19,9 +19,9 @@ class FakeAudioRecorder : IAudioRecorder {
     override val absoluteMaxVolume: Float = 32767.0f
 
     override fun startRecording(
-        audioRecorderSampleRateType: AudioRecorderSampleRateType,
-        audioRecorderChannelType: AudioRecorderChannelType,
-        audioRecorderEncodingType: AudioRecorderEncodingType
+        audioRecorderSampleRateType: AudioFormatSampleRateType,
+        audioRecorderChannelType: AudioFormatChannelType,
+        audioRecorderEncodingType: AudioFormatEncodingType
     ) {
     }
 

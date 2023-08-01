@@ -5,9 +5,8 @@ import co.touchlab.kermit.Logger
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
@@ -20,10 +19,8 @@ import java.io.File
  * checks for audio permission
  */
 actual class PorcupineWakeWordClient actual constructor(
-    private val isUseCustomRecorder: Boolean,
-    private val audioRecorderSampleRateType: AudioRecorderSampleRateType,
-    private val audioRecorderChannelType: AudioRecorderChannelType,
-    private val audioRecorderEncodingType: AudioRecorderEncodingType,
+    private val audioRecorderSampleRateType: AudioFormatSampleRateType,
+    private val audioRecorderChannelType: AudioFormatChannelType,
     private val wakeWordPorcupineAccessToken: String,
     private val wakeWordPorcupineKeywordDefaultOptions: ImmutableList<PorcupineDefaultKeyword>,
     private val wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
@@ -96,11 +93,10 @@ actual class PorcupineWakeWordClient actual constructor(
         return try {
             File(context.filesDir, "sounds").mkdirs()
 
-            porcupineClient = if (isUseCustomRecorder) {
+            porcupineClient = if (audioRecorderSampleRateType != AudioFormatSampleRateType.SR16000 || audioRecorderChannelType != AudioFormatChannelType.Mono) {
                 PorcupineCustomClient(
                     audioRecorderSampleRateType = audioRecorderSampleRateType,
                     audioRecorderChannelType = audioRecorderChannelType,
-                    audioRecorderEncodingType = audioRecorderEncodingType,
                     wakeWordPorcupineAccessToken = wakeWordPorcupineAccessToken,
                     wakeWordPorcupineKeywordDefaultOptions = wakeWordPorcupineKeywordDefaultOptions,
                     wakeWordPorcupineKeywordCustomOptions = wakeWordPorcupineKeywordCustomOptions,

@@ -8,6 +8,7 @@ import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.BackClick
@@ -68,9 +69,9 @@ class SilenceDetectionSettingsViewModel(
             ToggleAudioLevelTest -> requireMicrophonePermission {
                 if (audioRecorder.isRecording.value) audioRecorder.stopRecording()
                 else audioRecorder.startRecording(
-                    audioRecorderChannelType = AppSetting.audioRecorderChannel.value,
-                    audioRecorderEncodingType = AppSetting.audioRecorderEncoding.value,
-                    audioRecorderSampleRateType = AppSetting.audioRecorderSampleRate.value
+                    audioRecorderChannelType = ConfigurationSetting.speechToTextAudioRecorderChannel.value,
+                    audioRecorderEncodingType = ConfigurationSetting.speechToTextAudioRecorderEncoding.value,
+                    audioRecorderSampleRateType = ConfigurationSetting.speechToTextAudioRecorderSampleRate.value
                 )
             }
 

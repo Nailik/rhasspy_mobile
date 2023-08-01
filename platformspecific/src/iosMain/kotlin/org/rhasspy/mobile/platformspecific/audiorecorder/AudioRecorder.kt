@@ -3,9 +3,9 @@ package org.rhasspy.mobile.platformspecific.audiorecorder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 
 internal actual class AudioRecorder : IAudioRecorder {
 
@@ -23,9 +23,9 @@ internal actual class AudioRecorder : IAudioRecorder {
      * start recording
      */
     actual override fun startRecording(
-        audioRecorderSampleRateType: AudioRecorderSampleRateType,
-        audioRecorderChannelType: AudioRecorderChannelType,
-        audioRecorderEncodingType: AudioRecorderEncodingType
+        audioRecorderChannelType: AudioFormatChannelType,
+        audioRecorderEncodingType: AudioFormatEncodingType,
+        audioRecorderSampleRateType: AudioFormatSampleRateType,
     ) {
         //TODO("Not yet implemented")
     }

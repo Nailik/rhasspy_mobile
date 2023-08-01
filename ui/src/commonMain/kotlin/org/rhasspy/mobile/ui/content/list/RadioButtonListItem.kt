@@ -13,14 +13,16 @@ fun RadioButtonListItem(
     modifier: Modifier = Modifier,
     text: StableStringResource,
     isChecked: Boolean,
+    enabled: Boolean = true,
     trailing: @Composable (() -> Unit)? = null,
     onClick: () -> Unit
 ) {
     ListElement(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier.clickable(enabled = enabled, onClick = onClick),
         icon = {
             RadioButton(
                 selected = isChecked,
+                enabled = enabled,
                 onClick = onClick
             )
         },
@@ -34,14 +36,16 @@ fun RadioButtonListItem(
     modifier: Modifier = Modifier,
     text: String,
     isChecked: Boolean,
+    enabled: Boolean = true,
     trailing: @Composable (() -> Unit)? = null,
     onClick: () -> Unit
 ) {
     ListElement(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier.clickable(enabled = enabled, onClick = onClick),
         icon = {
             RadioButton(
                 selected = isChecked,
+                enabled = enabled,
                 onClick = onClick
             )
         },

@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.platformspecific.audiorecorder
 
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 
 object AudioRecorderUtils {
 
@@ -12,22 +12,22 @@ object AudioRecorderUtils {
      * to create wav header and add it in front of the given data
      */
     fun ByteArray.appendWavHeader(
-        audioRecorderChannelType: AudioRecorderChannelType,
-        audioRecorderSampleRateType: AudioRecorderSampleRateType,
-        audioRecorderEncodingType: AudioRecorderEncodingType
+        audioRecorderChannelType: AudioFormatChannelType,
+        audioRecorderSampleRateType: AudioFormatSampleRateType,
+        audioRecorderEncodingType: AudioFormatEncodingType
     ): ByteArray {
         return getWavHeader(
             audioRecorderChannelType = audioRecorderChannelType,
-            audioRecorderSampleRateType = audioRecorderSampleRateType,
             audioRecorderEncodingType = audioRecorderEncodingType,
+            audioRecorderSampleRateType = audioRecorderSampleRateType,
             audioSize = this.size.toLong()
         ) + this
     }
 
     fun getWavHeader(
-        audioRecorderChannelType: AudioRecorderChannelType,
-        audioRecorderSampleRateType: AudioRecorderSampleRateType,
-        audioRecorderEncodingType: AudioRecorderEncodingType,
+        audioRecorderChannelType: AudioFormatChannelType,
+        audioRecorderEncodingType: AudioFormatEncodingType,
+        audioRecorderSampleRateType: AudioFormatSampleRateType,
         audioSize: Long
     ): ByteArray {
         //info https://docs.fileformat.com/audio/wav/

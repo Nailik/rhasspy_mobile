@@ -21,7 +21,6 @@ import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
 import org.rhasspy.mobile.logic.services.intenthandling.IIntentHandlingService
 import org.rhasspy.mobile.logic.services.intentrecognition.IIntentRecognitionService
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
-import org.rhasspy.mobile.logic.services.recording.IRecordingService
 import org.rhasspy.mobile.logic.services.webserver.IWebServerService
 import org.rhasspy.mobile.overlay.IIndicationOverlay
 import org.rhasspy.mobile.overlay.IMicrophoneOverlay
@@ -138,7 +137,6 @@ class Application : NativeApplication(), KoinComponent {
     }
 
     private fun startServices() {
-        get<IRecordingService>()
         get<IHttpClientService>()
         get<IWebServerService>()
         get<IMqttService>()

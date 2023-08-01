@@ -36,11 +36,8 @@
     <string name="remoteURL">Entfernte URL</string>
     <string name="checkConnection">Verbindung prüfen</string>
     <string name="localPorcupine">Porcupine (lokal)</string>
-    <string name="porcupineAudioRecorderSettings">Audiorecorder Einstellungen</string>
-    <string name="porcupineAudioRecorderSettingsInformation">Audio wird in ein Porcupine-kompatibles
-        Format konvertiert. Benötigt PCM 16 Bit.
-    </string>
-    <string name="openAudioRecorderSettings">öffne Audiorecorder Einstellungen</string>
+    <string name="audioRecorderFormat">Audio-Recorder-Format</string>
+    <string name="audioOutputFormat">Audio-Ausgabeformat</string>
     <string name="local">Lokal</string>
     <string name="remote">Ferngesteuert</string>
     <string name="disabled">Deaktiviert</string>
@@ -58,6 +55,10 @@
     <string name="homeAssistantEvents">Sende *Ereignisse* an Home-Assistant\n(/api/events)</string>
     <string name="homeAssistantIntents">Sende *Intents* an Home-Assistant\n(/api/intent/handle)
     </string>
+    <string name="speechToTextAudioRecorderFormat">Sprache zu Text Audioaufnahme-Format</string>
+    <string name="speechToTextAudioOutputFormat">Sprache zu Text Audioausgabe-Format</string>
+    <string name="wakeWordAudioRecorderFormat">Aktivierungswort Audioaufnahme-Format</string>
+    <string name="wakeWordAudioOutputFormat">Aktivierungswort Audioausgabe-Format</string>
     <string name="refresh">Laden</string>
     <string name="de">Deutsch</string>
     <string name="en">English</string>
@@ -340,9 +341,10 @@
     <string name="onSound">Bei abgespieltem Ton</string>
     <string name="onSoundInformation">vom Audio-Dienst</string>
     <string name="onRecord">Bei Tonaufnahme</string>
-    <string name="onRecordInformation">ignoriert Wake Word Aufnahme</string>
+    <string name="onRecordInformation">ignoriert Aktivierungswort Aufnahme</string>
     <string name="onDialog">Bei Dialog-Aktion</string>
-    <string name="onDialogInformation">zwischen Sitzungsbeginn (Wake Word Detected) und Sitzungsende
+    <string name="onDialogInformation">zwischen Sitzungsbeginn (Aktivierungswort erkannt) und
+        Sitzungsende
         (nach Intent Recognition und Handling)
     </string>
     <string name="url">Url</string>

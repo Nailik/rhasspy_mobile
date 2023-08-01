@@ -21,13 +21,11 @@ import org.rhasspy.mobile.logic.middleware.Source.Mqtt
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.extensions.commonSource
 import org.rhasspy.mobile.platformspecific.mqtt.*
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.settings.AppSetting
 import kotlin.random.Random
 
 interface IMqttService : IService {
@@ -531,13 +529,7 @@ internal class MqttService(
         publishMessage(
             MqttTopicsPublish.AsrAudioFrame.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId),
-            MqttMessage(
-                byteArray.appendWavHeader(
-                    AppSetting.audioRecorderChannel.value,
-                    AppSetting.audioRecorderSampleRate.value,
-                    AppSetting.audioRecorderEncoding.value
-                )
-            ),
+            MqttMessage(byteArray),
             onResult
         )
     }
@@ -553,13 +545,7 @@ internal class MqttService(
             MqttTopicsPublish.AsrAudioSessionFrame.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
                 .set(MqttTopicPlaceholder.SessionId, sessionId),
-            MqttMessage(
-                byteArray.appendWavHeader(
-                    AppSetting.audioRecorderChannel.value,
-                    AppSetting.audioRecorderSampleRate.value,
-                    AppSetting.audioRecorderEncoding.value
-                )
-            ),
+            MqttMessage(byteArray),
             onResult
         )
     }
