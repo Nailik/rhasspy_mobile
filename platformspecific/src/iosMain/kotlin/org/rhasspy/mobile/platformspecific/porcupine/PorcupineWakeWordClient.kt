@@ -22,14 +22,6 @@ actual class PorcupineWakeWordClient actual constructor(
 ) {
 
     /**
-     * create porcupine client
-     */
-    actual fun initialize(): Exception? {
-        //TODO("Not yet implemented")
-        return null
-    }
-
-    /**
      * start wake word detected
      */
     actual fun start(): Exception? {
@@ -43,9 +35,6 @@ actual class PorcupineWakeWordClient actual constructor(
     actual fun stop() {
         //TODO("Not yet implemented")
     }
-
-    actual val isInitialized: Boolean
-        get() = true //TODO("Not yet implemented")
 
     actual fun close() {
         //TODO("Not yet implemented")
