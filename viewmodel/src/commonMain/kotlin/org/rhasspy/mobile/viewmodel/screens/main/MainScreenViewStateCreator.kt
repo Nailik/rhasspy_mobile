@@ -36,7 +36,6 @@ class MainScreenViewStateCreator(
 
     private fun getViewState(): MainScreenViewState {
         return MainScreenViewState(
-            isBottomNavigationVisible = navigator.topScreen.value is MainScreenNavigationDestination,
             bottomNavigationIndex = (navigator.topScreen.value as? MainScreenNavigationDestination?)?.ordinal ?: 0,
             isShowLogEnabled = AppSetting.isShowLogEnabled.value,
             isShowCrashlyticsDialog = !AppSetting.didShowCrashlyticsDialog.value && !isDebug(),

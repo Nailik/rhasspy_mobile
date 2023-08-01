@@ -6,9 +6,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Mic
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Timeline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,7 +14,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main.NavigationContent
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.BuildKonfig
@@ -146,22 +142,13 @@ private fun MainScreenContent(
     viewState: MainScreenViewState,
     onEvent: (event: MainScreenUiEvent) -> Unit
 ) {
-
-    Column {
-        Box(modifier = Modifier.weight(1f)) {
-            NavigationContent(screen)
-        }
-
-        if (viewState.isBottomNavigationVisible) {
-            BottomNavigation(
-                isShowLogEnabled = viewState.isShowLogEnabled,
-                activeIndex = viewState.bottomNavigationIndex,
-                onEvent = onEvent
-            )
-        }
-
+    NavigationContent(screen) {
+        BottomNavigation(
+            isShowLogEnabled = viewState.isShowLogEnabled,
+            activeIndex = viewState.bottomNavigationIndex,
+            onEvent = onEvent
+        )
     }
-
 }
 
 /**
