@@ -33,11 +33,7 @@ class PorcupineLanguageScreenTest : FlakyTest() {
 
         composeTestRule.setContent {
             TestContentProvider {
-                val viewState by viewModel.viewState.collectAsState()
-                PorcupineLanguageScreen(
-                    editData = viewState.editData.wakeWordPorcupineConfigurationData,
-                    onEvent = viewModel::onEvent
-                )
+                PorcupineLanguageScreen()
             }
         }
 

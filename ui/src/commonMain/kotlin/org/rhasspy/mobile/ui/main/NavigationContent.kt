@@ -14,6 +14,10 @@ import org.rhasspy.mobile.ui.configuration.speechtotext.SpeechToTextAudioOutputF
 import org.rhasspy.mobile.ui.configuration.speechtotext.SpeechToTextAudioRecorderFormatScreen
 import org.rhasspy.mobile.ui.configuration.wakeword.WakeWordAudioOutputFormatScreen
 import org.rhasspy.mobile.ui.configuration.wakeword.WakeWordAudioRecorderFormatScreen
+import org.rhasspy.mobile.ui.settings.IndicationErrorScreen
+import org.rhasspy.mobile.ui.settings.IndicationRecordedScreen
+import org.rhasspy.mobile.ui.settings.IndicationSettingsOverviewScreen
+import org.rhasspy.mobile.ui.settings.IndicationWakeScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.*
 

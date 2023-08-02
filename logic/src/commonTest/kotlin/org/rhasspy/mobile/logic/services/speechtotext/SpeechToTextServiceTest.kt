@@ -1,28 +1,29 @@
-package org.rhasspy.mobile.logic.services.recording
+package org.rhasspy.mobile.logic.services.speechtotext
 
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
+import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.AppTest
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SilenceDetected
 import org.rhasspy.mobile.logic.nVerify
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import kotlin.random.Random
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.milliseconds
 
 
-class RecordingServiceTest : AppTest() {
+class SpeechToTextServiceTest : AppTest() {
 
     private val audioRecorder = FakeAudioRecorder()
     private val threshold = 12767.5f
-    private val allowedDelay = 100.milliseconds //delay allowed until silence is detected
+    private val allowedDelay = 200.milliseconds //delay allowed until silence is detected
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     @Mock
@@ -46,17 +47,18 @@ class RecordingServiceTest : AppTest() {
     }
 
     @Test
-    fun `when minimum duration is set silence detection is only triggered after the time even though volume is below threshold`() =
-        runTest {
-            every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
+    fun `when minimum duration is set silence detection is only triggered after the time even though volume is below threshold`() = runTest {
+        ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.RemoteHTTP
 
-            val recordingService = get<IRecordingService>()
+        every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
-            //setup minimum time for recording
-            AppSetting.automaticSilenceDetectionMinimumTime.value = 500 //ms
-            AppSetting.automaticSilenceDetectionTime.value = 0 //ms
+        val speechToTextService = get<ISpeechToTextService>()
 
-            //sent varying (random) data below threshold
+        //setup minimum time for recording
+        AppSetting.automaticSilenceDetectionMinimumTime.value = 500 //ms
+        AppSetting.automaticSilenceDetectionTime.value = 0 //ms
+
+        //sent varying (random) data below threshold
             val job = coroutineScope.launch {
                 while (true) {
                     audioRecorder.sendMaxVolume(Random.nextFloat() * (threshold - 1))
@@ -64,10 +66,7 @@ class RecordingServiceTest : AppTest() {
                 }
             }
 
-            coroutineScope.launch {
-                recordingService.output.collect()
-            }
-            recordingService.toggleSilenceDetectionEnabled(true)
+        speechToTextService.startSpeechToText("", false)
 
             val job2 = coroutineScope.launch {
                 var time = 0
@@ -87,9 +86,10 @@ class RecordingServiceTest : AppTest() {
     @Test
     fun `when silence detection time is set the detection is only triggered when it is silent for a specific amount of time`() =
         runTest {
+            ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.RemoteHTTP
             every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
-            val recordingService = get<IRecordingService>()
+            val speechToTextService = get<ISpeechToTextService>()
 
             //setup silence detection time
             AppSetting.automaticSilenceDetectionTime.value = 200 //ms
@@ -104,10 +104,7 @@ class RecordingServiceTest : AppTest() {
                 }
             }
 
-            coroutineScope.launch {
-                recordingService.output.collect()
-            }
-            recordingService.toggleSilenceDetectionEnabled(true)
+            speechToTextService.startSpeechToText("", false)
 
             val job2 = coroutineScope.launch {
                 var time = 0
@@ -126,9 +123,11 @@ class RecordingServiceTest : AppTest() {
 
     @Test
     fun `when silence detection time and minimum duration work together`() = runTest {
+        ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.RemoteHTTP
+
         every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
-        val recordingService = get<IRecordingService>()
+        val speechToTextService = get<ISpeechToTextService>()
 
         //setup silence detection time
         AppSetting.automaticSilenceDetectionTime.value = 200 //ms
@@ -143,10 +142,7 @@ class RecordingServiceTest : AppTest() {
             }
         }
 
-        coroutineScope.launch {
-            recordingService.output.collect()
-        }
-        recordingService.toggleSilenceDetectionEnabled(true)
+        speechToTextService.startSpeechToText("", false)
 
         val job2 = coroutineScope.launch {
             var time = 0
@@ -167,9 +163,11 @@ class RecordingServiceTest : AppTest() {
     @Test
     fun `when silence detection time is set the detection is not triggered when volume increases above threshold after being below it for not the full silence detection time`() =
         runBlocking {
+            ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.RemoteHTTP
+
             every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
-            val recordingService = get<IRecordingService>()
+            val speechToTextService = get<ISpeechToTextService>()
 
             //setup silence detection time
             AppSetting.automaticSilenceDetectionTime.value = 200 //ms
@@ -189,10 +187,7 @@ class RecordingServiceTest : AppTest() {
                 }
             }
 
-            coroutineScope.launch {
-                recordingService.output.collect()
-            }
-            recordingService.toggleSilenceDetectionEnabled(true)
+            speechToTextService.startSpeechToText("", false)
 
             val job2 = coroutineScope.launch {
                 var time = 0
@@ -211,9 +206,11 @@ class RecordingServiceTest : AppTest() {
     @Test
     fun `when neither minimum duration nor silence detection time is set the detection is instantly triggered when a value falls below threshold`() =
         runBlocking {
+            ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.RemoteHTTP
+
             every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
-            val recordingService = get<IRecordingService>()
+            val speechToTextService = get<ISpeechToTextService>()
 
             //setup silence detection time to 0
             AppSetting.automaticSilenceDetectionTime.value = 0 //ms
@@ -228,10 +225,7 @@ class RecordingServiceTest : AppTest() {
                 }
             }
 
-            coroutineScope.launch {
-                recordingService.output.collect()
-            }
-            recordingService.toggleSilenceDetectionEnabled(true)
+            speechToTextService.startSpeechToText("", false)
 
             delay(allowedDelay)
 
@@ -243,9 +237,10 @@ class RecordingServiceTest : AppTest() {
 
     @Test
     fun `when volume stays above threshold silence detection is not triggered`() = runBlocking {
+        ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.RemoteHTTP
         every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
-        val recordingService = get<IRecordingService>()
+        val speechToTextService = get<ISpeechToTextService>()
 
         //setup silence detection time
         AppSetting.automaticSilenceDetectionTime.value = 200 //ms
@@ -261,10 +256,7 @@ class RecordingServiceTest : AppTest() {
             }
         }
 
-        coroutineScope.launch {
-            recordingService.output.collect()
-        }
-        recordingService.toggleSilenceDetectionEnabled(true)
+        speechToTextService.startSpeechToText("", false)
 
         delay(1000)
 

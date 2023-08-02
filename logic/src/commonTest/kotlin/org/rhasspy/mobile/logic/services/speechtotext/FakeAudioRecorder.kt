@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.logic.services.recording
+package org.rhasspy.mobile.logic.services.speechtotext
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,9 +19,9 @@ class FakeAudioRecorder : IAudioRecorder {
     override val absoluteMaxVolume: Float = 32767.0f
 
     override fun startRecording(
-        audioRecorderSampleRateType: AudioFormatSampleRateType,
         audioRecorderChannelType: AudioFormatChannelType,
-        audioRecorderEncodingType: AudioFormatEncodingType
+        audioRecorderEncodingType: AudioFormatEncodingType,
+        audioRecorderSampleRateType: AudioFormatSampleRateType,
     ) {
     }
 
