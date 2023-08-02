@@ -44,19 +44,18 @@ actual fun ApplicationEngineEnvironmentBuilder.installConnector(
     if (isUseSSL) {
         val keystore = KeyStore.getInstance(KeyStore.getDefaultType())
 
-        keystore.load(
-            File(
-                nativeApplication.filesDir,
-                keyStoreFile
-            ).inputStream(), keyStorePassword.toCharArray()
-        )
+        val file = File(nativeApplication.filesDir, keyStoreFile)
+
+        keystore.load(file.inputStream(), keyStorePassword.toCharArray())
 
         sslConnector(
             keyStore = keystore,
             keyAlias = keyAlias,
             keyStorePassword = { keyStorePassword.toCharArray() },
-            privateKeyPassword = { keyPassword.toCharArray() }) {
+            privateKeyPassword = { keyPassword.toCharArray() },
+        ) {
             // this.host = "0.0.0.0"
+            this.keyStorePath = file
             this.port = port
         }
     } else {
