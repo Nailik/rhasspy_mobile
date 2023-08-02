@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.HelpCenter
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -27,8 +28,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.Configurati
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.ConfigurationScreen
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.Navigate
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToErrorClick
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Consumed.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
@@ -70,7 +70,17 @@ fun ConfigurationScreenContent(
             .fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(MR.strings.configuration.stable) }
+                title = { Text(MR.strings.configuration.stable) },
+                actions = {
+                    IconButton(
+                        onClick = { onEvent(OpenWikiLink) },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.HelpCenter,
+                            contentDescription = MR.strings.wiki.stable,
+                        )
+                    }
+                }
             )
         },
     ) { paddingValues ->

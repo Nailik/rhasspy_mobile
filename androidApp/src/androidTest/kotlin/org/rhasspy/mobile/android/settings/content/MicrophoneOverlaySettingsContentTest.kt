@@ -1,22 +1,19 @@
 package org.rhasspy.mobile.android.settings.content
 
 import android.widget.Switch
-import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import org.rhasspy.mobile.ui.settings.MicrophoneOverlaySettingsContent
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.*
-import org.junit.Before
-import org.junit.Rule
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
-import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.settings.MicrophoneOverlaySettingsContent
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SelectMicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SetMicrophoneOverlayWhileAppEnabled
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewModel
@@ -24,29 +21,18 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class MicrophoneOverlaySettingsContentTest : FlakyTest() {
-
-    @get: Rule(order = 0)
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
+class MicrophoneOverlaySettingsContentTest : FlakyTestNew() {
 
     private val viewModel = get<MicrophoneOverlaySettingsViewModel>()
 
-    private val device: UiDevice =
-        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     private val settingsPage = "com.android.settings"
     private val list = ".*list"
 
-
-    @Before
-    fun setUp() {
-
-        composeTestRule.activity.setContent {
-            TestContentProvider {
-                MicrophoneOverlaySettingsContent()
-            }
-        }
-
+    @Composable
+    override fun ComposableContent() {
+        MicrophoneOverlaySettingsContent()
     }
 
     /**
@@ -72,8 +58,11 @@ class MicrophoneOverlaySettingsContentTest : FlakyTest() {
      * visible while app is saved
      */
     @Test
+    @AllowFlaky
     fun testContent() {
-        device.resetOverlayPermission(composeTestRule.activity, get())
+        setupContent()
+
+        device.resetOverlayPermission(activity, get())
 
         viewModel.onEvent(SelectMicrophoneOverlaySizeOption(MicrophoneOverlaySizeOption.Disabled))
         viewModel.onEvent(SetMicrophoneOverlayWhileAppEnabled(false))
@@ -137,4 +126,5 @@ class MicrophoneOverlaySettingsContentTest : FlakyTest() {
         assertTrue { newViewModel.viewState.value.isMicrophoneOverlayWhileAppEnabled }
 
     }
+
 }

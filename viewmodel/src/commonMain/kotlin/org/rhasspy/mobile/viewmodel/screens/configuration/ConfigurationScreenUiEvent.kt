@@ -14,6 +14,7 @@ sealed interface ConfigurationScreenUiEvent {
 
         data object ScrollToErrorClick : Action
         data object BackClick : Action
+        data object OpenWikiLink : Action
         data class Navigate(val destination: ConfigurationScreenNavigationDestination) : Action
 
     }

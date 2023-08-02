@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
     <string name="appName">Rhasspy Mobile</string>
+    <string name="wiki">Wiki</string>
     <string name="home">Home</string>
     <string name="configuration">Configuration</string>
     <string name="settings">Settings</string>

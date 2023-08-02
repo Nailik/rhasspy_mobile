@@ -4,10 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.HelpCenter
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,10 +21,7 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.elements.CustomDivider
-import org.rhasspy.mobile.ui.content.elements.Text
-import org.rhasspy.mobile.ui.content.elements.toText
-import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.SettingsScreen
@@ -33,6 +29,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScr
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.*
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent.Action.OpenWikiLink
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewState
 
@@ -66,7 +63,17 @@ fun SettingsScreenContent(
             .fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(MR.strings.settings.stable) }
+                title = { Text(MR.strings.settings.stable) },
+                actions = {
+                    IconButton(
+                        onClick = { onEvent(OpenWikiLink) },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.HelpCenter,
+                            contentDescription = MR.strings.wiki.stable,
+                        )
+                    }
+                }
             )
         },
     ) { paddingValues ->

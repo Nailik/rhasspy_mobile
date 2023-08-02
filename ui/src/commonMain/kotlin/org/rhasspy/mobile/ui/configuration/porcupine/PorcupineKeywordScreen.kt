@@ -41,7 +41,6 @@ fun PorcupineKeywordScreen() {
     Surface(tonalElevation = 3.dp) {
         Scaffold(
             modifier = Modifier
-                .testTag(TestTag.PorcupineKeywordScreen)
                 .fillMaxSize(),
             topBar = {
                 Column {
@@ -68,7 +67,11 @@ fun PorcupineKeywordScreen() {
 
         ) { paddingValues ->
             //horizontal pager to slide between pages
-            Surface(modifier = Modifier.padding(paddingValues)) {
+            Surface(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .testTag(TestTag.PorcupineKeywordScreen)
+            ) {
 
                 AnimatedContent(
                     targetState = viewState.porcupineWakeWordScreen,

@@ -3,6 +3,7 @@ package org.rhasspy.mobile.viewmodel.screens.configuration
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
@@ -38,6 +39,7 @@ class ConfigurationScreenViewModel(
             ScrollToErrorClick -> _viewState.update { it.copy(scrollToError = viewState.value.firstErrorIndex.value) }
             BackClick          -> navigator.onBackPressed()
             is Navigate        -> navigator.navigate(action.destination)
+            OpenWikiLink       -> openLink(LinkType.Wiki)
         }
     }
 

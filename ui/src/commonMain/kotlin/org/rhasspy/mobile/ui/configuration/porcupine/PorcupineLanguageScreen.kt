@@ -37,7 +37,6 @@ fun PorcupineLanguageScreen() {
 
     Scaffold(
         modifier = Modifier
-            .testTag(TestTag.PorcupineLanguageScreen)
             .fillMaxSize(),
         topBar = {
             AppBar(
@@ -47,7 +46,10 @@ fun PorcupineLanguageScreen() {
         }
     ) { paddingValues ->
 
-        Surface(Modifier.padding(paddingValues)) {
+        Surface(
+            Modifier.padding(paddingValues)
+                .testTag(TestTag.PorcupineLanguageScreen)
+        ) {
 
             val coroutineScope = rememberCoroutineScope()
             val state = rememberLazyListState()
