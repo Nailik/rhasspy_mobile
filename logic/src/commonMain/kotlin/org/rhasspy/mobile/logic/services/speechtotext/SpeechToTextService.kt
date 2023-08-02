@@ -3,6 +3,7 @@ package org.rhasspy.mobile.logic.services.speechtotext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import okio.FileHandle
 import okio.Path
@@ -99,11 +100,11 @@ internal class SpeechToTextService(
     init {
         scope.launch {
             paramsFlow.collect {
-                resampler?.dispose()
-                resampler = null
-
                 recorder?.cancel()
                 recorder = null
+
+                resampler?.dispose()
+                resampler = null
 
                 _serviceState.value =
                     when (it.speechToTextOption) {
@@ -134,6 +135,9 @@ internal class SpeechToTextService(
         logger.d { "endSpeechToText sessionId: $sessionId fromMqtt $fromMqtt" }
 
         audioRecorder.stopRecording()
+
+        resampler?.dispose()
+        resampler = null
 
         //stop recorder
         recorder?.cancel()
@@ -207,11 +211,13 @@ internal class SpeechToTextService(
 
         //start recorder
         recorder = scope.launch {
-            record(sessionId)
+            record(sessionId, this)
         }
     }
 
     private fun audioFrame(sessionId: String, data: ByteArray) {
+        if (!isActive) return
+
         if (AppSetting.isLogAudioFramesEnabled.value) {
             logger.d { "audioFrame dataSize: ${data.size}" }
         }
@@ -247,16 +253,17 @@ internal class SpeechToTextService(
         )
     }
 
-    private suspend fun record(sessionId: String) {
+    private suspend fun record(sessionId: String, coroutineScope: CoroutineScope) {
         silenceDetection.reset()
         localAudioService.isPlayingState.first { !it }
 
         audioFocusService.request(Record)
 
-        scope.launch {
+        coroutineScope.launch {
             //collect from audio recorder
-            audioRecorder.output.collect { data ->
+            audioRecorder.output.collectLatest { data ->
                 if (!localAudioService.isPlayingState.value) {
+                    println("output $coroutineScope")
                     if (data.isNotEmpty()) {
                         audioFrame(sessionId, data)
                     }
@@ -265,7 +272,7 @@ internal class SpeechToTextService(
         }
 
         if (AppSetting.isAutomaticSilenceDetectionEnabled.value) {
-            scope.launch {
+            coroutineScope.launch {
                 audioRecorder.maxVolume.collect {
                     silenceDetection.audioFrameVolume(it)
                 }

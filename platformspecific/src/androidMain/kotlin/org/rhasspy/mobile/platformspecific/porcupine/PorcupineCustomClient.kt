@@ -93,22 +93,6 @@ class PorcupineCustomClient(
 
                             oldData = currentRecording
 
-                        } catch (e: IllegalArgumentException) {
-                            //restart
-                            logger.d("audioRecorder collection", e)
-
-                            oldData = ShortArray(0)
-                            resampler.dispose()
-                            resampler = Resampler(
-                                inputSampleRateType = audioRecorderSampleRateType,
-                                inputChannelType = audioRecorderChannelType,
-                                inputEncodingType = AudioFormatEncodingType.PCM16Bit,
-                                outputSampleRateType = AudioFormatSampleRateType.findValue(porcupine.sampleRate),
-                                outputChannelType = AudioFormatChannelType.Mono,
-                                outputEncodingType = AudioFormatEncodingType.PCM16Bit,
-                            )
-
-                            start()
                         } catch (e: Exception) {
                             //restart
                             logger.d("audioRecorder collection", e)

@@ -3,6 +3,7 @@ package org.rhasspy.mobile.logic.services.wakeword
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.resource.stable
@@ -140,6 +141,9 @@ internal class WakeWordService(
         _isRecording.value = false
         recording?.cancel()
         recording = null
+        resampler?.dispose()
+        resampler = null
+        audioRecorder.stopRecording()
         try {
             porcupineWakeWordClient?.stop()
         } catch (e: Exception) {
@@ -186,7 +190,7 @@ internal class WakeWordService(
                 )
 
                 recording = scope.launch {
-                    audioRecorder.output.collect(::hotWordAudioFrame)
+                    audioRecorder.output.collectLatest(::hotWordAudioFrame)
                 }
             }
         }
@@ -268,6 +272,8 @@ internal class WakeWordService(
 
 
     private suspend fun hotWordAudioFrame(data: ByteArray) {
+        if (!isDetectionRunning) return
+
         if (AppSetting.isLogAudioFramesEnabled.value) {
             logger.d { "hotWordAudioFrame dataSize: ${data.size}" }
         }

@@ -137,7 +137,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
                             if (firstBuffer) {
                                 firstBuffer = false
                             } else {
-                                _output.emit(byteArray)
+                                _output.emit(byteArray.clone())
                             }
                         }
                     } catch (e: Exception) {

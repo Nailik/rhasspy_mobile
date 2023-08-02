@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.platformspecific.resampler
 
+import co.touchlab.kermit.Logger
 import io.github.nailik.androidresampler.Resampler
 import io.github.nailik.androidresampler.ResamplerConfiguration
 import io.github.nailik.androidresampler.data.ResamplerChannel
@@ -16,6 +17,7 @@ actual class Resampler actual constructor(
     outputEncodingType: AudioFormatEncodingType,
     private val outputSampleRateType: AudioFormatSampleRateType,
 ) {
+    private val logger = Logger.withTag("Resampler")
 
     private var resampler: Resampler? = null
 
@@ -40,10 +42,13 @@ actual class Resampler actual constructor(
         return resampler
     }
 
-    actual fun resample(inputData: ByteArray) = getResampler()?.resample(inputData) ?: inputData
+    actual fun resample(inputData: ByteArray): ByteArray {
+        return getResampler()?.resample(inputData) ?: inputData
+    }
 
     actual fun dispose() {
         resampler?.dispose()
+        resampler = null
     }
 
     private fun AudioFormatChannelType.toResamplerChannel(): ResamplerChannel {
