@@ -40,6 +40,7 @@ interface ISpeechToTextService : IService {
 
     val speechToTextAudioFile: Path
     val isActive: Boolean
+    val isRecording: StateFlow<Boolean>
 
     fun endSpeechToText(sessionId: String, fromMqtt: Boolean)
     fun startSpeechToText(sessionId: String, fromMqtt: Boolean)
@@ -73,6 +74,7 @@ internal class SpeechToTextService(
 
     override val speechToTextAudioFile: Path = Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
     override var isActive: Boolean = false
+    override val isRecording: StateFlow<Boolean> = audioRecorder.isRecording
     private var fileHandle: FileHandle? = null
 
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -240,10 +242,6 @@ internal class SpeechToTextService(
             SpeechToTextOption.Disabled   -> _serviceState.value = Disabled
         }
 
-        if (AppSetting.isAutomaticSilenceDetectionEnabled.value) {
-            serviceMiddleware.action(SilenceDetected(Local))
-        }
-
         //write async after data was send
         fileHandle?.write(
             fileOffset = fileHandle?.size() ?: 0,
@@ -263,7 +261,6 @@ internal class SpeechToTextService(
             //collect from audio recorder
             audioRecorder.output.collectLatest { data ->
                 if (!localAudioService.isPlayingState.value) {
-                    println("output $coroutineScope")
                     if (data.isNotEmpty()) {
                         audioFrame(sessionId, data)
                     }

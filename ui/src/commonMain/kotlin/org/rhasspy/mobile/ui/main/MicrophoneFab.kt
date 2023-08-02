@@ -63,7 +63,7 @@ fun MicrophoneFab(
         icon = {
             Icon(
                 modifier = Modifier.size(iconSize),
-                imageVector = if (viewState.isShowMicOn) Icons.Filled.Mic else Icons.Filled.MicOff,
+                imageVector = if (viewState.isMicrophonePermissionAllowed) Icons.Filled.Mic else Icons.Filled.MicOff,
                 contentDescription = MR.strings.wakeUp.stable,
             )
         }

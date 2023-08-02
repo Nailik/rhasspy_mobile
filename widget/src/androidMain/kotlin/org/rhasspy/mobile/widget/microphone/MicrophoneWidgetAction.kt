@@ -6,8 +6,6 @@ import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.platformspecific.intent.IIntentAction
-import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabUiEvent.Action.MicrophoneFabClick
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
 
@@ -20,10 +18,6 @@ class MicrophoneWidgetAction : ActionCallback, KoinComponent {
         glanceId: GlanceId,
         parameters: ActionParameters
     ) {
-        if (get<IMicrophonePermission>().granted.value) {
-            get<MicrophoneFabViewModel>().onEvent(MicrophoneFabClick)
-        } else {
-            get<IIntentAction>().startRecording()
-        }
+        get<MicrophoneFabViewModel>().onEvent(MicrophoneFabClick)
     }
 }
