@@ -3,7 +3,7 @@ package org.rhasspy.mobile.android.settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main.SettingsScreen
+import org.rhasspy.mobile.ui.main.SettingsScreen
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
 import org.junit.Test

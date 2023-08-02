@@ -2,7 +2,7 @@ package org.rhasspy.mobile.android.settings.content
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.*
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.SilenceDetectionSettingsContent
+import org.rhasspy.mobile.ui.settings.SilenceDetectionSettingsContent
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
 import org.junit.Test

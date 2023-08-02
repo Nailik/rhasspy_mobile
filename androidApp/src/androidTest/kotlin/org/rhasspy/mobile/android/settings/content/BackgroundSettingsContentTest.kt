@@ -5,7 +5,7 @@ import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.BackgroundServiceSettingsContent
+import org.rhasspy.mobile.ui.settings.BackgroundServiceSettingsContent
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice

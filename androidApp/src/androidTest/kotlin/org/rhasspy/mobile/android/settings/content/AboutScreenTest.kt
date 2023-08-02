@@ -3,7 +3,7 @@ package org.rhasspy.mobile.android.settings.content
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.AboutScreen
+import org.rhasspy.mobile.ui.settings.AboutScreen
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule

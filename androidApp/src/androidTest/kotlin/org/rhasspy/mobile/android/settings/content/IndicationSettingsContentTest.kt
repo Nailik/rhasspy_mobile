@@ -4,7 +4,7 @@ import android.widget.Switch
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.IndicationSettingsOverviewScreen
+import org.rhasspy.mobile.ui.settings.IndicationSettingsOverviewScreen
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.*
 import kotlinx.coroutines.test.runTest

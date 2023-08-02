@@ -5,7 +5,7 @@ import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.DeviceSettingsContent
+import org.rhasspy.mobile.ui.settings.DeviceSettingsContent
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule

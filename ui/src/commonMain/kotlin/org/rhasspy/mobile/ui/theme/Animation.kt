@@ -1,7 +1,10 @@
-package androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.theme
+package org.rhasspy.mobile.ui.theme
 
-import androidx.compose.animation.*
+import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 
 private const val CONTENT_ANIMATION_DURATION = 200
 

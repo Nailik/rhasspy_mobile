@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main.SettingsScreen
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.*
 import org.rhasspy.mobile.ui.configuration.*
 import org.rhasspy.mobile.ui.configuration.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.ui.configuration.porcupine.PorcupineLanguageScreen
@@ -14,10 +12,7 @@ import org.rhasspy.mobile.ui.configuration.speechtotext.SpeechToTextAudioOutputF
 import org.rhasspy.mobile.ui.configuration.speechtotext.SpeechToTextAudioRecorderFormatScreen
 import org.rhasspy.mobile.ui.configuration.wakeword.WakeWordAudioOutputFormatScreen
 import org.rhasspy.mobile.ui.configuration.wakeword.WakeWordAudioRecorderFormatScreen
-import org.rhasspy.mobile.ui.settings.IndicationErrorScreen
-import org.rhasspy.mobile.ui.settings.IndicationRecordedScreen
-import org.rhasspy.mobile.ui.settings.IndicationSettingsOverviewScreen
-import org.rhasspy.mobile.ui.settings.IndicationWakeScreen
+import org.rhasspy.mobile.ui.settings.*
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.*
 

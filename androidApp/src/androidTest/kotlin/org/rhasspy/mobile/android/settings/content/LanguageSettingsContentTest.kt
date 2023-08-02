@@ -3,7 +3,7 @@ package org.rhasspy.mobile.android.settings.content
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.LanguageSettingsScreenItemContent
+import org.rhasspy.mobile.ui.settings.LanguageSettingsScreenItemContent
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
