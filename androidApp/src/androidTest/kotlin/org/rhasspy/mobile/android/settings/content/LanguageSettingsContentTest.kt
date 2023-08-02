@@ -3,7 +3,6 @@ package org.rhasspy.mobile.android.settings.content
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
-import org.rhasspy.mobile.ui.settings.LanguageSettingsScreenItemContent
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -15,6 +14,7 @@ import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.language.LanguageType
+import org.rhasspy.mobile.ui.settings.LanguageSettingsScreenItemContent
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
 import kotlin.test.assertEquals

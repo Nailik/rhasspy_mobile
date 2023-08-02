@@ -3,7 +3,6 @@ package org.rhasspy.mobile.android.settings.content
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.performClick
-import org.rhasspy.mobile.ui.settings.AboutScreen
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -12,6 +11,7 @@ import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.settings.AboutScreen
 
 class AboutScreenTest : FlakyTest() {
 

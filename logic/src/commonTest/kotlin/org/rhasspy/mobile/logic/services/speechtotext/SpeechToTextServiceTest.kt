@@ -59,29 +59,29 @@ class SpeechToTextServiceTest : AppTest() {
         AppSetting.automaticSilenceDetectionTime.value = 0 //ms
 
         //sent varying (random) data below threshold
-            val job = coroutineScope.launch {
-                while (true) {
-                    audioRecorder.sendMaxVolume(Random.nextFloat() * (threshold - 1))
-                    delay(10)
-                }
+        val job = coroutineScope.launch {
+            while (true) {
+                audioRecorder.sendMaxVolume(Random.nextFloat() * (threshold - 1))
+                delay(10)
             }
+        }
 
         speechToTextService.startSpeechToText("", false)
 
-            val job2 = coroutineScope.launch {
-                var time = 0
-                while (time < 500) {
-                    nVerify { repeat(0) { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } }
-                    delay(10)
-                    time += 10
-                }
-                delay(allowedDelay)
-                nVerify { repeat(1) { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } }
+        val job2 = coroutineScope.launch {
+            var time = 0
+            while (time < 500) {
+                nVerify { repeat(0) { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } }
+                delay(10)
+                time += 10
             }
-            //check that silence detection is triggered after set minimum time for recording
-            joinAll(job2)
-            job.cancel()
+            delay(allowedDelay)
+            nVerify { repeat(1) { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } }
         }
+        //check that silence detection is triggered after set minimum time for recording
+        joinAll(job2)
+        job.cancel()
+    }
 
     @Test
     fun `when silence detection time is set the detection is only triggered when it is silent for a specific amount of time`() =
