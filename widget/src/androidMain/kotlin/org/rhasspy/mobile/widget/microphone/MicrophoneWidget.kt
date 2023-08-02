@@ -38,6 +38,7 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
         }
     }
 
+    @Suppress("StateFlowValueCalledInComposition") //suppress because it doesn't work in glance
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         initUpdateJob()
 
