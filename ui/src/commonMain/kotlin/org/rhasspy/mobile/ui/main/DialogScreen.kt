@@ -35,7 +35,7 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.DialogScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.DialogScreen
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogActionViewState
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogActionViewState.SourceViewState.SourceType.*

@@ -1,7 +1,5 @@
 package org.rhasspy.mobile.android.configuration.porcupine
 
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
@@ -33,11 +31,7 @@ class PorcupineLanguageScreenTest : FlakyTest() {
 
         composeTestRule.setContent {
             TestContentProvider {
-                val viewState by viewModel.viewState.collectAsState()
-                PorcupineLanguageScreen(
-                    editData = viewState.editData.wakeWordPorcupineConfigurationData,
-                    onEvent = viewModel::onEvent
-                )
+                PorcupineLanguageScreen()
             }
         }
 
@@ -62,16 +56,18 @@ class PorcupineLanguageScreenTest : FlakyTest() {
         composeTestRule.awaitIdle()
         val editData = viewModel.viewState.value.editData.wakeWordPorcupineConfigurationData
 
+        composeTestRule.awaitIdle()
         assertEquals(PorcupineLanguageOption.EN, editData.porcupineLanguage)
 
         //english is selected
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(PorcupineLanguageOption.EN).onListItemRadioButton()
             .assertIsSelected()
 
         //user clicks german
         composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).performClick()
         //german is selected
-        composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).onListItemRadioButton()
-            .assertIsSelected()
+        composeTestRule.awaitIdle()
+        composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).onListItemRadioButton().assertIsSelected()
     }
 }

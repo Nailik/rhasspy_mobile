@@ -20,3 +20,4 @@ signing.properties
 /iosApp/iosApp.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
 /Task
 *.podspec
+/logic/SpeechToTextAudio.wav

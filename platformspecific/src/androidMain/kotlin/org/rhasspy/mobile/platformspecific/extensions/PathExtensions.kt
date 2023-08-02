@@ -23,7 +23,7 @@ import java.util.Collections
 actual fun Path.Companion.commonInternalPath(
     nativeApplication: NativeApplication,
     fileName: String
-): Path = "${nativeApplication.filesDir}/$fileName".toPath()
+): Path = "${nativeApplication.filesDir?.let { "$it/" } ?: ""}$fileName".toPath()
 
 actual fun Path.commonDelete() {
     FileSystem.SYSTEM.delete(this)

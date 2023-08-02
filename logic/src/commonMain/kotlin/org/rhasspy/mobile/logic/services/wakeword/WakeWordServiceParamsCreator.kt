@@ -3,19 +3,25 @@ package org.rhasspy.mobile.logic.services.wakeword
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-internal class WakeWordServiceParamsCreator {
+internal class WakeWordServiceParamsCreator(
+    private val microphonePermission: IMicrophonePermission
+) {
 
     operator fun invoke(): StateFlow<WakeWordServiceParams> {
 
         return combineStateFlow(
-            AppSetting.audioRecorderSampleRate.data,
-            AppSetting.audioRecorderChannel.data,
-            AppSetting.audioRecorderEncoding.data,
+            microphonePermission.granted,
             AppSetting.isHotWordEnabled.data,
-            ConfigurationSetting.wakeWordPorcupineAudioRecorderSettings.data,
+            ConfigurationSetting.wakeWordAudioRecorderChannel.data,
+            ConfigurationSetting.wakeWordAudioRecorderEncoding.data,
+            ConfigurationSetting.wakeWordAudioRecorderSampleRate.data,
+            ConfigurationSetting.wakeWordAudioOutputChannel.data,
+            ConfigurationSetting.wakeWordAudioOutputEncoding.data,
+            ConfigurationSetting.wakeWordAudioOutputSampleRate.data,
             ConfigurationSetting.wakeWordOption.data,
             ConfigurationSetting.wakeWordPorcupineAccessToken.data,
             ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.data,
@@ -31,12 +37,15 @@ internal class WakeWordServiceParamsCreator {
 
     private fun getParams(): WakeWordServiceParams {
         return WakeWordServiceParams(
+            isMicrophonePermissionEnabled = microphonePermission.granted.value,
             isEnabled = AppSetting.isHotWordEnabled.value,
-            audioRecorderSampleRateType = AppSetting.audioRecorderSampleRate.value,
-            audioRecorderChannelType = AppSetting.audioRecorderChannel.value,
-            audioRecorderEncodingType = AppSetting.audioRecorderEncoding.value,
+            audioRecorderChannelType = ConfigurationSetting.wakeWordAudioRecorderChannel.value,
+            audioRecorderEncodingType = ConfigurationSetting.wakeWordAudioRecorderEncoding.value,
+            audioRecorderSampleRateType = ConfigurationSetting.wakeWordAudioRecorderSampleRate.value,
+            audioOutputChannelType = ConfigurationSetting.wakeWordAudioOutputChannel.value,
+            audioOutputEncodingType = ConfigurationSetting.wakeWordAudioOutputEncoding.value,
+            audioOutputSampleRateType = ConfigurationSetting.wakeWordAudioOutputSampleRate.value,
             wakeWordOption = ConfigurationSetting.wakeWordOption.value,
-            isUseCustomRecorder = ConfigurationSetting.wakeWordPorcupineAudioRecorderSettings.value,
             wakeWordPorcupineAccessToken = ConfigurationSetting.wakeWordPorcupineAccessToken.value,
             wakeWordPorcupineKeywordDefaultOptions = ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value,
             wakeWordPorcupineKeywordCustomOptions = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value,

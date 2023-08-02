@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import org.rhasspy.mobile.data.resource.StableStringResource
 
 @Composable
@@ -17,7 +16,7 @@ fun Icon(
     tint: Color = LocalContentColor.current
 ) {
     Icon(
-        painter = rememberVectorPainter(imageVector),
+        imageVector = imageVector,
         contentDescription = translate(contentDescription),
         modifier = modifier,
         tint = tint

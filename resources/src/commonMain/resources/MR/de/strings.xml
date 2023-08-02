@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
     <string name="appName">Rhasspy Mobile</string>
+    <string name="wiki">Wiki</string>
     <string name="home">Home</string>
     <string name="configuration">Konfiguration</string>
     <string name="settings">Einstellungen</string>
@@ -36,10 +37,8 @@
     <string name="remoteURL">Entfernte URL</string>
     <string name="checkConnection">Verbindung prüfen</string>
     <string name="localPorcupine">Porcupine (lokal)</string>
-    <string name="porcupineAudioRecorderSettings">Audiorecorder Einstellungen</string>
-    <string name="porcupineAudioRecorderSettingsInformation">Audio wird in ein Porcupine-kompatibles
-        Format konvertiert. Benötigt PCM 16 Bit.
-    </string>
+    <string name="audioRecorderFormat">Audio-Recorder-Format</string>
+    <string name="audioOutputFormat">Audio-Ausgabeformat</string>
     <string name="local">Lokal</string>
     <string name="remote">Ferngesteuert</string>
     <string name="disabled">Deaktiviert</string>
@@ -57,6 +56,10 @@
     <string name="homeAssistantEvents">Sende *Ereignisse* an Home-Assistant\n(/api/events)</string>
     <string name="homeAssistantIntents">Sende *Intents* an Home-Assistant\n(/api/intent/handle)
     </string>
+    <string name="speechToTextAudioRecorderFormat">Sprache zu Text Audioaufnahme-Format</string>
+    <string name="speechToTextAudioOutputFormat">Sprache zu Text Audioausgabe-Format</string>
+    <string name="wakeWordAudioRecorderFormat">Aktivierungswort Audioaufnahme-Format</string>
+    <string name="wakeWordAudioOutputFormat">Aktivierungswort Audioausgabe-Format</string>
     <string name="refresh">Laden</string>
     <string name="de">Deutsch</string>
     <string name="en">English</string>
@@ -181,6 +184,7 @@
     <string name="arabic">Arabisch</string>
     <string name="german">Deutsch</string>
     <string name="spanish">Spanisch</string>
+    <string name="farsi">Farsi</string>
     <string name="french">Französisch</string>
     <string name="hindi">Hindi</string>
     <string name="italian">Italienisch</string>
@@ -209,6 +213,7 @@
     <string name="mqttConnectionError">Fehler beim Verbindungsaufbau:</string>
     <string name="mqttConnectionLostError">Fehler bei verlorener Verbindung:</string>
     <string name="close">Schließen</string>
+    <string name="closeAppInformation">Zurück drücken zum Schließen</string>
     <string name="backup">Backup der Einstellungen und Konfiguration</string>
     <string name="unsavedChanges">Nicht gespeicherte Änderungen</string>
     <string name="unsavedChangesInformation">Wollen Sie die Änderungen speichern?</string>
@@ -311,7 +316,7 @@
     <string name="executeStartMqtt">MQTT starten</string>
     <string name="executeStartWebserver">starte Webserver</string>
     <string name="sslWiki">Erstellen der Zertifikatdatei</string>
-    <string name="sslWikiInfo">öffne GitHu- Wiki um zu Erfahren, wie ein Zertifikat erstellt werden
+    <string name="sslWikiInfo">öffne GitHub-Wiki um zu Erfahren, wie ein Zertifikat erstellt werden
         kann
     </string>
     <string name="currentlySelectedCertificate">Aktuell ausgewähltes Zertifikat: %s</string>
@@ -337,9 +342,10 @@
     <string name="onSound">Bei abgespieltem Ton</string>
     <string name="onSoundInformation">vom Audio-Dienst</string>
     <string name="onRecord">Bei Tonaufnahme</string>
-    <string name="onRecordInformation">ignoriert Wake Word Aufnahme</string>
+    <string name="onRecordInformation">ignoriert Aktivierungswort Aufnahme</string>
     <string name="onDialog">Bei Dialog-Aktion</string>
-    <string name="onDialogInformation">zwischen Sitzungsbeginn (Wake Word Detected) und Sitzungsende
+    <string name="onDialogInformation">zwischen Sitzungsbeginn (Aktivierungswort erkannt) und
+        Sitzungsende
         (nach Intent Recognition und Handling)
     </string>
     <string name="url">Url</string>
@@ -453,6 +459,10 @@
     <string name="leopardo_es">Leopardo</string>
     <string name="manzana_es">Manzana</string>
     <string name="murcielago_es">Murciélago</string>
+    <!-- fa wake words -->
+    <string name="hedgehog_fa">جوجه تیغی</string>
+    <string name="bye_fa">خداحافظ</string>
+    <string name="good_morning_fa">صبح بخیر</string>
     <!-- fr wake words -->
     <string name="framboise_fr">Framboise</string>
     <string name="mon_chouchou_fr">Mon Chouchou</string>

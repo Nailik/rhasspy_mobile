@@ -30,6 +30,15 @@ class DialogManagerMqtt(
 
     private val logger = Logger.withTag("DialogManagerMqtt")
 
+    fun onInit() {
+        dialogManagerService.transitionTo(
+            state = stateTransition.transitionToIdleState(
+                sessionData = null,
+                isSourceMqtt = false
+            )
+        )
+    }
+
     override fun onAction(action: DialogServiceMiddlewareAction) {
         with(dialogManagerService.currentDialogState.value) {
             logger.d { "action $action on state $this" }

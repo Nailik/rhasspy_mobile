@@ -159,6 +159,12 @@ fun Float.roundToDecimals(decimals: Int): Float {
     return (roundedValue / dotAt) + (roundedValue % dotAt).toFloat() / dotAt
 }
 
+fun Float.naNToZero(): Float {
+    return if (this.isNaN()) {
+        return 0F
+    } else this
+}
+
 fun <T> CancellableContinuation<T>.resumeSave(value: T) {
     if (!this.isCompleted) {
         this.resume(value)

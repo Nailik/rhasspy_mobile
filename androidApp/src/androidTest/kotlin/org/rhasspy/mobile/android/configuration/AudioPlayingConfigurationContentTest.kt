@@ -1,10 +1,9 @@
 package org.rhasspy.mobile.android.configuration
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createComposeRule
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
@@ -17,22 +16,14 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import kotlin.test.assertEquals
 
-class AudioPlayingConfigurationContentTest : FlakyTest() {
+class AudioPlayingConfigurationContentTest : FlakyTestNew() {
 
-    @get: Rule(order = 0)
-    val composeTestRule = createComposeRule()
 
     private val viewModel = get<AudioPlayingConfigurationViewModel>()
 
-    @Before
-    fun setUp() {
-
-        composeTestRule.setContent {
-            TestContentProvider {
-                AudioPlayingConfigurationScreen()
-            }
-        }
-
+    @Composable
+    override fun ComposableContent() {
+        AudioPlayingConfigurationScreen()
     }
 
     /**
@@ -56,7 +47,10 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
      * use custom endpoint is saved
      */
     @Test
+    @AllowFlaky
     fun testEndpoint() = runTest {
+        setupContent()
+
         viewModel.onEvent(SelectEditAudioPlayingOption(AudioPlayingOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
@@ -134,7 +128,10 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
      * option notification is saved
      */
     @Test
+    @AllowFlaky
     fun testLocalOutput() = runTest {
+        setupContent()
+
         viewModel.onEvent(SelectEditAudioPlayingOption(AudioPlayingOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()

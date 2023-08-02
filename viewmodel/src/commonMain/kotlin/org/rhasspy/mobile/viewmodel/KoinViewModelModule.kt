@@ -44,8 +44,6 @@ import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewStateCreator
-import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsViewModel
@@ -131,9 +129,6 @@ fun viewModelModule() = module {
 
     factoryOf(::AudioFocusSettingsViewStateCreator)
     singleOf(::AudioFocusSettingsViewModel)
-
-    factoryOf(::AudioRecorderSettingsViewStateCreator)
-    singleOf(::AudioRecorderSettingsViewModel)
 
     factoryOf(::BackgroundServiceSettingsViewStateCreator)
     singleOf(::BackgroundServiceSettingsViewModel)

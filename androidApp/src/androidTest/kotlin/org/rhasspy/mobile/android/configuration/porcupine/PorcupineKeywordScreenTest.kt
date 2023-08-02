@@ -1,7 +1,5 @@
 package org.rhasspy.mobile.android.configuration.porcupine
 
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -31,12 +29,7 @@ class PorcupineKeywordScreenTest : FlakyTest() {
 
         composeTestRule.setContent {
             TestContentProvider {
-                val viewState by viewModel.viewState.collectAsState()
-                PorcupineKeywordScreen(
-                    porcupineScreen = viewState.porcupineWakeWordScreen,
-                    editData = viewState.editData.wakeWordPorcupineConfigurationData,
-                    onEvent = viewModel::onEvent
-                )
+                PorcupineKeywordScreen()
             }
         }
 

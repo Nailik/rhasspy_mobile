@@ -2,9 +2,9 @@ package org.rhasspy.mobile.platformspecific.audiorecorder
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 
 interface IAudioRecorder {
 
@@ -12,10 +12,11 @@ interface IAudioRecorder {
     val maxVolume: StateFlow<Float>
     val isRecording: StateFlow<Boolean>
     val absoluteMaxVolume: Float
+
     fun startRecording(
-        audioRecorderSampleRateType: AudioRecorderSampleRateType,
-        audioRecorderChannelType: AudioRecorderChannelType,
-        audioRecorderEncodingType: AudioRecorderEncodingType
+        audioRecorderChannelType: AudioFormatChannelType,
+        audioRecorderEncodingType: AudioFormatEncodingType,
+        audioRecorderSampleRateType: AudioFormatSampleRateType,
     )
 
     fun stopRecording()
@@ -44,9 +45,9 @@ internal expect class AudioRecorder() : IAudioRecorder {
      * start recording
      */
     override fun startRecording(
-        audioRecorderSampleRateType: AudioRecorderSampleRateType,
-        audioRecorderChannelType: AudioRecorderChannelType,
-        audioRecorderEncodingType: AudioRecorderEncodingType
+        audioRecorderChannelType: AudioFormatChannelType,
+        audioRecorderEncodingType: AudioFormatEncodingType,
+        audioRecorderSampleRateType: AudioFormatSampleRateType,
     )
 
     /**

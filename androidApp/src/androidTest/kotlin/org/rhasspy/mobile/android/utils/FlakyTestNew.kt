@@ -21,6 +21,7 @@ abstract class FlakyTestNew : KoinComponent {
 
 
     lateinit var scenario: ActivityScenario<ComponentActivity>
+    lateinit var activity: ComponentActivity
 
     @Composable
     abstract fun ComposableContent()
@@ -32,6 +33,7 @@ abstract class FlakyTestNew : KoinComponent {
 
     fun setupContent() {
         scenario.onActivity { activity ->
+            this.activity = activity
             activity.setContent {
                 TestContentProvider {
                     ComposableContent()

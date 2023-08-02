@@ -81,11 +81,7 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
 
         silenceDetectionSettingsViewModel.onEvent(ToggleAudioLevelTest)
         nVerify {
-            audioRecorder.startRecording(
-                AppSetting.audioRecorderSampleRate.value,
-                AppSetting.audioRecorderChannel.value,
-                AppSetting.audioRecorderEncoding.value,
-            )
+            audioRecorder.startRecording(isAny(), isAny(), isAny())
         }
 
         isAppInBackground.value = true

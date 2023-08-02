@@ -1,11 +1,16 @@
 package org.rhasspy.mobile.logic.services.audioplaying
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Sound
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
@@ -40,11 +45,30 @@ internal class AudioPlayingService(
     private val mqttClientService by inject<IMqttService>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
+    private val _serviceState = MutableStateFlow<ServiceState>(Pending)
     override val serviceState = _serviceState.readOnly
 
     private var paramsFlow: StateFlow<AudioPlayingServiceParams> = paramsCreator()
     private val params: AudioPlayingServiceParams get() = paramsFlow.value
+
+    private val scope = CoroutineScope(Dispatchers.IO)
+
+    init {
+        scope.launch {
+            paramsFlow.collect {
+                updateState()
+            }
+        }
+    }
+
+    private fun updateState() {
+        _serviceState.value = when (params.audioPlayingOption) {
+            AudioPlayingOption.Local      -> Success
+            AudioPlayingOption.RemoteHTTP -> Success
+            AudioPlayingOption.RemoteMQTT -> Success
+            AudioPlayingOption.Disabled   -> Disabled
+        }
+    }
 
     /**
      * hermes/audioServer/<siteId>/playBytes/<requestId>

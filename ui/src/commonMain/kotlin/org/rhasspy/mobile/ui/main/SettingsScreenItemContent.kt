@@ -1,4 +1,4 @@
-package androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main
+package org.rhasspy.mobile.ui.main
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

@@ -2,8 +2,8 @@ object Version {
 
     const val major = 0
     const val minor = 4
-    const val patch = 10
-    const val code = 98
+    const val patch = 11
+    const val code = 99
 
     override fun toString(): String {
         return "$major.$minor.$patch-$code"

@@ -15,26 +15,27 @@ import org.rhasspy.mobile.android.utils.FlakyTestNew
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.WakeWordConfigurationScreen
+import org.rhasspy.mobile.ui.main.MainScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.INavigator
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class WakeWordConfigurationContentTest : FlakyTestNew() {
 
-    private val device: UiDevice =
-        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     private val viewModel = get<WakeWordConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
-        WakeWordConfigurationScreen()
+        MainScreen(LocalViewModelFactory.current)
     }
 
 
@@ -53,6 +54,7 @@ class WakeWordConfigurationContentTest : FlakyTestNew() {
     @Test
     @AllowFlaky
     fun testWakeWordContent() = runTest {
+        get<INavigator>().navigate(WakeWordConfigurationScreen)
         setupContent()
 
         //option is disable
@@ -94,6 +96,7 @@ class WakeWordConfigurationContentTest : FlakyTestNew() {
     @Test
     @AllowFlaky
     fun testPorcupineOptions() = runTest {
+        get<INavigator>().navigate(WakeWordConfigurationScreen)
         setupContent()
 
         //option is porcupine
@@ -143,6 +146,7 @@ class WakeWordConfigurationContentTest : FlakyTestNew() {
     @Test
     @AllowFlaky
     fun testPorcupineWakeWordOptions() = runTest {
+        get<INavigator>().navigate(WakeWordConfigurationScreen)
         setupContent()
 
         //option is porcupine
@@ -156,6 +160,7 @@ class WakeWordConfigurationContentTest : FlakyTestNew() {
         //wake word is clicked,
         composeTestRule.onNodeWithTag(TestTag.PorcupineKeyword).performScrollTo().performClick()
         //wake word page is opened
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordScreen).assertIsDisplayed()
 
         //back is clicked
@@ -167,11 +172,13 @@ class WakeWordConfigurationContentTest : FlakyTestNew() {
         //language is clicked
         composeTestRule.onNodeWithTag(TestTag.PorcupineLanguage).performScrollTo().performClick()
         //language page is opened
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.PorcupineLanguageScreen).assertIsDisplayed()
 
         //back is clicked
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
         //page is back to wake word settings
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(WakeWordConfigurationScreen).assertIsDisplayed()
 
         assertTrue(true)

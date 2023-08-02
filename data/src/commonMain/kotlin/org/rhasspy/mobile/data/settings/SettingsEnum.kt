@@ -52,10 +52,6 @@ enum class SettingsEnum {
     AudioFocusOnRecord,
     AudioFocusOnDialog,
 
-    AudioRecorderChannel,
-    AudioRecorderEncoding,
-    AudioRecorderSampleRate,
-
     ShowLog,
     LogAudioFrames,
     LogLevel,
@@ -87,13 +83,27 @@ enum class SettingsEnum {
     WakeWordUDPOutputPort,
 
     WakeWordOption,
+
+    WakeWordAudioRecorderChannel,
+    WakeWordAudioRecorderEncoding,
+    WakeWordAudioRecorderSampleRate,
+
+    WakeWordAudioOutputChannel,
+    WakeWordAudioROutputEncoding,
+    WakeWordAudioOutputSampleRate,
+
     WakeWordPorcupineAccessToken,
-    WakeWordPorcupineAudioRecorderSettings,
     WakeWordPorcupineKeywordDefaultSelectedOptions,
     WakeWordPorcupineKeywordCustomOptions,
     WakeWordPorcupineLanguage,
 
     SpeechToTextOption,
+    SpeechToTextAudioRecorderChannel,
+    SpeechToTextAudioRecorderEncoding,
+    SpeechToTextAudioRecorderSampleRate,
+    SpeechToTextAudioOutputChannel,
+    SpeechToTextAudioOutputEncoding,
+    SpeechToTextAudioOutputSampleRate,
     CustomSpeechToTextEndpoint,
     SpeechToTextHttpEndpoint,
     SpeechToTextMqttSilenceDetection,

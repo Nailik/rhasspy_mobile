@@ -1,7 +1,11 @@
 package org.rhasspy.mobile.logic.services.intentrecognition
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
@@ -9,6 +13,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
@@ -19,6 +24,7 @@ import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
 import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.platformspecific.readOnly
+import kotlin.Exception
 
 interface IIntentRecognitionService : IService {
 
@@ -46,9 +52,26 @@ internal class IntentRecognitionService(
     private val paramsFlow: StateFlow<IntentRecognitionServiceParams> = paramsCreator()
     private val params get() = paramsFlow.value
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
+    private val _serviceState = MutableStateFlow<ServiceState>(Pending)
     override val serviceState = _serviceState.readOnly
 
+    private val scope = CoroutineScope(Dispatchers.IO)
+
+    init {
+        scope.launch {
+            paramsFlow.collect {
+                updateState()
+            }
+        }
+    }
+
+    private fun updateState() {
+        _serviceState.value = when (params.intentRecognitionOption) {
+            IntentRecognitionOption.RemoteHTTP -> Success
+            IntentRecognitionOption.RemoteMQTT -> Success
+            IntentRecognitionOption.Disabled   -> Disabled
+        }
+    }
 
     /**
      * hermes/nlu/query

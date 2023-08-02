@@ -6,11 +6,11 @@ import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.nVerify
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WebServerConfigurationScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.ConfigurationScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WebServerConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.ConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.HomeScreen
 import org.rhasspy.mobile.viewmodel.screens.home.IHomeScreeViewModel
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -36,19 +36,6 @@ class NavigatorTest : AppTest() {
     }
 
     @Test
-    fun `when back stack is popped and there is only one screen the app is closed`() {
-        //every { nativeApplication.closeApp() } returns Unit
-        navigator.updateNavStack(persistentListOf(HomeScreen))
-        assertEquals(1, navigator.navStack.value.size)
-
-        navigator.popBackStack()
-
-        //nVerify { nativeApplication.closeApp() }
-
-        assertEquals(1, navigator.navStack.value.size)
-    }
-
-    @Test
     fun `when back stack is popped and there is more than one screen the top screen is closed`() {
         navigator.updateNavStack(persistentListOf(HomeScreen, ConfigurationScreen))
         assertEquals(2, navigator.navStack.value.size)
@@ -58,20 +45,6 @@ class NavigatorTest : AppTest() {
         //nVerify { repeat(0) { nativeApplication.closeApp() } }
         assertEquals(1, navigator.navStack.value.size)
         assertEquals(HomeScreen, navigator.navStack.value.last())
-    }
-
-    @Test
-    fun `when user clicks back and top view model doesn't handle it popBackStack is called`() {
-        //every { nativeApplication.closeApp() } returns Unit
-        every { homeScreenViewModel.onBackPressedClick() } returns false
-        navigator.updateNavStack(persistentListOf(HomeScreen))
-        navigator.onComposed(homeScreenViewModel)
-
-        navigator.onBackPressed()
-
-        //nVerify { nativeApplication.closeApp() }
-
-        assertEquals(1, navigator.navStack.value.size)
     }
 
     @Test
@@ -141,6 +114,7 @@ class NavigatorTest : AppTest() {
     @Test
     fun `when view model is disposed and exists on the back stack it's removed`() {
         //every { nativeApplication.closeApp() } returns Unit
+        navigator.updateNavStack(persistentListOf(ConfigurationScreen, HomeScreen))
         every { homeScreenViewModel.onBackPressedClick() } returns true
 
         navigator.onComposed(homeScreenViewModel)

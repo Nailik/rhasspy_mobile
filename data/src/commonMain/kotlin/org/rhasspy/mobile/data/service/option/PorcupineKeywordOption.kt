@@ -164,6 +164,23 @@ enum class PorcupineKeywordOption(
         PorcupineLanguageOption.ES
     ),
 
+    //fa
+    HEDGEHOG(
+        MR.strings.hedgehog_fa.stable,
+        MR.files.D8ACD988D8ACD98720D8AADB8CD8BADB8C_android,
+        PorcupineLanguageOption.FA
+    ),
+    BYE(
+        MR.strings.bye_fa.stable,
+        MR.files.D8AED8AFD8A7D8ADD8A7D981D8B8_android,
+        PorcupineLanguageOption.FA
+    ),
+    GOOD_MORNING(
+        MR.strings.good_morning_fa.stable,
+        MR.files.D8B5D8A8D8AD20D8A8D8AEDB8CD8B1_android,
+        PorcupineLanguageOption.FA
+    ),
+
     //fr
     FRAMBOISE(
         MR.strings.framboise_fr.stable,

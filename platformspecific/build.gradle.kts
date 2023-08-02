@@ -103,7 +103,7 @@ android {
     namespace = "org.rhasspy.mobile.platformspecific"
     buildTypes {
         release {
-            buildConfigField("boolean", "IS_DEBUG", "true")
+            buildConfigField("boolean", "IS_DEBUG", "false")
         }
         debug {
             buildConfigField("boolean", "IS_DEBUG", "true")

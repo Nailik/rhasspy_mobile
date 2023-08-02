@@ -5,7 +5,6 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Stable
 data class MainScreenViewState(
-    val isBottomNavigationVisible: Boolean,
     val bottomNavigationIndex: Int,
     val isShowLogEnabled: Boolean,
     val isShowCrashlyticsDialog: Boolean,

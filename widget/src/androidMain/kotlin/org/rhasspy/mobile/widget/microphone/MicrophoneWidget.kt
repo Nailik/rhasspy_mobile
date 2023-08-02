@@ -1,8 +1,6 @@
 package org.rhasspy.mobile.widget.microphone
 
 import android.content.Context
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.glance.*
 import androidx.glance.action.clickable
@@ -12,6 +10,10 @@ import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.appwidget.provideContent
 import androidx.glance.layout.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
@@ -23,9 +25,26 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
 
     val viewModel = get<MicrophoneFabViewModel>()
 
+    private var updateJob: Job? = null
+
+    private fun initUpdateJob() {
+        if (updateJob != null) return
+
+        updateJob = CoroutineScope(Dispatchers.IO).launch {
+            viewModel.viewState.collect {
+                //necessary to keep widget up to date
+                MicrophoneWidgetUtils.updateWidget()
+            }
+        }
+    }
+
+    @Suppress("StateFlowValueCalledInComposition") //suppress because it doesn't work in glance
     override suspend fun provideGlance(context: Context, id: GlanceId) {
+        initUpdateJob()
+
         provideContent {
-            val viewState by viewModel.viewState.collectAsState()
+            //collect as state is not working
+            val viewState = viewModel.viewState.value
 
             //used to mimic border, drawable necessary for rounded corner on older devices
             Box(
@@ -66,7 +85,7 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
                             .size(48.dp),
                         provider = ImageProvider(
                             getMicrophoneFabIconLegacy(
-                                isMicOn = viewState.isShowMicOn,
+                                isMicOn = viewState.isMicrophonePermissionAllowed,
                                 isActionEnabled = viewState.isUserActionEnabled,
                                 isRecording = viewState.isRecording
                             )

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
     <string name="appName">Rhasspy Mobile</string>
+    <string name="wiki">Wiki</string>
     <string name="home">Home</string>
     <string name="configuration">Configuration</string>
     <string name="settings">Settings</string>
@@ -36,10 +37,8 @@
     <string name="remoteURL">Remote URL</string>
     <string name="checkConnection">Check Connection</string>
     <string name="localPorcupine">Porcupine (local)</string>
-    <string name="porcupineAudioRecorderSettings">Audio Recorder Settings</string>
-    <string name="porcupineAudioRecorderSettingsInformation">Audio will be converted to Porcupine
-        compatible format. Requires PCM 16 Bit.
-    </string>
+    <string name="audioRecorderFormat">Audio Recorder Format</string>
+    <string name="audioOutputFormat">Audio Output Format</string>
     <string name="local">Local</string>
     <string name="remote">Remote</string>
     <string name="disabled">Disabled</string>
@@ -57,6 +56,10 @@
     <string name="homeAssistantEvents">Send *events* to Home Assistant\n(/api/events)</string>
     <string name="homeAssistantIntents">Send *intents* to Home Assistant\n(/api/intent/handle)
     </string>
+    <string name="speechToTextAudioRecorderFormat">SpeechToText Audio Recorder Format</string>
+    <string name="speechToTextAudioOutputFormat">SpeechToText Audio Output Format</string>
+    <string name="wakeWordAudioRecorderFormat">Wake Word Audio Recorder Format</string>
+    <string name="wakeWordAudioOutputFormat">Wake Word Audio Output Format</string>
     <string name="refresh">Refresh</string>
     <string name="de">Deutsch</string>
     <string name="en">English</string>
@@ -174,6 +177,7 @@
     <string name="arabic">Arabic</string>
     <string name="german">German</string>
     <string name="spanish">Spanish</string>
+    <string name="farsi">Farsi</string>
     <string name="french">French</string>
     <string name="hindi">Hindi</string>
     <string name="italian">Italian</string>
@@ -202,6 +206,7 @@
     <string name="mqttConnectionError">Error during connection:</string>
     <string name="mqttConnectionLostError">Lost connection error:</string>
     <string name="close">Close</string>
+    <string name="closeAppInformation">press back to close</string>
     <string name="backup">Backup Settings and Configuration</string>
     <string name="unsavedChanges">Unsaved changes</string>
     <string name="unsavedChangesInformation">Do you want to save the changes?</string>
@@ -431,6 +436,10 @@
     <string name="leopardo_es">Leopardo</string>
     <string name="manzana_es">Manzana</string>
     <string name="murcielago_es">Murciélago</string>
+    <!-- fa wake words -->
+    <string name="hedgehog_fa">جوجه تیغی</string>
+    <string name="bye_fa">خداحافظ</string>
+    <string name="good_morning_fa">صبح بخیر</string>
     <!-- fr wake words -->
     <string name="framboise_fr">Framboise</string>
     <string name="mon_chouchou_fr">Mon Chouchou</string>

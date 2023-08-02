@@ -9,6 +9,7 @@ import org.rhasspy.mobile.data.resource.StableStringResource.StableStringResourc
 val StringResource.stable get() = StableStringResourceSingle(this)
 val ResourceFormattedStringDesc.stable get() = StableResourceFormattedStringDesc(this)
 
+@Stable
 sealed interface StableStringResource {
 
     @Stable

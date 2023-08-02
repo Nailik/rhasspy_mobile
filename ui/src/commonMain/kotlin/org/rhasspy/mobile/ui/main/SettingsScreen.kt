@@ -1,24 +1,18 @@
-package androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.main
+package org.rhasspy.mobile.ui.main
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.HelpCenter
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings.*
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
@@ -27,17 +21,15 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.elements.CustomDivider
-import org.rhasspy.mobile.ui.content.elements.Text
-import org.rhasspy.mobile.ui.content.elements.toText
-import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.SettingsScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.SettingsScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.*
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent.Action.OpenWikiLink
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewState
 
@@ -47,33 +39,12 @@ fun SettingsScreen() {
     val viewModel: SettingsScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
     Screen(screenViewModel = viewModel) {
-        val screen by viewModel.screen.collectAsState()
+        val viewState by viewModel.viewState.collectAsState()
 
-        AnimatedContent(targetState = screen) { targetState ->
-            when (targetState) {
-                OverviewScreen            -> {
-                    val viewState by viewModel.viewState.collectAsState()
-
-                    SettingsScreenContent(
-                        viewState = viewState,
-                        onEvent = viewModel::onEvent
-                    )
-                }
-
-                AboutSettings             -> AboutScreen()
-                AudioFocusSettings        -> AudioFocusSettingsContent()
-                AudioRecorderSettings     -> AudioRecorderSettingsContent()
-                SilenceDetectionSettings  -> SilenceDetectionSettingsContent()
-                BackgroundServiceSettings -> BackgroundServiceSettingsContent()
-                DeviceSettings            -> DeviceSettingsContent()
-                IndicationSettings        -> IndicationSettingsContent()
-                LanguageSettingsScreen    -> LanguageSettingsScreenItemContent()
-                LogSettings               -> LogSettingsContent()
-                MicrophoneOverlaySettings -> MicrophoneOverlaySettingsContent()
-                SaveAndRestoreSettings    -> SaveAndRestoreSettingsContent()
-            }
-        }
-
+        SettingsScreenContent(
+            viewState = viewState,
+            onEvent = viewModel::onEvent
+        )
     }
 
 }
@@ -92,7 +63,17 @@ fun SettingsScreenContent(
             .fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(MR.strings.settings.stable) }
+                title = { Text(MR.strings.settings.stable) },
+                actions = {
+                    IconButton(
+                        onClick = { onEvent(OpenWikiLink) },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.HelpCenter,
+                            contentDescription = MR.strings.wiki.stable,
+                        )
+                    }
+                }
             )
         },
     ) { paddingValues ->
@@ -145,16 +126,6 @@ fun SettingsScreenContent(
             item {
                 AudioFocus(
                     viewState.audioFocusOption,
-                    onEvent
-                )
-                CustomDivider()
-            }
-
-            item {
-                AudioRecorderSettings(
-                    audioRecorderChannelType = viewState.audioRecorderChannelType,
-                    audioRecorderEncodingType = viewState.audioRecorderEncodingType,
-                    audioRecorderSampleRateType = viewState.audioRecorderSampleRateType,
                     onEvent
                 )
                 CustomDivider()
@@ -286,28 +257,6 @@ private fun AudioFocus(
         text = MR.strings.audioFocus.stable,
         secondaryText = audioFocusOption.text,
         destination = AudioFocusSettings,
-        onEvent = onEvent
-    )
-
-}
-
-
-@Composable
-private fun AudioRecorderSettings(
-    audioRecorderChannelType: AudioRecorderChannelType,
-    audioRecorderEncodingType: AudioRecorderEncodingType,
-    audioRecorderSampleRateType: AudioRecorderSampleRateType,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
-) {
-
-    SettingsListItem(
-        text = MR.strings.audioRecorder.stable,
-        secondaryText = "${translate(audioRecorderChannelType.text)} | ${
-            translate(
-                audioRecorderEncodingType.text
-            )
-        } | ${translate(audioRecorderSampleRateType.text)}",
-        destination = AudioRecorderSettings,
         onEvent = onEvent
     )
 

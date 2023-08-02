@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic
 
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.logger.FileLogger
@@ -39,8 +40,6 @@ import org.rhasspy.mobile.logic.services.localaudio.LocalAudioServiceParamsCreat
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParamsCreator
-import org.rhasspy.mobile.logic.services.recording.IRecordingService
-import org.rhasspy.mobile.logic.services.recording.RecordingService
 import org.rhasspy.mobile.logic.services.settings.AppSettingsService
 import org.rhasspy.mobile.logic.services.settings.IAppSettingsService
 import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
@@ -129,45 +128,50 @@ fun logicModule() = module {
     singleOf(::DialogManagerMqtt)
     singleOf(::DialogManagerDisabled)
 
-    factory { HomeAssistantServiceParamsCreator() }
+    factoryOf(::HomeAssistantServiceParamsCreator)
     single<IHomeAssistantService> { HomeAssistantService(paramsCreator = get()) }
 
-    factory { HttpClientServiceParamsCreator() }
+    factoryOf(::HttpClientServiceParamsCreator)
     single<IHttpClientService> { HttpClientService(paramsCreator = get()) }
 
-    single<IIndicationService> { IndicationService() }
+    single<IIndicationService> {
+        IndicationService()
+    }
 
-    factory { IntentHandlingServiceParamsCreator() }
+    factoryOf(::IntentHandlingServiceParamsCreator)
     single<IIntentHandlingService> { IntentHandlingService(paramsCreator = get()) }
 
-    factory { IntentRecognitionServiceParamsCreator() }
+    factoryOf(::IntentRecognitionServiceParamsCreator)
     single<IIntentRecognitionService> { IntentRecognitionService(paramsCreator = get()) }
 
-    factory { LocalAudioServiceParamsCreator() }
+    factoryOf(::LocalAudioServiceParamsCreator)
     single<ILocalAudioService> { LocalAudioService(paramsCreator = get()) }
 
-    single<IRecordingService> {
-        RecordingService(
-            dispatcherProvider = get(),
+    single<IAppSettingsService> { AppSettingsService() }
+
+    factoryOf(::MqttServiceParamsCreator)
+    single<IMqttService> { MqttService(paramsCreator = get()) }
+
+    factoryOf(::SpeechToTextServiceParamsCreator)
+    single<ISpeechToTextService> {
+        SpeechToTextService(
+            paramsCreator = get(),
             audioRecorder = get()
         )
     }
 
-    single<IAppSettingsService> { AppSettingsService() }
-
-    factory { MqttServiceParamsCreator() }
-    single<IMqttService> { MqttService(paramsCreator = get()) }
-
-    factory { SpeechToTextServiceParamsCreator() }
-    single<ISpeechToTextService> { SpeechToTextService(paramsCreator = get()) }
-
-    factory { TextToSpeechServiceParamsCreator() }
+    factoryOf(::TextToSpeechServiceParamsCreator)
     single<ITextToSpeechService> { TextToSpeechService(paramsCreator = get()) }
 
-    factory { WakeWordServiceParamsCreator() }
-    single<IWakeWordService> { WakeWordService(paramsCreator = get()) }
+    factoryOf(::WakeWordServiceParamsCreator)
+    single<IWakeWordService> {
+        WakeWordService(
+            paramsCreator = get(),
+            audioRecorder = get()
+        )
+    }
 
-    factory { WebServerServiceParamsCreator() }
+    factoryOf(::WebServerServiceParamsCreator)
     single<IWebServerService> { WebServerService(paramsCreator = get()) }
 
     factory { params -> UdpConnection(params[0], params[1]) }

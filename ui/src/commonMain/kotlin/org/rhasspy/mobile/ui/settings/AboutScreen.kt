@@ -1,4 +1,4 @@
-package androidx.compose.ui.tooling.preview.org.rhasspy.mobile.ui.settings
+package org.rhasspy.mobile.ui.settings
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -25,7 +25,7 @@ import org.rhasspy.mobile.resources.icons.RhasspyLogo
 import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.list.ListElement
-import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.AboutSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.AboutSettings
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.OpenSourceCode

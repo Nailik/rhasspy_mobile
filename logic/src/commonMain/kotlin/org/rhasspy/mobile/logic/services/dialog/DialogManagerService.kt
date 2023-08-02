@@ -9,7 +9,9 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.option.DialogManagementOption.*
+import org.rhasspy.mobile.data.service.ServiceState.Disabled
+import org.rhasspy.mobile.data.service.ServiceState.Success
+import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source
@@ -64,10 +66,32 @@ internal class DialogManagerService(
     private val _currentDialogState = MutableStateFlow<DialogManagerState>(IdleState)
     override val currentDialogState = _currentDialogState.readOnly
 
+    private val scope = CoroutineScope(dispatcherProvider.IO)
+
     init {
-        _serviceState.value = ServiceState.Success
-        CoroutineScope(dispatcherProvider.IO).launch {
-            transitionTo(IdleState)
+        _serviceState.value = Success
+
+        scope.launch {
+            ConfigurationSetting.dialogManagementOption.data.collect {
+                updateOptionAndInitServiceState(it)
+            }
+        }
+    }
+
+    private fun updateOptionAndInitServiceState(dialogManagementOption: DialogManagementOption) {
+        dialogHistory.value = persistentListOf()
+        _serviceState.value = when (dialogManagementOption) {
+            DialogManagementOption.Local      -> {
+                dialogManagerLocal.onInit()
+                Success
+            }
+
+            DialogManagementOption.RemoteMQTT -> {
+                dialogManagerMqtt.onInit()
+                Success
+            }
+
+            DialogManagementOption.Disabled   -> Disabled
         }
     }
 
@@ -92,9 +116,9 @@ internal class DialogManagerService(
 
     override suspend fun onAction(action: DialogServiceMiddlewareAction) {
         when (ConfigurationSetting.dialogManagementOption.value) {
-            Local      -> dialogManagerLocal.onAction(action)
-            RemoteMQTT -> dialogManagerMqtt.onAction(action)
-            Disabled   -> dialogManagerDisabled.onAction(action)
+            DialogManagementOption.Local      -> dialogManagerLocal.onAction(action)
+            DialogManagementOption.RemoteMQTT -> dialogManagerMqtt.onAction(action)
+            DialogManagementOption.Disabled   -> dialogManagerDisabled.onAction(action)
         }
     }
 

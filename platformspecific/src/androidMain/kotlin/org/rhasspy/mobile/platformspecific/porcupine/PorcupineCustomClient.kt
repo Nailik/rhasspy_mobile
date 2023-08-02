@@ -2,28 +2,24 @@ package org.rhasspy.mobile.platformspecific.porcupine
 
 import ai.picovoice.porcupine.Porcupine
 import co.touchlab.kermit.Logger
-import io.github.nailik.androidresampler.Resampler
-import io.github.nailik.androidresampler.ResamplerConfiguration
-import io.github.nailik.androidresampler.data.ResamplerChannel
-import io.github.nailik.androidresampler.data.ResamplerQuality
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
+import org.rhasspy.mobile.platformspecific.resampler.Resampler
 import java.nio.ByteBuffer
 import java.nio.ByteOrder.LITTLE_ENDIAN
 
 class PorcupineCustomClient(
-    private val audioRecorderSampleRateType: AudioRecorderSampleRateType,
-    private val audioRecorderChannelType: AudioRecorderChannelType,
-    private val audioRecorderEncodingType: AudioRecorderEncodingType,
+    private val audioRecorderSampleRateType: AudioFormatSampleRateType,
+    private val audioRecorderChannelType: AudioFormatChannelType,
     override val wakeWordPorcupineAccessToken: String,
     override val wakeWordPorcupineKeywordDefaultOptions: ImmutableList<PorcupineDefaultKeyword>,
     override val wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
@@ -47,24 +43,15 @@ class PorcupineCustomClient(
     private var collection: Job? = null
     private var isStarted = false
 
-    private fun AudioRecorderChannelType.toResamplerChannel(): ResamplerChannel {
-        return when (this) {
-            AudioRecorderChannelType.Default -> ResamplerChannel.MONO
-            AudioRecorderChannelType.Mono    -> ResamplerChannel.MONO
-            AudioRecorderChannelType.Stereo  -> ResamplerChannel.STEREO
-        }
-    }
 
     private var resampler = Resampler(
-        ResamplerConfiguration(
-            quality = ResamplerQuality.BEST,
-            inputChannel = audioRecorderChannelType.toResamplerChannel(),
-            inputSampleRate = audioRecorderSampleRateType.value,
-            outputChannel = ResamplerChannel.MONO,
-            outputSampleRate = porcupine.sampleRate
-        )
+        inputSampleRateType = audioRecorderSampleRateType,
+        inputChannelType = audioRecorderChannelType,
+        inputEncodingType = AudioFormatEncodingType.PCM16Bit,
+        outputSampleRateType = AudioFormatSampleRateType.findValue(porcupine.sampleRate),
+        outputChannelType = AudioFormatChannelType.Mono,
+        outputEncodingType = AudioFormatEncodingType.PCM16Bit,
     )
-
 
     override fun start() {
         if (isStarted) return
@@ -106,23 +93,6 @@ class PorcupineCustomClient(
 
                             oldData = currentRecording
 
-                        } catch (e: IllegalArgumentException) {
-                            //restart
-                            logger.d("audioRecorder collection", e)
-
-                            oldData = ShortArray(0)
-                            resampler.dispose()
-                            resampler = Resampler(
-                                ResamplerConfiguration(
-                                    quality = ResamplerQuality.BEST,
-                                    inputChannel = audioRecorderChannelType.toResamplerChannel(),
-                                    inputSampleRate = audioRecorderSampleRateType.value,
-                                    outputChannel = ResamplerChannel.MONO,
-                                    outputSampleRate = porcupine.sampleRate
-                                )
-                            )
-
-                            start()
                         } catch (e: Exception) {
                             //restart
                             logger.d("audioRecorder collection", e)
@@ -138,7 +108,7 @@ class PorcupineCustomClient(
 
         audioRecorder.startRecording(
             audioRecorderChannelType = audioRecorderChannelType,
-            audioRecorderEncodingType = audioRecorderEncodingType,
+            audioRecorderEncodingType = AudioFormatEncodingType.PCM16Bit,
             audioRecorderSampleRateType = audioRecorderSampleRateType
         )
     }

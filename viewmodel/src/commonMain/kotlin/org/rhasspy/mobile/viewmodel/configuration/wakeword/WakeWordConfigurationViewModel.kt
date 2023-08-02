@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.get
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.service.option.WakeWordOption
@@ -23,19 +24,15 @@ import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.AudioOutputFormatUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.AudioRecorderFormatUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.CustomKeywordScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.DefaultKeywordScreen
-import org.rhasspy.mobile.viewmodel.navigation.topScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.*
 
 @Stable
 class WakeWordConfigurationViewModel(
@@ -51,9 +48,10 @@ class WakeWordConfigurationViewModel(
     private val _viewState = MutableStateFlow(
         WakeWordConfigurationViewState(
             editData = initialData,
-            screen = navigator.topScreen(EditScreen).value,
-            porcupineWakeWordScreen = navigator.topScreen(DefaultKeywordScreen).value,
+            porcupineWakeWordScreen = 0,
             isMicrophonePermissionRequestVisible = !microphonePermission.granted.value && (initialData.wakeWordOption == WakeWordOption.Porcupine || initialData.wakeWordOption == WakeWordOption.Udp),
+            isRecorderEncodingChangeEnabled = initialData.wakeWordOption != WakeWordOption.Porcupine, //TODO #408
+            isOutputEncodingChangeEnabled = false //TODO #408
         )
     )
     val viewState = _viewState.readOnly
@@ -71,45 +69,81 @@ class WakeWordConfigurationViewModel(
     init {
         viewModelScope.launch(dispatcher.IO) {
             combineStateFlow(
-                navigator.topScreen(EditScreen),
-                navigator.topScreen(DefaultKeywordScreen),
-                microphonePermission.granted
-            ).collect { data ->
-                val screen: WakeWordConfigurationScreenDestination =
-                    data[0] as WakeWordConfigurationScreenDestination
-                val porcupineWakeWordScreen: PorcupineKeywordConfigurationScreenDestination =
-                    data[1] as PorcupineKeywordConfigurationScreenDestination
-                val isMicrophonePermissionGranted = data[2] as Boolean
-
+                microphonePermission.granted,
+                viewState
+            ).collect {
                 _viewState.update {
                     it.copy(
-                        screen = screen,
-                        porcupineWakeWordScreen = porcupineWakeWordScreen,
-                        isMicrophonePermissionRequestVisible = !isMicrophonePermissionGranted && (it.editData.wakeWordOption == WakeWordOption.Porcupine || it.editData.wakeWordOption == WakeWordOption.Udp)
+                        isMicrophonePermissionRequestVisible = !microphonePermission.granted.value
+                                && (it.editData.wakeWordOption == WakeWordOption.Porcupine || it.editData.wakeWordOption == WakeWordOption.Udp),
                     )
                 }
             }
-
-
         }
     }
 
     fun onEvent(event: WakeWordConfigurationUiEvent) {
         when (event) {
-            is Change           -> onChange(event)
-            is Action           -> onAction(event)
-            is PorcupineUiEvent -> onPorcupineAction(event)
-            is UdpUiEvent       -> onUdpAction(event)
+            is Change                     -> onChange(event)
+            is Action                     -> onAction(event)
+            is PorcupineUiEvent           -> onPorcupineAction(event)
+            is UdpUiEvent                 -> onUdpAction(event)
+            is AudioOutputFormatUiEvent   -> onAudioOutputFormatEvent(event)
+            is AudioRecorderFormatUiEvent -> onAudioRecorderFormatEvent(event)
+        }
+    }
+
+    private fun onAudioRecorderFormatEvent(event: AudioRecorderFormatUiEvent) {
+        _viewState.update {
+            it.copy(editData = with(it.editData) {
+                copy(
+                    wakeWordAudioRecorderData =
+                    when (event) {
+                        is SelectAudioRecorderChannelType    -> wakeWordAudioRecorderData.copy(audioRecorderChannelType = event.value)
+                        is SelectAudioRecorderEncodingType   -> wakeWordAudioRecorderData.copy(audioRecorderEncodingType = event.value)
+                        is SelectAudioRecorderSampleRateType -> wakeWordAudioRecorderData.copy(audioRecorderSampleRateType = event.value)
+                    },
+                    //TODO #408
+                    wakeWordAudioOutputData = when (event) {
+                        is SelectAudioRecorderEncodingType -> wakeWordAudioOutputData.copy(audioOutputEncodingType = event.value)
+                        else                               -> wakeWordAudioOutputData
+                    }
+                )
+            })
+        }
+    }
+
+    private fun onAudioOutputFormatEvent(event: AudioOutputFormatUiEvent) {
+        _viewState.update {
+            it.copy(editData = with(it.editData) {
+                copy(wakeWordAudioOutputData = wakeWordAudioOutputData.let { data ->
+                    when (event) {
+                        is SelectAudioOutputChannelType    -> data.copy(audioOutputChannelType = event.value)
+                        is SelectAudioOutputEncodingType   -> data.copy(audioOutputEncodingType = event.value)
+                        is SelectAudioOutputSampleRateType -> data.copy(audioOutputSampleRateType = event.value)
+                    }
+                })
+            })
         }
     }
 
     private fun onChange(change: Change) {
         _viewState.update {
-            it.copy(editData = with(it.editData) {
-                when (change) {
-                    is SelectWakeWordOption -> copy(wakeWordOption = change.option)
+            when (change) {
+                is SelectWakeWordOption -> {
+                    it.copy(
+                        isRecorderEncodingChangeEnabled = change.option != WakeWordOption.Porcupine,
+                        editData = with(it.editData) {
+                            copy(
+                                wakeWordOption = change.option,
+                                wakeWordAudioRecorderData = wakeWordAudioRecorderData.copy( //TODO #408
+                                    audioRecorderEncodingType = if (change.option == WakeWordOption.Porcupine) AudioFormatEncodingType.porcupine else wakeWordAudioRecorderData.audioRecorderEncodingType
+                                )
+                            )
+                        }
+                    )
                 }
-            })
+            }
         }
     }
 
@@ -117,9 +151,9 @@ class WakeWordConfigurationViewModel(
         when (action) {
             RequestMicrophonePermission -> requireMicrophonePermission {}
             BackClick                   -> navigator.onBackPressed()
-            is Navigate                 -> {
-                navigator.navigate(action.destination)
-            }
+            is Navigate                 -> navigator.navigate(action.destination)
+            OpenAudioOutputFormat       -> navigator.navigate(AudioOutputFormatScreen)
+            OpenAudioRecorderFormat     -> navigator.navigate(AudioRecorderFormatScreen)
         }
     }
 
@@ -136,7 +170,6 @@ class WakeWordConfigurationViewModel(
                 copy(wakeWordPorcupineConfigurationData = with(wakeWordPorcupineConfigurationData) {
                     when (change) {
                         is UpdateWakeWordPorcupineAccessToken               -> copy(accessToken = change.value)
-                        is SetPorcupineAudioRecorderSettings                -> copy(isUseAudioRecorderSettings = change.enabled)
                         is ClickPorcupineKeywordCustom                      -> copy(customOptions = customOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
                         is ClickPorcupineKeywordDefault                     -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
                         is DeletePorcupineKeywordCustom                     -> copy(deletedCustomOptions = deletedCustomOptions.updateList { add(change.item) })
@@ -168,7 +201,7 @@ class WakeWordConfigurationViewModel(
             OpenPicoVoiceConsole              -> openLink(LinkType.PicoVoiceConsole)
             PorcupineUiEvent.Action.BackClick -> navigator.onBackPressed()
             PorcupineLanguageClick            -> navigator.navigate(EditPorcupineLanguageScreen)
-            is PageClick                      -> navigator.replace(PorcupineKeywordConfigurationScreenDestination::class, action.screen)
+            is PageClick                      -> _viewState.update { it.copy(porcupineWakeWordScreen = action.screen) }
         }
     }
 
@@ -208,7 +241,6 @@ class WakeWordConfigurationViewModel(
             ConfigurationSetting.wakeWordOption.value = wakeWordOption
 
             with(wakeWordPorcupineConfigurationData) {
-                ConfigurationSetting.wakeWordPorcupineAudioRecorderSettings.value = isUseAudioRecorderSettings
                 ConfigurationSetting.wakeWordPorcupineAccessToken.value = accessToken
                 ConfigurationSetting.wakeWordPorcupineLanguage.value = porcupineLanguage
                 ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value = defaultOptions
@@ -218,6 +250,18 @@ class WakeWordConfigurationViewModel(
             with(wakeWordUdpConfigurationData) {
                 ConfigurationSetting.wakeWordUdpOutputHost.value = outputHost
                 ConfigurationSetting.wakeWordUdpOutputPort.value = outputPort.toIntOrZero()
+            }
+
+            with(wakeWordAudioRecorderData) {
+                ConfigurationSetting.wakeWordAudioRecorderChannel.value = audioRecorderChannelType
+                ConfigurationSetting.wakeWordAudioRecorderEncoding.value = audioRecorderEncodingType
+                ConfigurationSetting.wakeWordAudioRecorderSampleRate.value = audioRecorderSampleRateType
+            }
+
+            with(wakeWordAudioOutputData) {
+                ConfigurationSetting.wakeWordAudioOutputChannel.value = audioOutputChannelType
+                ConfigurationSetting.wakeWordAudioOutputEncoding.value = audioOutputEncodingType
+                ConfigurationSetting.wakeWordAudioOutputSampleRate.value = audioOutputSampleRateType
             }
         }
 
@@ -236,28 +280,6 @@ class WakeWordConfigurationViewModel(
         newFiles.clear()
         filesToDelete.clear()
         _viewState.update { it.copy(editData = WakeWordConfigurationData()) }
-    }
-
-    override fun onBackPressed(): Boolean {
-        return if (viewState.value.screen == EditScreen) {
-            super.onBackPressed()
-        } else if (viewState.value.porcupineWakeWordScreen == DefaultKeywordScreen) {
-            //pop backstack to remove DefaultKeywordScreen
-            navigator.popBackStack()
-            //was handled
-            true
-        } else if (viewState.value.porcupineWakeWordScreen == CustomKeywordScreen) {
-            //navigate to DefaultKeywordScreen
-            navigator.replace(
-                PorcupineKeywordConfigurationScreenDestination::class,
-                DefaultKeywordScreen
-            )
-            //was handled
-            true
-        } else {
-            //close porcupine language or keyword screen
-            false
-        }
     }
 
 }

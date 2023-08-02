@@ -2,8 +2,6 @@ package org.rhasspy.mobile.viewmodel.settings.indication
 
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination.OverviewScreen
-import org.rhasspy.mobile.viewmodel.navigation.topScreen
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.BackClick
@@ -17,8 +15,6 @@ class IndicationSettingsViewModel(
 ) : ScreenViewModel() {
 
     val viewState = viewStateCreator()
-
-    val screen = navigator.topScreen(OverviewScreen)
 
     fun onEvent(event: IndicationSettingsUiEvent) {
         when (event) {

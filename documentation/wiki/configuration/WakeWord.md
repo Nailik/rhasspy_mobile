@@ -18,14 +18,14 @@ Internet access is once required to verify the AccessKey.
 
 ### Settings
 
-| Setting                 | Information                                                                                                                                             | 
-|-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| AccessKey               | required to initialize PicoVoice                                                                                                                        | 
-| Language                | needs to match the Keyword Language                                                                                                                     | 
-| WakeWord                | Multiple WakeWords with different sensitivities are possible                                                                                            | 
-| WakeWord (Default)      | Predefined WakeWords on the selected language                                                                                                           | 
-| WakeWord (Custom)       | Custom generated WakeWords,<br/>activate only the ones with the correct language!                                                                       | 
-| Audio Recorder Settings | When enabled uses [[Audio Recorder]]<br/>converts SampleRate and Channel to Porcupine Format<br/>cannot convert Encoding, should be set to `PCM 16 Bit` | 
+| Setting               | Information                                                                                | 
+|-----------------------|--------------------------------------------------------------------------------------------|
+| AccessKey             | required to initialize PicoVoice                                                           | 
+| Language              | needs to match the Keyword Language                                                        | 
+| WakeWord              | Multiple WakeWords with different sensitivities are possible                               | 
+| WakeWord (Default)    | Predefined WakeWords on the selected language                                              | 
+| WakeWord (Custom)     | Custom generated WakeWords,<br/>activate only the ones with the correct language!          | 
+| Audio Recorder Format | Will be used to record audio and then converted into Format for Porcupine (Mono, 16000 Hz) |
 
 ### Setup
 
@@ -55,6 +55,14 @@ official [Rhasspy Docs](https://rhasspy.readthedocs.io/en/latest/wake-word/#:~:t
 ## UDP-Audio (Output)
 
 In this configuration the audio is send in small packets to a Udp Port on a specific IP.
+
+| Setting               | Information                                                              | 
+|-----------------------|--------------------------------------------------------------------------|
+| Host                  | Address to send audio to                                                 | 
+| Port                  | Port to be used                                                          | 
+| WakeWord              | Multiple WakeWords with different sensitivities are possible             | 
+| Audio Recorder Format | Will be used to record audio and then converted into Audio Output Format |
+| Audio Output Format   | Format of Data that is send via Udp                                      |
 
 1. Insert the Rhasspy IP or DNS name (without http:// because it's UDP) and the Port
 2. Setup your Rhasspy base to read the incoming data, this depends on what your base is running on:

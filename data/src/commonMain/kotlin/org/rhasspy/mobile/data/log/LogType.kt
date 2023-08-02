@@ -10,7 +10,6 @@ enum class LogType {
     IndicationService,
     LocalAudioService,
     MqttService,
-    RecordingService,
     AudioPlayingService,
     IntentHandlingService,
     IntentRecognitionService,

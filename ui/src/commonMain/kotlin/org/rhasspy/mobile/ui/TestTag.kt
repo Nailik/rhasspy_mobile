@@ -67,7 +67,6 @@ enum class TestTag {
     PorcupineAccessToken,
     PorcupineOpenConsole,
     PorcupineKeyword,
-    PorcupineCustomAudio,
     PorcupineLanguage,
     PorcupineKeywordScreen,
     PorcupineLanguageScreen,
@@ -108,6 +107,10 @@ enum class TestTag {
     AudioRecorderEncodingType,
     AudioRecorderChannelType,
     AudioRecorderSampleRateType,
+
+    AudioOutputEncodingType,
+    AudioOutputChannelType,
+    AudioOutputSampleRateType,
 
     Volume,
     MqttApi,
