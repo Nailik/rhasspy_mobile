@@ -29,13 +29,13 @@ sealed interface ExternalResultRequestIntention<R> {
         val mimeTypes: List<String>
     ) : ExternalResultRequestIntention<String>
 
-    object OpenBatteryOptimizationSettings : ExternalResultRequestIntention<Unit>
+    data object OpenBatteryOptimizationSettings : ExternalResultRequestIntention<Unit>
 
-    object RequestMicrophonePermissionExternally : ExternalResultRequestIntention<Unit>
+    data object RequestMicrophonePermissionExternally : ExternalResultRequestIntention<Unit>
 
-    object OpenOverlaySettings : ExternalResultRequestIntention<Unit>
+    data object OpenOverlaySettings : ExternalResultRequestIntention<Unit>
 
-    object OpenAppSettings : ExternalResultRequestIntention<Unit>
+    data object OpenAppSettings : ExternalResultRequestIntention<Unit>
 
     data class OpenLink(
         val link: LinkType
