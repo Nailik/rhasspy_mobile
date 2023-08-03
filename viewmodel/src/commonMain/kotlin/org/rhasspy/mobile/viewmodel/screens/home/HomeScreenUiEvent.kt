@@ -4,8 +4,8 @@ sealed interface HomeScreenUiEvent {
 
     sealed interface Action : HomeScreenUiEvent {
 
-        object MicrophoneFabClick : Action
-        object TogglePlayRecording : Action
+        data object MicrophoneFabClick : Action
+        data object TogglePlayRecording : Action
 
     }
 

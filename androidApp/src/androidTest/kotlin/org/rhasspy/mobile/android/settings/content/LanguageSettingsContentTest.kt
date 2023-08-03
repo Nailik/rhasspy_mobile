@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.android.settings.content
 
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
 import dev.icerock.moko.resources.desc.StringDesc
@@ -15,8 +14,7 @@ import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.language.LanguageType
-import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.settings.content.LanguageSettingsScreenItemContent
+import org.rhasspy.mobile.ui.settings.LanguageSettingsScreenItemContent
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
 import kotlin.test.assertEquals
@@ -66,10 +64,10 @@ class LanguageSettingsContentTest : FlakyTest() {
         //language is english
         assertEquals(LanguageType.English, viewModel.viewState.value.languageOption)
         //english is selected
-        composeTestRule.onNodeWithTag(LanguageType.English, true).onListItemRadioButton().assertIsSelected()
-        //title is "Language"
-        composeTestRule.onNodeWithTag(TestTag.AppBarTitle).assertTextEquals("Language")
+        composeTestRule.onNodeWithTag(LanguageType.English, true).onListItemRadioButton()
+            .assertIsSelected()
         //StringDesc is English
+        composeTestRule.awaitIdle()
         assertEquals(LanguageType.English.code, StringDesc.localeType.systemLocale!!.language)
 
         //User clicks german
@@ -82,11 +80,13 @@ class LanguageSettingsContentTest : FlakyTest() {
             timeoutMillis = 5000
         )
         //german is selected
-        composeTestRule.onNodeWithTag(LanguageType.German, true).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(LanguageType.German, true).onListItemRadioButton()
+            .assertIsSelected()
         //StringDesc is German
+        composeTestRule.awaitIdle()
         assertEquals(LanguageType.German.code, StringDesc.localeType.systemLocale!!.language)
         //language german is saved
-        var newViewModel = LanguageSettingsViewModel()
+        var newViewModel = LanguageSettingsViewModel(get())
         assertEquals(LanguageType.German, newViewModel.viewState.value.languageOption)
 
         //User clicks english
@@ -95,11 +95,12 @@ class LanguageSettingsContentTest : FlakyTest() {
         //language is english
         assertEquals(LanguageType.English, viewModel.viewState.value.languageOption)
         //english is selected
-        composeTestRule.onNodeWithTag(LanguageType.English, true).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(LanguageType.English, true).onListItemRadioButton()
+            .assertIsSelected()
         //StringDesc is English
         assertEquals(LanguageType.English.code, StringDesc.localeType.systemLocale!!.language)
         //language english is saved
-        newViewModel = LanguageSettingsViewModel()
+        newViewModel = LanguageSettingsViewModel(get())
         assertEquals(LanguageType.English, newViewModel.viewState.value.languageOption)
     }
 

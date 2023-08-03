@@ -3,45 +3,46 @@ package org.rhasspy.mobile.platformspecific.permission
 import android.provider.Settings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
-import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
+import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 
-actual object OverlayPermission : KoinComponent {
+internal actual class OverlayPermission actual constructor(
+    private val nativeApplication: NativeApplication,
+    private val externalResultRequest: IExternalResultRequest
+) : IOverlayPermission {
 
-    private val context by inject<NativeApplication>()
     private val _granted = MutableStateFlow(isGranted())
 
     /**
      * to observe if microphone permission is granted
      */
-    actual val granted: StateFlow<Boolean> = _granted
+    actual override val granted: StateFlow<Boolean> = _granted
 
     /**
      * to request the permission externally, redirect user to settings
      */
-    actual fun requestPermission(): Boolean {
-        val result = ExternalResultRequest.launch(ExternalResultRequestIntention.OpenOverlaySettings)
+    actual override fun request(): Boolean {
+        val result =
+            externalResultRequest.launch(ExternalResultRequestIntention.OpenOverlaySettings)
 
         return if (result is ExternalRedirectResult.Success) {
             true
         } else {
-            return ExternalResultRequest.launch(ExternalResultRequestIntention.OpenAppSettings) is ExternalRedirectResult.Success
+            return externalResultRequest.launch(ExternalResultRequestIntention.OpenAppSettings) is ExternalRedirectResult.Success
         }
     }
 
     /**
      * check if the permission is currently granted
      */
-    actual fun isGranted(): Boolean = Settings.canDrawOverlays(context)
+    actual override fun isGranted(): Boolean = Settings.canDrawOverlays(nativeApplication)
 
     /**
      * read from system
      */
-    actual fun update() {
+    actual override fun update() {
         _granted.value = isGranted()
     }
 

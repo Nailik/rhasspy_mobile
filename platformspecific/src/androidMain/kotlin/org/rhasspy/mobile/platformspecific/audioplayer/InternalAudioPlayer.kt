@@ -22,8 +22,10 @@ class InternalAudioPlayer(
     audioSource: AudioSource,
     private val volume: StateFlow<Float>,
     private val audioOutputOption: AudioOutputOption,
-    private val onFinished: (exception: Exception?) -> Unit
+    private val onFinished: () -> Unit
 ) : KoinComponent {
+
+    private val nativeApplication = get<NativeApplication>()
 
     private var finishCalled = false
     private var coroutineScope = CoroutineScope(Dispatchers.IO)
@@ -39,10 +41,7 @@ class InternalAudioPlayer(
             mediaPlayer.release()
         } catch (exception: Exception) {
             logger.e(exception) { "stop exception" }
-            if (!finishCalled) {
-                finishCalled = true
-                onFinished(exception)
-            }
+            callOnFinish()
         }
     }
 
@@ -52,8 +51,8 @@ class InternalAudioPlayer(
 
     @Suppress("DEPRECATION")
     private val uri = when (audioSource) {
-        is AudioSource.Data -> getUriFromData(audioSource.data)
-        is AudioSource.File -> Uri.fromFile(audioSource.path.toFile())
+        is AudioSource.Data     -> getUriFromData(audioSource.data)
+        is AudioSource.File     -> Uri.fromFile(audioSource.path.toFile())
         is AudioSource.Resource -> getUriFromResource(audioSource.fileResource.rawResId)
     }
 
@@ -61,7 +60,7 @@ class InternalAudioPlayer(
         setAudioAttributes(
             AudioAttributes.Builder().apply {
                 when (audioOutputOption) {
-                    AudioOutputOption.Sound -> {
+                    AudioOutputOption.Sound        -> {
                         this.setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                         this.setUsage(AudioAttributes.USAGE_MEDIA)
                     }
@@ -93,50 +92,56 @@ class InternalAudioPlayer(
             mediaPlayer.setVolume(volume.value, volume.value)
             mediaPlayer.setOnCompletionListener { onMediaPlayerCompletion() }
             mediaPlayer.setOnErrorListener { _, _, _ -> onMediaPlayerError(); false }
-            mediaPlayer.setDataSource(get<NativeApplication>(), uri)
+            mediaPlayer.setDataSource(nativeApplication, uri)
             mediaPlayer.prepare()
             volumeChange.start()
             val duration = mediaPlayer.duration
             timeoutJob = coroutineScope.launch {
-                delay(duration.toLong() + 100)
-                onMediaPlayerCompletion()
+                try {
+                    delay(duration.toLong() + 100)
+                    onMediaPlayerCompletion()
+                } catch (_: Exception) {
+                    callOnFinish()
+                }
             }
             mediaPlayer.start()
         } catch (exception: Exception) {
             logger.e(exception) { "start exception" }
-            onFinished(exception)
+            callOnFinish()
         }
     }
 
     private fun onMediaPlayerCompletion() {
         logger.v { "onMediaPlayerCompletion" }
-        timeoutJob?.cancel()
-        volumeChange.cancel()
+        if (timeoutJob?.isActive == true) {
+            timeoutJob?.cancel()
+        }
+        if (volumeChange.isActive) {
+            volumeChange.cancel()
+        }
         timeoutJob = null
         mediaPlayer.stop()
         mediaPlayer.release()
-        if (!finishCalled) {
-            finishCalled = true
-            onFinished(null)
-        }
+        callOnFinish()
     }
 
     private fun onMediaPlayerError() {
         logger.v { "onMediaPlayerError" }
-        timeoutJob?.cancel()
-        volumeChange.cancel()
+        if (timeoutJob?.isActive == true) {
+            timeoutJob?.cancel()
+        }
+        if (volumeChange.isActive) {
+            volumeChange.cancel()
+        }
         timeoutJob = null
         mediaPlayer.stop()
         mediaPlayer.release()
-        if (!finishCalled) {
-            finishCalled = true
-            onFinished(RuntimeException())
-        }
+        callOnFinish()
     }
 
     @Throws(Resources.NotFoundException::class)
     private fun getUriFromResource(@AnyRes resId: Int): Uri {
-        val res: Resources = get<NativeApplication>().resources
+        val res: Resources = nativeApplication.resources
         return Uri.parse(
             ContentResolver.SCHEME_ANDROID_RESOURCE +
                     "://" + res.getResourcePackageName(resId)
@@ -146,12 +151,19 @@ class InternalAudioPlayer(
     }
 
     private fun getUriFromData(data: ByteArray): Uri {
-        val soundFile = File(get<NativeApplication>().cacheDir, "/playData.wav")
+        val soundFile = File(nativeApplication.cacheDir, "/playData.wav")
         if (!soundFile.exists()) {
             soundFile.createNewFile()
         }
         soundFile.writeBytes(data)
         return Uri.fromFile(soundFile)
+    }
+
+    private fun callOnFinish() {
+        if (!finishCalled) {
+            finishCalled = true
+            onFinished()
+        }
     }
 
 }

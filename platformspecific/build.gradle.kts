@@ -52,9 +52,17 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Picovoice.porcupineAndroid)
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
+                implementation(Firebase.analyticsKtx)
+                implementation(Firebase.crashlyticsKtx)
+                implementation(platform(Firebase.bom))
+                implementation(Nailik.androidResampler)
             }
         }
-        val androidUnitTest by getting
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(AndroidX.archCore.testing)
+            }
+        }
         val iosX64Main by getting {
             dependencies {
                 implementation(Square.Okio.iosx64)
@@ -95,7 +103,7 @@ android {
     namespace = "org.rhasspy.mobile.platformspecific"
     buildTypes {
         release {
-            buildConfigField("boolean", "IS_DEBUG", "true")
+            buildConfigField("boolean", "IS_DEBUG", "false")
         }
         debug {
             buildConfigField("boolean", "IS_DEBUG", "true")

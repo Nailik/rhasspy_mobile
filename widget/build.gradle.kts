@@ -10,7 +10,6 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":shared"))
                 implementation(project(":viewmodel"))
                 implementation(project(":resources"))
                 implementation(project(":platformspecific"))
@@ -19,9 +18,7 @@ kotlin {
             }
         }
         val commonTest by getting {
-            dependencies {
-                implementation(Kotlin.test)
-            }
+            dependencies {}
         }
         val androidMain by getting {
             dependencies {
@@ -53,5 +50,6 @@ kotlin {
 
 android {
     namespace = "org.rhasspy.mobile.widget"
+
     buildFeatures.compose = true
 }

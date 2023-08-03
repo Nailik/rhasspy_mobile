@@ -21,6 +21,7 @@ fun <E : IOption<*>> RadioButtonsEnumSelectionList(
     modifier: Modifier = Modifier,
     selected: E,
     onSelect: (item: E) -> Unit,
+    enabled: Boolean = true,
     combinedTestTag: TestTag? = null,
     values: ImmutableList<E>
 ) {
@@ -34,6 +35,7 @@ fun <E : IOption<*>> RadioButtonsEnumSelectionList(
                 },
                 text = item.text,
                 isChecked = selected == item,
+                enabled = enabled,
                 onClick = { onSelect(item) }
             )
         }
@@ -45,6 +47,7 @@ fun <E : IOption<*>> RadioButtonsEnumSelection(
     modifier: Modifier = Modifier,
     selected: E,
     onSelect: (item: E) -> Unit,
+    enabled: Boolean = true,
     values: ImmutableList<E>,
     content: (@Composable (item: E) -> Unit)? = null
 ) {
@@ -59,6 +62,7 @@ fun <E : IOption<*>> RadioButtonsEnumSelection(
                         modifier = Modifier.testTag(item),
                         text = item.text,
                         isChecked = selected == item,
+                        enabled = enabled,
                         onClick = { onSelect(item) }
                     )
                 }
@@ -69,8 +73,8 @@ fun <E : IOption<*>> RadioButtonsEnumSelection(
                         content = { nullSafeContent(item) }
                     )
                 }
-            }
 
+            }
         }
     }
 }
@@ -81,6 +85,7 @@ fun <E : IOption<*>> RadioButtonsEnumSelection(
     modifier: Modifier = Modifier,
     selected: E,
     onSelect: (item: E) -> Unit,
+    enabled: Boolean = true,
     values: PersistentList<E>,
     secondaryContentVisible: Boolean,
     content: (@Composable () -> Unit)? = null
@@ -95,6 +100,7 @@ fun <E : IOption<*>> RadioButtonsEnumSelection(
                     modifier = Modifier.testTag(item),
                     text = item.text,
                     isChecked = selected == item,
+                    enabled = enabled,
                     onClick = { onSelect(item) }
                 )
             }

@@ -19,8 +19,8 @@ import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewState
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewState
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.HomeScreen
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action.MicrophoneFabClick
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action.TogglePlayRecording
@@ -41,7 +41,7 @@ import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewState
 fun HomeScreen() {
     val viewModel: HomeScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(viewModel) {
+    Screen(screenViewModel = viewModel) {
         Scaffold(
             modifier = Modifier
                 .testTag(HomeScreen)

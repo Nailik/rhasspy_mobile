@@ -101,7 +101,7 @@ fun TextFieldListItem(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TextFieldListItem(
     modifier: Modifier = Modifier,
@@ -132,7 +132,10 @@ fun TextFieldListItem(
             enabled = enabled,
             textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onBackground),
             keyboardOptions = if (isLastItem) {
-                keyboardOptions.copy(imeAction = ImeAction.Done)
+                keyboardOptions.copy(
+                    imeAction = ImeAction.Done,
+                    autoCorrect = autoCorrect
+                )
             } else {
                 keyboardOptions.copy(
                     imeAction = ImeAction.Next,

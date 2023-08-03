@@ -15,7 +15,7 @@ import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.settings.content.DeviceSettingsContent
+import org.rhasspy.mobile.ui.settings.DeviceSettingsContent
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -58,6 +58,28 @@ class DeviceSettingsContentTest : FlakyTest() {
     fun testContent() = runTest {
         //Volume is visible
         composeTestRule.onNodeWithTag(TestTag.Volume).assertIsDisplayed()
+
+        //mqtt api enabled
+        composeTestRule.onNodeWithTag(TestTag.MqttApi).onListItemSwitch().assertIsOn()
+        assertTrue { DeviceSettingsViewModel(get()).viewState.value.isMqttApiDeviceChangeEnabled }
+        //user clicks hot word
+        composeTestRule.onNodeWithTag(TestTag.MqttApi).performClick()
+        composeTestRule.awaitIdle()
+        //hot word is disabled
+        composeTestRule.onNodeWithTag(TestTag.MqttApi).onListItemSwitch().assertIsOff()
+        //hot word disabled is saved
+        assertFalse { DeviceSettingsViewModel(get()).viewState.value.isMqttApiDeviceChangeEnabled }
+
+        //http api is enabled
+        composeTestRule.onNodeWithTag(TestTag.HttpApi).onListItemSwitch().assertIsOn()
+        assertTrue { DeviceSettingsViewModel(get()).viewState.value.isHttpApiDeviceChangeEnabled }
+        //user clicks hot word
+        composeTestRule.onNodeWithTag(TestTag.HttpApi).performClick()
+        composeTestRule.awaitIdle()
+        //hot word is disabled
+        composeTestRule.onNodeWithTag(TestTag.HttpApi).onListItemSwitch().assertIsOff()
+        //hot word disabled is saved
+        assertFalse { DeviceSettingsViewModel(get()).viewState.value.isHttpApiDeviceChangeEnabled }
 
         //hot word is enabled
         composeTestRule.onNodeWithTag(TestTag.HotWord).onListItemSwitch().assertIsOn()

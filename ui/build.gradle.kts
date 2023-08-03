@@ -1,8 +1,9 @@
 @file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("multiplatform")
-    kotlin("native.cocoapods")
     id("com.android.library")
     id("org.jetbrains.compose")
     id("base-gradle")
@@ -11,23 +12,12 @@ plugins {
 version = Version.toString()
 
 kotlin {
-
-    cocoapods {
-        summary = "Some description for the Shared Module"
-        homepage = "Link to the Shared Module homepage"
-        ios.deploymentTarget = "14.0"
-        podfile = project.file("../iosApp/Podfile")
-        framework {
-            baseName = "ui"
-            isStatic = true
-        }
-    }
-
     sourceSets {
         val commonMain by getting {
             dependencies {
                 implementation(project(":viewmodel"))
                 implementation(project(":data"))
+                implementation(project(":logic"))
                 implementation(project(":resources"))
                 implementation(project(":settings"))
                 implementation(project(":platformspecific"))
@@ -43,6 +33,7 @@ kotlin {
                 implementation(Jetbrains.Compose.runtime)
                 implementation(Jetbrains.Compose.materialIconsExtended)
                 implementation(Mikepenz.aboutLibrariesCore)
+                implementation(Jetbrains.Kotlinx.dateTime)
             }
         }
         val commonTest by getting {
@@ -54,6 +45,7 @@ kotlin {
             dependencies {
                 implementation(AndroidX.Activity.compose)
                 implementation(AndroidX.Compose.ui)
+                implementation(AndroidX.Compose.Ui.toolingPreview)
                 implementation(Google.accompanist.systemUiController)
                 implementation(AndroidX.core)
             }
@@ -78,9 +70,24 @@ kotlin {
             iosSimulatorArm64Test.dependsOn(this)
         }
     }
+
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
+    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi"
+    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi"
+    kotlinOptions.freeCompilerArgs += "-P=plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_metrics"
+    kotlinOptions.freeCompilerArgs += "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_metrics"
 }
 
 android {
     namespace = "org.rhasspy.mobile.ui"
-    buildFeatures.compose = true
+    buildFeatures {
+        compose = true
+    }
+}
+dependencies {
+    debugImplementation("androidx.compose.ui:ui-tooling:1.4.3")
 }

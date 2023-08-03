@@ -31,7 +31,7 @@ data class IIndicationSoundSettingsViewState internal constructor(
         isAudioPlaying = isAudioPlaying,
         audioOutputOption = audioOutputOption,
         isNoSoundInformationBoxVisible = when (audioOutputOption) {
-            AudioOutputOption.Sound -> deviceSoundVolume == 0
+            AudioOutputOption.Sound        -> deviceSoundVolume == 0
             AudioOutputOption.Notification -> deviceNotificationVolume == 0
         }
     )

@@ -2,6 +2,9 @@ package org.rhasspy.mobile.settings
 
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.data.settings.SettingsEnum
@@ -31,7 +34,7 @@ object ConfigurationSetting {
     val isHttpClientSSLVerificationDisabled = ISetting(SettingsEnum.SSLVerificationDisabled, true)
     val httpClientServerEndpointHost = ISetting(SettingsEnum.HttpClientServerEndpointHost, "")
     val httpClientServerEndpointPort = ISetting(SettingsEnum.HttpClientServerEndpointPort, 12101)
-    val httpClientTimeout = ISetting<Long?>(SettingsEnum.HttpClientTimeout, 30000L)
+    val httpClientTimeout = ISetting(SettingsEnum.HttpClientTimeout, 30000L)
 
     val isMqttEnabled = ISetting(SettingsEnum.MQTTEnabled, false)
     val mqttHost = ISetting(SettingsEnum.MQTTHost, "")
@@ -39,17 +42,22 @@ object ConfigurationSetting {
     val mqttUserName = ISetting(SettingsEnum.MQTTUserName, "")
     val mqttPassword = ISetting(SettingsEnum.MQTTPassword, "")
     val isMqttSSLEnabled = ISetting(SettingsEnum.MQTTSSLEnabled, false)
-    val mqttConnectionTimeout = ISetting(SettingsEnum.MQTTConnectionTimeout, 5)
-    val mqttKeepAliveInterval = ISetting(SettingsEnum.MQTTKeepAliveInterval, 30)
+    val mqttConnectionTimeout = ISetting(SettingsEnum.MQTTConnectionTimeout, 5L)
+    val mqttKeepAliveInterval = ISetting(SettingsEnum.MQTTKeepAliveInterval, 30L)
     val mqttRetryInterval = ISetting(SettingsEnum.MQTTRetryInterval, 10L)
-    val mqttKeyStoreFile = ISetting(
-        SettingsEnum.MQTTKeyStoreFile,
-        null,
-        OkioPathSerializer
-    )
+    val mqttKeyStoreFile = ISetting(SettingsEnum.MQTTKeyStoreFile, null, OkioPathSerializer)
 
 
     val wakeWordOption = ISetting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled)
+
+    val wakeWordAudioRecorderChannel = ISetting(SettingsEnum.WakeWordAudioRecorderChannel, AudioFormatChannelType.default)
+    val wakeWordAudioRecorderEncoding = ISetting(SettingsEnum.WakeWordAudioRecorderEncoding, AudioFormatEncodingType.default)
+    val wakeWordAudioRecorderSampleRate = ISetting(SettingsEnum.WakeWordAudioRecorderSampleRate, AudioFormatSampleRateType.default)
+
+    val wakeWordAudioOutputChannel = ISetting(SettingsEnum.WakeWordAudioOutputChannel, AudioFormatChannelType.default)
+    val wakeWordAudioOutputEncoding = ISetting(SettingsEnum.WakeWordAudioROutputEncoding, AudioFormatEncodingType.default)
+    val wakeWordAudioOutputSampleRate = ISetting(SettingsEnum.WakeWordAudioOutputSampleRate, AudioFormatSampleRateType.default)
+
     val wakeWordPorcupineAccessToken = ISetting(SettingsEnum.WakeWordPorcupineAccessToken, "")
     val wakeWordPorcupineKeywordDefaultOptions = ISetting(
         SettingsEnum.WakeWordPorcupineKeywordDefaultSelectedOptions,
@@ -85,6 +93,15 @@ object ConfigurationSetting {
     val audioPlayingMqttSiteId = ISetting(SettingsEnum.AudioPlayingMqttSiteId, "")
 
     val speechToTextOption = ISetting(SettingsEnum.SpeechToTextOption, SpeechToTextOption.Disabled)
+
+    val speechToTextAudioRecorderChannel = ISetting(SettingsEnum.SpeechToTextAudioRecorderChannel, AudioFormatChannelType.default)
+    val speechToTextAudioRecorderEncoding = ISetting(SettingsEnum.SpeechToTextAudioRecorderEncoding, AudioFormatEncodingType.default)
+    val speechToTextAudioRecorderSampleRate = ISetting(SettingsEnum.SpeechToTextAudioRecorderSampleRate, AudioFormatSampleRateType.default)
+
+    val speechToTextAudioOutputChannel = ISetting(SettingsEnum.SpeechToTextAudioOutputChannel, AudioFormatChannelType.default)
+    val speechToTextAudioOutputEncoding = ISetting(SettingsEnum.SpeechToTextAudioOutputEncoding, AudioFormatEncodingType.default)
+    val speechToTextAudioOutputSampleRate = ISetting(SettingsEnum.SpeechToTextAudioOutputSampleRate, AudioFormatSampleRateType.default)
+
     val isUseCustomSpeechToTextHttpEndpoint = ISetting(SettingsEnum.CustomSpeechToTextEndpoint, false)
     val isUseSpeechToTextMqttSilenceDetection = ISetting(SettingsEnum.SpeechToTextMqttSilenceDetection, true)
     val speechToTextHttpEndpoint = ISetting(SettingsEnum.SpeechToTextHttpEndpoint, "")
@@ -92,8 +109,8 @@ object ConfigurationSetting {
     val intentHandlingOption = ISetting(SettingsEnum.IntentHandlingOption, IntentHandlingOption.Disabled)
     val intentHandlingHttpEndpoint = ISetting(SettingsEnum.IntentHandlingEndpoint, "")
 
-    val intentHandlingHassEndpoint = ISetting(SettingsEnum.IntentHandlingHassUrl, "")
-    val intentHandlingHassAccessToken = ISetting(SettingsEnum.IntentHandlingHassAccessToken, "")
+    val intentHandlingHomeAssistantEndpoint = ISetting(SettingsEnum.IntentHandlingHassUrl, "")
+    val intentHandlingHomeAssistantAccessToken = ISetting(SettingsEnum.IntentHandlingHassAccessToken, "")
     val intentHandlingHomeAssistantOption = ISetting(SettingsEnum.IsIntentHandlingHassEvent, HomeAssistantIntentHandlingOption.Intent)
 
 }

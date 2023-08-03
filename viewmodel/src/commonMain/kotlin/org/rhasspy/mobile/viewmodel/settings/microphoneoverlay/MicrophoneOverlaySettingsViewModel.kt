@@ -1,11 +1,9 @@
 package org.rhasspy.mobile.viewmodel.settings.microphoneoverlay
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change
@@ -13,10 +11,11 @@ import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlay
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SetMicrophoneOverlayWhileAppEnabled
 
 @Stable
-class MicrophoneOverlaySettingsViewModel : KViewModel() {
+class MicrophoneOverlaySettingsViewModel(
+    viewStateCreator: MicrophoneOverlaySettingsViewStateCreator
+) : ScreenViewModel() {
 
-    private val _viewState = MutableStateFlow(MicrophoneOverlaySettingsViewState())
-    val viewState = _viewState.readOnly
+    val viewState = viewStateCreator()
 
     fun onEvent(event: MicrophoneOverlaySettingsUiEvent) {
         when (event) {
@@ -26,20 +25,18 @@ class MicrophoneOverlaySettingsViewModel : KViewModel() {
     }
 
     private fun onChange(change: Change) {
-        _viewState.update {
-            when (change) {
-                is SelectMicrophoneOverlaySizeOption -> {
-                    requireOverlayPermission(it) {
+        when (change) {
+            is SelectMicrophoneOverlaySizeOption   ->
+                if (change.option != MicrophoneOverlaySizeOption.Disabled) {
+                    requireOverlayPermission {
                         AppSetting.microphoneOverlaySizeOption.value = change.option
-                        it.copy(microphoneOverlaySizeOption = change.option)
                     }
+                } else {
+                    AppSetting.microphoneOverlaySizeOption.value = change.option
                 }
 
-                is SetMicrophoneOverlayWhileAppEnabled -> {
-                    AppSetting.isMicrophoneOverlayWhileAppEnabled.value = change.enabled
-                    it.copy(isMicrophoneOverlayWhileAppEnabled = change.enabled)
-                }
-            }
+            is SetMicrophoneOverlayWhileAppEnabled -> AppSetting.isMicrophoneOverlayWhileAppEnabled.value =
+                change.enabled
         }
     }
 

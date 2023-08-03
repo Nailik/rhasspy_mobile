@@ -11,7 +11,7 @@ import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.settings.content.AboutScreen
+import org.rhasspy.mobile.ui.settings.AboutScreen
 
 class AboutScreenTest : FlakyTest() {
 

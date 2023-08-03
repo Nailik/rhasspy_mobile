@@ -2,34 +2,36 @@ package org.rhasspy.mobile.viewmodel.configuration.mqtt
 
 import androidx.compose.runtime.Stable
 import okio.Path
-import org.rhasspy.mobile.data.resource.StableStringResource
-import org.rhasspy.mobile.platformspecific.toIntOrZero
-import org.rhasspy.mobile.platformspecific.toLongOrZero
+import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 
 @Stable
 data class MqttConfigurationViewState internal constructor(
-    val isMqttEnabled: Boolean = ConfigurationSetting.isMqttEnabled.value,
-    val mqttHost: String = ConfigurationSetting.mqttHost.value,
-    val mqttPortText: String = ConfigurationSetting.mqttPort.value.toString(),
-    val mqttUserName: String = ConfigurationSetting.mqttUserName.value,
-    val mqttPassword: String = ConfigurationSetting.mqttPassword.value,
-    val isMqttSSLEnabled: Boolean = ConfigurationSetting.isMqttSSLEnabled.value,
-    val mqttConnectionTimeoutText: String = ConfigurationSetting.mqttConnectionTimeout.value.toString(),
-    val mqttKeepAliveIntervalText: String = ConfigurationSetting.mqttKeepAliveInterval.value.toString(),
-    val mqttRetryIntervalText: String = ConfigurationSetting.mqttRetryInterval.value.toString(),
-    val mqttKeyStoreFile: Path? = ConfigurationSetting.mqttKeyStoreFile.value,
-    val snackBarText: StableStringResource? = null
-) : IConfigurationEditViewState() {
+    override val editData: MqttConfigurationData
+) : IConfigurationViewState {
 
-    val mqttPort: Int get() = mqttPortText.toIntOrZero()
-    val mqttConnectionTimeout: Int get() = mqttConnectionTimeoutText.toIntOrZero()
-    val mqttKeepAliveInterval: Int get() = mqttKeepAliveIntervalText.toIntOrZero()
-    val mqttRetryInterval: Long get() = mqttRetryIntervalText.toLongOrZero()
-    val mqttKeyStoreFileName: String? get() = mqttKeyStoreFile?.name
+    @Stable
+    data class MqttConfigurationData internal constructor(
+        val isMqttEnabled: Boolean = ConfigurationSetting.isMqttEnabled.value,
+        val mqttHost: String = ConfigurationSetting.mqttHost.value,
+        val mqttPort: Int? = ConfigurationSetting.mqttPort.value,
+        val mqttUserName: String = ConfigurationSetting.mqttUserName.value,
+        val mqttPassword: String = ConfigurationSetting.mqttPassword.value,
+        val isMqttSSLEnabled: Boolean = ConfigurationSetting.isMqttSSLEnabled.value,
+        val mqttConnectionTimeout: Long? = ConfigurationSetting.mqttConnectionTimeout.value,
+        val mqttKeepAliveInterval: Long? = ConfigurationSetting.mqttKeepAliveInterval.value,
+        val mqttRetryInterval: Long? = ConfigurationSetting.mqttRetryInterval.value,
+        val mqttKeyStoreFile: Path? = ConfigurationSetting.mqttKeyStoreFile.value
+    ) : IConfigurationData {
 
-    override val isTestingEnabled: Boolean get() = isMqttEnabled
+        val mqttPortText: String = mqttPort.toStringOrEmpty()
+        val mqttConnectionTimeoutText: String = mqttConnectionTimeout.toStringOrEmpty()
+        val mqttKeepAliveIntervalText: String = mqttKeepAliveInterval.toStringOrEmpty()
+        val mqttRetryIntervalText: String = mqttRetryInterval.toStringOrEmpty()
+        val mqttKeyStoreFileName: String? = mqttKeyStoreFile?.name
 
+    }
 
 }

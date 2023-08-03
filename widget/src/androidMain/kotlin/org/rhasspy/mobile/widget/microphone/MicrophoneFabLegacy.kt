@@ -2,24 +2,20 @@ package org.rhasspy.mobile.widget.microphone
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.compose.runtime.Composable
 import org.rhasspy.mobile.widget.R
 
-
-@Composable
 @DrawableRes
 fun getContainerForMicrophoneFabLegacy(
     isActionEnabled: Boolean,
     isRecording: Boolean
 ): Int {
     return when {
-        isRecording -> R.drawable.microphone_widget_background_error
+        isRecording     -> R.drawable.microphone_widget_background_error
         isActionEnabled -> R.drawable.microphone_widget_background_primary
-        else -> R.drawable.microphone_widget_background_primary_04
+        else            -> R.drawable.microphone_widget_background_primary_04
     }
 }
 
-@Composable
 @ColorRes
 fun getMicrophoneFabIconLegacy(
     isMicOn: Boolean,
@@ -27,8 +23,8 @@ fun getMicrophoneFabIconLegacy(
     isRecording: Boolean
 ): Int {
     return when {
-        isRecording -> if (isMicOn) R.drawable.ic_mic_on_error_container else R.drawable.ic_mic_off_on_error_container
+        isRecording     -> if (isMicOn) R.drawable.ic_mic_on_error_container else R.drawable.ic_mic_off_on_error_container
         isActionEnabled -> if (isMicOn) R.drawable.ic_mic_on_primary_container else R.drawable.ic_mic_off_on_primary_container
-        else -> if (isMicOn) R.drawable.ic_mic_on_primary_container_04 else R.drawable.ic_mic_off_on_primary_container_04
+        else            -> if (isMicOn) R.drawable.ic_mic_on_primary_container_04 else R.drawable.ic_mic_off_on_primary_container_04
     }
 }

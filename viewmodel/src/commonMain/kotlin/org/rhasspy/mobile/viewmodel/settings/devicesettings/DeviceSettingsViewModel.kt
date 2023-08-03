@@ -2,7 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings.devicesettings
 
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change
@@ -11,7 +11,7 @@ import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEven
 @Stable
 class DeviceSettingsViewModel(
     viewStateCreator: DeviceSettingsViewStateCreator
-) : KViewModel() {
+) : ScreenViewModel() {
 
     val viewState = viewStateCreator()
 
@@ -24,10 +24,12 @@ class DeviceSettingsViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            is SetAudioOutputEnabled -> AppSetting.isAudioOutputEnabled.value = change.enabled
-            is SetHotWordEnabled -> AppSetting.isHotWordEnabled.value = change.enabled
+            is SetMqttApiChangesEnabled -> AppSetting.isMqttApiDeviceChangeEnabled.value = change.enabled
+            is SetHttpApiChangesEnabled -> AppSetting.isHttpApiDeviceChangeEnabled.value = change.enabled
+            is SetAudioOutputEnabled    -> AppSetting.isAudioOutputEnabled.value = change.enabled
+            is SetHotWordEnabled        -> AppSetting.isHotWordEnabled.value = change.enabled
             is SetIntentHandlingEnabled -> AppSetting.isIntentHandlingEnabled.value = change.enabled
-            is UpdateVolume -> AppSetting.volume.value = change.volume
+            is UpdateVolume             -> AppSetting.volume.value = change.volume
         }
     }
 

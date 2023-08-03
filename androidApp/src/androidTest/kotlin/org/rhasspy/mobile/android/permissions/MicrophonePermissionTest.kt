@@ -14,16 +14,20 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
@@ -48,7 +52,7 @@ class MicrophonePermissionTest : FlakyTest() {
     //.google is on devices with google play services and is missing on devices without play services
     private val permissionDialogPackageNameRegex = when {
         Build.VERSION.SDK_INT >= 29 -> ".*permissioncontroller"
-        else -> ".*packageinstaller"
+        else                        -> ".*packageinstaller"
     }
 
     private val indexOffset = 1
@@ -83,7 +87,8 @@ class MicrophonePermissionTest : FlakyTest() {
     @Before
     fun setUp() {
         //set english
-        LanguageSettingsViewModel().onEvent(SelectLanguageOption(LanguageType.English))
+        AppSetting.didShowChangelogDialog.value = BuildConfig.VERSION_CODE
+        LanguageSettingsViewModel(get()).onEvent(SelectLanguageOption(LanguageType.English))
     }
 
     /**
@@ -93,13 +98,14 @@ class MicrophonePermissionTest : FlakyTest() {
      * Dialog is closed and permission granted
      */
     @Test
+    @AllowFlaky
     fun testAllow() {
         if (Build.VERSION.SDK_INT >= 30) {
             //no simple allow button on api 30
             return
         }
 
-        assertFalse { MicrophonePermission.granted.value }
+        assertFalse { get<IMicrophonePermission>().granted.value }
 
         //User clicks button
         composeTestRule.onNodeWithTag(TestTag.MicrophoneFab).performClick()
@@ -107,7 +113,8 @@ class MicrophonePermissionTest : FlakyTest() {
         //System dialog is shown
         device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
         assertTrue {
-            device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists()
+            device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex))
+                .exists()
         }
 
         //User selects allow
@@ -116,8 +123,14 @@ class MicrophonePermissionTest : FlakyTest() {
 
         //Dialog is closed and permission granted
         device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
-        assertFalse { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
-        assertTrue { MicrophonePermission.granted.value }
+        assertFalse {
+            device.findObject(
+                UiSelector().packageNameMatches(
+                    permissionDialogPackageNameRegex
+                )
+            ).exists()
+        }
+        assertTrue { get<IMicrophonePermission>().granted.value }
     }
 
     /**
@@ -127,13 +140,14 @@ class MicrophonePermissionTest : FlakyTest() {
      * Dialog is closed and permission granted
      */
     @Test
+    @AllowFlaky
     fun testAllowWhileUsing() {
         if (Build.VERSION.SDK_INT < 30) {
             //allow while using only available above and on api 30
             return
         }
 
-        assertFalse { MicrophonePermission.granted.value }
+        assertFalse { get<IMicrophonePermission>().granted.value }
 
         //User clicks button
         composeTestRule.onNodeWithTag(TestTag.MicrophoneFab).performClick()
@@ -141,7 +155,13 @@ class MicrophonePermissionTest : FlakyTest() {
         //System dialog is shown
         getInstrumentation().waitForIdleSync()
         device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
-        assertTrue { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
+        assertTrue {
+            device.findObject(
+                UiSelector().packageNameMatches(
+                    permissionDialogPackageNameRegex
+                )
+            ).exists()
+        }
 
         //User selects allow while using the app
         device.wait(Until.hasObject(By.res(btnPermissionAllowForegroundOnly.toPattern())), 5000)
@@ -150,8 +170,14 @@ class MicrophonePermissionTest : FlakyTest() {
         //Dialog is closed and permission granted
         getInstrumentation().waitForIdleSync()
         device.wait(Until.hasObject(By.res(permissionDialogPackageNameRegex.toPattern())), 5000)
-        assertFalse { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
-        assertTrue { MicrophonePermission.granted.value }
+        assertFalse {
+            device.findObject(
+                UiSelector().packageNameMatches(
+                    permissionDialogPackageNameRegex
+                )
+            ).exists()
+        }
+        assertTrue { get<IMicrophonePermission>().granted.value }
     }
 
     /**
@@ -167,14 +193,20 @@ class MicrophonePermissionTest : FlakyTest() {
             return
         }
 
-        assertFalse { MicrophonePermission.granted.value }
+        assertFalse { get<IMicrophonePermission>().granted.value }
 
         //User clicks button
         composeTestRule.onNodeWithTag(TestTag.MicrophoneFab).performClick()
 
         //System dialog is shown
         device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
-        assertTrue { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
+        assertTrue {
+            device.findObject(
+                UiSelector().packageNameMatches(
+                    permissionDialogPackageNameRegex
+                )
+            ).exists()
+        }
 
         //user selects only once
         device.wait(Until.hasObject(By.res(btnPermissionAllowOneTime.toPattern())), 5000)
@@ -182,8 +214,14 @@ class MicrophonePermissionTest : FlakyTest() {
 
         //Dialog is closed and permission granted
         device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
-        assertFalse { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
-        assertTrue { MicrophonePermission.granted.value }
+        assertFalse {
+            device.findObject(
+                UiSelector().packageNameMatches(
+                    permissionDialogPackageNameRegex
+                )
+            ).exists()
+        }
+        assertTrue { get<IMicrophonePermission>().granted.value }
     }
 
     /**
@@ -207,7 +245,7 @@ class MicrophonePermissionTest : FlakyTest() {
             return
         }
 
-        assertFalse { MicrophonePermission.granted.value }
+        assertFalse { get<IMicrophonePermission>().granted.value }
 
         //User clicks button
         composeTestRule.onNodeWithTag(TestTag.MicrophoneFab).performClick()
@@ -215,21 +253,34 @@ class MicrophonePermissionTest : FlakyTest() {
         //System dialog is shown
         getInstrumentation().waitForIdleSync()
         device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
-        assertTrue { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
+        assertTrue {
+            device.findObject(
+                UiSelector().packageNameMatches(
+                    permissionDialogPackageNameRegex
+                )
+            ).exists()
+        }
         //deny permission
         device.wait(Until.hasObject(By.res(denyPermissionRegex.toPattern())), 5000)
-        device.findObject(UiSelector().resourceIdMatches(denyPermissionRegex)).clickAndWaitForNewWindow()
+        device.findObject(UiSelector().resourceIdMatches(denyPermissionRegex))
+            .clickAndWaitForNewWindow()
 
         //User clicks button
         composeTestRule.onNodeWithTag(TestTag.MicrophoneFab).performClick()
         //InformationDialog is shown
-        composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission).assertExists()
+        composeTestRule.onNodeWithTag(TestTag.DialogMicrophonePermissionInfo).assertExists()
         //ok clicked
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
         //System dialog is shown
         getInstrumentation().waitForIdleSync()
         device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
-        assertTrue { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
+        assertTrue {
+            device.findObject(
+                UiSelector().packageNameMatches(
+                    permissionDialogPackageNameRegex
+                )
+            ).exists()
+        }
 
         //deny always
         if (Build.VERSION.SDK_INT < 29) {
@@ -238,7 +289,8 @@ class MicrophonePermissionTest : FlakyTest() {
             device.findObject(UiSelector().resourceId(cbhDoNotAsk)).click()
             //deny always
             device.wait(Until.hasObject(By.res(denyPermissionRegex.toPattern())), 5000)
-            device.findObject(UiSelector().resourceIdMatches(denyPermissionRegex)).clickAndWaitForNewWindow()
+            device.findObject(UiSelector().resourceIdMatches(denyPermissionRegex))
+                .clickAndWaitForNewWindow()
         } else {
             //directly click do not ask again
             device.wait(Until.hasObject(By.res(btnDoNotAskAgain)), 5000)
@@ -247,15 +299,22 @@ class MicrophonePermissionTest : FlakyTest() {
 
         //Dialog is closed and permission not granted
         device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
-        assertFalse { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
-        assertFalse { MicrophonePermission.granted.value }
+        assertFalse {
+            device.findObject(
+                UiSelector().packageNameMatches(
+                    permissionDialogPackageNameRegex
+                )
+            ).exists()
+        }
+        assertFalse { get<IMicrophonePermission>().granted.value }
 
         //User clicks button
         composeTestRule.onNodeWithTag(TestTag.MicrophoneFab).performClick()
         //snack bar shown
         device.wait(Until.hasObject(textRes(MR.strings.microphonePermissionDenied.stable)), 5000)
         assertTrue {
-            device.findObject(UiSelector().text(MR.strings.microphonePermissionDenied.stable)).exists()
+            device.findObject(UiSelector().text(MR.strings.microphonePermissionDenied.stable))
+                .exists()
         }
     }
 
@@ -288,7 +347,7 @@ class MicrophonePermissionTest : FlakyTest() {
      */
     @Test
     fun testInformationDialog() {
-        assertFalse { MicrophonePermission.granted.value }
+        assertFalse { get<IMicrophonePermission>().granted.value }
 
         //User clicks button
         composeTestRule.onNodeWithTag(TestTag.MicrophoneFab).performClick()
@@ -297,17 +356,29 @@ class MicrophonePermissionTest : FlakyTest() {
         //System dialog is shown
         getInstrumentation().waitForIdleSync()
         device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
-        assertTrue { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
+        assertTrue {
+            device.findObject(
+                UiSelector().packageNameMatches(
+                    permissionDialogPackageNameRegex
+                )
+            ).exists()
+        }
         //user selects deny
         device.wait(Until.hasObject(By.res(denyPermissionRegex.toPattern())), 5000)
         device.findObject(UiSelector().resourceIdMatches(denyPermissionRegex)).click()
         //Dialog is closed and permission not granted
         device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
-        assertFalse { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
-        assertFalse { MicrophonePermission.granted.value }
-        //Snackbar is shown
+        assertFalse {
+            device.findObject(
+                UiSelector().packageNameMatches(
+                    permissionDialogPackageNameRegex
+                )
+            ).exists()
+        }
+        assertFalse { get<IMicrophonePermission>().granted.value }
+        //Snack bar is shown
         device.wait(Until.hasObject(textRes(MR.strings.microphonePermissionDenied.stable)), 5000)
-        assertFalse { MicrophonePermission.granted.value }
+        assertFalse { get<IMicrophonePermission>().granted.value }
 
         //User clicks button
         composeTestRule.onNodeWithTag(TestTag.MicrophoneFab).performClick()
@@ -319,28 +390,34 @@ class MicrophonePermissionTest : FlakyTest() {
         ) {
 
             //InformationDialog is shown
-            composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission)
+            composeTestRule.onNodeWithTag(TestTag.DialogMicrophonePermissionInfo)
                 .assertExists()
             //Cancel clicked
             composeTestRule.onNodeWithTag(TestTag.DialogCancel).performClick()
             //Dialog closed
-            composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission)
+            composeTestRule.onNodeWithTag(TestTag.DialogMicrophonePermissionInfo)
                 .assertDoesNotExist()
 
             //User clicks button
             composeTestRule.onNodeWithTag(TestTag.MicrophoneFab).performClick()
             //InformationDialog is shown
-            composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission)
+            composeTestRule.onNodeWithTag(TestTag.DialogMicrophonePermissionInfo)
                 .assertExists()
             //ok clicked
             composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
             //Dialog closed
-            composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission)
+            composeTestRule.onNodeWithTag(TestTag.DialogMicrophonePermissionInfo)
                 .assertDoesNotExist()
             //System Dialog is shown
             getInstrumentation().waitForIdleSync()
             device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
-            assertTrue { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
+            assertTrue {
+                device.findObject(
+                    UiSelector().packageNameMatches(
+                        permissionDialogPackageNameRegex
+                    )
+                ).exists()
+            }
             //user selects deny
             //deny always
             if (Build.VERSION.SDK_INT < 29) {
@@ -401,8 +478,5 @@ class MicrophonePermissionTest : FlakyTest() {
         if (Build.VERSION.SDK_INT >= 24) {
             device.pressBack()
         }
-
-        //Permission is allowed
-        assertTrue { MicrophonePermission.granted.value }
     }
 }

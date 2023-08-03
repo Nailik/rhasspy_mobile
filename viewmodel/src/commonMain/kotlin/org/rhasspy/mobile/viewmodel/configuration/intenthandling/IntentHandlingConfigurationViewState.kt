@@ -6,21 +6,25 @@ import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 
 @Stable
 data class IntentHandlingConfigurationViewState internal constructor(
-    val intentHandlingOption: IntentHandlingOption = ConfigurationSetting.intentHandlingOption.value,
-    val intentHandlingHttpEndpoint: String = ConfigurationSetting.intentHandlingHttpEndpoint.value,
-    val intentHandlingHassEndpoint: String = ConfigurationSetting.intentHandlingHassEndpoint.value,
-    val intentHandlingHassAccessToken: String = ConfigurationSetting.intentHandlingHassAccessToken.value,
-    val intentHandlingHassOption: HomeAssistantIntentHandlingOption = ConfigurationSetting.intentHandlingHomeAssistantOption.value,
-    val testIntentHandlingName: String = "",
-    val testIntentHandlingText: String = ""
-) : IConfigurationEditViewState() {
+    override val editData: IntentHandlingConfigurationData
+) : IConfigurationViewState {
 
-    val intentHandlingOptionList: ImmutableList<IntentHandlingOption> = IntentHandlingOption.values().toList().toImmutableList()
+    @Stable
+    data class IntentHandlingConfigurationData internal constructor(
+        val intentHandlingOption: IntentHandlingOption = ConfigurationSetting.intentHandlingOption.value,
+        val intentHandlingHttpEndpoint: String = ConfigurationSetting.intentHandlingHttpEndpoint.value,
+        val intentHandlingHomeAssistantEndpoint: String = ConfigurationSetting.intentHandlingHomeAssistantEndpoint.value,
+        val intentHandlingHomeAssistantAccessToken: String = ConfigurationSetting.intentHandlingHomeAssistantAccessToken.value,
+        val intentHandlingHomeAssistantOption: HomeAssistantIntentHandlingOption = ConfigurationSetting.intentHandlingHomeAssistantOption.value,
+    ) : IConfigurationData {
 
-    override val isTestingEnabled: Boolean get() = intentHandlingOption != IntentHandlingOption.Disabled
+        val intentHandlingOptionList: ImmutableList<IntentHandlingOption> = IntentHandlingOption.values().toList().toImmutableList()
+
+    }
 
 }

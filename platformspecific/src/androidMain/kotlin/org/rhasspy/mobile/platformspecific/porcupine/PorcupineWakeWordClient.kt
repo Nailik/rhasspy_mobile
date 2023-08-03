@@ -1,15 +1,12 @@
 package org.rhasspy.mobile.platformspecific.porcupine
 
 import ai.picovoice.porcupine.PorcupineException
-import ai.picovoice.porcupine.PorcupineManager
-import ai.picovoice.porcupine.PorcupineManagerCallback
-import android.Manifest
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
@@ -22,88 +19,23 @@ import java.io.File
  * checks for audio permission
  */
 actual class PorcupineWakeWordClient actual constructor(
+    private val audioRecorderSampleRateType: AudioFormatSampleRateType,
+    private val audioRecorderChannelType: AudioFormatChannelType,
     private val wakeWordPorcupineAccessToken: String,
     private val wakeWordPorcupineKeywordDefaultOptions: ImmutableList<PorcupineDefaultKeyword>,
     private val wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
     private val wakeWordPorcupineLanguage: PorcupineLanguageOption,
     private val onKeywordDetected: (hotWord: String) -> Unit,
     private val onError: (Exception) -> Unit
-) : PorcupineManagerCallback, KoinComponent {
+) : KoinComponent {
+
     private val logger = Logger.withTag("PorcupineWakeWordClient")
 
     //manager to stop start and reload porcupine
-    private var porcupineManager: PorcupineManager? = null
+    private var porcupineClient: IPorcupineClient? = null
 
+    private var isStarted = false
     private val context = get<NativeApplication>()
-
-    private var initialized: Boolean = false
-    actual val isInitialized: Boolean = initialized
-
-    /**
-     * create porcupine client
-     */
-    actual fun initialize(): Exception? {
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.RECORD_AUDIO
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            logger.e { "missing recording permission" }
-            return Exception("MicrophonePermissionMissing")
-        }
-
-        return try {
-            val porcupineBuilder = PorcupineManager.Builder()
-                .setAccessKey(wakeWordPorcupineAccessToken)
-                //keyword paths can not be used with keywords, therefore also the built in keywords are copied to a usable file location
-                .setKeywordPaths(
-                    wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
-                        .map {
-                            copyBuildInKeywordFile(it)
-                        }.toMutableList().also { list ->
-                            list.addAll(
-                                wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
-                                    File(
-                                        context.filesDir,
-                                        "porcupine/${it.fileName}"
-                                    ).absolutePath
-                                }
-                            )
-                        }.toTypedArray()
-                )
-                .setSensitivities(
-                    wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
-                        .map {
-                            it.sensitivity
-                        }.toMutableList().also { list ->
-                            list.addAll(
-                                wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
-                                    it.sensitivity
-                                }
-                            )
-                        }.toTypedArray().toFloatArray()
-                )
-                .setModelPath(copyModelFile())
-                .setErrorCallback {
-                    onError(it)
-                }
-
-
-            File(context.filesDir, "sounds").mkdirs()
-
-            porcupineManager = porcupineBuilder.build(context, this)
-
-            initialized = true
-            null//no error
-        } catch (exception: PorcupineException) {
-            initialized = false
-            return Exception(exception.localizedMessage)
-        } catch (exception: Exception) {
-            initialized = false
-            return exception
-        }
-    }
-
 
     /**
      * start wake word detected
@@ -115,11 +47,20 @@ actual class PorcupineWakeWordClient actual constructor(
      * tries to start porcupine
      */
     actual fun start(): Exception? {
-        return porcupineManager?.let {
+        if (isStarted) return null
+
+        if (porcupineClient == null) {
+            val exception = initialize()
+            if (exception != null) return exception
+        }
+
+        return porcupineClient?.let {
             return try {
+                isStarted = true
                 it.start()
                 null
             } catch (exception: Exception) {
+                isStarted = false
                 exception
             }
         } ?: run {
@@ -132,13 +73,61 @@ actual class PorcupineWakeWordClient actual constructor(
      * stop wake word detected
      */
     actual fun stop() {
-        porcupineManager?.stop()
+        porcupineClient?.stop()
+        isStarted = false
     }
+
+    /**
+     * deletes the porcupine manager
+     */
+    actual fun close() {
+        porcupineClient?.close()
+        porcupineClient = null
+        isStarted = false
+    }
+
+    /**
+     * create porcupine client
+     */
+    private fun initialize(): Exception? {
+        return try {
+            File(context.filesDir, "sounds").mkdirs()
+
+            porcupineClient = if (audioRecorderSampleRateType != AudioFormatSampleRateType.SR16000 || audioRecorderChannelType != AudioFormatChannelType.Mono) {
+                PorcupineCustomClient(
+                    audioRecorderSampleRateType = audioRecorderSampleRateType,
+                    audioRecorderChannelType = audioRecorderChannelType,
+                    wakeWordPorcupineAccessToken = wakeWordPorcupineAccessToken,
+                    wakeWordPorcupineKeywordDefaultOptions = wakeWordPorcupineKeywordDefaultOptions,
+                    wakeWordPorcupineKeywordCustomOptions = wakeWordPorcupineKeywordCustomOptions,
+                    wakeWordPorcupineLanguage = wakeWordPorcupineLanguage,
+                    onKeywordDetected = ::onKeywordDetected,
+                    onError = onError
+                )
+            } else {
+                PorcupineDefaultClient(
+                    wakeWordPorcupineAccessToken = wakeWordPorcupineAccessToken,
+                    wakeWordPorcupineKeywordDefaultOptions = wakeWordPorcupineKeywordDefaultOptions,
+                    wakeWordPorcupineKeywordCustomOptions = wakeWordPorcupineKeywordCustomOptions,
+                    wakeWordPorcupineLanguage = wakeWordPorcupineLanguage,
+                    onKeywordDetected = ::onKeywordDetected,
+                    onError = onError
+                )
+            }
+
+            null//no error
+        } catch (exception: PorcupineException) {
+            return Exception(exception.localizedMessage)
+        } catch (exception: Exception) {
+            return exception
+        }
+    }
+
 
     /**
      * invoked when a WakeWord is detected, informs listening service
      */
-    override fun invoke(keywordIndex: Int) {
+    private fun onKeywordDetected(keywordIndex: Int) {
         logger.d { "invoke - keyword detected" }
 
         val allKeywords = wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled }.map {
@@ -149,52 +138,12 @@ actual class PorcupineWakeWordClient actual constructor(
             }.toMutableList())
         }
 
-        if (allKeywords.size > keywordIndex) {
+        if (keywordIndex in 0..allKeywords.size) { //TODO index might be negative
             onKeywordDetected(allKeywords[keywordIndex])
-        } else {
-            onKeywordDetected("Unknown")
+        } else if (keywordIndex > 0) {
+            onKeywordDetected("UnknownIndex $keywordIndex")
         }
     }
 
-    /**
-     * copies a model file from the file resources to app storage directory, else cannot be used by porcupine
-     */
-    private fun copyModelFile(): String {
-        val folder = File(context.filesDir, "porcupine")
-        folder.mkdirs()
-        val file = File(folder, "model_${wakeWordPorcupineLanguage.name.lowercase()}.pv")
-
-        file.outputStream().write(
-            context.resources.openRawResource(wakeWordPorcupineLanguage.file.rawResId)
-                .readBytes()
-        )
-
-        return file.absolutePath
-    }
-
-    /**
-     * copies a keyword file from the file resources to app storage directory, else cannot be used by porcupine
-     */
-    private fun copyBuildInKeywordFile(defaultKeyword: PorcupineDefaultKeyword): String {
-        val folder = File(context.filesDir, "porcupine")
-        folder.mkdirs()
-        val file = File(folder, "keyword_${defaultKeyword.option.name.lowercase()}.ppn")
-
-        file.outputStream().write(
-            context.resources.openRawResource(defaultKeyword.option.file.rawResId)
-                .readBytes()
-        )
-
-        return file.absolutePath
-    }
-
-    /**
-     * deletes the porcupine manager
-     */
-    actual fun close() {
-        porcupineManager?.stop()
-        porcupineManager?.delete()
-        porcupineManager = null
-    }
 
 }

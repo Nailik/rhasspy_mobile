@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
     <string name="appName">Rhasspy Mobile</string>
+    <string name="wiki">Wiki</string>
     <string name="home">Home</string>
     <string name="configuration">Configuration</string>
     <string name="settings">Settings</string>
@@ -36,6 +37,8 @@
     <string name="remoteURL">Remote URL</string>
     <string name="checkConnection">Check Connection</string>
     <string name="localPorcupine">Porcupine (local)</string>
+    <string name="audioRecorderFormat">Audio Recorder Format</string>
+    <string name="audioOutputFormat">Audio Output Format</string>
     <string name="local">Local</string>
     <string name="remote">Remote</string>
     <string name="disabled">Disabled</string>
@@ -53,6 +56,10 @@
     <string name="homeAssistantEvents">Send *events* to Home Assistant\n(/api/events)</string>
     <string name="homeAssistantIntents">Send *intents* to Home Assistant\n(/api/intent/handle)
     </string>
+    <string name="speechToTextAudioRecorderFormat">SpeechToText Audio Recorder Format</string>
+    <string name="speechToTextAudioOutputFormat">SpeechToText Audio Output Format</string>
+    <string name="wakeWordAudioRecorderFormat">Wake Word Audio Recorder Format</string>
+    <string name="wakeWordAudioOutputFormat">Wake Word Audio Output Format</string>
     <string name="refresh">Refresh</string>
     <string name="de">Deutsch</string>
     <string name="en">English</string>
@@ -61,7 +68,7 @@
     <string name="enableBackground">Enable Background Services</string>
     <string name="backgroundWakeWordDetectionTurnOnDisplay">Wake Up Display</string>
     <string name="wakeWordIndication">WakeWord Indication</string>
-    <string name="wakeWordSoundIndication">Sound</string>
+    <string name="wakeWordAudioIndication">Audio</string>
     <string name="wakeWordLightIndication">Visual</string>
     <string name="enableSSL">Enable SSL</string>
     <string name="enabled">Enabled</string>
@@ -124,7 +131,7 @@
     <string name="share">Share</string>
     <string name="reset">Reset</string>
     <string name="device">Device</string>
-    <string name="deviceSettingsInformation">This settings can be changed with MQTT commands.
+    <string name="deviceSettingsInformation">This settings can be changed via MQTT-Api or Http-Api.
     </string>
     <string name="volume">Volume</string>
     <string name="hotWord">HotWord (WakeWord)</string>
@@ -156,7 +163,7 @@
     <string name="wakeSound">Wake</string>
     <string name="recordedSound">Recorded</string>
     <string name="errorSound">Error</string>
-    <string name="selectFile">select File</string>
+    <string name="selectFile">File</string>
     <string name="defaultText">Default</string>
     <string name="remoteHermesHTTP">Remote Hermes HTTP</string>
     <string name="sslValidation">SSL Validation</string>
@@ -170,6 +177,7 @@
     <string name="arabic">Arabic</string>
     <string name="german">German</string>
     <string name="spanish">Spanish</string>
+    <string name="farsi">Farsi</string>
     <string name="french">French</string>
     <string name="hindi">Hindi</string>
     <string name="italian">Italian</string>
@@ -198,6 +206,7 @@
     <string name="mqttConnectionError">Error during connection:</string>
     <string name="mqttConnectionLostError">Lost connection error:</string>
     <string name="close">Close</string>
+    <string name="closeAppInformation">press back to close</string>
     <string name="backup">Backup Settings and Configuration</string>
     <string name="unsavedChanges">Unsaved changes</string>
     <string name="unsavedChangesInformation">Do you want to save the changes?</string>
@@ -205,7 +214,7 @@
     <string name="test">Test</string>
     <string name="back">Back</string>
     <string name="language">Language</string>
-    <string name="fileOpen">select file</string>
+    <string name="fileOpen">file</string>
     <string name="useCustomEndpoint">Custom Http Endpoint</string>
     <string name="textDefault">Default</string>
     <string name="textCustom">Custom</string>
@@ -256,7 +265,7 @@
     <string name="startRecordAudio">Start Record Audio</string>
     <string name="stopRecordAudio">Stop Record Audio</string>
     <string name="useMqttSilenceDetection">Use Mqtt Silence Detection</string>
-    <string name="textToSpeechText">Text To Speech Text</string>
+    <string name="textToSpeechText">Text To Speech</string>
     <string name="executeTextToSpeechText">Transcribe Text to Speech</string>
     <string name="textIntentRecognitionText">Text To Recognize Intent</string>
     <string name="executeIntentRecognition">Recognize Intent</string>
@@ -279,14 +288,16 @@
     <string name="serviceStatusErrorText">Service error occurred</string>
     <string name="executeTestHttpConnection">Test Http Connection</string>
     <string name="porcupineLanguageInformation">All active activation words must match the selected
-        language and be compatible with the current Porcupine version (2.2)!
+        language and be compatible with the current Porcupine version (2.2.2)!
     </string>
     <string name="backgroundServiceInformation">Background service will enable the app to stay
         active in the background and prevent it from being closed by the system.
     </string>
-    <string name="deviceSettingsLongInformation">This settings can be changed by calling the
-        Webserver (HTTP API) or by publishing MQTT Messages.
+    <string name="isMqttApiDeviceChangeEnabled">changes via MQTT Api enabled</string>
+    <string name="isMqttApiDeviceChangeEnabledInformation">Should be enabled when using Dialog
+        Management Remote Hermes MQTT
     </string>
+    <string name="isHttpApiDeviceChangeEnabled">changes via HTTP Api enabled</string>
     <string name="intentName">Intent Name</string>
     <string name="intentText">Intent Json</string>
     <string name="executePlayTestAudio">play Test Audio</string>
@@ -307,9 +318,8 @@
     <string name="intentRecognitionTimeoutText">Intent Recognition Timeout (MS)</string>
     <string name="recordingTimeoutText">Recording Timeout (MS)</string>
     <string name="audioFocus">Audio Focus</string>
-    <string name="audioFocusInformation">Audio Focus allows the Rhasspy to pause and resume or
-        decrease the volume of other audio streams such as music or videos. Decrease the volume of
-        other audio streams such as music or videos.
+    <string name="audioFocusInformation">Audio Focus allows Rhasspy to pause and resume or
+        decrease the volume of other audio streams such as music or videos.
     </string>
     <string name="pauseAndResume">Pause and Resume</string>
     <string name="duck">Duck (lower Volume)</string>
@@ -331,10 +341,13 @@
     <string name="restoreSettingsFromFileFailed">restore setting from file failed</string>
     <string name="shareSettingsFileFailed">share setting file failed</string>
     <string name="selectFileFailed">unable to open file chooser</string>
-    <string name="audioRecorder">Audio recorder</string>
+    <string name="audioRecorder">Audio Recorder</string>
     <string name="sampleRate">Sample rate</string>
     <string name="channel">Channel</string>
     <string name="encoding">Encoding</string>
+    <string name="dialog">Dialog</string>
+    <string name="notInitialized">not Initialized</string>
+    <string name="clear_text">clear</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>
@@ -370,12 +383,13 @@
     <string name="channel_type_mono">Mono</string>
     <string name="channel_type_stereo">Stereo</string>
     <string name="encoding_type_default">Default</string>
-    <string name="encoding_type_PCM8Bit">PCM8Bit</string>
-    <string name="encoding_type_PCM16Bit">PCM16Bit</string>
-    <string name="encoding_type_PCM_32BIT">PCM_32BIT</string>
+    <string name="encoding_type_PCM8Bit">PCM 8 Bit</string>
+    <string name="encoding_type_PCM16Bit">PCM 16 Bit</string>
+    <string name="encoding_type_PCM_32BIT">PCM 32 Bit</string>
     <string name="sample_rate_type_11025">11025 Hz</string>
-    <string name="sample_rate_type_22050">22050 Hz</string>
+    <string name="sample_rate_type_12000">12000 Hz</string>
     <string name="sample_rate_type_16000">16000 Hz</string>
+    <string name="sample_rate_type_22050">22050 Hz</string>
     <string name="sample_rate_type_32000">32000 Hz</string>
     <string name="sample_rate_type_44100">44100 Hz</string>
     <string name="sample_rate_type_48000">48000 Hz</string>
@@ -383,7 +397,7 @@
     <string name="heyGoogle">Hey Google</string>
     <string name="heySiri">Hey Siri</string>
     <string name="okGoogle">OK Google</string>
-    <string name="logSettings">Log-Einstellungen</string>
+    <string name="logSettings">Log Settings</string>
     <string name="verbose">Verbose</string>
     <string name="debug">Debug</string>
     <string name="info">Info</string>
@@ -422,6 +436,10 @@
     <string name="leopardo_es">Leopardo</string>
     <string name="manzana_es">Manzana</string>
     <string name="murcielago_es">Murciélago</string>
+    <!-- fa wake words -->
+    <string name="hedgehog_fa">جوجه تیغی</string>
+    <string name="bye_fa">خداحافظ</string>
+    <string name="good_morning_fa">صبح بخیر</string>
     <!-- fr wake words -->
     <string name="framboise_fr">Framboise</string>
     <string name="mon_chouchou_fr">Mon Chouchou</string>
@@ -481,4 +499,39 @@
     <string name="coffee_zh">咖啡</string>
     <string name="dumplings_zh">水饺</string>
     <string name="porcupine_zh">豪猪</string>
+    <!-- DialogManagerState -->
+    <string name="audio_playing_state">AudioPlayingState</string>
+    <string name="idle_state">IdleState</string>
+    <string name="recognizing_intent_state">RecognizingIntentState</string>
+    <string name="recording_intent_state">RecordingIntentState</string>
+    <string name="transcribing_intent_state">TranscribingIntentState</string>
+    <!-- DialogManagerStateInformation -->
+    <string name="session_id">SessionId: %s</string>
+    <string name="asr_text">AsrText: %s</string>
+    <string name="intent">IntentName: %s\nIntent: %s</string>
+    <string name="audio_data_size">AudioDataSize: %s</string>
+    <string name="send_audio_captured">SendAudioCaptured: %s</string>
+    <string name="wake_word">WakeWord: %s</string>
+    <!-- DialogServiceMiddlewareAction -->
+    <string name="asr_error">AsrError</string>
+    <string name="asr_text_captured">AsrTextCaptured</string>
+    <string name="end_session">EndSession</string>
+    <string name="intent_recognition_error">IntentRecognitionError</string>
+    <string name="intent_recognition_result">IntentRecognitionResult</string>
+    <string name="play_audio">PlayAudio</string>
+    <string name="play_finished">PlayFinished</string>
+    <string name="session_ended">SessionEnded</string>
+    <string name="session_started">SessionStarted</string>
+    <string name="silence_detected">SilenceDetected</string>
+    <string name="start_listening">StartListening</string>
+    <string name="start_session">StartSession</string>
+    <string name="stop_audio_playing">StopAudioPlaying</string>
+    <string name="stop_listening">StopListening</string>
+    <string name="wake_word_detected">WakeWordDetected</string>
+    <string name="asr_timeout_error">AsrTimeoutError</string>
+    <string name="intent_recognition_timeout_error">IntentRecognitionTimeoutError</string>
+    <!-- Source -->
+    <string name="http_api">HttpApi</string>
+    <string name="local">Local</string>
+    <string name="mqtt">Mqtt</string>
 </resources>

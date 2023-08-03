@@ -2,7 +2,7 @@ package org.rhasspy.mobile.logic.middleware
 
 sealed class ServiceMiddlewareAction {
 
-    object PlayStopRecording : ServiceMiddlewareAction()
+    data object PlayStopRecording : ServiceMiddlewareAction()
 
     data class WakeWordError(val description: String) : ServiceMiddlewareAction() {
         override fun toString(): String {
@@ -10,7 +10,12 @@ sealed class ServiceMiddlewareAction {
         }
     }
 
-    class SayText(val text: String) : ServiceMiddlewareAction() {
+    class SayText(
+        val text: String,
+        val volume: Float?,
+        val siteId: String,
+        val sessionId: String?
+    ) : ServiceMiddlewareAction() {
         override fun toString(): String {
             return "${super.toString()} text: $text"
         }
@@ -19,15 +24,16 @@ sealed class ServiceMiddlewareAction {
     class Mqtt(val topic: String, val payload: ByteArray) : ServiceMiddlewareAction()
 
     sealed class AppSettingsServiceMiddlewareAction : ServiceMiddlewareAction() {
-        class AudioOutputToggle(val enabled: Boolean) : AppSettingsServiceMiddlewareAction()
-        class AudioVolumeChange(val volume: Float) : AppSettingsServiceMiddlewareAction()
-        class HotWordToggle(val enabled: Boolean) : AppSettingsServiceMiddlewareAction()
-        class IntentHandlingToggle(val enabled: Boolean) : AppSettingsServiceMiddlewareAction()
+        class AudioOutputToggle(val enabled: Boolean, val source: Source) : AppSettingsServiceMiddlewareAction()
+        class AudioVolumeChange(val volume: Float, val source: Source) : AppSettingsServiceMiddlewareAction()
+        class HotWordToggle(val enabled: Boolean, val source: Source) : AppSettingsServiceMiddlewareAction()
+        class IntentHandlingToggle(val enabled: Boolean, val source: Source) : AppSettingsServiceMiddlewareAction()
     }
 
     sealed class DialogServiceMiddlewareAction(val source: Source) : ServiceMiddlewareAction() {
 
-        class WakeWordDetected(source: Source, val wakeWord: String) : DialogServiceMiddlewareAction(source) {
+        class WakeWordDetected(source: Source, val wakeWord: String) :
+            DialogServiceMiddlewareAction(source) {
             override fun toString(): String {
                 return "${super.toString()} wakeWord: $wakeWord"
             }
@@ -52,13 +58,15 @@ sealed class ServiceMiddlewareAction {
 
         class StopListening(source: Source) : DialogServiceMiddlewareAction(source)
 
-        class AsrTextCaptured(source: Source, val text: String?) : DialogServiceMiddlewareAction(source) {
+        class AsrTextCaptured(source: Source, val text: String?) :
+            DialogServiceMiddlewareAction(source) {
             override fun toString(): String {
                 return "${super.toString()} text: $text"
             }
         }
 
         class AsrError(source: Source) : DialogServiceMiddlewareAction(source)
+        class AsrTimeoutError(source: Source) : DialogServiceMiddlewareAction(source)
 
         class IntentRecognitionResult(source: Source, val intentName: String, val intent: String) :
             DialogServiceMiddlewareAction(source) {
@@ -68,8 +76,10 @@ sealed class ServiceMiddlewareAction {
         }
 
         class IntentRecognitionError(source: Source) : DialogServiceMiddlewareAction(source)
+        class IntentRecognitionTimeoutError(source: Source) : DialogServiceMiddlewareAction(source)
 
-        class PlayAudio(source: Source, val byteArray: ByteArray) : DialogServiceMiddlewareAction(source) {
+        class PlayAudio(source: Source, val byteArray: ByteArray) :
+            DialogServiceMiddlewareAction(source) {
             override fun toString(): String {
                 return "${super.toString()} size: ${byteArray.size}"
             }
@@ -82,5 +92,6 @@ sealed class ServiceMiddlewareAction {
         override fun toString(): String {
             return "${this::class.simpleName ?: super.toString()} from $source"
         }
+
     }
 }

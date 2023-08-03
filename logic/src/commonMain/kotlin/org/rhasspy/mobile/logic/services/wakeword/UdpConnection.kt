@@ -11,10 +11,9 @@ import io.ktor.utils.io.core.ByteReadPacket
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.channels.SendChannel
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
 import org.rhasspy.mobile.settings.AppSetting
 
-class UdpConnection(
+internal class UdpConnection(
     private val host: String,
     private val port: Int
 ) {
@@ -68,13 +67,8 @@ class UdpConnection(
             try {
                 sendChannel?.send(
                     Datagram(
-                        ByteReadPacket(
-                            data.appendWavHeader(
-                                AppSetting.audioRecorderChannel.value,
-                                AppSetting.audioRecorderSampleRate.value,
-                                AppSetting.audioRecorderEncoding.value
-                            )
-                        ), it
+                        packet = ByteReadPacket(data),
+                        address = it
                     )
                 )
             } catch (exception: Exception) {

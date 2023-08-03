@@ -1,14 +1,15 @@
 package org.rhasspy.mobile.ui.content.list
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListElement(
     modifier: Modifier = Modifier,
+    colors: ListItemColors = ListItemDefaults.colors(),
     icon: @Composable (() -> Unit)? = null,
     secondaryText: @Composable (() -> Unit)? = null,
     overlineText: @Composable (() -> Unit)? = null,
@@ -16,12 +17,13 @@ fun ListElement(
     text: @Composable () -> Unit
 ) {
     ListItem(
-        headlineText = text,
+        headlineContent = text,
         modifier = modifier,
-        overlineText = overlineText,
-        supportingText = secondaryText,
+        overlineContent = overlineText,
+        supportingContent = secondaryText,
         leadingContent = icon,
-        trailingContent = trailing
+        trailingContent = trailing,
+        colors = colors,
     )
 }
 

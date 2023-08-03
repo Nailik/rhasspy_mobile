@@ -13,10 +13,11 @@ versionf
 /androidApp/release/
 signing.properties
 */xcuserdata
-/iosApp/Pods/Pods.xcodeproj/xcuserdata/*
 /version
 /iosApp/Pods/*
+/iosApp/Pods/.*
 /iosApp/Pods/Pods.xcodeproj/xcuserdata/
-/iosApp/iosApp.xcworkspace/*
+/iosApp/iosApp.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
 /Task
 *.podspec
+/logic/SpeechToTextAudio.wav

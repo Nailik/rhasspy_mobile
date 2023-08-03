@@ -16,9 +16,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.indication.IndicationState
 import org.rhasspy.mobile.data.indication.IndicationState.*
+import org.rhasspy.mobile.resources.assistant_color_four
+import org.rhasspy.mobile.resources.assistant_color_one
+import org.rhasspy.mobile.resources.assistant_color_three
+import org.rhasspy.mobile.resources.assistant_color_two
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.combinedTestTag
-import org.rhasspy.mobile.ui.theme.*
+import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 import kotlin.math.abs
 
@@ -44,11 +48,11 @@ fun Indication(indicationState: IndicationState) {
     ) {
 
         when (indicationState) {
-            Idle -> {}
-            WakeUp -> WakeupIndication()
+            Idle      -> Unit
+            WakeUp    -> WakeupIndication()
             Recording -> RecordingIndication()
-            Thinking -> ThinkingIndication()
-            Speaking -> SpeakingIndication()
+            Thinking  -> ThinkingIndication()
+            Speaking  -> SpeakingIndication()
         }
     }
 }
@@ -107,10 +111,22 @@ private fun RecordingIndication() {
             .height(8.dp)
             .fillMaxWidth()
     ) {
-        IndicationBar(if ((0f..1f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_one)
-        IndicationBar(if ((1f..2f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_two)
-        IndicationBar(if ((2f..3f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_three)
-        IndicationBar(if ((3f..4f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_four)
+        IndicationBar(
+            if ((0f..1f).contains(item)) size else 1f,
+            MaterialTheme.colorScheme.assistant_color_one
+        )
+        IndicationBar(
+            if ((1f..2f).contains(item)) size else 1f,
+            MaterialTheme.colorScheme.assistant_color_two
+        )
+        IndicationBar(
+            if ((2f..3f).contains(item)) size else 1f,
+            MaterialTheme.colorScheme.assistant_color_three
+        )
+        IndicationBar(
+            if ((3f..4f).contains(item)) size else 1f,
+            MaterialTheme.colorScheme.assistant_color_four
+        )
     }
 }
 
@@ -201,7 +217,7 @@ private fun IndicationCircle(color: Color, item: Int, current: Float) {
         val height = abs(item - current)
         return when {
             height < 1.5f -> height
-            else -> 1f
+            else          -> 1f
         }
     }
 

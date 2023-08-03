@@ -9,14 +9,12 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectUtils
-import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
+import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.file.SystemFolderType
 import java.io.BufferedInputStream
@@ -26,77 +24,82 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
-actual object SettingsUtils : KoinComponent {
+internal actual class SettingsUtils actual constructor(
+    private val externalResultRequest: IExternalResultRequest,
+    private val nativeApplication: NativeApplication
+) : ISettingsUtils {
 
     private val logger = Logger.withTag("SettingsUtils")
-    private val context = get<NativeApplication>()
 
     /**
      * export the settings file
      */
-    actual suspend fun exportSettingsFile(): Boolean {
+    actual override suspend fun exportSettingsFile(): Boolean {
         return try {
             logger.d { "exportSettingsFile" }
 
-            val result = ExternalResultRequest.launchForResult(
+            val result = externalResultRequest.launchForResult(
                 ExternalResultRequestIntention.CreateDocument(
-                    title = "rhasspy_settings_${Clock.System.now().toLocalDateTime(TimeZone.UTC)}.zip",
+                    title = "rhasspy_settings_${
+                        Clock.System.now().toLocalDateTime(TimeZone.UTC)
+                    }.zip",
                     mimeType = "application/zip"
                 )
             )
 
             return when (result) {
                 is ExternalRedirectResult.Result -> {
-                    return context.contentResolver.openOutputStream(result.data.toUri())?.let { outputStream ->
+                    return nativeApplication.contentResolver.openOutputStream(result.data.toUri())
+                        ?.let { outputStream ->
 
-                        //create output for zip file
-                        val zipOutputStream =
-                            ZipOutputStream(BufferedOutputStream(outputStream))
+                            //create output for zip file
+                            val zipOutputStream =
+                                ZipOutputStream(BufferedOutputStream(outputStream))
 
-                        //shared Prefs file
-                        zipOutputStream.putNextEntry(ZipEntry("shared_prefs/"))
+                            //shared Prefs file
+                            zipOutputStream.putNextEntry(ZipEntry("shared_prefs/"))
 
-                        //copy org.rhasspy.mobile.android_prefenrences.xml
-                        val sharedPreferencesFile = File(
-                            context.filesDir.parent,
-                            "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
-                        )
-                        if (sharedPreferencesFile.exists()) {
-                            zipOutputStream.putNextEntry(ZipEntry("shared_prefs/${sharedPreferencesFile.name}"))
-                            zipOutputStream.write(sharedPreferencesFile.readBytes())
-                        }
+                            //copy org.rhasspy.mobile.android_prefenrences.xml
+                            val sharedPreferencesFile = File(
+                                nativeApplication.filesDir.parent,
+                                "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
+                            )
+                            if (sharedPreferencesFile.exists()) {
+                                zipOutputStream.putNextEntry(ZipEntry("shared_prefs/${sharedPreferencesFile.name}"))
+                                zipOutputStream.write(sharedPreferencesFile.readBytes())
+                            }
 
-                        zipOutputStream.closeEntry()
-                        zipOutputStream.putNextEntry(ZipEntry("files/"))
+                            zipOutputStream.closeEntry()
+                            zipOutputStream.putNextEntry(ZipEntry("files/"))
 
-                        //all custom files
-                        val files = context.filesDir
-                        FolderType.values().forEach { folderType ->
-                            File(files, folderType.toString()).walkTopDown().forEach { file ->
-                                if (file.exists()) {
-                                    if (file.isDirectory) {
-                                        zipOutputStream.putNextEntry(ZipEntry("files/${folderType}/"))
-                                        zipOutputStream.closeEntry()
-                                    } else {
-                                        zipOutputStream.putNextEntry(ZipEntry("files/${folderType}/${file.name}"))
-                                        zipOutputStream.write(file.readBytes())
-                                        zipOutputStream.closeEntry()
+                            //all custom files
+                            val files = nativeApplication.filesDir
+                            FolderType.values().forEach { folderType ->
+                                File(files, folderType.toString()).walkTopDown().forEach { file ->
+                                    if (file.exists()) {
+                                        if (file.isDirectory) {
+                                            zipOutputStream.putNextEntry(ZipEntry("files/${folderType}/"))
+                                            zipOutputStream.closeEntry()
+                                        } else {
+                                            zipOutputStream.putNextEntry(ZipEntry("files/${folderType}/${file.name}"))
+                                            zipOutputStream.write(file.readBytes())
+                                            zipOutputStream.closeEntry()
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        zipOutputStream.flush()
-                        outputStream.flush()
+                            zipOutputStream.flush()
+                            outputStream.flush()
 
-                        zipOutputStream.close()
-                        outputStream.close()
+                            zipOutputStream.close()
+                            outputStream.close()
 
-                        true
-                    } ?: false
+                            true
+                        } ?: false
                 }
 
-                else -> false
+                else                             -> false
             }
 
 
@@ -109,7 +112,7 @@ actual object SettingsUtils : KoinComponent {
     /**
      * restore all settings from a file
      */
-    actual suspend fun restoreSettingsFromFile(): Boolean {
+    actual override suspend fun restoreSettingsFromFile(): Boolean {
         return try {
             logger.d { "restoreSettingsFromFile" }
 
@@ -121,13 +124,13 @@ actual object SettingsUtils : KoinComponent {
 
             return result?.toUri()?.let { uri ->
                 logger.d { "restoreSettingsFromFile $uri" }
-                context.contentResolver.openInputStream(uri)
+                nativeApplication.contentResolver.openInputStream(uri)
                     ?.let { inputStream ->
                         //read input data
                         val zipInputStream = ZipInputStream(BufferedInputStream(inputStream))
 
                         var entry = zipInputStream.nextEntry
-                        val dir = context.filesDir.parent ?: ""
+                        val dir = nativeApplication.filesDir.parent ?: ""
 
                         while (entry != null) {
                             val file = File(dir, entry.name)
@@ -159,7 +162,7 @@ actual object SettingsUtils : KoinComponent {
                         }
 
                         inputStream.close()
-                        context.restart()
+                        nativeApplication.restart()
 
                         true
                     } ?: false
@@ -174,7 +177,7 @@ actual object SettingsUtils : KoinComponent {
     /**
      * share settings file but without sensitive data
      */
-    actual suspend fun shareSettingsFile(): Boolean {
+    actual override suspend fun shareSettingsFile(): Boolean {
         return try {
             logger.d { "shareSettingsFile" }
 
@@ -206,11 +209,11 @@ actual object SettingsUtils : KoinComponent {
 
             //copy org.rhasspy.mobile.android_prefenrences.xml
             val sharedPreferencesFile = File(
-                context.filesDir.parent,
+                nativeApplication.filesDir.parent,
                 "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
             )
             val exportFile = File(
-                context.filesDir,
+                nativeApplication.filesDir,
                 "org.rhasspy.mobile.android_preferences_export.xml"
             )
             //create new empty file
@@ -242,12 +245,12 @@ actual object SettingsUtils : KoinComponent {
             }
             //share file
             val fileUri: Uri = FileProvider.getUriForFile(
-                context,
-                context.packageName.toString() + ".provider",
+                nativeApplication,
+                nativeApplication.packageName.toString() + ".provider",
                 exportFile
             )
 
-            return ExternalResultRequest.launch(
+            return externalResultRequest.launch(
                 ExternalResultRequestIntention.ShareFile(
                     fileUri = fileUri.toString(),
                     mimeType = "application/xml"

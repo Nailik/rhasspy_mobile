@@ -28,8 +28,8 @@ actual class MqttClient actual constructor(
 
     private var client = when (persistenceType) {
         MqttPersistence.MEMORY -> MqttClient(brokerUrl, clientId, MemoryPersistence())
-        MqttPersistence.FILE -> MqttClient(brokerUrl, clientId, MqttDefaultFilePersistence())
-        else -> MqttClient(brokerUrl, clientId)
+        MqttPersistence.FILE   -> MqttClient(brokerUrl, clientId, MqttDefaultFilePersistence())
+        else                   -> MqttClient(brokerUrl, clientId)
     }
 
     /**
@@ -136,9 +136,9 @@ actual class MqttClient actual constructor(
             else if (securityEx.reasonCode == 5) status = MqttStatus.NOT_AUTHORIZED
         } catch (mqttEx: MqttException) {
             status = when (mqttEx.reasonCode) {
-                3 -> MqttStatus.SERVER_UNAVAILABLE
-                2 -> MqttStatus.IDENTIFIER_REJECTED
-                1 -> MqttStatus.UNACCEPTABLE_PROTOCOL
+                3    -> MqttStatus.SERVER_UNAVAILABLE
+                2    -> MqttStatus.IDENTIFIER_REJECTED
+                1    -> MqttStatus.UNACCEPTABLE_PROTOCOL
                 else -> MqttStatus.UNKNOWN
             }
         } catch (e: Exception) {

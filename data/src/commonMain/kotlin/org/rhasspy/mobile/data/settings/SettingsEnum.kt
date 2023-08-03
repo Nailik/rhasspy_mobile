@@ -3,8 +3,10 @@ package org.rhasspy.mobile.data.settings
 enum class SettingsEnum {
     //App Settings
     CrashlyticsDialog,
+    ChangelogDialog,
     Crashlytics,
     LanguageOption,
+    DialogAutoScroll,
 
     AutomaticSilenceDetection,
     AutomaticSilenceDetectionAudioLevel,
@@ -27,10 +29,12 @@ enum class SettingsEnum {
     WakeWordLightIndication,
     SoundIndicationOutput,
 
+    MqttApiDeviceChangeEnabled,
+    HttpApiDeviceChangeEnabled,
+    Volume,
     HotWordEnabled,
     AudioOutputEnabled,
     IntentHandlingEnabled,
-    Volume,
 
     WakeSoundVolume,
     RecordedSoundVolume,
@@ -47,10 +51,6 @@ enum class SettingsEnum {
     AudioFocusOnSound,
     AudioFocusOnRecord,
     AudioFocusOnDialog,
-
-    AudioRecorderChannel,
-    AudioRecorderEncoding,
-    AudioRecorderSampleRate,
 
     ShowLog,
     LogAudioFrames,
@@ -83,12 +83,27 @@ enum class SettingsEnum {
     WakeWordUDPOutputPort,
 
     WakeWordOption,
+
+    WakeWordAudioRecorderChannel,
+    WakeWordAudioRecorderEncoding,
+    WakeWordAudioRecorderSampleRate,
+
+    WakeWordAudioOutputChannel,
+    WakeWordAudioROutputEncoding,
+    WakeWordAudioOutputSampleRate,
+
     WakeWordPorcupineAccessToken,
     WakeWordPorcupineKeywordDefaultSelectedOptions,
     WakeWordPorcupineKeywordCustomOptions,
     WakeWordPorcupineLanguage,
 
     SpeechToTextOption,
+    SpeechToTextAudioRecorderChannel,
+    SpeechToTextAudioRecorderEncoding,
+    SpeechToTextAudioRecorderSampleRate,
+    SpeechToTextAudioOutputChannel,
+    SpeechToTextAudioOutputEncoding,
+    SpeechToTextAudioOutputSampleRate,
     CustomSpeechToTextEndpoint,
     SpeechToTextHttpEndpoint,
     SpeechToTextMqttSilenceDetection,

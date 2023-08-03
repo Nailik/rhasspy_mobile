@@ -1,29 +1,50 @@
 package org.rhasspy.mobile.logic.services.indication
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.indication.IndicationState
 import org.rhasspy.mobile.data.log.LogType
+import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
+import org.rhasspy.mobile.logic.services.localaudio.ILocalAudioService
 import org.rhasspy.mobile.platformspecific.indication.NativeIndication
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 
-class IndicationService : IService(LogType.IndicationService) {
+interface IIndicationService : IService {
 
-    private val localAudioService by inject<LocalAudioService>()
+    val isShowVisualIndication: StateFlow<Boolean>
+    val indicationState: StateFlow<IndicationState>
+
+    fun onIdle()
+    fun onSessionStarted()
+    fun onRecording()
+    fun onSilenceDetected()
+    fun onThinking()
+    fun onPlayAudio()
+    fun onError()
+
+}
+
+internal class IndicationService : IIndicationService {
+
+    override val logger = LogType.IndicationService.logger()
+    private val localAudioService by inject<ILocalAudioService>()
 
     //states are used by overlay
     private val _isShowVisualIndication = MutableStateFlow(false)
-    val isShowVisualIndication = _isShowVisualIndication.readOnly
+    override val isShowVisualIndication = _isShowVisualIndication.readOnly
     private val _indicationState = MutableStateFlow(IndicationState.Idle)
-    val indicationState = _indicationState.readOnly
+    override val indicationState = _indicationState.readOnly
+
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
+    override val serviceState = _serviceState.readOnly
 
     /**
      * idle shows no indication and stops screen wakeup
      */
-    fun onIdle() {
+    override fun onIdle() {
         logger.d { "onIdle" }
         _isShowVisualIndication.value = false
         NativeIndication.releaseWakeUp()
@@ -32,7 +53,7 @@ class IndicationService : IService(LogType.IndicationService) {
     /**
      * wake up screen when hotword is detected and play sound eventually
      */
-    fun onWakeWordDetected(onFinished: () -> Unit) {
+    override fun onSessionStarted() {
         logger.d { "onWakeWordDetected" }
         if (AppSetting.isWakeWordDetectionTurnOnDisplayEnabled.value) {
             NativeIndication.wakeUpScreen()
@@ -42,17 +63,15 @@ class IndicationService : IService(LogType.IndicationService) {
         }
         _indicationState.value = IndicationState.WakeUp
         if (AppSetting.isSoundIndicationEnabled.value) {
-            localAudioService.playWakeSound { onFinished() }
-        } else {
-            onFinished()
+            localAudioService.playWakeSound { }
         }
     }
 
     /**
      * update indication state
      */
-    fun onListening() {
-        logger.d { "onListening" }
+    override fun onRecording() {
+        logger.d { "onRecording" }
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true
         }
@@ -62,7 +81,7 @@ class IndicationService : IService(LogType.IndicationService) {
     /**
      * play sound that speech was recorded
      */
-    fun onSilenceDetected() {
+    override fun onSilenceDetected() {
         logger.d { "onSilenceDetected" }
         if (AppSetting.isSoundIndicationEnabled.value) {
             localAudioService.playRecordedSound()
@@ -72,7 +91,7 @@ class IndicationService : IService(LogType.IndicationService) {
     /**
      * when intent is recognized show thinking animation
      */
-    fun onThinking() {
+    override fun onThinking() {
         logger.d { "onRecognizingIntent" }
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true
@@ -83,7 +102,7 @@ class IndicationService : IService(LogType.IndicationService) {
     /**
      * show animation that audio is playing
      */
-    fun onPlayAudio() {
+    override fun onPlayAudio() {
         logger.d { "onPlayAudio" }
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true
@@ -94,7 +113,7 @@ class IndicationService : IService(LogType.IndicationService) {
     /**
      * play error sound on error
      */
-    fun onError() {
+    override fun onError() {
         logger.d { "onError" }
         if (AppSetting.isSoundIndicationEnabled.value) {
             localAudioService.playErrorSound()

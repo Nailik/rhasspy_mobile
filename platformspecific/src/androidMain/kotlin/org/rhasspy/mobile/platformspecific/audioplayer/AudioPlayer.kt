@@ -30,7 +30,7 @@ actual class AudioPlayer : Closeable, KoinComponent {
         audioSource: AudioSource,
         volume: StateFlow<Float>,
         audioOutputOption: AudioOutputOption,
-        onFinished: (exception: Exception?) -> Unit
+        onFinished: () -> Unit
     ) {
         logger.v { "playSound" }
 
@@ -47,7 +47,7 @@ actual class AudioPlayer : Closeable, KoinComponent {
             onFinished = {
                 internalAudioPlayer = null
                 _isPlayingState.value = false
-                onFinished.invoke(it)
+                onFinished.invoke()
             }
         )
     }

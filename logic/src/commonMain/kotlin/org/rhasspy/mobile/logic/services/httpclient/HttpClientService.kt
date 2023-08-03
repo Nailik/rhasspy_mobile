@@ -17,6 +17,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import okio.Path
+import org.koin.core.component.inject
 import org.rhasspy.mobile.data.httpclient.HttpClientPath
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
@@ -24,19 +25,38 @@ import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.*
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.ktor.configureEngine
 import org.rhasspy.mobile.platformspecific.readOnly
+
+interface IHttpClientService : IService {
+
+    override val serviceState: StateFlow<ServiceState>
+
+    fun speechToText(audioFilePath: Path, onResult: (result: HttpClientResult<String>) -> Unit)
+    fun recognizeIntent(text: String, onResult: (result: HttpClientResult<String>) -> Unit)
+    fun textToSpeech(text: String, volume: Float?, siteId: String?, onResult: (result: HttpClientResult<ByteArray>) -> Unit)
+    fun playWav(audioSource: AudioSource, onResult: (result: HttpClientResult<String>) -> Unit)
+    fun intentHandling(intent: String, onResult: (result: HttpClientResult<String>) -> Unit)
+    fun homeAssistantEvent(json: String, intentName: String, onResult: (result: HttpClientResult<String>) -> Unit)
+    fun homeAssistantIntent(intentJson: String, onResult: (result: HttpClientResult<String>) -> Unit)
+}
 
 /**
  * contains client to send data to http endpoints
  *
  * functions return the result or an exception
  */
-class HttpClientService(
+internal class HttpClientService(
     paramsCreator: HttpClientServiceParamsCreator
-) : IService(LogType.HttpClientService) {
+) : IHttpClientService {
+
+    override val logger = LogType.HttpClientService.logger()
+
+    private val nativeApplication by inject<NativeApplication>()
 
     private var coroutineScope = CoroutineScope(Dispatchers.IO)
 
@@ -49,7 +69,7 @@ class HttpClientService(
     private val audioContentType = ContentType("audio", "wav")
     private val jsonContentType = ContentType("application", "json")
     private fun HttpMessageBuilder.hassAuthorization() =
-        this.header("Authorization", "Bearer ${params.intentHandlingHassAccessToken}")
+        this.header("Authorization", "Bearer ${params.intentHandlingHomeAssistantAccessToken}")
 
     private val isHandleIntentDirectly
         get() =
@@ -87,8 +107,8 @@ class HttpClientService(
             "${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.PlayWav.path}"
         }
 
-    private val hassEventUrl get() = "${params.intentHandlingHassEndpoint}/api/events/rhasspy_"
-    private val hassIntentUrl get() = "${params.intentHandlingHassEndpoint}/api/intent/handle"
+    private val hassEventUrl get() = "${params.intentHandlingHomeAssistantEndpoint}/api/events/rhasspy_"
+    private val hassIntentUrl get() = "${params.intentHandlingHomeAssistantEndpoint}/api/intent/handle"
 
     private var httpClient: HttpClient? = null
 
@@ -153,12 +173,16 @@ class HttpClientService(
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    suspend fun speechToText(audioFilePath: Path): HttpClientResult<String> {
+    override fun speechToText(audioFilePath: Path, onResult: (result: HttpClientResult<String>) -> Unit) {
         logger.d { "speechToText: audioFilePath.name" }
 
-        return post(speechToTextUrl) {
-            setBody(StreamContent(audioFilePath))
-        }
+        post(
+            url = speechToTextUrl,
+            block = {
+                setBody(StreamContent(audioFilePath))
+            },
+            onResult = onResult
+        )
     }
 
     /**
@@ -170,11 +194,16 @@ class HttpClientService(
      *
      * returns null if the intent is not found
      */
-    suspend fun recognizeIntent(text: String): HttpClientResult<String> {
+    override fun recognizeIntent(text: String, onResult: (result: HttpClientResult<String>) -> Unit) {
         logger.d { "recognizeIntent text: $text" }
-        return post(recognizeIntentUrl) {
-            setBody(text)
-        }
+
+        post(
+            url = recognizeIntentUrl,
+            block = {
+                setBody(text)
+            },
+            onResult = onResult
+        )
     }
 
     /**
@@ -186,11 +215,16 @@ class HttpClientService(
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun textToSpeech(text: String): HttpClientResult<ByteArray> {
+    override fun textToSpeech(text: String, volume: Float?, siteId: String?, onResult: (result: HttpClientResult<ByteArray>) -> Unit) {
         logger.d { "textToSpeech text: $text" }
-        return post(textToSpeechUrl) {
-            setBody(text)
-        }
+
+        post(
+            url = "$textToSpeechUrl${volume?.let { "?volume=$it" } ?: ""}${siteId?.let { "?siteId=$it" } ?: ""}",
+            block = {
+                setBody(text)
+            },
+            onResult = onResult
+        )
     }
 
     /**
@@ -200,20 +234,24 @@ class HttpClientService(
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     @Suppress("IMPLICIT_CAST_TO_ANY")
-    suspend fun playWav(audioSource: AudioSource): HttpClientResult<String> {
+    override fun playWav(audioSource: AudioSource, onResult: (result: HttpClientResult<String>) -> Unit) {
         logger.d { "playWav size: $audioSource" }
         @Suppress("DEPRECATION")
         val body = when (audioSource) {
-            is AudioSource.Data -> audioSource.data
-            is AudioSource.File -> StreamContent(audioSource.path)
-            is AudioSource.Resource -> audioSource.fileResource.commonData(nativeApplication)
+            is Data -> audioSource.data
+            is File -> StreamContent(audioSource.path)
+            is Resource -> audioSource.fileResource.commonData(nativeApplication)
         }
-        return post(audioPlayingUrl) {
-            setAttributes {
-                contentType(audioContentType)
-            }
-            setBody(body)
-        }
+        return post(
+            url = audioPlayingUrl,
+            block = {
+                setAttributes {
+                    contentType(audioContentType)
+                }
+                setBody(body)
+            },
+            onResult = onResult
+        )
     }
 
     /**
@@ -232,40 +270,49 @@ class HttpClientService(
      *
      * Implemented by rhasspy-remote-http-hermes
      */
-    suspend fun intentHandling(intent: String): HttpClientResult<String> {
+    override fun intentHandling(intent: String, onResult: (result: HttpClientResult<String>) -> Unit) {
         logger.d { "intentHandling intent: $intent" }
-        return post(params.intentHandlingHttpEndpoint) {
-            setBody(intent)
-        }
+        return post(
+            url = params.intentHandlingHttpEndpoint, block = {
+                setBody(intent)
+            },
+            onResult = onResult
+        )
     }
 
     /**
      * send intent as Event to Home Assistant
      */
-    suspend fun hassEvent(json: String, intentName: String): HttpClientResult<String> {
-        logger.d { "hassEvent json: $json intentName: $intentName" }
-        return post("$hassEventUrl$intentName") {
-            buildHeaders {
-                hassAuthorization()
-                contentType(jsonContentType)
-            }
-            setBody(json)
-        }
+    override fun homeAssistantEvent(json: String, intentName: String, onResult: (result: HttpClientResult<String>) -> Unit) {
+        logger.d { "homeAssistantEvent json: $json intentName: $intentName" }
+        return post(
+            url = "$hassEventUrl$intentName", block = {
+                buildHeaders {
+                    hassAuthorization()
+                    contentType(jsonContentType)
+                }
+                setBody(json)
+            },
+            onResult = onResult
+        )
     }
 
 
     /**
      * send intent as Intent to Home Assistant
      */
-    suspend fun hassIntent(intentJson: String): HttpClientResult<String> {
-        logger.d { "hassIntent json: $intentJson" }
-        return post(hassIntentUrl) {
-            buildHeaders {
-                hassAuthorization()
-                contentType(jsonContentType)
-            }
-            setBody(intentJson)
-        }
+    override fun homeAssistantIntent(intentJson: String, onResult: (result: HttpClientResult<String>) -> Unit) {
+        logger.d { "homeAssistantIntent json: $intentJson" }
+        return post(
+            url = hassIntentUrl, block = {
+                buildHeaders {
+                    hassAuthorization()
+                    contentType(jsonContentType)
+                }
+                setBody(intentJson)
+            },
+            onResult = onResult
+        )
     }
 
 
@@ -273,36 +320,38 @@ class HttpClientService(
      * post data to endpoint
      * handles even in event logger
      */
-    private suspend inline fun <reified T> post(
+    private inline fun <reified T> post(
         url: String,
-        block: HttpRequestBuilder.() -> Unit
-    ): HttpClientResult<T> {
-        return httpClient?.let { client ->
-            try {
-                val request = client.post(url, block)
-                val result = request.body<T>()
-                if (result is ByteArray) {
-                    logger.d { "post result size: ${result.size}" }
-                } else {
-                    logger.d { "post result data: $result" }
+        crossinline block: HttpRequestBuilder.() -> Unit,
+        crossinline onResult: (result: HttpClientResult<T>) -> Unit
+    ) {
+        coroutineScope.launch {
+            val result = httpClient?.let { client ->
+                try {
+                    val request = client.post(url, block)
+                    val result = request.body<T>()
+                    if (result is ByteArray) {
+                        logger.d { "post result size: ${result.size}" }
+                    } else {
+                        logger.d { "post result data: $result" }
+                    }
+
+                    _serviceState.value = Success
+                    HttpClientResult.Success(result)
+
+                } catch (exception: Exception) {
+
+                    logger.e(exception) { "post result error" }
+                    _serviceState.value = mapError(exception)
+                    HttpClientResult.Error(exception)
+
                 }
-
-                _serviceState.value = Success
-                HttpClientResult.Success(result)
-
-            } catch (exception: Exception) {
-
-                logger.e(exception) { "post result error" }
-                _serviceState.value = mapError(exception)
-                HttpClientResult.Error(exception)
-
+            } ?: run {
+                logger.a { "post client not initialized" }
+                _serviceState.value = ServiceState.Exception()
+                HttpClientResult.Error(Exception())
             }
-        } ?: run {
-
-            logger.a { "post client not initialized" }
-            _serviceState.value = ServiceState.Exception()
-            HttpClientResult.Error(Exception())
-
+            onResult(result)
         }
     }
 

@@ -5,6 +5,6 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.service.ServiceState
 
 @Stable
-data class ServiceViewState internal constructor(
+data class ServiceViewState(
     val serviceState: StateFlow<ServiceState>
 )

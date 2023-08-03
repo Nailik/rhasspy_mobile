@@ -15,7 +15,7 @@ sealed interface DialogManagementConfigurationUiEvent {
 
     sealed interface Action : DialogManagementConfigurationUiEvent {
 
-        object BackClick : Action
+        data object BackClick : Action
 
     }
 

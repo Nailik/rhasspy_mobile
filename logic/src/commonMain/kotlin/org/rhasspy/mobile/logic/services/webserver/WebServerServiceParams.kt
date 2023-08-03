@@ -2,7 +2,8 @@ package org.rhasspy.mobile.logic.services.webserver
 
 import okio.Path
 
-data class WebServerServiceParams(
+internal data class WebServerServiceParams(
+    val siteId: String,
     val isHttpServerEnabled: Boolean,
     val httpServerPort: Int,
     val isHttpServerSSLEnabled: Boolean,

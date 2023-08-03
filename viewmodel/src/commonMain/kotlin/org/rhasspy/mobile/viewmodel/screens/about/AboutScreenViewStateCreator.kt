@@ -3,7 +3,9 @@ package org.rhasspy.mobile.viewmodel.screens.about
 import com.mikepenz.aboutlibraries.Libs
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.rhasspy.mobile.BuildKonfig
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.jsonPrimitive
 import org.rhasspy.mobile.data.libraries.stable
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.resource.readToString
@@ -16,10 +18,8 @@ class AboutScreenViewStateCreator(
     operator fun invoke(): MutableStateFlow<AboutScreenViewState> {
         return MutableStateFlow(
             AboutScreenViewState(
-                changelog = BuildKonfig.changelog.split("\\\\")
-                    .map { it.replace("\n", "") }
-                    .filter { it.isNotEmpty() }
-                    .map { "· $it" }
+                changelog = Json.decodeFromString<JsonArray>(MR.files.changelog.readToString(nativeApplication))
+                    .map { "· ${it.jsonPrimitive.content}\n" }
                     .toImmutableList(),
                 isChangelogDialogVisible = false,
                 privacy = MR.files.dataprivacy.readToString(nativeApplication),

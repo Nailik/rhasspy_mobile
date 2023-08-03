@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.viewmodel.screens.configuration
 
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination
 
 sealed interface ConfigurationScreenUiEvent {
 
@@ -12,10 +12,16 @@ sealed interface ConfigurationScreenUiEvent {
 
     sealed interface Action : ConfigurationScreenUiEvent {
 
-        object ScrollToError : Action
-        object BackClick : Action
+        data object ScrollToErrorClick : Action
+        data object BackClick : Action
+        data object OpenWikiLink : Action
         data class Navigate(val destination: ConfigurationScreenNavigationDestination) : Action
 
+    }
+
+    sealed interface Consumed : ConfigurationScreenUiEvent {
+
+        data object ScrollToError : Consumed
 
     }
 

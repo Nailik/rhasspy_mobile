@@ -1,30 +1,30 @@
 package org.rhasspy.mobile.viewmodel.screens.configuration
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.event.EventState.Consumed
-import org.rhasspy.mobile.data.event.EventState.Triggered
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
+import org.rhasspy.mobile.data.link.LinkType
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.KViewModel
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
-import org.rhasspy.mobile.viewmodel.screens.configuration.IConfigurationScreenUiStateEvent.ScrollToErrorEventIState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Consumed.ScrollToError
 
 @Stable
 class ConfigurationScreenViewModel(
-    private val viewStateCreator: ConfigurationScreenViewStateCreator
-) : KViewModel() {
+    viewStateCreator: ConfigurationScreenViewStateCreator
+) : ScreenViewModel() {
 
-    val viewState: StateFlow<ConfigurationScreenViewState> = viewStateCreator()
-    val screen = navigator.topScreen<ConfigurationScreenNavigationDestination>()
+    private val _viewState: MutableStateFlow<ConfigurationScreenViewState> = viewStateCreator()
+    val viewState = _viewState.readOnly
 
     fun onEvent(event: ConfigurationScreenUiEvent) {
         when (event) {
-            is Change -> onChange(event)
-            is Action -> onAction(event)
+            is Change   -> onChange(event)
+            is Action   -> onAction(event)
+            is Consumed -> onConsumed(event)
         }
     }
 
@@ -36,15 +36,16 @@ class ConfigurationScreenViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            ScrollToError -> viewStateCreator.updateScrollToError(Triggered)
-            BackClick -> navigator.onBackPressed()
-            is Navigate -> navigator.navigate(action.destination)
+            ScrollToErrorClick -> _viewState.update { it.copy(scrollToError = viewState.value.firstErrorIndex.value) }
+            BackClick          -> navigator.onBackPressed()
+            is Navigate        -> navigator.navigate(action.destination)
+            OpenWikiLink       -> openLink(LinkType.Wiki)
         }
     }
 
-    fun onConsumed(event: IConfigurationScreenUiStateEvent) {
-        when (event) {
-            is ScrollToErrorEventIState -> viewStateCreator.updateScrollToError(Consumed)
+    private fun onConsumed(consumed: Consumed) {
+        when (consumed) {
+            ScrollToError -> _viewState.update { it.copy(scrollToError = null) }
         }
     }
 

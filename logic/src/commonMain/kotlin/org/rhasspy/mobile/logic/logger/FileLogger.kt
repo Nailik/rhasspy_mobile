@@ -8,32 +8,48 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okio.Path
 import okio.buffer
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.rhasspy.mobile.data.log.LogElement
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.*
+import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.settings.AppSetting
 
-object FileLogger : LogWriter(), KoinComponent {
+interface IFileLogger {
+
+    val flow: Flow<LogElement>
+
+    fun getLines(): ImmutableList<LogElement>
+    fun shareLogFile(): Boolean
+    suspend fun saveLogFile(): Boolean
+
+}
+
+internal class FileLogger(
+    private val nativeApplication: NativeApplication,
+    private val externalResultRequest: IExternalResultRequest
+) : IFileLogger, LogWriter() {
     private val logger = Logger.withTag("FileLogger")
 
     //create new file when logfile is 2 MB
-    private val file = Path.commonInternalPath(get(), "logfile.json")
+    private val file = Path.commonInternalPath(nativeApplication, "logfile.json")
+    private val fileHandle = file.commonReadWrite()
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val _flow = MutableSharedFlow<LogElement>()
-    val flow = _flow.readOnly
+    override val flow = _flow.readOnly
 
     init {
         Logger.setMinSeverity(AppSetting.logLevel.value.severity)
@@ -44,13 +60,13 @@ object FileLogger : LogWriter(), KoinComponent {
      */
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
         val element = LogElement(
-            Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
+            Clock.System.now().toLocalDateTime(currentSystemDefault()).toString(),
             severity,
             tag,
             message,
             throwable?.message
         )
-        file.commonReadWrite().appendingSink().buffer().writeUtf8("\n,${Json.encodeToString(element)}").flush()
+        fileHandle.appendingSink().buffer().writeUtf8("\n,${Json.encodeToString(element)}").flush()
         coroutineScope.launch {
             _flow.emit(element)
         }
@@ -59,7 +75,7 @@ object FileLogger : LogWriter(), KoinComponent {
     /**
      * read all lines from file
      */
-    fun getLines(): ImmutableList<LogElement> {
+    override fun getLines(): ImmutableList<LogElement> {
         return try {
             file.commonDecodeLogList<Array<LogElement>>().toImmutableList()
         } catch (exception: Exception) {
@@ -71,13 +87,14 @@ object FileLogger : LogWriter(), KoinComponent {
     /**
      * share the log file
      */
-    fun shareLogFile() = file.commonShare(get())
+    override fun shareLogFile() = file.commonShare(nativeApplication, externalResultRequest)
 
     /**
      * save log to external file
      */
-    suspend fun saveLogFile() = file.commonSave(
-        get(),
+    override suspend fun saveLogFile() = file.commonSave(
+        nativeApplication,
+        externalResultRequest,
         "rhasspy_logfile_${
             Clock.System.now().toLocalDateTime(TimeZone.UTC)
         }.json",

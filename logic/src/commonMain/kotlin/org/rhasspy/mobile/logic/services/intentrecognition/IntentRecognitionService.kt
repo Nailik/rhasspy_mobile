@@ -1,7 +1,11 @@
 package org.rhasspy.mobile.logic.services.intentrecognition
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
@@ -9,33 +13,65 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
+import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionResult
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
+import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.platformspecific.readOnly
+import kotlin.Exception
+
+interface IIntentRecognitionService : IService {
+
+    override val serviceState: StateFlow<ServiceState>
+
+    fun recognizeIntent(sessionId: String, text: String)
+
+}
 
 /**
  * calls actions and returns result
  *
  * when data is null the service was most probably mqtt and will return result in a call function
  */
-open class IntentRecognitionService(
+internal class IntentRecognitionService(
     paramsCreator: IntentRecognitionServiceParamsCreator
-) : IService(LogType.IntentRecognitionService) {
+) : IIntentRecognitionService {
 
-    private val httpClientService by inject<HttpClientService>()
-    private val mqttClientService by inject<MqttService>()
+    override val logger = LogType.IntentRecognitionService.logger()
+
+    private val serviceMiddleware by inject<IServiceMiddleware>()
+    private val httpClientService by inject<IHttpClientService>()
+    private val mqttClientService by inject<IMqttService>()
 
     private val paramsFlow: StateFlow<IntentRecognitionServiceParams> = paramsCreator()
     private val params get() = paramsFlow.value
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
+    private val _serviceState = MutableStateFlow<ServiceState>(Pending)
     override val serviceState = _serviceState.readOnly
 
+    private val scope = CoroutineScope(Dispatchers.IO)
+
+    init {
+        scope.launch {
+            paramsFlow.collect {
+                updateState()
+            }
+        }
+    }
+
+    private fun updateState() {
+        _serviceState.value = when (params.intentRecognitionOption) {
+            IntentRecognitionOption.RemoteHTTP -> Success
+            IntentRecognitionOption.RemoteMQTT -> Success
+            IntentRecognitionOption.Disabled   -> Disabled
+        }
+    }
 
     /**
      * hermes/nlu/query
@@ -54,25 +90,35 @@ open class IntentRecognitionService(
      * - calls default site to recognize intent
      * - later eventually intentRecognized or intentNotRecognized will be called with received data
      */
-    suspend fun recognizeIntent(sessionId: String, text: String) {
+    override fun recognizeIntent(sessionId: String, text: String) {
         logger.d { "recognizeIntent sessionId: $sessionId text: $text" }
         when (params.intentRecognitionOption) {
             IntentRecognitionOption.RemoteHTTP -> {
-                val result = httpClientService.recognizeIntent(text)
-                _serviceState.value = result.toServiceState()
-                val action = when (result) {
-                    is HttpClientResult.Error -> DialogServiceMiddlewareAction.IntentRecognitionError(Source.HttpApi)
-                    is HttpClientResult.Success -> DialogServiceMiddlewareAction.IntentRecognitionResult(
-                        Source.HttpApi,
-                        readIntentNameFromJson(result.data),
-                        result.data
-                    )
+                httpClientService.recognizeIntent(text) { result ->
+                    _serviceState.value = result.toServiceState()
+                    val action = when (result) {
+                        is HttpClientResult.Error   -> IntentRecognitionError(Source.Local)
+                        is HttpClientResult.Success -> IntentRecognitionResult(
+                            source = Source.Local,
+                            intentName = readIntentNameFromJson(result.data),
+                            intent = result.data
+                        )
+                    }
+                    serviceMiddleware.action(action)
                 }
-                serviceMiddleware.action(action)
             }
 
-            IntentRecognitionOption.RemoteMQTT -> _serviceState.value = mqttClientService.recognizeIntent(sessionId, text)
-            IntentRecognitionOption.Disabled -> serviceMiddleware.action(DialogServiceMiddlewareAction.IntentRecognitionResult(Source.Local, "", ""))
+            IntentRecognitionOption.RemoteMQTT -> mqttClientService.recognizeIntent(sessionId, text) {
+                _serviceState.value = it
+            }
+
+            IntentRecognitionOption.Disabled   -> serviceMiddleware.action(
+                IntentRecognitionResult(
+                    Source.Local,
+                    "",
+                    ""
+                )
+            )
         }
     }
 
@@ -81,7 +127,8 @@ open class IntentRecognitionService(
      */
     private fun readIntentNameFromJson(intent: String): String {
         return try {
-            Json.decodeFromString<JsonObject>(intent).jsonObject["intent"]?.jsonObject?.get("name")?.jsonPrimitive?.content ?: ""
+            Json.decodeFromString<JsonObject>(intent).jsonObject["intent"]?.jsonObject?.get("name")?.jsonPrimitive?.content
+                ?: ""
         } catch (e: Exception) {
             ""
         }

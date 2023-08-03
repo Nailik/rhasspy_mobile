@@ -4,20 +4,22 @@ sealed interface LogScreenUiEvent {
 
     sealed interface Change : LogScreenUiEvent {
 
-        object ToggleListAutoScroll : Change
+        data object ToggleListAutoScroll : Change
+
+        data object ManualListScroll : Change
 
     }
 
     sealed interface Action : LogScreenUiEvent {
 
-        object ShareLogFile : Action
-        object SaveLogFile : Action
+        data object ShareLogFile : Action
+        data object SaveLogFile : Action
 
     }
 
     sealed interface Consumed : LogScreenUiEvent {
 
-        object ShowSnackBar : Consumed
+        data object ShowSnackBar : Consumed
 
     }
 

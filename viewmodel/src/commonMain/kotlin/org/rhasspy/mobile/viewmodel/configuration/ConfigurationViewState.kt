@@ -1,17 +1,21 @@
 package org.rhasspy.mobile.viewmodel.configuration
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
-data class ConfigurationViewState<V : IConfigurationEditViewState> internal constructor(
+data class ConfigurationViewState(
     val serviceViewState: ServiceViewState,
-    val isOpenServiceStateDialogEnabled: Boolean,
-    val isShowServiceStateDialog: Boolean = false,
-    val serviceStateDialogText: Any,
-    val testViewState: StateFlow<ConfigurationTestViewState>,
-    val editViewState: StateFlow<V>,
-    val isShowUnsavedChangesDialog: Boolean = false,
-    val hasUnsavedChanges: Boolean
-)
+    val hasUnsavedChanges: Boolean = false,
+    val isOpenServiceStateDialogEnabled: Boolean = false,
+    val dialogState: DialogState? = null
+) {
+
+    sealed interface DialogState {
+
+        data object UnsavedChangesDialogState : DialogState
+        data class ServiceStateDialogState(val dialogText: Any) : DialogState
+
+    }
+
+}

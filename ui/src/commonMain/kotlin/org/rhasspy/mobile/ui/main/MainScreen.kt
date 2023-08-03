@@ -1,14 +1,11 @@
 package org.rhasspy.mobile.ui.main
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Mic
-import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,27 +15,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
+import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.resources.icons.RhasspyLogo
 import org.rhasspy.mobile.ui.*
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreen
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
-import org.rhasspy.mobile.ui.settings.SettingsScreen
+import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent
-import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.CrashlyticsDialogResult
-import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModelFactory: ViewModelFactory) {
 
@@ -61,13 +57,27 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
                         Box(modifier = Modifier.padding(paddingValues)) {
 
-                            val viewModel: MainScreenViewModel = LocalViewModelFactory.current.getViewModel()
-                            Screen(viewModel) {
+                            val viewModel: MainScreenViewModel =
+                                LocalViewModelFactory.current.getViewModel()
+                            Screen(screenViewModel = viewModel) {
                                 val screen by viewModel.screen.collectAsState()
                                 val viewState by viewModel.viewState.collectAsState()
 
                                 if (viewState.isShowCrashlyticsDialog) {
-                                    CrashlyticsDialog(onResult = { viewModel.onEvent(CrashlyticsDialogResult(it)) })
+                                    CrashlyticsDialog(
+                                        onResult = {
+                                            viewModel.onEvent(
+                                                CrashlyticsDialogResult(it)
+                                            )
+                                        }
+                                    )
+                                }
+
+                                if (viewState.isChangelogDialogVisible) {
+                                    ChangelogDialog(
+                                        changelog = viewState.changelog,
+                                        onDismissRequest = { viewModel.onEvent(CloseChangelog) }
+                                    )
                                 }
 
                                 MainScreenContent(
@@ -99,36 +109,47 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
 }
 
+
+/**
+ * Displays changelog as text in a dialog
+ */
 @Composable
-private fun MainScreenContent(
-    screen: MainScreenNavigationDestination,
-    viewState: MainScreenViewState,
-    onEvent: (event: MainScreenUiEvent) -> Unit
+private fun ChangelogDialog(
+    changelog: ImmutableList<String>,
+    onDismissRequest: () -> Unit
 ) {
 
-    Column {
-        Box(modifier = Modifier.weight(1f)) {
-            when (screen) {
-                HomeScreen -> HomeScreen()
-                ConfigurationScreen -> ConfigurationScreen()
-                SettingsScreen -> SettingsScreen()
-                LogScreen -> LogScreen()
+    Dialog(
+        testTag = TestTag.DialogChangelog,
+        title = "${translate(MR.strings.changelog.stable)} - ${BuildKonfig.versionName}",
+        supportingText = {
+            LazyColumn {
+                items(changelog) { item ->
+                    Text(text = item)
+                }
             }
-        }
-
-
-        AnimatedVisibility(visible = viewState.isBottomNavigationVisible) {
-            BottomNavigation(
-                isShowLogEnabled = viewState.isShowLogEnabled,
-                activeIndex = viewState.bottomNavigationIndex,
-                onEvent = onEvent
-            )
-        }
-
-    }
+        },
+        confirmLabel = MR.strings.close.stable,
+        onConfirm = onDismissRequest,
+        onDismiss = onDismissRequest
+    )
 
 }
 
+@Composable
+private fun MainScreenContent(
+    screen: NavigationDestination,
+    viewState: MainScreenViewState,
+    onEvent: (event: MainScreenUiEvent) -> Unit
+) {
+    NavigationContent(screen) {
+        BottomNavigation(
+            isShowLogEnabled = viewState.isShowLogEnabled,
+            activeIndex = viewState.bottomNavigationIndex,
+            onEvent = onEvent
+        )
+    }
+}
 
 /**
  * dialog if user wants to enable crashlytics
@@ -136,30 +157,15 @@ private fun MainScreenContent(
 @Composable
 fun CrashlyticsDialog(onResult: (result: Boolean) -> Unit) {
     Dialog(
-        modifier = Modifier.testTag(TestTag.DialogCrashlytics),
-        onDismissRequest = { onResult(false) },
-        confirmButton = {
-            TextButton(
-                onClick = { onResult(true) },
-                modifier = Modifier.testTag(TestTag.DialogOk)
-            ) {
-                Text(MR.strings.confirm.stable)
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { onResult(false) },
-                modifier = Modifier.testTag(TestTag.DialogOk)
-            ) {
-                Text(MR.strings.deny.stable)
-            }
-        },
-        headline = {
-            Text(MR.strings.crashlytics.stable)
-        },
-        supportingText = {
-            Text(MR.strings.crashlyticsDialogText.stable)
-        }
+        testTag = TestTag.DialogCrashlytics,
+        icon = Icons.Filled.BugReport,
+        title = MR.strings.crashlytics.stable,
+        message = MR.strings.crashlyticsDialogText.stable,
+        confirmLabel = MR.strings.confirm.stable,
+        dismissLabel = MR.strings.deny.stable,
+        onConfirm = { onResult(true) },
+        onDismiss = { onResult(false) },
+        onClose = {}
     )
 }
 
@@ -178,16 +184,7 @@ private fun BottomNavigation(
 
         NavigationBarItem(
             modifier = Modifier.testTag(HomeScreen),
-            icon = {
-                Icon(
-                    if (activeIndex == 0) {
-                        Icons.Filled.Mic
-                    } else {
-                        Icons.Outlined.Mic
-                    },
-                    MR.strings.home.stable
-                )
-            },
+            icon = { Icon(Icons.Filled.Mic, MR.strings.home.stable) },
             label = {
                 Text(
                     resource = MR.strings.home.stable,
@@ -197,6 +194,20 @@ private fun BottomNavigation(
             },
             selected = activeIndex == 0,
             onClick = { onEvent(Navigate(HomeScreen)) }
+        )
+
+        NavigationBarItem(
+            modifier = Modifier.testTag(DialogScreen),
+            icon = { Icon(Icons.Filled.Timeline, MR.strings.home.stable) },
+            label = {
+                Text(
+                    resource = MR.strings.dialog.stable,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
+            },
+            selected = activeIndex == 1,
+            onClick = { onEvent(Navigate(DialogScreen)) }
         )
 
         NavigationBarItem(
@@ -215,22 +226,13 @@ private fun BottomNavigation(
                     maxLines = 1
                 )
             },
-            selected = activeIndex == 1,
+            selected = activeIndex == 2,
             onClick = { onEvent(Navigate(ConfigurationScreen)) }
         )
 
         NavigationBarItem(
             modifier = Modifier.testTag(SettingsScreen),
-            icon = {
-                Icon(
-                    if (activeIndex == 2) {
-                        Icons.Filled.Settings
-                    } else {
-                        Icons.Outlined.Settings
-                    },
-                    MR.strings.settings.stable
-                )
-            },
+            icon = { Icon(Icons.Filled.Settings, MR.strings.settings.stable) },
             label = {
                 Text(
                     resource = MR.strings.settings.stable,
@@ -238,16 +240,14 @@ private fun BottomNavigation(
                     maxLines = 1
                 )
             },
-            selected = activeIndex == 2,
+            selected = activeIndex == 3,
             onClick = { onEvent(Navigate(SettingsScreen)) }
         )
 
         if (isShowLogEnabled) {
             NavigationBarItem(
                 modifier = Modifier.testTag(LogScreen),
-                icon = {
-                    Icon(Icons.Filled.Code, MR.strings.log.stable)
-                },
+                icon = { Icon(Icons.Filled.Code, MR.strings.log.stable) },
                 label = {
                     Text(
                         resource = MR.strings.log.stable,
@@ -255,7 +255,7 @@ private fun BottomNavigation(
                         maxLines = 1
                     )
                 },
-                selected = activeIndex == 3,
+                selected = activeIndex == 4,
                 onClick = { onEvent(Navigate(LogScreen)) }
             )
         }

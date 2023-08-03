@@ -17,20 +17,23 @@ import androidx.test.uiautomator.UiSelector
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.resource.StableStringResource
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.data.resource.StableStringResource.StableResourceFormattedStringDesc
+import org.rhasspy.mobile.data.resource.StableStringResource.StableStringResourceSingle
+import org.rhasspy.mobile.data.service.option.IOption
+import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
 
 fun SemanticsNodeInteraction.onListItemSwitch(): SemanticsNodeInteraction {
-    return this.onChildren().filter(isToggleable()).onFirst()
-    //return this.onChildAt(0).onChildren().filter(isToggleable()).onFirst()
+    //return this.onChildren().filter(isToggleable()).onFirst()
+    return this.onChildAt(0).onChildren().filter(isToggleable()).onFirst()
 }
 
 fun SemanticsNodeInteraction.onListItemRadioButton(): SemanticsNodeInteraction {
-    return this.onChildren().filter(isSelectable()).onFirst()
-    //return this.onChildAt(0).onChildren().filter(isSelectable()).onFirst()
+    //return this.onChildren().filter(isSelectable()).onFirst()
+    return this.onChildAt(0).onChildren().filter(isSelectable()).onFirst()
 }
 
 fun hasTestTag(testTag: Enum<*>): SemanticsMatcher =
@@ -43,9 +46,19 @@ fun hasCombinedTestTag(tag1: Enum<*>, tag2: Enum<*>): SemanticsMatcher =
     SemanticsMatcher.expectValue(SemanticsProperties.TestTag, "${tag1.name}${tag2.name}")
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
-    testTag: Enum<*>,
+    testTag: IOption<*>,
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag(testTag.name), useUnmergedTree)
+
+fun SemanticsNodeInteractionsProvider.onNodeWithTag(
+    testTag: TestTag,
+    useUnmergedTree: Boolean = false
+): SemanticsNodeInteraction = onNode(hasTestTag(testTag.name), useUnmergedTree)
+
+fun SemanticsNodeInteractionsProvider.onNodeWithTag(
+    testTag: NavigationDestination,
+    useUnmergedTree: Boolean = false
+): SemanticsNodeInteraction = onNode(hasTestTag(testTag.toString()), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     name: String,
@@ -71,30 +84,26 @@ fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
 fun SemanticsNodeInteractionsProvider.onAllNodesWithText(
     text: StableStringResource,
     useUnmergedTree: Boolean = false
-): SemanticsNodeInteractionCollection = onAllNodesWithText(
-    StringDesc.Resource(text.stringResource).toString(
-        getInstrumentation()
-            .targetContext.applicationContext
-    ), useUnmergedTree
-)
+): SemanticsNodeInteractionCollection = onAllNodesWithText(getText(text), useUnmergedTree)
 
 
 fun textRes(text: StableStringResource): BySelector {
-    return By.text(
-        StringDesc.Resource(text.stringResource).toString(
-            getInstrumentation()
-                .targetContext.applicationContext
-        )
-    )
+    return By.text(getText(text))
+}
+
+private fun getText(text: StableStringResource): String {
+    return when (text) {
+        is StableResourceFormattedStringDesc ->
+            text.stringResource.toString(getInstrumentation().targetContext.applicationContext)
+
+        is StableStringResourceSingle        ->
+            StringDesc.Resource(text.stringResource)
+                .toString(getInstrumentation().targetContext.applicationContext)
+    }
 }
 
 fun UiSelector.text(text: StableStringResource): UiSelector {
-    return this.textMatches(
-        StringDesc.Resource(text.stringResource).toString(
-            getInstrumentation()
-                .targetContext.applicationContext
-        )
-    )
+    return this.textMatches(getText(text))
 }
 
 
@@ -109,74 +118,51 @@ fun requestExternalStoragePermissions(device: UiDevice) {
             }
         }
 
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R                                                  -> {
             device.executeShellCommand("appops set --uid ${getInstrumentation().targetContext.packageName} MANAGE_EXTERNAL_STORAGE allow")
         }
 
-        else -> return
+        else                                                                                            -> return
     }
-    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).listFiles()?.forEach {
-        it.deleteRecursively()
-    }
+    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).listFiles()
+        ?.forEach {
+            it.deleteRecursively()
+        }
 }
 
-fun requestMicrophonePermissions() {
+fun IMicrophonePermission.requestMicrophonePermissions() {
     with(PermissionRequester()) {
         addPermissions("android.permission.RECORD_AUDIO")
         requestPermissions()
     }
-    MicrophonePermission.update()
+    this.update()
 }
 
-fun UiDevice.requestOverlayPermissions(context: Context) {
+fun UiDevice.requestOverlayPermissions(context: Context, overlayPermission: IOverlayPermission) {
     try {
         with(PermissionRequester()) {
             try {
                 addPermissions("android.permission.SYSTEM_ALERT_WINDOW")
                 requestPermissions()
             } catch (e: Exception) {
-                requestOverlayPermissionLegacy(context)
+                requestOverlayPermissionLegacy(context, overlayPermission)
             }
         }
     } catch (e: Exception) {
-        requestOverlayPermissionLegacy(context)
+        requestOverlayPermissionLegacy(context, overlayPermission)
     }
     if (!Settings.canDrawOverlays(context)) {
         //will be called on android M (23)
-        requestOverlayPermissionLegacy(context)
+        requestOverlayPermissionLegacy(context, overlayPermission)
     }
 }
 
-
-fun SemanticsNodeInteraction.assertTextEquals(
-    text: StableStringResource,
-    includeEditableText: Boolean = true
-): SemanticsNodeInteraction =
-    this.assertTextEquals(
-        values = arrayOf(
-            StringDesc.Resource(text.stringResource).toString(
-                getInstrumentation()
-                    .targetContext.applicationContext
-            )
-        ),
-        includeEditableText = includeEditableText
-    )
-
-fun <V : IConfigurationEditViewState> ComposeTestRule.saveBottomAppBar(viewModel: IConfigurationViewModel<V>) {
+suspend fun ComposeTestRule.saveBottomAppBar() {
     Espresso.closeSoftKeyboard()
     waitUntilExists(hasTestTag(TestTag.BottomAppBarSave).and(isEnabled()))
     onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-    awaitSaved(viewModel)
+    awaitIdle()
 }
-
-
-fun <V : IConfigurationEditViewState> ComposeTestRule.awaitSaved(viewModel: IConfigurationViewModel<V>) {
-    this.waitUntil(
-        condition = { !viewModel.viewState.value.hasUnsavedChanges },
-        timeoutMillis = 5000
-    )
-}
-
 
 @OptIn(ExperimentalTestApi::class)
 fun ComposeTestRule.waitUntilExists(
@@ -184,4 +170,12 @@ fun ComposeTestRule.waitUntilExists(
     timeoutMillis: Long = 5000
 ) {
     return this.waitUntilNodeCount(matcher, 1, timeoutMillis)
+}
+
+@OptIn(ExperimentalTestApi::class)
+fun ComposeTestRule.waitUntilNotExists(
+    matcher: SemanticsMatcher,
+    timeoutMillis: Long = 5000
+) {
+    return this.waitUntilNodeCount(matcher, 0, timeoutMillis)
 }

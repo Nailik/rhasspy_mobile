@@ -26,20 +26,32 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.Source
+import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.HotWordToggle
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.Source.HttpApi
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
+import org.rhasspy.mobile.logic.services.webserver.WebServerResult.*
+import org.rhasspy.mobile.logic.services.webserver.WebServerServiceErrorType.WakeOptionInvalid
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.ktor.getEngine
 import org.rhasspy.mobile.platformspecific.ktor.installCallLogging
 import org.rhasspy.mobile.platformspecific.ktor.installCompression
 import org.rhasspy.mobile.platformspecific.ktor.installConnector
 import org.rhasspy.mobile.platformspecific.readOnly
+
+interface IWebServerService : IService {
+
+    override val serviceState: StateFlow<ServiceState>
+
+}
 
 /**
  * Web server service holds all routes for WebServerPath values
@@ -50,12 +62,17 @@ import org.rhasspy.mobile.platformspecific.readOnly
  * - parameter Invalid: BadRequest
  * - else: determined by Ktor
  */
-class WebServerService(
+internal class WebServerService(
     paramsCreator: WebServerServiceParamsCreator
-) : IService(LogType.WebServerService) {
+) : IWebServerService {
+
+    override val logger = LogType.WebServerService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
+
+    private val nativeApplication by inject<NativeApplication>()
+    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val paramsFlow: StateFlow<WebServerServiceParams> = paramsCreator()
     private val params: WebServerServiceParams get() = paramsFlow.value
@@ -175,7 +192,7 @@ class WebServerService(
                         evaluateCall(path, call)
                     }
 
-                    WebServerPath.WebServerCallType.GET -> get(path.path) {
+                    WebServerPath.WebServerCallType.GET  -> get(path.path) {
                         evaluateCall(path, call)
                     }
                 }
@@ -190,35 +207,28 @@ class WebServerService(
         logger.d { "evaluateCall ${path.path} ${call.parameters}" }
         try {
             val result = when (path) {
-                WebServerPath.ListenForCommand -> listenForCommand()
-                WebServerPath.ListenForWake -> listenForWake(call)
+                WebServerPath.ListenForCommand  -> listenForCommand()
+                WebServerPath.ListenForWake     -> listenForWake(call)
                 WebServerPath.PlayRecordingPost -> playRecordingPost()
-                WebServerPath.PlayRecordingGet -> playRecordingGet(call)
-                WebServerPath.PlayWav -> playWav(call)
-                WebServerPath.SetVolume -> setVolume(call)
-                WebServerPath.StartRecording -> startRecording()
-                WebServerPath.StopRecording -> stopRecording()
-                WebServerPath.Say -> say(call)
-                WebServerPath.Mqtt -> mqtt(call)
+                WebServerPath.PlayRecordingGet  -> playRecordingGet(call)
+                WebServerPath.PlayWav           -> playWav(call)
+                WebServerPath.SetVolume         -> setVolume(call)
+                WebServerPath.StartRecording    -> startRecording()
+                WebServerPath.StopRecording     -> stopRecording()
+                WebServerPath.Say               -> say(call)
+                WebServerPath.Mqtt              -> mqtt(call)
             }
 
             when (result) {
-                is WebServerResult.Accepted -> {
-                    call.respond(HttpStatusCode.Accepted)
-                }
+                is Accepted -> call.respond(HttpStatusCode.Accepted, result.data)
 
-                is WebServerResult.Error -> {
+                is Error    -> {
                     logger.d { "evaluateCall BadRequest ${result.errorType.description}" }
                     call.respond(HttpStatusCode.BadRequest, result.errorType.description)
                 }
 
-                WebServerResult.Ok -> {
-                    call.respond(HttpStatusCode.OK)
-                }
-
-                else -> {
-
-                }
+                Ok          -> call.respond(HttpStatusCode.OK)
+                else        -> Unit
             }
             _serviceState.value = ServiceState.Success
 
@@ -237,8 +247,8 @@ class WebServerService(
      * ?entity=<entity>&value=<value> - set custom entities/values in recognized intent
      */
     private fun listenForCommand(): WebServerResult {
-        serviceMiddleware.action(DialogServiceMiddlewareAction.WakeWordDetected(Source.HttpApi, "remote"))
-        return WebServerResult.Ok
+        serviceMiddleware.action(WakeWordDetected(HttpApi, "remote"))
+        return Ok
     }
 
 
@@ -249,16 +259,17 @@ class WebServerService(
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     private suspend fun listenForWake(call: ApplicationCall): WebServerResult {
-        val action = when (call.receive<String>()) {
-            "on" -> true
+        val value = call.receive<String>()
+        val action = when (value) {
+            "on"  -> true
             "off" -> false
-            else -> null
+            else  -> null
         }
 
         return action?.let {
-            serviceMiddleware.action(AppSettingsServiceMiddlewareAction.HotWordToggle(it))
-            WebServerResult.Accepted(it.toString())
-        } ?: WebServerResult.Error(WebServerServiceErrorType.WakeOptionInvalid)
+            serviceMiddleware.action(HotWordToggle(it, HttpApi))
+            Accepted(value)
+        } ?: Error(WakeOptionInvalid)
     }
 
 
@@ -267,8 +278,8 @@ class WebServerService(
      * POST to play last recorded voice command
      */
     private fun playRecordingPost(): WebServerResult {
-        serviceMiddleware.action(ServiceMiddlewareAction.PlayStopRecording)
-        return WebServerResult.Ok
+        serviceMiddleware.action(PlayStopRecording)
+        return Ok
     }
 
 
@@ -290,10 +301,10 @@ class WebServerService(
     private suspend fun playWav(call: ApplicationCall): WebServerResult {
         val result = if (call.request.contentType() != audioContentType) {
             logger.w { "playWav wrong content type ${call.request.contentType()}" }
-            WebServerResult.Error(WebServerServiceErrorType.AudioContentTypeWarning)
-        } else WebServerResult.Ok
+            Error(WebServerServiceErrorType.AudioContentTypeWarning)
+        } else Ok
         //play even without content type
-        serviceMiddleware.action(DialogServiceMiddlewareAction.PlayAudio(Source.HttpApi, call.receive()))
+        serviceMiddleware.action(PlayAudio(HttpApi, call.receive()))
         return result
     }
 
@@ -308,15 +319,15 @@ class WebServerService(
         val result = call.receive<String>()
         return result.toFloatOrNull()?.let {
             if (it in 0f..1f) {
-                serviceMiddleware.action(AppSettingsServiceMiddlewareAction.AudioVolumeChange(it))
-                WebServerResult.Accepted(it.toString())
+                serviceMiddleware.action(AudioVolumeChange(it, HttpApi))
+                Accepted(it.toString())
             } else {
                 logger.w { "setVolume VolumeValueOutOfRange $it" }
-                WebServerResult.Error(WebServerServiceErrorType.VolumeValueOutOfRange)
+                Error(WebServerServiceErrorType.VolumeValueOutOfRange)
             }
         } ?: run {
             logger.w { "setVolume VolumeValueInvalid $result" }
-            WebServerResult.Error(WebServerServiceErrorType.VolumeValueInvalid)
+            Error(WebServerServiceErrorType.VolumeValueInvalid)
         }
     }
 
@@ -326,8 +337,8 @@ class WebServerService(
      * actually starts a session
      */
     private fun startRecording(): WebServerResult {
-        serviceMiddleware.action(DialogServiceMiddlewareAction.StartListening(Source.HttpApi, false))
-        return WebServerResult.Ok
+        serviceMiddleware.action(StartListening(HttpApi, false))
+        return Ok
     }
 
     /**
@@ -342,8 +353,8 @@ class WebServerService(
      * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
      */
     private fun stopRecording(): WebServerResult {
-        serviceMiddleware.action(DialogServiceMiddlewareAction.StopListening(Source.HttpApi))
-        return WebServerResult.Ok
+        serviceMiddleware.action(StopListening(HttpApi))
+        return Ok
     }
 
     /**
@@ -355,8 +366,15 @@ class WebServerService(
      * just like using say in the ui start screen but remote
      */
     private suspend fun say(call: ApplicationCall): WebServerResult {
-        serviceMiddleware.action(ServiceMiddlewareAction.SayText(call.receive()))
-        return WebServerResult.Ok
+        serviceMiddleware.action(
+            SayText(
+                text = call.receive(),
+                volume = null,
+                siteId = params.siteId,
+                sessionId = null
+            )
+        )
+        return Ok
     }
 
     /**
@@ -367,8 +385,8 @@ class WebServerService(
      */
     private suspend fun mqtt(call: ApplicationCall): WebServerResult {
         val topic = call.request.path().substringAfter("/mqtt")
-        serviceMiddleware.action(ServiceMiddlewareAction.Mqtt(topic, call.receive()))
-        return WebServerResult.Ok
+        serviceMiddleware.action(Mqtt(topic, call.receive()))
+        return Ok
     }
 
 }

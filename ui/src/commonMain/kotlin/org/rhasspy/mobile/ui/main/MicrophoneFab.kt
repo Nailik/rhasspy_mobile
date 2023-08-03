@@ -18,9 +18,9 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.FloatingActionButton
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.UserSessionClick
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewState
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabUiEvent
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabUiEvent.Action.MicrophoneFabClick
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewState
 
 /**
  * Floating Action Button with microphone
@@ -48,16 +48,22 @@ fun MicrophoneFab(
             },
         onClick = {
             if (viewState.isUserActionEnabled) {
-                onEvent(UserSessionClick)
+                onEvent(MicrophoneFabClick)
             }
         },
         isEnabled = viewState.isUserActionEnabled,
-        containerColor = getContainerColorForMicrophoneFab(viewState.isUserActionEnabled, viewState.isRecording),
-        contentColor = getContentColorForMicrophoneFab(viewState.isUserActionEnabled, viewState.isRecording),
+        containerColor = getContainerColorForMicrophoneFab(
+            viewState.isUserActionEnabled,
+            viewState.isRecording
+        ),
+        contentColor = getContentColorForMicrophoneFab(
+            viewState.isUserActionEnabled,
+            viewState.isRecording
+        ),
         icon = {
             Icon(
                 modifier = Modifier.size(iconSize),
-                imageVector = if (viewState.isShowMicOn) Icons.Filled.Mic else Icons.Filled.MicOff,
+                imageVector = if (viewState.isMicrophonePermissionAllowed) Icons.Filled.Mic else Icons.Filled.MicOff,
                 contentDescription = MR.strings.wakeUp.stable,
             )
         }
@@ -69,17 +75,17 @@ fun MicrophoneFab(
 @Composable
 fun getContainerColorForMicrophoneFab(isActionEnabled: Boolean, isRecording: Boolean): Color {
     return when {
-        isRecording -> MaterialTheme.colorScheme.errorContainer
+        isRecording     -> MaterialTheme.colorScheme.errorContainer
         isActionEnabled -> MaterialTheme.colorScheme.primaryContainer
-        else -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+        else            -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
     }
 }
 
 @Composable
 fun getContentColorForMicrophoneFab(isActionEnabled: Boolean, isRecording: Boolean): Color {
     return when {
-        isRecording -> MaterialTheme.colorScheme.onErrorContainer
+        isRecording     -> MaterialTheme.colorScheme.onErrorContainer
         isActionEnabled -> MaterialTheme.colorScheme.onPrimaryContainer
-        else -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.4f)
+        else            -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.4f)
     }
 }

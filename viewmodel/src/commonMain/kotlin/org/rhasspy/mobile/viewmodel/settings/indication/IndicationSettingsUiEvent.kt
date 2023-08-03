@@ -1,13 +1,13 @@
 package org.rhasspy.mobile.viewmodel.settings.indication
 
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
-import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination
 
 sealed interface IndicationSettingsUiEvent {
 
     sealed interface Action : IndicationSettingsUiEvent {
 
-        object BackClick : Action
+        data object BackClick : Action
         data class Navigate(val destination: IndicationSettingsScreenDestination) : Action
 
     }

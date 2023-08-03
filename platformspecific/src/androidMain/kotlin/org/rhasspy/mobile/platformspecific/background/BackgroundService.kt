@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.platformspecific.background
 
+import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
@@ -11,7 +12,32 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 /**
  * Native Service to run continuously in background
  */
-actual class BackgroundService : android.app.Service() {
+internal actual class BackgroundService : IBackgroundService, Service(), KoinComponent {
+    private val nativeApplication = get<NativeApplication>()
+
+    private val logger = Logger.withTag("BackgroundService")
+    private val intent = Intent(nativeApplication, BackgroundService::class.java)
+
+    /**
+     * start background service
+     */
+    actual override fun start() {
+        logger.d { "start" }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            nativeApplication.startForegroundService(intent)
+        } else {
+            nativeApplication.startService(intent)
+        }
+    }
+
+    /**
+     * stop background work
+     */
+    actual override fun stop() {
+        logger.d { "stop" }
+        nativeApplication.stopService(intent)
+    }
+
 
     /**
      * create service, show notification and start in foreground
@@ -33,32 +59,6 @@ actual class BackgroundService : android.app.Service() {
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
-    }
-
-    actual companion object : KoinComponent {
-        private val logger = Logger.withTag("BackgroundService")
-        private val context = get<NativeApplication>()
-        private val intent = Intent(context, BackgroundService::class.java)
-
-        /**
-         * start background service
-         */
-        actual fun start() {
-            logger.d { "start" }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
-            }
-        }
-
-        /**
-         * stop background work
-         */
-        actual fun stop() {
-            logger.d { "stop" }
-            context.stopService(intent)
-        }
     }
 
 }

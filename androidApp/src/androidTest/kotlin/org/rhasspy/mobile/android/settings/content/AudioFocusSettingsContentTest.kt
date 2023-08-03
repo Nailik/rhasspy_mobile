@@ -14,7 +14,7 @@ import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.settings.content.AudioFocusSettingsContent
+import org.rhasspy.mobile.ui.settings.AudioFocusSettingsContent
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.SelectAudioFocusOption
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewModel
 import kotlin.test.assertEquals
@@ -76,16 +76,19 @@ class AudioFocusSettingsContentTest : FlakyTest() {
         assertEquals(AudioFocusOption.Disabled, AppSetting.audioFocusOption.value)
 
         //option disable is set
-        composeTestRule.onNodeWithTag(AudioFocusOption.Disabled).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioFocusOption.Disabled).onListItemRadioButton()
+            .assertIsSelected()
 
         //additional settings invisible
         composeTestRule.onNodeWithTag(TestTag.AudioFocusSettingsConfiguration).assertDoesNotExist()
 
         //user clicks pause resume
-        composeTestRule.onNodeWithTag(AudioFocusOption.PauseAndResume).performScrollTo().performClick()
+        composeTestRule.onNodeWithTag(AudioFocusOption.PauseAndResume).performScrollTo()
+            .performClick()
         composeTestRule.awaitIdle()
         //new option is selected
-        composeTestRule.onNodeWithTag(AudioFocusOption.PauseAndResume).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioFocusOption.PauseAndResume).onListItemRadioButton()
+            .assertIsSelected()
         //option is saved
         assertEquals(AudioFocusOption.PauseAndResume, AppSetting.audioFocusOption.value)
         //additional settings visible
@@ -95,7 +98,8 @@ class AudioFocusSettingsContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(AudioFocusOption.Duck).performScrollTo().performClick()
         composeTestRule.awaitIdle()
         //new option is selected
-        composeTestRule.onNodeWithTag(AudioFocusOption.Duck).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioFocusOption.Duck).onListItemRadioButton()
+            .assertIsSelected()
         //option is saved
         assertEquals(AudioFocusOption.Duck, AppSetting.audioFocusOption.value)
         //additional settings visible
@@ -103,7 +107,8 @@ class AudioFocusSettingsContentTest : FlakyTest() {
 
         //notification unchecked
         assertFalse { AppSetting.isAudioFocusOnNotification.value }
-        composeTestRule.onNodeWithTag(TestTag.AudioFocusOnNotification).performScrollTo().assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.AudioFocusOnNotification).performScrollTo()
+            .assertIsOff()
         //user clicks notification
         composeTestRule.onNodeWithTag(TestTag.AudioFocusOnNotification).performClick()
         composeTestRule.awaitIdle()

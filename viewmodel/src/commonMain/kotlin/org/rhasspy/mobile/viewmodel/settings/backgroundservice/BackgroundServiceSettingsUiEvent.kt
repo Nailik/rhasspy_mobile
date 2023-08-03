@@ -10,14 +10,14 @@ sealed interface BackgroundServiceSettingsUiEvent {
 
     sealed interface Action : BackgroundServiceSettingsUiEvent {
 
-        object DisableBatteryOptimization : Action
-        object BackClick : Action
+        data object DisableBatteryOptimization : Action
+        data object BackClick : Action
 
     }
 
     sealed interface Consumed : BackgroundServiceSettingsUiEvent {
 
-        object ShowSnackBar : Consumed
+        data object ShowSnackBar : Consumed
 
     }
 

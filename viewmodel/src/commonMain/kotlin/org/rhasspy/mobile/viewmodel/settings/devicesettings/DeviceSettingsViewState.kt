@@ -4,6 +4,8 @@ import androidx.compose.runtime.Stable
 
 @Stable
 data class DeviceSettingsViewState internal constructor(
+    val isMqttApiDeviceChangeEnabled: Boolean,
+    val isHttpApiDeviceChangeEnabled: Boolean,
     val volume: Float,
     val isHotWordEnabled: Boolean,
     val isAudioOutputEnabled: Boolean,

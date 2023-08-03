@@ -1,21 +1,26 @@
 package org.rhasspy.mobile.platformspecific.permission
 
-import android.content.Context
 import android.os.PowerManager
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import androidx.core.content.getSystemService
+import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
-actual object BatteryOptimization : KoinComponent {
+actual class BatteryOptimization actual constructor(
+    private val nativeApplication: NativeApplication
+) {
 
-    private val context by inject<NativeApplication>()
+    private val logger = Logger.withTag("BatteryOptimization")
 
     /**
      * check if battery optimization is disabled
      */
     actual fun isBatteryOptimizationDisabled(): Boolean {
-        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
-        return powerManager.isIgnoringBatteryOptimizations(context.packageName)
+        return nativeApplication.getSystemService<PowerManager>()
+            ?.isIgnoringBatteryOptimizations(nativeApplication.packageName)
+            ?: run {
+                logger.e { "isBatteryOptimizationDisabled powerManager is null" }
+                false
+            }
     }
 
 }

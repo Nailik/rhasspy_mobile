@@ -13,19 +13,18 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.*
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.*
-import kotlin.coroutines.resume
+import org.rhasspy.mobile.platformspecific.resumeSave
 
-actual object ExternalResultRequest : KoinComponent {
+internal actual class ExternalResultRequest actual constructor(
+    private val nativeApplication: NativeApplication
+) : IExternalResultRequest, KoinComponent {
 
     private val logger = Logger.withTag("ExternalRedirect")
-    private val nativeApplication by inject<NativeApplication>()
 
     private lateinit var someActivityResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var somePermissionResultLauncher: ActivityResultLauncher<String>
@@ -47,7 +46,7 @@ actual object ExternalResultRequest : KoinComponent {
         }
     }
 
-    actual fun <R> launch(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> {
+    actual override fun <R> launch(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> {
         logger.v { "launch $intention" }
         return launching {
             nativeApplication.currentActivity?.also {
@@ -63,20 +62,23 @@ actual object ExternalResultRequest : KoinComponent {
     }
 
     @Suppress("UNCHECKED_CAST")
-    @OptIn(ExperimentalCoroutinesApi::class)
-    actual suspend fun <R> launchForResult(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> =
+    actual override suspend fun <R> launchForResult(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> =
         suspendCancellableCoroutine { continuation ->
             logger.v { "launchForResult $intention" }
             launching<R> {
-                activityResultCallback = { continuation.resume(getResult(it) as ExternalRedirectResult<R>) { cause -> Error<R>(cause) } }
+                activityResultCallback = {
+                    continuation.resumeSave(getResult(it) as ExternalRedirectResult<R>) { cause ->
+                        Error<R>(cause)
+                    }
+                }
                 someActivityResultLauncher.launch(intentFromIntention(intention))
             }
         }
 
-    actual suspend fun launchForPermission(permission: String): Boolean =
+    actual override suspend fun launchForPermission(permission: String): Boolean =
         suspendCancellableCoroutine { continuation ->
             logger.v { "launchForResult $permission" }
-            permissionResultCallback = { continuation.resume(it) }
+            permissionResultCallback = { continuation.resumeSave(it) }
             somePermissionResultLauncher.launch(permission)
         }
 
@@ -103,12 +105,12 @@ actual object ExternalResultRequest : KoinComponent {
 
     private fun <R> intentFromIntention(intention: ExternalResultRequestIntention<R>): Intent {
         return when (intention) {
-            is CreateDocument ->
+            is CreateDocument                     ->
                 ActivityResultContracts
                     .CreateDocument(intention.mimeType)
                     .createIntent(nativeApplication, intention.title)
 
-            is OpenDocument ->
+            is OpenDocument                       ->
                 ActivityResultContracts
                     .OpenDocument()
                     .createIntent(nativeApplication, intention.mimeTypes.toTypedArray())
@@ -119,7 +121,7 @@ actual object ExternalResultRequest : KoinComponent {
                         putExtra(Intent.EXTRA_MIME_TYPES, intention.mimeTypes.toTypedArray())
                     }
 
-            is GetContent ->
+            is GetContent                         ->
                 ActivityResultContracts
                     .GetContent()
                     .createIntent(nativeApplication, "*/*")
@@ -130,7 +132,7 @@ actual object ExternalResultRequest : KoinComponent {
                         putExtra(Intent.EXTRA_MIME_TYPES, intention.mimeTypes.toTypedArray())
                     }
 
-            OpenBatteryOptimizationSettings ->
+            OpenBatteryOptimizationSettings       ->
                 Intent().apply {
                     @SuppressLint("BatteryLife")
                     action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
@@ -143,23 +145,23 @@ actual object ExternalResultRequest : KoinComponent {
                     data = Uri.parse("package:org.rhasspy.mobile.android")
                 }
 
-            is OpenLink ->
+            is OpenLink                           ->
                 Intent().apply {
                     action = Intent.ACTION_VIEW
                     data = Uri.parse(intention.link.url)
                 }
 
-            OpenAppSettings ->
+            OpenAppSettings                       ->
                 Intent().apply {
                     action = Settings.ACTION_SETTINGS
                 }
 
-            OpenOverlaySettings ->
+            OpenOverlaySettings                   ->
                 Intent().apply {
                     action = Settings.ACTION_MANAGE_OVERLAY_PERMISSION
                 }
 
-            is ShareFile ->
+            is ShareFile                          ->
                 Intent.createChooser(
                     Intent().apply {
                         action = Intent.ACTION_SEND

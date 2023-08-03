@@ -5,7 +5,7 @@ import android.media.AudioManager
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +24,7 @@ actual object DeviceVolume : KoinComponent {
 
     private val context = get<NativeApplication>()
 
-    private val audioManager = ContextCompat.getSystemService(context, AudioManager::class.java)
+    private val audioManager = context.getSystemService<AudioManager>()
 
     //sound output volume
     private val _volumeFlowSound =

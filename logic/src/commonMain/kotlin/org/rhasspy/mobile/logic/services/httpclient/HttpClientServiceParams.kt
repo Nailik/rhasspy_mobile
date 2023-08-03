@@ -2,7 +2,7 @@ package org.rhasspy.mobile.logic.services.httpclient
 
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 
-data class HttpClientServiceParams(
+internal data class HttpClientServiceParams(
     val siteId: String,
     val isHttpSSLVerificationDisabled: Boolean,
     val httpClientServerEndpointHost: String,
@@ -17,7 +17,7 @@ data class HttpClientServiceParams(
     val isUseCustomAudioPlayingEndpoint: Boolean,
     val audioPlayingHttpEndpoint: String,
     val intentHandlingHttpEndpoint: String,
-    val intentHandlingHassEndpoint: String,
-    val intentHandlingHassAccessToken: String,
+    val intentHandlingHomeAssistantEndpoint: String,
+    val intentHandlingHomeAssistantAccessToken: String,
     val intentHandlingOption: IntentHandlingOption
 )

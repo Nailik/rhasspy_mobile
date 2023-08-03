@@ -1,45 +1,39 @@
 package org.rhasspy.mobile.viewmodel.screens.configuration
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.data.event.EventState
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
-import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingService
-import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionService
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
-import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
-import org.rhasspy.mobile.logic.services.webserver.WebServerService
+import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
+import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
+import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.services.intenthandling.IIntentHandlingService
+import org.rhasspy.mobile.logic.services.intentrecognition.IIntentRecognitionService
+import org.rhasspy.mobile.logic.services.mqtt.IMqttService
+import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
+import org.rhasspy.mobile.logic.services.texttospeech.ITextToSpeechService
+import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
+import org.rhasspy.mobile.logic.services.webserver.IWebServerService
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
-import org.rhasspy.mobile.viewmodel.screens.configuration.IConfigurationScreenUiStateEvent.ScrollToErrorEventIState
 
 class ConfigurationScreenViewStateCreator(
-    private val httpClientService: HttpClientService,
-    private val webServerService: WebServerService,
-    private val mqttService: MqttService,
-    private val wakeWordService: WakeWordService,
-    private val speechToTextService: SpeechToTextService,
-    private val intentRecognitionService: IntentRecognitionService,
-    private val textToSpeechService: TextToSpeechService,
-    private val audioPlayingService: AudioPlayingService,
-    private val dialogManagerService: DialogManagerService,
-    private val intentHandlingService: IntentHandlingService
+    dispatcherProvider: IDispatcherProvider,
+    private val httpClientService: IHttpClientService,
+    private val webServerService: IWebServerService,
+    private val mqttService: IMqttService,
+    private val wakeWordService: IWakeWordService,
+    private val speechToTextService: ISpeechToTextService,
+    private val intentRecognitionService: IIntentRecognitionService,
+    private val textToSpeechService: ITextToSpeechService,
+    private val audioPlayingService: IAudioPlayingService,
+    private val dialogManagerService: IDialogManagerService,
+    private val intentHandlingService: IIntentHandlingService
 ) {
-    private val updaterScope = CoroutineScope(Dispatchers.IO)
-
-    private val scrollToErrorEvent = MutableStateFlow(ScrollToErrorEventIState(EventState.Consumed, 0))
 
     private val serviceStateFlow = combineStateFlow(
         httpClientService.serviceState,
@@ -53,11 +47,18 @@ class ConfigurationScreenViewStateCreator(
         dialogManagerService.serviceState,
         intentHandlingService.serviceState
     )
+    private val firstErrorIndex =
+        serviceStateFlow.mapReadonlyState(sharingStarted = SharingStarted.Eagerly) { array ->
+            val index =
+                array.indexOfFirst { it is ServiceState.Error || it is ServiceState.Exception }
+            return@mapReadonlyState if (index != -1) index else null
+        }
+    private val hasError = firstErrorIndex.mapReadonlyState { it != null }
 
-    private val viewState = MutableStateFlow(getViewState())
+    private val viewState = MutableStateFlow(getViewState(null))
 
-    operator fun invoke(): StateFlow<ConfigurationScreenViewState> {
-        updaterScope.launch {
+    init {
+        CoroutineScope(dispatcherProvider.IO).launch {
             combineStateFlow(
                 ConfigurationSetting.siteId.data,
                 ConfigurationSetting.isHttpClientSSLVerificationDisabled.data,
@@ -71,24 +72,14 @@ class ConfigurationScreenViewStateCreator(
                 ConfigurationSetting.intentHandlingOption.data,
                 mqttService.isConnected
             ).collect {
-                viewState.value = getViewState()
+                viewState.value = getViewState(viewState.value.scrollToError)
             }
         }
-
-        return viewState
     }
 
-    fun updateScrollToError(eventState: EventState) {
-        scrollToErrorEvent.update {
-            it.copy(
-                eventState = eventState,
-                firstErrorIndex = viewState.value.firstErrorIndex.value ?: it.firstErrorIndex
-            )
-        }
-    }
+    operator fun invoke(): MutableStateFlow<ConfigurationScreenViewState> = viewState
 
-
-    private fun getViewState(): ConfigurationScreenViewState {
+    private fun getViewState(scrollToError: Int?): ConfigurationScreenViewState {
         return ConfigurationScreenViewState(
             siteId = SiteIdViewState(
                 text = ConfigurationSetting.siteId.data
@@ -133,9 +124,9 @@ class ConfigurationScreenViewStateCreator(
                 intentHandlingOption = ConfigurationSetting.intentHandlingOption.value,
                 serviceState = ServiceViewState(intentHandlingService.serviceState)
             ),
-            hasError = serviceStateFlow.mapReadonlyState { array -> array.firstOrNull { it is ServiceState.Error } != null },
-            firstErrorIndex = serviceStateFlow.mapReadonlyState { array -> array.indexOfFirst { it is ServiceState.Error } },
-            scrollToErrorEvent = scrollToErrorEvent
+            hasError = hasError,
+            firstErrorIndex = firstErrorIndex,
+            scrollToError = scrollToError
         )
     }
 

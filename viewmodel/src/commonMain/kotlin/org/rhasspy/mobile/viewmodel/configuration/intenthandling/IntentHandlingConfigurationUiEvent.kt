@@ -8,18 +8,15 @@ sealed interface IntentHandlingConfigurationUiEvent {
     sealed interface Change : IntentHandlingConfigurationUiEvent {
         data class SelectIntentHandlingOption(val option: IntentHandlingOption) : Change
         data class ChangeIntentHandlingHttpEndpoint(val endpoint: String) : Change
-        data class ChangeIntentHandlingHassEndpoint(val endpoint: String) : Change
-        data class ChangeIntentHandlingHassAccessToken(val token: String) : Change
-        data class SelectIntentHandlingHassOption(val option: HomeAssistantIntentHandlingOption) : Change
-        data class UpdateTestIntentHandlingName(val name: String) : Change
-        data class UpdateTestIntentHandlingText(val text: String) : Change
+        data class ChangeIntentHandlingHomeAssistantEndpoint(val endpoint: String) : Change
+        data class ChangeIntentHandlingHomeAssistantAccessToken(val token: String) : Change
+        data class SelectIntentHandlingHomeAssistantOption(val option: HomeAssistantIntentHandlingOption) : Change
 
     }
 
     sealed interface Action : IntentHandlingConfigurationUiEvent {
 
-        object RunIntentHandlingTest : Action
-        object BackClick : Action
+        data object BackClick : Action
 
     }
 

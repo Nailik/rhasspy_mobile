@@ -1,48 +1,46 @@
 package org.rhasspy.mobile.settings
 
 import kotlinx.collections.immutable.persistentListOf
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
-import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.data.sounds.SoundOption
-import org.rhasspy.mobile.platformspecific.language.getDeviceLanguage
+import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.settings.serializer.StringListSerializer
 
 /**
  * directly consumed
  */
-object AppSetting {
+object AppSetting : KoinComponent {
 
     val didShowCrashlyticsDialog = ISetting(SettingsEnum.CrashlyticsDialog, false)
+    val didShowChangelogDialog = ISetting(SettingsEnum.ChangelogDialog, 0)
 
-    val languageType = ISetting(SettingsEnum.LanguageOption, getDeviceLanguage())
+    val languageType = ISetting(SettingsEnum.LanguageOption, get<ILanguageUtils>().getDeviceLanguage())
 
     val isAutomaticSilenceDetectionEnabled = ISetting(SettingsEnum.AutomaticSilenceDetection, false)
-    val automaticSilenceDetectionAudioLevel =
-        ISetting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
-    val automaticSilenceDetectionTime = ISetting(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
-    val automaticSilenceDetectionMinimumTime = ISetting(SettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000)
+    val automaticSilenceDetectionAudioLevel = ISetting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
+    val automaticSilenceDetectionTime = ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
+    val automaticSilenceDetectionMinimumTime = ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000)
 
     val isBackgroundServiceEnabled = ISetting(SettingsEnum.BackgroundEnabled, false)
-    val microphoneOverlaySizeOption =
-        ISetting(SettingsEnum.MicrophoneOverlaySize, MicrophoneOverlaySizeOption.Disabled)
+    val microphoneOverlaySizeOption = ISetting(SettingsEnum.MicrophoneOverlaySize, MicrophoneOverlaySizeOption.Disabled)
     val isMicrophoneOverlayWhileAppEnabled = ISetting(SettingsEnum.MicrophoneOverlayWhileApp, false)
     val microphoneOverlayPositionX = ISetting(SettingsEnum.MicrophoneOverlayPositionX, 0)
     val microphoneOverlayPositionY = ISetting(SettingsEnum.MicrophoneOverlayPositionY, 0)
 
-    val isWakeWordDetectionTurnOnDisplayEnabled =
-        ISetting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
+    val isWakeWordDetectionTurnOnDisplayEnabled = ISetting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
     val isSoundIndicationEnabled = ISetting(SettingsEnum.SoundIndication, true)
-    val soundIndicationOutputOption =
-        ISetting(SettingsEnum.SoundIndicationOutput, AudioOutputOption.Notification)
+    val soundIndicationOutputOption = ISetting(SettingsEnum.SoundIndicationOutput, AudioOutputOption.Notification)
     val isWakeWordLightIndicationEnabled = ISetting(SettingsEnum.WakeWordLightIndication, false)
 
+    val isMqttApiDeviceChangeEnabled = ISetting(SettingsEnum.MqttApiDeviceChangeEnabled, true)
+    val isHttpApiDeviceChangeEnabled = ISetting(SettingsEnum.HttpApiDeviceChangeEnabled, true)
     val volume = ISetting(SettingsEnum.Volume, 0.5F)
     val isHotWordEnabled = ISetting(SettingsEnum.HotWordEnabled, true)
     val isAudioOutputEnabled = ISetting(SettingsEnum.AudioOutputEnabled, true)
@@ -73,8 +71,5 @@ object AppSetting {
     val isAudioFocusOnRecord = ISetting(SettingsEnum.AudioFocusOnRecord, false)
     val isAudioFocusOnDialog = ISetting(SettingsEnum.AudioFocusOnDialog, false)
 
-    val audioRecorderChannel = ISetting(SettingsEnum.AudioRecorderChannel, AudioRecorderChannelType.default)
-    val audioRecorderEncoding = ISetting(SettingsEnum.AudioRecorderEncoding, AudioRecorderEncodingType.default)
-    val audioRecorderSampleRate = ISetting(SettingsEnum.AudioRecorderSampleRate, AudioRecorderSampleRateType.default)
-
+    val isDialogAutoscroll = ISetting(SettingsEnum.DialogAutoScroll, true)
 }

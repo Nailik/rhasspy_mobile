@@ -4,8 +4,8 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec
 import com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
 import com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
 import groovy.json.JsonSlurper
-import org.apache.commons.io.output.ByteArrayOutputStream
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.jetbrains.compose.experimental.uikit.tasks.SyncComposeResourcesForIosTask
 
 plugins {
     kotlin("multiplatform")
@@ -23,10 +23,9 @@ version = Version.toString()
 
 kotlin {
 
-    //must be a framework else moko resources doesn't generate task to copy files
     cocoapods {
-        summary = "Some description for the Shared Module"
-        homepage = "Link to the Shared Module homepage"
+        summary = "Some description for the app Module"
+        homepage = "Link to the app Module homepage"
         ios.deploymentTarget = "14.0"
         podfile = project.file("../iosApp/Podfile")
         framework {
@@ -40,6 +39,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(Icerock.Resources)
+                implementation(Icerock.Resources)
                 implementation(Jetbrains.Kotlinx.atomicfu)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Jetbrains.Compose.ui)
@@ -56,9 +56,15 @@ kotlin {
         }
         val androidMain by getting
         val androidUnitTest by getting
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
+        val iosX64Main by getting {
+            resources.srcDirs("build/generated/moko/iosX64Main/src")
+        }
+        val iosArm64Main by getting {
+            resources.srcDirs("build/generated/moko/iosArm64Main/src")
+        }
+        val iosSimulatorArm64Main by getting {
+            resources.srcDirs("build/generated/moko/iosSimulatorArm64Main/src")
+        }
         val iosMain by creating {
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)
@@ -91,9 +97,16 @@ aboutLibraries {
     duplicationRule = SIMPLE
 }
 
+
 android {
     namespace = "org.rhasspy.mobile.resources"
-    buildFeatures.compose = true
+    sourceSets {
+        //java because else Expected object 'MR' has no actual declaration in module <resources_debug> for JVM
+        getByName("main").java.srcDirs("build/generated/moko/androidMain/src")
+    }
+    kotlin {
+        jvmToolchain(19)
+    }
 }
 
 buildkonfig {
@@ -102,7 +115,6 @@ buildkonfig {
     exposeObjectWithName = "BuildKonfig"
 
     defaultConfigs {
-        buildConfigField(FieldSpec.Type.STRING, "changelog", generateChangelog())
         buildConfigField(FieldSpec.Type.INT, "versionCode", Version.code.toString())
         buildConfigField(FieldSpec.Type.STRING, "versionName", Version.toString())
     }
@@ -123,38 +135,10 @@ tasks.findByPath("preBuild")!!.doFirst {
     }
 }
 
-fun generateChangelog(): String {
-    try {
-        var os = ByteArrayOutputStream()
-
-        exec {
-            standardOutput = os
-            commandLine = listOf("git")
-            args = listOf("describe", "--tags", "--abbrev=0")
-        }
-
-        val lastTag = String(os.toByteArray()).trim()
-        os.close()
-
-        os = ByteArrayOutputStream()
-        exec {
-            standardOutput = os
-            commandLine = listOf("git")
-            args = listOf(
-                "log",
-                "$lastTag..develop",
-                "--merges",
-                "--first-parent",
-                "--pretty=format:\"%b\"\\\\"
-            )
-        }
-        val changelog = String(os.toByteArray()).trim()
-        os.close()
-
-        return changelog
-    } catch (e: Exception) {
-        return ""
-    }
+tasks.withType<SyncComposeResourcesForIosTask> {
+    dependsOn(tasks.findByName("generateMRcommonMain"))
+    dependsOn(tasks.findByName("generateMRiosArm64Main"))
+    dependsOn(tasks.findByName("generateMRiosSimulatorArm64Main"))
 }
 
 @Suppress("UNCHECKED_CAST")
