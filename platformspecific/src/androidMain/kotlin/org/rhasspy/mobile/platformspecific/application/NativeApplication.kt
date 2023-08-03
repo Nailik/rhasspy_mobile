@@ -53,7 +53,6 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
 
     override fun onCreate() {
         super.onCreate()
-        onCreated()
 
         //catches all exceptions
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
@@ -69,6 +68,7 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
             }
         }
 
+        onCreated()
 
         CoroutineScope(get<IDispatcherProvider>().Main).launch {
             ProcessLifecycleOwner.get().lifecycle.addObserver(object : LifecycleEventObserver {
