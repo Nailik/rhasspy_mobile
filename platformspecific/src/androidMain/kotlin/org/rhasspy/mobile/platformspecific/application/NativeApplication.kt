@@ -53,6 +53,7 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
 
     override fun onCreate() {
         super.onCreate()
+        onCreated()
 
         //catches all exceptions
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
@@ -103,8 +104,6 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
             override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {}
             override fun onActivityDestroyed(p0: Activity) {}
         })
-
-        onCreated()
     }
 
     actual val currentlyAppInBackground = MutableStateFlow(false)
