@@ -53,7 +53,6 @@ android {
 
     buildTypes {
         release {
-            isDebuggable = true
             isMinifyEnabled = true
             isShrinkResources = true
             enableUnitTestCoverage = true

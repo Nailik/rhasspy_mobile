@@ -16,7 +16,6 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -48,6 +47,13 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
 
     actual fun onInit() {
         koinApplicationInstance = this
+    }
+
+    actual abstract fun onCreated()
+
+    override fun onCreate() {
+        super.onCreate()
+
         //catches all exceptions
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
             logger.a(exception) { "uncaught exception in Thread $thread" }
@@ -63,7 +69,7 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
         }
 
 
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(get<IDispatcherProvider>().Main).launch {
             ProcessLifecycleOwner.get().lifecycle.addObserver(object : LifecycleEventObserver {
                 override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                     when (event) {
@@ -80,13 +86,6 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
                 }
             })
         }
-
-    }
-
-    actual abstract fun onCreated()
-
-    override fun onCreate() {
-        super.onCreate()
 
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(p0: Activity, p1: Bundle?) {}
