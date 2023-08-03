@@ -55,8 +55,6 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            enableUnitTestCoverage = true
-            enableAndroidTestCoverage = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
