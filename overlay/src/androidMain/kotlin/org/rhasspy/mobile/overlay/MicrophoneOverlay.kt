@@ -90,8 +90,10 @@ actual class MicrophoneOverlay actual constructor(
                 @Suppress("DEPRECATION") FLAG_SHOW_WHEN_LOCKED or FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
             ).applySettings()
-            lifecycleOwner.performRestore(null)
-            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+            CoroutineScope(Dispatchers.Main).launch {
+                lifecycleOwner.performRestore(null)
+                lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+            }
         } catch (exception: Exception) {
             logger.a(exception) { "exception in initialization" }
         }

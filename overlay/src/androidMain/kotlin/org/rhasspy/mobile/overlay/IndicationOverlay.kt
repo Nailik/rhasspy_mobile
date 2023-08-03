@@ -15,6 +15,7 @@ import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
@@ -76,8 +77,10 @@ actual class IndicationOverlay actual constructor(
             ).apply {
                 gravity = Gravity.BOTTOM
             }
-            lifecycleOwner.performRestore(null)
-            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+            CoroutineScope(Dispatchers.Main).launch {
+                lifecycleOwner.performRestore(null)
+                lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+            }
         } catch (exception: Exception) {
             logger.a(exception) { "exception in initialization" }
         }
@@ -109,7 +112,7 @@ actual class IndicationOverlay actual constructor(
                                         Looper.prepare()
                                     }
                                     launch(dispatcher.Main) {
-                                        overlayWindowManager?.addView(view, mParams) ?: {
+                                        overlayWindowManager?.addView(view, mParams) ?: run {
                                             logger.e { "addView overlayWindowManager is null" }
                                         }
                                         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
@@ -118,7 +121,7 @@ actual class IndicationOverlay actual constructor(
                             } else {
                                 launch(dispatcher.Main) {
                                     if (view.parent != null) {
-                                        overlayWindowManager?.removeView(view) ?: {
+                                        overlayWindowManager?.removeView(view) ?: run {
                                             logger.e { "removeView overlayWindowManager is null" }
                                         }
                                     }
