@@ -4,17 +4,23 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import org.junit.Before
 import org.junit.Test
-import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.viewmodel.settings.sound.WakeIndicationSoundSettingsViewModel
+import org.koin.core.component.get
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoundSettingsViewModel
 
 class WakeIndicationSoundScreenTest : IndicationSoundScreenTest(
-    viewModel = WakeIndicationSoundSettingsViewModel(),
-    title = MR.strings.wakeSound,
-    screen = IndicationSettingsScreens.WakeIndicationSound
+    title = MR.strings.wakeSound.stable,
+    screen = IndicationSettingsScreenDestination.WakeIndicationSoundScreen
 ) {
 
     override val device: UiDevice =
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
+    override fun getViewModelInstance(): IIndicationSoundSettingsViewModel =
+        get<WakeIndicationSoundSettingsViewModel>()
 
     @Before
     override fun setUp() {

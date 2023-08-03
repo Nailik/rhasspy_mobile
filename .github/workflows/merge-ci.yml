@@ -12,6 +12,8 @@ on:
     secrets:
       SONAR_TOKEN:
         required: true
+      SONAR_KEY:
+        required: true
       SIGNING_KEY:
         required: true
       ALIAS:
@@ -29,6 +31,7 @@ jobs:
       BUILD_TYPE_LOWERCASE: ${{ inputs.BUILD_TYPE_LOWERCASE }}
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_KEY: ${{ secrets.SONAR_KEY }}
   uiTest:
     needs: check
     runs-on: self-hosted
@@ -36,11 +39,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
-      - name: Set Up JDK 18
+      - name: Set Up JDK 19
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '18'
+          java-version: '19'
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       # necessary for linux/macos but doesn't work on windows
@@ -51,9 +54,8 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          target: default
           arch: arm64-v8a
-          profile: Nexus 6
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -skin 500x833
           script: ./gradlew androidApp:connectedCheck
       # better looking test report inside github
       - name: Create Test Report
@@ -61,8 +63,9 @@ jobs:
         if: always()
         with:
           name: Test Report
-          path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml
+          path: androidApp/build/outputs/androidTest-results/connected/debug/TEST-*.xml
           reporter: java-junit
+          fail-on-error: false
   build:
     runs-on: self-hosted
     needs: uiTest
@@ -70,11 +73,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
-      - name: Set Up JDK 18
+      - name: Set Up JDK 19
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '18'
+          java-version: '19'
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       # necessary for linux/macos but doesn't work on windows
@@ -111,7 +114,7 @@ jobs:
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
-          BUILD_TOOLS_VERSION: "33.0.1"
+          BUILD_TOOLS_VERSION: "34.0.0"
       # sign the generated apks
       - uses: r0adkll/sign-android-release@v1
         name: Sign App Bundle
@@ -123,12 +126,38 @@ jobs:
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
-          BUILD_TOOLS_VERSION: "33.0.1"
+          BUILD_TOOLS_VERSION: "34.0.0"
       # upload apks to action
       - uses: actions/upload-artifact@v3
         with:
           name: Artifact of signed apks
           path: |
+            androidApp/build/outputs/bundle/${{ inputs.BUILD_TYPE_LOWERCASE }}/androidApp-${{ inputs.BUILD_TYPE_LOWERCASE }}.aab
+            androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-arm64-v8a-signed.apk
+            androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-armeabi-v7a-signed.apk
+            androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-x86-signed.apk
+            androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-x86_64-signed.apk
+  #upload dev build
+  remove:
+    if: (${{ inputs.BUILD_TYPE }} != "Release")
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - uses: ClementTsang/delete-tag-and-release@v0.3.1
+        with:
+          delete_release: true
+          tag_name: nightly
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  upload:
+    runs-on: self-hosted
+    needs: remove
+    steps:
+      - uses: softprops/action-gh-release@v1
+        with:
+          name: nightly
+          tag_name: nightly
+          files: |
             androidApp/build/outputs/bundle/${{ inputs.BUILD_TYPE_LOWERCASE }}/androidApp-${{ inputs.BUILD_TYPE_LOWERCASE }}.aab
             androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-arm64-v8a-signed.apk
             androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-armeabi-v7a-signed.apk

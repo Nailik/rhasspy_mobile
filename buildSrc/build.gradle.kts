@@ -1,18 +1,27 @@
+plugins {
+    `kotlin-dsl`
+}
+
 repositories {
     gradlePluginPortal()
     google()
     mavenCentral()
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.jvmTarget = "1.8"
+dependencies {
+    compileOnly(gradleApi())
+
+    implementation("com.android.tools.build:gradle:_")
+    implementation("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:_")
+    implementation(kotlin("gradle-plugin", "_"))
+    implementation(kotlin("android-extensions"))
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-plugins {
-    `kotlin-dsl`
+gradlePlugin {
+    plugins {
+        register("base-gradle") {
+            id = "base-gradle"
+            implementationClass = "BaseGradle"
+        }
+    }
 }

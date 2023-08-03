@@ -9,22 +9,30 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.logic.settings.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.android.utils.FlakyTest
+import org.rhasspy.mobile.android.utils.onNodeWithCombinedTag
+import org.rhasspy.mobile.android.utils.requestMicrophonePermissions
+import org.rhasspy.mobile.android.utils.requestOverlayPermissions
+import org.rhasspy.mobile.app.MainActivity
+import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
+import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.ui.TestTag
 
 @RunWith(AndroidJUnit4::class)
-class MicrophoneOverlayTest : KoinComponent {
+class MicrophoneOverlayTest : FlakyTest() {
 
-    @get: Rule
+    @get: Rule(order = 0)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
-    private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private val device: UiDevice =
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     @Before
     fun setUp() {
-        requestMicrophonePermissions()
-        device.requestOverlayPermissions(composeTestRule.activity)
+        get<IMicrophonePermission>().requestMicrophonePermissions()
+        device.requestOverlayPermissions(composeTestRule.activity, get())
         AppSetting.microphoneOverlaySizeOption.value = MicrophoneOverlaySizeOption.Big
         AppSetting.isMicrophoneOverlayWhileAppEnabled.value = true
     }

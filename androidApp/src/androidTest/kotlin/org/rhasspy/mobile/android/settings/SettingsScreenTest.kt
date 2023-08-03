@@ -1,32 +1,32 @@
 package org.rhasspy.mobile.android.settings
 
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
-import kotlinx.coroutines.runBlocking
-import org.junit.Before
-import org.junit.Rule
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.hasTestTag
-import org.rhasspy.mobile.android.navigation.BottomBarScreenType
-import org.rhasspy.mobile.android.onNodeWithTag
+import org.koin.core.component.get
+import org.rhasspy.mobile.android.utils.FlakyTestNew
+import org.rhasspy.mobile.android.utils.hasTestTag
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.main.MainScreen
+import org.rhasspy.mobile.viewmodel.navigation.INavigator
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.SettingsScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination
 
 /**
  * Test Settings Screen
  * Items exist
  * Site ID edit
  */
-class SettingsScreenTest {
+class SettingsScreenTest : FlakyTestNew() {
 
-    @get: Rule
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
-
-    @Before
-    fun setUp() {
-        //open configuration screen
-        composeTestRule.onNodeWithTag(BottomBarScreenType.SettingsScreen).performClick()
+    @Composable
+    override fun ComposableContent() {
+        MainScreen(LocalViewModelFactory.current)
     }
 
     /**
@@ -38,17 +38,23 @@ class SettingsScreenTest {
      * back button exists
      */
     @Test
-    fun testContent() = runBlocking {
+    @AllowFlaky
+    fun testContent() = runTest {
+        get<INavigator>().navigate(SettingsScreen)
+        setupContent()
+
         //each item exists and navigates
-        SettingsScreenType.values().forEach { tag ->
-            composeTestRule.onNodeWithTag(TestTag.List).performScrollToNode(hasTestTag(tag))
-                .assertExists()
+        SettingsScreenDestination.values().forEach { tag ->
+            composeTestRule.awaitIdle()
+            composeTestRule.onNodeWithTag(TestTag.List).performScrollToNode(hasTestTag(tag)).assertExists()
             composeTestRule.onNodeWithTag(tag).performClick()
             //content exists
+            composeTestRule.awaitIdle()
             composeTestRule.onNodeWithTag(tag).assertExists()
             //press toolbar back button
             composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
         }
     }
+
 
 }

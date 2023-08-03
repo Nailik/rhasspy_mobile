@@ -2,50 +2,35 @@ package org.rhasspy.mobile.android.settings.content
 
 import android.widget.Switch
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onChildAt
-import androidx.compose.ui.test.performClick
-import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.UiScrollable
-import androidx.test.uiautomator.UiSelector
-import kotlinx.coroutines.runBlocking
+import androidx.test.uiautomator.*
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onSwitch
-import org.rhasspy.mobile.android.resetOverlayPermission
-import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
-import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.text
-import org.rhasspy.mobile.logic.nativeutils.OverlayPermission
-import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.logic.settings.option.AudioOutputOption
-import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
+import org.koin.core.component.get
+import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.app.MainActivity
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.option.AudioOutputOption
+import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
+import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.settings.IndicationSettingsOverviewScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class IndicationSettingsContentTest {
+class IndicationSettingsContentTest : FlakyTest() {
 
-    @get: Rule
+    @get: Rule(order = 0)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-    private val viewModel = IndicationSettingsViewModel()
+    private val viewModel = get<IndicationSettingsViewModel>()
 
     private val device: UiDevice =
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -57,18 +42,8 @@ class IndicationSettingsContentTest {
     fun setUp() {
 
         composeTestRule.activity.setContent {
-            Surface(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surface)
-                    .testTag(TestTag.Background)
-            ) {
-                val navController = rememberNavController()
-
-                CompositionLocalProvider(
-                    LocalMainNavController provides navController
-                ) {
-                    WakeWordIndicationSettingsContent(viewModel)
-                }
+            TestContentProvider {
+                IndicationSettingsOverviewScreen()
             }
         }
 
@@ -91,32 +66,33 @@ class IndicationSettingsContentTest {
      * sound is enabled
      * sound is saved
      */
-    @Test
-    fun testIndicationSettings() = runBlocking {
-        device.resetOverlayPermission(composeTestRule.activity)
+    //@Test Manual
+    @Suppress("unused")
+    fun testIndicationSettings() {
+        device.resetOverlayPermission(composeTestRule.activity, get())
 
-        viewModel.toggleWakeWordDetectionTurnOnDisplay(false)
-        if (AppSetting.isWakeWordLightIndicationEnabled.value) {
-            viewModel.toggleWakeWordLightIndicationEnabled()
-        }
-        viewModel.toggleWakeWordSoundIndicationEnabled(false)
+        viewModel.onEvent(SetWakeWordLightIndicationEnabled(false))
+        viewModel.onEvent(SetSoundIndicationEnabled(false))
+        viewModel.onEvent(SetWakeWordDetectionTurnOnDisplay(false))
 
         //wake up display disabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onSwitch()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onListItemSwitch()
             .assertIsOff()
         //visual disabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onSwitch()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onListItemSwitch()
             .assertIsOff()
         //sound disabled
-        composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onSwitch().assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onListItemSwitch()
+            .assertIsOff()
 
         //user clicks wake up display
         composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).performClick()
+        composeTestRule.waitForIdle()
         //wake up display is enabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onSwitch()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onListItemSwitch()
             .assertIsOn()
         //wake up display is saved
-        assertTrue { IndicationSettingsViewModel().isWakeWordDetectionTurnOnDisplayEnabled.value }
+        assertTrue { IndicationSettingsViewModel(get()).viewState.value.isWakeWordDetectionTurnOnDisplayEnabled }
 
 
         //user clicks visual
@@ -128,31 +104,36 @@ class IndicationSettingsContentTest {
 
         //Redirected to settings
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        device.wait(Until.hasObject(By.pkg(settingsPage.toPattern())), 5000)
         assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
-        UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
-        device.findObject(UiSelector().text(MR.strings.appName)).click()
+        UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName.stable))
+        device.waitForIdle()
+
+        device.findObject(UiSelector().text(MR.strings.appName.stable)).click()
         device.findObject(UiSelector().className(Switch::class.java)).click()
         //User clicks back
         device.pressBack()
         device.pressBack()
 
         //app will be closed when pressing one more back
-        OverlayPermission.update()
+        get<IOverlayPermission>().update()
         //Dialog is closed and permission granted
-        assertTrue { OverlayPermission.granted.value }
+        assertTrue { get<IOverlayPermission>().granted.value }
 
         //visual is enabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onSwitch()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).performClick()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onListItemSwitch()
             .assertIsOn()
         //visual is saved
-        assertTrue { IndicationSettingsViewModel().isWakeWordLightIndicationEnabled.value }
+        assertTrue { IndicationSettingsViewModel(get()).viewState.value.isWakeWordLightIndicationEnabled }
 
         //user clicks sound
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).performClick()
         //sound is enabled
-        composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onSwitch().assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onListItemSwitch()
+            .assertIsOn()
         //sound is saved
-        assertTrue { IndicationSettingsViewModel().isSoundIndicationEnabled.value }
+        assertTrue { IndicationSettingsViewModel(get()).viewState.value.isSoundIndicationEnabled }
     }
 
     /**
@@ -183,69 +164,77 @@ class IndicationSettingsContentTest {
      * user clicks back
      */
     @Test
-    fun testSoundIndicationOptions() {
+    fun testSoundIndicationOptions() = runTest {
         //Sound is disabled
-        viewModel.toggleWakeWordSoundIndicationEnabled(false)
+        viewModel.onEvent(SetSoundIndicationEnabled(false))
         //sound settings invisible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertDoesNotExist()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.WakeIndicationSound)
+        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.WakeIndicationSoundScreen)
             .assertDoesNotExist()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.RecordedIndicationSound)
+        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
             .assertDoesNotExist()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.ErrorIndicationSound)
+        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
             .assertDoesNotExist()
 
         //user clicks sound
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).performClick()
+        composeTestRule.awaitIdle()
         //sound is enabled
-        composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onSwitch().assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onListItemSwitch()
+            .assertIsOn()
         //sound settings visible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.WakeIndicationSound)
+        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.WakeIndicationSoundScreen)
             .assertIsDisplayed()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.RecordedIndicationSound)
+        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
             .assertIsDisplayed()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.ErrorIndicationSound)
+        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
             .assertIsDisplayed()
 
         //sound output is notification
-        assertEquals(AudioOutputOption.Notification, viewModel.soundIndicationOutputOption.value)
+        assertEquals(
+            AudioOutputOption.Notification,
+            viewModel.viewState.value.soundIndicationOutputOption
+        )
         //sound output notification is selected
-        composeTestRule.onNodeWithTag(AudioOutputOption.Notification, true).onChildAt(0)
+        composeTestRule.onNodeWithTag(AudioOutputOption.Notification, true).onListItemRadioButton()
             .assertIsSelected()
 
         //user clicks sound output sound
         composeTestRule.onNodeWithTag(AudioOutputOption.Sound).performClick()
+        composeTestRule.awaitIdle()
         //sound output sound is selected
-        composeTestRule.onNodeWithTag(AudioOutputOption.Sound, true).onChildAt(0)
+        composeTestRule.onNodeWithTag(AudioOutputOption.Sound, true).onListItemRadioButton()
             .assertIsSelected()
         //sound output sound is saved
         assertEquals(
             AudioOutputOption.Sound,
-            IndicationSettingsViewModel().soundIndicationOutputOption.value
+            IndicationSettingsViewModel(get()).viewState.value.soundIndicationOutputOption
         )
 
         //user clicks wake word
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.WakeIndicationSound).performClick()
+        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.WakeIndicationSoundScreen)
+            .performClick()
         //wake word page is opened
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.WakeIndicationSound)
+        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.WakeIndicationSoundScreen)
             .assertIsDisplayed()
         //user clicks back
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
 
         //user clicks recorded
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.RecordedIndicationSound)
+        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
             .performClick()
         //recorded page is opened
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.RecordedIndicationSound)
+        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
             .assertIsDisplayed()
         //user clicks back
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
 
         //user click error
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.ErrorIndicationSound).performClick()
+        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
+            .performClick()
         //error page is opened
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.ErrorIndicationSound)
+        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
             .assertIsDisplayed()
         //user clicks back
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()

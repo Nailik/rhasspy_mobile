@@ -2,60 +2,64 @@ package org.rhasspy.mobile.android.settings.content.sound
 
 import android.os.Environment
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.performClick
-import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
-import dev.icerock.moko.resources.StringResource
+import androidx.test.uiautomator.Until
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.Rule
-import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.main.LocalNavController
-import org.rhasspy.mobile.android.onNodeWithCombinedTag
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.requestExternalStoragePermissions
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.test.R
-import org.rhasspy.mobile.logic.settings.option.AudioOutputOption
-import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.sound.IIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.app.MainActivity
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.service.option.AudioOutputOption.Sound
+import org.rhasspy.mobile.data.sounds.SoundOption
+import org.rhasspy.mobile.data.sounds.SoundOption.Disabled
+import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.settings.sound.IndicationSoundScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SelectSoundIndicationOutputOption
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetSoundIndicationEnabled
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.SetSoundIndicationOption
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewModel
 import java.io.File
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 abstract class IndicationSoundScreenTest(
-    val viewModel: IIndicationSoundSettingsViewModel,
-    val title: StringResource,
-    val screen: IndicationSettingsScreens
-) {
-    @get: Rule
+    val title: StableStringResource,
+    private val screen: IndicationSettingsScreenDestination,
+) : FlakyTest() {
+
+    @get: Rule(order = 0)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     abstract val device: UiDevice
 
     private val fileName = "sound.wav"
 
+    abstract fun getViewModelInstance(): IIndicationSoundSettingsViewModel
+
+    private val viewModel get() = getViewModelInstance()
+
     open fun setUp() {
         requestExternalStoragePermissions(device)
 
         composeTestRule.activity.setContent {
-            val navController = rememberNavController()
-
-            CompositionLocalProvider(
-                LocalNavController provides navController
-            ) {
+            TestContentProvider {
                 IndicationSoundScreen(
                     viewModel = viewModel,
-                    title = title,
-                    screen = screen
+                    screen = screen,
+                    title = title
                 )
             }
         }
@@ -82,7 +86,7 @@ abstract class IndicationSoundScreenTest(
      * file is removed
      * file is deleted from view model
      */
-    open fun testAddSoundFile() = runBlocking {
+    open fun testAddSoundFile() = runTest {
         //copy test file to downloads directory
         val file = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
@@ -97,43 +101,50 @@ abstract class IndicationSoundScreenTest(
         InstrumentationRegistry.getInstrumentation().context.resources.openRawResource(R.raw.sound)
             .copyTo(file.outputStream())
 
-        viewModel.onClickSoundIndicationDisabled()
+        viewModel.onEvent(SetSoundIndicationOption(Disabled))
         composeTestRule.awaitIdle()
 
         //Disabled sound is saved
-        assertTrue { viewModel.isSoundIndicationDisabled.value }
+        assertTrue { viewModel.viewState.value.soundSetting == Disabled.name }
         //Disabled sound ist selected
-        composeTestRule.onNodeWithTag(TestTag.Disabled).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(TestTag.Disabled).onListItemRadioButton().assertIsSelected()
 
         //user selects add file
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
+        composeTestRule.awaitIdle()
+        device.waitForIdle()
         //user clicks file
+        device.wait(Until.hasObject(By.text(fileName)), 5000)
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
 
         //file is added to list
+        composeTestRule.waitUntilExists(hasTag(fileName))
         composeTestRule.onNodeWithTag(fileName).assertIsDisplayed()
         //file is selected
-        composeTestRule.onNodeWithTag(fileName).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(fileName).onListItemRadioButton().assertIsSelected()
         //file cannot be deleted
         composeTestRule.onNodeWithCombinedTag(fileName, TestTag.Delete).assertDoesNotExist()
 
         //user clicks default
         composeTestRule.onNodeWithTag(TestTag.Default).performClick()
+        composeTestRule.awaitIdle()
+        device.waitForIdle()
         //default sound ist selected
-        composeTestRule.onNodeWithTag(TestTag.Default).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(TestTag.Default).onListItemRadioButton().assertIsSelected()
         //default sound is saved
-        assertTrue { viewModel.isSoundIndicationDefault.value }
+        assertTrue { viewModel.viewState.value.soundSetting == SoundOption.Default.name }
 
         //file can be deleted
         composeTestRule.onNodeWithCombinedTag(fileName, TestTag.Delete).assertIsDisplayed()
         //user clicks delete
         composeTestRule.onNodeWithCombinedTag(fileName, TestTag.Delete).performClick()
         composeTestRule.awaitIdle()
+        device.waitForIdle()
 
         //file is removed
         //composeTestRule.onNodeWithTag(fileName).assertDoesNotExist() TOO often false assert error
         //file is deleted from view model
-        assertTrue { viewModel.customSoundFiles.value.isEmpty() }
+        assertTrue { viewModel.viewState.value.customSoundFiles.isEmpty() }
     }
 
     /**
@@ -158,7 +169,7 @@ abstract class IndicationSoundScreenTest(
      * user clicks stop
      * status is stop
      */
-    open fun testPlayback() = runBlocking {
+    open fun testPlayback() = runTest {
         //copy test file to downloads directory
         val file = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
@@ -175,50 +186,59 @@ abstract class IndicationSoundScreenTest(
 
         //output option is sound
         //(play works with silent sound but not silent notification)
-        IndicationSettingsViewModel().selectSoundIndicationOutputOption(AudioOutputOption.Sound)
-
-        viewModel.onClickSoundIndicationDisabled()
+        val otherViewModel = get<IndicationSettingsViewModel>()
+        otherViewModel.onEvent(SelectSoundIndicationOutputOption(Sound))
+        otherViewModel.onEvent(SetSoundIndicationEnabled(true))
+        viewModel.onEvent(SetSoundIndicationOption(Disabled))
         composeTestRule.awaitIdle()
 
         //Disabled sound is saved
-        assertTrue { viewModel.isSoundIndicationDisabled.value }
+        assertTrue { otherViewModel.viewState.value.isSoundIndicationEnabled }
+        composeTestRule.awaitIdle()
+        device.waitForIdle()
         //Disabled sound ist selected
-        composeTestRule.onNodeWithTag(TestTag.Disabled).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(TestTag.Disabled).onListItemRadioButton().assertIsSelected()
 
         //user clicks default
         composeTestRule.onNodeWithTag(TestTag.Default).performClick()
+        composeTestRule.awaitIdle()
+        device.waitForIdle()
         //default is selected
-        composeTestRule.onNodeWithTag(TestTag.Default).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(TestTag.Default).onListItemRadioButton().assertIsSelected()
 
         //user selects add file
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
         //user clicks file
+        device.wait(Until.hasObject(By.text(fileName)), 5000)
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
+        composeTestRule.awaitIdle()
 
         //file is added to list
+        composeTestRule.waitUntilExists(hasTag(fileName))
         composeTestRule.onNodeWithTag(fileName).assertIsDisplayed()
+        composeTestRule.awaitIdle()
         //file is selected
-        composeTestRule.onNodeWithTag(fileName).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(fileName).onListItemRadioButton().assertIsSelected()
 
         //user clicks play
         composeTestRule.onNodeWithTag(TestTag.PlayPause).performClick()
         composeTestRule.awaitIdle()
         //status is playing
         composeTestRule.waitUntil(
-            condition = { viewModel.isAudioPlaying.value },
+            condition = { viewModel.viewState.value.isAudioPlaying },
             timeoutMillis = 5000
         )
-        assertTrue { viewModel.isAudioPlaying.value }
+        assertTrue { viewModel.viewState.value.isAudioPlaying }
 
         //user clicks stop
         composeTestRule.onNodeWithTag(TestTag.PlayPause).performClick()
         composeTestRule.awaitIdle()
         //status is stop
         composeTestRule.waitUntil(
-            condition = { !viewModel.isAudioPlaying.value },
+            condition = { !viewModel.viewState.value.isAudioPlaying },
             timeoutMillis = 5000
         )
-        assertFalse { viewModel.isAudioPlaying.value }
+        assertFalse { viewModel.viewState.value.isAudioPlaying }
     }
 
 }

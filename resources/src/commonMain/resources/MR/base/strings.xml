@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="appName">Rhasspy Mobile</string>
+    <string name="wiki">Wiki</string>
+    <string name="home">Home</string>
+    <string name="configuration">Configuration</string>
+    <string name="settings">Settings</string>
+    <string name="siteId">site ID</string>
+    <string name="mqtt">MQTT</string>
+    <string name="externalMQTT">External MQTT</string>
+    <string name="notConnected">Not Connected</string>
+    <string name="connected">Connected</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="host">Host</string>
+    <string name="port">Port</string>
+    <string name="baseHost">Base Host</string>
+    <string name="userName">Username</string>
+    <string name="password">Password</string>
+    <string name="audioRecording">Audio Recording</string>
+    <string name="udpAudioOutput">UDP Audio (Output)</string>
+    <string name="udpAudioOutputOff">UDP Audio (Off)</string>
+    <string name="udpAudioOutputOn">UDP Audio (On)</string>
+    <string name="udpAudioOutputDetail">(outside ASR listening)</string>
+    <string name="wakeWord">Wake Word</string>
+    <string name="sensitivity">Sensitivity</string>
+    <string name="speechToText">Speech to Text</string>
+    <string name="speechToTextURL">Speech to Text URL (%s)</string>
+    <string name="intentRecognition">Intent Recognition</string>
+    <string name="rhasspyTextToIntentURL">Rhasspy Text-to-Intent URL (%s)</string>
+    <string name="textToSpeech">Text to Speech</string>
+    <string name="rhasspyTextToSpeechURL">Rhasspy Text-to-Speech URL (%s)</string>
+    <string name="audioOutputURL">Audio Output URL (%s)</string>
+    <string name="audioPlaying">Audio Playing</string>
+    <string name="dialogManagement">Dialog Management</string>
+    <string name="intentHandling">Intent Handling</string>
+    <string name="remoteURL">Remote URL</string>
+    <string name="checkConnection">Check Connection</string>
+    <string name="localPorcupine">Porcupine (local)</string>
+    <string name="audioRecorderFormat">Audio Recorder Format</string>
+    <string name="audioOutputFormat">Audio Output Format</string>
+    <string name="local">Local</string>
+    <string name="remote">Remote</string>
+    <string name="disabled">Disabled</string>
+    <string name="remoteMQTT">Remote Hermes MQTT</string>
+    <string name="remoteHTTP">Remote HTTP</string>
+    <string name="withRecognition">With Recognition</string>
+    <string name="homeAssistant">Home Assistant</string>
+    <string name="hassURL">Hass URL</string>
+    <string name="wakeUp">Wake Up</string>
+    <string name="playRecording">Play Recording</string>
+    <string name="stopPlayRecording">Stop Playing Recording</string>
+    <string name="textToRecognize">Text to recognize</string>
+    <string name="textToSpeak">Text to speak</string>
+    <string name="accessToken">Access Token</string>
+    <string name="homeAssistantEvents">Send *events* to Home Assistant\n(/api/events)</string>
+    <string name="homeAssistantIntents">Send *intents* to Home Assistant\n(/api/intent/handle)
+    </string>
+    <string name="speechToTextAudioRecorderFormat">SpeechToText Audio Recorder Format</string>
+    <string name="speechToTextAudioOutputFormat">SpeechToText Audio Output Format</string>
+    <string name="wakeWordAudioRecorderFormat">Wake Word Audio Recorder Format</string>
+    <string name="wakeWordAudioOutputFormat">Wake Word Audio Output Format</string>
+    <string name="refresh">Refresh</string>
+    <string name="de">Deutsch</string>
+    <string name="en">English</string>
+    <string name="automaticSilenceDetection">Automatic Silence Detection</string>
+    <string name="backgroundWakeWordDetection">Background WakeWord Detection</string>
+    <string name="enableBackground">Enable Background Services</string>
+    <string name="backgroundWakeWordDetectionTurnOnDisplay">Wake Up Display</string>
+    <string name="wakeWordIndication">WakeWord Indication</string>
+    <string name="wakeWordAudioIndication">Audio</string>
+    <string name="wakeWordLightIndication">Visual</string>
+    <string name="enableSSL">Enable SSL</string>
+    <string name="enabled">Enabled</string>
+    <string name="sound">Sound</string>
+    <string name="_and">and</string>
+    <string name="light">Light</string>
+    <string name="chooseCertificate">Choose Certificate (.bks)</string>
+    <string name="showLog">Show Log</string>
+    <string name="log">Log</string>
+    <string name="audioFramesLogging">Audio Frames Logging</string>
+    <string name="httpSSL">HTTP SSL</string>
+    <string name="porcupineAccessKey">AccessKey</string>
+    <string name="openPicoVoiceConsole">PicoVoice Console</string>
+    <string name="openPicoVoiceConsoleInfo">click to open browser and generate access token</string>
+    <string name="expandListItem">Expand list item</string>
+    <string name="expandDropDown">Expand drop down</string>
+    <string name="visibility">Visibility</string>
+    <string name="logSettings">Log Settings</string>
+    <string name="verbose">Verbose</string>
+    <string name="debug">Debug</string>
+    <string name="info">Info</string>
+    <string name="warn">Warn</string>
+    <string name="error">Error</string>
+    <string name="assert_level">Assert</string>
+    <string name="microphone">Microphone</string>
+    <string name="microphonePermissionDialogTitle">Microphone access</string>
+    <string name="microphonePermissionInfoRecord">To record audio microphone access is required.
+    </string>
+    <string name="microphonePermissionInfoWakeWord">To use Porcupine WakeWord service microphone
+        access is required.
+    </string>
+    <string name="microphonePermissionInfoAudioLevel">To check audio level microphone access is
+        required.
+    </string>
+    <string name="microphonePermissionDenied">open settings to allow microphone access</string>
+    <string name="microphonePermissionRequestFailed">requesting microphone permission failed
+    </string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="testAudioLevel">Audio Level Test</string>
+    <string name="stop">Stop</string>
+    <string name="audioLevelThreshold">Audio Level Threshold</string>
+    <string name="silenceDetectionInformation">Silence is detected if the audio level remains below
+        the selected threshold for the selected time period and the recording is at least the length
+        of the minimum duration
+    </string>
+    <string name="silenceDetectionMinimumTime">Voice command minimum Time (ms)</string>
+    <string name="silenceDetectionTime">Silence Detection Time (ms)</string>
+    <string name="overlayPermissionTitle">Overlay Permission</string>
+    <string name="overlay">Overlay</string>
+    <string name="overlayPermissionInfo">Visual indication uses an Overlay to display the
+        indication.\nClick "OK", scroll to Rhasspy and allow
+        Permission.
+    </string>
+    <string name="overlayPermissionRequestFailed">requesting overlay permission failed</string>
+    <string name="save">Save</string>
+    <string name="saveSettingsText">Save settings to an external file</string>
+    <string name="restoreSettingsText">Restore settings from an external file</string>
+    <string name="shareSettingsText">Share settings file without sensitive data</string>
+    <string name="share">Share</string>
+    <string name="reset">Reset</string>
+    <string name="device">Device</string>
+    <string name="deviceSettingsInformation">This settings can be changed via MQTT-Api or Http-Api.
+    </string>
+    <string name="volume">Volume</string>
+    <string name="hotWord">HotWord (WakeWord)</string>
+    <string name="audioOutput">Audio Output</string>
+    <string name="microphoneOverlay">Microphone Overlay</string>
+    <string name="showMicrophoneOverlay">Show Microphone Overlay</string>
+    <string name="showMicrophoneOverlayInfo">Best to use with Background Services, else the Overlay
+        may closes when App is hidden
+    </string>
+    <string name="whileAppIsOpened">Visible while app is opened</string>
+    <string name="restore">Restore</string>
+    <string name="saveAndRestoreSettings">Save and Restore Settings</string>
+    <string name="saveSettings">Save Settings</string>
+    <string name="saveSettingsWarningText">The exported Settings file contains sensitive Data!\nRead
+        the file and edit carefully before sharing.
+    </string>
+    <string name="restoreSettings">Restore Settings</string>
+    <string name="restoreSettingsWarningText">Your current settings will be lost after restoring
+        from file!
+    </string>
+    <string name="warning">Warning</string>
+    <string name="success">Success</string>
+    <string name="aboutTitle">About Rhasspy Mobile</string>
+    <string name="version">Version</string>
+    <string name="sounds">Sounds</string>
+    <string name="soundsText">WAV files to play when Rhasspy wakes up and is finished recording a
+        voice command.
+    </string>
+    <string name="wakeSound">Wake</string>
+    <string name="recordedSound">Recorded</string>
+    <string name="errorSound">Error</string>
+    <string name="selectFile">File</string>
+    <string name="defaultText">Default</string>
+    <string name="remoteHermesHTTP">Remote Hermes HTTP</string>
+    <string name="sslValidation">SSL Validation</string>
+    <string name="disableSSLValidation">Disable SSL Certificate Validation</string>
+    <string name="disableSSLValidationInformation">Possibly necessary when using self signed
+        Certificates
+    </string>
+    <string name="webserver">Webserver</string>
+    <string name="enableHTTPApi">Enable HTTP Api</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
+    <string name="german">German</string>
+    <string name="spanish">Spanish</string>
+    <string name="farsi">Farsi</string>
+    <string name="french">French</string>
+    <string name="hindi">Hindi</string>
+    <string name="italian">Italian</string>
+    <string name="japanese">Japanese</string>
+    <string name="korean">Korean</string>
+    <string name="dutch">Dutch</string>
+    <string name="polish">Polish</string>
+    <string name="portuguese">Portuguese</string>
+    <string name="russian">Russian</string>
+    <string name="swedish">Swedish</string>
+    <string name="vietnamese">Vietnamese</string>
+    <string name="chinese">Chinese</string>
+    <string name="icon">Icon</string>
+    <string name="dataPrivacy">Data Privacy</string>
+    <string name="sourceCode">Sourcecode</string>
+    <string name="changelog">Changelog</string>
+    <string name="remove">Remove</string>
+    <string name="selectCustomSoundFile">Select custom sound file</string>
+    <string name="connectionTimeout">Connection timeout (s)</string>
+    <string name="keepAliveInterval">KeepAlive interval (s)</string>
+    <string name="retryInterval">Retry interval (s)</string>
+    <string name="testConnection">Test Connection</string>
+    <string name="background">Background</string>
+    <string name="batteryOptimization">Deactivate Battery Optimization</string>
+    <string name="mqttNotConnected">MQTT not connected</string>
+    <string name="mqttConnectionError">Error during connection:</string>
+    <string name="mqttConnectionLostError">Lost connection error:</string>
+    <string name="close">Close</string>
+    <string name="closeAppInformation">press back to close</string>
+    <string name="backup">Backup Settings and Configuration</string>
+    <string name="unsavedChanges">Unsaved changes</string>
+    <string name="unsavedChangesInformation">Do you want to save the changes?</string>
+    <string name="discard">Discard</string>
+    <string name="test">Test</string>
+    <string name="back">Back</string>
+    <string name="language">Language</string>
+    <string name="fileOpen">file</string>
+    <string name="useCustomEndpoint">Custom Http Endpoint</string>
+    <string name="textDefault">Default</string>
+    <string name="textCustom">Custom</string>
+    <string name="download">Download</string>
+    <string name="delete">Delete</string>
+    <string name="active">Active</string>
+    <string name="porcupineKeyword">Porcupine WakeWord</string>
+    <string name="small">Small</string>
+    <string name="medium">Medium</string>
+    <string name="big">Big</string>
+    <string name="play">Play</string>
+    <string name="indication">Indication</string>
+    <string name="soundsInfo">Custom Sounds can be selected in the Settings</string>
+    <string name="audioPlayingInfo">can be set in configuration Settings</string>
+    <string name="notification">Notification</string>
+    <string name="audioOutputSilentOrDisabled">Your audio Output is Silent or Disabled</string>
+    <string name="initializePorcupine">Initialize Porcupine</string>
+    <string name="startPorcupine">Start Porcupine</string>
+    <string name="hotWordDetected">HotWord Detected</string>
+    <string name="start">Start</string>
+    <string name="recognizeIntent">Recognize Intent</string>
+    <string name="playWav">Play Sound</string>
+    <string name="hassEvent">Homeassistant Event</string>
+    <string name="hassIntent">Homeassistant Intent</string>
+    <string name="received">Received</string>
+    <string name="streamAudio">Stream audio</string>
+    <string name="connecting">Connecting</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="reconnect">Reconnect</string>
+    <string name="subscribeTopic">Subscribe Topic</string>
+    <string name="subscribing">Subscribing</string>
+    <string name="publish">Publish</string>
+    <string name="say">Say</string>
+    <string name="playAudio">Play Audio</string>
+    <string name="sendIntent">Send Intent</string>
+    <string name="homeAssistantService">Homeassistant Service</string>
+    <string name="hotWordService">HotWord Service</string>
+    <string name="httpClientService">Http Client Service</string>
+    <string name="indicationService">Indication Service</string>
+    <string name="mqttService">Mqtt Service</string>
+    <string name="rhasspyActionService">Rhasspy Actions Service</string>
+    <string name="udpService">Udp Service</string>
+    <string name="webServerService">Webserver Service</string>
+    <string name="recordingService">Recording Service</string>
+    <string name="pending">Pending</string>
+    <string name="loading">Loading</string>
+    <string name="noDetails">no Details</string>
+    <string name="startRecordAudio">Start Record Audio</string>
+    <string name="stopRecordAudio">Stop Record Audio</string>
+    <string name="useMqttSilenceDetection">Use Mqtt Silence Detection</string>
+    <string name="textToSpeechText">Text To Speech</string>
+    <string name="executeTextToSpeechText">Transcribe Text to Speech</string>
+    <string name="textIntentRecognitionText">Text To Recognize Intent</string>
+    <string name="executeIntentRecognition">Recognize Intent</string>
+    <string name="crashlytics">Crashlytics</string>
+    <string name="crashlyticsText">send crashes to help improve the app</string>
+    <string name="crashlyticsDialogText">Please allow to collect crash reports in order to help
+        improve the app.\nThe settings can be changed on the
+        Log Settings page
+    </string>
+    <string name="confirm">Confirm</string>
+    <string name="deny">Deny</string>
+    <string name="serviceStatusPending">Pending</string>
+    <string name="serviceStatusLoading">Loading</string>
+    <string name="serviceStatusWarning">Warning</string>
+    <string name="serviceStatusError">Error</string>
+    <string name="serviceStatusPendingText">Services waiting</string>
+    <string name="serviceStatusLoadingText">Services are starting</string>
+    <string name="serviceStatusRunningText">Services are running</string>
+    <string name="serviceStatusWarningText">Services detected possible problems</string>
+    <string name="serviceStatusErrorText">Service error occurred</string>
+    <string name="executeTestHttpConnection">Test Http Connection</string>
+    <string name="porcupineLanguageInformation">All active activation words must match the selected
+        language and be compatible with the current Porcupine version (2.2.2)!
+    </string>
+    <string name="backgroundServiceInformation">Background service will enable the app to stay
+        active in the background and prevent it from being closed by the system.
+    </string>
+    <string name="isMqttApiDeviceChangeEnabled">changes via MQTT Api enabled</string>
+    <string name="isMqttApiDeviceChangeEnabledInformation">Should be enabled when using Dialog
+        Management Remote Hermes MQTT
+    </string>
+    <string name="isHttpApiDeviceChangeEnabled">changes via HTTP Api enabled</string>
+    <string name="intentName">Intent Name</string>
+    <string name="intentText">Intent Json</string>
+    <string name="executePlayTestAudio">play Test Audio</string>
+    <string name="executeHandleIntent">handle Intent</string>
+    <string name="executeStartMqtt">start MQTT</string>
+    <string name="executeStartWebserver">start Webserver</string>
+    <string name="sslWiki">Certificate File creation</string>
+    <string name="sslWikiInfo">open GitHub Wiki to see how to create the Certificate</string>
+    <string name="currentlySelectedCertificate">Currently Selected Certificate: %s</string>
+    <string name="keyStorePassword">KeyStore Password</string>
+    <string name="keyStoreKeyAlias">Key Alias</string>
+    <string name="keyStoreKeyPassword">Key Password</string>
+    <string name="filterList">filter List</string>
+    <string name="autoscrollList">autoscroll List</string>
+    <string name="requestTimeout">request Timeout (MS)</string>
+    <string name="allowMicrophonePermission">allow microphone permission</string>
+    <string name="textAsrTimeoutText">Speech To Text Timeout (MS)</string>
+    <string name="intentRecognitionTimeoutText">Intent Recognition Timeout (MS)</string>
+    <string name="recordingTimeoutText">Recording Timeout (MS)</string>
+    <string name="audioFocus">Audio Focus</string>
+    <string name="audioFocusInformation">Audio Focus allows Rhasspy to pause and resume or
+        decrease the volume of other audio streams such as music or videos.
+    </string>
+    <string name="pauseAndResume">Pause and Resume</string>
+    <string name="duck">Duck (lower Volume)</string>
+    <string name="onNotification">On Notification played</string>
+    <string name="onSound">On Sound played</string>
+    <string name="onSoundInformation">from Audio Service</string>
+    <string name="onRecord">On Record audio</string>
+    <string name="onRecordInformation">ignores Wake Word recording</string>
+    <string name="onDialog">On Dialog action</string>
+    <string name="onDialogInformation">between Start Session (Wake Word Detected) and End Session
+        (After Intent Recognition and Handling)
+    </string>
+    <string name="url">Url</string>
+    <string name="linkOpenFailed">Unable to open link\nthe link was copied to the clipboard</string>
+    <string name="saveLogFileFailed">Save log file failed</string>
+    <string name="shareLogFileFailed">Share log file failed</string>
+    <string name="disableBatteryOptimizationFailed">Deactivate Battery Optimization failed</string>
+    <string name="exportSettingsFileFailed">export setting file failed</string>
+    <string name="restoreSettingsFromFileFailed">restore setting from file failed</string>
+    <string name="shareSettingsFileFailed">share setting file failed</string>
+    <string name="selectFileFailed">unable to open file chooser</string>
+    <string name="audioRecorder">Audio Recorder</string>
+    <string name="sampleRate">Sample rate</string>
+    <string name="channel">Channel</string>
+    <string name="encoding">Encoding</string>
+    <string name="dialog">Dialog</string>
+    <string name="notInitialized">not Initialized</string>
+    <string name="clear_text">clear</string>
+    <!-- porcupine error -->
+    <string name="activation_exception">activation exception</string>
+    <string name="activation_limit_exception">activation limit exception</string>
+    <string name="activation_refused_exception">activation refused exception</string>
+    <string name="activation_throttled_exception">activation throttled exception</string>
+    <string name="invalid_argument_exception">invalid argument exception</string>
+    <string name="invalid_state_exception">invalid state exception</string>
+    <string name="io_exception">io exception</string>
+    <string name="key_exception">key exception</string>
+    <string name="memory_exception">memory exception</string>
+    <string name="runtime_exception">runtime exception</string>
+    <string name="stop_iteration_exception">activation</string>
+    <string name="microphone_permission_missing">microphone permission missing</string>
+    <!-- http client service error -->
+    <string name="illegal_argument_exception">illegal argument exception</string>
+    <string name="invalid_tls_record_type">invalid tls record type</string>
+    <string name="unresolved_address_exception">unresolved address exception</string>
+    <string name="connection_exception">connection exception</string>
+    <string name="connection_refused">connection refused</string>
+    <!-- mqtt service error -->
+    <string name="unacceptable_protocol">unacceptable protocol</string>
+    <string name="identifier_rejected">identifier rejected</string>
+    <string name="server_unavailable">server unavailable</string>
+    <string name="invalid_credentials">invalid credentials</string>
+    <string name="not_authorized">not authorized</string>
+    <string name="already_connected">already connected</string>
+    <string name="msg_delivery_failed">message delivery failed</string>
+    <string name="msg_persistence_failed">message persistence failed</string>
+    <string name="subscribe_failed">subscription failed</string>
+    <string name="topic_subscription_failed">topic subscription failed</string>
+    <!-- audioRecorder -->
+    <string name="channel_type_default">Default</string>
+    <string name="channel_type_mono">Mono</string>
+    <string name="channel_type_stereo">Stereo</string>
+    <string name="encoding_type_default">Default</string>
+    <string name="encoding_type_PCM8Bit">PCM 8 Bit</string>
+    <string name="encoding_type_PCM16Bit">PCM 16 Bit</string>
+    <string name="encoding_type_PCM_32BIT">PCM 32 Bit</string>
+    <string name="sample_rate_type_11025">11025 Hz</string>
+    <string name="sample_rate_type_12000">12000 Hz</string>
+    <string name="sample_rate_type_16000">16000 Hz</string>
+    <string name="sample_rate_type_22050">22050 Hz</string>
+    <string name="sample_rate_type_32000">32000 Hz</string>
+    <string name="sample_rate_type_44100">44100 Hz</string>
+    <string name="sample_rate_type_48000">48000 Hz</string>
+    <!-- en wake words -->
+    <string name="heyGoogle">Hey Google</string>
+    <string name="heySiri">Hey Siri</string>
+    <string name="okGoogle">OK Google</string>
+    <string name="logSettings">Log Settings</string>
+    <string name="verbose">Verbose</string>
+    <string name="debug">Debug</string>
+    <string name="info">Info</string>
+    <string name="warn">Warn</string>
+    <string name="error">Error</string>
+    <string name="assert_level">Assert</string>
+    <string name="alexa">Alexa</string>
+    <string name="americano">Americano</string>
+    <string name="blueberry">Blueberry</string>
+    <string name="bumblebee">Bumblebee</string>
+    <string name="computer">Computer</string>
+    <string name="grapefruit">Grapefruit</string>
+    <string name="grasshopper">Grasshopper</string>
+    <string name="hey_barista">Hey Barista</string>
+    <string name="hey_google">Hey Google</string>
+    <string name="hey_siri">Hey Siri</string>
+    <string name="jarvis">Jarvis</string>
+    <string name="ok_google">OK Google</string>
+    <string name="pico_clock">Pico Clock</string>
+    <string name="picovoice">Picovoice</string>
+    <string name="porcupine">Porcupine</string>
+    <string name="terminator">Terminator</string>
+    <!-- ar wake words -->
+    <string name="octopus_ar">محمصة</string>
+    <string name="humus_ar">الحمص</string>
+    <string name="coffee_ar">قهوة</string>
+    <string name="toaster_ar">محمصة</string>
+    <!-- de wake words -->
+    <string name="ananas_de">Ananas</string>
+    <string name="heuschrecke_de">Heuschrecke</string>
+    <string name="himbeere_de">Himbeere</string>
+    <string name="leguan_de">Leguan</string>
+    <string name="stachelschwein_de">Stachelschwein</string>
+    <!-- es wake words -->
+    <string name="emparedado_es">Emparedado</string>
+    <string name="leopardo_es">Leopardo</string>
+    <string name="manzana_es">Manzana</string>
+    <string name="murcielago_es">Murciélago</string>
+    <!-- fa wake words -->
+    <string name="hedgehog_fa">جوجه تیغی</string>
+    <string name="bye_fa">خداحافظ</string>
+    <string name="good_morning_fa">صبح بخیر</string>
+    <!-- fr wake words -->
+    <string name="framboise_fr">Framboise</string>
+    <string name="mon_chouchou_fr">Mon Chouchou</string>
+    <string name="parapluie_fr">Parapluie</string>
+    <string name="perroquet_fr">Perroquet</string>
+    <string name="tournesol_fr">Tournesol</string>
+    <!-- hi wake words -->
+    <string name="namaste_hi">नमस्ते</string>
+    <string name="mohabbat_hi">मोहब्बत</string>
+    <string name="vidai_hi">विदाई</string>
+    <string name="subhaga_hi">सुभग</string>
+    <!-- it wake words -->
+    <string name="cameriere_it">Cameriere</string>
+    <string name="espresso_it">Espresso</string>
+    <string name="porcospino_it">Porcospino</string>
+    <string name="silencio_bruno_it">Silencio Bruno</string>
+    <!-- ja wake words -->
+    <string name="ringo_ja">りんご</string>
+    <string name="ninja_ja">忍者</string>
+    <string name="bushi_ja">武士</string>
+    <!-- ko wake words -->
+    <string name="aieseukeulim_ko">아이스크림</string>
+    <string name="bigseubi_ko">빅스비</string>
+    <string name="koppulso_ko">코뿔소</string>
+    <!-- nl wake words -->
+    <string name="broodrooster_nl">broodrooster</string>
+    <string name="hoiLotte_nl">hoi lotte</string>
+    <string name="koffie_nl">koffie</string>
+    <string name="stekelvarken_nl">stekelvarken</string>
+    <!-- pl wake words -->
+    <string name="jezozwierz_pl">jeżozwierz</string>
+    <string name="kawa_pl">kawa</string>
+    <string name="pierogi_pl">pierogi</string>
+    <string name="zubrowka_pl">żubrówka</string>
+    <!-- pt wake words -->
+    <string name="abacaxi_pt">Abacaxi</string>
+    <string name="fenomeno_pt">Fenomeno</string>
+    <string name="formiga_pt">Formiga</string>
+    <string name="porcoEspinho_pt">Porco Espinho</string>
+    <!-- ru wake words -->
+    <string name="vnimaniye_ru">внимание</string>
+    <string name="ostorozhnyy_ru">осторожный</string>
+    <string name="otkryto_ru">открыто</string>
+    <string name="pomogite_ru">помогите</string>
+    <!-- sv wake words -->
+    <string name="hygge_sv">hygge</string>
+    <string name="kaffee_sv">kaffee</string>
+    <string name="koettbullar_sv">köttbullar</string>
+    <string name="piggsvin_sv">piggsvin</string>
+    <!-- vn wake words -->
+    <string name="chao_chi_vn">chào chị</string>
+    <string name="con_nhim_vn">con nhím</string>
+    <string name="may_nuong_banh_mi_vn">máy nướng bánh mì</string>
+    <string name="may_pha_ca_phe_vn">máy pha cà phê</string>
+    <!-- zh wake words -->
+    <string name="hello_zh">你好</string>
+    <string name="coffee_zh">咖啡</string>
+    <string name="dumplings_zh">水饺</string>
+    <string name="porcupine_zh">豪猪</string>
+    <!-- DialogManagerState -->
+    <string name="audio_playing_state">AudioPlayingState</string>
+    <string name="idle_state">IdleState</string>
+    <string name="recognizing_intent_state">RecognizingIntentState</string>
+    <string name="recording_intent_state">RecordingIntentState</string>
+    <string name="transcribing_intent_state">TranscribingIntentState</string>
+    <!-- DialogManagerStateInformation -->
+    <string name="session_id">SessionId: %s</string>
+    <string name="asr_text">AsrText: %s</string>
+    <string name="intent">IntentName: %s\nIntent: %s</string>
+    <string name="audio_data_size">AudioDataSize: %s</string>
+    <string name="send_audio_captured">SendAudioCaptured: %s</string>
+    <string name="wake_word">WakeWord: %s</string>
+    <!-- DialogServiceMiddlewareAction -->
+    <string name="asr_error">AsrError</string>
+    <string name="asr_text_captured">AsrTextCaptured</string>
+    <string name="end_session">EndSession</string>
+    <string name="intent_recognition_error">IntentRecognitionError</string>
+    <string name="intent_recognition_result">IntentRecognitionResult</string>
+    <string name="play_audio">PlayAudio</string>
+    <string name="play_finished">PlayFinished</string>
+    <string name="session_ended">SessionEnded</string>
+    <string name="session_started">SessionStarted</string>
+    <string name="silence_detected">SilenceDetected</string>
+    <string name="start_listening">StartListening</string>
+    <string name="start_session">StartSession</string>
+    <string name="stop_audio_playing">StopAudioPlaying</string>
+    <string name="stop_listening">StopListening</string>
+    <string name="wake_word_detected">WakeWordDetected</string>
+    <string name="asr_timeout_error">AsrTimeoutError</string>
+    <string name="intent_recognition_timeout_error">IntentRecognitionTimeoutError</string>
+    <!-- Source -->
+    <string name="http_api">HttpApi</string>
+    <string name="local">Local</string>
+    <string name="mqtt">Mqtt</string>
+</resources>

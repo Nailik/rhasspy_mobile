@@ -1,5 +1,9 @@
 -dontobfuscate
 
+-keep class org.eclipse.paho.clent.mqttv3.** {*;}
+-keep class org.eclipse.paho.client.mqttv3.*$* { *; }
+-keep class org.eclipse.paho.client.mqttv3.logging.JSR47Logger { *; }
+
 # Keep `Companion` object fields of serializable classes.
 # This avoids serializer lookup through `getDeclaredClasses` as done for named companion objects.
 -if @kotlinx.serialization.Serializable class **

@@ -1,6 +1,6 @@
 # Rhasspy mobile
 
-This will be a Rhasspy satellite on a mobile phone. The original idea is
+This is a Rhasspy satellite on a mobile phone. The original idea is
 from [rhasspy-mobile-app](https://github.com/razzo04/rhasspy-mobile-app). The latest Version can be
 found on the [PlayStore](https://play.google.com/store/apps/details?id=org.rhasspy.mobile.android)
 or in [Releases](https://github.com/Nailik/rhasspy_mobile/releases).
@@ -14,7 +14,7 @@ implemented on each platform yet.
 
 | Platform | Support                              |
 |----------|--------------------------------------|
-| Android  | Android 6.0 (API level 23)           |
+| Android  | Android 6.0 (API level 24)           |
 | iOS      | Not yet planned                      |
 | Other    | Open a discussion if your interested |
 
@@ -33,18 +33,18 @@ of [Rhasspy](https://rhasspy.readthedocs.io/en/latest/tutorials/#server-with-sat
 
 ## Main features
 
-| Feature                           | Description                                                                                                                                                                       |
-|-----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Local wake-word                   | Uses [Porcupine](https://picovoice.ai/platform/porcupine/) to enable local wake-word processing                                                                                   |
-| Background Service                | Allows to run the app continuously in Background, listening for wake word and processing audio.                                                                                   |
-| Microphone Overlay and Widget     | Quick access to voice commands without using a wake-word.                                                                                                                         |
-| Indication                        | Indicate different Rhasspy states<br/><ul><li>Wake up display when wake-word is detected</li><li>Sound indication like Rhasspy</li><li>Overlay animation</li></ul>                |
-| Automatic local silence detection | Stop recording audio when silence is detected with custom audio level.                                                                                                            |
-| Test configuration                | Test Rhasspy configuration while editing to simpler setup everything correctly.                                                                                                   |
-| Save and restore settings         | Don't loose the Satellite configuration.                                                                                                                                          |
-| Local Webserver                   | Hosts Hermes api to send commands to Rhasspy Satellite.                                                                                                                           |
-| Intent                            | Start Recording via Intent.<br/>`adb shell am start -a android.intent.action.MAIN -n org.rhasspy.mobile.android/.MainActivity --ez START_RECORDING 1`                             |
-| Broadcast                         | To Start Recording without launching app.<br/>`adb shell am broadcast -a org.rhasspy.mobile.android.action.START_RECORDING -n org.rhasspy.mobile.android/.StartRecordingReceiver` |
+| Feature                           | Description                                                                                                                                                                 |
+|-----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Local Wake Word                   | Uses [Porcupine](https://picovoice.ai/platform/porcupine/) to enable local wake-word processing                                                                             |
+| Background Service                | Allows to run the app continuously in Background, listening for wake word and processing audio.                                                                             |
+| Microphone Overlay and Widget     | Quick access to voice commands without using a wake-word.                                                                                                                   |
+| Indication                        | Indicate different Rhasspy states<br/><ul><li>Wake up display when wake-word is detected</li><li>Sound indication like Rhasspy</li><li>Overlay animation</li></ul>          |
+| Automatic local silence detection | Stop recording audio when silence is detected with custom audio level.                                                                                                      |
+| Test configuration                | Test Rhasspy configuration while editing to simpler setup everything correctly.                                                                                             |
+| Save and restore settings         | Don't loose the Satellite configuration.                                                                                                                                    |
+| Local Webserver                   | Hosts Hermes api to send commands to Rhasspy Satellite.                                                                                                                     |
+| Intent                            | Start Recording via Intent.<br/>`adb shell am start -a android.intent.action.MAIN -n org.rhasspy.mobile.android/org.rhasspy.mobile.app.MainActivity --ez START_RECORDING 1` |
+| Broadcast                         | To Start Recording without launching app.<br/>`adb shell am broadcast -n org.rhasspy.mobile.android/org.rhasspy.mobile.app.StartRecordingReceiver`                          |
 
 ## Rhasspy configuration
 
