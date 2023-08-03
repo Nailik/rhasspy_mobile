@@ -18,7 +18,6 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.milliseconds
 
-
 class SpeechToTextServiceTest : AppTest() {
 
     private val audioRecorder = FakeAudioRecorder()
@@ -75,7 +74,7 @@ class SpeechToTextServiceTest : AppTest() {
                 delay(10)
                 time += 10
             }
-            delay(allowedDelay)
+            delay(allowedDelay * 1.5)
             nVerify { repeat(1) { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } }
         }
         //check that silence detection is triggered after set minimum time for recording

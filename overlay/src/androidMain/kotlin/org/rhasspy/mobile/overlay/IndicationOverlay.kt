@@ -5,6 +5,7 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Looper
 import android.view.Gravity
+import android.view.View
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.*
 import androidx.compose.ui.platform.ComposeView
@@ -15,6 +16,7 @@ import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
@@ -76,8 +78,10 @@ actual class IndicationOverlay actual constructor(
             ).apply {
                 gravity = Gravity.BOTTOM
             }
-            lifecycleOwner.performRestore(null)
-            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+            CoroutineScope(Dispatchers.Main).launch {
+                lifecycleOwner.performRestore(null)
+                lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+            }
         } catch (exception: Exception) {
             logger.a(exception) { "exception in initialization" }
         }
@@ -89,41 +93,44 @@ actual class IndicationOverlay actual constructor(
      */
     override fun start() {
         try {
-            val view = getView()
-
-            view.setViewTreeLifecycleOwner(lifecycleOwner)
-            view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
-            view.setViewTreeViewModelStoreOwner(lifecycleOwner)
+            var view: View? = null
 
             if (job?.isActive == true) {
                 return
             }
-            job = CoroutineScope(dispatcher.IO).launch {
+
+            job = CoroutineScope(dispatcher.Main).launch {
                 viewModel.viewState.collect {
                     try {
                         if (it.isShowVisualIndication != showVisualIndicationOldValue) {
                             showVisualIndicationOldValue = it.isShowVisualIndication
                             if (it.isShowVisualIndication) {
+
                                 if (overlayPermission.isGranted()) {
+                                    view = getView().apply {
+                                        setViewTreeLifecycleOwner(lifecycleOwner)
+                                        setViewTreeSavedStateRegistryOwner(lifecycleOwner)
+                                        setViewTreeViewModelStoreOwner(lifecycleOwner)
+                                    }
+
                                     if (Looper.myLooper() == null) {
                                         Looper.prepare()
                                     }
-                                    launch(dispatcher.Main) {
-                                        overlayWindowManager?.addView(view, mParams) ?: {
-                                            logger.e { "addView overlayWindowManager is null" }
-                                        }
-                                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+
+                                    overlayWindowManager?.addView(view, mParams) ?: run {
+                                        logger.e { "addView overlayWindowManager is null" }
                                     }
+                                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
                                 }
+
                             } else {
-                                launch(dispatcher.Main) {
-                                    if (view.parent != null) {
-                                        overlayWindowManager?.removeView(view) ?: {
-                                            logger.e { "removeView overlayWindowManager is null" }
-                                        }
-                                    }
-                                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+
+                                overlayWindowManager?.removeView(view) ?: run {
+                                    logger.e { "removeView overlayWindowManager is null" }
                                 }
+                                view = null
+                                lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+
                             }
                         }
                     } catch (exception: Exception) {
@@ -131,15 +138,21 @@ actual class IndicationOverlay actual constructor(
                     }
                 }
             }.also {
-                it.invokeOnCompletion {
-                    if (view.parent != null) {
+
+                try {
+
+                    it.invokeOnCompletion {
                         //check if view is attached before removing it
                         //removing a not attached view results in IllegalArgumentException
-                        overlayWindowManager?.removeView(view) ?: {
+                        overlayWindowManager?.removeView(view) ?: run {
                             logger.e { "removeView2 overlayWindowManager is null" }
                         }
                     }
+
+                } catch (exception: Exception) {
+                    logger.a(exception) { "exception in invokeOnCompletion" }
                 }
+
             }
         } catch (exception: Exception) {
             logger.a(exception) { "exception in start" }

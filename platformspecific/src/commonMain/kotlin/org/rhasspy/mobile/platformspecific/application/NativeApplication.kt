@@ -14,7 +14,7 @@ expect abstract class NativeApplication() {
     val isAppInBackground: StateFlow<Boolean>
     abstract val isHasStarted: StateFlow<Boolean>
 
-    abstract fun resume()
+    abstract suspend fun resume()
 
     abstract fun onCreated()
 

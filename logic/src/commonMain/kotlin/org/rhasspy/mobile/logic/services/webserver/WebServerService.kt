@@ -112,6 +112,8 @@ internal class WebServerService(
                 logger.a(exception) { "initialization error" }
                 _serviceState.value = ServiceState.Exception(exception)
             }
+        } else {
+            _serviceState.value = ServiceState.Disabled
         }
     }
 

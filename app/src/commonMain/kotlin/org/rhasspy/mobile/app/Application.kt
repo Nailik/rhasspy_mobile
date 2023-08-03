@@ -85,8 +85,7 @@ class Application : NativeApplication(), KoinComponent {
             )
 
             //setup language
-            AppSetting.languageType.value =
-                get<ILanguageUtils>().setupLanguage(AppSetting.languageType.value)
+            AppSetting.languageType.value = get<ILanguageUtils>().setupLanguage(AppSetting.languageType.value)
             StringDesc.localeType = StringDesc.LocaleType.Custom(AppSetting.languageType.value.code)
 
             //start foreground service if enabled
@@ -100,27 +99,25 @@ class Application : NativeApplication(), KoinComponent {
         }
     }
 
-    private fun startOverlay() {
-        CoroutineScope(get<IDispatcherProvider>().Main).launch {
-            get<IIndicationOverlay>().start()
-            get<IMicrophoneOverlay>().start()
-        }
-    }
-
-    @Suppress("unused")
-    fun stopOverlay() {
-        CoroutineScope(get<IDispatcherProvider>().Main).launch {
-            get<IIndicationOverlay>().stop()
-            get<IMicrophoneOverlay>().stop()
-        }
-    }
-
-    override fun resume() {
+    override suspend fun resume() {
         get<IMicrophonePermission>().update()
         get<IOverlayPermission>().update()
+        //start services
+        get<IHttpClientService>()
+        get<IWebServerService>()
+        get<IMqttService>()
+        get<IDialogManagerService>()
+        get<IIntentRecognitionService>()
+        get<IIntentHandlingService>()
+        get<IAudioPlayingService>()
+        //start overlay
         checkOverlayPermission()
-        startServices()
-        startOverlay()
+        get<IIndicationOverlay>().start()
+        get<IMicrophoneOverlay>().start()
+
+        if (AppSetting.isBackgroundServiceEnabled.value) {
+            get<IBackgroundService>().start()
+        }
     }
 
     private fun checkOverlayPermission() {
@@ -134,16 +131,6 @@ class Application : NativeApplication(), KoinComponent {
                 AppSetting.isWakeWordLightIndicationEnabled.value = false
             }
         }
-    }
-
-    private fun startServices() {
-        get<IHttpClientService>()
-        get<IWebServerService>()
-        get<IMqttService>()
-        get<IDialogManagerService>()
-        get<IIntentRecognitionService>()
-        get<IIntentHandlingService>()
-        get<IAudioPlayingService>()
     }
 
 }

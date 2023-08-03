@@ -129,6 +129,8 @@ internal class MqttService(
                 logger.e(exception) { "client initialization error" }
                 _serviceState.value = ServiceState.Exception(exception)
             }
+        } else {
+            _serviceState.value = ServiceState.Disabled
         }
     }
 

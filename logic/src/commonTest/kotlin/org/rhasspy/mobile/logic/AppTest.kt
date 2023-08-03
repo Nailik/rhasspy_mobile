@@ -30,7 +30,7 @@ abstract class AppTest : IAppTest(), KoinTest {
             override val isHasStarted: StateFlow<Boolean>
                 get() = MutableStateFlow(true)
 
-            override fun resume() {}
+            override suspend fun resume() {}
 
             override fun onCreated() {}
         }

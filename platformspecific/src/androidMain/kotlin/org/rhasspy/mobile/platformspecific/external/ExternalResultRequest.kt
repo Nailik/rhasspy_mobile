@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Build
 import android.provider.DocumentsContract
@@ -19,6 +21,7 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.*
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.*
 import org.rhasspy.mobile.platformspecific.resumeSave
+
 
 internal actual class ExternalResultRequest actual constructor(
     private val nativeApplication: NativeApplication
@@ -161,8 +164,9 @@ internal actual class ExternalResultRequest actual constructor(
                     action = Settings.ACTION_MANAGE_OVERLAY_PERMISSION
                 }
 
-            is ShareFile                          ->
-                Intent.createChooser(
+            is ShareFile                          -> {
+                val uri = Uri.parse(intention.fileUri)
+                val chooser = Intent.createChooser(
                     Intent().apply {
                         action = Intent.ACTION_SEND
                         putExtra(Intent.EXTRA_STREAM, Uri.parse(intention.fileUri))
@@ -170,6 +174,14 @@ internal actual class ExternalResultRequest actual constructor(
                     },
                     null
                 )
+
+                val resInfoList: List<ResolveInfo> = nativeApplication.packageManager.queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY)
+                for (resolveInfo in resInfoList) {
+                    val packageName = resolveInfo.activityInfo.packageName
+                    nativeApplication.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                return chooser
+            }
         }
     }
 

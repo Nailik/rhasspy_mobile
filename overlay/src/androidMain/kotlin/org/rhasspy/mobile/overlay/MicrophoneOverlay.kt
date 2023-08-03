@@ -68,6 +68,7 @@ actual class MicrophoneOverlay actual constructor(
 
 
     private fun onDrag(delta: Offset, view: View) {
+        logger.d { "onDrag $delta" }
         viewModel.onEvent(UpdateMicrophoneOverlayPosition(offsetX = delta.x, offsetY = delta.y))
         mParams.applySettings()
         overlayWindowManager?.updateViewLayout(view, mParams) ?: {
@@ -90,8 +91,10 @@ actual class MicrophoneOverlay actual constructor(
                 @Suppress("DEPRECATION") FLAG_SHOW_WHEN_LOCKED or FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
             ).applySettings()
-            lifecycleOwner.performRestore(null)
-            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+            CoroutineScope(Dispatchers.Main).launch {
+                lifecycleOwner.performRestore(null)
+                lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+            }
         } catch (exception: Exception) {
             logger.a(exception) { "exception in initialization" }
         }
@@ -112,42 +115,45 @@ actual class MicrophoneOverlay actual constructor(
      */
     override fun start() {
         try {
-            val view = getView()
-
-            view.setViewTreeLifecycleOwner(lifecycleOwner)
-            view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
-            view.setViewTreeViewModelStoreOwner(lifecycleOwner)
+            var view: View? = null
 
             if (job?.isActive == true) {
                 return
             }
 
-            job = CoroutineScope(Dispatchers.IO).launch {
+            job = CoroutineScope(dispatcher.Main).launch {
                 viewModel.viewState.collect {
                     try {
                         if (it.shouldOverlayBeShown != showVisualIndicationOldValue) {
                             showVisualIndicationOldValue = it.shouldOverlayBeShown
                             if (it.shouldOverlayBeShown) {
+
                                 if (overlayPermission.isGranted()) {
+                                    view = getView().apply {
+                                        setViewTreeLifecycleOwner(lifecycleOwner)
+                                        setViewTreeSavedStateRegistryOwner(lifecycleOwner)
+                                        setViewTreeViewModelStoreOwner(lifecycleOwner)
+                                    }
+
                                     if (Looper.myLooper() == null) {
                                         Looper.prepare()
                                     }
-                                    launch(dispatcher.Main) {
-                                        overlayWindowManager?.addView(view, mParams) ?: {
-                                            logger.e { "addView overlayWindowManager is null" }
-                                        }
-                                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                                    logger.d { "addView" }
+                                    overlayWindowManager?.addView(view, mParams) ?: run {
+                                        logger.e { "addView overlayWindowManager is null" }
                                     }
+                                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
                                 }
+
                             } else {
-                                launch(dispatcher.Main) {
-                                    if (view.parent != null) {
-                                        overlayWindowManager?.removeView(view) ?: {
-                                            logger.e { "removeView overlayWindowManager is null" }
-                                        }
-                                    }
-                                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+
+                                logger.d { "removeView" }
+                                overlayWindowManager?.removeView(view) ?: run {
+                                    logger.e { "removeView overlayWindowManager is null" }
                                 }
+                                view = null
+                                lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+
                             }
                         }
                     } catch (exception: Exception) {
@@ -155,15 +161,21 @@ actual class MicrophoneOverlay actual constructor(
                     }
                 }
             }.also {
-                it.invokeOnCompletion {
-                    if (view.parent != null) {
+
+                try {
+
+                    it.invokeOnCompletion {
                         //check if view is attached before removing it
                         //removing a not attached view results in IllegalArgumentException
-                        overlayWindowManager?.removeView(view) ?: {
+                        overlayWindowManager?.removeView(view) ?: run {
                             logger.e { "removeView2 overlayWindowManager is null" }
                         }
                     }
+
+                } catch (exception: Exception) {
+                    logger.a(exception) { "exception in invokeOnCompletion" }
                 }
+
             }
         } catch (exception: Exception) {
             logger.a(exception) { "exception in start" }
