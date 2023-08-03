@@ -139,7 +139,7 @@ jobs:
             androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-x86_64-signed.apk
   #upload dev build
   remove:
-    if: $BUILD_TYPE != "Release"
+    if: (${{ inputs.BUILD_TYPE }} != "Release")
     runs-on: self-hosted
     needs: build
     steps:
