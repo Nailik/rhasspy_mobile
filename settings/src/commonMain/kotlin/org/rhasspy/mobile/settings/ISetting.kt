@@ -68,17 +68,23 @@ open class ISetting<T>(
     @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
     @Suppress("UNCHECKED_CAST")
     private fun readValue(): T {
-        return when (initial) {
-            is String     -> settings[key.name, initial]
-            is Int        -> settings[key.name, initial]
-            is Float      -> settings[key.name, initial]
-            is Long       -> settings[key.name, initial]
-            is Boolean    -> settings[key.name, initial]
-            is IOption<*> -> initial.findValue(settings[key.name, initial.name])
-            else          -> serializer?.let {
-                settings.decodeValue(serializer, key.name, initial)
-            } ?: initial
-        } as T
+        return try {
+            when (initial) {
+                is String     -> settings[key.name, initial]
+                is Int        -> settings[key.name, initial]
+                is Float      -> settings[key.name, initial]
+                is Long       -> settings[key.name, initial]
+                is Boolean    -> settings[key.name, initial]
+                is IOption<*> -> initial.findValue(settings[key.name, initial.name])
+                else          -> serializer?.let {
+                    settings.decodeValue(serializer, key.name, initial)
+                } ?: initial
+            } as T
+        } catch (e: Exception) {
+            logger.e { "reset of ${key.name} to $initial" }
+            saveValue(initial)
+            return initial
+        }
     }
 
 }

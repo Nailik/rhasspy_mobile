@@ -5,12 +5,12 @@ import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 
 actual class Resampler actual constructor(
-    inputSampleRateType: AudioFormatSampleRateType,
     inputChannelType: AudioFormatChannelType,
     inputEncodingType: AudioFormatEncodingType,
-    outputSampleRateType: AudioFormatSampleRateType,
+    inputSampleRateType: AudioFormatSampleRateType,
     outputChannelType: AudioFormatChannelType,
-    outputEncodingType: AudioFormatEncodingType
+    outputEncodingType: AudioFormatEncodingType,
+    outputSampleRateType: AudioFormatSampleRateType,
 ) {
     actual fun resample(inputData: ByteArray): ByteArray {
         //TODO("Not yet implemented")

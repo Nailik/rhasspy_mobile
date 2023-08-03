@@ -36,7 +36,7 @@ actual abstract class NativeApplication {
         //TODO("Not yet implemented")
     }
 
-    actual abstract fun resume()
+    actual abstract suspend fun resume()
     actual fun closeApp() {
         //TODO("Not yet implemented")
     }

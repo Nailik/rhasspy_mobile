@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.platformspecific.utils
 
+import kotlin.experimental.ExperimentalNativeApi
+
+@OptIn(ExperimentalNativeApi::class)
 actual fun isDebug(): Boolean {
-    //TODO("Not yet implemented")
-    return true
+    return Platform.isDebugBinary
 }

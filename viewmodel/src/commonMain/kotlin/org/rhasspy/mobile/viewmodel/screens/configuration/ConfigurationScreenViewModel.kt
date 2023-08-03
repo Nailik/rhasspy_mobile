@@ -39,7 +39,7 @@ class ConfigurationScreenViewModel(
             ScrollToErrorClick -> _viewState.update { it.copy(scrollToError = viewState.value.firstErrorIndex.value) }
             BackClick          -> navigator.onBackPressed()
             is Navigate        -> navigator.navigate(action.destination)
-            OpenWikiLink       -> openLink(LinkType.Wiki)
+            OpenWikiLink       -> openLink(LinkType.WikiConfiguration)
         }
     }
 

@@ -15,11 +15,15 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.dsl.module
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.utils.isDebug
@@ -57,16 +61,26 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
             } catch (_: Exception) {
             }
         }
-        ProcessLifecycleOwner.get().lifecycle.addObserver(object : LifecycleEventObserver {
-            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                when (event) {
-                    Lifecycle.Event.ON_START  -> currentlyAppInBackground.value = false
-                    Lifecycle.Event.ON_STOP   -> currentlyAppInBackground.value = true
-                    Lifecycle.Event.ON_RESUME -> resume()
-                    else                      -> Unit
+
+
+        CoroutineScope(Dispatchers.Main).launch {
+            ProcessLifecycleOwner.get().lifecycle.addObserver(object : LifecycleEventObserver {
+                override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                    when (event) {
+                        Lifecycle.Event.ON_START  -> currentlyAppInBackground.value = false
+                        Lifecycle.Event.ON_STOP   -> currentlyAppInBackground.value = true
+                        Lifecycle.Event.ON_RESUME -> {
+                            CoroutineScope(get<IDispatcherProvider>().IO).launch {
+                                resume()
+                            }
+                        }
+
+                        else                      -> Unit
+                    }
                 }
-            }
-        })
+            })
+        }
+
     }
 
     actual abstract fun onCreated()
@@ -116,7 +130,7 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
     }
 
     actual abstract val isHasStarted: StateFlow<Boolean>
-    actual abstract fun resume()
+    actual abstract suspend fun resume()
     actual fun closeApp() {
         currentActivity?.moveTaskToBack(false)
     }
