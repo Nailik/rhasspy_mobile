@@ -1,32 +1,21 @@
 package org.rhasspy.mobile.android.settings.content
 
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.performClick
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.rhasspy.mobile.android.utils.FlakyTest
-import org.rhasspy.mobile.android.utils.TestContentProvider
+import org.rhasspy.mobile.android.utils.FlakyTestNew
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.settings.AboutScreen
 
-class AboutScreenTest : FlakyTest() {
+class AboutScreenTest : FlakyTestNew() {
 
-    @get: Rule(order = 0)
-    val composeTestRule = createComposeRule()
-
-    @Before
-    fun setUp() {
-
-        composeTestRule.setContent {
-            TestContentProvider {
-                AboutScreen()
-            }
-        }
-
+    @Composable
+    override fun ComposableContent() {
+        AboutScreen()
     }
 
     /**
@@ -36,14 +25,18 @@ class AboutScreenTest : FlakyTest() {
      * Dialog closes
      */
     @Test
+    @AllowFlaky
     fun testChangelogDialog() = runTest {
+        setupContent()
         //User clicks button
         composeTestRule.onNodeWithTag(TestTag.DialogChangelogButton).performClick()
         //Dialog with text opens
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.DialogChangelog).assertExists()
         //User clicks ok button
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
         //Dialog closes
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.DialogChangelog).assertDoesNotExist()
     }
 
@@ -55,14 +48,18 @@ class AboutScreenTest : FlakyTest() {
      * Dialog closes
      */
     @Test
+    @AllowFlaky
     fun testPrivacyDialog() = runTest {
+        setupContent()
         //User clicks button
         composeTestRule.onNodeWithTag(TestTag.DialogDataPrivacyButton).performClick()
         //Dialog with text opens
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.DialogDataPrivacy).assertExists()
         //User clicks ok button
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
         //Dialog closes
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.DialogDataPrivacy).assertDoesNotExist()
     }
 
@@ -74,16 +71,20 @@ class AboutScreenTest : FlakyTest() {
      * Dialog closes
      */
     @Test
+    @AllowFlaky
     fun testLibraryDialog() = runTest {
+        setupContent()
         //Libraries container exists
         composeTestRule.onNodeWithTag(TestTag.LibrariesContainer).assertExists()
         //User clicks library
         composeTestRule.onNodeWithTag(TestTag.LibrariesContainer).onChildAt(0).performClick()
         //Dialog opens
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.DialogLibrary).assertExists()
         //User clicks ok button
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
         //Dialog closes
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.DialogLibrary).assertDoesNotExist()
     }
 
