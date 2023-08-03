@@ -13,6 +13,10 @@
 
     <uses-permission-sdk-23 android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
+    <uses-permission
+        android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove" />
+
     <application
         android:name="org.rhasspy.mobile.app.Application"
         android:enableOnBackInvokedCallback="true"
