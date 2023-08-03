@@ -1,5 +1,5 @@
 target 'iosApp' do
-  use_frameworks!
+  use_modular_headers!
   platform :ios, '14.1'
   pod 'Firebase/Crashlytics'
   pod 'app', :path => '../app'
