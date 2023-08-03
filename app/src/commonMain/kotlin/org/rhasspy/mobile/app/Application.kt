@@ -114,6 +114,10 @@ class Application : NativeApplication(), KoinComponent {
         checkOverlayPermission()
         get<IIndicationOverlay>().start()
         get<IMicrophoneOverlay>().start()
+
+        if (AppSetting.isBackgroundServiceEnabled.value) {
+            get<IBackgroundService>().start()
+        }
     }
 
     private fun checkOverlayPermission() {
