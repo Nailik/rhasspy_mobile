@@ -29,8 +29,8 @@ fun MicrophoneOverlay(
                 .combinedTestTag(TestTag.MicrophoneFab, TestTag.Overlay)
                 .pointerInput(Unit) {
                     detectDragGestures { change, dragAmount ->
-                        change.consume()
                         onDrag(dragAmount)
+                        change.consume()
                     }
                 },
             iconSize = (viewState.microphoneOverlaySize * 0.4).dp,
