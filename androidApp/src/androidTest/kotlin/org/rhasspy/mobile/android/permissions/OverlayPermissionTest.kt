@@ -12,7 +12,6 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.*
-import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
