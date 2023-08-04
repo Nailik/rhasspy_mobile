@@ -1,18 +1,15 @@
 package org.rhasspy.mobile.android.settings.content
 
 import android.widget.Switch
-import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.*
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
-import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
@@ -27,9 +24,6 @@ import kotlin.test.assertTrue
 
 class IndicationSettingsContentTest : FlakyTest() {
 
-    @get: Rule(order = 0)
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
-
     private val viewModel = get<IndicationSettingsViewModel>()
 
     private val device: UiDevice =
@@ -38,15 +32,9 @@ class IndicationSettingsContentTest : FlakyTest() {
     private val settingsPage = "com.android.settings"
     private val list = ".*list"
 
-    @Before
-    fun setUp() {
-
-        composeTestRule.activity.setContent {
-            TestContentProvider {
-                IndicationSettingsOverviewScreen()
-            }
-        }
-
+    @Composable
+    override fun ComposableContent() {
+        IndicationSettingsOverviewScreen()
     }
 
     /**
@@ -66,10 +54,12 @@ class IndicationSettingsContentTest : FlakyTest() {
      * sound is enabled
      * sound is saved
      */
-    //@Test Manual
+    @Test
+    @AllowFlaky
     @Suppress("unused")
     fun testIndicationSettings() {
-        device.resetOverlayPermission(composeTestRule.activity, get())
+        setupContent()
+        device.resetOverlayPermission(activity, get())
 
         viewModel.onEvent(SetWakeWordLightIndicationEnabled(false))
         viewModel.onEvent(SetSoundIndicationEnabled(false))
@@ -165,6 +155,7 @@ class IndicationSettingsContentTest : FlakyTest() {
      */
     @Test
     fun testSoundIndicationOptions() = runTest {
+        setupContent()
         //Sound is disabled
         viewModel.onEvent(SetSoundIndicationEnabled(false))
         //sound settings invisible

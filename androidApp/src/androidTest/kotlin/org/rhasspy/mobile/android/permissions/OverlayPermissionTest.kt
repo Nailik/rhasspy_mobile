@@ -12,11 +12,13 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.*
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.utils.*
@@ -34,7 +36,7 @@ import kotlin.test.assertTrue
  * Tests Overlay Permission redirecting and recognition
  */
 @RunWith(AndroidJUnit4::class)
-class OverlayPermissionTest : FlakyTest() {
+class OverlayPermissionTest : KoinComponent {
 
     // activity necessary for permission
     @get: Rule(order = 0)

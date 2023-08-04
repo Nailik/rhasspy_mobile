@@ -1,18 +1,14 @@
 package org.rhasspy.mobile.android.settings.content
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.utils.FlakyTest
-import org.rhasspy.mobile.android.utils.TestContentProvider
-import org.rhasspy.mobile.android.utils.onListItemRadioButton
-import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.ui.settings.LanguageSettingsScreenItemContent
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
@@ -21,20 +17,11 @@ import kotlin.test.assertEquals
 
 class LanguageSettingsContentTest : FlakyTest() {
 
-    @get: Rule(order = 0)
-    val composeTestRule = createComposeRule()
-
     private val viewModel = get<LanguageSettingsViewModel>()
 
-    @Before
-    fun setUp() {
-
-        composeTestRule.setContent {
-            TestContentProvider {
-                LanguageSettingsScreenItemContent()
-            }
-        }
-
+    @Composable
+    override fun ComposableContent() {
+        LanguageSettingsScreenItemContent()
     }
 
     /**
@@ -58,7 +45,10 @@ class LanguageSettingsContentTest : FlakyTest() {
      * language english is saved
      */
     @Test
+    @AllowFlaky
     fun testLanguage() = runTest {
+        setupContent()
+
         viewModel.onEvent(SelectLanguageOption(LanguageType.English))
 
         //language is english

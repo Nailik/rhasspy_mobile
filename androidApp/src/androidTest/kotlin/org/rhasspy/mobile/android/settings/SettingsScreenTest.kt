@@ -7,7 +7,7 @@ import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.utils.FlakyTestNew
+import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.hasTestTag
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.LocalViewModelFactory
@@ -22,7 +22,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScr
  * Items exist
  * Site ID edit
  */
-class SettingsScreenTest : FlakyTestNew() {
+class SettingsScreenTest : FlakyTest() {
 
     @Composable
     override fun ComposableContent() {
