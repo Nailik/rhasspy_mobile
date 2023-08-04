@@ -5,6 +5,7 @@ import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.naNToZero
+import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.settings.AppSetting
 import kotlin.math.log
 
@@ -29,8 +30,8 @@ class SilenceDetectionSettingsViewStateCreator(
 
     private fun getViewState(): SilenceDetectionSettingsViewState {
         return SilenceDetectionSettingsViewState(
-            silenceDetectionTimeText = AppSetting.automaticSilenceDetectionTime.value.toString(),
-            silenceDetectionMinimumTimeText = AppSetting.automaticSilenceDetectionMinimumTime.value.toString(),
+            silenceDetectionTimeText = AppSetting.automaticSilenceDetectionTime.value.toStringOrEmpty(),
+            silenceDetectionMinimumTimeText = AppSetting.automaticSilenceDetectionMinimumTime.value.toStringOrEmpty(),
             isSilenceDetectionEnabled = AppSetting.isAutomaticSilenceDetectionEnabled.value,
             silenceDetectionAudioLevel = AppSetting.automaticSilenceDetectionAudioLevel.value,
             silenceDetectionAudioLevelPercentage = log(AppSetting.automaticSilenceDetectionAudioLevel.value, audioRecorder.absoluteMaxVolume).naNToZero(),
