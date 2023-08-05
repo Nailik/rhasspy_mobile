@@ -16,7 +16,7 @@ import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSe
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class SilenceDetectionSettingsContentTest : FlakyTestNew() {
+class SilenceDetectionSettingsContentTest : FlakyTest() {
 
     private val viewModel = get<SilenceDetectionSettingsViewModel>()
 

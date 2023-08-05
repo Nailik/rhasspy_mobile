@@ -19,6 +19,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.utils.*
@@ -43,7 +44,7 @@ import kotlin.test.assertTrue
  * - 30 : allow only while using the app, ask every time, don't allow
  */
 @RunWith(AndroidJUnit4::class)
-class MicrophonePermissionTest : FlakyTest() {
+class MicrophonePermissionTest : KoinComponent {
 
     // activity necessary for permission
     @get: Rule(order = 0)

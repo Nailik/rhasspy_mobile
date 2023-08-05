@@ -237,7 +237,7 @@ internal class MqttService(
             }
 
         } catch (e: Exception) {
-            logger.a(e) { "received message on $topic error" }
+            logger.e(e) { "received message on $topic error" }
         }
     }
 

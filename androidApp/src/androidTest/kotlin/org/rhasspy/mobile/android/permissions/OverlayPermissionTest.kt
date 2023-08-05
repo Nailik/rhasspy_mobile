@@ -17,6 +17,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.utils.*
@@ -34,7 +35,7 @@ import kotlin.test.assertTrue
  * Tests Overlay Permission redirecting and recognition
  */
 @RunWith(AndroidJUnit4::class)
-class OverlayPermissionTest : FlakyTest() {
+class OverlayPermissionTest : KoinComponent {
 
     // activity necessary for permission
     @get: Rule(order = 0)

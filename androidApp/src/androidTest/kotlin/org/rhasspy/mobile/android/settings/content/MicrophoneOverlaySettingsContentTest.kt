@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class MicrophoneOverlaySettingsContentTest : FlakyTestNew() {
+class MicrophoneOverlaySettingsContentTest : FlakyTest() {
 
     private val viewModel = get<MicrophoneOverlaySettingsViewModel>()
 
