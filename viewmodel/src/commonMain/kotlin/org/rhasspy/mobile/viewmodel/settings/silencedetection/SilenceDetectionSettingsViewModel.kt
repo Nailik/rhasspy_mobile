@@ -7,6 +7,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
+import org.rhasspy.mobile.platformspecific.toLongOrNullOrConstant
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
@@ -57,10 +58,10 @@ class SilenceDetectionSettingsViewModel(
                     } else 0f
 
             is UpdateSilenceDetectionMinimumTime         ->
-                AppSetting.automaticSilenceDetectionMinimumTime.value = change.time.toLongOrNull()
+                AppSetting.automaticSilenceDetectionMinimumTime.value = change.time.toLongOrNullOrConstant()
 
             is UpdateSilenceDetectionTime                ->
-                AppSetting.automaticSilenceDetectionTime.value = change.time.toLongOrNull()
+                AppSetting.automaticSilenceDetectionTime.value = change.time.toLongOrNullOrConstant()
         }
     }
 

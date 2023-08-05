@@ -148,7 +148,7 @@ fun TextFieldListItem(
                 )
             } else {
                 KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    onNext = { focusManager.moveFocus(FocusDirection.Next) }
                 )
             },
             onValueChange = { onValueChange?.invoke(it) },
