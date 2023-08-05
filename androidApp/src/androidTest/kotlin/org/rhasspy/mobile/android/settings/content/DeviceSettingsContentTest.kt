@@ -1,17 +1,15 @@
 package org.rhasspy.mobile.android.settings.content
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.FlakyTest
-import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
@@ -22,18 +20,9 @@ import kotlin.test.assertTrue
 
 class DeviceSettingsContentTest : FlakyTest() {
 
-    @get: Rule(order = 0)
-    val composeTestRule = createComposeRule()
-
-    @Before
-    fun setUp() {
-
-        composeTestRule.setContent {
-            TestContentProvider {
-                DeviceSettingsContent()
-            }
-        }
-
+    @Composable
+    override fun ComposableContent() {
+        DeviceSettingsContent()
     }
 
     /**
@@ -55,7 +44,10 @@ class DeviceSettingsContentTest : FlakyTest() {
      * intent handling disabled is saved
      */
     @Test
+    @AllowFlaky
     fun testContent() = runTest {
+        setupContent()
+
         //Volume is visible
         composeTestRule.onNodeWithTag(TestTag.Volume).assertIsDisplayed()
 

@@ -1,41 +1,39 @@
 package org.rhasspy.mobile.android.overlay
 
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.runtime.Composable
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import org.junit.Before
-import org.junit.Rule
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.android.utils.FlakyTest
-import org.rhasspy.mobile.android.utils.hasCombinedTestTag
-import org.rhasspy.mobile.android.utils.requestOverlayPermissions
-import org.rhasspy.mobile.android.utils.waitUntilExists
-import org.rhasspy.mobile.app.MainActivity
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.indication.IndicationState
 import org.rhasspy.mobile.logic.services.indication.IIndicationService
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.main.MainScreen
 
 @RunWith(AndroidJUnit4::class)
 class IndicationOverlayTest : FlakyTest() {
 
-    @get: Rule(order = 0)
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
-    private val device: UiDevice =
-        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-    @Before
-    fun setUp() {
-        device.requestOverlayPermissions(composeTestRule.activity, get())
-        AppSetting.isWakeWordLightIndicationEnabled.value = true
+    @Composable
+    override fun ComposableContent() {
+        MainScreen(LocalViewModelFactory.current)
     }
 
     @Test
+    @AllowFlaky
     fun test() {
+        setupContent()
+        device.requestOverlayPermissions(activity, get())
+        AppSetting.isWakeWordLightIndicationEnabled.value = true
+
         composeTestRule.waitForIdle()
         get<IIndicationService>().onThinking()
         composeTestRule.waitUntil(

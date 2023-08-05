@@ -1,14 +1,12 @@
 package org.rhasspy.mobile.android.settings.content
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createComposeRule
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.FlakyTest
-import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
@@ -23,21 +21,11 @@ import kotlin.test.assertTrue
 
 class AudioFocusSettingsContentTest : FlakyTest() {
 
-    @get: Rule(order = 0)
-    val composeTestRule = createComposeRule()
-
     private val viewModel = get<AudioFocusSettingsViewModel>()
 
-
-    @Before
-    fun setUp() {
-
-        composeTestRule.setContent {
-            TestContentProvider {
-                AudioFocusSettingsContent()
-            }
-        }
-
+    @Composable
+    override fun ComposableContent() {
+        AudioFocusSettingsContent()
     }
 
     /**
@@ -71,7 +59,10 @@ class AudioFocusSettingsContentTest : FlakyTest() {
      * dialog saved
      */
     @Test
+    @AllowFlaky
     fun testContent() = runTest {
+        setupContent()
+
         viewModel.onEvent(SelectAudioFocusOption(AudioFocusOption.Disabled))
         assertEquals(AudioFocusOption.Disabled, AppSetting.audioFocusOption.value)
 

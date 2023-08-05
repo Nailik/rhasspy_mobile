@@ -1,13 +1,15 @@
 package org.rhasspy.mobile.android.configuration
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createComposeRule
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.utils.FlakyTest
+import org.rhasspy.mobile.android.utils.onListItemRadioButton
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.ui.TestTag
@@ -19,20 +21,12 @@ import kotlin.test.assertEquals
 
 class IntentHandlingConfigurationContentTest : FlakyTest() {
 
-    @get: Rule(order = 0)
-    val composeTestRule = createComposeRule()
 
     private val viewModel = get<IntentHandlingConfigurationViewModel>()
 
-    @Before
-    fun setUp() {
-
-        composeTestRule.setContent {
-            TestContentProvider {
-                IntentHandlingConfigurationScreen()
-            }
-        }
-
+    @Composable
+    override fun ComposableContent() {
+        IntentHandlingConfigurationScreen()
     }
 
     /**
@@ -49,7 +43,10 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
      * use custom endpoint is saved
      */
     @Test
+    @AllowFlaky
     fun testEndpoint() = runTest {
+        setupContent()
+
         viewModel.onEvent(SelectIntentHandlingOption(IntentHandlingOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
@@ -116,7 +113,10 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
      * send events is saved
      */
     @Test
+    @AllowFlaky
     fun testHomeAssistant() = runTest {
+        setupContent()
+
         viewModel.onEvent(SelectIntentHandlingOption(IntentHandlingOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()

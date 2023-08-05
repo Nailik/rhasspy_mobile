@@ -1,38 +1,23 @@
 package org.rhasspy.mobile.android.configuration.porcupine
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.FlakyTest
-import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.porcupine.PorcupineKeywordScreen
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertTrue
 
 class PorcupineKeywordScreenTest : FlakyTest() {
 
-    @get: Rule(order = 0)
-    val composeTestRule = createComposeRule()
-
-    private val viewModel = get<WakeWordConfigurationViewModel>()
-
-    @Before
-    fun setUp() {
-
-        composeTestRule.setContent {
-            TestContentProvider {
-                PorcupineKeywordScreen()
-            }
-        }
-
+    @Composable
+    override fun ComposableContent() {
+        PorcupineKeywordScreen()
     }
 
     /**
@@ -51,7 +36,10 @@ class PorcupineKeywordScreenTest : FlakyTest() {
      * default is opened and selected
      */
     @Test
+    @AllowFlaky
     fun testPager() = runTest {
+        setupContent()
+
         //default is opened
         composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen).assertIsDisplayed()
 

@@ -9,7 +9,7 @@ import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.utils.FlakyTestNew
+import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
@@ -21,7 +21,7 @@ import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class LogSettingsContentTest : FlakyTestNew() {
+class LogSettingsContentTest : FlakyTest() {
 
     private val viewModel = get<LogSettingsViewModel>()
 

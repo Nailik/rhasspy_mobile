@@ -1,14 +1,16 @@
 package org.rhasspy.mobile.android.configuration
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.utils.FlakyTest
+import org.rhasspy.mobile.android.utils.onListItemRadioButton
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.ui.configuration.DialogManagementConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
@@ -18,20 +20,11 @@ import kotlin.test.assertEquals
 
 class DialogManagementConfigurationContentTest : FlakyTest() {
 
-    @get: Rule(order = 0)
-    val composeTestRule = createComposeRule()
-
     private val viewModel = get<DialogManagementConfigurationViewModel>()
 
-    @Before
-    fun setUp() {
-
-        composeTestRule.setContent {
-            TestContentProvider {
-                DialogManagementConfigurationScreen()
-            }
-        }
-
+    @Composable
+    override fun ComposableContent() {
+        DialogManagementConfigurationScreen()
     }
 
     /**
@@ -43,7 +36,10 @@ class DialogManagementConfigurationContentTest : FlakyTest() {
      * option is saved to local
      */
     @Test
+    @AllowFlaky
     fun testEndpoint() = runTest {
+        setupContent()
+
         viewModel.onEvent(SelectDialogManagementOption(DialogManagementOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()

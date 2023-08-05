@@ -22,11 +22,7 @@ object ConfigurationSetting {
     val isHttpServerEnabled = ISetting(SettingsEnum.HttpServerEnabled, true)
     val httpServerPort = ISetting(SettingsEnum.HttpServerPort, 12101)
     val isHttpServerSSLEnabledEnabled = ISetting(SettingsEnum.HttpServerSSLEnabled, false)
-    val httpServerSSLKeyStoreFile = ISetting(
-        SettingsEnum.HttpServerSSLKeyStoreFile,
-        null,
-        OkioPathSerializer
-    )
+    val httpServerSSLKeyStoreFile = ISetting(SettingsEnum.HttpServerSSLKeyStoreFile, null, OkioPathSerializer)
     val httpServerSSLKeyStorePassword = ISetting(SettingsEnum.HttpServerSSLKeyStorePassword, "")
     val httpServerSSLKeyAlias = ISetting(SettingsEnum.HttpServerSSLKeyAlias, "")
     val httpServerSSLKeyPassword = ISetting(SettingsEnum.HttpServerSSLKeyPassword, "")
@@ -64,11 +60,7 @@ object ConfigurationSetting {
         PorcupineKeywordOption.values().map { PorcupineDefaultKeyword(it, false, 0.5f) }.toImmutableList(),
         PorcupineDefaultKeywordSerializer
     )
-    val wakeWordPorcupineKeywordCustomOptions = ISetting(
-        SettingsEnum.WakeWordPorcupineKeywordCustomOptions,
-        persistentListOf(),
-        PorcupineCustomKeywordSerializer
-    )
+    val wakeWordPorcupineKeywordCustomOptions = ISetting(SettingsEnum.WakeWordPorcupineKeywordCustomOptions, persistentListOf(), PorcupineCustomKeywordSerializer)
     val wakeWordPorcupineLanguage = ISetting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOption.EN)
     val wakeWordUdpOutputHost = ISetting(SettingsEnum.WakeWordUDPOutputHost, "")
     val wakeWordUdpOutputPort = ISetting(SettingsEnum.WakeWordUDPOutputPort, 20000)
