@@ -128,7 +128,8 @@ private fun DialogManagementSettings(
             value = textAsrTimeoutText,
             onValueChange = { onEvent(ChangeTextAsrTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            label = MR.strings.textAsrTimeoutText.stable
+            label = MR.strings.textAsrTimeoutText.stable,
+            isLastItem = false
         )
 
         //intent recognition timeout
@@ -137,7 +138,8 @@ private fun DialogManagementSettings(
             value = intentRecognitionTimeoutText,
             onValueChange = { onEvent(ChangeIntentRecognitionTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            label = MR.strings.intentRecognitionTimeoutText.stable
+            label = MR.strings.intentRecognitionTimeoutText.stable,
+            isLastItem = false
         )
 
         //recording timeout

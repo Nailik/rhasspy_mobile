@@ -125,7 +125,8 @@ private fun Time(
         modifier = Modifier.testTag(TestTag.AutomaticSilenceDetectionSettingsMinimumTime),
         value = silenceDetectionMinimumTimeText,
         onValueChange = { onEvent(UpdateSilenceDetectionMinimumTime(it)) },
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        isLastItem = false
     )
 
     TextFieldListItem(
