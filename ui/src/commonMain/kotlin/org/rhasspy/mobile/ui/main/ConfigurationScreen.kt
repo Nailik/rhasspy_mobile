@@ -1,9 +1,7 @@
 package org.rhasspy.mobile.ui.main
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
@@ -24,6 +22,8 @@ import org.rhasspy.mobile.ui.content.item.EventStateIconTinted
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.utils.ListType.ConfigurationScreenList
+import org.rhasspy.mobile.ui.utils.rememberForeverScrollState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.ConfigurationScreen
@@ -43,13 +43,11 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 fun ConfigurationScreen() {
 
     val viewModel: ConfigurationScreenViewModel = LocalViewModelFactory.current.getViewModel()
-    val scrollState = rememberScrollState()
 
     Screen(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         ConfigurationScreenContent(
-            scrollState = scrollState,
             onEvent = viewModel::onEvent,
             viewState = viewState
         )
@@ -59,10 +57,10 @@ fun ConfigurationScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfigurationScreenContent(
-    scrollState: ScrollState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit,
     viewState: ConfigurationScreenViewState
 ) {
+    val scrollState = rememberForeverScrollState(ConfigurationScreenList)
 
     Scaffold(
         modifier = Modifier

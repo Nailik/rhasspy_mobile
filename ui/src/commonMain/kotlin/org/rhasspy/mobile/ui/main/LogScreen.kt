@@ -4,7 +4,6 @@ import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LowPriority
 import androidx.compose.material.icons.filled.PlaylistRemove
@@ -28,6 +27,8 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.LogListElement
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.utils.ListType.LogScreenList
+import org.rhasspy.mobile.ui.utils.rememberForeverLazyListState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.LogScreen
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.SaveLogFile
@@ -42,6 +43,7 @@ import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
  */
 @Composable
 fun LogScreen() {
+
     val viewModel: LogScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
     Screen(screenViewModel = viewModel) {
@@ -111,19 +113,19 @@ private fun LogScreenContent(
     onEvent: (LogScreenUiEvent) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val scrollState = rememberLazyListState()
+    val lazyListState = rememberForeverLazyListState(LogScreenList)
 
     if (isLogAutoscroll) {
         LaunchedEffect(logList.size) {
             coroutineScope.launch {
                 if (logList.isNotEmpty()) {
-                    scrollState.animateScrollToItem(logList.size - 1)
+                    lazyListState.animateScrollToItem(logList.size - 1)
                 }
             }
         }
     }
 
-    val isDraggedState by scrollState.interactionSource.collectIsDraggedAsState()
+    val isDraggedState by lazyListState.interactionSource.collectIsDraggedAsState()
     LaunchedEffect(isDraggedState) {
         if (isDraggedState) {
             onEvent(ManualListScroll)
@@ -131,7 +133,7 @@ private fun LogScreenContent(
     }
 
     LazyColumn(
-        state = scrollState,
+        state = lazyListState,
         modifier = Modifier.fillMaxHeight()
     ) {
         items(logList) { item ->
