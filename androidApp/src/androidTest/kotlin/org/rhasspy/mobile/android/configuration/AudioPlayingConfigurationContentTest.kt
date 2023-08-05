@@ -16,7 +16,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import kotlin.test.assertEquals
 
-class AudioPlayingConfigurationContentTest : FlakyTestNew() {
+class AudioPlayingConfigurationContentTest : FlakyTest() {
 
 
     private val viewModel = get<AudioPlayingConfigurationViewModel>()

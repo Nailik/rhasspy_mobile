@@ -21,6 +21,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.Before
 import org.junit.Rule
+import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.android.utils.*
@@ -35,7 +36,7 @@ import kotlin.test.assertTrue
 /**
  * disabled because too flaky, test by hand
  */
-class PorcupineKeywordCustomScreenTest : FlakyTest() {
+class PorcupineKeywordCustomScreenTest : KoinComponent {
 
     @get: Rule(order = 0)
     val composeTestRule = createEmptyComposeRule()

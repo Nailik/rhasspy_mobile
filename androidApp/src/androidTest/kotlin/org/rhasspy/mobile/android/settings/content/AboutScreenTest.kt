@@ -6,12 +6,12 @@ import androidx.compose.ui.test.performClick
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import org.rhasspy.mobile.android.utils.FlakyTestNew
+import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.settings.AboutScreen
 
-class AboutScreenTest : FlakyTestNew() {
+class AboutScreenTest : FlakyTest() {
 
     @Composable
     override fun ComposableContent() {

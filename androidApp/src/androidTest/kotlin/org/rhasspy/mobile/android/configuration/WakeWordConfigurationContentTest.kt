@@ -11,7 +11,7 @@ import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.utils.FlakyTestNew
+import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.WakeWordOption
@@ -27,7 +27,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.Configurati
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class WakeWordConfigurationContentTest : FlakyTestNew() {
+class WakeWordConfigurationContentTest : FlakyTest() {
 
     private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 

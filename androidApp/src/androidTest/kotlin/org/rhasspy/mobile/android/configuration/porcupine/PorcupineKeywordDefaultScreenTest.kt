@@ -1,12 +1,11 @@
 package org.rhasspy.mobile.android.configuration.porcupine
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createComposeRule
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
@@ -19,24 +18,15 @@ import kotlin.test.assertFalse
 
 class PorcupineKeywordDefaultScreenTest : FlakyTest() {
 
-    @get: Rule(order = 0)
-    val composeTestRule = createComposeRule()
-
     private val viewModel = get<WakeWordConfigurationViewModel>()
 
-    @Before
-    fun setUp() {
-
-        composeTestRule.setContent {
-            TestContentProvider {
-                val viewState by viewModel.viewState.collectAsState()
-                PorcupineKeywordDefaultScreen(
-                    editData = viewState.editData.wakeWordPorcupineConfigurationData,
-                    onEvent = viewModel::onEvent
-                )
-            }
-        }
-
+    @Composable
+    override fun ComposableContent() {
+        val viewState by viewModel.viewState.collectAsState()
+        PorcupineKeywordDefaultScreen(
+            editData = viewState.editData.wakeWordPorcupineConfigurationData,
+            onEvent = viewModel::onEvent
+        )
     }
 
     /**
@@ -61,7 +51,10 @@ class PorcupineKeywordDefaultScreenTest : FlakyTest() {
      * everything else is saved with not enabled
      */
     @Test
+    @AllowFlaky
     fun testList() = runTest {
+        setupContent()
+
         //no wake word is set
         val viewState = viewModel.viewState.value.editData.wakeWordPorcupineConfigurationData
         viewState.defaultOptionsUi.forEach {
