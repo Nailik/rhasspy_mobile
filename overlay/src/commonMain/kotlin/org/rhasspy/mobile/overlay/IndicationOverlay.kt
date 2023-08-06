@@ -3,6 +3,7 @@ package org.rhasspy.mobile.overlay
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
+import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 
 interface IIndicationOverlay {
@@ -13,6 +14,7 @@ interface IIndicationOverlay {
 }
 
 expect class IndicationOverlay(
+    viewModelFactory: ViewModelFactory,
     viewModel: IndicationOverlayViewModel,
     nativeApplication: NativeApplication,
     overlayPermission: IOverlayPermission,
