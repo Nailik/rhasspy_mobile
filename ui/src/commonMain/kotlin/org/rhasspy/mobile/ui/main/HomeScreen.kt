@@ -18,6 +18,7 @@ import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
+import org.rhasspy.mobile.ui.overlay.IndicationContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.HomeScreen
@@ -25,7 +26,6 @@ import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action.MicrophoneFabClick
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action.TogglePlayRecording
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewState
 
 /**
  * Home Screen contains
@@ -47,109 +47,44 @@ fun HomeScreen() {
                 .testTag(HomeScreen)
                 .fillMaxSize(),
             topBar = {
-                TopAppBar(
-                    title = { Text(MR.strings.appName.stable) }
-                )
+                TopAppBar(title = { Text(MR.strings.appName.stable) })
             },
         ) { paddingValues ->
 
             val viewState by viewModel.viewState.collectAsState()
 
-            BoxWithConstraints {
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
+            ) {
 
-                when (maxHeight > maxWidth) {
-                    true -> {
-                        PortraitContent(
-                            paddingValues = paddingValues,
-                            viewState = viewState,
-                            onEvent = viewModel::onEvent
-                        )
-                    }
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .weight(1f)
+                ) {
+                    MicrophoneFabElement(
+                        viewState = viewState.microphoneFabViewState,
+                        onEvent = viewModel::onEvent
+                    )
 
-                    false -> {
-                        LandscapeContent(
-                            paddingValues = paddingValues,
-                            viewState = viewState,
-                            onEvent = viewModel::onEvent
-                        )
+                    Column {
+                        Spacer(modifier = Modifier.weight(1f))
+                        IndicationContent()
                     }
                 }
+
+                PlayRecording(
+                    isPlaying = viewState.isPlayingRecording,
+                    isPlayingRecordingEnabled = viewState.isPlayingRecordingEnabled,
+                    onEvent = viewModel::onEvent
+                )
+
             }
 
         }
     }
-}
-
-/**
- * Contains Column with
- *
- * Service status information
- * wake up button
- * play recording button
- */
-@Composable
-private fun PortraitContent(
-    paddingValues: PaddingValues,
-    viewState: HomeScreenViewState,
-    onEvent: (event: HomeScreenUiEvent) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .padding(paddingValues)
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Box(modifier = Modifier.weight(1f)) {
-            MicrophoneFabElement(
-                viewState = viewState.microphoneFabViewState,
-                onEvent = onEvent
-            )
-        }
-
-        PlayRecording(
-            isPlaying = viewState.isPlayingRecording,
-            isPlayingRecordingEnabled = viewState.isPlayingRecordingEnabled,
-            onEvent = onEvent
-        )
-    }
-}
-
-/**
- * Contains Row and Columns with
- *
- * Service status information
- * wake up button
- * play recording button
- */
-@Composable
-fun LandscapeContent(
-    paddingValues: PaddingValues,
-    viewState: HomeScreenViewState,
-    onEvent: (event: HomeScreenUiEvent) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .padding(paddingValues)
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Box(modifier = Modifier.weight(1f)) {
-            MicrophoneFabElement(
-                viewState = viewState.microphoneFabViewState,
-                onEvent = onEvent
-            )
-        }
-
-        PlayRecording(
-            modifier = Modifier.weight(1f),
-            isPlaying = viewState.isPlayingRecording,
-            isPlayingRecordingEnabled = viewState.isPlayingRecordingEnabled,
-            onEvent = onEvent
-        )
-    }
-
 }
 
 
@@ -177,6 +112,7 @@ private fun PlayRecording(
     isPlayingRecordingEnabled: Boolean,
     onEvent: (event: HomeScreenUiEvent) -> Unit
 ) {
+
     FilledTonalButtonListItem(
         modifier = modifier,
         onClick = { onEvent(TogglePlayRecording) },

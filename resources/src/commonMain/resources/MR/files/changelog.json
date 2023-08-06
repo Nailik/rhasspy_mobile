@@ -1,12 +1,6 @@
 [
-  "Wiki Documentation",
-  "Dialog screen",
-  "Porcupine 2.2.2, new languages and WakeWords",
-  "Audio Focus when recording",
-  "Custom Recording Format",
-  "Improved Silence Detection",
-  "Improved MQTT and Http Api",
-  "Multiplatform Ui (Android, iOS)",
-  "Ui Improvements",
-  "Overall Bugfixes"
+  "update show Indication state on start screen",
+  "update List loosing scroll state on navigation",
+  "update Text Input next Button improvements",
+  "fix Silence Detection Ui issue"
 ]

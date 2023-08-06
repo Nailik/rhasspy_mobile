@@ -245,7 +245,7 @@ internal class WakeWordService(
                 Success
             }
 
-            WakeWordOption.Disabled -> Disabled
+            WakeWordOption.Disabled  -> Disabled
         }
     }
 

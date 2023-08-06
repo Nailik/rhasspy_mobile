@@ -12,6 +12,7 @@ fun koinOverlayModule() = module {
 
     single<IIndicationOverlay> {
         IndicationOverlay(
+            viewModelFactory = get(),
             viewModel = get(),
             nativeApplication = get(),
             overlayPermission = get(),
@@ -20,6 +21,7 @@ fun koinOverlayModule() = module {
     }
     single<IMicrophoneOverlay> {
         MicrophoneOverlay(
+            viewModelFactory = get(),
             viewModel = get(),
             nativeApplication = get(),
             overlayPermission = get(),

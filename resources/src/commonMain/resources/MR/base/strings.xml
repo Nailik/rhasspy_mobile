@@ -69,7 +69,7 @@
     <string name="backgroundWakeWordDetectionTurnOnDisplay">Wake Up Display</string>
     <string name="wakeWordIndication">WakeWord Indication</string>
     <string name="wakeWordAudioIndication">Audio</string>
-    <string name="wakeWordLightIndication">Visual</string>
+    <string name="wakeWordLightIndication">Visual Overlay</string>
     <string name="enableSSL">Enable SSL</string>
     <string name="enabled">Enabled</string>
     <string name="sound">Sound</string>

@@ -20,30 +20,50 @@ import org.rhasspy.mobile.resources.assistant_color_four
 import org.rhasspy.mobile.resources.assistant_color_one
 import org.rhasspy.mobile.resources.assistant_color_three
 import org.rhasspy.mobile.resources.assistant_color_two
+import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.combinedTestTag
-import org.rhasspy.mobile.ui.theme.AppTheme
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 import kotlin.math.abs
 
 @Composable
-fun IndicationOverlay(viewModel: IndicationOverlayViewModel) {
-    AppTheme {
-        val viewState by viewModel.viewState.collectAsState()
-        Indication(viewState.indicationState)
+fun IndicationOverlayContent() {
+    Box(
+        modifier = Modifier
+            .combinedTestTag(TestTag.Indication, TestTag.Overlay)
+            .height(96.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        IndicationContent()
     }
+}
+
+@Composable
+fun IndicationContent() {
+
+    val viewModel: IndicationOverlayViewModel = LocalViewModelFactory.current.getViewModel()
+
+    val viewState by viewModel.viewState.collectAsState()
+    Indication(
+        indicationState = viewState.indicationState
+    )
+
 }
 
 /**
  * indication animations for overlay
  */
 @Composable
-fun Indication(indicationState: IndicationState) {
+private fun Indication(
+    indicationState: IndicationState
+) {
     Box(
         modifier = Modifier
-            .combinedTestTag(TestTag.Indication, TestTag.Overlay)
+            .testTag(TestTag.Indication)
             .fillMaxWidth()
-            .height(96.dp),
+            .padding(vertical = 8.dp)
+            .height(48.dp),
         contentAlignment = Alignment.Center
     ) {
 

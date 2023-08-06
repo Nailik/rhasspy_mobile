@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.*
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.getSystemService
 import androidx.lifecycle.Lifecycle
@@ -22,14 +23,18 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
+import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.native.nativeComposeView
-import org.rhasspy.mobile.ui.overlay.IndicationOverlay
+import org.rhasspy.mobile.ui.overlay.IndicationOverlayContent
+import org.rhasspy.mobile.ui.theme.AppTheme
+import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 
 /**
  * Overlay Service
  */
 actual class IndicationOverlay actual constructor(
+    private val viewModelFactory: ViewModelFactory,
     private val viewModel: IndicationOverlayViewModel,
     private val nativeApplication: NativeApplication,
     private val overlayPermission: IOverlayPermission,
@@ -57,7 +62,13 @@ actual class IndicationOverlay actual constructor(
      */
     private fun getView(): ComposeView {
         return nativeComposeView(context) {
-            IndicationOverlay(viewModel)
+            AppTheme {
+                CompositionLocalProvider(
+                    LocalViewModelFactory provides viewModelFactory
+                ) {
+                    IndicationOverlayContent()
+                }
+            }
         }
     }
 
