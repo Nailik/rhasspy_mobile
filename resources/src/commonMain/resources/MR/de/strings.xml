@@ -371,6 +371,8 @@
     <string name="dialog">Dialog</string>
     <string name="notInitialized">nicht initialisiert</string>
     <string name="clear_text">leeren</string>
+    <string name="scan_qr_code">QR-Code scannen</string>
+    <string name="scan_qr_code_failed">QR-Code konnte nicht gescannt werden</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>

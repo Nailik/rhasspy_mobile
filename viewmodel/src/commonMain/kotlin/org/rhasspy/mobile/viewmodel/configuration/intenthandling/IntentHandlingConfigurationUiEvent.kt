@@ -17,6 +17,7 @@ sealed interface IntentHandlingConfigurationUiEvent {
     sealed interface Action : IntentHandlingConfigurationUiEvent {
 
         data object BackClick : Action
+        data object ScanHomeAssistantAccessToken : Action
 
     }
 

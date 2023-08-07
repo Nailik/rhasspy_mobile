@@ -348,6 +348,8 @@
     <string name="dialog">Dialog</string>
     <string name="notInitialized">not Initialized</string>
     <string name="clear_text">clear</string>
+    <string name="scan_qr_code">Scan QR-Code</string>
+    <string name="scan_qr_code_failed">Unable to scan QR-Code</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>

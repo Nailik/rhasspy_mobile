@@ -1,4 +1,5 @@
 [
+  "scan HomeAssistant Access Token via QR-Code",
   "update show Indication state on start screen",
   "update List loosing scroll state on navigation",
   "update Text Input next Button improvements",

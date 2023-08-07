@@ -22,6 +22,7 @@ data class ScreenViewState internal constructor(
         data object MicrophonePermissionRequestDenied : ScreenSnackBarState
         data object LinkOpenFailed : ScreenSnackBarState
         data object SelectFileFailed : ScreenSnackBarState
+        data object ScanQRCodeFailed : ScreenSnackBarState
 
     }
 }

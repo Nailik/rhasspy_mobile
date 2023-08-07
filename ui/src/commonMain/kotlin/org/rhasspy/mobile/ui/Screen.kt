@@ -117,6 +117,13 @@ fun Screen(
                     consumed = { screenViewModel.onEvent(Consumed) },
                 )
             }
+
+            ScanQRCodeFailed                  -> {
+                SnackBar(
+                    title = MR.strings.scan_qr_code_failed.stable,
+                    consumed = { screenViewModel.onEvent(Consumed) },
+                )
+            }
         }
     }
 

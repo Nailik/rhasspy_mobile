@@ -11,6 +11,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.RequestMicrophonePermissionExternally
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.file.FileUtils
@@ -72,6 +73,15 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
         viewModelScope.launch(dispatcher.IO) {
             FileUtils.selectFile(folderType)?.also(action) ?: run {
                 _screenViewState.update { it.copy(snackBarState = SelectFileFailed) }
+            }
+        }
+    }
+
+    fun scanQRCode(onResult: (String) -> Unit) {
+        viewModelScope.launch(dispatcher.IO) {
+            when (val result = externalResultRequest.launchForResult(ExternalResultRequestIntention.ScanQRCode)) {
+                is ExternalRedirectResult.Result -> onResult(result.data)
+                else                             -> _screenViewState.update { it.copy(snackBarState = ScanQRCodeFailed) }
             }
         }
     }

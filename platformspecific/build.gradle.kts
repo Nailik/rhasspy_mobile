@@ -56,6 +56,7 @@ kotlin {
                 implementation(Firebase.crashlyticsKtx)
                 implementation(platform(Firebase.bom))
                 implementation(Nailik.androidResampler)
+                implementation(Journeyapps.zXingAndroid)
             }
         }
         val androidUnitTest by getting {
