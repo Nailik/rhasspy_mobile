@@ -1,7 +1,11 @@
 package org.rhasspy.mobile.viewmodel.navigation
 
+import androidx.compose.runtime.Stable
+
+@Stable
 sealed interface NavigationDestination {
 
+    @Stable
     enum class MainScreenNavigationDestination : NavigationDestination {
 
         HomeScreen,
@@ -12,6 +16,7 @@ sealed interface NavigationDestination {
 
     }
 
+    @Stable
     enum class ConfigurationScreenNavigationDestination : NavigationDestination {
 
         AudioPlayingConfigurationScreen,
@@ -27,6 +32,7 @@ sealed interface NavigationDestination {
 
     }
 
+    @Stable
     enum class SettingsScreenDestination : NavigationDestination {
 
         AboutSettings,
@@ -42,6 +48,7 @@ sealed interface NavigationDestination {
 
     }
 
+    @Stable
     enum class WakeWordConfigurationScreenDestination : NavigationDestination {
 
         EditPorcupineLanguageScreen,
@@ -51,6 +58,7 @@ sealed interface NavigationDestination {
 
     }
 
+    @Stable
     enum class SpeechToTextConfigurationScreenDestination : NavigationDestination {
 
         AudioRecorderFormatScreen,
@@ -58,6 +66,7 @@ sealed interface NavigationDestination {
 
     }
 
+    @Stable
     enum class IndicationSettingsScreenDestination : NavigationDestination {
 
         WakeIndicationSoundScreen,

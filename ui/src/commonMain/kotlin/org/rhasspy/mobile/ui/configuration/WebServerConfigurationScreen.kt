@@ -19,7 +19,7 @@ import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
-import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.elements.Translate
 import org.rhasspy.mobile.ui.content.list.*
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
@@ -191,7 +191,7 @@ private fun WebserverSSL(
                 }
 
                 InformationListElement(
-                    text = translate(
+                    text = Translate.translate(
                         resource = MR.strings.currentlySelectedCertificate.stable,
                         keyStoreFileText
                     )

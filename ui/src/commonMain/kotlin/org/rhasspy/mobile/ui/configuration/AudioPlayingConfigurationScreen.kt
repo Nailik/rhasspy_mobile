@@ -18,7 +18,7 @@ import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
-import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.elements.Translate
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
@@ -172,7 +172,7 @@ private fun HttpEndpointConfigurationContent(
             modifier = Modifier.testTag(TestTag.Endpoint),
             value = audioPlayingHttpEndpoint,
             onValueChange = { onEvent(ChangeEditAudioPlayingHttpEndpoint(it)) },
-            label = translate(MR.strings.audioOutputURL.stable, HttpClientPath.PlayWav.path)
+            label = Translate.translate(MR.strings.audioOutputURL.stable, HttpClientPath.PlayWav.path)
         )
 
     }
@@ -197,7 +197,7 @@ private fun MqttSiteIdConfigurationContent(
             modifier = Modifier.testTag(TestTag.ConfigurationSiteId),
             value = audioPlayingMqttSiteId,
             onValueChange = { onEvent(ChangeEditAudioPlayingMqttSiteId(it)) },
-            label = translate(MR.strings.siteId.stable)
+            label = Translate.translate(MR.strings.siteId.stable)
         )
 
     }

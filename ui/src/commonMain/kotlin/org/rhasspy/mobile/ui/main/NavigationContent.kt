@@ -18,18 +18,17 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.*
 
 @Composable
 fun NavigationContent(
-    screen: NavigationDestination,
-    bottomNavigation: @Composable () -> Unit
+    screen: NavigationDestination
 ) {
     //only animates when the type changes
     Crossfade(targetState = screen) {
-        when (it) {
-            is ConfigurationScreenNavigationDestination   -> ConfigurationNavigationContent(it)
-            is MainScreenNavigationDestination            -> MainNavigationContent(it, bottomNavigation)
-            is SettingsScreenDestination                  -> SettingsNavigationContent(it)
-            is WakeWordConfigurationScreenDestination     -> WakeWordNavigationContent(it)
-            is IndicationSettingsScreenDestination        -> IndicationNavigationContent(it)
-            is SpeechToTextConfigurationScreenDestination -> SpeechToTextConfigurationNavigationContent(it)
+        when (screen) {
+            is ConfigurationScreenNavigationDestination   -> ConfigurationNavigationContent(screen)
+            is MainScreenNavigationDestination            -> MainNavigationContent(screen)
+            is SettingsScreenDestination                  -> SettingsNavigationContent(screen)
+            is WakeWordConfigurationScreenDestination     -> WakeWordNavigationContent(screen)
+            is IndicationSettingsScreenDestination        -> IndicationNavigationContent(screen)
+            is SpeechToTextConfigurationScreenDestination -> SpeechToTextConfigurationNavigationContent(screen)
         }
     }
 }
@@ -37,8 +36,7 @@ fun NavigationContent(
 
 @Composable
 private fun MainNavigationContent(
-    screen: MainScreenNavigationDestination,
-    bottomNavigation: @Composable () -> Unit
+    screen: MainScreenNavigationDestination
 ) {
     Column {
         Box(modifier = Modifier.weight(1f)) {
@@ -51,7 +49,7 @@ private fun MainNavigationContent(
             }
         }
 
-        bottomNavigation()
+        BottomNavigation()
     }
 }
 
@@ -124,3 +122,5 @@ private fun IndicationNavigationContent(
         IndicationSettingsScreenDestination.ErrorIndicationSoundScreen    -> IndicationWakeScreen()
     }
 }
+
+

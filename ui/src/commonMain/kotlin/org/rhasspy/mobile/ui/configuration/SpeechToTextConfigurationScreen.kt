@@ -18,7 +18,7 @@ import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.Text
-import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.elements.Translate
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
@@ -150,7 +150,7 @@ private fun SpeechToTextHTTP(
             modifier = Modifier.testTag(TestTag.Endpoint),
             value = speechToTextHttpEndpointText,
             onValueChange = { onEvent(UpdateSpeechToTextHttpEndpoint(it)) },
-            label = translate(MR.strings.speechToTextURL.stable, HttpClientPath.SpeechToText.path)
+            label = Translate.translate(MR.strings.speechToTextURL.stable, HttpClientPath.SpeechToText.path)
         )
 
 
@@ -159,9 +159,9 @@ private fun SpeechToTextHTTP(
             modifier = Modifier.clickable { onEvent(OpenAudioRecorderFormat) },
             text = { Text(resource = MR.strings.audioRecorderFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(speechToTextAudioRecorderFormatData.audioRecorderChannelType.text)} | " +
-                        "${translate(speechToTextAudioRecorderFormatData.audioRecorderEncodingType.text)} | " +
-                        translate(speechToTextAudioRecorderFormatData.audioRecorderSampleRateType.text)
+                val text = "${Translate.translate(speechToTextAudioRecorderFormatData.audioRecorderChannelType.text)} | " +
+                        "${Translate.translate(speechToTextAudioRecorderFormatData.audioRecorderEncodingType.text)} | " +
+                        Translate.translate(speechToTextAudioRecorderFormatData.audioRecorderSampleRateType.text)
                 Text(text = text)
             }
         )
@@ -171,9 +171,9 @@ private fun SpeechToTextHTTP(
             modifier = Modifier.clickable { onEvent(OpenAudioOutputFormat) },
             text = { Text(MR.strings.audioOutputFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(speechToTextAudioOutputFormatData.audioOutputChannelType.text)} | " +
-                        "${translate(speechToTextAudioOutputFormatData.audioOutputEncodingType.text)} | " +
-                        translate(speechToTextAudioOutputFormatData.audioOutputSampleRateType.text)
+                val text = "${Translate.translate(speechToTextAudioOutputFormatData.audioOutputChannelType.text)} | " +
+                        "${Translate.translate(speechToTextAudioOutputFormatData.audioOutputEncodingType.text)} | " +
+                        Translate.translate(speechToTextAudioOutputFormatData.audioOutputSampleRateType.text)
                 Text(text = text)
             }
         )
@@ -207,9 +207,9 @@ private fun SpeechToTextMqtt(
             modifier = Modifier.clickable { onEvent(OpenAudioRecorderFormat) },
             text = { Text(MR.strings.audioRecorderFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(speechToTextAudioRecorderFormatData.audioRecorderChannelType.text)} | " +
-                        "${translate(speechToTextAudioRecorderFormatData.audioRecorderEncodingType.text)} | " +
-                        translate(speechToTextAudioRecorderFormatData.audioRecorderSampleRateType.text)
+                val text = "${Translate.translate(speechToTextAudioRecorderFormatData.audioRecorderChannelType.text)} | " +
+                        "${Translate.translate(speechToTextAudioRecorderFormatData.audioRecorderEncodingType.text)} | " +
+                        Translate.translate(speechToTextAudioRecorderFormatData.audioRecorderSampleRateType.text)
                 Text(text = text)
             }
         )
@@ -219,9 +219,9 @@ private fun SpeechToTextMqtt(
             modifier = Modifier.clickable { onEvent(OpenAudioOutputFormat) },
             text = { Text(MR.strings.audioOutputFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(speechToTextAudioOutputFormatData.audioOutputChannelType.text)} | " +
-                        "${translate(speechToTextAudioOutputFormatData.audioOutputEncodingType.text)} | " +
-                        translate(speechToTextAudioOutputFormatData.audioOutputSampleRateType.text)
+                val text = "${Translate.translate(speechToTextAudioOutputFormatData.audioOutputChannelType.text)} | " +
+                        "${Translate.translate(speechToTextAudioOutputFormatData.audioOutputEncodingType.text)} | " +
+                        Translate.translate(speechToTextAudioOutputFormatData.audioOutputSampleRateType.text)
                 Text(text = text)
             }
         )

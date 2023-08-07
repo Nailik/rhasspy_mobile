@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
+import org.rhasspy.mobile.data.viewstate.TextWrapper
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Dialog
@@ -21,7 +22,7 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Composable
 fun ServiceStateDialog(
-    dialogText: Any,
+    dialogText: TextWrapper,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {

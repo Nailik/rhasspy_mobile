@@ -17,7 +17,7 @@ fun Icon(
 ) {
     Icon(
         imageVector = imageVector,
-        contentDescription = translate(contentDescription),
+        contentDescription = Translate.translate(contentDescription),
         modifier = modifier,
         tint = tint
     )

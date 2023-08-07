@@ -47,7 +47,7 @@ fun AboutScreen() {
     Screen(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
         val snackBarHostState = LocalSnackBarHostState.current
-        val snackBarText = viewState.snackBarText?.let { translate(it) }
+        val snackBarText = viewState.snackBarText?.let { Translate.translate(it) }
 
         LaunchedEffect(snackBarText) {
             snackBarText?.also {
@@ -113,7 +113,7 @@ fun Header(viewModel: AboutScreenViewModel) {
         )
 
         Text(
-            text = "${translate(MR.strings.version.stable)} ${BuildKonfig.versionName}",
+            text = "${Translate.translate(MR.strings.version.stable)} ${BuildKonfig.versionName}",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(8.dp)
         )
@@ -248,7 +248,7 @@ private fun ChangelogDialog(
 
     Dialog(
         testTag = TestTag.DialogChangelog,
-        title = "${translate(MR.strings.changelog.stable)} - ${BuildKonfig.versionName}",
+        title = "${Translate.translate(MR.strings.changelog.stable)} - ${BuildKonfig.versionName}",
         supportingText = {
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 items(changelog) { item ->

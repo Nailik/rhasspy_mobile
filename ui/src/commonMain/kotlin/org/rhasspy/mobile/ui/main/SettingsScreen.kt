@@ -220,15 +220,15 @@ private fun Indication(
     onEvent: (event: SettingsScreenUiEvent) -> Unit
 ) {
 
-    var stateText = if (isSoundIndicationEnabled) translate(MR.strings.sound.stable) else ""
+    var stateText = if (isSoundIndicationEnabled) Translate.translate(MR.strings.sound.stable) else ""
     if (isWakeWordLightIndicationEnabled) {
         if (stateText.isNotEmpty()) {
-            stateText += " ${translate(MR.strings._and.stable)} "
+            stateText += " ${Translate.translate(MR.strings._and.stable)} "
         }
-        stateText += translate(MR.strings.light.stable)
+        stateText += Translate.translate(MR.strings.light.stable)
     }
     if (stateText.isEmpty()) {
-        stateText = translate(MR.strings.disabled.stable)
+        stateText = Translate.translate(MR.strings.disabled.stable)
     }
 
     SettingsListItem(
@@ -314,7 +314,7 @@ private fun About(onEvent: (event: SettingsScreenUiEvent) -> Unit) {
 
     SettingsListItem(
         text = MR.strings.aboutTitle.stable,
-        secondaryText = "${translate(MR.strings.version.stable)} ${BuildKonfig.versionName}",
+        secondaryText = "${Translate.translate(MR.strings.version.stable)} ${BuildKonfig.versionName}",
         destination = AboutSettings,
         onEvent = onEvent
     )

@@ -23,7 +23,7 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.Text
-import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.elements.Translate
 import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
@@ -184,7 +184,7 @@ private fun PorcupineConfiguration(
                 .testTag(TestTag.PorcupineKeyword)
                 .clickable { onEvent(Navigate(EditPorcupineWakeWordScreen)) },
             text = { Text(MR.strings.wakeWord.stable) },
-            secondaryText = { Text("${editData.keywordCount} ${translate(MR.strings.active.stable)}") }
+            secondaryText = { Text("${editData.keywordCount} ${Translate.translate(MR.strings.active.stable)}") }
         )
 
 
@@ -193,9 +193,9 @@ private fun PorcupineConfiguration(
             modifier = Modifier.clickable { onEvent(OpenAudioRecorderFormat) },
             text = { Text(MR.strings.audioRecorderFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(wakeWordAudioRecorderData.audioRecorderChannelType.text)} | " +
-                        "${translate(wakeWordAudioRecorderData.audioRecorderEncodingType.text)} | " +
-                        translate(wakeWordAudioRecorderData.audioRecorderSampleRateType.text)
+                val text = "${Translate.translate(wakeWordAudioRecorderData.audioRecorderChannelType.text)} | " +
+                        "${Translate.translate(wakeWordAudioRecorderData.audioRecorderEncodingType.text)} | " +
+                        Translate.translate(wakeWordAudioRecorderData.audioRecorderSampleRateType.text)
                 Text(text = text)
             }
         )
@@ -253,9 +253,9 @@ private fun UdpSettings(
             modifier = Modifier.clickable { onEvent(OpenAudioRecorderFormat) },
             text = { Text(MR.strings.audioRecorderFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(wakeWordAudioRecorderData.audioRecorderChannelType.text)} | " +
-                        "${translate(wakeWordAudioRecorderData.audioRecorderEncodingType.text)} | " +
-                        translate(wakeWordAudioRecorderData.audioRecorderSampleRateType.text)
+                val text = "${Translate.translate(wakeWordAudioRecorderData.audioRecorderChannelType.text)} | " +
+                        "${Translate.translate(wakeWordAudioRecorderData.audioRecorderEncodingType.text)} | " +
+                        Translate.translate(wakeWordAudioRecorderData.audioRecorderSampleRateType.text)
                 Text(text = text)
             }
         )
@@ -265,9 +265,9 @@ private fun UdpSettings(
             modifier = Modifier.clickable { onEvent(OpenAudioOutputFormat) },
             text = { Text(MR.strings.audioOutputFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(wakeWordAudioOutputData.audioOutputChannelType.text)} | " +
-                        "${translate(wakeWordAudioOutputData.audioOutputEncodingType.text)} | " +
-                        translate(wakeWordAudioOutputData.audioOutputSampleRateType.text)
+                val text = "${Translate.translate(wakeWordAudioOutputData.audioOutputChannelType.text)} | " +
+                        "${Translate.translate(wakeWordAudioOutputData.audioOutputEncodingType.text)} | " +
+                        Translate.translate(wakeWordAudioOutputData.audioOutputSampleRateType.text)
                 Text(text = text)
             }
         )

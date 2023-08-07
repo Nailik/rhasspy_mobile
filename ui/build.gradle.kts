@@ -48,6 +48,7 @@ kotlin {
                 implementation(AndroidX.Compose.Ui.toolingPreview)
                 implementation(Google.accompanist.systemUiController)
                 implementation(AndroidX.core)
+                implementation(AndroidX.multidex)
             }
         }
         val androidUnitTest by getting
