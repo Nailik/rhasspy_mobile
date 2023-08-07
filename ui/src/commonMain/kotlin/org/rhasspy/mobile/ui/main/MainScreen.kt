@@ -24,7 +24,7 @@ import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Dialog
-import org.rhasspy.mobile.ui.content.elements.Translate
+import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.CloseChangelog
@@ -56,7 +56,6 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
                             val viewModel: MainScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
                             Screen(screenViewModel = viewModel) {
-                                val screen by viewModel.screen.collectAsState()
                                 val viewState by viewModel.viewState.collectAsState()
 
                                 if (viewState.isShowCrashlyticsDialog) {
@@ -76,6 +75,7 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
                                     )
                                 }
 
+                                val screen by viewModel.screen.collectAsState()
                                 NavigationContent(screen)
                             }
                         }
@@ -113,7 +113,7 @@ private fun ChangelogDialog(
 
     Dialog(
         testTag = TestTag.DialogChangelog,
-        title = "${Translate.translate(MR.strings.changelog.stable)} - ${BuildKonfig.versionName}",
+        title = "${translate(MR.strings.changelog.stable)} - ${BuildKonfig.versionName}",
         supportingText = {
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 items(changelog) { item ->

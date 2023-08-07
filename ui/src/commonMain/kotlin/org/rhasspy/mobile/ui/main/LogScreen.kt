@@ -24,7 +24,7 @@ import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.content.elements.CustomDivider
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
-import org.rhasspy.mobile.ui.content.elements.Translate
+import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.LogListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.utils.ListType.LogScreenList
@@ -50,7 +50,7 @@ fun LogScreen() {
         val viewState by viewModel.viewState.collectAsState()
 
         val snackBarHostState = LocalSnackBarHostState.current
-        val snackBarText = viewState.snackBarText?.let { Translate.translate(it) }
+        val snackBarText = viewState.snackBarText?.let { translate(it) }
 
         LaunchedEffect(snackBarText) {
             snackBarText?.also {

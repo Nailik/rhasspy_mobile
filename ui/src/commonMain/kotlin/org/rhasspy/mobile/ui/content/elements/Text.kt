@@ -107,7 +107,7 @@ fun Text(
     style: TextStyle = LocalTextStyle.current
 ) {
     androidx.compose.material3.Text(
-        text = Translate.translate(resource),
+        text = translate(resource),
         modifier = modifier,
         color = color,
         fontSize = fontSize,

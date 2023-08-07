@@ -95,7 +95,7 @@ internal class Navigator(
         updateNavStack(list)
     }
 
-    private fun updateNavStack(list: ImmutableList<NavigationDestination>) {
+    fun updateNavStack(list: ImmutableList<NavigationDestination>) {
         navStack.value = list
     }
 

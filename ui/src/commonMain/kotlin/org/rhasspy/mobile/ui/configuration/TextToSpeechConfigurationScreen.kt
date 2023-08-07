@@ -15,7 +15,7 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
-import org.rhasspy.mobile.ui.content.elements.Translate
+import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
@@ -131,7 +131,7 @@ private fun TextToSpeechHTTP(
             enabled = isUseCustomTextToSpeechHttpEndpoint,
             value = textToSpeechHttpEndpointText,
             onValueChange = { onAction(UpdateTextToSpeechHttpEndpoint(it)) },
-            label = Translate.translate(
+            label = translate(
                 MR.strings.rhasspyTextToSpeechURL.stable,
                 HttpClientPath.TextToSpeech.path
             )

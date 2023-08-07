@@ -27,7 +27,7 @@ class MainScreenViewStateCreator(
             navigator.topScreen,
             AppSetting.isShowLogEnabled.data,
             AppSetting.didShowCrashlyticsDialog.data,
-            AppSetting.didShowChangelogDialog.data,
+            AppSetting.didShowChangelogDialog.data
         ).mapReadonlyState {
             getViewState()
         }
@@ -42,7 +42,7 @@ class MainScreenViewStateCreator(
             changelog = Json.decodeFromString<JsonArray>(MR.files.changelog.readToString(nativeApplication))
                 .map { "· ${it.jsonPrimitive.content}\n" }
                 .toImmutableList(),
-            isChangelogDialogVisible = AppSetting.didShowChangelogDialog.value < BuildKonfig.versionCode,
+            isChangelogDialogVisible = AppSetting.didShowChangelogDialog.value < BuildKonfig.versionCode
         )
     }
 }

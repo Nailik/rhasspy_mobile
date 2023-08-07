@@ -26,7 +26,7 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.content.elements.Icon
-import org.rhasspy.mobile.ui.content.elements.Translate
+import org.rhasspy.mobile.ui.content.elements.translate
 
 @Composable
 fun TextFieldListItemVisibility(
@@ -87,7 +87,7 @@ fun TextFieldListItem(
 ) {
     TextFieldListItem(
         modifier = modifier,
-        label = Translate.translate(label),
+        label = translate(label),
         value = value,
         readOnly = readOnly,
         autoCorrect = autoCorrect,

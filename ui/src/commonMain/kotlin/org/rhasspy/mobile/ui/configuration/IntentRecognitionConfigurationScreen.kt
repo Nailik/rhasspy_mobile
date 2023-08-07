@@ -16,7 +16,7 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
-import org.rhasspy.mobile.ui.content.elements.Translate
+import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
@@ -136,7 +136,7 @@ private fun IntentRecognitionHTTP(
                 .padding(bottom = 8.dp),
             value = intentRecognitionHttpEndpointText,
             onValueChange = { onEvent(ChangeIntentRecognitionHttpEndpoint(it)) },
-            label = Translate.translate(
+            label = translate(
                 MR.strings.rhasspyTextToIntentURL.stable,
                 HttpClientPath.TextToIntent.path
             )

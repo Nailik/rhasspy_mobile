@@ -20,15 +20,14 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.*
 fun NavigationContent(
     screen: NavigationDestination
 ) {
-    //only animates when the type changes
     Crossfade(targetState = screen) {
-        when (screen) {
-            is ConfigurationScreenNavigationDestination   -> ConfigurationNavigationContent(screen)
-            is MainScreenNavigationDestination            -> MainNavigationContent(screen)
-            is SettingsScreenDestination                  -> SettingsNavigationContent(screen)
-            is WakeWordConfigurationScreenDestination     -> WakeWordNavigationContent(screen)
-            is IndicationSettingsScreenDestination        -> IndicationNavigationContent(screen)
-            is SpeechToTextConfigurationScreenDestination -> SpeechToTextConfigurationNavigationContent(screen)
+        when (it) {
+            is ConfigurationScreenNavigationDestination   -> ConfigurationNavigationContent(it)
+            is MainScreenNavigationDestination            -> MainNavigationContent(it)
+            is SettingsScreenDestination                  -> SettingsNavigationContent(it)
+            is WakeWordConfigurationScreenDestination     -> WakeWordNavigationContent(it)
+            is IndicationSettingsScreenDestination        -> IndicationNavigationContent(it)
+            is SpeechToTextConfigurationScreenDestination -> SpeechToTextConfigurationNavigationContent(it)
         }
     }
 }

@@ -1,25 +1,33 @@
 package org.rhasspy.mobile.ui.content.elements
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalInspectionMode
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.ResourceFormatted
 import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.StableStringResource.StableResourceFormattedStringDesc
 import org.rhasspy.mobile.data.resource.StableStringResource.StableStringResourceSingle
+import org.rhasspy.mobile.settings.AppSetting
 
-
-actual object Translate {
-
-    actual fun translate(resource: StableStringResource): String {
-        return when (resource) {
-            is StableResourceFormattedStringDesc -> resource.stringResource.localized()
-            is StableStringResourceSingle        -> StringDesc.Resource(resource.stringResource)
-                .localized()
-        }
+@Composable
+actual fun translate(resource: StableStringResource): String {
+    if (!LocalInspectionMode.current) {
+        AppSetting.languageType.data.collectAsState().value
     }
 
-    actual fun translate(resource: StableStringResourceSingle, arg: String): String {
-        return StringDesc.ResourceFormatted(resource.stringResource, arg).localized()
+    return when (resource) {
+        is StableResourceFormattedStringDesc -> resource.stringResource.localized()
+        is StableStringResourceSingle        -> StringDesc.Resource(resource.stringResource)
+            .localized()
     }
+}
 
+@Composable
+actual fun translate(resource: StableStringResourceSingle, arg: String): String {
+    if (!LocalInspectionMode.current) {
+        AppSetting.languageType.data.collectAsState().value
+    }
+    return StringDesc.ResourceFormatted(resource.stringResource, arg).localized()
 }

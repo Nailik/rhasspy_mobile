@@ -16,8 +16,8 @@ fun SnackBar(
 ) {
 
     val snackBarHostState = LocalSnackBarHostState.current
-    val snackBarMessage = Translate.translate(title)
-    val snackBarActionLabel = label?.let { Translate.translate(it) }
+    val snackBarMessage = translate(title)
+    val snackBarActionLabel = label?.let { translate(it) }
 
     LaunchedEffect(Unit) {
         val snackBarResult = snackBarHostState.showSnackbar(
