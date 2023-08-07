@@ -231,11 +231,7 @@ private fun RemoteHermesHttp(
 
     ConfigurationListItem(
         text = MR.strings.remoteHermesHTTP.stable,
-        secondaryText = "${translate(MR.strings.sslValidation.stable)} ${
-            translate(
-                viewState.isHttpSSLVerificationEnabled.not().toText()
-            )
-        }",
+        secondaryText = "${translate(MR.strings.sslValidation.stable)} ${translate(viewState.isHttpSSLVerificationEnabled.not().toText())}",
         viewState = viewState.serviceState,
         destination = RemoteHermesHttpConfigurationScreen,
         onEvent = onEvent
