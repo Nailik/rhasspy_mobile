@@ -11,6 +11,7 @@ import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action.ScanHomeAssistantAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewState.IntentHandlingConfigurationData
@@ -58,7 +59,8 @@ class IntentHandlingConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick -> navigator.onBackPressed()
+            BackClick                    -> navigator.onBackPressed()
+            ScanHomeAssistantAccessToken -> scanQRCode { onChange(ChangeIntentHandlingHomeAssistantAccessToken(it)) }
         }
     }
 

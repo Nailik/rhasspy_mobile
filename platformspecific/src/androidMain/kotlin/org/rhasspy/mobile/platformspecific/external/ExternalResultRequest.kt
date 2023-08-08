@@ -15,12 +15,15 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import co.touchlab.kermit.Logger
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanOptions
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.*
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.*
 import org.rhasspy.mobile.platformspecific.resumeSave
+import org.rhasspy.mobile.resources.MR
 
 
 internal actual class ExternalResultRequest actual constructor(
@@ -64,15 +67,12 @@ internal actual class ExternalResultRequest actual constructor(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     actual override suspend fun <R> launchForResult(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> =
         suspendCancellableCoroutine { continuation ->
             logger.v { "launchForResult $intention" }
             launching<R> {
                 activityResultCallback = {
-                    continuation.resumeSave(getResult(it) as ExternalRedirectResult<R>) { cause ->
-                        Error<R>(cause)
-                    }
+                    continuation.resumeSave(getResult(intention, it)) { cause -> Error<R>(cause) }
                 }
                 someActivityResultLauncher.launch(intentFromIntention(intention))
             }
@@ -98,11 +98,14 @@ internal actual class ExternalResultRequest actual constructor(
         }
     }
 
-    private fun getResult(activityResult: ActivityResult): ExternalRedirectResult<String> {
+    private fun <R> getResult(intention: ExternalResultRequestIntention<R>, activityResult: ActivityResult): ExternalRedirectResult<R> {
         return if (activityResult.resultCode == Activity.RESULT_OK) {
-            return activityResult.data?.data?.let { uri ->
-                Result(uri.toString())
-            } ?: Error()
+            @Suppress("UNCHECKED_CAST")
+            return when (intention) {
+                is ScanQRCode -> Result(ScanContract().parseResult(activityResult.resultCode, activityResult.data).contents as R)
+                else          -> activityResult.data?.data?.let { uri -> Result(uri.toString() as R) } ?: Error()
+            }
+
         } else Error()
     }
 
@@ -163,6 +166,18 @@ internal actual class ExternalResultRequest actual constructor(
                 Intent().apply {
                     action = Settings.ACTION_MANAGE_OVERLAY_PERMISSION
                 }
+
+            ScanQRCode                            -> {
+                ScanContract().createIntent(
+                    context = nativeApplication,
+                    input = ScanOptions().apply {
+                        setOrientationLocked(false)
+                        setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+                        setPrompt(MR.strings.scan_qr_code.getString(nativeApplication))
+                        setBeepEnabled(true)
+                    }
+                )
+            }
 
             is ShareFile                          -> {
                 val uri = Uri.parse(intention.fileUri)

@@ -16,6 +16,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
 import org.rhasspy.mobile.widget.R
 
@@ -90,7 +92,7 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
                                 isRecording = viewState.isRecording
                             )
                         ),
-                        contentDescription = "translate(resource = MR.strings.microphone)",
+                        contentDescription = MR.strings.microphone.getString(get<NativeApplication>()),
                         contentScale = ContentScale.FillBounds
                     )
                 }
