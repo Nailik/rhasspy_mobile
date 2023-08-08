@@ -51,7 +51,6 @@ kotlin {
                 implementation(Koin.androidCompat)
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Picovoice.porcupineAndroid)
-                implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
                 implementation(Firebase.analyticsKtx)
                 implementation(Firebase.crashlyticsKtx)
                 implementation(platform(Firebase.bom))

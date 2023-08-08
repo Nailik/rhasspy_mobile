@@ -34,6 +34,8 @@ kotlin {
                 implementation(Benasher.uuid)
                 implementation(Square.okio)
                 implementation(Koin.core)
+                implementation("com.github.davidepianca98:kmqtt-common:0.4.1")
+                implementation("com.github.davidepianca98:kmqtt-client:0.4.1")
             }
         }
         val commonTest by getting {

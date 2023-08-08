@@ -2,7 +2,6 @@ package org.rhasspy.mobile.logic.services.mqtt
 
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.platformspecific.mqtt.MqttStatus
 import org.rhasspy.mobile.resources.MR
 
 enum class MqttServiceStateType(val serviceState: ServiceState) {
@@ -18,7 +17,7 @@ enum class MqttServiceStateType(val serviceState: ServiceState) {
     SUBSCRIBE_FAILED(ServiceState.Error(MR.strings.subscribe_failed.stable)),
     UNKNOWN(ServiceState.Exception()),
     TopicSubscriptionFailed(ServiceState.Error(MR.strings.topic_subscription_failed.stable));
-
+/*
     companion object {
         fun fromMqttStatus(mqttStatus: MqttStatus): MqttServiceStateType {
             return when (mqttStatus) {
@@ -35,5 +34,5 @@ enum class MqttServiceStateType(val serviceState: ServiceState) {
                 MqttStatus.UNKNOWN                -> UNKNOWN
             }
         }
-    }
+    }*/
 }

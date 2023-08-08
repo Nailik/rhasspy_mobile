@@ -3,6 +3,7 @@ buildscript {
         gradlePluginPortal()
         google()
         mavenCentral()
+        mavenLocal() //necessary for KMQTT
     }
     dependencies {
         //classpath dependencies cannot be loaded from buildSrc
@@ -26,6 +27,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        mavenLocal()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://androidx.dev/storage/compose-compiler/repository/")
     }

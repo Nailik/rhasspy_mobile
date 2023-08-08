@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.platformspecific.mqtt
+package org.rhasspy.mobile.logic.services.mqtt
 
 /**
  * contains all mqtt topics that the mqtt service subscribes to

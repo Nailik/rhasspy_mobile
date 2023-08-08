@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.platformspecific.mqtt
+package org.rhasspy.mobile.logic.services.mqtt
 
 /**
  * topics where the mqtt client will publish to

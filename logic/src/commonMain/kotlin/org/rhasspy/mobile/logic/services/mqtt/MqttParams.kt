@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.platformspecific.mqtt
+package org.rhasspy.mobile.logic.services.mqtt
 
 enum class MqttParams(val value: String) {
     SessionId("sessionId"),

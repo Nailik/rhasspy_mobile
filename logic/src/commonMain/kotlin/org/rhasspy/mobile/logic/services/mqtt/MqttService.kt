@@ -1,17 +1,20 @@
 package org.rhasspy.mobile.logic.services.mqtt
 
+import MQTTClient
 import com.benasher44.uuid.uuid4
-import io.ktor.utils.io.core.toByteArray
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
+import mqtt.Subscription
+import mqtt.packets.Qos
+import mqtt.packets.mqtt.MQTTPublish
+import mqtt.packets.mqttv5.ReasonCode
 import okio.Path
 import okio.buffer
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
-import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
@@ -23,10 +26,9 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.extensions.commonSource
-import org.rhasspy.mobile.platformspecific.mqtt.*
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.resources.MR
 import kotlin.random.Random
+import kotlin.random.nextUInt
 
 interface IMqttService : IService {
 
@@ -72,11 +74,9 @@ internal class MqttService(
     private val paramsFlow: StateFlow<MqttServiceParams> = paramsCreator()
     private val params: MqttServiceParams get() = paramsFlow.value
 
-    private val url get() = "tcp://${params.mqttHost}:${params.mqttPort}"
-
-    private var client: MqttClient? = null
+    private var client: MQTTClient? = null
     private var retryJob: Job? = null
-    private val id = Random.nextInt()
+    private val id = Random.nextUInt()
 
     private val _isConnected = MutableStateFlow(false)
     override val isConnected = _isConnected.readOnly
@@ -111,13 +111,10 @@ internal class MqttService(
                 client = buildClient()
                 scope.launch {
                     try {
-                        if (connectClient()) {
-                            _serviceState.value = subscribeTopics()
-                            _isHasStarted.value = true
-                        } else {
-                            _serviceState.value = ServiceState.Error(MR.strings.notConnected.stable)
-                            logger.e { "client could not connect" }
-                        }
+                        _serviceState.value = subscribeTopics()
+                        client?.run()
+                        _isHasStarted.value = true
+                        _isConnected.value = true
                     } catch (exception: Exception) {
                         //start error
                         logger.e(exception) { "client connect error" }
@@ -142,83 +139,51 @@ internal class MqttService(
     private fun stop() {
         retryJob?.cancel()
         retryJob = null
-        client?.disconnect()
-        client = null
+        try {
+            client?.disconnect(ReasonCode.UNSPECIFIED_ERROR)
+            client = null
+        } catch (e: Exception) {
+            //UnresolvedAddressException
+        }
         _serviceState.value = ServiceState.Disabled
         _isHasStarted.value = false
         _isConnected.value = false
     }
 
-    private fun buildClient(): MqttClient {
+    @OptIn(ExperimentalUnsignedTypes::class)
+    private fun buildClient(): MQTTClient {
         logger.d { "buildClient" }
-        return MqttClient(
-            brokerUrl = url,
+        return MQTTClient(
+            mqttVersion = 4,
+            address = params.mqttHost,
+            port = params.mqttPort,
+            tls = null,
+            keepAlive = params.retryInterval.toInt(), //TODO keep alive interval
+            webSocket = false,
+            cleanStart = params.mqttServiceConnectionOptions.cleanStart,
             clientId = params.siteId,
-            persistenceType = MqttPersistence.MEMORY,
-            onDelivered = { },
-            onMessageReceived = { topic, message ->
-                onMessageInternalReceived(topic, message)
-            },
-            onDisconnect = { error -> onDisconnect(error) },
+            userName = params.mqttServiceConnectionOptions.connUsername,
+            password = params.mqttServiceConnectionOptions.connPassword.encodeToByteArray().toUByteArray(),
+            publishReceived = { message ->
+                onMessageInternalReceived(message)
+            }
         )
     }
 
-    /**
-     * connects client to server and returns if client is now connected
-     */
-    private suspend fun connectClient(): Boolean {
-        logger.d { "connectClient" }
-        client?.also {
-            if (!it.isConnected.value) {
-                //connect to server
-                it.connect(params.mqttServiceConnectionOptions)?.also { error ->
-                    logger.e { "connectClient error $error" }
-                    _serviceState.value =
-                        MqttServiceStateType.fromMqttStatus(error.statusCode).serviceState
-                }
-            } else {
-                _serviceState.value = ServiceState.Success
-            }
-            //update value, may be used from reconnect
-            _isConnected.value = it.isConnected.value == true
-        }
+    @OptIn(ExperimentalUnsignedTypes::class)
+    private fun onMessageInternalReceived(message: MQTTPublish) {
+        logger.d { "onMessageInternalReceived id ${message.packetId} ${message.topicName}" }
 
-        return _isConnected.value
-    }
-
-
-    /**
-     * try to reconnect after disconnect
-     */
-    private fun onDisconnect(throwable: Throwable) {
-        logger.e(throwable) { "onDisconnect" }
-        _isConnected.value = client?.isConnected?.value == true
-
-        if (retryJob?.isActive != true) {
-            retryJob = scope.launch {
-                logger.e(throwable) { "start retryJob" }
-                client?.also {
-                    while (!it.isConnected.value) {
-                        connectClient()
-                        delay(params.retryInterval)
-                    }
-                    retryJob?.cancel()
-                    retryJob = null
-                }
-            }
-        }
-    }
-
-    private fun onMessageInternalReceived(topic: String, message: MqttMessage) {
-        logger.d { "onMessageInternalReceived id ${message.msgId} $topic" }
-
-        if (message.msgId == id) {
+        if (message.packetId == id) {
             //ignore all messages that i have send
             logger.d { "message ignored, was same id as send by myself" }
             return
         }
 
-        onMessageReceived(topic, message.payload)
+        message.payload?.also {
+            onMessageReceived(message.topicName, it.toByteArray())
+        }
+
     }
 
     /**
@@ -348,21 +313,17 @@ internal class MqttService(
     /**
      * Subscribes to topics that are necessary
      */
-    private suspend fun subscribeTopics(): ServiceState {
+    private fun subscribeTopics(): ServiceState {
         logger.d { "subscribeTopics" }
         var hasError = false
 
+        val topics = MqttTopicsSubscription.values().map { Subscription(topicFilter = it.topic.set(MqttTopicPlaceholder.SiteId, params.siteId)) }
         //subscribe to topics with this site id (if contained in topic, currently only in PlayBytes)
-        MqttTopicsSubscription.values().forEach { mqttTopic ->
-            try {
-                client?.subscribe(mqttTopic.topic.set(MqttTopicPlaceholder.SiteId, params.siteId))
-                    ?.also {
-                        hasError = true
-                    }
-            } catch (exception: Exception) {
-                hasError = true
-                logger.e(exception) { "subscribeTopics error" }
-            }
+        try {
+            client?.subscribe(topics)
+        } catch (exception: Exception) {
+            hasError = true
+            logger.e(exception) { "subscribeTopics error" }
         }
 
         return if (hasError) {
@@ -378,41 +339,73 @@ internal class MqttService(
      *
      * boolean if message was published
      */
-    private fun publishMessage(topic: String, message: MqttMessage, onResult: ((result: ServiceState) -> Unit)? = null) {
+    /* private fun publishMessage(topic: String, message: MQTTPublish, onResult: ((result: ServiceState) -> Unit)? = null) {
+         scope.launch {
+             val status = if (params.isMqttEnabled) {
+                 message.packetId = id
+
+                 client?.let { mqttClient ->
+                     mqttClient.publish(topic, message)?.let {
+                         logger.e { "mqtt publish error $it" }
+                         MqttServiceStateType.fromMqttStatus(it.statusCode).serviceState
+                     } ?: run {
+                         logger.v { "$topic mqtt message published" }
+                         ServiceState.Success
+                     }
+                 } ?: run {
+                     logger.a { "mqttClient not initialized" }
+                     ServiceState.Exception()
+                 }
+
+             } else {
+                 ServiceState.Success
+             }
+             _serviceState.value = status
+             onResult?.invoke(status)
+         }
+     }*/
+
+    private fun publishMessage(
+        mqttTopic: MqttTopicsPublish,
+        builderAction: JsonObjectBuilder.() -> Unit,
+        onResult: ((result: ServiceState) -> Unit)? = null
+    ) {
+        publishMessage(
+            mqttTopic = mqttTopic.topic,
+            builderAction = builderAction,
+        )
+    }
+
+    private fun publishMessage(
+        mqttTopic: String,
+        builderAction: JsonObjectBuilder.() -> Unit,
+        onResult: ((result: ServiceState) -> Unit)? = null
+    ) {
+        publishMessage(
+            mqttTopic = mqttTopic,
+            data = Json.encodeToString(buildJsonObject(builderAction)).encodeToByteArray(),
+        )
+    }
+
+    @OptIn(ExperimentalUnsignedTypes::class)
+    private fun publishMessage(
+        mqttTopic: String,
+        data: ByteArray,
+        onResult: ((result: ServiceState) -> Unit)? = null
+    ) {
         scope.launch {
-            val status = if (params.isMqttEnabled) {
-                message.msgId = id
-
-                client?.let { mqttClient ->
-                    mqttClient.publish(topic, message)?.let {
-                        logger.e { "mqtt publish error $it" }
-                        MqttServiceStateType.fromMqttStatus(it.statusCode).serviceState
-                    } ?: run {
-                        logger.v { "$topic mqtt message published" }
-                        ServiceState.Success
-                    }
-                } ?: run {
-                    logger.a { "mqttClient not initialized" }
-                    ServiceState.Exception()
-                }
-
-            } else {
-                ServiceState.Success
+            try {
+                client?.publish(
+                    retain = false,
+                    qos = Qos.EXACTLY_ONCE,
+                    topic = mqttTopic,
+                    payload = data.toUByteArray(),
+                )
+            } catch (e: Exception) {
+                logger.e(e) { "publishMessage" }
             }
-            _serviceState.value = status
-            onResult?.invoke(status)
         }
     }
-
-    private fun publishMessage(mqttTopic: MqttTopicsPublish, message: MqttMessage, onResult: ((result: ServiceState) -> Unit)? = null) {
-        publishMessage(mqttTopic.topic, message, onResult)
-    }
-
-    /**
-     * create a new message
-     */
-    private fun createMqttMessage(builderAction: JsonObjectBuilder.() -> Unit): MqttMessage =
-        MqttMessage(Json.encodeToString(buildJsonObject(builderAction)).toByteArray())
 
     //###################################  Input Messages
 
@@ -467,8 +460,8 @@ internal class MqttService(
      */
     override fun sessionStarted(sessionId: String) {
         publishMessage(
-            MqttTopicsPublish.SessionStarted,
-            createMqttMessage {
+            mqttTopic = MqttTopicsPublish.SessionStarted,
+            builderAction = {
                 put(MqttParams.SiteId, params.siteId)
                 put(MqttParams.SessionId, sessionId)
             }
@@ -498,8 +491,8 @@ internal class MqttService(
      */
     override fun sessionEnded(sessionId: String) {
         publishMessage(
-            MqttTopicsPublish.SessionEnded,
-            createMqttMessage {
+            mqttTopic = MqttTopicsPublish.SessionEnded,
+            builderAction = {
                 put(MqttParams.SiteId, params.siteId)
                 put(MqttParams.SessionId, sessionId)
             }
@@ -514,8 +507,8 @@ internal class MqttService(
      */
     override fun intentNotRecognized(sessionId: String) {
         publishMessage(
-            MqttTopicsPublish.IntentNotRecognizedInSession,
-            createMqttMessage {
+            mqttTopic = MqttTopicsPublish.IntentNotRecognizedInSession,
+            builderAction = {
                 put(MqttParams.SiteId, params.siteId)
                 put(MqttParams.SessionId, sessionId)
             }
@@ -529,9 +522,8 @@ internal class MqttService(
      */
     override fun asrAudioFrame(byteArray: ByteArray, onResult: (result: ServiceState) -> Unit) {
         publishMessage(
-            MqttTopicsPublish.AsrAudioFrame.topic
-                .set(MqttTopicPlaceholder.SiteId, params.siteId),
-            MqttMessage(byteArray),
+            mqttTopic = MqttTopicsPublish.AsrAudioFrame.topic.set(MqttTopicPlaceholder.SiteId, params.siteId),
+            data = byteArray,
             onResult
         )
     }
@@ -544,10 +536,10 @@ internal class MqttService(
      */
     override fun asrAudioSessionFrame(sessionId: String, byteArray: ByteArray, onResult: (result: ServiceState) -> Unit) {
         publishMessage(
-            MqttTopicsPublish.AsrAudioSessionFrame.topic
+            mqttTopic = MqttTopicsPublish.AsrAudioSessionFrame.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
                 .set(MqttTopicPlaceholder.SessionId, sessionId),
-            MqttMessage(byteArray),
+            data = byteArray,
             onResult
         )
     }
@@ -602,9 +594,8 @@ internal class MqttService(
      */
     override fun hotWordDetected(keyword: String) {
         publishMessage(
-            MqttTopicsPublish.HotWordDetected.topic
-                .set(MqttTopicPlaceholder.WakeWord, keyword),
-            createMqttMessage {
+            mqttTopic = MqttTopicsPublish.HotWordDetected.topic.set(MqttTopicPlaceholder.WakeWord, keyword),
+            builderAction = {
                 put(MqttParams.SiteId, params.siteId)
                 put(MqttParams.ModelId, keyword)
             }
@@ -620,8 +611,8 @@ internal class MqttService(
      */
     override fun wakeWordError(description: String) {
         publishMessage(
-            MqttTopicsPublish.WakeWordError,
-            createMqttMessage {
+            mqttTopic = MqttTopicsPublish.WakeWordError,
+            builderAction = {
                 put(MqttParams.SiteId, params.siteId)
                 put(MqttParams.Error, description)
             }
@@ -653,8 +644,8 @@ internal class MqttService(
      */
     override fun startListening(sessionId: String, onResult: (result: ServiceState) -> Unit) {
         publishMessage(
-            MqttTopicsPublish.AsrStartListening,
-            createMqttMessage {
+            mqttTopic = MqttTopicsPublish.AsrStartListening,
+            builderAction = {
                 put(MqttParams.SiteId, params.siteId)
                 put(MqttParams.SessionId, sessionId)
                 put(MqttParams.StopOnSilence, params.isUseSpeechToTextMqttSilenceDetection)
@@ -684,8 +675,8 @@ internal class MqttService(
      */
     override fun stopListening(sessionId: String, onResult: (result: ServiceState) -> Unit) {
         publishMessage(
-            MqttTopicsPublish.AsrStopListening,
-            createMqttMessage {
+            mqttTopic = MqttTopicsPublish.AsrStopListening,
+            builderAction = {
                 put(MqttParams.SessionId, sessionId)
             },
             onResult
@@ -718,8 +709,8 @@ internal class MqttService(
      */
     override fun asrTextCaptured(sessionId: String, text: String?) {
         publishMessage(
-            MqttTopicsPublish.AsrTextCaptured,
-            createMqttMessage {
+            mqttTopic = MqttTopicsPublish.AsrTextCaptured,
+            builderAction = {
                 put(MqttParams.Text, JsonPrimitive(text))
                 put(MqttParams.SiteId, params.siteId)
                 put(MqttParams.SessionId, sessionId)
@@ -747,8 +738,8 @@ internal class MqttService(
      */
     override fun asrError(sessionId: String) {
         publishMessage(
-            MqttTopicsPublish.AsrError,
-            createMqttMessage {
+            mqttTopic = MqttTopicsPublish.AsrError,
+            builderAction = {
                 put(MqttParams.SessionId, sessionId)
             }
         )
@@ -764,10 +755,10 @@ internal class MqttService(
     override fun audioCaptured(sessionId: String, audioFilePath: Path) {
         with(audioFilePath.commonSource().buffer()) {
             publishMessage(
-                MqttTopicsPublish.AudioCaptured.topic
+                mqttTopic = MqttTopicsPublish.AudioCaptured.topic
                     .set(MqttTopicPlaceholder.SiteId, params.siteId)
                     .set(MqttTopicPlaceholder.SessionId, sessionId),
-                MqttMessage(this.readByteArray())
+                data = this.readByteArray()
             )
             this.close()
         }
@@ -787,8 +778,8 @@ internal class MqttService(
      */
     override fun recognizeIntent(sessionId: String, text: String, onResult: (result: ServiceState) -> Unit) {
         publishMessage(
-            MqttTopicsPublish.Query,
-            createMqttMessage {
+            mqttTopic = MqttTopicsPublish.Query,
+            builderAction = {
                 put(MqttParams.Input, JsonPrimitive(text))
                 put(MqttParams.SiteId, params.siteId)
                 put(MqttParams.SessionId, sessionId)
@@ -812,8 +803,7 @@ internal class MqttService(
         serviceMiddleware.action(
             IntentRecognitionResult(
                 source = jsonObject.getSource(),
-                intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content
-                    ?: "",
+                intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content ?: "",
                 intent = jsonObject.toString()
             )
         )
@@ -858,8 +848,8 @@ internal class MqttService(
      */
     override fun say(sessionId: String, text: String, siteId: String, onResult: (result: ServiceState) -> Unit) {
         publishMessage(
-            MqttTopicsPublish.Say,
-            createMqttMessage {
+            mqttTopic = MqttTopicsPublish.Say,
+            builderAction = {
                 put(MqttParams.SiteId, siteId)
                 put(MqttParams.SessionId, sessionId)
                 put(MqttParams.Text, JsonPrimitive(text))
@@ -933,17 +923,14 @@ internal class MqttService(
      */
     override fun playAudioRemote(audioSource: AudioSource, onResult: (result: ServiceState) -> Unit) {
         publishMessage(
-            MqttTopicsPublish.AudioOutputPlayBytes.topic
+            mqttTopic = MqttTopicsPublish.AudioOutputPlayBytes.topic
                 .set(MqttTopicPlaceholder.SiteId, params.audioPlayingMqttSiteId)
                 .set(MqttTopicPlaceholder.RequestId, uuid4().toString()),
-            MqttMessage(
-                @Suppress("DEPRECATION")
-                when (audioSource) {
-                    is AudioSource.Data     -> audioSource.data
-                    is AudioSource.File     -> audioSource.path.commonSource().buffer().readByteArray()
-                    is AudioSource.Resource -> audioSource.fileResource.commonData(nativeApplication)
-                }
-            ),
+            data = when (audioSource) {
+                is AudioSource.Data -> audioSource.data
+                is AudioSource.File -> audioSource.path.commonSource().buffer().readByteArray()
+                is AudioSource.Resource -> audioSource.fileResource.commonData(nativeApplication)
+            },
             onResult
         )
     }
@@ -972,9 +959,9 @@ internal class MqttService(
      */
     override fun playFinished() {
         publishMessage(
-            MqttTopicsPublish.AudioOutputPlayFinished.topic
+            mqttTopic = MqttTopicsPublish.AudioOutputPlayFinished.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId),
-            MqttMessage(ByteArray(0))
+            data = ByteArray(0)
         )
     }
 
