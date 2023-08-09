@@ -34,7 +34,6 @@ import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.settingsModule
@@ -63,7 +62,7 @@ class Application : NativeApplication(), KoinComponent {
         CoroutineScope(get<IDispatcherProvider>().IO).launch {
 
             Logger.addLogWriter(get<IFileLogger>() as LogWriter)
-            if (!isDebug() && !isInstrumentedTest()) {
+            if (!isInstrumentedTest()) {
                 Logger.addLogWriter(
                     CrashlyticsLogWriter(
                         minSeverity = Severity.Info,
@@ -79,7 +78,7 @@ class Application : NativeApplication(), KoinComponent {
             ConfigurationSetting
 
             get<ICrashlytics>().setEnabled(
-                if (!isDebug() && !isInstrumentedTest()) {
+                if (!isInstrumentedTest()) {
                     AppSetting.isCrashlyticsEnabled.value
                 } else false
             )
