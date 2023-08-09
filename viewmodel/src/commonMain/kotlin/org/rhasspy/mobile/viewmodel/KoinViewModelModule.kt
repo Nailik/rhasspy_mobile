@@ -9,6 +9,7 @@ import org.rhasspy.mobile.logic.logicModule
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.settings.settingsModule
+import org.rhasspy.mobile.viewmodel.assist.AssistantViewModel
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
@@ -76,7 +77,10 @@ fun viewModelModule() = module {
             nativeApplication = get()
         )
     }
+
     singleOf(::ViewModelFactory)
+
+    singleOf(::AssistantViewModel)
 
     factoryOf(::MainScreenViewStateCreator)
     singleOf(::MainScreenViewModel)
