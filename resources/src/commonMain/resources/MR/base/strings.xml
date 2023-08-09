@@ -76,6 +76,7 @@
     <string name="_and">and</string>
     <string name="light">Light</string>
     <string name="chooseCertificate">Choose Certificate (.bks)</string>
+    <string name="certificate_missing">Certificate file is missing</string>
     <string name="showLog">Show Log</string>
     <string name="log">Log</string>
     <string name="audioFramesLogging">Audio Frames Logging</string>
