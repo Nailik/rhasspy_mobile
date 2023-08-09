@@ -54,8 +54,7 @@
     <string name="textToSpeak">Text to speak</string>
     <string name="accessToken">Access Token</string>
     <string name="homeAssistantEvents">Send *events* to Home Assistant\n(/api/events)</string>
-    <string name="homeAssistantIntents">Send *intents* to Home Assistant\n(/api/intent/handle)
-    </string>
+    <string name="homeAssistantIntents">Send *intents* to Home Assistant\n(/api/intent/handle)</string>
     <string name="speechToTextAudioRecorderFormat">SpeechToText Audio Recorder Format</string>
     <string name="speechToTextAudioOutputFormat">SpeechToText Audio Output Format</string>
     <string name="wakeWordAudioRecorderFormat">Wake Word Audio Recorder Format</string>
@@ -96,34 +95,23 @@
     <string name="assert_level">Assert</string>
     <string name="microphone">Microphone</string>
     <string name="microphonePermissionDialogTitle">Microphone access</string>
-    <string name="microphonePermissionInfoRecord">To record audio microphone access is required.
-    </string>
-    <string name="microphonePermissionInfoWakeWord">To use Porcupine WakeWord service microphone
-        access is required.
-    </string>
-    <string name="microphonePermissionInfoAudioLevel">To check audio level microphone access is
-        required.
-    </string>
+    <string name="microphonePermissionInfoRecord">To record audio microphone access is required.</string>
+    <string name="microphonePermissionInfoWakeWord">To use Porcupine WakeWord service microphone access is required.</string>
+    <string name="microphonePermissionInfoAudioLevel">To check audio level microphone access is required.</string>
     <string name="microphonePermissionDenied">open settings to allow microphone access</string>
-    <string name="microphonePermissionRequestFailed">requesting microphone permission failed
-    </string>
+    <string name="microphonePermissionRequestFailed">requesting microphone permission failed</string>
+    <string name="microphonePermissionMissing">microphone permission missing</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="testAudioLevel">Audio Level Test</string>
     <string name="stop">Stop</string>
     <string name="audioLevelThreshold">Audio Level Threshold</string>
-    <string name="silenceDetectionInformation">Silence is detected if the audio level remains below
-        the selected threshold for the selected time period and the recording is at least the length
-        of the minimum duration
-    </string>
+    <string name="silenceDetectionInformation">Silence is detected if the audio level remains below the selected threshold for the selected time period and the recording is at least the length of the minimum duration</string>
     <string name="silenceDetectionMinimumTime">Voice command minimum Time (ms)</string>
     <string name="silenceDetectionTime">Silence Detection Time (ms)</string>
     <string name="overlayPermissionTitle">Overlay Permission</string>
     <string name="overlay">Overlay</string>
-    <string name="overlayPermissionInfo">Visual indication uses an Overlay to display the
-        indication.\nClick "OK", scroll to Rhasspy and allow
-        Permission.
-    </string>
+    <string name="overlayPermissionInfo">Visual indication uses an Overlay to display the indication.\nClick "OK", scroll to Rhasspy and allow Permission.</string>
     <string name="overlayPermissionRequestFailed">requesting overlay permission failed</string>
     <string name="save">Save</string>
     <string name="saveSettingsText">Save settings to an external file</string>
@@ -132,35 +120,26 @@
     <string name="share">Share</string>
     <string name="reset">Reset</string>
     <string name="device">Device</string>
-    <string name="deviceSettingsInformation">This settings can be changed via MQTT-Api or Http-Api.
-    </string>
+    <string name="deviceSettingsInformation">This settings can be changed via MQTT-Api or Http-Api.</string>
     <string name="volume">Volume</string>
     <string name="hotWord">HotWord (WakeWord)</string>
     <string name="audioOutput">Audio Output</string>
     <string name="microphoneOverlay">Microphone Overlay</string>
     <string name="showMicrophoneOverlay">Show Microphone Overlay</string>
-    <string name="showMicrophoneOverlayInfo">Best to use with Background Services, else the Overlay
-        may closes when App is hidden
-    </string>
+    <string name="showMicrophoneOverlayInfo">Best to use with Background Services, else the Overlay may closes when App is hidden</string>
     <string name="whileAppIsOpened">Visible while app is opened</string>
     <string name="restore">Restore</string>
     <string name="saveAndRestoreSettings">Save and Restore Settings</string>
     <string name="saveSettings">Save Settings</string>
-    <string name="saveSettingsWarningText">The exported Settings file contains sensitive Data!\nRead
-        the file and edit carefully before sharing.
-    </string>
+    <string name="saveSettingsWarningText">The exported Settings file contains sensitive Data!\nRead the file and edit carefully before sharing.</string>
     <string name="restoreSettings">Restore Settings</string>
-    <string name="restoreSettingsWarningText">Your current settings will be lost after restoring
-        from file!
-    </string>
+    <string name="restoreSettingsWarningText">Your current settings will be lost after restoring from file!</string>
     <string name="warning">Warning</string>
     <string name="success">Success</string>
     <string name="aboutTitle">About Rhasspy Mobile</string>
     <string name="version">Version</string>
     <string name="sounds">Sounds</string>
-    <string name="soundsText">WAV files to play when Rhasspy wakes up and is finished recording a
-        voice command.
-    </string>
+    <string name="soundsText">WAV files to play when Rhasspy wakes up and is finished recording a voice command.</string>
     <string name="wakeSound">Wake</string>
     <string name="recordedSound">Recorded</string>
     <string name="errorSound">Error</string>
@@ -169,9 +148,7 @@
     <string name="remoteHermesHTTP">Remote Hermes HTTP</string>
     <string name="sslValidation">SSL Validation</string>
     <string name="disableSSLValidation">Disable SSL Certificate Validation</string>
-    <string name="disableSSLValidationInformation">Possibly necessary when using self signed
-        Certificates
-    </string>
+    <string name="disableSSLValidationInformation">Possibly necessary when using self signed Certificates</string>
     <string name="webserver">Webserver</string>
     <string name="enableHTTPApi">Enable HTTP Api</string>
     <string name="english">English</string>
@@ -272,10 +249,7 @@
     <string name="executeIntentRecognition">Recognize Intent</string>
     <string name="crashlytics">Crashlytics</string>
     <string name="crashlyticsText">send crashes to help improve the app</string>
-    <string name="crashlyticsDialogText">Please allow to collect crash reports in order to help
-        improve the app.\nThe settings can be changed on the
-        Log Settings page
-    </string>
+    <string name="crashlyticsDialogText">Please allow to collect crash reports in order to help improve the app.\nThe settings can be changed on the Log Settings page</string>
     <string name="confirm">Confirm</string>
     <string name="deny">Deny</string>
     <string name="serviceStatusPending">Pending</string>
@@ -288,16 +262,10 @@
     <string name="serviceStatusWarningText">Services detected possible problems</string>
     <string name="serviceStatusErrorText">Service error occurred</string>
     <string name="executeTestHttpConnection">Test Http Connection</string>
-    <string name="porcupineLanguageInformation">All active activation words must match the selected
-        language and be compatible with the current Porcupine version (2.2.2)!
-    </string>
-    <string name="backgroundServiceInformation">Background service will enable the app to stay
-        active in the background and prevent it from being closed by the system.
-    </string>
+    <string name="porcupineLanguageInformation">All active activation words must match the selected language and be compatible with the current Porcupine version (2.2.2)!</string>
+    <string name="backgroundServiceInformation">Background service will enable the app to stay active in the background and prevent it from being closed by the system.</string>
     <string name="isMqttApiDeviceChangeEnabled">changes via MQTT Api enabled</string>
-    <string name="isMqttApiDeviceChangeEnabledInformation">Should be enabled when using Dialog
-        Management Remote Hermes MQTT
-    </string>
+    <string name="isMqttApiDeviceChangeEnabledInformation">Should be enabled when using Dialog Management Remote Hermes MQTT</string>
     <string name="isHttpApiDeviceChangeEnabled">changes via HTTP Api enabled</string>
     <string name="intentName">Intent Name</string>
     <string name="intentText">Intent Json</string>
@@ -319,9 +287,7 @@
     <string name="intentRecognitionTimeoutText">Intent Recognition Timeout (MS)</string>
     <string name="recordingTimeoutText">Recording Timeout (MS)</string>
     <string name="audioFocus">Audio Focus</string>
-    <string name="audioFocusInformation">Audio Focus allows Rhasspy to pause and resume or
-        decrease the volume of other audio streams such as music or videos.
-    </string>
+    <string name="audioFocusInformation">Audio Focus allows Rhasspy to pause and resume or decrease the volume of other audio streams such as music or videos.</string>
     <string name="pauseAndResume">Pause and Resume</string>
     <string name="duck">Duck (lower Volume)</string>
     <string name="onNotification">On Notification played</string>
@@ -330,9 +296,7 @@
     <string name="onRecord">On Record audio</string>
     <string name="onRecordInformation">ignores Wake Word recording</string>
     <string name="onDialog">On Dialog action</string>
-    <string name="onDialogInformation">between Start Session (Wake Word Detected) and End Session
-        (After Intent Recognition and Handling)
-    </string>
+    <string name="onDialogInformation">between Start Session (Wake Word Detected) and End Session (After Intent Recognition and Handling)</string>
     <string name="url">Url</string>
     <string name="linkOpenFailed">Unable to open link\nthe link was copied to the clipboard</string>
     <string name="saveLogFileFailed">Save log file failed</string>
