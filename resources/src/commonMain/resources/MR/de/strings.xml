@@ -76,6 +76,7 @@
     <string name="_and">und</string>
     <string name="light">Licht</string>
     <string name="chooseCertificate">Zertifikatdatei öffnen (.bks)</string>
+    <string name="certificate_missing">Zertifikatdatei fehlt</string>
     <string name="showLog">Protokoll anzeigen</string>
     <string name="log">Protokoll</string>
     <string name="audioFramesLogging">Audio-Frames protokollieren</string>
