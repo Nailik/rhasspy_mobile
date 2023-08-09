@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import okio.FileHandle
-import okio.Path
+import kotlinx.io.Sink
+import kotlinx.io.files.sink
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
 import org.rhasspy.mobile.data.log.LogType
@@ -27,9 +27,7 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeader
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
-import org.rhasspy.mobile.platformspecific.extensions.commonDelete
-import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
-import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
+import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.resampler.Resampler
 import org.rhasspy.mobile.settings.AppSetting
@@ -38,7 +36,7 @@ interface ISpeechToTextService : IService {
 
     override val serviceState: StateFlow<ServiceState>
 
-    val speechToTextAudioFile: Path
+    val speechToTextAudioFile: String
     val isActive: Boolean
     val isRecording: StateFlow<Boolean>
 
@@ -72,10 +70,10 @@ internal class SpeechToTextService(
     private val _serviceState = MutableStateFlow<ServiceState>(Success)
     override val serviceState = _serviceState.readOnly
 
-    override val speechToTextAudioFile: Path = Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
+    override val speechToTextAudioFile = "SpeechToTextAudio.wav"
     override var isActive: Boolean = false
     override val isRecording: StateFlow<Boolean> = audioRecorder.isRecording
-    private var fileHandle: FileHandle? = null
+    private var fileHandle: Sink? = null
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private var recorder: Job? = null
@@ -152,10 +150,10 @@ internal class SpeechToTextService(
             audioRecorderChannelType = params.audioRecorderChannelType,
             audioRecorderEncodingType = params.audioRecorderEncodingType,
             audioRecorderSampleRateType = params.audioRecorderSampleRateType,
-            audioSize = fileHandle?.size() ?: 0
+            audioSize = FileUtils.getSize(speechToTextAudioFile)
         )
-
-        fileHandle?.write(0, header, 0, header.size)
+        //TODO is header appended instead of written in front?
+        fileHandle?.write(header)
         fileHandle?.flush()
         fileHandle?.close()
         fileHandle = null
@@ -195,8 +193,8 @@ internal class SpeechToTextService(
 
         fileHandle?.flush()
         fileHandle?.close()
-        speechToTextAudioFile.commonDelete()
-        fileHandle = speechToTextAudioFile.commonReadWrite()
+        //TODO    speechToTextAudioFile.commonDelete()
+        fileHandle = FileUtils.getPath(speechToTextAudioFile).sink()
 
 
         when (params.speechToTextOption) {
@@ -243,12 +241,7 @@ internal class SpeechToTextService(
         }
 
         //write async after data was send
-        fileHandle?.write(
-            fileOffset = fileHandle?.size() ?: 0,
-            array = resampled,
-            arrayOffset = 0,
-            byteCount = resampled.size
-        )
+        fileHandle?.write(resampled)
     }
 
     private suspend fun record(sessionId: String, coroutineScope: CoroutineScope) {

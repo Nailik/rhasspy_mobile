@@ -3,7 +3,6 @@ package org.rhasspy.mobile.logic.middleware
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import okio.Path
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
@@ -28,7 +27,7 @@ interface IServiceMiddleware {
 
     fun action(serviceMiddlewareAction: ServiceMiddlewareAction)
     fun userSessionClick()
-    fun getRecordedFile(): Path
+    fun getRecordedFile(): String
 
 }
 
@@ -122,6 +121,6 @@ internal class ServiceMiddleware(
         }
     }
 
-    override fun getRecordedFile(): Path = speechToTextService.speechToTextAudioFile
+    override fun getRecordedFile(): String = speechToTextService.speechToTextAudioFile
 
 }

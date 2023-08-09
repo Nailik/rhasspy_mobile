@@ -28,7 +28,7 @@ kotlin {
                 implementation(Icerock.Mvvm.core)
                 implementation(Ktor2.Client.core)
                 implementation(Icerock.Resources.resourcesCompose)
-                implementation(Square.okio)
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.2.1")
                 implementation(Mikepenz.aboutLibrariesCore)
                 implementation(Russhwolf.multiplatformSettingsNoArg)
             }
@@ -46,7 +46,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(AndroidX.multidex)
-                implementation(Square.okio)
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.2.1")
             }
         }
         val androidUnitTest by getting {
@@ -64,7 +64,7 @@ kotlin {
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
             dependencies {
-                implementation(Square.okio)
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.2.1")
             }
         }
         val iosX64Test by getting

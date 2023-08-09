@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.data.mqtt
 
-import okio.Path
+import kotlinx.io.files.Path
 
 /** Provides all MQTT connection options. */
 data class MqttServiceConnectionOptions(

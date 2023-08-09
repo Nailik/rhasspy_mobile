@@ -32,10 +32,10 @@ kotlin {
                 implementation(Ktor2.Plugins.network)
                 implementation(Ktor2.Server.core)
                 implementation(Benasher.uuid)
-                implementation(Square.okio)
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.2.1")
                 implementation(Koin.core)
-                implementation("com.github.davidepianca98:kmqtt-common:0.4.1")
-                implementation("com.github.davidepianca98:kmqtt-client:0.4.1")
+                implementation(Davidepianca98.KMQTT.common)
+                implementation(Davidepianca98.KMQTT.client)
             }
         }
         val commonTest by getting {

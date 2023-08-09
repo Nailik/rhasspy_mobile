@@ -3,6 +3,7 @@ package org.rhasspy.mobile.logic.logger
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
+import io.ktor.utils.io.core.toByteArray
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
@@ -15,13 +16,13 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.io.files.Path
+import kotlinx.io.files.sink
+import kotlinx.io.writeString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import okio.Path
-import okio.buffer
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.extensions.*
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toImmutableList
@@ -44,8 +45,8 @@ internal class FileLogger(
     private val logger = Logger.withTag("FileLogger")
 
     //create new file when logfile is 2 MB
-    private val file = Path.commonInternalPath(nativeApplication, "logfile.json")
-    private val fileHandle = file.commonReadWrite()
+    private val file = Path("logfile.json")
+    private val fileHandle = file.sink()
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val _flow = MutableSharedFlow<LogElement>()
@@ -66,7 +67,8 @@ internal class FileLogger(
             message,
             throwable?.message
         )
-        fileHandle.appendingSink().buffer().writeUtf8("\n,${Json.encodeToString(element)}").flush()
+        fileHandle.writeString("\n,${Json.encodeToString(element)}")
+        fileHandle.flush()
         coroutineScope.launch {
             _flow.emit(element)
         }
@@ -77,7 +79,7 @@ internal class FileLogger(
      */
     override fun getLines(): ImmutableList<LogElement> {
         return try {
-            file.commonDecodeLogList<Array<LogElement>>().toImmutableList()
+            decodeLogList<Array<LogElement>>().toImmutableList()
         } catch (exception: Exception) {
             logger.e(exception) { "could not read log file" }
             persistentListOf()

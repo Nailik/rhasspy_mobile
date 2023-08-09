@@ -16,7 +16,7 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Touchlab.kermit)
-                implementation(Square.okio)
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.2.1")
                 implementation(Jetbrains.Compose.runtime)
                 implementation(Mikepenz.aboutLibrariesCore)
             }

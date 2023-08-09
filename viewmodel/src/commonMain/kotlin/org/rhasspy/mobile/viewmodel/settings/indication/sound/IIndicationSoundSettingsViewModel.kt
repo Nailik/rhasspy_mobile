@@ -83,7 +83,7 @@ abstract class IIndicationSoundSettingsViewModel(
         when (action) {
             ChooseSoundFile         -> {
                 viewModelScope.launch {
-                    FileUtils.selectFile(soundFolderType)?.also { path ->
+                    FileUtils.selectPath(soundFolderType)?.also { path ->
                         onEvent(AddSoundFile(path.name))
                     } ?: run {
                         _viewState.update {

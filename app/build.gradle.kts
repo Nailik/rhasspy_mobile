@@ -58,7 +58,7 @@ kotlin {
                 implementation(Ktor.Plugins.network)
                 implementation(Benasher.uuid)
                 implementation(Koin.core)
-                implementation(Square.okio)
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.2.1")
                 implementation(Russhwolf.multiplatformSettingsNoArg)
             }
         }

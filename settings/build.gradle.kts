@@ -20,7 +20,7 @@ kotlin {
                 implementation(Koin.core)
                 implementation(Russhwolf.multiplatformSettingsNoArg)
                 implementation(Russhwolf.multiplatformSettingsSerialization)
-                implementation(Square.okio)
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.2.1")
             }
         }
         val commonTest by getting {

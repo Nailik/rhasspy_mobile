@@ -5,14 +5,15 @@ import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.io.Source
+import kotlinx.io.files.Path
+import kotlinx.io.files.source
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import mqtt.Subscription
 import mqtt.packets.Qos
 import mqtt.packets.mqtt.MQTTPublish
 import mqtt.packets.mqttv5.ReasonCode
-import okio.Path
-import okio.buffer
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
@@ -24,8 +25,7 @@ import org.rhasspy.mobile.logic.middleware.Source.Mqtt
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
-import org.rhasspy.mobile.platformspecific.extensions.commonData
-import org.rhasspy.mobile.platformspecific.extensions.commonSource
+import org.rhasspy.mobile.platformspecific.file.FileUtils.commonData
 import org.rhasspy.mobile.platformspecific.readOnly
 import kotlin.random.Random
 import kotlin.random.nextUInt
@@ -166,6 +166,9 @@ internal class MqttService(
             password = params.mqttServiceConnectionOptions.connPassword.encodeToByteArray().toUByteArray(),
             publishReceived = { message ->
                 onMessageInternalReceived(message)
+            },
+            disconnectReceived = { received ->
+
             }
         )
     }
@@ -400,6 +403,25 @@ internal class MqttService(
                     qos = Qos.EXACTLY_ONCE,
                     topic = mqttTopic,
                     payload = data.toUByteArray(),
+                )
+            } catch (e: Exception) {
+                logger.e(e) { "publishMessage" }
+            }
+        }
+    }
+
+    private fun publishMessage(
+        mqttTopic: String,
+        source: Source,
+        onResult: ((result: ServiceState) -> Unit)? = null
+    ) {
+        scope.launch {
+            try {
+                client?.publish(
+                    retain = false,
+                    qos = Qos.EXACTLY_ONCE,
+                    topic = mqttTopic,
+                    source = source,
                 )
             } catch (e: Exception) {
                 logger.e(e) { "publishMessage" }
@@ -753,14 +775,14 @@ internal class MqttService(
      * Only sent if sendAudioCaptured = true in startListening
      */
     override fun audioCaptured(sessionId: String, audioFilePath: Path) {
-        with(audioFilePath.commonSource().buffer()) {
+        with(audioFilePath.source()) {
             publishMessage(
                 mqttTopic = MqttTopicsPublish.AudioCaptured.topic
                     .set(MqttTopicPlaceholder.SiteId, params.siteId)
                     .set(MqttTopicPlaceholder.SessionId, sessionId),
-                data = this.readByteArray()
+                source = this
             )
-            this.close()
+
         }
     }
 
@@ -922,17 +944,29 @@ internal class MqttService(
      *
      */
     override fun playAudioRemote(audioSource: AudioSource, onResult: (result: ServiceState) -> Unit) {
-        publishMessage(
-            mqttTopic = MqttTopicsPublish.AudioOutputPlayBytes.topic
-                .set(MqttTopicPlaceholder.SiteId, params.audioPlayingMqttSiteId)
-                .set(MqttTopicPlaceholder.RequestId, uuid4().toString()),
-            data = when (audioSource) {
-                is AudioSource.Data -> audioSource.data
-                is AudioSource.File -> audioSource.path.commonSource().buffer().readByteArray()
-                is AudioSource.Resource -> audioSource.fileResource.commonData(nativeApplication)
-            },
-            onResult
-        )
+        when (audioSource) {
+            is AudioSource.File -> {
+                with(Path(audioSource.path).source()) {
+                    publishMessage(
+                        mqttTopic = MqttTopicsPublish.AudioOutputPlayBytes.topic
+                            .set(MqttTopicPlaceholder.SiteId, params.audioPlayingMqttSiteId)
+                            .set(MqttTopicPlaceholder.RequestId, uuid4().toString()),
+                        source = this,
+                        onResult
+                    )
+                }
+            }
+
+            is AudioSource.Resource -> {
+                publishMessage(
+                    mqttTopic = MqttTopicsPublish.AudioOutputPlayBytes.topic
+                        .set(MqttTopicPlaceholder.SiteId, params.audioPlayingMqttSiteId)
+                        .set(MqttTopicPlaceholder.RequestId, uuid4().toString()),
+                    data = commonData(audioSource.fileResource),
+                    onResult
+                )
+            }
+        }
     }
 
     /**

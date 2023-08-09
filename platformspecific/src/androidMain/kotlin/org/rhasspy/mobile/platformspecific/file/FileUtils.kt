@@ -2,20 +2,30 @@ package org.rhasspy.mobile.platformspecific.file
 
 import android.net.Uri
 import android.provider.OpenableColumns
+import androidx.core.content.FileProvider
 import androidx.core.net.toUri
+import co.touchlab.kermit.Severity
+import dev.icerock.moko.resources.FileResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import okio.Path
-import okio.Path.Companion.toPath
+import kotlinx.io.asInputStream
+import kotlinx.io.files.Path
+import kotlinx.io.files.source
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectUtils
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
+import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.resumeSave
-import java.io.BufferedInputStream
-import java.io.File
+import java.io.*
+import java.util.Collections
 import java.util.zip.ZipInputStream
 
 /**
@@ -23,12 +33,63 @@ import java.util.zip.ZipInputStream
  */
 actual object FileUtils : KoinComponent {
 
-    private val context = get<NativeApplication>()
+    private val nativeApplication = get<NativeApplication>()
+    private val externalResultRequest = get<IExternalResultRequest>()
+
+    actual fun getFilePath(fileName: String): String {
+        return "${nativeApplication.filesDir?.let { "$it/" } ?: ""}$this"
+    }
+
+    actual fun getPath(fileName: String): Path {
+        return Path(getFilePath(fileName))
+    }
+
+    actual fun getSize(fileName: String): Long {
+        return File(getFilePath(fileName)).length()
+    }
+
+    actual fun shareFile(fileName: String): Boolean {
+        //copy file
+        val fileUri: Uri = FileProvider.getUriForFile(
+            nativeApplication, nativeApplication.packageName.toString() + ".provider",
+            File(fileName)
+        )
+
+        val result = externalResultRequest.launch(
+            ExternalResultRequestIntention.ShareFile(
+                fileUri = fileUri.toString(),
+                mimeType = "text/html"
+            )
+        )
+
+        return result is ExternalRedirectResult.Success
+    }
+
+    actual suspend fun exportFile(path: Path, fileName: String, fileType: String): Boolean {
+
+        val result = externalResultRequest.launchForResult(
+            ExternalResultRequestIntention.CreateDocument(
+                fileName,
+                fileType
+            )
+        )
+
+        return if (result is ExternalRedirectResult.Result) {
+            nativeApplication.contentResolver.openOutputStream(result.data.toUri())
+                ?.also { outputStream ->
+                    path.source().asInputStream().copyTo(outputStream)
+                    outputStream.flush()
+                    outputStream.close()
+                }
+
+            true
+        } else false
+    }
 
     /**
      * open file selection and copy file to specific folder and return selected file name
      */
-    actual suspend fun selectFile(folderType: FolderType): Path? =
+    actual suspend fun selectPath(folderType: FolderType): Path? =
         suspendCancellableCoroutine { continuation ->
             CoroutineScope(Dispatchers.IO).launch {
                 ExternalRedirectUtils.openDocument(
@@ -39,11 +100,11 @@ actual object FileUtils : KoinComponent {
 
                     queryFile(uri)?.also { fileName ->
                         val finalFileName =
-                            renameFileWhileExists(context.filesDir, folderType.toString(), fileName)
+                            renameFileWhileExists(nativeApplication.filesDir, folderType.toString(), fileName)
                         //create folder if it doesn't exist yet
-                        File(context.filesDir, folderType.toString()).mkdirs()
+                        File(nativeApplication.filesDir, folderType.toString()).mkdirs()
                         val result = copyFile(folderType, uri, folderType.toString(), finalFileName)
-                        continuation.resumeSave(result?.toPath())
+                        continuation.resumeSave(result?.let { Path(it) })
                     } ?: run {
                         continuation.resumeSave(null)
                     }
@@ -54,12 +115,14 @@ actual object FileUtils : KoinComponent {
             }
         }
 
+    actual fun commonData(resource: FileResource): ByteArray =
+        nativeApplication.resources.openRawResource(resource.rawResId).readBytes()
 
     /**
      * read file from system
      */
     private suspend fun queryFile(uri: Uri): String? = suspendCancellableCoroutine { continuation ->
-        context.contentResolver.query(uri, null, null, null, null)
+        nativeApplication.contentResolver.query(uri, null, null, null, null)
             ?.also { cursor ->
                 if (cursor.moveToFirst()) {
                     val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
@@ -98,8 +161,8 @@ actual object FileUtils : KoinComponent {
      */
     private suspend fun copyNormalFile(uri: Uri, folderName: String, fileName: String): String? =
         suspendCancellableCoroutine { continuation ->
-            context.contentResolver.openInputStream(uri)?.also { inputStream ->
-                File(context.filesDir, "$folderName/$fileName").apply {
+            nativeApplication.contentResolver.openInputStream(uri)?.also { inputStream ->
+                File(nativeApplication.filesDir, "$folderName/$fileName").apply {
                     this.outputStream().apply {
                         inputStream.copyTo(this)
 
@@ -123,7 +186,7 @@ actual object FileUtils : KoinComponent {
         folderName: String,
         selectedFileName: String
     ): String? = suspendCancellableCoroutine { continuation ->
-        context.contentResolver.openInputStream(uri)?.also { inputStream ->
+        nativeApplication.contentResolver.openInputStream(uri)?.also { inputStream ->
 
             when {
                 selectedFileName.endsWith(".zip") -> {
@@ -139,10 +202,10 @@ actual object FileUtils : KoinComponent {
                         if (!ze.isDirectory) {
                             if (ze.name.endsWith(".ppn")) {
                                 val fileName =
-                                    renameFileWhileExists(context.filesDir, folderName, ze.name)
+                                    renameFileWhileExists(nativeApplication.filesDir, folderName, ze.name)
 
                                 File(
-                                    context.filesDir,
+                                    nativeApplication.filesDir,
                                     "$folderName/$fileName"
                                 ).outputStream().apply {
                                     zipInputStream.copyTo(this)
@@ -163,9 +226,9 @@ actual object FileUtils : KoinComponent {
                 selectedFileName.endsWith(".ppn") -> {
                     //use this file
                     val fileName =
-                        renameFileWhileExists(context.filesDir, folderName, selectedFileName)
+                        renameFileWhileExists(nativeApplication.filesDir, folderName, selectedFileName)
 
-                    File(context.filesDir, "$folderName/$fileName").apply {
+                    File(nativeApplication.filesDir, "$folderName/$fileName").apply {
                         this.outputStream().apply {
                             inputStream.copyTo(this)
                             this.flush()
@@ -198,6 +261,27 @@ actual object FileUtils : KoinComponent {
             }
         }
         return fileName
+    }
+
+    fun InputStream.modify(): InputStream {
+        val streams = listOf(
+            ByteArrayInputStream(
+                "[${
+                    Json.encodeToString(
+                        LogElement(
+                            time = "",
+                            severity = Severity.Assert,
+                            tag = "",
+                            message = "",
+                            throwable = null
+                        )
+                    )
+                }".toByteArray()
+            ),
+            this,
+            ByteArrayInputStream("]".toByteArray())
+        )
+        return SequenceInputStream(Collections.enumeration(streams))
     }
 
 }

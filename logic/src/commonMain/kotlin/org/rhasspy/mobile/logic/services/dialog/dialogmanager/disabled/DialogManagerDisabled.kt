@@ -10,7 +10,6 @@ import org.rhasspy.mobile.logic.services.dialog.dialogmanager.IDialogManager
 import org.rhasspy.mobile.logic.services.intenthandling.IIntentHandlingService
 import org.rhasspy.mobile.logic.services.intentrecognition.IIntentRecognitionService
 import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
-import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.Data
 
 class DialogManagerDisabled(
     private val audioPlayingService: IAudioPlayingService,
@@ -31,7 +30,7 @@ class DialogManagerDisabled(
             is EndSession                    -> Unit
             is IntentRecognitionError        -> Unit
             is IntentRecognitionResult       -> intentHandlingService.intentHandling(action.intentName, action.intent)
-            is PlayAudio                     -> @Suppress("DEPRECATION") audioPlayingService.playAudio(Data(action.byteArray))
+            is PlayAudio                     -> audioPlayingService.playAudio(Data(action.byteArray))
             is PlayFinished                  -> Unit
             is SessionEnded                  -> Unit
             is SessionStarted                -> Unit

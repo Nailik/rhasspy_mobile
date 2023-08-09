@@ -71,7 +71,7 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
 
     fun selectFile(folderType: FolderType, action: (Path) -> Unit) {
         viewModelScope.launch(dispatcher.IO) {
-            FileUtils.selectFile(folderType)?.also(action) ?: run {
+            FileUtils.selectPath(folderType)?.also(action) ?: run {
                 _screenViewState.update { it.copy(snackBarState = SelectFileFailed) }
             }
         }

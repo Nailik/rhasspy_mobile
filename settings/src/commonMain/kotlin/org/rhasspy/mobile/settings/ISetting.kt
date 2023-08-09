@@ -53,6 +53,7 @@ open class ISetting<T>(
             } else {
                 when (initial) {
                     is String     -> settings[key.name] = newValue as String
+                    is String?    -> settings[key.name] = newValue as String?
                     is Int        -> settings[key.name] = newValue as Int
                     is Float      -> settings[key.name] = newValue as Float
                     is Long?      -> settings[key.name] = newValue as Long?
@@ -79,6 +80,7 @@ open class ISetting<T>(
             } else {
                 when (initial) {
                     is String     -> settings[key.name, initial]
+                    is String?    -> settings[key.name, initial ?: ""]
                     is Int        -> settings[key.name, initial]
                     is Float      -> settings[key.name, initial]
                     is Long?      -> settings[key.name, initial ?: 0L]

@@ -6,7 +6,6 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import okio.Path
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Notification
 import org.rhasspy.mobile.data.log.LogType
@@ -18,7 +17,7 @@ import org.rhasspy.mobile.logic.services.audiofocus.IAudioFocusService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioPlayer
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
-import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
+import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
@@ -101,12 +100,7 @@ internal class LocalAudioService(
             )
 
             else                      -> playAudio(
-                AudioSource.File(
-                    Path.commonInternalPath(
-                        nativeApplication = nativeApplication,
-                        fileName = "${FolderType.SoundFolder.Wake}/${AppSetting.wakeSound.value}"
-                    )
-                ),
+                AudioSource.File(FileUtils.getPath("${FolderType.SoundFolder.Wake}/${AppSetting.wakeSound.value}")),
                 AppSetting.wakeSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value,
                 onFinished

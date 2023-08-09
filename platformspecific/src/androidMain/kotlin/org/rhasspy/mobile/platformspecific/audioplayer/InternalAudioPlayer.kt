@@ -49,10 +49,8 @@ class InternalAudioPlayer(
     val isPlaying: Boolean
         get() = mediaPlayer.isPlaying
 
-    @Suppress("DEPRECATION")
     private val uri = when (audioSource) {
-        is AudioSource.Data     -> getUriFromData(audioSource.data)
-        is AudioSource.File     -> Uri.fromFile(audioSource.path.toFile())
+        is AudioSource.File     -> Uri.fromFile(File(audioSource.path)) //TODO
         is AudioSource.Resource -> getUriFromResource(audioSource.fileResource.rawResId)
     }
 

@@ -8,7 +8,6 @@ import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.data.settings.SettingsEnum
-import org.rhasspy.mobile.settings.serializer.OkioPathSerializer
 import org.rhasspy.mobile.settings.serializer.PorcupineCustomKeywordSerializer
 import org.rhasspy.mobile.settings.serializer.PorcupineDefaultKeywordSerializer
 
@@ -22,7 +21,7 @@ object ConfigurationSetting {
     val isHttpServerEnabled = ISetting(SettingsEnum.HttpServerEnabled, true)
     val httpServerPort = ISetting(SettingsEnum.HttpServerPort, 12101)
     val isHttpServerSSLEnabledEnabled = ISetting(SettingsEnum.HttpServerSSLEnabled, false)
-    val httpServerSSLKeyStoreFile = ISetting(SettingsEnum.HttpServerSSLKeyStoreFile, null, OkioPathSerializer)
+    val httpServerSSLKeyStoreFile = ISetting<String?>(SettingsEnum.HttpServerSSLKeyStoreFile, null)
     val httpServerSSLKeyStorePassword = ISetting(SettingsEnum.HttpServerSSLKeyStorePassword, "")
     val httpServerSSLKeyAlias = ISetting(SettingsEnum.HttpServerSSLKeyAlias, "")
     val httpServerSSLKeyPassword = ISetting(SettingsEnum.HttpServerSSLKeyPassword, "")
@@ -41,7 +40,7 @@ object ConfigurationSetting {
     val mqttConnectionTimeout = ISetting(SettingsEnum.MQTTConnectionTimeout, 5L)
     val mqttKeepAliveInterval = ISetting(SettingsEnum.MQTTKeepAliveInterval, 30L)
     val mqttRetryInterval = ISetting(SettingsEnum.MQTTRetryInterval, 10L)
-    val mqttKeyStoreFile = ISetting(SettingsEnum.MQTTKeyStoreFile, null, OkioPathSerializer)
+    val mqttKeyStoreFile = ISetting<String?>(SettingsEnum.MQTTKeyStoreFile, null)
 
 
     val wakeWordOption = ISetting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled)

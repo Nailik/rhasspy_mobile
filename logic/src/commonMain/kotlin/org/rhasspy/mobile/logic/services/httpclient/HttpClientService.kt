@@ -16,7 +16,6 @@ import io.ktor.http.contentType
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import okio.Path
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.httpclient.HttpClientPath
 import org.rhasspy.mobile.data.log.LogType
@@ -27,8 +26,9 @@ import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
-import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.*
-import org.rhasspy.mobile.platformspecific.extensions.commonData
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.File
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.Resource
+import org.rhasspy.mobile.platformspecific.file.FileUtils.commonData
 import org.rhasspy.mobile.platformspecific.ktor.configureEngine
 import org.rhasspy.mobile.platformspecific.readOnly
 
@@ -36,7 +36,7 @@ interface IHttpClientService : IService {
 
     override val serviceState: StateFlow<ServiceState>
 
-    fun speechToText(audioFilePath: Path, onResult: (result: HttpClientResult<String>) -> Unit)
+    fun speechToText(audioFilePath: String, onResult: (result: HttpClientResult<String>) -> Unit)
     fun recognizeIntent(text: String, onResult: (result: HttpClientResult<String>) -> Unit)
     fun textToSpeech(text: String, volume: Float?, siteId: String?, onResult: (result: HttpClientResult<ByteArray>) -> Unit)
     fun playWav(audioSource: AudioSource, onResult: (result: HttpClientResult<String>) -> Unit)
@@ -173,7 +173,7 @@ internal class HttpClientService(
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    override fun speechToText(audioFilePath: Path, onResult: (result: HttpClientResult<String>) -> Unit) {
+    override fun speechToText(audioFilePath: String, onResult: (result: HttpClientResult<String>) -> Unit) {
         logger.d { "speechToText: audioFilePath.name" }
 
         post(
@@ -233,25 +233,37 @@ internal class HttpClientService(
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    @Suppress("IMPLICIT_CAST_TO_ANY")
     override fun playWav(audioSource: AudioSource, onResult: (result: HttpClientResult<String>) -> Unit) {
         logger.d { "playWav size: $audioSource" }
-        @Suppress("DEPRECATION")
-        val body = when (audioSource) {
-            is Data -> audioSource.data
-            is File -> StreamContent(audioSource.path)
-            is Resource -> audioSource.fileResource.commonData(nativeApplication)
+
+        return when (audioSource) {
+            is File     -> {
+                post(
+                    url = audioPlayingUrl,
+                    block = {
+                        setAttributes {
+                            contentType(audioContentType)
+                        }
+                        setBody(StreamContent(audioSource.path))
+                    },
+                    onResult = onResult
+                )
+            }
+
+            is Resource -> {
+                post(
+                    url = audioPlayingUrl,
+                    block = {
+                        setAttributes {
+                            contentType(audioContentType)
+                        }
+                        setBody(commonData(audioSource.fileResource))
+                    },
+                    onResult = onResult
+                )
+            }
         }
-        return post(
-            url = audioPlayingUrl,
-            block = {
-                setAttributes {
-                    contentType(audioContentType)
-                }
-                setBody(body)
-            },
-            onResult = onResult
-        )
+
     }
 
     /**
