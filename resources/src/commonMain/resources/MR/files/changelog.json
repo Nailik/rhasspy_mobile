@@ -1,4 +1,5 @@
 [
+  "fix Disable DialogManager not starting WakeWord",
   "fix android media player stop error",
   "enabled to set app as android default assistant",
   "fix check for Certificate file before starting WebServer",
