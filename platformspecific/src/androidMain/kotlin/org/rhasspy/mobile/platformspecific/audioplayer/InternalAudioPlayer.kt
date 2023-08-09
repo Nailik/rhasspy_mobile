@@ -120,8 +120,14 @@ class InternalAudioPlayer(
             volumeChange.cancel()
         }
         timeoutJob = null
-        mediaPlayer.stop()
-        mediaPlayer.release()
+        try {
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.stop()
+            }
+            mediaPlayer.release()
+        } catch (e: Exception) {
+            logger.a(e) { "mediaPlayer stop adn release" }
+        }
         callOnFinish()
     }
 
@@ -134,8 +140,14 @@ class InternalAudioPlayer(
             volumeChange.cancel()
         }
         timeoutJob = null
-        mediaPlayer.stop()
-        mediaPlayer.release()
+        try {
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.stop()
+            }
+            mediaPlayer.release()
+        } catch (e: Exception) {
+            logger.a(e) { "mediaPlayer stop adn release" }
+        }
         callOnFinish()
     }
 
