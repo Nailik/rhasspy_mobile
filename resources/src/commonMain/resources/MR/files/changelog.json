@@ -1,4 +1,5 @@
 [
+  "enabled to set app as android default assistant",
   "fix check for Certificate file before starting WebServer",
   "scan HomeAssistant Access Token via QR-Code",
   "update show Indication state on start screen",

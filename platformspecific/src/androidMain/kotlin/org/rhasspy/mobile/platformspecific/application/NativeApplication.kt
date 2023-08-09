@@ -92,7 +92,7 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
             override fun onActivityCreated(p0: Activity, p1: Bundle?) {}
             override fun onActivityStarted(p0: Activity) {
                 //always represents top activity
-                if (p0 is AppCompatActivity) {
+                if (p0 is IMainActivity) {
                     currentActivity = p0
                     (get<IExternalResultRequest>() as ExternalResultRequest).registerCallback(p0)
                 }
