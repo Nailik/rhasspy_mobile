@@ -15,9 +15,14 @@ on:
       SONAR_KEY:
         required: true
 
+concurrency:
+  group: build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   #runs sonar
   analyze:
+    if: (contains(github.event.pull_request.labels.*.name, 'automerge') == false)
     runs-on: self-hosted
     steps:
       #checkout project
