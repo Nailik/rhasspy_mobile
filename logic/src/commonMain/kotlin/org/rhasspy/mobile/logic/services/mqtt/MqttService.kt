@@ -156,9 +156,7 @@ internal class MqttService(
             clientId = params.siteId,
             persistenceType = MqttPersistence.MEMORY,
             onDelivered = { },
-            onMessageReceived = { topic, message ->
-                onMessageInternalReceived(topic, message)
-            },
+            onMessageReceived = { topic, message -> onMessageInternalReceived(topic, message) },
             onDisconnect = { error -> onDisconnect(error) },
         )
     }
@@ -173,8 +171,7 @@ internal class MqttService(
                 //connect to server
                 it.connect(params.mqttServiceConnectionOptions)?.also { error ->
                     logger.e { "connectClient error $error" }
-                    _serviceState.value =
-                        MqttServiceStateType.fromMqttStatus(error.statusCode).serviceState
+                    _serviceState.value = MqttServiceStateType.fromMqttStatus(error.statusCode).serviceState
                 }
             } else {
                 _serviceState.value = ServiceState.Success
@@ -222,64 +219,16 @@ internal class MqttService(
     }
 
     /**
-     * message from external sources
-     * eg: http api
-     */
-    override fun onMessageReceived(topic: String, payload: ByteArray) {
-        logger.d { "onMessageReceived $topic" }
-
-        try {
-            //regex topic
-            if (!regexTopic(topic, payload)) {
-                compareTopic(topic, payload)
-            } else {
-                logger.d { "regexTopic matched $topic" }
-            }
-
-        } catch (e: Exception) {
-            logger.e(e) { "received message on $topic error" }
-        }
-    }
-
-
-    /**
-     * consumes messages that match by regex
-     *
-     * returns true when message was consumed
-     */
-    private fun regexTopic(topic: String, payload: ByteArray): Boolean {
-        logger.d { "regexTopic $topic" }
-        when {
-            MqttTopicsSubscription.HotWordDetected.topic.matches(topic)         -> {
-                hotWordDetectedCalled(topic)
-            }
-
-            MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> {
-                val jsonObject = Json.decodeFromString<JsonObject>(payload.decodeToString())
-                intentRecognitionResult(jsonObject)
-            }
-
-            MqttTopicsSubscription.PlayBytes.topic
-                .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                .matches(topic)                                                 -> {
-                playBytes(payload)
-            }
-
-            else                                                                -> return false
-        }
-        return true
-    }
-
-    /**
      * checks topics that are equal, compared to enum name
      *
      * returns true when message was consumed
      */
-    private fun compareTopic(topic: String, payload: ByteArray) {
+    override fun onMessageReceived(topic: String, payload: ByteArray) {
         logger.d { "compareTopic $topic" }
 
         //topic matches enum
         getMqttTopic(topic)?.also { mqttTopic ->
+            logger.d { "resulting topic $topic" }
 
             if (!mqttTopic.topic.contains(MqttTopicPlaceholder.SiteId.toString())) {
                 //site id in payload
@@ -321,26 +270,15 @@ internal class MqttService(
                         }
                     }
                 }
+            } else {
+                when (mqttTopic) {
+                    MqttTopicsSubscription.PlayBytes       -> playBytes(payload)
+                    MqttTopicsSubscription.PlayFinished    -> playFinishedCall()
+                    else                                   -> { logger.d { "isNotThisSiteId mqttTopic notFound $topic" } }
+                }
             }
         } ?: run {
-            //site id in topic
-            when {
-                MqttTopicsSubscription.PlayBytes.topic
-                    .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                    .matches(topic) -> {
-                    playBytes(payload)
-                }
 
-                MqttTopicsSubscription.PlayFinished.topic
-                    .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                    .matches(topic) -> {
-                    playFinishedCall()
-                }
-
-                else                -> {
-                    logger.d { "siteId in Topic mqttTopic notFound $topic" }
-                }
-            }
         }
     }
 
@@ -1018,6 +956,7 @@ internal class MqttService(
         this.replace(key.placeholder, value)
 
     private fun String.matches(regex: String): Boolean {
+        println("match topic $this with $regex")
         return this
             .replace("/", "\\/") //escape slashes
             .replace("+", ".*") //replace wildcard with regex text
@@ -1031,11 +970,13 @@ internal class MqttService(
             MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> MqttTopicsSubscription.IntentRecognitionResult
             MqttTopicsSubscription.PlayBytes.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                .matches(topic)                                                 -> MqttTopicsSubscription.IntentRecognitionResult
+                .matches(topic)                                                 -> MqttTopicsSubscription.PlayBytes
 
-            else                                                                -> MqttTopicsSubscription.fromTopic(
-                topic
-            )
+            MqttTopicsSubscription.PlayFinished.topic
+                .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                .matches(topic)                                                 -> MqttTopicsSubscription.PlayFinished
+
+            else                                                                -> MqttTopicsSubscription.fromTopic(topic)
         }
     }
 
