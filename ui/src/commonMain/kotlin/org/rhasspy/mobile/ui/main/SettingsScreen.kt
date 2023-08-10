@@ -175,9 +175,9 @@ private fun Language(
 ) {
 
     SettingsListItem(
-        text = MR.strings.language.stable,
-        secondaryText = viewState.currentLanguage.text,
-        destination = LanguageSettingsScreen,
+        text = MR.strings.theme_and_language.stable,
+        secondaryText = "${translate(viewState.currentTheme.text)} | ${translate(viewState.currentLanguage.text)}",
+        destination = AppearanceSettingsScreen,
         onEvent = onEvent
     )
 

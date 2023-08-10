@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.*
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.StableStringResource
@@ -27,6 +28,7 @@ import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.theme.GetColorScheme
 import org.rhasspy.mobile.ui.theme.SetSystemColor
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState
@@ -55,7 +57,8 @@ fun ConfigurationScreenItemContent(
         screenViewModel = screenViewModel
     ) {
 
-        SetSystemColor(0.dp)
+        val colorScheme by GetColorScheme()
+        SetSystemColor(colorScheme.surfaceColorAtElevation(0.dp))
 
         viewState.dialogState?.also {
             Dialogs(

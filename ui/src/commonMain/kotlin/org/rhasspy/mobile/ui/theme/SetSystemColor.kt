@@ -5,7 +5,4 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 
 @Composable
-expect fun SetSystemColor(elevation: Dp)
-
-@Composable
 expect fun SetSystemColor(color: Color)

@@ -55,7 +55,7 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSou
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.RecordedIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewModel
@@ -148,7 +148,7 @@ fun viewModelModule() = module {
     singleOf(::RecordedIndicationSoundSettingsViewModel)
     singleOf(::ErrorIndicationSoundSettingsViewModel)
 
-    singleOf(::LanguageSettingsViewModel)
+    singleOf(::AppearanceSettingsViewModel)
 
     factoryOf(::LogSettingsViewStateCreator)
     singleOf(::LogSettingsViewModel)

@@ -9,6 +9,7 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.data.sounds.SoundOption
+import org.rhasspy.mobile.data.theme.ThemeType
 import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.settings.serializer.StringListSerializer
@@ -22,6 +23,7 @@ object AppSetting : KoinComponent {
     val didShowChangelogDialog = ISetting(SettingsEnum.ChangelogDialog, 0)
 
     val languageType = ISetting(SettingsEnum.LanguageOption, get<ILanguageUtils>().getDeviceLanguage())
+    val themeType = ISetting(SettingsEnum.ThemeOption, ThemeType.System)
 
     val isAutomaticSilenceDetectionEnabled = ISetting(SettingsEnum.AutomaticSilenceDetection, false)
     val automaticSilenceDetectionAudioLevel = ISetting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
