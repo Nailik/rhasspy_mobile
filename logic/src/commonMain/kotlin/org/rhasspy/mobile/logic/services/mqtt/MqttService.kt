@@ -272,9 +272,11 @@ internal class MqttService(
                 }
             } else {
                 when (mqttTopic) {
-                    MqttTopicsSubscription.PlayBytes       -> playBytes(payload)
-                    MqttTopicsSubscription.PlayFinished    -> playFinishedCall()
-                    else                                   -> { logger.d { "isNotThisSiteId mqttTopic notFound $topic" } }
+                    MqttTopicsSubscription.PlayBytes    -> playBytes(payload)
+                    MqttTopicsSubscription.PlayFinished -> playFinishedCall()
+                    else                                -> {
+                        logger.d { "isNotThisSiteId mqttTopic notFound $topic" }
+                    }
                 }
             }
         } ?: run {

@@ -55,12 +55,12 @@
 
         <activity
             android:name="org.rhasspy.mobile.app.AssistantActivity"
-            android:exported="true"
-            android:theme="@style/AppTheme.Assistant"
-            android:windowSoftInputMode="adjustResize"
-            android:launchMode="singleTask"
             android:autoRemoveFromRecents="true"
-            android:showWhenLocked="true">
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:showWhenLocked="true"
+            android:theme="@style/AppTheme.Assistant"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.ASSIST" />
                 <category android:name="android.intent.category.DEFAULT" />

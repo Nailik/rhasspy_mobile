@@ -81,9 +81,9 @@ private fun SettingsNavigationContent(
         SettingsScreenDestination.SilenceDetectionSettings  -> SilenceDetectionSettingsContent()
         SettingsScreenDestination.BackgroundServiceSettings -> BackgroundServiceSettingsContent()
         SettingsScreenDestination.DeviceSettings            -> DeviceSettingsContent()
-        SettingsScreenDestination.IndicationSettings       -> IndicationSettingsOverviewScreen()
-        SettingsScreenDestination.AppearanceSettingsScreen -> AppearanceSettingsScreenItemContent()
-        SettingsScreenDestination.LogSettings              -> LogSettingsContent()
+        SettingsScreenDestination.IndicationSettings        -> IndicationSettingsOverviewScreen()
+        SettingsScreenDestination.AppearanceSettingsScreen  -> AppearanceSettingsScreenItemContent()
+        SettingsScreenDestination.LogSettings               -> LogSettingsContent()
         SettingsScreenDestination.MicrophoneOverlaySettings -> MicrophoneOverlaySettingsContent()
         SettingsScreenDestination.SaveAndRestoreSettings    -> SaveAndRestoreSettingsContent()
     }

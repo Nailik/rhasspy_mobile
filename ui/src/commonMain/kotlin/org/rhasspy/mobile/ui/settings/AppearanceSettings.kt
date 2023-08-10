@@ -18,7 +18,6 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.AppearanceSettingsScreen
-import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsUiEvent.Change.SelectLanguageOption
 import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsUiEvent.Change.SelectThemeOption

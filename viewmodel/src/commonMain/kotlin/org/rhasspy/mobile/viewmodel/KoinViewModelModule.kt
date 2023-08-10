@@ -43,6 +43,7 @@ import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
@@ -55,7 +56,6 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSou
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.RecordedIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewModel

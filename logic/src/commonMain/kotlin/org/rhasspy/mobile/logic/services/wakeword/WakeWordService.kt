@@ -156,7 +156,7 @@ internal class WakeWordService(
 
 
     private fun startPorcupine() {
-        if(!checkMicrophonePermission()) {
+        if (!checkMicrophonePermission()) {
             return
         }
 
@@ -173,15 +173,15 @@ internal class WakeWordService(
         } ?: Error(MR.strings.notInitialized.stable)
     }
 
-    private fun checkMicrophonePermission() : Boolean {
-        if(!microphonePermission.granted.value) {
+    private fun checkMicrophonePermission(): Boolean {
+        if (!microphonePermission.granted.value) {
             _serviceState.value = Error(MR.strings.microphonePermissionDenied.stable)
         }
         return microphonePermission.granted.value
     }
 
     private fun startUdp() {
-        if(!checkMicrophonePermission()) {
+        if (!checkMicrophonePermission()) {
             return
         }
 
