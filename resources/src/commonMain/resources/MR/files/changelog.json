@@ -1,4 +1,5 @@
 [
+  "fix wake sound not played on some devices",
   "fix indication navigation",
   "fix Disable DialogManager not starting WakeWord",
   "fix android media player stop error",
