@@ -116,9 +116,9 @@ private fun IndicationNavigationContent(
     screen: IndicationSettingsScreenDestination
 ) {
     when (screen) {
-        IndicationSettingsScreenDestination.WakeIndicationSoundScreen     -> IndicationErrorScreen()
+        IndicationSettingsScreenDestination.WakeIndicationSoundScreen     -> IndicationWakeScreen()
         IndicationSettingsScreenDestination.RecordedIndicationSoundScreen -> IndicationRecordedScreen()
-        IndicationSettingsScreenDestination.ErrorIndicationSoundScreen    -> IndicationWakeScreen()
+        IndicationSettingsScreenDestination.ErrorIndicationSoundScreen    -> IndicationErrorScreen()
     }
 }
 
