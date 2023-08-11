@@ -94,10 +94,11 @@ android {
 
     packaging {
         //else netty finds multiple INDEX.LIST files
-        resources.pickFirsts.add("META-INF/INDEX.LIST")
+        resources.excludes.add("META-INF/LICENSE*.md")
+        resources.excludes.add("META-INF/versions/9/previous-compilation-data.bin")
+        resources.excludes.add("META-INF/INDEX.LIST")
         resources.pickFirsts.add("META-INF/io.netty.versions.properties")
         resources.pickFirsts.add("META-INF/.*")
-        resources.excludes.add("META-INF/LICENSE*.md")
         resources.pickFirsts.add("BuildConfig.kt")
         resources.pickFirsts.add("BuildConfig.dex")
         jniLibs.keepDebugSymbols.add("**/libpv_porcupine.so")

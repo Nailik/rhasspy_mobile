@@ -1,16 +1,3 @@
 [
-  "fix Recording file wrong wav header",
-  "fix SilenceDetection Settings page",
-  "update add manual Theme selection",
-  "fix wake sound not played on some devices",
-  "fix indication navigation",
-  "fix Disable DialogManager not starting WakeWord",
-  "fix android media player stop error",
-  "enabled to set app as android default assistant",
-  "fix check for Certificate file before starting WebServer",
-  "scan HomeAssistant Access Token via QR-Code",
-  "update show Indication state on start screen",
-  "update List loosing scroll state on navigation",
-  "update Text Input next Button improvements",
-  "fix Silence Detection Ui issue"
+  "update custom chrome tabs"
 ]

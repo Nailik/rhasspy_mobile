@@ -14,6 +14,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
 import co.touchlab.kermit.Logger
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
@@ -152,8 +153,7 @@ internal actual class ExternalResultRequest actual constructor(
                 }
 
             is OpenLink                           ->
-                Intent().apply {
-                    action = Intent.ACTION_VIEW
+                CustomTabsIntent.Builder().build().intent.apply {
                     data = Uri.parse(intention.link.url)
                 }
 
