@@ -14,6 +14,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.viewstate.TextWrapper
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.testTag
@@ -23,7 +24,7 @@ fun Dialog(
     testTag: TestTag,
     icon: ImageVector? = null,
     title: StableStringResource? = null,
-    message: Any,
+    message: TextWrapper,
     confirmLabel: StableStringResource,
     dismissLabel: StableStringResource? = null,
     onConfirm: () -> Unit,
@@ -35,13 +36,34 @@ fun Dialog(
         testTag = testTag,
         icon = icon,
         title = title,
-        supportingText = {
-            when (message) {
-                is StableStringResource -> Text(message)
-                is String               -> Text(message)
-                else                    -> Text(message.toString())
-            }
-        },
+        supportingText = { Text(wrapper = message) },
+        confirmLabel = confirmLabel,
+        dismissLabel = dismissLabel,
+        onConfirm = onConfirm,
+        onDismiss = onDismiss,
+        onClose = onClose
+    )
+
+}
+
+@Composable
+fun Dialog(
+    testTag: TestTag,
+    icon: ImageVector? = null,
+    title: StableStringResource? = null,
+    message: StableStringResource,
+    confirmLabel: StableStringResource,
+    dismissLabel: StableStringResource? = null,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    onClose: () -> Unit = onDismiss //outside click
+) {
+
+    Dialog(
+        testTag = testTag,
+        icon = icon,
+        title = title,
+        supportingText = { Text(resource = message) },
         confirmLabel = confirmLabel,
         dismissLabel = dismissLabel,
         onConfirm = onConfirm,
@@ -162,10 +184,14 @@ private fun Dialog(
         //Scrim
         Surface(
             modifier = modifier
-                .fillMaxSize()
-                .clickable(enabled = dismissOnOutside, onClick = onDismissRequest),
+                .fillMaxSize(),
             color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f)
         ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable(enabled = dismissOnOutside, onClick = onDismissRequest)
+            )
 
             //Container
             Surface(
@@ -173,8 +199,7 @@ private fun Dialog(
                     .widthIn(min = 280.dp, max = 560.dp)
                     .padding(48.dp)
                     .wrapContentHeight()
-                    .clip(RoundedCornerShape(28.dp))
-                    .clickable(enabled = false) { },
+                    .clip(RoundedCornerShape(28.dp)),
                 shape = RoundedCornerShape(28.dp),
                 color = MaterialTheme.colorScheme.surface,
                 tonalElevation = 6.dp

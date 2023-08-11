@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.platformspecific.language
 
-import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import dev.icerock.moko.resources.desc.StringDesc
@@ -12,13 +11,10 @@ import org.rhasspy.mobile.data.language.LanguageType
 internal actual class LanguageUtils : ILanguageUtils {
 
     actual override fun getDeviceLanguage(): LanguageType {
-        Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-        return LocaleListCompat.getDefault().getFirstMatch(arrayOf("en", "de")).let {
-            when (it?.language) {
-                "en" -> LanguageType.English
-                "de" -> LanguageType.German
-                else -> LanguageType.English
-            }
+        return when (LocaleListCompat.getDefault().getFirstMatch(arrayOf("en", "de"))?.language) {
+            "en" -> LanguageType.English
+            "de" -> LanguageType.German
+            else -> LanguageType.English
         }
     }
 

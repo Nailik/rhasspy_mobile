@@ -113,18 +113,18 @@ fun Long?.toLongOrZero(): Long = this ?: 0
 fun Int?.toStringOrEmpty(): String = this?.toString() ?: ""
 fun Long?.toStringOrEmpty(): String = this?.toString() ?: ""
 fun String?.toLongOrNullOrConstant(): Long? =
-    this?.let {
-        if (it.length > 10) this.substring(0..9).toLong() else it.trimTrailingZeros()
+    this?.replace(" ", "")?.let {
+        if (it.length > 10) this.substring(0..9).toLong() else it.trim().trimTrailingZeros()
             ?.toLongOrNull()
     }
 
 fun String?.toIntOrNullOrConstant(): Int? =
-    this?.let {
+    this?.replace(" ", "")?.let {
         if (it.length > 10) this.substring(0..9).toInt() else it.trimTrailingZeros()
             ?.toIntOrNull()
     }
 
-fun String?.trimTrailingZeros(): String? {
+private fun String?.trimTrailingZeros(): String? {
     if (this == null) return null
     val result = this.replaceFirst(Regex("^0*"), "")
     return if (result.isEmpty() && this.isNotEmpty()) {

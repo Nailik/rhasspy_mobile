@@ -10,7 +10,6 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.resource.readToString
-import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
@@ -27,7 +26,7 @@ class MainScreenViewStateCreator(
             navigator.topScreen,
             AppSetting.isShowLogEnabled.data,
             AppSetting.didShowCrashlyticsDialog.data,
-            AppSetting.didShowChangelogDialog.data,
+            AppSetting.didShowChangelogDialog.data
         ).mapReadonlyState {
             getViewState()
         }
@@ -36,13 +35,13 @@ class MainScreenViewStateCreator(
 
     private fun getViewState(): MainScreenViewState {
         return MainScreenViewState(
-            bottomNavigationIndex = (navigator.topScreen.value as? MainScreenNavigationDestination?)?.ordinal ?: 0,
+            bottomNavigationIndex = (navigator.topScreen.value as? MainScreenNavigationDestination?)?.ordinal ?: 1,
             isShowLogEnabled = AppSetting.isShowLogEnabled.value,
-            isShowCrashlyticsDialog = !AppSetting.didShowCrashlyticsDialog.value && !isDebug(),
+            isShowCrashlyticsDialog = !AppSetting.didShowCrashlyticsDialog.value,
             changelog = Json.decodeFromString<JsonArray>(MR.files.changelog.readToString(nativeApplication))
                 .map { "· ${it.jsonPrimitive.content}\n" }
                 .toImmutableList(),
-            isChangelogDialogVisible = AppSetting.didShowChangelogDialog.value < BuildKonfig.versionCode,
+            isChangelogDialogVisible = AppSetting.didShowChangelogDialog.value < BuildKonfig.versionCode
         )
     }
 }

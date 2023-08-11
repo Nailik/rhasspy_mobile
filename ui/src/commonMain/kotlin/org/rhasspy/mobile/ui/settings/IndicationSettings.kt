@@ -42,12 +42,13 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoun
 /**
  * indication sounds
  */
+
 @Composable
-fun IndicationErrorScreen() {
+fun IndicationWakeScreen() {
     IndicationSoundScreen(
-        viewModel = LocalViewModelFactory.current.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
-        screen = ErrorIndicationSoundScreen,
-        title = MR.strings.errorSound.stable
+        viewModel = LocalViewModelFactory.current.getViewModel<WakeIndicationSoundSettingsViewModel>(),
+        screen = WakeIndicationSoundScreen,
+        title = MR.strings.wakeSound.stable
     )
 }
 
@@ -61,11 +62,11 @@ fun IndicationRecordedScreen() {
 }
 
 @Composable
-fun IndicationWakeScreen() {
+fun IndicationErrorScreen() {
     IndicationSoundScreen(
-        viewModel = LocalViewModelFactory.current.getViewModel<WakeIndicationSoundSettingsViewModel>(),
-        screen = WakeIndicationSoundScreen,
-        title = MR.strings.wakeSound.stable
+        viewModel = LocalViewModelFactory.current.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
+        screen = ErrorIndicationSoundScreen,
+        title = MR.strings.errorSound.stable
     )
 }
 
@@ -138,7 +139,6 @@ fun IndicationSettingsOverviewScreen() {
 /**
  * overview page for indication settings
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SoundIndicationSettingsOverview(
     soundIndicationOutputOption: AudioOutputOption,

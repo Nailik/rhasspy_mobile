@@ -10,6 +10,7 @@ import org.rhasspy.mobile.logic.services.dialog.dialogmanager.IDialogManager
 import org.rhasspy.mobile.logic.services.intenthandling.IIntentHandlingService
 import org.rhasspy.mobile.logic.services.intentrecognition.IIntentRecognitionService
 import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
+import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.Data
 
 class DialogManagerDisabled(
@@ -18,9 +19,14 @@ class DialogManagerDisabled(
     private val intentRecognitionService: IIntentRecognitionService,
     private val intentHandlingService: IIntentHandlingService,
     private val dialogManagerService: IDialogManagerService,
+    private val wakeWordService: IWakeWordService,
 ) : IDialogManager {
 
     private val logger = Logger.withTag("DialogManagerDisabled")
+
+    fun onInit() {
+        wakeWordService.startDetection()
+    }
 
     override fun onAction(action: DialogServiceMiddlewareAction) {
         logger.d { "action $action" }

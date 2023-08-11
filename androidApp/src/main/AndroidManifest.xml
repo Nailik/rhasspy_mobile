@@ -53,6 +53,20 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="org.rhasspy.mobile.app.AssistantActivity"
+            android:autoRemoveFromRecents="true"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:showWhenLocked="true"
+            android:theme="@style/AppTheme.Assistant"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.ASSIST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <receiver
             android:name="org.rhasspy.mobile.app.StartRecordingReceiver"
             android:exported="true"

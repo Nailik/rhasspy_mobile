@@ -24,6 +24,8 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.utils.ListType.SettingsScreenList
+import org.rhasspy.mobile.ui.utils.rememberForeverLazyListState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.SettingsScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.*
@@ -78,11 +80,14 @@ fun SettingsScreenContent(
         },
     ) { paddingValues ->
 
+        val lazyListState = rememberForeverLazyListState(SettingsScreenList)
+
         LazyColumn(
             Modifier
                 .testTag(TestTag.List)
                 .padding(paddingValues)
-                .fillMaxSize()
+                .fillMaxSize(),
+            state = lazyListState,
         ) {
 
             item {
@@ -170,9 +175,9 @@ private fun Language(
 ) {
 
     SettingsListItem(
-        text = MR.strings.language.stable,
-        secondaryText = viewState.currentLanguage.text,
-        destination = LanguageSettingsScreen,
+        text = MR.strings.theme_and_language.stable,
+        secondaryText = "${translate(viewState.currentTheme.text)} | ${translate(viewState.currentLanguage.text)}",
+        destination = AppearanceSettingsScreen,
         onEvent = onEvent
     )
 

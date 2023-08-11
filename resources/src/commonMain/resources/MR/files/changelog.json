@@ -1,12 +1,16 @@
 [
-  "Wiki Documentation",
-  "Dialog screen",
-  "Porcupine 2.2.2, new languages and WakeWords",
-  "Audio Focus when recording",
-  "Custom Recording Format",
-  "Improved Silence Detection",
-  "Improved MQTT and Http Api",
-  "Multiplatform Ui (Android, iOS)",
-  "Ui Improvements",
-  "Overall Bugfixes"
+  "fix Recording file wrong wav header",
+  "fix SilenceDetection Settings page",
+  "update add manual Theme selection",
+  "fix wake sound not played on some devices",
+  "fix indication navigation",
+  "fix Disable DialogManager not starting WakeWord",
+  "fix android media player stop error",
+  "enabled to set app as android default assistant",
+  "fix check for Certificate file before starting WebServer",
+  "scan HomeAssistant Access Token via QR-Code",
+  "update show Indication state on start screen",
+  "update List loosing scroll state on navigation",
+  "update Text Input next Button improvements",
+  "fix Silence Detection Ui issue"
 ]

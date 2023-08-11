@@ -5,7 +5,6 @@ import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -35,6 +34,8 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.utils.ListType.DialogScreenList
+import org.rhasspy.mobile.ui.utils.rememberForeverLazyListState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.DialogScreen
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogActionViewState
@@ -111,19 +112,19 @@ private fun DialogScreenContent(
     onEvent: (DialogScreenUiEvent) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val scrollState = rememberLazyListState()
+    val lazyListState = rememberForeverLazyListState(DialogScreenList)
 
     if (isLogAutoscroll) {
         LaunchedEffect(history.size) {
             coroutineScope.launch {
                 if (history.isNotEmpty()) {
-                    scrollState.animateScrollToItem(history.size - 1)
+                    lazyListState.animateScrollToItem(history.size - 1)
                 }
             }
         }
     }
 
-    val isDraggedState by scrollState.interactionSource.collectIsDraggedAsState()
+    val isDraggedState by lazyListState.interactionSource.collectIsDraggedAsState()
     LaunchedEffect(isDraggedState) {
         if (isDraggedState) {
             onEvent(ManualListScroll)
@@ -134,7 +135,7 @@ private fun DialogScreenContent(
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxSize(),
-        state = scrollState
+        state = lazyListState
     ) {
 
         items(history) { item ->

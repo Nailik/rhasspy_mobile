@@ -35,6 +35,8 @@ sealed interface ExternalResultRequestIntention<R> {
 
     data object OpenOverlaySettings : ExternalResultRequestIntention<Unit>
 
+    data object ScanQRCode : ExternalResultRequestIntention<String>
+
     data object OpenAppSettings : ExternalResultRequestIntention<Unit>
 
     data class OpenLink(
