@@ -26,6 +26,7 @@ class SilenceDetectionSettingsViewModel(
 ) : ScreenViewModel() {
 
     private val dispatcher by inject<IDispatcherProvider>()
+    private var wakeWordSetting = AppSetting.isHotWordEnabled.value
 
     val viewState: StateFlow<SilenceDetectionSettingsViewState> = viewStateCreator()
 
@@ -33,7 +34,7 @@ class SilenceDetectionSettingsViewModel(
         viewModelScope.launch(dispatcher.IO) {
             nativeApplication.isAppInBackground.collect { isAppInBackground ->
                 if (isAppInBackground) {
-                    audioRecorder.stopRecording()
+                    stopRecording()
                 }
             }
         }
@@ -68,16 +69,40 @@ class SilenceDetectionSettingsViewModel(
     private fun onAction(action: Action) {
         when (action) {
             ToggleAudioLevelTest -> requireMicrophonePermission {
-                if (audioRecorder.isRecording.value) audioRecorder.stopRecording()
-                else audioRecorder.startRecording(
-                    audioRecorderChannelType = ConfigurationSetting.speechToTextAudioRecorderChannel.value,
-                    audioRecorderEncodingType = ConfigurationSetting.speechToTextAudioRecorderEncoding.value,
-                    audioRecorderSampleRateType = ConfigurationSetting.speechToTextAudioRecorderSampleRate.value
-                )
+                if (audioRecorder.isRecording.value) {
+                    stopRecording()
+                } else {
+                    startRecording()
+                }
             }
 
             is BackClick         -> navigator.onBackPressed()
         }
+    }
+
+    override fun onDisposed() {
+        stopRecording()
+        super.onDisposed()
+    }
+
+
+    private fun startRecording() {
+        //save to restore later
+        wakeWordSetting = AppSetting.isHotWordEnabled.value
+        //disable so recording is stopped
+        AppSetting.isHotWordEnabled.value = false
+        //start this recording
+        audioRecorder.startRecording(
+            audioRecorderChannelType = ConfigurationSetting.speechToTextAudioRecorderChannel.value,
+            audioRecorderEncodingType = ConfigurationSetting.speechToTextAudioRecorderEncoding.value,
+            audioRecorderSampleRateType = ConfigurationSetting.speechToTextAudioRecorderSampleRate.value
+        )
+    }
+
+    private fun stopRecording() {
+        audioRecorder.stopRecording()
+        //reset to previous setting
+        AppSetting.isHotWordEnabled.value = wakeWordSetting
     }
 
 }

@@ -1,4 +1,5 @@
 [
+  "fix SilenceDetection Settings page",
   "update add manual Theme selection",
   "fix wake sound not played on some devices",
   "fix indication navigation",
