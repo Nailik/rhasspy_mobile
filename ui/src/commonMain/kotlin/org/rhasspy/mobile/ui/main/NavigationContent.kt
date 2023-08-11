@@ -82,7 +82,7 @@ private fun SettingsNavigationContent(
         SettingsScreenDestination.BackgroundServiceSettings -> BackgroundServiceSettingsContent()
         SettingsScreenDestination.DeviceSettings            -> DeviceSettingsContent()
         SettingsScreenDestination.IndicationSettings        -> IndicationSettingsOverviewScreen()
-        SettingsScreenDestination.LanguageSettingsScreen    -> LanguageSettingsScreenItemContent()
+        SettingsScreenDestination.AppearanceSettingsScreen  -> AppearanceSettingsScreenItemContent()
         SettingsScreenDestination.LogSettings               -> LogSettingsContent()
         SettingsScreenDestination.MicrophoneOverlaySettings -> MicrophoneOverlaySettingsContent()
         SettingsScreenDestination.SaveAndRestoreSettings    -> SaveAndRestoreSettingsContent()

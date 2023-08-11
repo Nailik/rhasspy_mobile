@@ -192,6 +192,11 @@
     <string name="test">Test</string>
     <string name="back">Back</string>
     <string name="language">Language</string>
+    <string name="theme_and_language">Theme &amp; Language</string>
+    <string name="theme">Theme</string>
+    <string name="system">System</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
     <string name="fileOpen">file</string>
     <string name="useCustomEndpoint">Custom Http Endpoint</string>
     <string name="textDefault">Default</string>

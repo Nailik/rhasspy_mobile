@@ -11,6 +11,7 @@ class SettingsScreenViewStateCreator {
 
         return combineStateFlow(
             AppSetting.languageType.data,
+            AppSetting.themeType.data,
             AppSetting.isBackgroundServiceEnabled.data,
             AppSetting.microphoneOverlaySizeOption.data,
             AppSetting.isSoundIndicationEnabled.data,
@@ -27,6 +28,7 @@ class SettingsScreenViewStateCreator {
     private fun getViewState(): SettingsScreenViewState {
         return SettingsScreenViewState(
             currentLanguage = AppSetting.languageType.value,
+            currentTheme = AppSetting.themeType.value,
             isBackgroundEnabled = AppSetting.isBackgroundServiceEnabled.value,
             microphoneOverlaySizeOption = AppSetting.microphoneOverlaySizeOption.value,
             isSoundIndicationEnabled = AppSetting.isSoundIndicationEnabled.value,

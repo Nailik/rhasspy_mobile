@@ -15,7 +15,6 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
-import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -31,8 +30,8 @@ import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
-import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsUiEvent.Change.SelectLanguageOption
+import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -91,7 +90,7 @@ class MicrophonePermissionTest : KoinComponent {
         //set english
         AppSetting.didShowCrashlyticsDialog.value = true
         AppSetting.didShowChangelogDialog.value = BuildConfig.VERSION_CODE
-        LanguageSettingsViewModel(get()).onEvent(SelectLanguageOption(LanguageType.English))
+        AppearanceSettingsViewModel(get()).onEvent(SelectLanguageOption(LanguageType.English))
     }
 
     /**

@@ -41,7 +41,7 @@ sealed interface NavigationDestination {
         BackgroundServiceSettings,
         DeviceSettings,
         IndicationSettings,
-        LanguageSettingsScreen,
+        AppearanceSettingsScreen,
         LogSettings,
         MicrophoneOverlaySettings,
         SaveAndRestoreSettings

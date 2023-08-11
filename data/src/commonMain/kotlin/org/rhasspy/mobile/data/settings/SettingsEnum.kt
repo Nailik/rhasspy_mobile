@@ -6,6 +6,7 @@ enum class SettingsEnum {
     ChangelogDialog,
     Crashlytics,
     LanguageOption,
+    ThemeOption,
     DialogAutoScroll,
 
     AutomaticSilenceDetection,

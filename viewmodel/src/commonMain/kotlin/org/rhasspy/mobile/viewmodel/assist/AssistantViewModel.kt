@@ -17,7 +17,7 @@ class AssistantViewModel(
 ) : ViewModel() {
 
     fun awaitIdle(function: () -> Unit) {
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             var isInitial = true
             indicationService.isShowVisualIndication.collect {
                 if (!it) {

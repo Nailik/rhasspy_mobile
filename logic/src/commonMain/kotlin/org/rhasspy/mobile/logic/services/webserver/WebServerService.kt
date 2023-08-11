@@ -106,7 +106,7 @@ internal class WebServerService(
             logger.d { "initialization" }
             _serviceState.value = ServiceState.Loading
 
-            if(params.isHttpServerSSLEnabled && !params.httpServerSSLKeyStoreFile.commonExists()) {
+            if (params.isHttpServerSSLEnabled && !params.httpServerSSLKeyStoreFile.commonExists()) {
                 _serviceState.value = ServiceState.Error(MR.strings.certificate_missing.stable)
                 return
             }
