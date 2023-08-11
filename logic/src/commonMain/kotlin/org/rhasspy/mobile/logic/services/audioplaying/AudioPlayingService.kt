@@ -114,7 +114,7 @@ internal class AudioPlayingService(
                 serviceMiddleware.action(PlayFinished(Source.Local))
             }
 
-            AudioPlayingOption.Disabled -> serviceMiddleware.action(PlayFinished(Source.Local))
+            AudioPlayingOption.Disabled   -> serviceMiddleware.action(PlayFinished(Source.Local))
         }
     }
 

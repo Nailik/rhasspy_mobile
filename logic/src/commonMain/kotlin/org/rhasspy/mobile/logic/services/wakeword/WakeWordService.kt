@@ -16,6 +16,7 @@ import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
+import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.porcupine.PorcupineWakeWordClient
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.resampler.Resampler
@@ -41,7 +42,8 @@ interface IWakeWordService : IService {
  */
 internal class WakeWordService(
     paramsCreator: WakeWordServiceParamsCreator,
-    private val audioRecorder: IAudioRecorder
+    private val audioRecorder: IAudioRecorder,
+    private val microphonePermission: IMicrophonePermission
 ) : IWakeWordService {
 
     override val logger = LogType.WakeWordService.logger()
@@ -154,6 +156,10 @@ internal class WakeWordService(
 
 
     private fun startPorcupine() {
+        if (!checkMicrophonePermission()) {
+            return
+        }
+
         initialize()
 
         _serviceState.value = porcupineWakeWordClient?.let { client ->
@@ -167,8 +173,18 @@ internal class WakeWordService(
         } ?: Error(MR.strings.notInitialized.stable)
     }
 
+    private fun checkMicrophonePermission(): Boolean {
+        if (!microphonePermission.granted.value) {
+            _serviceState.value = Error(MR.strings.microphonePermissionDenied.stable)
+        }
+        return microphonePermission.granted.value
+    }
 
     private fun startUdp() {
+        if (!checkMicrophonePermission()) {
+            return
+        }
+
         initialize()
 
         _serviceState.value = udpConnection?.let { client ->
@@ -245,7 +261,7 @@ internal class WakeWordService(
                 Success
             }
 
-            WakeWordOption.Disabled -> Disabled
+            WakeWordOption.Disabled  -> Disabled
         }
     }
 

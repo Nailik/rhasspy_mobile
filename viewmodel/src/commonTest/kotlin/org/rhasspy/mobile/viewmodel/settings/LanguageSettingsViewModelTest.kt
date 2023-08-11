@@ -7,8 +7,8 @@ import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.AppTest
-import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
-import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsUiEvent.Change.SelectLanguageOption
+import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsViewModel
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -18,7 +18,7 @@ class LanguageSettingsViewModelTest : AppTest() {
     @Mock
     lateinit var languageUtils: ILanguageUtils
 
-    private lateinit var languageSettingsViewModel: LanguageSettingsViewModel
+    private lateinit var appearanceSettingsViewModel: AppearanceSettingsViewModel
 
     override fun setUpMocks() = injectMocks(mocker)
 
@@ -30,7 +30,7 @@ class LanguageSettingsViewModelTest : AppTest() {
             }
         )
 
-        languageSettingsViewModel = get()
+        appearanceSettingsViewModel = get()
     }
 
     @Test
@@ -38,7 +38,7 @@ class LanguageSettingsViewModelTest : AppTest() {
         every { languageUtils.setLanguage(isAny()) } returns Unit
 
         LanguageType.values().forEach { language ->
-            languageSettingsViewModel.onEvent(SelectLanguageOption(language))
+            appearanceSettingsViewModel.onEvent(SelectLanguageOption(language))
 
             assertEquals(language, AppSetting.languageType.value)
             verify { languageUtils.setLanguage(language) }

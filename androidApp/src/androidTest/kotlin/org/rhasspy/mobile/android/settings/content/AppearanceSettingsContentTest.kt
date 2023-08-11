@@ -12,18 +12,18 @@ import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.language.LanguageType
-import org.rhasspy.mobile.ui.settings.LanguageSettingsScreenItemContent
-import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
-import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
+import org.rhasspy.mobile.ui.settings.AppearanceSettingsScreenItemContent
+import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsUiEvent.Change.SelectLanguageOption
 import kotlin.test.assertEquals
 
-class LanguageSettingsContentTest : FlakyTest() {
+class AppearanceSettingsContentTest : FlakyTest() {
 
-    private val viewModel = get<LanguageSettingsViewModel>()
+    private val viewModel = get<AppearanceSettingsViewModel>()
 
     @Composable
     override fun ComposableContent() {
-        LanguageSettingsScreenItemContent()
+        AppearanceSettingsScreenItemContent()
     }
 
     /**
@@ -78,7 +78,7 @@ class LanguageSettingsContentTest : FlakyTest() {
         composeTestRule.awaitIdle()
         assertEquals(LanguageType.German.code, StringDesc.localeType.systemLocale!!.language)
         //language german is saved
-        var newViewModel = LanguageSettingsViewModel(get())
+        var newViewModel = AppearanceSettingsViewModel(get())
         assertEquals(LanguageType.German, newViewModel.viewState.value.languageOption)
 
         //User clicks english
@@ -92,7 +92,7 @@ class LanguageSettingsContentTest : FlakyTest() {
         //StringDesc is English
         assertEquals(LanguageType.English.code, StringDesc.localeType.systemLocale!!.language)
         //language english is saved
-        newViewModel = LanguageSettingsViewModel(get())
+        newViewModel = AppearanceSettingsViewModel(get())
         assertEquals(LanguageType.English, newViewModel.viewState.value.languageOption)
     }
 

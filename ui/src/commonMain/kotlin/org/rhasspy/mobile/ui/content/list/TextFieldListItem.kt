@@ -40,6 +40,7 @@ fun TextFieldListItemVisibility(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     isLastItem: Boolean = true,
     onValueChange: ((String) -> Unit)? = null,
+    action: (@Composable () -> Unit)? = null,
 ) {
     var isShowPassword by rememberSaveable { mutableStateOf(false) }
 
@@ -66,7 +67,8 @@ fun TextFieldListItemVisibility(
                 )
             }
         },
-        visualTransformation = if (isShowPassword) VisualTransformation.None else PasswordVisualTransformation()
+        visualTransformation = if (isShowPassword) VisualTransformation.None else PasswordVisualTransformation(),
+        action = action,
     )
 }
 
@@ -84,6 +86,7 @@ fun TextFieldListItem(
     isLastItem: Boolean = true,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    action: (@Composable () -> Unit)? = null,
 ) {
     TextFieldListItem(
         modifier = modifier,
@@ -97,7 +100,8 @@ fun TextFieldListItem(
         keyboardActions = keyboardActions,
         isLastItem = isLastItem,
         trailingIcon = trailingIcon,
-        visualTransformation = visualTransformation
+        visualTransformation = visualTransformation,
+        action = action,
     )
 }
 
@@ -116,11 +120,13 @@ fun TextFieldListItem(
     isLastItem: Boolean = true,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    action: (@Composable () -> Unit)? = null,
 ) {
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
     ListElement(
-        modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester)
+        modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester),
+        trailing = action,
     ) {
         val coroutineScope = rememberCoroutineScope()
         val focusManager = LocalFocusManager.current
@@ -148,7 +154,7 @@ fun TextFieldListItem(
                 )
             } else {
                 KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    onNext = { focusManager.moveFocus(FocusDirection.Next) }
                 )
             },
             onValueChange = { onValueChange?.invoke(it) },

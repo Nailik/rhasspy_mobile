@@ -11,6 +11,8 @@ expect fun Path.Companion.commonInternalPath(
     fileName: String
 ): Path
 
+expect fun Path?.commonExists(): Boolean
+
 expect fun Path.commonDelete()
 
 expect fun Path.commonSize(): Long?

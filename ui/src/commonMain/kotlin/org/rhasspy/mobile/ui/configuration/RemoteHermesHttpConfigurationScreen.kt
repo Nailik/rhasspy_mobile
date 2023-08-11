@@ -81,7 +81,8 @@ private fun WebServerEditContent(
                 modifier = Modifier.testTag(TestTag.Port),
                 value = editData.httpClientServerEndpointPortText,
                 onValueChange = { onEvent(UpdateHttpClientServerEndpointPort(it)) },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                isLastItem = false
             )
         }
 

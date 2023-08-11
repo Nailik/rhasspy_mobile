@@ -6,6 +6,10 @@ on:
       - develop
     types: [ opened, labeled, synchronize ]
 
+concurrency:
+  group: build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
     if: (contains(github.event.pull_request.labels.*.name, 'automerge') == false)

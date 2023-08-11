@@ -7,6 +7,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
+import org.rhasspy.mobile.platformspecific.toLongOrNullOrConstant
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
@@ -25,6 +26,7 @@ class SilenceDetectionSettingsViewModel(
 ) : ScreenViewModel() {
 
     private val dispatcher by inject<IDispatcherProvider>()
+    private var wakeWordSetting = AppSetting.isHotWordEnabled.value
 
     val viewState: StateFlow<SilenceDetectionSettingsViewState> = viewStateCreator()
 
@@ -32,7 +34,7 @@ class SilenceDetectionSettingsViewModel(
         viewModelScope.launch(dispatcher.IO) {
             nativeApplication.isAppInBackground.collect { isAppInBackground ->
                 if (isAppInBackground) {
-                    audioRecorder.stopRecording()
+                    stopRecording()
                 }
             }
         }
@@ -57,26 +59,50 @@ class SilenceDetectionSettingsViewModel(
                     } else 0f
 
             is UpdateSilenceDetectionMinimumTime         ->
-                AppSetting.automaticSilenceDetectionMinimumTime.value = change.time.toLongOrNull()
+                AppSetting.automaticSilenceDetectionMinimumTime.value = change.time.toLongOrNullOrConstant()
 
             is UpdateSilenceDetectionTime                ->
-                AppSetting.automaticSilenceDetectionTime.value = change.time.toLongOrNull()
+                AppSetting.automaticSilenceDetectionTime.value = change.time.toLongOrNullOrConstant()
         }
     }
 
     private fun onAction(action: Action) {
         when (action) {
             ToggleAudioLevelTest -> requireMicrophonePermission {
-                if (audioRecorder.isRecording.value) audioRecorder.stopRecording()
-                else audioRecorder.startRecording(
-                    audioRecorderChannelType = ConfigurationSetting.speechToTextAudioRecorderChannel.value,
-                    audioRecorderEncodingType = ConfigurationSetting.speechToTextAudioRecorderEncoding.value,
-                    audioRecorderSampleRateType = ConfigurationSetting.speechToTextAudioRecorderSampleRate.value
-                )
+                if (audioRecorder.isRecording.value) {
+                    stopRecording()
+                } else {
+                    startRecording()
+                }
             }
 
             is BackClick         -> navigator.onBackPressed()
         }
+    }
+
+    override fun onDisposed() {
+        stopRecording()
+        super.onDisposed()
+    }
+
+
+    private fun startRecording() {
+        //save to restore later
+        wakeWordSetting = AppSetting.isHotWordEnabled.value
+        //disable so recording is stopped
+        AppSetting.isHotWordEnabled.value = false
+        //start this recording
+        audioRecorder.startRecording(
+            audioRecorderChannelType = ConfigurationSetting.speechToTextAudioRecorderChannel.value,
+            audioRecorderEncodingType = ConfigurationSetting.speechToTextAudioRecorderEncoding.value,
+            audioRecorderSampleRateType = ConfigurationSetting.speechToTextAudioRecorderSampleRate.value
+        )
+    }
+
+    private fun stopRecording() {
+        audioRecorder.stopRecording()
+        //reset to previous setting
+        AppSetting.isHotWordEnabled.value = wakeWordSetting
     }
 
 }

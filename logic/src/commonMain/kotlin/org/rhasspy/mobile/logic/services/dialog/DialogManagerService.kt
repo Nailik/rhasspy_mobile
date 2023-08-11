@@ -91,7 +91,10 @@ internal class DialogManagerService(
                 Success
             }
 
-            DialogManagementOption.Disabled   -> Disabled
+            DialogManagementOption.Disabled   -> {
+                dialogManagerDisabled.onInit()
+                Disabled
+            }
         }
     }
 

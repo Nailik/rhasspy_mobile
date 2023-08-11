@@ -149,9 +149,9 @@ internal class SpeechToTextService(
 
         //add wav header to file
         val header = getWavHeader(
-            audioRecorderChannelType = params.audioRecorderChannelType,
-            audioRecorderEncodingType = params.audioRecorderEncodingType,
-            audioRecorderSampleRateType = params.audioRecorderSampleRateType,
+            audioRecorderChannelType = params.audioOutputChannelType,
+            audioRecorderEncodingType = params.audioOutputEncodingType,
+            audioRecorderSampleRateType = params.audioOutputSampleRateType,
             audioSize = fileHandle?.size() ?: 0
         )
 

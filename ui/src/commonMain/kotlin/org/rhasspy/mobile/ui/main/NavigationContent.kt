@@ -18,14 +18,12 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.*
 
 @Composable
 fun NavigationContent(
-    screen: NavigationDestination,
-    bottomNavigation: @Composable () -> Unit
+    screen: NavigationDestination
 ) {
-    //only animates when the type changes
     Crossfade(targetState = screen) {
         when (it) {
             is ConfigurationScreenNavigationDestination   -> ConfigurationNavigationContent(it)
-            is MainScreenNavigationDestination            -> MainNavigationContent(it, bottomNavigation)
+            is MainScreenNavigationDestination            -> MainNavigationContent(it)
             is SettingsScreenDestination                  -> SettingsNavigationContent(it)
             is WakeWordConfigurationScreenDestination     -> WakeWordNavigationContent(it)
             is IndicationSettingsScreenDestination        -> IndicationNavigationContent(it)
@@ -37,8 +35,7 @@ fun NavigationContent(
 
 @Composable
 private fun MainNavigationContent(
-    screen: MainScreenNavigationDestination,
-    bottomNavigation: @Composable () -> Unit
+    screen: MainScreenNavigationDestination
 ) {
     Column {
         Box(modifier = Modifier.weight(1f)) {
@@ -51,7 +48,7 @@ private fun MainNavigationContent(
             }
         }
 
-        bottomNavigation()
+        BottomNavigation()
     }
 }
 
@@ -85,7 +82,7 @@ private fun SettingsNavigationContent(
         SettingsScreenDestination.BackgroundServiceSettings -> BackgroundServiceSettingsContent()
         SettingsScreenDestination.DeviceSettings            -> DeviceSettingsContent()
         SettingsScreenDestination.IndicationSettings        -> IndicationSettingsOverviewScreen()
-        SettingsScreenDestination.LanguageSettingsScreen    -> LanguageSettingsScreenItemContent()
+        SettingsScreenDestination.AppearanceSettingsScreen  -> AppearanceSettingsScreenItemContent()
         SettingsScreenDestination.LogSettings               -> LogSettingsContent()
         SettingsScreenDestination.MicrophoneOverlaySettings -> MicrophoneOverlaySettingsContent()
         SettingsScreenDestination.SaveAndRestoreSettings    -> SaveAndRestoreSettingsContent()
@@ -119,8 +116,10 @@ private fun IndicationNavigationContent(
     screen: IndicationSettingsScreenDestination
 ) {
     when (screen) {
-        IndicationSettingsScreenDestination.WakeIndicationSoundScreen     -> IndicationErrorScreen()
+        IndicationSettingsScreenDestination.WakeIndicationSoundScreen     -> IndicationWakeScreen()
         IndicationSettingsScreenDestination.RecordedIndicationSoundScreen -> IndicationRecordedScreen()
-        IndicationSettingsScreenDestination.ErrorIndicationSoundScreen    -> IndicationWakeScreen()
+        IndicationSettingsScreenDestination.ErrorIndicationSoundScreen    -> IndicationErrorScreen()
     }
 }
+
+

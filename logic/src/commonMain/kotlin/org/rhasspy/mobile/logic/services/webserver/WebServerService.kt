@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
@@ -40,12 +41,14 @@ import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
 import org.rhasspy.mobile.logic.services.webserver.WebServerResult.*
 import org.rhasspy.mobile.logic.services.webserver.WebServerServiceErrorType.WakeOptionInvalid
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.extensions.commonExists
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.ktor.getEngine
 import org.rhasspy.mobile.platformspecific.ktor.installCallLogging
 import org.rhasspy.mobile.platformspecific.ktor.installCompression
 import org.rhasspy.mobile.platformspecific.ktor.installConnector
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.resources.MR
 
 interface IWebServerService : IService {
 
@@ -102,6 +105,11 @@ internal class WebServerService(
         if (params.isHttpServerEnabled) {
             logger.d { "initialization" }
             _serviceState.value = ServiceState.Loading
+
+            if (params.isHttpServerSSLEnabled && !params.httpServerSSLKeyStoreFile.commonExists()) {
+                _serviceState.value = ServiceState.Error(MR.strings.certificate_missing.stable)
+                return
+            }
 
             try {
                 server = buildServer()
