@@ -28,7 +28,7 @@ class AudioFocusSettingsViewModel(
             is SetAudioFocusOnNotification -> AppSetting.isAudioFocusOnNotification.value = change.enabled
             is SetAudioFocusOnRecord       -> AppSetting.isAudioFocusOnRecord.value = change.enabled
             is SetAudioFocusOnSound        -> AppSetting.isAudioFocusOnSound.value = change.enabled
-            is SetStopRecording            -> AppSetting.isPauseRecordingOnPlayback.value = change.enabled
+            is SetStopRecording            -> AppSetting.isPauseRecordingOnMedia.value = change.enabled
         }
     }
 

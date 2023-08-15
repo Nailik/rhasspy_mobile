@@ -122,10 +122,8 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
             _isRecording.value = true
             recorder?.startRecording()
 
-            if (isAutoPauseOnMediaPlayback) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    audioManger?.registerAudioPlaybackCallback(audioPlaybackCallback, null)
-                }
+            if (isAutoPauseOnMediaPlayback && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                audioManger?.registerAudioPlaybackCallback(audioPlaybackCallback, null)
             }
 
             read(tempBufferSize)
@@ -141,22 +139,22 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
         override fun onPlaybackConfigChanged(configs: MutableList<AudioPlaybackConfiguration>?) {
             super.onPlaybackConfigChanged(configs)
 
-            audioManger?.also { audioManager ->
-                if (audioManager.isMusicActive) {
-                    pauseRecording()
-                } else {
-                    resumeRecording()
-                }
+            if (configs?.isNotEmpty() == true) {
+                pauseRecording()
+            } else {
+                resumeRecording()
             }
         }
     }
 
     private fun pauseRecording() {
+        logger.v { "pauseRecording" }
         _isRecording.value = false
         recorder?.stop()
     }
 
     private fun resumeRecording() {
+        logger.v { "resumeRecording" }
         if (shouldRecord) {
             _isRecording.value = true
             recorder?.startRecording()

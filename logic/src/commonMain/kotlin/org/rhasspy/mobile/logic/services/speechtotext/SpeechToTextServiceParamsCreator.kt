@@ -11,7 +11,7 @@ internal class SpeechToTextServiceParamsCreator {
     operator fun invoke(): StateFlow<SpeechToTextServiceParams> {
 
         return combineStateFlow(
-            AppSetting.isPauseRecordingOnPlayback.data,
+            AppSetting.isPauseRecordingOnMedia.data,
             ConfigurationSetting.speechToTextOption.data,
             ConfigurationSetting.dialogManagementOption.data,
             ConfigurationSetting.speechToTextAudioRecorderChannel.data,
@@ -28,7 +28,7 @@ internal class SpeechToTextServiceParamsCreator {
 
     private fun getParams(): SpeechToTextServiceParams {
         return SpeechToTextServiceParams(
-            isAutoPauseOnMediaPlayback = AppSetting.isPauseRecordingOnPlayback.value,
+            isAutoPauseOnMediaPlayback = AppSetting.isPauseRecordingOnMedia.value,
             speechToTextOption = ConfigurationSetting.speechToTextOption.value,
             dialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
             audioRecorderChannelType = ConfigurationSetting.speechToTextAudioRecorderChannel.value,

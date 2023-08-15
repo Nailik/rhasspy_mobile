@@ -58,13 +58,15 @@ fun AudioFocusSettingsContent() {
 
             }
 
-            //switch to set if recording should stop
-            SwitchListItem(
-                modifier = Modifier.testTag(TestTag.AudioFocusStopRecording),
-                text = MR.strings.autoStopRecording.stable,
-                isChecked = viewState.isAutoStopRecording,
-                onCheckedChange = { viewModel.onEvent(SetStopRecording(it)) }
-            )
+            if (viewState.isPauseRecordingOnMediaFeatureEnabled) {
+                //switch to set if recording should stop
+                SwitchListItem(
+                    modifier = Modifier.testTag(TestTag.AudioFocusStopRecording),
+                    text = MR.strings.autoStopRecording.stable,
+                    isChecked = viewState.isPauseRecordingOnMedia,
+                    onCheckedChange = { viewModel.onEvent(SetStopRecording(it)) }
+                )
+            }
 
         }
     }

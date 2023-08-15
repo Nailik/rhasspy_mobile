@@ -52,7 +52,7 @@ enum class SettingsEnum {
     AudioFocusOnSound,
     AudioFocusOnRecord,
     AudioFocusOnDialog,
-    AudioRecorderPauseOnPlayback,
+    AudioRecorderPauseRecordingOnMedia,
 
     ShowLog,
     LogAudioFrames,

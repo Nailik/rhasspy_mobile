@@ -169,6 +169,7 @@ internal class WakeWordService(
                 ServiceState.Exception(it)
             } ?: Success
         } ?: Error(MR.strings.notInitialized.stable)
+        startRecording()
     }
 
     private fun startUdp() {
@@ -179,7 +180,10 @@ internal class WakeWordService(
                 ServiceState.Exception(it)
             } ?: Success
         } ?: Error(MR.strings.notInitialized.stable)
+        startRecording()
+    }
 
+    private fun startRecording() {
         if (_serviceState.value == Success) {
             if (recording == null) {
                 audioRecorder.startRecording(
@@ -203,6 +207,7 @@ internal class WakeWordService(
      * disposes old if necessary and reinitialize wake word
      */
     private fun initialize() {
+        logger.d { "check initialize" }
         initializedParams?.also {
             //ignore enabled flag when comparing
             if (it == params.copy(isEnabled = it.isEnabled)) {
@@ -220,7 +225,6 @@ internal class WakeWordService(
 
         initializedParams = params
 
-        logger.d { "initialization" }
         _serviceState.value = when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
                 _serviceState.value = Loading
@@ -253,13 +257,13 @@ internal class WakeWordService(
     }
 
     private fun disposeOld() {
-        logger.d { "stop" }
+        logger.d { "disposeOld" }
         recording?.cancel()
         recording = null
         try {
             porcupineWakeWordClient?.close()
         } catch (e: Exception) {
-            logger.e(e) { "porcupineWakeWordClient stop" }
+            logger.e(e) { "porcupineWakeWordClient disposeOld" }
         }
         udpConnection?.close()
         udpConnection = null

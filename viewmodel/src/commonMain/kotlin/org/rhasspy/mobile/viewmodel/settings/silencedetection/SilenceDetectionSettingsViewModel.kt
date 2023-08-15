@@ -99,7 +99,7 @@ class SilenceDetectionSettingsViewModel(
             audioRecorderOutputChannelType = ConfigurationSetting.speechToTextAudioOutputChannel.value,
             audioRecorderOutputEncodingType = ConfigurationSetting.speechToTextAudioOutputEncoding.value,
             audioRecorderOutputSampleRateType = ConfigurationSetting.speechToTextAudioOutputSampleRate.value,
-            isAutoPauseOnMediaPlayback = AppSetting.isPauseRecordingOnPlayback.value,
+            isAutoPauseOnMediaPlayback = AppSetting.isPauseRecordingOnMedia.value,
         )
     }
 

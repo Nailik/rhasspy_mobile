@@ -16,7 +16,7 @@ internal class WakeWordServiceParamsCreator(
         return combineStateFlow(
             microphonePermission.granted,
             AppSetting.isHotWordEnabled.data,
-            AppSetting.isPauseRecordingOnPlayback.data,
+            AppSetting.isPauseRecordingOnMedia.data,
             ConfigurationSetting.wakeWordAudioRecorderChannel.data,
             ConfigurationSetting.wakeWordAudioRecorderEncoding.data,
             ConfigurationSetting.wakeWordAudioRecorderSampleRate.data,
@@ -40,7 +40,7 @@ internal class WakeWordServiceParamsCreator(
         return WakeWordServiceParams(
             isMicrophonePermissionEnabled = microphonePermission.granted.value,
             isEnabled = AppSetting.isHotWordEnabled.value,
-            isAutoPauseOnMediaPlayback = AppSetting.isPauseRecordingOnPlayback.value,
+            isAutoPauseOnMediaPlayback = AppSetting.isPauseRecordingOnMedia.value,
             audioRecorderChannelType = ConfigurationSetting.wakeWordAudioRecorderChannel.value,
             audioRecorderEncodingType = ConfigurationSetting.wakeWordAudioRecorderEncoding.value,
             audioRecorderSampleRateType = ConfigurationSetting.wakeWordAudioRecorderSampleRate.value,
