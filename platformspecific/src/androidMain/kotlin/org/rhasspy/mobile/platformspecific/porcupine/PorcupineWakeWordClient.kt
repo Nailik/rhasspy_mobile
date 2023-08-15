@@ -5,8 +5,6 @@ import co.touchlab.kermit.Logger
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
-import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
@@ -19,22 +17,18 @@ import java.io.File
  * checks for audio permission
  */
 actual class PorcupineWakeWordClient actual constructor(
-    private val audioRecorderSampleRateType: AudioFormatSampleRateType,
-    private val audioRecorderChannelType: AudioFormatChannelType,
     private val wakeWordPorcupineAccessToken: String,
     private val wakeWordPorcupineKeywordDefaultOptions: ImmutableList<PorcupineDefaultKeyword>,
     private val wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
     private val wakeWordPorcupineLanguage: PorcupineLanguageOption,
     private val onKeywordDetected: (hotWord: String) -> Unit,
-    private val onError: (Exception) -> Unit
 ) : KoinComponent {
 
     private val logger = Logger.withTag("PorcupineWakeWordClient")
 
     //manager to stop start and reload porcupine
-    private var porcupineClient: IPorcupineClient? = null
+    private var porcupineClient: PorcupineClient? = null
 
-    private var isStarted = false
     private val context = get<NativeApplication>()
 
     /**
@@ -47,34 +41,15 @@ actual class PorcupineWakeWordClient actual constructor(
      * tries to start porcupine
      */
     actual fun start(): Exception? {
-        if (isStarted) return null
-
         if (porcupineClient == null) {
-            val exception = initialize()
-            if (exception != null) return exception
+            return initialize()
         }
 
-        return porcupineClient?.let {
-            return try {
-                isStarted = true
-                it.start()
-                null
-            } catch (exception: Exception) {
-                isStarted = false
-                exception
-            }
-        } ?: run {
-            logger.a { "Porcupine start but porcupineManager not initialized" }
-            Exception("notInitialized")
-        }
+        return null
     }
 
-    /**
-     * stop wake word detected
-     */
-    actual fun stop() {
-        porcupineClient?.stop()
-        isStarted = false
+    actual fun audioFrame(data: ByteArray) {
+        porcupineClient?.audioFrame(data)
     }
 
     /**
@@ -83,7 +58,6 @@ actual class PorcupineWakeWordClient actual constructor(
     actual fun close() {
         porcupineClient?.close()
         porcupineClient = null
-        isStarted = false
     }
 
     /**
@@ -93,27 +67,13 @@ actual class PorcupineWakeWordClient actual constructor(
         return try {
             File(context.filesDir, "sounds").mkdirs()
 
-            porcupineClient = if (audioRecorderSampleRateType != AudioFormatSampleRateType.SR16000 || audioRecorderChannelType != AudioFormatChannelType.Mono) {
-                PorcupineCustomClient(
-                    audioRecorderSampleRateType = audioRecorderSampleRateType,
-                    audioRecorderChannelType = audioRecorderChannelType,
-                    wakeWordPorcupineAccessToken = wakeWordPorcupineAccessToken,
-                    wakeWordPorcupineKeywordDefaultOptions = wakeWordPorcupineKeywordDefaultOptions,
-                    wakeWordPorcupineKeywordCustomOptions = wakeWordPorcupineKeywordCustomOptions,
-                    wakeWordPorcupineLanguage = wakeWordPorcupineLanguage,
-                    onKeywordDetected = ::onKeywordDetected,
-                    onError = onError
-                )
-            } else {
-                PorcupineDefaultClient(
-                    wakeWordPorcupineAccessToken = wakeWordPorcupineAccessToken,
-                    wakeWordPorcupineKeywordDefaultOptions = wakeWordPorcupineKeywordDefaultOptions,
-                    wakeWordPorcupineKeywordCustomOptions = wakeWordPorcupineKeywordCustomOptions,
-                    wakeWordPorcupineLanguage = wakeWordPorcupineLanguage,
-                    onKeywordDetected = ::onKeywordDetected,
-                    onError = onError
-                )
-            }
+            porcupineClient = PorcupineClient(
+                wakeWordPorcupineAccessToken = wakeWordPorcupineAccessToken,
+                wakeWordPorcupineKeywordDefaultOptions = wakeWordPorcupineKeywordDefaultOptions,
+                wakeWordPorcupineKeywordCustomOptions = wakeWordPorcupineKeywordCustomOptions,
+                wakeWordPorcupineLanguage = wakeWordPorcupineLanguage,
+                onKeywordDetected = ::onKeywordDetected,
+            )
 
             null//no error
         } catch (exception: PorcupineException) {
@@ -138,7 +98,7 @@ actual class PorcupineWakeWordClient actual constructor(
             }.toMutableList())
         }
 
-        if (keywordIndex in 0..allKeywords.size) { //TODO index might be negative
+        if (keywordIndex in 0..allKeywords.size) {
             onKeywordDetected(allKeywords[keywordIndex])
         } else if (keywordIndex > 0) {
             onKeywordDetected("UnknownIndex $keywordIndex")

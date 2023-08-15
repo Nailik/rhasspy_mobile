@@ -14,6 +14,7 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.list.CheckBoxListItem
 import org.rhasspy.mobile.ui.content.list.InformationListElement
+import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.AudioFocusSettings
@@ -55,6 +56,16 @@ fun AudioFocusSettingsContent() {
                     onEvent = viewModel::onEvent
                 )
 
+            }
+
+            if (viewState.isPauseRecordingOnMediaFeatureEnabled) {
+                //switch to set if recording should stop
+                SwitchListItem(
+                    modifier = Modifier.testTag(TestTag.AudioFocusStopRecording),
+                    text = MR.strings.autoStopRecording.stable,
+                    isChecked = viewState.isPauseRecordingOnMedia,
+                    onCheckedChange = { viewModel.onEvent(SetStopRecording(it)) }
+                )
             }
 
         }

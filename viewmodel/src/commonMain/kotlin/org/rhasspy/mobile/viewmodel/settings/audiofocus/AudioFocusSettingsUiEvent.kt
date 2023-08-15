@@ -5,7 +5,7 @@ import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 sealed interface AudioFocusSettingsUiEvent {
 
     sealed interface Action : AudioFocusSettingsUiEvent {
-        object BackClick : Action
+        data object BackClick : Action
     }
 
     sealed interface Change : AudioFocusSettingsUiEvent {
@@ -15,6 +15,7 @@ sealed interface AudioFocusSettingsUiEvent {
         data class SetAudioFocusOnSound(val enabled: Boolean) : Change
         data class SetAudioFocusOnRecord(val enabled: Boolean) : Change
         data class SetAudioFocusOnDialog(val enabled: Boolean) : Change
+        data class SetStopRecording(val enabled: Boolean) : Change
 
     }
 
