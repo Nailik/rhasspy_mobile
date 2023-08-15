@@ -11,7 +11,8 @@ data class AudioFocusSettingsViewState(
     val isAudioFocusOnNotification: Boolean,
     val isAudioFocusOnSound: Boolean,
     val isAudioFocusOnRecord: Boolean,
-    val isAudioFocusOnDialog: Boolean
+    val isAudioFocusOnDialog: Boolean,
+    val isAutoStopRecording: Boolean,
 ) {
 
     val audioFocusOptions: PersistentList<AudioFocusOption> =
