@@ -3,6 +3,7 @@ package org.rhasspy.mobile.logic.services.speechtotext
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 internal class SpeechToTextServiceParamsCreator {
@@ -10,6 +11,7 @@ internal class SpeechToTextServiceParamsCreator {
     operator fun invoke(): StateFlow<SpeechToTextServiceParams> {
 
         return combineStateFlow(
+            AppSetting.isPauseRecordingOnPlayback.data,
             ConfigurationSetting.speechToTextOption.data,
             ConfigurationSetting.dialogManagementOption.data,
             ConfigurationSetting.speechToTextAudioRecorderChannel.data,
@@ -26,6 +28,7 @@ internal class SpeechToTextServiceParamsCreator {
 
     private fun getParams(): SpeechToTextServiceParams {
         return SpeechToTextServiceParams(
+            isAutoPauseOnMediaPlayback = AppSetting.isPauseRecordingOnPlayback.value,
             speechToTextOption = ConfigurationSetting.speechToTextOption.value,
             dialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
             audioRecorderChannelType = ConfigurationSetting.speechToTextAudioRecorderChannel.value,

@@ -31,7 +31,6 @@ import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.resampler.Resampler
 import org.rhasspy.mobile.settings.AppSetting
 
 interface ISpeechToTextService : IService {
@@ -84,29 +83,11 @@ internal class SpeechToTextService(
         serviceMiddleware.action(SilenceDetected(Local))
     }
 
-    private var resampler: Resampler? = null
-
-    private fun getResampler(): Resampler {
-        return resampler ?: Resampler(
-            inputChannelType = params.audioRecorderChannelType,
-            inputEncodingType = params.audioRecorderEncodingType,
-            inputSampleRateType = params.audioRecorderSampleRateType,
-            outputChannelType = params.audioOutputChannelType,
-            outputEncodingType = params.audioOutputEncodingType,
-            outputSampleRateType = params.audioOutputSampleRateType,
-        ).also {
-            resampler = it
-        }
-    }
-
     init {
         scope.launch {
             paramsFlow.collect {
                 recorder?.cancel()
                 recorder = null
-
-                resampler?.dispose()
-                resampler = null
 
                 _serviceState.value =
                     when (it.speechToTextOption) {
@@ -137,9 +118,6 @@ internal class SpeechToTextService(
         logger.d { "endSpeechToText sessionId: $sessionId fromMqtt $fromMqtt" }
 
         audioRecorder.stopRecording()
-
-        resampler?.dispose()
-        resampler = null
 
         //stop recorder
         recorder?.cancel()
@@ -208,9 +186,6 @@ internal class SpeechToTextService(
             }
         }
 
-        //init resampler
-        getResampler()
-
         //start recorder
         recorder = scope.launch {
             record(sessionId, this)
@@ -224,14 +199,12 @@ internal class SpeechToTextService(
             logger.d { "audioFrame dataSize: ${data.size}" }
         }
 
-        val resampled = getResampler().resample(data)
-
         when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> _serviceState.value = Success
             SpeechToTextOption.RemoteMQTT -> {
                 mqttClientService.asrAudioSessionFrame(
                     sessionId = sessionId,
-                    resampled.appendWavHeader(
+                    data.appendWavHeader(
                         audioRecorderChannelType = params.audioOutputChannelType,
                         audioRecorderEncodingType = params.audioOutputEncodingType,
                         audioRecorderSampleRateType = params.audioOutputSampleRateType
@@ -245,9 +218,9 @@ internal class SpeechToTextService(
         //write async after data was send
         fileHandle?.write(
             fileOffset = fileHandle?.size() ?: 0,
-            array = resampled,
+            array = data,
             arrayOffset = 0,
-            byteCount = resampled.size
+            byteCount = data.size
         )
     }
 
@@ -280,6 +253,10 @@ internal class SpeechToTextService(
             audioRecorderChannelType = params.audioRecorderChannelType,
             audioRecorderEncodingType = params.audioRecorderEncodingType,
             audioRecorderSampleRateType = params.audioRecorderSampleRateType,
+            audioRecorderOutputChannelType = params.audioOutputChannelType,
+            audioRecorderOutputEncodingType = params.audioOutputEncodingType,
+            audioRecorderOutputSampleRateType = params.audioOutputSampleRateType,
+            isAutoPauseOnMediaPlayback = params.isAutoPauseOnMediaPlayback,
         )
     }
 

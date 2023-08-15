@@ -78,23 +78,4 @@ actual object AudioFocusUtil : KoinComponent {
 
     }
 
-    fun detectAudioPlaying(callback: (isPlaying: Boolean) -> Unit) {
-        //https://stackoverflow.com/questions/29635514/how-to-get-info-of-currently-playing-music-using-broadcastreceiver-while-the-app
-        val am = nativeApplication.getSystemService<AudioManager>()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            am?.registerAudioPlaybackCallback(
-                object : AudioPlaybackCallback() {
-
-                },
-                null
-            )
-            am?.registerAudioRecordingCallback(
-                object : AudioRecordingCallback() {
-                    //TODO other app (whatsapp/maps)
-                },
-                null
-            )
-        }
-    }
-
 }
