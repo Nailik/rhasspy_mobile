@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.media.*
+import android.media.AudioRecord.RECORDSTATE_RECORDING
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -121,12 +122,11 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
 
             _isRecording.value = true
             recorder?.startRecording()
+            read(tempBufferSize)
 
             if (isAutoPauseOnMediaPlayback && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 audioManger?.registerAudioPlaybackCallback(audioPlaybackCallback, null)
             }
-
-            read(tempBufferSize)
 
         } catch (e: Exception) {
             _isRecording.value = false
@@ -148,9 +148,15 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
     }
 
     private fun pauseRecording() {
-        logger.v { "pauseRecording" }
+        logger.v { "pauseRecording ${recorder?.recordingState}" }
         _isRecording.value = false
-        recorder?.stop()
+        try {
+            if (recorder?.recordingState == RECORDSTATE_RECORDING) {
+                recorder?.stop()
+            }
+        } catch (e: Exception) {
+            logger.a(e) { "pauseRecording" }
+        }
     }
 
     private fun resumeRecording() {
@@ -169,15 +175,22 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
             audioManger?.unregisterAudioPlaybackCallback(audioPlaybackCallback)
         }
         shouldRecord = false
-        logger.v { "stopRecording" }
+        logger.v { "stopRecording ${recorder?.recordingState}" }
         if (_isRecording.value) {
             _isRecording.value = false
-            recorder?.stop()
+            try {
+                if (recorder?.recordingState == RECORDSTATE_RECORDING) {
+                    recorder?.stop()
+                }
+            } catch (e: Exception) {
+                logger.a(e) { "pauseRecording" }
+            }
             //without release audio output sometimes doesn't work after calling start
             recorder?.release()
             recorder = null
         }
     }
+
 
     /**
      * reads from audio and emits buffer onto output
@@ -186,18 +199,20 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
         var firstBuffer = true
         coroutineScope.launch {
             recorder?.also {
-                while (it.recordingState == AudioRecord.RECORDSTATE_RECORDING) {
+                while (shouldRecord) {
                     try {
-                        val byteArray = ByteArray(bufferSize)
-                        if (it.read(byteArray, 0, byteArray.size) == bufferSize) {
-                            updateMaxVolume(byteArray.clone())
+                        if (it.recordingState == RECORDSTATE_RECORDING) {
+                            val byteArray = ByteArray(bufferSize)
+                            if (it.read(byteArray, 0, byteArray.size) == bufferSize) {
+                                updateMaxVolume(byteArray.clone())
 
-                            //throw away first buffer to get rid of leading zeros
-                            if (firstBuffer) {
-                                firstBuffer = false
-                            } else {
-                                val data = byteArray.clone()
-                                _output.emit(resampler?.resample(data) ?: data)
+                                //throw away first buffer to get rid of leading zeros
+                                if (firstBuffer) {
+                                    firstBuffer = false
+                                } else {
+                                    val data = byteArray.clone()
+                                    _output.emit(resampler?.resample(data) ?: data)
+                                }
                             }
                         }
                     } catch (e: Exception) {

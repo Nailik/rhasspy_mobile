@@ -85,6 +85,10 @@ internal class WakeWordService(
 
                 //resume detection if necessary
                 resumeDetection()
+
+                if (!it.isEnabled && isRecording.value) {
+                    stopRecording()
+                }
             }
         }
     }
@@ -137,7 +141,7 @@ internal class WakeWordService(
     override fun stopDetection() {
         logger.d { "stopDetection $isDetectionRunning" }
         if (!isDetectionRunning) return
-        stop()
+        stopRecording()
         isDetectionRunning = false
     }
 
@@ -153,7 +157,7 @@ internal class WakeWordService(
     /**
      * stop internally
      */
-    private fun stop() {
+    private fun stopRecording() {
         logger.d { "stop" }
         recording?.cancel()
         recording = null
@@ -185,20 +189,19 @@ internal class WakeWordService(
 
     private fun startRecording() {
         if (_serviceState.value == Success) {
-            if (recording == null) {
-                audioRecorder.startRecording(
-                    audioRecorderChannelType = params.audioRecorderChannelType,
-                    audioRecorderEncodingType = params.audioRecorderEncodingType,
-                    audioRecorderSampleRateType = params.audioRecorderSampleRateType,
-                    audioRecorderOutputChannelType = params.audioOutputChannelType,
-                    audioRecorderOutputEncodingType = params.audioOutputEncodingType,
-                    audioRecorderOutputSampleRateType = params.audioOutputSampleRateType,
-                    isAutoPauseOnMediaPlayback = params.isAutoPauseOnMediaPlayback
-                )
+            audioRecorder.startRecording(
+                audioRecorderChannelType = params.audioRecorderChannelType,
+                audioRecorderEncodingType = params.audioRecorderEncodingType,
+                audioRecorderSampleRateType = params.audioRecorderSampleRateType,
+                audioRecorderOutputChannelType = params.audioOutputChannelType,
+                audioRecorderOutputEncodingType = params.audioOutputEncodingType,
+                audioRecorderOutputSampleRateType = params.audioOutputSampleRateType,
+                isAutoPauseOnMediaPlayback = params.isAutoPauseOnMediaPlayback
+            )
 
-                recording = scope.launch {
-                    audioRecorder.output.collectLatest(::hotWordAudioFrame)
-                }
+            recording?.cancel()
+            recording = scope.launch {
+                audioRecorder.output.collectLatest(::hotWordAudioFrame)
             }
         }
     }
