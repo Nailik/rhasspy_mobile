@@ -3,7 +3,9 @@ package org.rhasspy.mobile.logic.middleware
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import okio.Path
+import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
@@ -19,6 +21,7 @@ import org.rhasspy.mobile.logic.services.texttospeech.ITextToSpeechService
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface IServiceMiddleware {
 
@@ -46,6 +49,7 @@ internal class ServiceMiddleware(
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
     private var currentJob: Job? = null
+    private var awaitMqttConnected: Job? = null
 
     private val _isPlayingRecording = MutableStateFlow(false)
     override val isPlayingRecording = _isPlayingRecording.readOnly
@@ -116,12 +120,33 @@ internal class ServiceMiddleware(
 
     override fun userSessionClick() {
         when (dialogManagerService.currentDialogState.value) {
-            is IdleState            -> action(WakeWordDetected(Local, "manual"))
+            is IdleState            -> {
+                if (isAnyServiceUsingMqtt() && !mqttService.isHasStarted.value) {
+                    //await for mqtt to be started (connected and subscribed to topics) in the case that any service is using mqtt
+                    //this is necessary to ensure all topics are correctly being sent and consumed
+                    awaitMqttConnected?.cancel()
+                    awaitMqttConnected = coroutineScope.launch {
+                        mqttService.isHasStarted.first { it }
+                        action(WakeWordDetected(Local, "manual"))
+                    }
+                } else {
+                    action(WakeWordDetected(Local, "manual"))
+                }
+            }
+
             is RecordingIntentState -> action(StopListening(Local))
             else                    -> Unit
         }
     }
 
     override fun getRecordedFile(): Path = speechToTextService.speechToTextAudioFile
+
+    private fun isAnyServiceUsingMqtt(): Boolean {
+        return ConfigurationSetting.audioPlayingOption.value == AudioPlayingOption.RemoteMQTT ||
+                ConfigurationSetting.dialogManagementOption.value == DialogManagementOption.RemoteMQTT ||
+                ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.RemoteMQTT ||
+                ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteMQTT ||
+                ConfigurationSetting.textToSpeechOption.value == TextToSpeechOption.RemoteMQTT
+    }
 
 }
