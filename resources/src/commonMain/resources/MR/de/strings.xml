@@ -115,6 +115,8 @@
     <string name="reset">Zurücksetzen</string>
     <string name="device">Gerät</string>
     <string name="deviceSettingsInformation">Diese Einstellungen können durch die MQTT-Api oder Http-Api geändert werden.</string>
+    <string name="deviceSettingsLocalDialogInformation">Änderung über MQTT-Api aktiviert kann zu langen Wartezeiten zwischen Sitzungsende und WakeWord-Aktivierung führen.</string>
+    <string name="deviceSettingsMqttDialogInformation">Es ist wichtig, die Änderung über MQTT-Api zu aktivieren, damit die Dialogverwaltung richtig funktioniert.</string>
     <string name="volume">Lautstärke</string>
     <string name="hotWord">Aktivierungswort (Wakeword)</string>
     <string name="audioOutput">Audioausgabe</string>
@@ -287,6 +289,7 @@
     <string name="recordingTimeoutText">Aufnahmezeitüberschreitung (MS)</string>
     <string name="audioFocus">Audio-Fokus</string>
     <string name="audioFocusInformation">Durch Audio Focus kann Rhasspy andere Audiostreams wie Musik oder Videos anhalten und wieder aufnehmen oder die Lautstärke verringern.</string>
+    <string name="autoStopRecording">Aufnahme anhalten, wenn eine andere Anwendung Audio abspielt.</string>
     <string name="pauseAndResume">Pause und Wiederaufnahme</string>
     <string name="duck">Duck (Lautstärke senken)</string>
     <string name="onNotification">Benachrichtigung wird abgespielt</string>

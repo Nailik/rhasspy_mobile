@@ -17,6 +17,10 @@ interface IAudioRecorder {
         audioRecorderChannelType: AudioFormatChannelType,
         audioRecorderEncodingType: AudioFormatEncodingType,
         audioRecorderSampleRateType: AudioFormatSampleRateType,
+        audioRecorderOutputChannelType: AudioFormatChannelType,
+        audioRecorderOutputEncodingType: AudioFormatEncodingType,
+        audioRecorderOutputSampleRateType: AudioFormatSampleRateType,
+        isAutoPauseOnMediaPlayback: Boolean,
     )
 
     fun stopRecording()
@@ -48,6 +52,10 @@ internal expect class AudioRecorder() : IAudioRecorder {
         audioRecorderChannelType: AudioFormatChannelType,
         audioRecorderEncodingType: AudioFormatEncodingType,
         audioRecorderSampleRateType: AudioFormatSampleRateType,
+        audioRecorderOutputChannelType: AudioFormatChannelType,
+        audioRecorderOutputEncodingType: AudioFormatEncodingType,
+        audioRecorderOutputSampleRateType: AudioFormatSampleRateType,
+        isAutoPauseOnMediaPlayback: Boolean,
     )
 
     /**

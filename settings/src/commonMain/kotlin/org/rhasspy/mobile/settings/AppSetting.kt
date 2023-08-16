@@ -41,7 +41,7 @@ object AppSetting : KoinComponent {
     val soundIndicationOutputOption = ISetting(SettingsEnum.SoundIndicationOutput, AudioOutputOption.Notification)
     val isWakeWordLightIndicationEnabled = ISetting(SettingsEnum.WakeWordLightIndication, false)
 
-    val isMqttApiDeviceChangeEnabled = ISetting(SettingsEnum.MqttApiDeviceChangeEnabled, true)
+    val isMqttApiDeviceChangeEnabled = ISetting(SettingsEnum.MqttApiDeviceChangeEnabled, false)
     val isHttpApiDeviceChangeEnabled = ISetting(SettingsEnum.HttpApiDeviceChangeEnabled, true)
     val volume = ISetting(SettingsEnum.Volume, 0.5F)
     val isHotWordEnabled = ISetting(SettingsEnum.HotWordEnabled, true)
@@ -72,6 +72,7 @@ object AppSetting : KoinComponent {
     val isAudioFocusOnSound = ISetting(SettingsEnum.AudioFocusOnSound, false)
     val isAudioFocusOnRecord = ISetting(SettingsEnum.AudioFocusOnRecord, false)
     val isAudioFocusOnDialog = ISetting(SettingsEnum.AudioFocusOnDialog, false)
+    val isPauseRecordingOnMedia = ISetting(SettingsEnum.AudioRecorderPauseRecordingOnMedia, true)
 
     val isDialogAutoscroll = ISetting(SettingsEnum.DialogAutoScroll, true)
 }

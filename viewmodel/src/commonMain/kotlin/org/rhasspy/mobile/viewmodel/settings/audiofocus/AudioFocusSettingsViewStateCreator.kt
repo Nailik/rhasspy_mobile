@@ -13,7 +13,8 @@ class AudioFocusSettingsViewStateCreator {
             AppSetting.isAudioFocusOnNotification.data,
             AppSetting.isAudioFocusOnSound.data,
             AppSetting.isAudioFocusOnRecord.data,
-            AppSetting.isAudioFocusOnDialog.data
+            AppSetting.isAudioFocusOnDialog.data,
+            AppSetting.isPauseRecordingOnMedia.data,
         ).mapReadonlyState {
             getViewState()
         }
@@ -25,7 +26,8 @@ class AudioFocusSettingsViewStateCreator {
             isAudioFocusOnNotification = AppSetting.isAudioFocusOnNotification.value,
             isAudioFocusOnSound = AppSetting.isAudioFocusOnSound.value,
             isAudioFocusOnRecord = AppSetting.isAudioFocusOnRecord.value,
-            isAudioFocusOnDialog = AppSetting.isAudioFocusOnDialog.value
+            isAudioFocusOnDialog = AppSetting.isAudioFocusOnDialog.value,
+            isPauseRecordingOnMedia = AppSetting.isPauseRecordingOnMedia.value,
         )
     }
 

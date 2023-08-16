@@ -4,10 +4,12 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.media.AudioFormat
-import android.media.AudioRecord
-import android.media.MediaRecorder
+import android.media.*
+import android.media.AudioRecord.RECORDSTATE_RECORDING
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import androidx.core.content.getSystemService
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,16 +18,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.platformspecific.resampler.Resampler
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
     private val logger = Logger.withTag("AudioRecorder")
+
+    private val nativeApplication by inject<NativeApplication>()
+    private val audioManger = nativeApplication.getSystemService<AudioManager>()
 
     /**
      * output data as flow
@@ -39,8 +46,10 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
     private val _maxVolume = MutableStateFlow(0f)
     actual override val maxVolume = _maxVolume.readOnly
 
+    private var shouldRecord = false
+
     //state if currently recording
-    private val _isRecording = MutableStateFlow(false)
+    private var _isRecording = MutableStateFlow(false)
     actual override val isRecording = _isRecording.readOnly
 
     //maximum audio level that can happen
@@ -50,7 +59,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private var recorder: AudioRecord? = null
-
+    private var resampler: Resampler? = null
 
     /**
      * start recording
@@ -62,63 +71,126 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
         audioRecorderChannelType: AudioFormatChannelType,
         audioRecorderEncodingType: AudioFormatEncodingType,
         audioRecorderSampleRateType: AudioFormatSampleRateType,
+        audioRecorderOutputChannelType: AudioFormatChannelType,
+        audioRecorderOutputEncodingType: AudioFormatEncodingType,
+        audioRecorderOutputSampleRateType: AudioFormatSampleRateType,
+        isAutoPauseOnMediaPlayback: Boolean,
     ) {
-
-        val tempBufferSize = AudioRecord.getMinBufferSize(
-            audioRecorderSampleRateType.value,
-            audioRecorderChannelType.value,
-            audioRecorderEncodingType.value
-        ) * 2
-
-        logger.v { "startRecording" }
-
-        if (ActivityCompat.checkSelfPermission(
-                get<NativeApplication>() as Context,
-                Manifest.permission.RECORD_AUDIO
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            logger.e { "missing recording permission" }
-            return
-        }
-
+        shouldRecord = true
+        if (_isRecording.value) return
         try {
-            if (recorder == null) {
-                logger.v { "initializing recorder $tempBufferSize" }
-                recorder = AudioRecord.Builder()
-                    .setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
-                    .setAudioFormat(
-                        AudioFormat.Builder()
-                            .setSampleRate(audioRecorderSampleRateType.value)
-                            .setChannelMask(audioRecorderChannelType.value)
-                            .setEncoding(audioRecorderEncodingType.value)
-                            .build()
-                    )
-                    .setBufferSizeInBytes(tempBufferSize)
-                    .build()
+            logger.v { "startRecording" }
+
+            if (ActivityCompat.checkSelfPermission(
+                    get<NativeApplication>() as Context,
+                    Manifest.permission.RECORD_AUDIO
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                logger.e { "missing recording permission" }
+                return
             }
+
+            val tempBufferSize = AudioRecord.getMinBufferSize(
+                audioRecorderSampleRateType.value,
+                audioRecorderChannelType.value,
+                audioRecorderEncodingType.value
+            ) * 2
+
+            resampler?.dispose()
+            resampler = createResampler(
+                audioRecorderChannelType = audioRecorderChannelType,
+                audioRecorderEncodingType = audioRecorderEncodingType,
+                audioRecorderSampleRateType = audioRecorderSampleRateType,
+                audioRecorderOutputChannelType = audioRecorderOutputChannelType,
+                audioRecorderOutputEncodingType = audioRecorderOutputEncodingType,
+                audioRecorderOutputSampleRateType = audioRecorderOutputSampleRateType,
+            )
+
+            logger.v { "initializing recorder $tempBufferSize" }
+            recorder?.release()
+            recorder = AudioRecord.Builder()
+                .setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
+                .setAudioFormat(
+                    AudioFormat.Builder()
+                        .setSampleRate(audioRecorderSampleRateType.value)
+                        .setChannelMask(audioRecorderChannelType.value)
+                        .setEncoding(audioRecorderEncodingType.value)
+                        .build()
+                )
+                .setBufferSizeInBytes(tempBufferSize)
+                .build()
 
             _isRecording.value = true
             recorder?.startRecording()
             read(tempBufferSize)
+
+            if (isAutoPauseOnMediaPlayback && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                audioManger?.registerAudioPlaybackCallback(audioPlaybackCallback, null)
+            }
+
         } catch (e: Exception) {
             _isRecording.value = false
             logger.e(e) { "native start recording error" }
         }
     }
 
-    /**
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val audioPlaybackCallback = object : AudioManager.AudioPlaybackCallback() {
+        override fun onPlaybackConfigChanged(configs: MutableList<AudioPlaybackConfiguration>?) {
+            super.onPlaybackConfigChanged(configs)
+
+            if (configs?.isNotEmpty() == true) {
+                pauseRecording()
+            } else {
+                resumeRecording()
+            }
+        }
+    }
+
+    private fun pauseRecording() {
+        logger.v { "pauseRecording ${recorder?.recordingState}" }
+        _isRecording.value = false
+        try {
+            if (recorder?.recordingState == RECORDSTATE_RECORDING) {
+                recorder?.stop()
+            }
+        } catch (e: Exception) {
+            logger.a(e) { "pauseRecording" }
+        }
+    }
+
+    private fun resumeRecording() {
+        logger.v { "resumeRecording" }
+        if (shouldRecord) {
+            _isRecording.value = true
+            recorder?.startRecording()
+        }
+    }
+
+    /**shouldRecord
      * stop recording
      */
     actual override fun stopRecording() {
-        logger.v { "stopRecording" }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            audioManger?.unregisterAudioPlaybackCallback(audioPlaybackCallback)
+        }
+        shouldRecord = false
+        logger.v { "stopRecording ${recorder?.recordingState}" }
         if (_isRecording.value) {
             _isRecording.value = false
-            recorder?.stop()
+            try {
+                if (recorder?.recordingState == RECORDSTATE_RECORDING) {
+                    recorder?.stop()
+                }
+            } catch (e: Exception) {
+                logger.a(e) { "pauseRecording" }
+            }
             //without release audio output sometimes doesn't work after calling start
             recorder?.release()
             recorder = null
         }
     }
+
 
     /**
      * reads from audio and emits buffer onto output
@@ -127,17 +199,20 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
         var firstBuffer = true
         coroutineScope.launch {
             recorder?.also {
-                while (it.recordingState == AudioRecord.RECORDSTATE_RECORDING) {
+                while (shouldRecord) {
                     try {
-                        val byteArray = ByteArray(bufferSize)
-                        if (it.read(byteArray, 0, byteArray.size) == bufferSize) {
-                            updateMaxVolume(byteArray.clone())
+                        if (it.recordingState == RECORDSTATE_RECORDING) {
+                            val byteArray = ByteArray(bufferSize)
+                            if (it.read(byteArray, 0, byteArray.size) == bufferSize) {
+                                updateMaxVolume(byteArray.clone())
 
-                            //throw away first buffer to get rid of leading zeros
-                            if (firstBuffer) {
-                                firstBuffer = false
-                            } else {
-                                _output.emit(byteArray.clone())
+                                //throw away first buffer to get rid of leading zeros
+                                if (firstBuffer) {
+                                    firstBuffer = false
+                                } else {
+                                    val data = byteArray.clone()
+                                    _output.emit(resampler?.resample(data) ?: data)
+                                }
                             }
                         }
                     } catch (e: Exception) {
@@ -164,6 +239,27 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
             }
             _maxVolume.value = max.toFloat()
         }
+    }
+
+    /**
+     * get resampler or create new one if necessary
+     */
+    private fun createResampler(
+        audioRecorderChannelType: AudioFormatChannelType,
+        audioRecorderEncodingType: AudioFormatEncodingType,
+        audioRecorderSampleRateType: AudioFormatSampleRateType,
+        audioRecorderOutputChannelType: AudioFormatChannelType,
+        audioRecorderOutputEncodingType: AudioFormatEncodingType,
+        audioRecorderOutputSampleRateType: AudioFormatSampleRateType,
+    ): Resampler {
+        return Resampler(
+            inputChannelType = audioRecorderChannelType,
+            inputEncodingType = audioRecorderEncodingType,
+            inputSampleRateType = audioRecorderSampleRateType,
+            outputChannelType = audioRecorderOutputChannelType,
+            outputEncodingType = audioRecorderOutputEncodingType,
+            outputSampleRateType = audioRecorderOutputSampleRateType,
+        )
     }
 
 }

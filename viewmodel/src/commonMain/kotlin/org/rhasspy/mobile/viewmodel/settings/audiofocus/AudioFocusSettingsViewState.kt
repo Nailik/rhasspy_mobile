@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
+import org.rhasspy.mobile.platformspecific.features.FeatureAvailability
 
 @Stable
 data class AudioFocusSettingsViewState(
@@ -11,10 +12,12 @@ data class AudioFocusSettingsViewState(
     val isAudioFocusOnNotification: Boolean,
     val isAudioFocusOnSound: Boolean,
     val isAudioFocusOnRecord: Boolean,
-    val isAudioFocusOnDialog: Boolean
+    val isAudioFocusOnDialog: Boolean,
+    val isPauseRecordingOnMedia: Boolean,
 ) {
 
-    val audioFocusOptions: PersistentList<AudioFocusOption> =
-        AudioFocusOption.values().toMutableList().toPersistentList()
+    val audioFocusOptions: PersistentList<AudioFocusOption> = AudioFocusOption.values().toMutableList().toPersistentList()
+
+    val isPauseRecordingOnMediaFeatureEnabled = FeatureAvailability.isPauseRecordingOnPlaybackFeatureEnabled
 
 }

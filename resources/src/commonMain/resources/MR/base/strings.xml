@@ -121,6 +121,8 @@
     <string name="reset">Reset</string>
     <string name="device">Device</string>
     <string name="deviceSettingsInformation">This settings can be changed via MQTT-Api or Http-Api.</string>
+    <string name="deviceSettingsLocalDialogInformation">Change via MQTT-Api enabled might result in long waiting time between session end and WakeWord activation.</string>
+    <string name="deviceSettingsMqttDialogInformation">It\'s important to enable change via MQTT-Api for the Dialog Management to work properly.</string>
     <string name="volume">Volume</string>
     <string name="hotWord">HotWord (WakeWord)</string>
     <string name="audioOutput">Audio Output</string>
@@ -293,6 +295,7 @@
     <string name="recordingTimeoutText">Recording Timeout (MS)</string>
     <string name="audioFocus">Audio Focus</string>
     <string name="audioFocusInformation">Audio Focus allows Rhasspy to pause and resume or decrease the volume of other audio streams such as music or videos.</string>
+    <string name="autoStopRecording">Pause recording when another app plays audio.</string>
     <string name="pauseAndResume">Pause and Resume</string>
     <string name="duck">Duck (lower Volume)</string>
     <string name="onNotification">On Notification played</string>
