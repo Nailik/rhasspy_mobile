@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.ui.configuration
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,14 +17,18 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
+import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewState.DialogManagementConfigurationData
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.DeviceSettings
 
 /**
  * DropDown to select dialog management option
@@ -91,20 +96,83 @@ private fun DialogManagementOptionContent(
         values = editData.dialogManagementOptionList
     ) { option ->
 
-        when (option) {
-            DialogManagementOption.Local,
-            DialogManagementOption.RemoteMQTT ->
-                DialogManagementSettings(
-                    textAsrTimeoutText = editData.textAsrTimeoutText,
-                    intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
-                    recordingTimeoutText = editData.recordingTimeoutText,
-                    onEvent = onEvent
-                )
 
-            else                              -> Unit
+        Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
+            when (option) {
+                DialogManagementOption.Local ->
+                    DialogManagementSettingsLocal(
+                        textAsrTimeoutText = editData.textAsrTimeoutText,
+                        intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
+                        recordingTimeoutText = editData.recordingTimeoutText,
+                        onEvent = onEvent
+                    )
+
+                DialogManagementOption.RemoteMQTT ->
+                    DialogManagementSettingsMqtt(
+                        textAsrTimeoutText = editData.textAsrTimeoutText,
+                        intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
+                        recordingTimeoutText = editData.recordingTimeoutText,
+                        onEvent = onEvent
+                    )
+
+                else -> Unit
+            }
+
         }
 
     }
+
+}
+
+@Composable
+private fun DialogManagementSettingsLocal(
+    textAsrTimeoutText: String,
+    intentRecognitionTimeoutText: String,
+    recordingTimeoutText: String,
+    onEvent: (DialogManagementConfigurationUiEvent) -> Unit
+) {
+
+    DialogManagementSettings(
+        textAsrTimeoutText = textAsrTimeoutText,
+        intentRecognitionTimeoutText = intentRecognitionTimeoutText,
+        recordingTimeoutText = recordingTimeoutText,
+        onEvent = onEvent
+    )
+
+    //opens page for device settings
+    ListElement(
+        modifier = Modifier
+            .testTag(TestTag.PorcupineLanguage)
+            .clickable { onEvent(Navigate(DeviceSettings)) },
+        text = { Text(MR.strings.device.stable) },
+        secondaryText = { Text(MR.strings.deviceSettingsLocalDialogInformation.stable) }
+    )
+
+}
+
+@Composable
+private fun DialogManagementSettingsMqtt(
+    textAsrTimeoutText: String,
+    intentRecognitionTimeoutText: String,
+    recordingTimeoutText: String,
+    onEvent: (DialogManagementConfigurationUiEvent) -> Unit
+) {
+
+    DialogManagementSettings(
+        textAsrTimeoutText = textAsrTimeoutText,
+        intentRecognitionTimeoutText = intentRecognitionTimeoutText,
+        recordingTimeoutText = recordingTimeoutText,
+        onEvent = onEvent
+    )
+
+    //opens page for device settings
+    ListElement(
+        modifier = Modifier
+            .testTag(TestTag.PorcupineLanguage)
+            .clickable { onEvent(Navigate(DeviceSettings)) },
+        text = { Text(MR.strings.device.stable) },
+        secondaryText = { Text(MR.strings.deviceSettingsMqttDialogInformation.stable) }
+    )
 
 }
 
@@ -120,37 +188,33 @@ private fun DialogManagementSettings(
     onEvent: (DialogManagementConfigurationUiEvent) -> Unit
 ) {
 
-    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
+    //asr timeout
+    TextFieldListItem(
+        modifier = Modifier.testTag(TestTag.TextAsrTimeout),
+        value = textAsrTimeoutText,
+        onValueChange = { onEvent(ChangeTextAsrTimeout(it)) },
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        label = MR.strings.textAsrTimeoutText.stable,
+        isLastItem = false
+    )
 
-        //asr timeout
-        TextFieldListItem(
-            modifier = Modifier.testTag(TestTag.TextAsrTimeout),
-            value = textAsrTimeoutText,
-            onValueChange = { onEvent(ChangeTextAsrTimeout(it)) },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            label = MR.strings.textAsrTimeoutText.stable,
-            isLastItem = false
-        )
+    //intent recognition timeout
+    TextFieldListItem(
+        modifier = Modifier.testTag(TestTag.IntentRecognitionTimeout),
+        value = intentRecognitionTimeoutText,
+        onValueChange = { onEvent(ChangeIntentRecognitionTimeout(it)) },
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        label = MR.strings.intentRecognitionTimeoutText.stable,
+        isLastItem = false
+    )
 
-        //intent recognition timeout
-        TextFieldListItem(
-            modifier = Modifier.testTag(TestTag.IntentRecognitionTimeout),
-            value = intentRecognitionTimeoutText,
-            onValueChange = { onEvent(ChangeIntentRecognitionTimeout(it)) },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            label = MR.strings.intentRecognitionTimeoutText.stable,
-            isLastItem = false
-        )
-
-        //recording timeout
-        TextFieldListItem(
-            modifier = Modifier.testTag(TestTag.RecordingTimeout),
-            value = recordingTimeoutText,
-            onValueChange = { onEvent(ChangeRecordingTimeout(it)) },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            label = MR.strings.recordingTimeoutText.stable
-        )
-
-    }
+    //recording timeout
+    TextFieldListItem(
+        modifier = Modifier.testTag(TestTag.RecordingTimeout),
+        value = recordingTimeoutText,
+        onValueChange = { onEvent(ChangeRecordingTimeout(it)) },
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        label = MR.strings.recordingTimeoutText.stable
+    )
 
 }

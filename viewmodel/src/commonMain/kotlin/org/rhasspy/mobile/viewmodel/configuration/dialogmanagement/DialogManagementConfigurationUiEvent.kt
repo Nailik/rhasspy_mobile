@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.viewmodel.configuration.dialogmanagement
 
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
 sealed interface DialogManagementConfigurationUiEvent {
 
@@ -16,6 +17,7 @@ sealed interface DialogManagementConfigurationUiEvent {
     sealed interface Action : DialogManagementConfigurationUiEvent {
 
         data object BackClick : Action
+        data class Navigate(val destination: NavigationDestination) : Action
 
     }
 
