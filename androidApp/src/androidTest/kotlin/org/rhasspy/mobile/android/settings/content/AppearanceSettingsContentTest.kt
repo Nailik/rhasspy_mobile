@@ -13,8 +13,8 @@ import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.ui.settings.AppearanceSettingsScreenItemContent
-import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsUiEvent.Change.SelectLanguageOption
+import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsViewModel
 import kotlin.test.assertEquals
 
 class AppearanceSettingsContentTest : FlakyTest() {

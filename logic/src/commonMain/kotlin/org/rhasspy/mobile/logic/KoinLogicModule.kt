@@ -168,7 +168,6 @@ fun logicModule() = module {
         WakeWordService(
             paramsCreator = get(),
             audioRecorder = get(),
-            microphonePermission = get()
         )
     }
 

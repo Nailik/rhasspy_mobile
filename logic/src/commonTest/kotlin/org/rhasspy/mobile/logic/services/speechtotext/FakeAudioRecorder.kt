@@ -22,6 +22,10 @@ class FakeAudioRecorder : IAudioRecorder {
         audioRecorderChannelType: AudioFormatChannelType,
         audioRecorderEncodingType: AudioFormatEncodingType,
         audioRecorderSampleRateType: AudioFormatSampleRateType,
+        audioRecorderOutputChannelType: AudioFormatChannelType,
+        audioRecorderOutputEncodingType: AudioFormatEncodingType,
+        audioRecorderOutputSampleRateType: AudioFormatSampleRateType,
+        isAutoPauseOnMediaPlayback: Boolean,
     ) {
     }
 

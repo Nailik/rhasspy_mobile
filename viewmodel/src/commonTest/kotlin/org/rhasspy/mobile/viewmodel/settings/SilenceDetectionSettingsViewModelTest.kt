@@ -75,13 +75,13 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
     @Suppress("unused")
     fun `when the user tests the audio recording and closes the app audio recording test is stopped`() {
         every { audioRecorder.stopRecording() } returns Unit
-        every { audioRecorder.startRecording(isAny(), isAny(), isAny()) } returns Unit
+        every { audioRecorder.startRecording(isAny(), isAny(), isAny(), isAny(), isAny(), isAny(), isAny()) } returns Unit
         every { microphonePermission.granted } returns MutableStateFlow(true)
         assertEquals(false, audioRecorder.isRecording.value)
 
         silenceDetectionSettingsViewModel.onEvent(ToggleAudioLevelTest)
         nVerify {
-            audioRecorder.startRecording(isAny(), isAny(), isAny())
+            audioRecorder.startRecording(isAny(), isAny(), isAny(), isAny(), isAny(), isAny(), isAny())
         }
 
         isAppInBackground.value = true

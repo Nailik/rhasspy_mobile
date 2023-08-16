@@ -2,8 +2,8 @@ package org.rhasspy.mobile.platformspecific.background
 
 import android.app.Service
 import android.content.Intent
-import android.os.Build
 import android.os.IBinder
+import androidx.core.content.ContextCompat
 import co.touchlab.kermit.Logger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -23,11 +23,8 @@ internal actual class BackgroundService : IBackgroundService, Service(), KoinCom
      */
     actual override fun start() {
         logger.d { "start" }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            nativeApplication.startForegroundService(intent)
-        } else {
-            nativeApplication.startService(intent)
-        }
+        //start normally because the notification needs to be shown within 5 second but on create may be called later
+        nativeApplication.startService(intent)
     }
 
     /**
@@ -45,7 +42,8 @@ internal actual class BackgroundService : IBackgroundService, Service(), KoinCom
     override fun onCreate() {
         super.onCreate()
         logger.d { "onCreate" }
-        //start service, display notification
+        //start as foreground service and instantly display notification
+        ContextCompat.startForegroundService(this, intent)
         startForeground(ServiceNotification.ONGOING_NOTIFICATION_ID, ServiceNotification.create())
     }
 

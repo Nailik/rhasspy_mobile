@@ -12,6 +12,7 @@ import org.rhasspy.mobile.data.service.option.WakeWordOption
 internal data class WakeWordServiceParams(
     val isMicrophonePermissionEnabled: Boolean,
     val isEnabled: Boolean,
+    val isAutoPauseOnMediaPlayback: Boolean,
     val audioRecorderSampleRateType: AudioFormatSampleRateType,
     val audioRecorderChannelType: AudioFormatChannelType,
     val audioRecorderEncodingType: AudioFormatEncodingType,

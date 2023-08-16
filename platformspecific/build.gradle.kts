@@ -57,6 +57,7 @@ kotlin {
                 implementation(platform(Firebase.bom))
                 implementation(Nailik.androidResampler)
                 implementation(Journeyapps.zXingAndroid)
+                implementation(AndroidX.browser)
             }
         }
         val androidUnitTest by getting {

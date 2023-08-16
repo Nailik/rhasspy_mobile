@@ -65,7 +65,8 @@ class DialogManagementConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick -> navigator.onBackPressed()
+            BackClick          -> navigator.onBackPressed()
+            is Action.Navigate -> navigator.navigate(action.destination)
         }
     }
 
