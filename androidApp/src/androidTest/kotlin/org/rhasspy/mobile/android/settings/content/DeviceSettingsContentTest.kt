@@ -52,15 +52,15 @@ class DeviceSettingsContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.Volume).assertIsDisplayed()
 
         //mqtt api enabled
-        composeTestRule.onNodeWithTag(TestTag.MqttApi).onListItemSwitch().assertIsOn()
-        assertTrue { DeviceSettingsViewModel(get()).viewState.value.isMqttApiDeviceChangeEnabled }
+        composeTestRule.onNodeWithTag(TestTag.MqttApi).onListItemSwitch().assertIsOff()
+        assertFalse { DeviceSettingsViewModel(get()).viewState.value.isMqttApiDeviceChangeEnabled }
         //user clicks hot word
         composeTestRule.onNodeWithTag(TestTag.MqttApi).performClick()
         composeTestRule.awaitIdle()
         //hot word is disabled
-        composeTestRule.onNodeWithTag(TestTag.MqttApi).onListItemSwitch().assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.MqttApi).onListItemSwitch().assertIsOn()
         //hot word disabled is saved
-        assertFalse { DeviceSettingsViewModel(get()).viewState.value.isMqttApiDeviceChangeEnabled }
+        assertTrue { DeviceSettingsViewModel(get()).viewState.value.isMqttApiDeviceChangeEnabled }
 
         //http api is enabled
         composeTestRule.onNodeWithTag(TestTag.HttpApi).onListItemSwitch().assertIsOn()
