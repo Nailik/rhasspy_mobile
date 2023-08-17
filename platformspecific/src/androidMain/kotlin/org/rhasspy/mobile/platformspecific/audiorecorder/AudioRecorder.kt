@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.media.*
 import android.media.AudioRecord.RECORDSTATE_RECORDING
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.getSystemService
 import co.touchlab.kermit.Logger
@@ -32,7 +31,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
     private val logger = Logger.withTag("AudioRecorder")
 
     private val nativeApplication by inject<NativeApplication>()
-    private val audioManger = nativeApplication.getSystemService<AudioManager>()
+    private val audioManager = nativeApplication.getSystemService<AudioManager>()
 
     /**
      * output data as flow
@@ -60,6 +59,22 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
 
     private var recorder: AudioRecord? = null
     private var resampler: Resampler? = null
+
+    private val audioPlaybackCallback =
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> AudioManagerCallback(
+                callback = { isPlaying ->
+                    if (isPlaying) {
+                        pauseRecording()
+                    } else {
+                        resumeRecording()
+                    }
+                },
+                audioManager = audioManager
+            )
+
+            else                                           -> AudioManagerCallbackLegacy()
+        }
 
     /**
      * start recording
@@ -124,26 +139,13 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
             recorder?.startRecording()
             read(tempBufferSize)
 
-            if (isAutoPauseOnMediaPlayback && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                audioManger?.registerAudioPlaybackCallback(audioPlaybackCallback, null)
+            if (isAutoPauseOnMediaPlayback) {
+                audioPlaybackCallback.register()
             }
 
         } catch (e: Exception) {
             _isRecording.value = false
             logger.e(e) { "native start recording error" }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val audioPlaybackCallback = object : AudioManager.AudioPlaybackCallback() {
-        override fun onPlaybackConfigChanged(configs: MutableList<AudioPlaybackConfiguration>?) {
-            super.onPlaybackConfigChanged(configs)
-
-            if (configs?.isNotEmpty() == true) {
-                pauseRecording()
-            } else {
-                resumeRecording()
-            }
         }
     }
 
@@ -171,9 +173,8 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
      * stop recording
      */
     actual override fun stopRecording() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            audioManger?.unregisterAudioPlaybackCallback(audioPlaybackCallback)
-        }
+        audioPlaybackCallback.unregister()
+
         shouldRecord = false
         logger.v { "stopRecording ${recorder?.recordingState}" }
         if (_isRecording.value) {
