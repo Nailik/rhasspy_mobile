@@ -125,8 +125,7 @@ class InternalAudioPlayer(
                 mediaPlayer.stop()
             }
             mediaPlayer.release()
-        } catch (e: Exception) {
-            logger.a(e) { "mediaPlayer stop adn release" }
+        } catch (_: Exception) {
         }
         callOnFinish()
     }
@@ -145,8 +144,7 @@ class InternalAudioPlayer(
                 mediaPlayer.stop()
             }
             mediaPlayer.release()
-        } catch (e: Exception) {
-            logger.a(e) { "mediaPlayer stop adn release" }
+        } catch (_: Exception) {
         }
         callOnFinish()
     }
