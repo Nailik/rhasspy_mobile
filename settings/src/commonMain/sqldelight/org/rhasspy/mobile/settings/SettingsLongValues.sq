@@ -1,0 +1,15 @@
+CREATE TABLE settingsLongValues (
+    id TEXT PRIMARY KEY,
+    value INTEGER NOT NULL,
+    FOREIGN KEY (id) REFERENCES settingsIds(id)
+);
+
+insertOrUpdate:
+INSERT INTO settingsLongValues(id, value)
+VALUES (?, ?)
+ON CONFLICT(id) DO UPDATE SET value = excluded.value;
+
+select:
+SELECT value
+FROM settingsLongValues
+WHERE id = ?;

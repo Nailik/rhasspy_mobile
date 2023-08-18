@@ -1,0 +1,15 @@
+CREATE TABLE settingsStringValues (
+    id TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    FOREIGN KEY (id) REFERENCES settingsIds(id)
+);
+
+insertOrUpdate:
+INSERT INTO settingsStringValues(id, value)
+VALUES (?, ?)
+ON CONFLICT(id) DO UPDATE SET value = excluded.value;
+
+select:
+SELECT value
+FROM settingsStringValues
+WHERE id = ?;

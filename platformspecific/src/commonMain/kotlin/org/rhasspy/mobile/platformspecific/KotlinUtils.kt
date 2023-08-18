@@ -85,6 +85,12 @@ fun <T, R> StateFlow<T>.mapReadonlyState(
     transform(it)
 }.stateIn(scope, sharingStarted, transform.invoke(this.value))
 
+fun <T> Flow<T>.simpleStateIn(
+    initial: T,
+    scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+    sharingStarted: SharingStarted = SharingStarted.Eagerly,
+): StateFlow<T> = this.stateIn(scope, sharingStarted, initialValue = initial)
+
 val <T> MutableStateFlow<T>.readOnly get(): StateFlow<T> = this
 
 val <T> MutableSharedFlow<T>.readOnly get(): Flow<T> = this

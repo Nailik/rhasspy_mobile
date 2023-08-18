@@ -40,8 +40,6 @@ kotlin {
             dependsOn(commonMain)
             dependencies {
                 implementation(project(":platformspecific"))
-                implementation(Russhwolf.multiplatformSettingsTest)
-                implementation(Russhwolf.multiplatformSettingsNoArg)
                 implementation(Kotlin.test)
                 implementation(Koin.test)
                 implementation(KotlinX.Coroutines.test)

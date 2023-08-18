@@ -30,7 +30,6 @@ kotlin {
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Square.okio)
                 implementation(Mikepenz.aboutLibrariesCore)
-                implementation(Russhwolf.multiplatformSettingsNoArg)
             }
         }
         val commonTest by getting {
@@ -40,7 +39,6 @@ kotlin {
                 implementation(Koin.test)
                 implementation(Kotlin.test)
                 implementation(KotlinX.Coroutines.test)
-                implementation(Russhwolf.multiplatformSettingsTest)
             }
         }
         val androidMain by getting {

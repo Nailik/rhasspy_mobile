@@ -38,10 +38,9 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation(Square.Okio.jvm)
+                api(AndroidX.multidex)
                 implementation(Square.okio)
                 implementation(AndroidX.appCompat)
-                implementation(AndroidX.multidex)
                 implementation(AndroidX.lifecycle.process)
                 implementation(AndroidX.appCompat)
                 implementation(Ktor2.Server.compression)
@@ -65,21 +64,9 @@ kotlin {
                 implementation(AndroidX.archCore.testing)
             }
         }
-        val iosX64Main by getting {
-            dependencies {
-                implementation(Square.Okio.iosx64)
-            }
-        }
-        val iosArm64Main by getting {
-            dependencies {
-                implementation(Square.Okio.iosarm64)
-            }
-        }
-        val iosSimulatorArm64Main by getting {
-            dependencies {
-                implementation(Square.Okio.iossimulatorarm64)
-            }
-        }
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
         val iosMain by creating {
             dependencies {
                 implementation(Square.okio)
