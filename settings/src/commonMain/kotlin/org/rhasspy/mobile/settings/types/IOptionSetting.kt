@@ -1,28 +1,27 @@
 package org.rhasspy.mobile.settings.types
 
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToOneOrNull
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.data.service.option.IOption
 import org.rhasspy.mobile.data.settings.SettingsEnum
-import org.rhasspy.mobile.platformspecific.simpleStateIn
 import org.rhasspy.mobile.settings.ISetting
 
-class IOptionSetting<R, T : IOption<R>>(
+class IOptionSetting<T>(
     private val key: SettingsEnum,
-    initial: T
-) : ISetting<T>() {
+    private val initial: T
+) : ISetting<T>() where T : IOption<T>, T : Enum<T> {
 
-    override val data = database.database.settingsStringValuesQueries
-        .select(key.name)
-        .asFlow()
-        .mapToOneOrNull(Dispatchers.IO)
-        .map { if (it != null) initial.findValue(it) as T else initial }
-        .simpleStateIn(initial)
+    override val data = MutableStateFlow(readInitial())
+
+    private fun readInitial(): T {
+        return database.database.settingsStringValuesQueries
+            .select(key.name)
+            .executeAsOneOrNull().let {
+                if (it != null) initial.findValue(it) else initial
+            }
+    }
 
     override fun saveValue(newValue: T) {
+        data.value = newValue
         database.database.settingsStringValuesQueries.insertOrUpdate(key.name, newValue.name)
     }
 

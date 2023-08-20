@@ -5,7 +5,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
 abstract class ISetting<T> : KoinComponent {
-
+//TODO -> when database is completely new created make a savevalue on all initial values
     val database = get<DatabaseConnection>()
 
     abstract val data: StateFlow<T>

@@ -126,7 +126,7 @@ fun String?.toLongOrNullOrConstant(): Long? =
 
 fun String?.toIntOrNullOrConstant(): Int? =
     this?.replace(" ", "")?.let {
-        if (it.length > 10) this.substring(0..9).toInt() else it.trimTrailingZeros()
+        if (it.length > 9) this.substring(0..9).toInt() else it.trimTrailingZeros()
             ?.toIntOrNull()
     }
 

@@ -4,10 +4,10 @@ import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.data.resource.StableStringResource
 
 @Stable
-interface IOption<T> {
+interface IOption<T : Enum<T>> {
     val text: StableStringResource
     val name: String
 
-    fun findValue(value: String): IOption<T>
+    fun findValue(value: String): T
 }
 

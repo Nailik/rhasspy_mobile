@@ -1,27 +1,26 @@
 package org.rhasspy.mobile.settings.types
 
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToOneOrNull
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.data.settings.SettingsEnum
-import org.rhasspy.mobile.platformspecific.simpleStateIn
 import org.rhasspy.mobile.settings.ISetting
 
 class LongSetting(
     private val key: SettingsEnum,
-    initial: Long
+    private val initial: Long
 ) : ISetting<Long>() {
 
-    override val data = database.database.settingsLongValuesQueries
-        .select(key.name)
-        .asFlow()
-        .mapToOneOrNull(Dispatchers.IO)
-        .map { it ?: initial }
-        .simpleStateIn(initial)
+    override val data = MutableStateFlow(readInitial())
+
+    private fun readInitial(): Long {
+        return database.database.settingsLongValuesQueries
+            .select(key.name)
+            .executeAsOneOrNull().let {
+                it ?: initial
+            }
+    }
 
     override fun saveValue(newValue: Long) {
+        data.value = newValue
         database.database.settingsLongValuesQueries.insertOrUpdate(key.name, newValue)
     }
 

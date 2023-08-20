@@ -1,14 +1,9 @@
 package org.rhasspy.mobile.settings.types
 
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.data.settings.SettingsEnum
-import org.rhasspy.mobile.platformspecific.simpleStateIn
 import org.rhasspy.mobile.settings.ISetting
 
 class StringListSetting(
@@ -16,14 +11,17 @@ class StringListSetting(
     initial: ImmutableList<String>
 ) : ISetting<ImmutableList<String>>() {
 
-    override val data = database.database.settingsStringListValuesQueries
-        .select(key.name)
-        .asFlow()
-        .mapToList(Dispatchers.IO)
-        .map { it.toImmutableList() }
-        .simpleStateIn(initial)
+    override val data = MutableStateFlow(readInitial())
+
+    private fun readInitial(): ImmutableList<String> {
+        return database.database.settingsStringListValuesQueries
+            .select(key.name)
+            .executeAsList()
+            .toImmutableList()
+    }
 
     override fun saveValue(newValue: ImmutableList<String>) {
+        data.value = newValue
         database.database.settingsStringListValuesQueries.transaction {
             newValue.forEach {
                 database.database.settingsStringListValuesQueries.insertOrUpdate(key.name, it)
