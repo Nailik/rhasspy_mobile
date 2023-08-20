@@ -153,11 +153,9 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
         logger.v { "pauseRecording ${recorder?.recordingState}" }
         _isRecording.value = false
         try {
-            if (recorder?.recordingState == RECORDSTATE_RECORDING) {
-                recorder?.stop()
-            }
+            recorder?.stop()
         } catch (e: Exception) {
-            logger.a(e) { "pauseRecording" }
+            logger.e(e) { "pauseRecording" }
         }
     }
 
@@ -180,11 +178,9 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
         if (_isRecording.value) {
             _isRecording.value = false
             try {
-                if (recorder?.recordingState == RECORDSTATE_RECORDING) {
-                    recorder?.stop()
-                }
+                recorder?.stop()
             } catch (e: Exception) {
-                logger.a(e) { "pauseRecording" }
+                logger.e(e) { "pauseRecording" }
             }
             //without release audio output sometimes doesn't work after calling start
             recorder?.release()
