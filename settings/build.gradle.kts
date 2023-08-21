@@ -31,6 +31,9 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(CashApp.Sqldelight.android)
+                //only for migration
+                implementation("com.russhwolf:multiplatform-settings-no-arg:_")
+                implementation("com.russhwolf:multiplatform-settings-serialization:_")
             }
         }
         val androidUnitTest by getting
@@ -67,6 +70,7 @@ sqldelight {
         create("Database") {
             dialect("app.cash.sqldelight:sqlite-3-30-dialect:2.0.0")
             packageName.set("org.rhasspy.mobile.settings")
+            schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
         }
     }
 }

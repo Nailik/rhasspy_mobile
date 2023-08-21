@@ -8,8 +8,7 @@ pluginManagement {
 
 plugins {
     // See https://jmfayard.github.io/refreshVersions
-    id("de.fayard.refreshVersions") version "0.51.0"
-////                            # available:"0.60.0"
+    id("de.fayard.refreshVersions") version "0.60.0"
 }
 
 rootProject.name = "Rhasspy_Mobile"
@@ -27,5 +26,3 @@ include(":settings")
 include(":platformspecific")
 include(":data")
 include(":resources")
-
-

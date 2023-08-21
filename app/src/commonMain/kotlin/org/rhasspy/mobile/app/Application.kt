@@ -36,6 +36,7 @@ import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.MigrateSettingsToDatabase
 import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.viewModelModule
 
@@ -73,6 +74,7 @@ class Application : NativeApplication(), KoinComponent {
 
             logger.i { "######## Application \n started ########" }
 
+            MigrateSettingsToDatabase.migrateIfNecessary()
             //initialize/load the settings, generate the MutableStateFlow
             AppSetting
             ConfigurationSetting
