@@ -1,3 +1,10 @@
 CREATE TABLE settingsIds (
   id TEXT PRIMARY KEY NOT NULL
 );
+
+insertOrIgnore:
+INSERT OR IGNORE INTO settingsIds(id)
+VALUES (?);
+
+selectChanges:
+SELECT changes();

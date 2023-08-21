@@ -6,10 +6,10 @@ CREATE TABLE settingsLongValues (
 
 insertOrUpdate:
 INSERT INTO settingsLongValues(id, value)
-VALUES (?, ?)
+VALUES (:id, :value)
 ON CONFLICT(id) DO UPDATE SET value = excluded.value;
 
 select:
 SELECT value
 FROM settingsLongValues
-WHERE id = ?;
+WHERE id = :id;

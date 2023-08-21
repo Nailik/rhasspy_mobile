@@ -9,10 +9,10 @@ CREATE TABLE porcupineKeywordValues (
 
 insertOrUpdate:
 INSERT INTO porcupineKeywordValues(id, value, enabled, sensitivity)
-VALUES (?, ?, ?, ?)
+VALUES (:id, :value, :enabled, :sensitivity)
 ON CONFLICT(key) DO UPDATE SET enabled = excluded.enabled, sensitivity = excluded.sensitivity;
 
 select:
 SELECT *
 FROM porcupineKeywordValues
-WHERE id = ?;
+WHERE id = :id;

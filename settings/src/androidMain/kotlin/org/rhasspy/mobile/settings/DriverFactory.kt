@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.settings
 
+import androidx.sqlite.db.SupportSQLiteDatabase
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import org.koin.core.component.KoinComponent
@@ -8,7 +9,16 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
 actual class DriverFactory : KoinComponent {
     actual fun createDriver(): SqlDriver {
-        return AndroidSqliteDriver(Database.Schema, get<NativeApplication>(), "settings.db")
+        return AndroidSqliteDriver(
+            schema = Database.Schema,
+            context = get<NativeApplication>(),
+            name = "settings.db",
+            callback = object : AndroidSqliteDriver.Callback(Database.Schema) {
+                override fun onOpen(db: SupportSQLiteDatabase) {
+                    db.setForeignKeyConstraintsEnabled(true)
+                }
+            }
+        )
     }
 
 }

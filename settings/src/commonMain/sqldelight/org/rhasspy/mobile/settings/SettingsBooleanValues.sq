@@ -6,10 +6,10 @@ CREATE TABLE settingsBooleanValues (
 
 insertOrUpdate:
 INSERT INTO settingsBooleanValues(id, value)
-VALUES (?, ?)
+VALUES (:id, :value)
 ON CONFLICT(id) DO UPDATE SET value = excluded.value;
 
 select:
 SELECT value
 FROM settingsBooleanValues
-WHERE id = ?;
+WHERE id = :id;

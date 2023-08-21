@@ -1,21 +1,21 @@
 package org.rhasspy.mobile.settings.types
 
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.settings.ISetting
 
 class PorcupineKeywordCustomListSetting(
-    private val key: SettingsEnum,
-    private val initial: ImmutableList<PorcupineCustomKeyword> //TODO initial
-) : ISetting<ImmutableList<PorcupineCustomKeyword>>() {
+    key: SettingsEnum,
+    initial: ImmutableList<PorcupineCustomKeyword>
+) : ISetting<ImmutableList<PorcupineCustomKeyword>>(
+    key = key,
+    initial = initial
+) {
 
-    override val data = MutableStateFlow(readInitial())
-
-    private fun readInitial(): ImmutableList<PorcupineCustomKeyword> {
-        return database.database.settingsPorcupineKeywordListValuesQueries
+    override fun readValue(): ImmutableList<PorcupineCustomKeyword> {
+        return database.settingsPorcupineKeywordListValuesQueries
             .select(key.name)
             .executeAsList().map {
                 PorcupineCustomKeyword(
@@ -27,13 +27,12 @@ class PorcupineKeywordCustomListSetting(
     }
 
     override fun saveValue(newValue: ImmutableList<PorcupineCustomKeyword>) {
-        data.value = newValue
-        database.database.settingsPorcupineKeywordListValuesQueries.transaction {
+        database.settingsPorcupineKeywordListValuesQueries.transaction {
             newValue.forEach {
-                database.database.settingsPorcupineKeywordListValuesQueries
+                database.settingsPorcupineKeywordListValuesQueries
                     .insertOrUpdate(
                         id = key.name,
-                        value_ = it.fileName,
+                        value = it.fileName,
                         enabled = if (it.isEnabled) 1 else 0,
                         sensitivity = it.sensitivity.toLong()
                     )

@@ -1,27 +1,24 @@
 package org.rhasspy.mobile.settings.types
 
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.settings.ISetting
 
 class LongNullableSetting(
-    private val key: SettingsEnum,
-    private val initial: Long?
-) : ISetting<Long?>() {
+    key: SettingsEnum,
+    initial: Long?
+) : ISetting<Long?>(
+    key = key,
+    initial = initial
+) {
 
-    override val data = MutableStateFlow(readInitial())
-
-    private fun readInitial(): Long? {
-        return database.database.settingsLongNullableValuesQueries
+    override fun readValue(): Long? {
+        return database.settingsLongNullableValuesQueries
             .select(key.name)
-            .executeAsOneOrNull().let {
-                if (it != null) it.value_ else initial
-            }
+            .executeAsOneOrNull()?.value_
     }
 
     override fun saveValue(newValue: Long?) {
-        data.value = newValue
-        database.database.settingsLongNullableValuesQueries.insertOrUpdate(key.name, newValue)
+        database.settingsLongNullableValuesQueries.insertOrUpdate(key.name, newValue)
     }
 
 }

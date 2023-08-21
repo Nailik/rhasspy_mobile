@@ -6,10 +6,10 @@ CREATE TABLE settingsStringValues (
 
 insertOrUpdate:
 INSERT INTO settingsStringValues(id, value)
-VALUES (?, ?)
+VALUES (:id, :value)
 ON CONFLICT(id) DO UPDATE SET value = excluded.value;
 
 select:
 SELECT value
 FROM settingsStringValues
-WHERE id = ?;
+WHERE id = :id;

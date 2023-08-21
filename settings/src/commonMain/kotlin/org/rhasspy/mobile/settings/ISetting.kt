@@ -1,19 +1,40 @@
 package org.rhasspy.mobile.settings
 
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.rhasspy.mobile.data.settings.SettingsEnum
+import org.rhasspy.mobile.platformspecific.readOnly
 
-abstract class ISetting<T> : KoinComponent {
-//TODO -> when database is completely new created make a savevalue on all initial values
-    val database = get<DatabaseConnection>()
+abstract class ISetting<T>(
+    val key: SettingsEnum,
+    val initial: T
+) : KoinComponent {
 
-    abstract val data: StateFlow<T>
+    val database = get<SettingsDatabase>().database
+
+    init {
+        database.transaction {
+            database.settingsIdsQueries.insertOrIgnore(key.name)
+            val numberOfRowsAffected = database.settingsIdsQueries.selectChanges().executeAsOne()
+            if (numberOfRowsAffected > 0) {
+                saveValue(initial)
+            }
+        }
+    }
+
+    private val _data by lazy { MutableStateFlow(readValue()) }
+    val data by lazy { _data.readOnly }
 
     var value: T
         get() = data.value
-        set(value) = saveValue(value)
+        set(value) {
+            _data.value = value
+            saveValue(value)
+        }
 
-    abstract fun saveValue(newValue: T)
+    protected abstract fun saveValue(newValue: T)
+
+    protected abstract fun readValue(): T
 
 }

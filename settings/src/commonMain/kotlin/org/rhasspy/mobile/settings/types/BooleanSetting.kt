@@ -1,27 +1,29 @@
 package org.rhasspy.mobile.settings.types
 
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.settings.ISetting
 
-class BooleanSetting(
-    private val key: SettingsEnum,
-    private val initial: Boolean
-) : ISetting<Boolean>() {
+open class BooleanSetting(
+    key: SettingsEnum,
+    initial: Boolean
+) : ISetting<Boolean>(
+    key = key,
+    initial = initial
+) {
 
-    override val data = MutableStateFlow(readInitial())
+    override fun saveValue(newValue: Boolean) {
+        database.settingsBooleanValuesQueries.insertOrUpdate(key.name, newValue.toLong())
+    }
 
-    private fun readInitial(): Boolean {
-        return database.database.settingsBooleanValuesQueries
+    override fun readValue(): Boolean {
+        return database.settingsBooleanValuesQueries
             .select(key.name)
             .executeAsOneOrNull().let {
-                if (it != null) it == 1L else initial
+                it?.toBoolean() ?: initial
             }
     }
 
-    override fun saveValue(newValue: Boolean) {
-        data.value = newValue
-        database.database.settingsBooleanValuesQueries.insertOrUpdate(key.name, if (newValue) 1L else 0L)
-    }
+    private fun Long?.toBoolean(): Boolean? = if (this != null) this == 1L else null
+    private fun Boolean.toLong(): Long = if (this) 1L else 0L
 
 }
