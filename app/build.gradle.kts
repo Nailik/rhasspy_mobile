@@ -25,6 +25,7 @@ kotlin {
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "app"
+            linkerOpts.add("-lsqlite3")
         }
     }
 
