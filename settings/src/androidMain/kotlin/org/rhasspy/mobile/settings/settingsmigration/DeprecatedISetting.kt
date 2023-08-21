@@ -2,7 +2,6 @@ package org.rhasspy.mobile.settings.settingsmigration
 
 import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi
-import com.russhwolf.settings.Settings
 import com.russhwolf.settings.get
 import com.russhwolf.settings.serialization.decodeValue
 import com.russhwolf.settings.serialization.encodeValue
@@ -11,7 +10,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.rhasspy.mobile.data.service.option.IOption
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -24,7 +22,7 @@ open class DeprecatedISetting<T>(
     private val serializer: KSerializer<T>? = null
 ) : KoinComponent {
 
-    private val settings = get<Settings>()
+    private val settings = MigrateToDatabase.settings
 
     /**
      * data used to get current saved value or to set value for unsaved changes

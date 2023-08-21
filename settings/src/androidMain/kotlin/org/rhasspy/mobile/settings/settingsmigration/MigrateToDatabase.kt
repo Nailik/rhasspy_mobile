@@ -2,6 +2,7 @@ package org.rhasspy.mobile.settings.settingsmigration
 
 import androidx.sqlite.db.SupportSQLiteDatabase
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
+import com.russhwolf.settings.Settings
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
@@ -11,6 +12,9 @@ import java.io.File
 object MigrateToDatabase : KoinComponent {
 
     lateinit var database: Database
+        private set
+
+    lateinit var settings: Settings
         private set
 
     fun migrateIfNecessary() {
@@ -31,6 +35,7 @@ object MigrateToDatabase : KoinComponent {
                 }
             }
         )
+        settings = Settings()
         database = Database(driver)
         //migrate to new settings and delete file
         migrateAppSetting()

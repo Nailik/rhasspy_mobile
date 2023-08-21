@@ -22,7 +22,7 @@ class PorcupineKeywordDefaultListSetting(
                 PorcupineDefaultKeyword(
                     option = PorcupineKeywordOption.valueOf(it.value_),
                     isEnabled = it.enabled == 1L,
-                    sensitivity = it.sensitivity.toFloat()
+                    sensitivity = it.sensitivity
                 )
             }.toTypedArray().toImmutableList()
     }
@@ -35,7 +35,7 @@ class PorcupineKeywordDefaultListSetting(
                         id = key.name,
                         value = it.option.name,
                         enabled = if (it.isEnabled) 1 else 0,
-                        sensitivity = it.sensitivity.toLong()
+                        sensitivity = it.sensitivity
                     )
             }
         }

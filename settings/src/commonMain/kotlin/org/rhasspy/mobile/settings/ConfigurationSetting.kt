@@ -55,7 +55,7 @@ object ConfigurationSetting {
     val wakeWordPorcupineAccessToken = StringSetting(SettingsEnum.WakeWordPorcupineAccessToken, "")
     val wakeWordPorcupineKeywordDefaultOptions = PorcupineKeywordDefaultListSetting(
         SettingsEnum.WakeWordPorcupineKeywordDefaultSelectedOptions,
-        PorcupineKeywordOption.values().map { PorcupineDefaultKeyword(it, false, 0.5f) }.toImmutableList(),
+        PorcupineKeywordOption.values().map { PorcupineDefaultKeyword(it, false, 0.5) }.toImmutableList(),
     )
     val wakeWordPorcupineKeywordCustomOptions = PorcupineKeywordCustomListSetting(SettingsEnum.WakeWordPorcupineKeywordCustomOptions, persistentListOf())
     val wakeWordPorcupineLanguage = IOptionSetting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOption.EN)

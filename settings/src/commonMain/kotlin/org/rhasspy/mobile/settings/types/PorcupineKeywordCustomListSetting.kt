@@ -21,20 +21,21 @@ class PorcupineKeywordCustomListSetting(
                 PorcupineCustomKeyword(
                     fileName = it.value_,
                     isEnabled = it.enabled == 1L,
-                    sensitivity = it.sensitivity.toFloat()
+                    sensitivity = it.sensitivity
                 )
             }.toTypedArray().toImmutableList()
     }
 
     override fun saveValue(newValue: ImmutableList<PorcupineCustomKeyword>) {
         database.settingsPorcupineKeywordListValuesQueries.transaction {
+            database.settingsPorcupineKeywordListValuesQueries.delete(key.name)
             newValue.forEach {
                 database.settingsPorcupineKeywordListValuesQueries
                     .insertOrUpdate(
                         id = key.name,
                         value = it.fileName,
                         enabled = if (it.isEnabled) 1 else 0,
-                        sensitivity = it.sensitivity.toLong()
+                        sensitivity = it.sensitivity
                     )
             }
         }

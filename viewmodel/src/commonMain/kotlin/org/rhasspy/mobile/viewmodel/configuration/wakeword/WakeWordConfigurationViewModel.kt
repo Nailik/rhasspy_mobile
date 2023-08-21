@@ -184,7 +184,7 @@ class WakeWordConfigurationViewModel(
                                 PorcupineCustomKeyword(
                                     fileName = change.path.name,
                                     isEnabled = true,
-                                    sensitivity = 0.5f
+                                    sensitivity = 0.5
                                 )
                             )
                         })

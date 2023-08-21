@@ -54,7 +54,7 @@ object DeprecatedConfigurationSetting {
     val wakeWordPorcupineAccessToken = DeprecatedISetting(SettingsEnum.WakeWordPorcupineAccessToken, "")
     val wakeWordPorcupineKeywordDefaultOptions = DeprecatedISetting(
         SettingsEnum.WakeWordPorcupineKeywordDefaultSelectedOptions,
-        PorcupineKeywordOption.values().map { PorcupineDefaultKeyword(it, false, 0.5f) }.toImmutableList(),
+        PorcupineKeywordOption.values().map { PorcupineDefaultKeyword(it, false, 0.5) }.toImmutableList(),
         PorcupineDefaultKeywordSerializer
     )
     val wakeWordPorcupineKeywordCustomOptions = DeprecatedISetting(SettingsEnum.WakeWordPorcupineKeywordCustomOptions, persistentListOf(), PorcupineCustomKeywordSerializer)
