@@ -80,9 +80,6 @@ internal class WakeWordService(
             paramsFlow.collect {
                 updateState()
 
-                //check that everything is initialized
-                initialize()
-
                 //resume detection if necessary
                 resumeDetection()
 
