@@ -6,6 +6,7 @@ object CashApp : DependencyGroup(group = "app.cash") {
         val android = module("android-driver")
         val ios = module("native-driver")
         val coroutines = module("coroutines-extensions")
+        val androidTest = module("sqlite-driver")
     }
 
 }

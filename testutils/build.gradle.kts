@@ -26,7 +26,7 @@ kotlin {
         val commonTest by getting
         val androidMain by getting {
             dependencies {
-                implementation("app.cash.sqldelight:sqlite-driver:_")
+                implementation(CashApp.Sqldelight.androidTest)
                 implementation(AndroidX.archCore.testing)
             }
         }
