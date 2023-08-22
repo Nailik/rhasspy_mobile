@@ -178,24 +178,27 @@ internal actual class SettingsUtils actual constructor(
             logger.d { "shareSettingsFile" }
 
             //copy org.rhasspy.mobile.android_prefenrences.xml
-            val databaseFile = File(
-                nativeApplication.filesDir.parent,
-                "databases/settings.db"
-            )
-            val exportFile = File(
-                nativeApplication.filesDir,
-                "databases/settings-export.db"
-            )
+            val databaseFile = nativeApplication.getDatabasePath("settings.db")
+            val intermediateFile = nativeApplication.getDatabasePath("settings-export.db")
+            val exportFile = File(nativeApplication.filesDir, "settings-export.db")
 
             //write data
             if (databaseFile.exists()) {
                 databaseFile.copyTo(
-                    target = exportFile,
+                    target = intermediateFile,
                     overwrite = true
                 )
             }
 
             removeSensitiveData()
+
+
+            intermediateFile.copyTo(
+                target = exportFile,
+                overwrite = true
+            )
+
+            intermediateFile.delete()
 
             //share file
             val fileUri: Uri = FileProvider.getUriForFile(
