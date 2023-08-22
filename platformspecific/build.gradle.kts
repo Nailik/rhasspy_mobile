@@ -30,7 +30,6 @@ kotlin {
                 implementation(Ktor2.Server.statusPages)
                 implementation(Ktor2.Plugins.network)
                 implementation(Ktor2.Server.core)
-                runtimeOnly("app.cash.sqldelight:core:_")
             }
         }
         val commonTest by getting {

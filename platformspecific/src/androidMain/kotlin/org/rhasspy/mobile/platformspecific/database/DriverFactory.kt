@@ -11,6 +11,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
 actual class DriverFactory : IDriverFactory, KoinComponent {
+
     actual override fun createDriver(database: SqlSchema<QueryResult.Value<Unit>>, name: String): SqlDriver {
 
         return AndroidSqliteDriver(

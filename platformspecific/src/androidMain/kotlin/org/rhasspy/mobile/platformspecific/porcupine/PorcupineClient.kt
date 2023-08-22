@@ -88,9 +88,9 @@ class PorcupineClient(
 
     private fun getSensitivities(): FloatArray {
         return wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
-            .map {
-                it.sensitivity.toFloat()
-            }.toMutableList().also { list ->
+            .map { it.sensitivity.toFloat() }
+            .toMutableList()
+            .also { list ->
                 list.addAll(
                     wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
                         it.sensitivity.toFloat()

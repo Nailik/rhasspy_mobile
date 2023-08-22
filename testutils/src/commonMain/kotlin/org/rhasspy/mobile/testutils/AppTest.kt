@@ -14,8 +14,8 @@ import org.koin.test.KoinTest
 import org.rhasspy.mobile.logic.logicModule
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.database.IDriverFactory
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
-import org.rhasspy.mobile.settings.IDriverFactory
 import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.viewModelModule
 import kotlin.test.AfterTest

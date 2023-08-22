@@ -1,15 +1,16 @@
 package org.rhasspy.mobile.testutils
 
+import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
-import org.rhasspy.mobile.settings.Database
-import org.rhasspy.mobile.settings.IDriverFactory
+import org.rhasspy.mobile.platformspecific.database.IDriverFactory
 
 actual class TestDriverFactory : IDriverFactory {
 
-    actual override fun createDriver(): SqlDriver {
+    actual override fun createDriver(database: SqlSchema<QueryResult.Value<Unit>>, name: String): SqlDriver {
         return JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).also {
-            Database.Schema.create(it)
+            database.create(it)
         }
     }
 

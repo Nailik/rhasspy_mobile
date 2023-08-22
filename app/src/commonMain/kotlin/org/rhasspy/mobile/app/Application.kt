@@ -80,7 +80,7 @@ class Application : NativeApplication(), KoinComponent {
                     )
                 )
             }
-            logger.i { "sdf" }
+
             //initialize/load the settings, generate the MutableStateFlow
             AppSetting
             ConfigurationSetting
