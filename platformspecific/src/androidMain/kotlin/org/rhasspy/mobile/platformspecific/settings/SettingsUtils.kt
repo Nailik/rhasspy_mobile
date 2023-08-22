@@ -116,7 +116,6 @@ internal actual class SettingsUtils actual constructor(
             )
 
             return result?.toUri()?.let { uri ->
-
                 logger.d { "restoreSettingsFromFile $uri" }
                 nativeApplication.contentResolver.openInputStream(uri)
                     ?.let { inputStream ->
@@ -127,6 +126,7 @@ internal actual class SettingsUtils actual constructor(
                         val dir = nativeApplication.filesDir.parent ?: ""
 
                         while (entry != null) {
+                            logger.d { "restoreSettingsFromFile entry $entry" }
                             val file = File(dir, entry.name)
                             val canonicalPath: String = file.canonicalPath
                             //necessary to hide play store warning
@@ -139,12 +139,14 @@ internal actual class SettingsUtils actual constructor(
                             }
                             // Finish unzipping…
                             if (entry.isDirectory) {
+                                logger.d { "restoreSettingsFromFile entry isDirectory $entry" }
                                 //when it's a directory create new directory
                                 file.mkdirs()
                             } else {
                                 //when it's a file copy file
                                 file.parent?.also { parentFile -> File(parentFile).mkdirs() }
                                 file.createNewFile()
+                                logger.d { "restoreSettingsFromFile entry outputStream $entry" }
                                 file.outputStream().apply {
                                     zipInputStream.copyTo(this)
                                     flush()
@@ -154,6 +156,7 @@ internal actual class SettingsUtils actual constructor(
                             //go to next entry
                             entry = zipInputStream.nextEntry
                         }
+                        logger.d { "restoreSettingsFromFile inputStream.close()" }
 
                         inputStream.close()
                         nativeApplication.restart()

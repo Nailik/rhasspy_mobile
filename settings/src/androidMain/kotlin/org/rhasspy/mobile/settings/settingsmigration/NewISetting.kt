@@ -1,13 +1,12 @@
 package org.rhasspy.mobile.settings.settingsmigration
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.platformspecific.readOnly
 
 abstract class NewISetting<T>(
     val key: NewSettingsEnum,
     val initial: T
-) : KoinComponent {
+) {
 
     val database = MigrateToDatabase.database
 

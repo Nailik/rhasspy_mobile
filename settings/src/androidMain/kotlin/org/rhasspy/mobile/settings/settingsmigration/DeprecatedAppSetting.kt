@@ -1,27 +1,25 @@
 package org.rhasspy.mobile.settings.settingsmigration
 
 import kotlinx.collections.immutable.persistentListOf
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
+import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.data.sounds.SoundOption
 import org.rhasspy.mobile.data.theme.ThemeType
-import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 
 /**
  * directly consumed
  */
-object DeprecatedAppSetting : KoinComponent {
+object DeprecatedAppSetting {
 
     val didShowCrashlyticsDialog = DeprecatedISetting(SettingsEnum.CrashlyticsDialog, false)
     val didShowChangelogDialog = DeprecatedISetting(SettingsEnum.ChangelogDialog, 0)
 
-    val languageType = DeprecatedISetting(SettingsEnum.LanguageOption, get<ILanguageUtils>().getDeviceLanguage())
+    val languageType = DeprecatedISetting(SettingsEnum.LanguageOption, LanguageType.English)
     val themeType = DeprecatedISetting(SettingsEnum.ThemeOption, ThemeType.System)
 
     val isAutomaticSilenceDetectionEnabled = DeprecatedISetting(SettingsEnum.AutomaticSilenceDetection, false)

@@ -4,12 +4,14 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.settings.ISettingsUtils
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.settings.ISettingsDatabase
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
@@ -68,6 +70,7 @@ class SaveAndRestoreSettingsViewModel(
 
                     is RestoreSettingsFromFileDialogResult       -> {
                         if (action.confirmed) {
+                            get<ISettingsDatabase>().close() //stop settings database connection
                             if (!settingsUtils.restoreSettingsFromFile())
                                 it.copy(
                                     snackBarText = MR.strings.restoreSettingsFromFileFailed.stable,

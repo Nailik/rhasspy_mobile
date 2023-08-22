@@ -9,7 +9,6 @@ import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.data.service.option.IOption
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -20,7 +19,7 @@ open class DeprecatedISetting<T>(
     private val key: SettingsEnum,
     private val initial: T,
     private val serializer: KSerializer<T>? = null
-) : KoinComponent {
+) {
 
     private val settings = MigrateToDatabase.settings
 

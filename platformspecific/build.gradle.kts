@@ -60,7 +60,7 @@ kotlin {
                 implementation(Journeyapps.zXingAndroid)
                 implementation(AndroidX.browser)
                 implementation(CashApp.Sqldelight.android)
-                implementation("com.github.requery:sqlite-android:_")
+                api(Requery.sqliteAndroid)
             }
         }
         val androidUnitTest by getting {

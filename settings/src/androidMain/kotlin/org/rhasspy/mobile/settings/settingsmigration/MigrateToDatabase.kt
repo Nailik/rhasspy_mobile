@@ -1,17 +1,17 @@
 package org.rhasspy.mobile.settings.settingsmigration
 
+import androidx.sqlite.db.SupportSQLiteDatabase
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import co.touchlab.kermit.Logger
 import com.russhwolf.settings.Settings
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
+import io.requery.android.database.sqlite.RequerySQLiteOpenHelperFactory
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.database.IDriverFactory
 import org.rhasspy.mobile.settings.SettingsDatabase
 import java.io.File
 
-object MigrateToDatabase : KoinComponent {
+object MigrateToDatabase {
 
-    val logger = Logger.withTag("MigrateToDatabase")
+    private val logger = Logger.withTag("MigrateToDatabase")
 
     lateinit var database: SettingsDatabase
         private set
@@ -19,19 +19,39 @@ object MigrateToDatabase : KoinComponent {
     lateinit var settings: Settings
         private set
 
-    fun migrateIfNecessary() {
+    fun migrateIfNecessary(nativeApplication: NativeApplication) {
         logger.d { "migrateIfNecessary" }
         val sharedPreferencesFile = File(
-            get<NativeApplication>().filesDir.parent,
+            nativeApplication.filesDir.parent,
             "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
         )
 
         if (!sharedPreferencesFile.exists()) return
+
+        val databaseFile = File(
+            nativeApplication.filesDir.parent,
+            "databases/settings.db"
+        )
+
+        if (databaseFile.exists()) {
+            databaseFile.delete()
+        }
+
         logger.d { "migrate file exists" }
 
         settings = Settings()
         logger.d { "initialized settings" }
-        val driver = get<IDriverFactory>().createDriver(InitialSchema, "settings.db")
+        val driver = AndroidSqliteDriver(
+            schema = InitialSchema,
+            context = nativeApplication,
+            factory = RequerySQLiteOpenHelperFactory(),
+            name = "settings.db",
+            callback = object : AndroidSqliteDriver.Callback(InitialSchema) {
+                override fun onOpen(db: SupportSQLiteDatabase) {
+                    db.setForeignKeyConstraintsEnabled(true)
+                }
+            }
+        )
         logger.d { "created driver" }
         database = SettingsDatabase(driver)
         logger.d { "created database" }
@@ -98,7 +118,10 @@ object MigrateToDatabase : KoinComponent {
     }
 
     private fun migrateConfigurationSetting() {
+        logger.d { "deprecated site id value ${DeprecatedConfigurationSetting.siteId.value}" }
+        logger.d { "new site id value ${NewConfigurationSetting.siteId.value}" }
         NewConfigurationSetting.siteId.value = DeprecatedConfigurationSetting.siteId.value
+        logger.d { "new site id value after migration ${NewConfigurationSetting.siteId.value}" }
         NewConfigurationSetting.isHttpServerEnabled.value = DeprecatedConfigurationSetting.isHttpServerEnabled.value
         NewConfigurationSetting.httpServerPort.value = DeprecatedConfigurationSetting.httpServerPort.value
         NewConfigurationSetting.isHttpServerSSLEnabledEnabled.value = DeprecatedConfigurationSetting.isHttpServerSSLEnabledEnabled.value
@@ -128,6 +151,8 @@ object MigrateToDatabase : KoinComponent {
         NewConfigurationSetting.wakeWordAudioOutputEncoding.value = DeprecatedConfigurationSetting.wakeWordAudioOutputEncoding.value
         NewConfigurationSetting.wakeWordAudioOutputSampleRate.value = DeprecatedConfigurationSetting.wakeWordAudioOutputSampleRate.value
         NewConfigurationSetting.wakeWordPorcupineAccessToken.value = DeprecatedConfigurationSetting.wakeWordPorcupineAccessToken.value
+        //necessary to initialize all values
+        // NewConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value = NewConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.initial
         NewConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value = DeprecatedConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value
         NewConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value = DeprecatedConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value
         NewConfigurationSetting.wakeWordPorcupineLanguage.value = DeprecatedConfigurationSetting.wakeWordPorcupineLanguage.value

@@ -15,7 +15,7 @@ object InitialSchema : SqlSchema<QueryResult.Value<Unit>> {
           |CREATE TABLE settingsBooleanValues (
           |    id TEXT PRIMARY KEY,
           |    value INTEGER NOT NULL CHECK (value IN (0, 1)),
-          |    FOREIGN KEY (id) REFERENCES settingsIds(id)
+          |    FOREIGN KEY (id) REFERENCES settingsIds(id) ON DELETE CASCADE
           |)
           """.trimMargin(), 0
         )
@@ -31,7 +31,7 @@ object InitialSchema : SqlSchema<QueryResult.Value<Unit>> {
           |CREATE TABLE settingsLongNullableValues (
           |    id TEXT PRIMARY KEY,
           |    value INTEGER,
-          |    FOREIGN KEY (id) REFERENCES settingsIds(id)
+          |    FOREIGN KEY (id) REFERENCES settingsIds(id) ON DELETE CASCADE
           |)
           """.trimMargin(), 0
         )
@@ -40,19 +40,19 @@ object InitialSchema : SqlSchema<QueryResult.Value<Unit>> {
           |CREATE TABLE settingsLongValues (
           |    id TEXT PRIMARY KEY,
           |    value INTEGER NOT NULL,
-          |    FOREIGN KEY (id) REFERENCES settingsIds(id)
+          |    FOREIGN KEY (id) REFERENCES settingsIds(id) ON DELETE CASCADE
           |)
           """.trimMargin(), 0
         )
         driver.execute(
             null, """
           |CREATE TABLE porcupineKeywordValues (
-          |    key INTEGER PRIMARY KEY,
-          |    id TEXT,
+          |    id TEXT NOT NULL,
           |    value TEXT NOT NULL,
           |    enabled INTEGER NOT NULL CHECK (enabled IN (0, 1)),
-          |    sensitivity INTEGER NOT NULL CHECK (sensitivity IN (0, 1)),
-          |    FOREIGN KEY (id) REFERENCES settingsIds(id)
+          |    sensitivity REAL NOT NULL CHECK (sensitivity >= 0 AND sensitivity <= 1),
+          |    FOREIGN KEY (id) REFERENCES settingsIds(id) ON DELETE CASCADE,
+          |    PRIMARY KEY (id, value)
           |)
           """.trimMargin(), 0
         )
@@ -62,7 +62,7 @@ object InitialSchema : SqlSchema<QueryResult.Value<Unit>> {
           |    key INTEGER PRIMARY KEY,
           |    id TEXT,
           |    value TEXT NOT NULL,
-          |    FOREIGN KEY (id) REFERENCES settingsIds(id)
+          |    FOREIGN KEY (id) REFERENCES settingsIds(id) ON DELETE CASCADE
           |)
           """.trimMargin(), 0
         )
@@ -71,7 +71,7 @@ object InitialSchema : SqlSchema<QueryResult.Value<Unit>> {
           |CREATE TABLE settingsStringNullableValues (
           |    id TEXT PRIMARY KEY,
           |    value TEXT,
-          |    FOREIGN KEY (id) REFERENCES settingsIds(id)
+          |    FOREIGN KEY (id) REFERENCES settingsIds(id) ON DELETE CASCADE
           |)
           """.trimMargin(), 0
         )
@@ -80,7 +80,7 @@ object InitialSchema : SqlSchema<QueryResult.Value<Unit>> {
           |CREATE TABLE settingsStringValues (
           |    id TEXT PRIMARY KEY,
           |    value TEXT NOT NULL,
-          |    FOREIGN KEY (id) REFERENCES settingsIds(id)
+          |    FOREIGN KEY (id) REFERENCES settingsIds(id) ON DELETE CASCADE
           |)
           """.trimMargin(), 0
         )

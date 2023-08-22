@@ -8,6 +8,7 @@ import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -48,6 +49,12 @@ class Application : NativeApplication(), KoinComponent {
 
     @OptIn(ExperimentalKermitApi::class)
     override fun onCreated() {
+        logger.i { "######## Application \n started ########" }
+
+        MigrateSettingsToDatabase.migrateIfNecessary(this)
+
+        logger.d { "startKoin" }
+
         startKoin {
             // declare used modules
             modules(
@@ -60,6 +67,8 @@ class Application : NativeApplication(), KoinComponent {
             )
         }
 
+        logger.d { "Koin started" }
+
         CoroutineScope(get<IDispatcherProvider>().IO).launch {
 
             Logger.addLogWriter(get<IFileLogger>() as LogWriter)
@@ -71,10 +80,7 @@ class Application : NativeApplication(), KoinComponent {
                     )
                 )
             }
-
-            logger.i { "######## Application \n started ########" }
-
-            MigrateSettingsToDatabase.migrateIfNecessary()
+            logger.i { "sdf" }
             //initialize/load the settings, generate the MutableStateFlow
             AppSetting
             ConfigurationSetting
@@ -95,12 +101,13 @@ class Application : NativeApplication(), KoinComponent {
             }
 
             //check if overlay permission is granted
-            resume()
             _isHasStarted.value = true
+            resume()
         }
     }
 
     override suspend fun resume() {
+        _isHasStarted.first { it } //await for app start
         get<IMicrophonePermission>().update()
         get<IOverlayPermission>().update()
         //start services
