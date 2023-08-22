@@ -10,13 +10,12 @@ sealed interface SaveAndRestoreSettingsUiEvent {
         data class RestoreSettingsFromFileDialogResult(val confirmed: Boolean) : Action
         data object ShareSettingsFile : Action
         data object BackClick : Action
-        data object CloseRestoreSettingsFromDeprecatedFileDialog : Action
 
     }
 
     sealed interface Consumed : SaveAndRestoreSettingsUiEvent {
 
-        object ShowSnackBar : Consumed
+        data object ShowSnackBar : Consumed
 
     }
 

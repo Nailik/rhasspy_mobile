@@ -9,7 +9,6 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.settings.ISettingsUtils
-import org.rhasspy.mobile.platformspecific.settings.RestoreResult
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action
@@ -69,28 +68,15 @@ class SaveAndRestoreSettingsViewModel(
 
                     is RestoreSettingsFromFileDialogResult       -> {
                         if (action.confirmed) {
-                            when (settingsUtils.restoreSettingsFromFile()) {
-                                RestoreResult.Success           ->
-                                    it.copy(isRestoreSettingsFromFileDialogVisible = false)
-
-                                RestoreResult.DeprecatedSuccess ->
-                                    it.copy(
-                                        isRestoreSettingsFromDeprecatedFileDialogVisible = true,
-                                        isRestoreSettingsFromFileDialogVisible = false
-                                    )
-
-                                RestoreResult.Error             -> it.copy(
+                            if (!settingsUtils.restoreSettingsFromFile())
+                                it.copy(
                                     snackBarText = MR.strings.restoreSettingsFromFileFailed.stable,
                                     isRestoreSettingsFromFileDialogVisible = false
-                                )
-                            }
+                                ) else it.copy(isRestoreSettingsFromFileDialogVisible = false)
                         } else {
                             it.copy(isRestoreSettingsFromFileDialogVisible = false)
                         }
                     }
-
-                    CloseRestoreSettingsFromDeprecatedFileDialog ->
-                        it.copy(isRestoreSettingsFromDeprecatedFileDialogVisible = false)
                 }
             }
         }
@@ -105,10 +91,7 @@ class SaveAndRestoreSettingsViewModel(
     }
 
     override fun onBackPressed(): Boolean {
-        return if (_viewState.value.isRestoreSettingsFromDeprecatedFileDialogVisible) {
-            _viewState.update { it.copy(isRestoreSettingsFromDeprecatedFileDialogVisible = false) }
-            true
-        } else if (_viewState.value.isRestoreSettingsFromFileDialogVisible) {
+        return if (_viewState.value.isRestoreSettingsFromFileDialogVisible) {
             _viewState.update { it.copy(isRestoreSettingsFromFileDialogVisible = false) }
             true
         } else if (_viewState.value.isSaveSettingsToFileDialogVisible) {

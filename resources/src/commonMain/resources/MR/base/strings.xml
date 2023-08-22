@@ -136,8 +136,6 @@
     <string name="saveSettingsWarningText">The exported Settings file contains sensitive Data!\nRead the file and edit carefully before sharing.</string>
     <string name="restoreSettings">Restore Settings</string>
     <string name="restoreSettingsWarningText">Your current settings will be lost after restoring from file!</string>
-    <string name="restoreDeprecatedSettings">Deprecated backup file!</string>
-    <string name="restoreSettingsDeprecatedWarningText">You are restoring settings from a deprecated settings backup. Support will be removed in Version 0.8!</string>
     <string name="warning">Warning</string>
     <string name="success">Success</string>
     <string name="aboutTitle">About Rhasspy Mobile</string>
