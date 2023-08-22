@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.settings.settingsmigration
 
+import co.touchlab.kermit.Logger
 import com.russhwolf.settings.Settings
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -10,6 +11,8 @@ import java.io.File
 
 object MigrateToDatabase : KoinComponent {
 
+    val logger = Logger.withTag("MigrateToDatabase")
+
     lateinit var database: SettingsDatabase
         private set
 
@@ -17,21 +20,32 @@ object MigrateToDatabase : KoinComponent {
         private set
 
     fun migrateIfNecessary() {
+        logger.d { "migrateIfNecessary" }
         val sharedPreferencesFile = File(
             get<NativeApplication>().filesDir.parent,
             "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
         )
 
         if (!sharedPreferencesFile.exists()) return
-
+        logger.d { "migrate file exists" }
 
         settings = Settings()
-        database = SettingsDatabase(get<IDriverFactory>().createDriver(InitialSchema, "settings.db"))
+        logger.d { "initialized settings" }
+        val driver = get<IDriverFactory>().createDriver(InitialSchema, "settings.db")
+        logger.d { "created driver" }
+        database = SettingsDatabase(driver)
+        logger.d { "created database" }
         //migrate to new settings and delete file
         migrateAppSetting()
+        logger.d { "migrated app settings" }
         migrateConfigurationSetting()
+        logger.d { "migrated configuration settings" }
+
+        driver.close()
+        logger.d { "closed driver" }
 
         sharedPreferencesFile.delete()
+        logger.d { "deleted old configuration" }
     }
 
 
