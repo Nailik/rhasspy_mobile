@@ -16,6 +16,7 @@ kotlin {
                 api(project(":settings"))
                 api(project(":logic"))
                 api(project(":app"))
+                api(project(":viewmodel"))
                 implementation(Kotlin.test)
                 implementation(Koin.test)
                 implementation(KotlinX.Coroutines.test)

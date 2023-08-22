@@ -17,6 +17,7 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.settings.IDriverFactory
 import org.rhasspy.mobile.settings.settingsModule
+import org.rhasspy.mobile.viewmodel.viewModelModule
 import kotlin.test.AfterTest
 
 expect abstract class IAppTest() : TestsWithMocks
@@ -44,6 +45,7 @@ abstract class AppTest : IAppTest(), KoinTest {
                 platformSpecificModule,
                 settingsModule,
                 logicModule(),
+                viewModelModule(),
                 module {
                     single<IDriverFactory> {
                         TestDriverFactory()

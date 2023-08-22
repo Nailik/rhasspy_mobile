@@ -42,21 +42,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
             }
         )
 
-        initialWakeWordConfigurationData = WakeWordConfigurationData(
-            wakeWordOption = WakeWordOption.Disabled,
-            wakeWordPorcupineConfigurationData = WakeWordPorcupineConfigurationData(
-                accessToken = "",
-                porcupineLanguage = PorcupineLanguageOption.EN,
-                defaultOptions = PorcupineKeywordOption.values()
-                    .map { PorcupineDefaultKeyword(it, false, 0.5) }.toImmutableList(),
-                customOptions = persistentListOf(),
-                deletedCustomOptions = persistentListOf()
-            ),
-            wakeWordUdpConfigurationData = WakeWordUdpConfigurationData(
-                outputHost = "",
-                outputPort = 20000
-            )
-        )
+        initialWakeWordConfigurationData = WakeWordConfigurationData()
 
         wakeWordConfigurationData = WakeWordConfigurationData(
             wakeWordOption = WakeWordOption.MQTT,
@@ -64,7 +50,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                 accessToken = getRandomString(5),
                 porcupineLanguage = PorcupineLanguageOption.DE,
                 defaultOptions = PorcupineKeywordOption.values()
-                    .map { PorcupineDefaultKeyword(it, true, 0.7) }.toImmutableList(),
+                    .map { PorcupineDefaultKeyword(it, true, 0.7) }.sortedBy { it.option.name }.toImmutableList(), //sort is necessary because database also sorts
                 customOptions = persistentListOf(
                     PorcupineCustomKeyword(
                         fileName = getRandomString(5),

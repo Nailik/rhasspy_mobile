@@ -8,8 +8,8 @@ import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.AppTest
-import org.rhasspy.mobile.viewmodel.getRandomString
+import org.rhasspy.mobile.testutils.AppTest
+import org.rhasspy.mobile.testutils.getRandomString
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToErrorClick
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Consumed
