@@ -106,7 +106,7 @@ internal actual class SettingsUtils actual constructor(
     /**
      * restore all settings from a file
      */
-    actual override suspend fun restoreSettingsFromFile(): Boolean {
+    actual override suspend fun restoreSettingsFromFile(): RestoreResult {
         return try {
             logger.d { "restoreSettingsFromFile" }
 
@@ -116,6 +116,7 @@ internal actual class SettingsUtils actual constructor(
             )
 
             return result?.toUri()?.let { uri ->
+                var isDeprecatedSettingsFile = false
                 logger.d { "restoreSettingsFromFile $uri" }
                 nativeApplication.contentResolver.openInputStream(uri)
                     ?.let { inputStream ->
@@ -143,6 +144,11 @@ internal actual class SettingsUtils actual constructor(
                             } else {
                                 //when it's a file copy file
                                 file.parent?.also { parentFile -> File(parentFile).mkdirs() }
+
+                                if (file.name == "org.rhasspy.mobile.android_preferences.xml") {
+                                    isDeprecatedSettingsFile = true
+                                }
+
                                 file.createNewFile()
                                 file.outputStream().apply {
                                     zipInputStream.copyTo(this)
@@ -157,13 +163,13 @@ internal actual class SettingsUtils actual constructor(
                         inputStream.close()
                         nativeApplication.restart()
 
-                        true
-                    } ?: false
-            } ?: false
+                        if (isDeprecatedSettingsFile) RestoreResult.DeprecatedSuccess else RestoreResult.Success
+                    } ?: RestoreResult.Error
+            } ?: RestoreResult.Error
 
         } catch (exception: Exception) {
             logger.e(exception) { "restoreSettingsFromFile" }
-            false
+            RestoreResult.Error
         }
     }
 
@@ -201,12 +207,16 @@ internal actual class SettingsUtils actual constructor(
                 exportFile
             )
 
-            return externalResultRequest.launch(
+            val result = externalResultRequest.launch(
                 ExternalResultRequestIntention.ShareFile(
                     fileUri = fileUri.toString(),
                     mimeType = "application/xml"
                 )
             ) is ExternalRedirectResult.Success
+
+            exportFile.delete()
+
+            return result
 
         } catch (exception: Exception) {
             logger.e(exception) { "shareSettingsFile" }

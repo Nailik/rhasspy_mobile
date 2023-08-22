@@ -21,9 +21,9 @@ internal actual class SettingsUtils actual constructor(
     /**
      * restore all settings from a file
      */
-    actual override suspend fun restoreSettingsFromFile(): Boolean {
+    actual override suspend fun restoreSettingsFromFile(): RestoreResult {
         //TODO("Not yet implemented")
-        return true
+        return RestoreResult.Success
     }
 
     /**

@@ -65,6 +65,15 @@ fun SaveAndRestoreSettingsContent() {
                 onEvent = viewModel::onEvent
             )
 
+            //Deprecated Settings
+            if (viewState.isRestoreSettingsFromDeprecatedFileDialogVisible) {
+
+                RestoreDeprecatedSettingsDialog(
+                    onClose = { viewModel.onEvent(CloseRestoreSettingsFromDeprecatedFileDialog) }
+                )
+
+            }
+
             //Share Settings
             ShareSettings(viewModel::onEvent)
         }
@@ -202,6 +211,25 @@ private fun RestoreSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) 
         dismissLabel = MR.strings.cancel.stable,
         onConfirm = onConfirm,
         onDismiss = onDismiss
+    )
+
+
+}
+
+/**
+ * dialog to restore settings
+ */
+@Composable
+private fun RestoreDeprecatedSettingsDialog(onClose: () -> Unit) {
+
+    Dialog(
+        testTag = TestTag.DialogRestoreDeprecatedSettings,
+        icon = Icons.Filled.Warning,
+        title = MR.strings.restoreDeprecatedSettings.stable,
+        message = MR.strings.restoreSettingsDeprecatedWarningText.stable,
+        confirmLabel = MR.strings.ok.stable,
+        onConfirm = onClose,
+        onDismiss = onClose
     )
 
 }

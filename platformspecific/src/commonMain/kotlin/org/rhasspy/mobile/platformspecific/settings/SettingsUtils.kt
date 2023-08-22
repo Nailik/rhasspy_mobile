@@ -7,9 +7,16 @@ import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 interface ISettingsUtils {
 
     suspend fun exportSettingsFile(): Boolean
-    suspend fun restoreSettingsFromFile(): Boolean
+    suspend fun restoreSettingsFromFile(): RestoreResult
     suspend fun shareSettingsFile(): Boolean
 
+}
+
+
+enum class RestoreResult {
+    Success,
+    DeprecatedSuccess,
+    Error
 }
 
 internal expect class SettingsUtils(
@@ -26,7 +33,7 @@ internal expect class SettingsUtils(
     /**
      * restore all settings from a file
      */
-    override suspend fun restoreSettingsFromFile(): Boolean
+    override suspend fun restoreSettingsFromFile(): RestoreResult
 
     /**
      * share settings file but without sensitive data

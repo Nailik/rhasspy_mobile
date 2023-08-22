@@ -7,5 +7,6 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 data class SaveAndRestoreSettingsViewState(
     val snackBarText: StableStringResource? = null,
     val isSaveSettingsToFileDialogVisible: Boolean = false,
-    val isRestoreSettingsFromFileDialogVisible: Boolean = false
+    val isRestoreSettingsFromFileDialogVisible: Boolean = false,
+    val isRestoreSettingsFromDeprecatedFileDialogVisible: Boolean = false
 )
