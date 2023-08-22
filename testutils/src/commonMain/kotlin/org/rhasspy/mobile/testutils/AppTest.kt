@@ -1,7 +1,5 @@
-package org.rhasspy.mobile.viewmodel
+package org.rhasspy.mobile.testutils
 
-import com.russhwolf.settings.MapSettings
-import com.russhwolf.settings.Settings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +15,8 @@ import org.rhasspy.mobile.logic.logicModule
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
+import org.rhasspy.mobile.settings.IDriverFactory
+import org.rhasspy.mobile.settings.settingsModule
 import kotlin.test.AfterTest
 
 expect abstract class IAppTest() : TestsWithMocks
@@ -39,18 +39,17 @@ abstract class AppTest : IAppTest(), KoinTest {
         }
 
         Dispatchers.setMain(Dispatchers.Unconfined)
-
         startKoin {
             modules(
                 platformSpecificModule,
+                settingsModule,
                 logicModule(),
-                viewModelModule(),
                 module {
+                    single<IDriverFactory> {
+                        TestDriverFactory()
+                    }
                     single {
                         application
-                    }
-                    single<Settings> {
-                        MapSettings()
                     }
                     single<IDispatcherProvider> {
                         TestDispatcherProvider()

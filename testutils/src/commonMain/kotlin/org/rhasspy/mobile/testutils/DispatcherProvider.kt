@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel
+package org.rhasspy.mobile.testutils
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi

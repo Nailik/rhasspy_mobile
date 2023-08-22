@@ -6,13 +6,14 @@ import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
-import org.rhasspy.mobile.logic.AppTest
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SilenceDetected
-import org.rhasspy.mobile.logic.nVerify
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.SettingsDatabase
+import org.rhasspy.mobile.testutils.AppTest
+import org.rhasspy.mobile.testutils.nVerify
 import kotlin.random.Random
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -39,6 +40,7 @@ class SpeechToTextServiceTest : AppTest() {
             }
         )
 
+        get<SettingsDatabase>()
         //enable silence detection
         AppSetting.isAutomaticSilenceDetectionEnabled.value = true
         //set threshold, must be below may volume

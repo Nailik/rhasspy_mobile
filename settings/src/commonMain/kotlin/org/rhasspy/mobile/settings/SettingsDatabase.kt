@@ -1,8 +1,10 @@
 package org.rhasspy.mobile.settings
 
-class SettingsDatabase {
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
-    private val driver = DriverFactory().createDriver()
-    val database = Database(driver)
+class SettingsDatabase : KoinComponent {
+
+    val database = Database(get<IDriverFactory>().createDriver())
 
 }

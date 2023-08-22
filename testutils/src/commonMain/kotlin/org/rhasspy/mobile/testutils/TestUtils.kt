@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.logic
+package org.rhasspy.mobile.testutils
 
 import org.kodein.mock.ArgConstraintsBuilder
 import org.kodein.mock.Mocker

@@ -14,7 +14,7 @@ abstract class ISetting<T>(
     val database = get<SettingsDatabase>().database
 
     init {
-        database.transaction {
+        get<SettingsDatabase>().database.transaction {
             database.settingsIdsQueries.insertOrIgnore(key.name)
             val numberOfRowsAffected = database.settingsIdsQueries.selectChanges().executeAsOne()
             if (numberOfRowsAffected > 0) {

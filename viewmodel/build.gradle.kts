@@ -35,7 +35,7 @@ kotlin {
         val commonTest by getting {
             dependsOn(commonMain)
             dependencies {
-                implementation(project(":app"))
+                implementation(project(":testutils"))
                 implementation(Koin.test)
                 implementation(Kotlin.test)
                 implementation(KotlinX.Coroutines.test)

@@ -39,7 +39,7 @@ kotlin {
         val commonTest by getting {
             dependsOn(commonMain)
             dependencies {
-                implementation(project(":platformspecific"))
+                implementation(project(":testutils"))
                 implementation(Kotlin.test)
                 implementation(Koin.test)
                 implementation(KotlinX.Coroutines.test)
