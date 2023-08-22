@@ -5,6 +5,7 @@ plugins {
     kotlin("plugin.serialization")
     id("com.android.library")
     id("base-gradle")
+    id("app.cash.sqldelight")
 }
 
 kotlin {
@@ -29,6 +30,7 @@ kotlin {
                 implementation(Ktor2.Server.statusPages)
                 implementation(Ktor2.Plugins.network)
                 implementation(Ktor2.Server.core)
+                runtimeOnly("app.cash.sqldelight:core:_")
             }
         }
         val commonTest by getting {
@@ -57,6 +59,8 @@ kotlin {
                 implementation(Nailik.androidResampler)
                 implementation(Journeyapps.zXingAndroid)
                 implementation(AndroidX.browser)
+                implementation(CashApp.Sqldelight.android)
+                implementation("com.github.requery:sqlite-android:_")
             }
         }
         val androidUnitTest by getting {
@@ -70,6 +74,7 @@ kotlin {
         val iosMain by creating {
             dependencies {
                 implementation(Square.okio)
+                implementation(CashApp.Sqldelight.ios)
             }
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)
@@ -96,6 +101,16 @@ android {
         }
         debug {
             buildConfigField("boolean", "IS_DEBUG", "true")
+        }
+    }
+}
+
+sqldelight {
+    databases {
+        create("SettingsDatabase") {
+            dialect("app.cash.sqldelight:sqlite-3-30-dialect:_")
+            packageName.set("org.rhasspy.mobile.settings")
+            schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
         }
     }
 }

@@ -2,7 +2,7 @@ CREATE TABLE stringSetValues (
     key INTEGER PRIMARY KEY,
     id TEXT,
     value TEXT NOT NULL,
-    FOREIGN KEY (id) REFERENCES settingsIds(id)
+    FOREIGN KEY (id) REFERENCES settingsIds(id) ON DELETE CASCADE
 );
 
 insertOrUpdate:

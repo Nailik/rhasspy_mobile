@@ -8,3 +8,6 @@ VALUES (?);
 
 selectChanges:
 SELECT changes();
+
+removeById:
+DELETE FROM settingsIds WHERE id == :id;

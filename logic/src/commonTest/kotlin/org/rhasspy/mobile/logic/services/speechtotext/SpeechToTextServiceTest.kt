@@ -11,7 +11,7 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogService
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.settings.SettingsDatabase
+import org.rhasspy.mobile.settings.ISettingsDatabase
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.nVerify
 import kotlin.random.Random
@@ -40,7 +40,7 @@ class SpeechToTextServiceTest : AppTest() {
             }
         )
 
-        get<SettingsDatabase>()
+        get<ISettingsDatabase>()
         //enable silence detection
         AppSetting.isAutomaticSilenceDetectionEnabled.value = true
         //set threshold, must be below may volume

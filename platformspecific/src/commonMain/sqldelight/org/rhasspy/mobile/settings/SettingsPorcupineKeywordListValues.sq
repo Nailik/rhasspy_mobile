@@ -3,7 +3,7 @@ CREATE TABLE porcupineKeywordValues (
     value TEXT NOT NULL,
     enabled INTEGER NOT NULL CHECK (enabled IN (0, 1)),
     sensitivity REAL NOT NULL CHECK (sensitivity >= 0 AND sensitivity <= 1),
-    FOREIGN KEY (id) REFERENCES settingsIds(id),
+    FOREIGN KEY (id) REFERENCES settingsIds(id) ON DELETE CASCADE,
     PRIMARY KEY (id, value)
 );
 

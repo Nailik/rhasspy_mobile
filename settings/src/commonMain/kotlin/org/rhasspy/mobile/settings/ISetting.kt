@@ -11,10 +11,10 @@ abstract class ISetting<T>(
     val initial: T
 ) : KoinComponent {
 
-    val database = get<SettingsDatabase>().database
+    val database = get<ISettingsDatabase>().database
 
     init {
-        get<SettingsDatabase>().database.transaction {
+        get<ISettingsDatabase>().database.transaction {
             database.settingsIdsQueries.insertOrIgnore(key.name)
             val numberOfRowsAffected = database.settingsIdsQueries.selectChanges().executeAsOne()
             if (numberOfRowsAffected > 0) {

@@ -1,7 +1,7 @@
 CREATE TABLE settingsStringValues (
     id TEXT PRIMARY KEY,
     value TEXT NOT NULL,
-    FOREIGN KEY (id) REFERENCES settingsIds(id)
+    FOREIGN KEY (id) REFERENCES settingsIds(id) ON DELETE CASCADE
 );
 
 insertOrUpdate:

@@ -1,17 +1,16 @@
 package org.rhasspy.mobile.settings.settingsmigration
 
-import androidx.sqlite.db.SupportSQLiteDatabase
-import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.russhwolf.settings.Settings
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.settings.Database
+import org.rhasspy.mobile.platformspecific.database.IDriverFactory
+import org.rhasspy.mobile.settings.SettingsDatabase
 import java.io.File
 
 object MigrateToDatabase : KoinComponent {
 
-    lateinit var database: Database
+    lateinit var database: SettingsDatabase
         private set
 
     lateinit var settings: Settings
@@ -25,18 +24,9 @@ object MigrateToDatabase : KoinComponent {
 
         if (!sharedPreferencesFile.exists()) return
 
-        val driver = AndroidSqliteDriver(
-            schema = InitialSchema,
-            context = get<NativeApplication>(),
-            name = "settings.db",
-            callback = object : AndroidSqliteDriver.Callback(InitialSchema) {
-                override fun onOpen(db: SupportSQLiteDatabase) {
-                    db.setForeignKeyConstraintsEnabled(true)
-                }
-            }
-        )
+
         settings = Settings()
-        database = Database(driver)
+        database = SettingsDatabase(get<IDriverFactory>().createDriver(InitialSchema, "settings.db"))
         //migrate to new settings and delete file
         migrateAppSetting()
         migrateConfigurationSetting()
