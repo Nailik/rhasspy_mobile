@@ -18,7 +18,6 @@ kotlin {
                 implementation(project(":resources"))
                 implementation(project(":settings"))
                 implementation(Touchlab.kermit)
-                implementation(CashApp.Paging.runtime)
                 implementation(Jetbrains.Kotlinx.coroutines)
                 implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Jetbrains.Kotlinx.serialization)

@@ -30,8 +30,8 @@ kotlin {
                 implementation(Ktor2.Server.statusPages)
                 implementation(Ktor2.Plugins.network)
                 implementation(Ktor2.Server.core)
-                implementation(CashApp.Paging.runtime)
-                implementation(CashApp.Sqldelight.paging)
+                api(CashApp.Paging.runtime)
+                api(CashApp.Sqldelight.paging)
             }
         }
         val commonTest by getting {

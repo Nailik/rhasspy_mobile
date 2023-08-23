@@ -44,7 +44,7 @@ class LogScreenViewStateCreator(
         )
     }
 
-    private fun getNews(): Flow<androidx.paging.PagingData<LogElements>> {
+    private fun getNews(): Flow<PagingData<LogElements>> {
         return Pager<Int, LogElements>(
             config = PagingConfig(
                 pageSize = 20,
