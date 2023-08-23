@@ -7,10 +7,10 @@ import org.kodein.mock.Mock
 import org.koin.dsl.module
 import org.koin.test.get
 import org.rhasspy.mobile.logic.logger.IFileLogger
-import org.rhasspy.mobile.viewmodel.AppTest
-import org.rhasspy.mobile.viewmodel.coEvery
-import org.rhasspy.mobile.viewmodel.coVerify
-import org.rhasspy.mobile.viewmodel.nVerify
+import org.rhasspy.mobile.testutils.AppTest
+import org.rhasspy.mobile.testutils.coEvery
+import org.rhasspy.mobile.testutils.coVerify
+import org.rhasspy.mobile.testutils.nVerify
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.SaveLogFile
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.ShareLogFile
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel

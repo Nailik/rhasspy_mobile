@@ -5,9 +5,9 @@ import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.settings.ISettingsUtils
-import org.rhasspy.mobile.viewmodel.AppTest
-import org.rhasspy.mobile.viewmodel.coEvery
-import org.rhasspy.mobile.viewmodel.coVerify
+import org.rhasspy.mobile.testutils.AppTest
+import org.rhasspy.mobile.testutils.coEvery
+import org.rhasspy.mobile.testutils.coVerify
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsViewModel
 import kotlin.test.BeforeTest

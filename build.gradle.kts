@@ -19,6 +19,7 @@ buildscript {
         classpath("co.touchlab.crashkios.crashlyticslink:co.touchlab.crashkios.crashlyticslink.gradle.plugin:_")
         classpath("com.android.tools.build:gradle:_")
         classpath("de.undercouch.download:de.undercouch.download.gradle.plugin:_")
+        classpath("app.cash.sqldelight:app.cash.sqldelight.gradle.plugin:_")
     }
 }
 
@@ -28,6 +29,7 @@ allprojects {
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://androidx.dev/storage/compose-compiler/repository/")
+        maven("https://jitpack.io")
     }
 }
 

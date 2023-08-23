@@ -8,6 +8,7 @@ import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -36,6 +37,7 @@ import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.MigrateSettingsToDatabase
 import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.viewModelModule
 
@@ -47,6 +49,12 @@ class Application : NativeApplication(), KoinComponent {
 
     @OptIn(ExperimentalKermitApi::class)
     override fun onCreated() {
+        logger.i { "######## Application \n started ########" }
+
+        MigrateSettingsToDatabase.migrateIfNecessary(this)
+
+        logger.d { "startKoin" }
+
         startKoin {
             // declare used modules
             modules(
@@ -59,6 +67,8 @@ class Application : NativeApplication(), KoinComponent {
             )
         }
 
+        logger.d { "Koin started" }
+
         CoroutineScope(get<IDispatcherProvider>().IO).launch {
 
             Logger.addLogWriter(get<IFileLogger>() as LogWriter)
@@ -70,8 +80,6 @@ class Application : NativeApplication(), KoinComponent {
                     )
                 )
             }
-
-            logger.i { "######## Application \n started ########" }
 
             //initialize/load the settings, generate the MutableStateFlow
             AppSetting
@@ -93,12 +101,13 @@ class Application : NativeApplication(), KoinComponent {
             }
 
             //check if overlay permission is granted
-            resume()
             _isHasStarted.value = true
+            resume()
         }
     }
 
     override suspend fun resume() {
+        _isHasStarted.first { it } //await for app start
         get<IMicrophonePermission>().update()
         get<IOverlayPermission>().update()
         //start services

@@ -1,0 +1,13 @@
+CREATE TABLE settingsIds (
+  id TEXT PRIMARY KEY NOT NULL
+);
+
+insertOrIgnore:
+INSERT OR IGNORE INTO settingsIds(id)
+VALUES (?);
+
+selectChanges:
+SELECT changes();
+
+removeById:
+DELETE FROM settingsIds WHERE id == :id;

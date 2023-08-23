@@ -9,10 +9,10 @@ import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.PlayStopRecording
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.viewmodel.AppTest
-import org.rhasspy.mobile.viewmodel.coEvery
-import org.rhasspy.mobile.viewmodel.coVerify
-import org.rhasspy.mobile.viewmodel.nVerify
+import org.rhasspy.mobile.testutils.AppTest
+import org.rhasspy.mobile.testutils.coEvery
+import org.rhasspy.mobile.testutils.coVerify
+import org.rhasspy.mobile.testutils.nVerify
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action.MicrophoneFabClick
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action.TogglePlayRecording
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel

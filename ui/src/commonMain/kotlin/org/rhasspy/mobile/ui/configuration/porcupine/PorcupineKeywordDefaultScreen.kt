@@ -46,8 +46,8 @@ fun PorcupineKeywordDefaultScreen(
                 onUpdateSensitivity = {
                     onEvent(
                         UpdateWakeWordPorcupineKeywordDefaultSensitivity(
-                            option,
-                            it
+                            item = option,
+                            value = it.toDouble()
                         )
                     )
                 }
@@ -93,7 +93,7 @@ private fun DefaultKeywordListItem(
                 .combinedTestTag(element.option, TestTag.Sensitivity)
                 .padding(horizontal = 12.dp),
             text = MR.strings.sensitivity.stable,
-            value = element.sensitivity,
+            value = element.sensitivity.toFloat(),
             onValueChange = onUpdateSensitivity
         )
     }

@@ -5,5 +5,5 @@ import androidx.compose.runtime.Stable
 @Stable
 interface PorcupineKeyword {
     val isEnabled: Boolean
-    val sensitivity: Float
+    val sensitivity: Double
 }

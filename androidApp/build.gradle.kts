@@ -174,7 +174,6 @@ dependencies {
     implementation(Touchlab.kermit)
     implementation(Koin.core)
     implementation(Square.okio)
-    implementation(Russhwolf.multiplatformSettingsNoArg)
     implementation(Icerock.Mvvm.core)
     implementation(Kotlin.test)
     implementation(Kotlin.Test.junit)
