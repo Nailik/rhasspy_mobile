@@ -7,6 +7,7 @@ object CashApp {
         val ios = module("native-driver")
         val coroutines = module("coroutines-extensions")
         val androidTest = module("sqlite-driver")
+        val paging = module("androidx-paging3-extensions")
     }
 
     object Paging : DependencyGroup(group = "app.cash.paging") {

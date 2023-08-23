@@ -34,6 +34,7 @@ kotlin {
                 implementation(Benasher.uuid)
                 implementation(Square.okio)
                 implementation(Koin.core)
+                implementation(CashApp.Sqldelight.paging)
             }
         }
         val commonTest by getting {

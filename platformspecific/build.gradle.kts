@@ -31,6 +31,7 @@ kotlin {
                 implementation(Ktor2.Plugins.network)
                 implementation(Ktor2.Server.core)
                 implementation(CashApp.Paging.runtime)
+                implementation(CashApp.Sqldelight.paging)
             }
         }
         val commonTest by getting {

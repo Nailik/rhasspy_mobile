@@ -1,10 +1,10 @@
 package org.rhasspy.mobile.logic.logger
 
+import app.cash.paging.PagingSource
+import app.cash.sqldelight.paging3.QueryPagingSource
 import co.touchlab.kermit.LogWriter
-import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
 import database.LogElements
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
@@ -23,8 +23,6 @@ import org.rhasspy.mobile.platformspecific.extensions.commonSave
 import org.rhasspy.mobile.platformspecific.extensions.commonShare
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.sqldelightpaging3.OffsetQueryPagingSource
-import org.rhasspy.mobile.platformspecific.sqldelightpaging3.toInt
 
 interface IDatabaseLogger {
 
@@ -33,7 +31,7 @@ interface IDatabaseLogger {
     fun shareLogFile(): Boolean
     suspend fun saveLogFile(): Boolean
 
-    fun getPagingSource(): OffsetQueryPagingSource<LogElements>
+    fun getPagingSource(): PagingSource<Int, LogElements>
 
 }
 
@@ -42,9 +40,6 @@ internal class DatabaseLogger(
     private val externalResultRequest: IExternalResultRequest,
     private val driverFactory: IDriverFactory
 ) : IDatabaseLogger, LogWriter() {
-    private val logger = Logger.withTag("FileLogger")
-
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val _flow = MutableSharedFlow<LogElement>()
     override val flow = _flow.readOnly
@@ -84,27 +79,12 @@ internal class DatabaseLogger(
                 "application/*"
             )
 
-    private fun LogElements.toViewObject(): LogElement {
-        val severity = if (this.severity.toInt() in 0..Severity.entries.size) {
-            Severity.entries[this.severity.toInt()]
-        } else Severity.Info
-
-        return LogElement(
-            id = this.id,
-            time = this.time,
-            severity = severity,
-            tag = this.tag,
-            message = this.message,
-            throwable = this.throwable
-        )
-    }
-
-    override fun getPagingSource(): OffsetQueryPagingSource<LogElements> {
-        return OffsetQueryPagingSource(
-            { limit, offset -> database.logElementsQueries.logElements(limit.toLong(), offset.toLong()) },
-            database.logElementsQueries.countLogElements().toInt(),
+    override fun getPagingSource(): PagingSource<Int, LogElements> {
+        return QueryPagingSource(
+            database.logElementsQueries.countLogElements(),
             database.logElementsQueries,
             Dispatchers.IO,
+            database.logElementsQueries::logElements,
         )
     }
 
