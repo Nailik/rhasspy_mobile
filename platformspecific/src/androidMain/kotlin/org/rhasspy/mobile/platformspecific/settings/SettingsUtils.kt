@@ -59,10 +59,7 @@ internal actual class SettingsUtils actual constructor(
                     zipOutputStream.putNextEntry(ZipEntry("databases/"))
 
                     //copy org.rhasspy.mobile.android_prefenrences.xml
-                    val databaseFile = File(
-                        nativeApplication.filesDir.parent,
-                        "databases/settings.db"
-                    )
+                    val databaseFile = nativeApplication.getDatabasePath("settings.db")
                     if (databaseFile.exists()) {
                         zipOutputStream.putNextEntry(ZipEntry("databases/settings.db"))
                         zipOutputStream.write(databaseFile.readBytes())

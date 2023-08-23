@@ -6,7 +6,7 @@ import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
 import org.koin.dsl.module
 import org.koin.test.get
-import org.rhasspy.mobile.logic.logger.IFileLogger
+import org.rhasspy.mobile.logic.logger.IDatabaseLogger
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.coEvery
 import org.rhasspy.mobile.testutils.coVerify
@@ -20,7 +20,7 @@ import kotlin.test.Test
 class LogScreenViewModelTest : AppTest() {
 
     @Mock
-    lateinit var fileLogger: IFileLogger
+    lateinit var fileLogger: IDatabaseLogger
 
     private lateinit var logScreenViewModel: LogScreenViewModel
 

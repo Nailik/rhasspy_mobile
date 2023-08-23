@@ -34,6 +34,7 @@ kotlin {
                 implementation(Jetbrains.Compose.materialIconsExtended)
                 implementation(Mikepenz.aboutLibrariesCore)
                 implementation(Jetbrains.Kotlinx.dateTime)
+                implementation(CashApp.Paging.runtime)
             }
         }
         val commonTest by getting {

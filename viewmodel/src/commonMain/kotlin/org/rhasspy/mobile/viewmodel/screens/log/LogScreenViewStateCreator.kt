@@ -1,19 +1,19 @@
 package org.rhasspy.mobile.viewmodel.screens.log
 
-import kotlinx.collections.immutable.persistentListOf
+import app.cash.paging.Pager
+import app.cash.paging.PagingConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.logic.logger.IFileLogger
-import org.rhasspy.mobile.platformspecific.updateList
+import org.rhasspy.mobile.logic.logger.IDatabaseLogger
 import org.rhasspy.mobile.settings.AppSetting
 
 class LogScreenViewStateCreator(
-    private val fileLogger: IFileLogger
+    private val fileLogger: IDatabaseLogger
 ) {
 
     private val updaterScope = CoroutineScope(Dispatchers.IO)
@@ -22,27 +22,12 @@ class LogScreenViewStateCreator(
         val viewState = MutableStateFlow(getViewState())
         //load file into list
         updaterScope.launch {
-            val lines = fileLogger.getLines()
-            viewState.update {
-                it.copy(logList = lines)
-            }
-
-            //collect new log
-            fileLogger.flow.collectIndexed { _, value ->
-                viewState.update {
-                    it.copy(
-                        logList = it.logList.updateList {
-                            add(value)
-                        }
-                    )
-                }
-            }
-        }
-
-        updaterScope.launch {
             AppSetting.isLogAutoscroll.data.collect { isLogAutoscroll ->
                 viewState.update {
-                    it.copy(isLogAutoscroll = isLogAutoscroll)
+                    it.copy(
+                        isLogAutoscroll = isLogAutoscroll,
+                        logList = getNews()
+                    )
                 }
             }
         }
@@ -52,8 +37,13 @@ class LogScreenViewStateCreator(
     private fun getViewState(): LogScreenViewState {
         return LogScreenViewState(
             isLogAutoscroll = AppSetting.isLogAutoscroll.value,
-            logList = persistentListOf()
+            logList = emptyFlow()
         )
     }
+
+    private fun getNews() = Pager(
+        config = PagingConfig(pageSize = 20),
+        pagingSourceFactory = { fileLogger.getPagingSource() }
+    ).flow
 
 }

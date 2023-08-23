@@ -30,6 +30,7 @@ kotlin {
                 implementation(Ktor2.Server.statusPages)
                 implementation(Ktor2.Plugins.network)
                 implementation(Ktor2.Server.core)
+                implementation(CashApp.Paging.runtime)
             }
         }
         val commonTest by getting {
@@ -110,6 +111,13 @@ sqldelight {
             dialect("app.cash.sqldelight:sqlite-3-30-dialect:_")
             packageName.set("org.rhasspy.mobile.settings")
             schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
+            srcDirs("src/commonMain/sqldelight/org/rhasspy/mobile/settings")
+        }
+        create("LogDatabase") {
+            dialect("app.cash.sqldelight:sqlite-3-30-dialect:_")
+            packageName.set("org.rhasspy.mobile.logging")
+            schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
+            srcDirs("src/commonMain/sqldelight/org/rhasspy/mobile/logging")
         }
     }
 }

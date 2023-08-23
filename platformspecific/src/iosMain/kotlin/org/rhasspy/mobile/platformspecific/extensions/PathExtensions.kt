@@ -1,11 +1,7 @@
 package org.rhasspy.mobile.platformspecific.extensions
 
-import co.touchlab.kermit.Severity
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import okio.*
-import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import platform.Foundation.NSDocumentDirectory
@@ -42,6 +38,12 @@ actual fun Path.Companion.commonInternalPath(
     fileName: String
 ): Path = "${readDocumentsDirectory().replace("file:", "")}/$fileName".toPath()
 
+actual fun Path.Companion.commonDatabasePath(
+    nativeApplication: NativeApplication,
+    fileName: String
+): Path = "${readDocumentsDirectory().replace("file:", "")}/$fileName".toPath()
+
+
 actual fun Path?.commonExists(): Boolean = this?.let { !FileSystem.SYSTEM.exists(this) } ?: false
 actual fun Path.commonDelete() {
     FileSystem.SYSTEM.delete(this, mustExist = false)
@@ -53,24 +55,6 @@ actual fun Path.commonSource(): Source = FileSystem.SYSTEM.source(this)
 
 actual fun Path.commonReadWrite(): FileHandle =
     FileSystem.SYSTEM.openReadWrite(this, !FileSystem.SYSTEM.exists(this), mustExist = false)
-
-actual inline fun <reified T> Path.commonDecodeLogList(): T {
-    val fileSource = this.commonSource().buffer()
-    val json = fileSource.use {
-        "[${
-            Json.encodeToString(
-                LogElement(
-                    time = "",
-                    severity = Severity.Assert,
-                    tag = "",
-                    message = "",
-                    throwable = null
-                )
-            )
-        }" + it.readUtf8() + "]"
-    }
-    return Json.decodeFromString(json)
-}
 
 actual fun Path.commonShare(
     nativeApplication: NativeApplication,
