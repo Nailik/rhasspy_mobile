@@ -49,11 +49,8 @@ class Application : NativeApplication(), KoinComponent {
 
     @OptIn(ExperimentalKermitApi::class)
     override fun onCreated() {
-        logger.i { "######## Application \n started ########" }
 
         MigrateSettingsToDatabase.migrateIfNecessary(this)
-
-        logger.d { "startKoin" }
 
         startKoin {
             // declare used modules
@@ -67,8 +64,6 @@ class Application : NativeApplication(), KoinComponent {
             )
         }
 
-        logger.d { "Koin started" }
-
         CoroutineScope(get<IDispatcherProvider>().IO).launch {
 
             Logger.addLogWriter(get<IDatabaseLogger>() as LogWriter)
@@ -80,6 +75,7 @@ class Application : NativeApplication(), KoinComponent {
                     )
                 )
             }
+            logger.i { "######## Application \n started ########" }
 
             //initialize/load the settings, generate the MutableStateFlow
             AppSetting
