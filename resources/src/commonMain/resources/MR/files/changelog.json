@@ -1,3 +1,3 @@
 [
-  "fixed possible crash on Android 6"
+  "fixed possible issue with AudioRecorder in combination with Pause on Media Playback"
 ]
