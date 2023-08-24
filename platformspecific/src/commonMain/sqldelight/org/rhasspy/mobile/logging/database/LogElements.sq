@@ -12,10 +12,6 @@ insert:
 INSERT INTO logElements
 VALUES (?, ?, ?, ?, ?, ?);
 
-deleteOldest:
-DELETE FROM logElements
-WHERE id IN (SELECT id FROM logElements ORDER BY id ASC LIMIT 100);
-
 countLogElements:
 SELECT count(*) FROM logElements;
 
@@ -23,3 +19,9 @@ logElements:
 SELECT *
 FROM logElements
 LIMIT :limit OFFSET :offset;
+
+CREATE TRIGGER deleteOldest AFTER INSERT ON logElements
+    BEGIN
+        DELETE FROM logElements
+        WHERE id NOT IN (SELECT id FROM logElements ORDER BY id DESC LIMIT 5000);
+    END;
