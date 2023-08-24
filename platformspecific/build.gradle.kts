@@ -74,6 +74,7 @@ kotlin {
         val iosSimulatorArm64Main by getting
         val iosMain by creating {
             dependencies {
+                implementation(Kotlin.Stdlib.common)
                 implementation(Square.okio)
                 implementation(CashApp.Sqldelight.ios)
             }

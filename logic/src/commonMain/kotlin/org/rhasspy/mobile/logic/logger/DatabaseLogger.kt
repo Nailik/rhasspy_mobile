@@ -79,6 +79,7 @@ internal class DatabaseLogger(
                 "application/*"
             )
 
+    @Suppress("TYPE_MISMATCH")
     override fun getPagingSource(): PagingSource<Int, LogElements> {
         return QueryPagingSource(
             database.logElementsQueries.countLogElements(),

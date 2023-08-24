@@ -44,6 +44,7 @@ class LogScreenViewStateCreator(
         )
     }
 
+    @Suppress("TYPE_MISMATCH")
     private fun getNews(): Flow<PagingData<LogElements>> {
         return Pager<Int, LogElements>(
             config = PagingConfig(

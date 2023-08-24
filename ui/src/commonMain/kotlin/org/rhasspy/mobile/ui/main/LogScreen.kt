@@ -145,6 +145,7 @@ private fun LogScreenContent(
         state = lazyListState,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        @Suppress("USELESS_IS_CHECK")
         when (val loadState = items.loadState.refresh) {
             is LoadStateLoading    -> {
                 item {
