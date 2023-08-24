@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.media.*
 import android.media.AudioRecord.RECORDSTATE_RECORDING
+import android.media.AudioRecord.STATE_UNINITIALIZED
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.getSystemService
@@ -160,10 +161,17 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
     }
 
     private fun resumeRecording() {
-        logger.v { "resumeRecording" }
+        logger.v { "resumeRecording ${recorder?.recordingState}" }
         if (shouldRecord) {
-            _isRecording.value = true
-            recorder?.startRecording()
+            try {
+                if (recorder?.recordingState != STATE_UNINITIALIZED) {
+                    //may be called to early
+                    _isRecording.value = true
+                    recorder?.startRecording()
+                }
+            } catch (e: Exception) {
+                logger.a(e) { "resumeRecording ${recorder?.recordingState}" }
+            }
         }
     }
 
