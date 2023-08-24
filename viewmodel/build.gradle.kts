@@ -23,6 +23,7 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Compose.foundation)
+                implementation(Jetbrains.Compose.foundation)
                 implementation(Jetbrains.Compose.materialIconsExtended)
                 implementation(Koin.core)
                 implementation(Icerock.Mvvm.core)
@@ -30,17 +31,15 @@ kotlin {
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Square.okio)
                 implementation(Mikepenz.aboutLibrariesCore)
-                implementation(Russhwolf.multiplatformSettingsNoArg)
             }
         }
         val commonTest by getting {
             dependsOn(commonMain)
             dependencies {
-                implementation(project(":app"))
+                implementation(project(":testutils"))
                 implementation(Koin.test)
                 implementation(Kotlin.test)
                 implementation(KotlinX.Coroutines.test)
-                implementation(Russhwolf.multiplatformSettingsTest)
             }
         }
         val androidMain by getting {

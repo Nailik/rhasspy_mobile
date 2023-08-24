@@ -12,7 +12,8 @@ import org.rhasspy.mobile.data.service.option.PorcupineKeywordOption
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
-import org.rhasspy.mobile.viewmodel.AppTest
+import org.rhasspy.mobile.testutils.AppTest
+import org.rhasspy.mobile.testutils.getRandomString
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
@@ -22,7 +23,6 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordUdpConfigurationData
-import org.rhasspy.mobile.viewmodel.getRandomString
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -42,21 +42,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
             }
         )
 
-        initialWakeWordConfigurationData = WakeWordConfigurationData(
-            wakeWordOption = WakeWordOption.Disabled,
-            wakeWordPorcupineConfigurationData = WakeWordPorcupineConfigurationData(
-                accessToken = "",
-                porcupineLanguage = PorcupineLanguageOption.EN,
-                defaultOptions = PorcupineKeywordOption.values()
-                    .map { PorcupineDefaultKeyword(it, false, 0.5f) }.toImmutableList(),
-                customOptions = persistentListOf(),
-                deletedCustomOptions = persistentListOf()
-            ),
-            wakeWordUdpConfigurationData = WakeWordUdpConfigurationData(
-                outputHost = "",
-                outputPort = 20000
-            )
-        )
+        initialWakeWordConfigurationData = WakeWordConfigurationData()
 
         wakeWordConfigurationData = WakeWordConfigurationData(
             wakeWordOption = WakeWordOption.MQTT,
@@ -64,12 +50,12 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                 accessToken = getRandomString(5),
                 porcupineLanguage = PorcupineLanguageOption.DE,
                 defaultOptions = PorcupineKeywordOption.values()
-                    .map { PorcupineDefaultKeyword(it, true, 0.7f) }.toImmutableList(),
+                    .map { PorcupineDefaultKeyword(it, true, 0.7) }.sortedBy { it.option.name }.toImmutableList(), //sort is necessary because database also sorts
                 customOptions = persistentListOf(
                     PorcupineCustomKeyword(
                         fileName = getRandomString(5),
                         isEnabled = true,
-                        sensitivity = 0.7f
+                        sensitivity = 0.7
                     )
                 ),
                 deletedCustomOptions = persistentListOf()
@@ -120,7 +106,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                     wakeWordConfigurationViewModel.onEvent(
                         SetPorcupineKeywordCustom(
                             it.copy(
-                                sensitivity = 0.5f
+                                sensitivity = 0.5
                             ), false
                         )
                     )
@@ -130,7 +116,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                         ClickPorcupineKeywordCustom(
                             it.copy(
                                 isEnabled = false,
-                                sensitivity = 0.5f
+                                sensitivity = 0.5
                             )
                         )
                     )
@@ -138,8 +124,8 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                 customOptions.forEach {
                     wakeWordConfigurationViewModel.onEvent(
                         UpdateWakeWordPorcupineKeywordCustomSensitivity(
-                            it.copy(sensitivity = 0.5f),
-                            0.7f
+                            it.copy(sensitivity = 0.5),
+                            0.7
                         )
                     )
                 }
@@ -152,7 +138,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                         SetPorcupineKeywordDefault(
                             it.copy(
                                 isEnabled = false,
-                                sensitivity = 0.5f
+                                sensitivity = 0.5
                             ), false
                         )
                     )
@@ -162,7 +148,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                         ClickPorcupineKeywordDefault(
                             it.copy(
                                 isEnabled = false,
-                                sensitivity = 0.5f
+                                sensitivity = 0.5
                             )
                         )
                     )
@@ -170,8 +156,8 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                 defaultOptions.forEach {
                     wakeWordConfigurationViewModel.onEvent(
                         UpdateWakeWordPorcupineKeywordDefaultSensitivity(
-                            it.copy(sensitivity = 0.5f),
-                            0.7f
+                            it.copy(sensitivity = 0.5),
+                            0.7
                         )
                     )
                 }
@@ -235,7 +221,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                     wakeWordConfigurationViewModel.onEvent(
                         SetPorcupineKeywordCustom(
                             it.copy(
-                                sensitivity = 0.5f
+                                sensitivity = 0.5
                             ), false
                         )
                     )
@@ -245,7 +231,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                         ClickPorcupineKeywordCustom(
                             it.copy(
                                 isEnabled = false,
-                                sensitivity = 0.5f
+                                sensitivity = 0.5
                             )
                         )
                     )
@@ -253,8 +239,8 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                 customOptions.forEach {
                     wakeWordConfigurationViewModel.onEvent(
                         UpdateWakeWordPorcupineKeywordCustomSensitivity(
-                            it.copy(sensitivity = 0.5f),
-                            0.7f
+                            it.copy(sensitivity = 0.5),
+                            0.7
                         )
                     )
                 }
@@ -267,7 +253,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                         SetPorcupineKeywordDefault(
                             it.copy(
                                 isEnabled = false,
-                                sensitivity = 0.5f
+                                sensitivity = 0.5
                             ), false
                         )
                     )
@@ -277,7 +263,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                         ClickPorcupineKeywordDefault(
                             it.copy(
                                 isEnabled = false,
-                                sensitivity = 0.5f
+                                sensitivity = 0.5
                             )
                         )
                     )
@@ -285,8 +271,8 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                 defaultOptions.forEach {
                     wakeWordConfigurationViewModel.onEvent(
                         UpdateWakeWordPorcupineKeywordDefaultSensitivity(
-                            it.copy(sensitivity = 0.5f),
-                            0.7f
+                            it.copy(sensitivity = 0.5),
+                            0.7
                         )
                     )
                 }

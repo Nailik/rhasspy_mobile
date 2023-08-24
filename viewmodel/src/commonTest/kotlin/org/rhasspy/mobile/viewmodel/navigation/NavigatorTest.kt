@@ -4,8 +4,8 @@ import kotlinx.collections.immutable.persistentListOf
 import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
-import org.rhasspy.mobile.viewmodel.AppTest
-import org.rhasspy.mobile.viewmodel.nVerify
+import org.rhasspy.mobile.testutils.AppTest
+import org.rhasspy.mobile.testutils.nVerify
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WebServerConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination

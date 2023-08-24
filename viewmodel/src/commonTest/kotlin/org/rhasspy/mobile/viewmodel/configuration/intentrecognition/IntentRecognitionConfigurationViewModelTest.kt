@@ -7,12 +7,12 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
-import org.rhasspy.mobile.viewmodel.AppTest
+import org.rhasspy.mobile.testutils.AppTest
+import org.rhasspy.mobile.testutils.getRandomString
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewState.IntentRecognitionConfigurationData
-import org.rhasspy.mobile.viewmodel.getRandomString
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

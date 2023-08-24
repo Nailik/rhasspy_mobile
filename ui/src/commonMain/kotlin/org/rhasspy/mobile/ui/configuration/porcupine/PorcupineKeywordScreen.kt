@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -38,63 +39,70 @@ fun PorcupineKeywordScreen() {
     val viewState by viewModel.viewState.collectAsState()
     val editData = viewState.editData.wakeWordPorcupineConfigurationData
 
-    Surface(tonalElevation = 3.dp) {
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize(),
-            topBar = {
-                Column {
-                    AppBar(viewModel::onEvent)
-                    //opens page for porcupine language selection
-                    ListElement(
-                        modifier = Modifier
-                            .testTag(TestTag.PorcupineLanguage)
-                            .clickable { viewModel.onEvent(PorcupineLanguageClick) },
-                        text = { Text(MR.strings.language.stable) },
-                        secondaryText = { Text(editData.porcupineLanguage.text) }
-                    )
-                }
-            },
-            bottomBar = {
-                Surface(tonalElevation = 3.dp) {
-                    //bottom tab bar with pages tabs
-                    BottomTabBar(
-                        selectedIndex = viewState.porcupineWakeWordScreen,
-                        onSelectedScreen = { viewModel.onEvent(PageClick(it)) }
-                    )
-                }
-            }
+    Screen(
+        screenViewModel = viewModel
+    ) {
 
-        ) { paddingValues ->
-            //horizontal pager to slide between pages
-            Surface(
+        Surface(tonalElevation = 3.dp) {
+            Scaffold(
                 modifier = Modifier
-                    .padding(paddingValues)
-                    .testTag(TestTag.PorcupineKeywordScreen)
-            ) {
-
-                AnimatedContent(
-                    targetState = viewState.porcupineWakeWordScreen,
-                    transitionSpec = {
-                        horizontalAnimationSpec(targetState, initialState)
-                    }
-                ) { targetState ->
-                    when (targetState) {
-                        0 -> PorcupineKeywordDefaultScreen(
-                            editData = editData,
-                            onEvent = viewModel::onEvent
+                    .fillMaxSize(),
+                topBar = {
+                    Column {
+                        AppBar(viewModel::onEvent)
+                        //opens page for porcupine language selection
+                        ListElement(
+                            modifier = Modifier
+                                .testTag(TestTag.PorcupineLanguage)
+                                .clickable { viewModel.onEvent(PorcupineLanguageClick) },
+                            text = { Text(MR.strings.language.stable) },
+                            secondaryText = { Text(editData.porcupineLanguage.text) }
                         )
-
-                        1 -> PorcupineKeywordCustomScreen(
-                            editData = editData,
-                            onEvent = viewModel::onEvent
+                    }
+                },
+                bottomBar = {
+                    Surface(tonalElevation = 3.dp) {
+                        //bottom tab bar with pages tabs
+                        BottomTabBar(
+                            selectedIndex = viewState.porcupineWakeWordScreen,
+                            onSelectedScreen = { viewModel.onEvent(PageClick(it)) }
                         )
                     }
                 }
 
+            ) { paddingValues ->
+                //horizontal pager to slide between pages
+                Surface(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .testTag(TestTag.PorcupineKeywordScreen)
+                ) {
+
+                    AnimatedContent(
+                        targetState = viewState.porcupineWakeWordScreen,
+                        transitionSpec = {
+                            horizontalAnimationSpec(targetState, initialState)
+                        }
+                    ) { targetState ->
+                        when (targetState) {
+                            0 -> PorcupineKeywordDefaultScreen(
+                                editData = editData,
+                                onEvent = viewModel::onEvent
+                            )
+
+                            1 -> PorcupineKeywordCustomScreen(
+                                editData = editData,
+                                onEvent = viewModel::onEvent
+                            )
+                        }
+                    }
+
+                }
             }
         }
+
     }
+
 }
 
 

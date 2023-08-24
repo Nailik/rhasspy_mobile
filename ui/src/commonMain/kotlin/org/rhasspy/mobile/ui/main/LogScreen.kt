@@ -3,7 +3,6 @@ package org.rhasspy.mobile.ui.main
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LowPriority
 import androidx.compose.material.icons.filled.PlaylistRemove
@@ -11,11 +10,18 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.collections.immutable.ImmutableList
+import app.cash.paging.LoadStateError
+import app.cash.paging.LoadStateLoading
+import app.cash.paging.LoadStateNotLoading
+import app.cash.paging.PagingData
+import app.cash.paging.compose.LazyPagingItems
+import app.cash.paging.compose.collectAsLazyPagingItems
+import database.LogElements
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalSnackBarHostState
@@ -109,21 +115,13 @@ private fun AppBar(
 @Composable
 private fun LogScreenContent(
     isLogAutoscroll: Boolean,
-    logList: ImmutableList<LogElement>,
+    logList: Flow<PagingData<LogElements>>,
     onEvent: (LogScreenUiEvent) -> Unit
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val lazyListState = rememberForeverLazyListState(LogScreenList)
 
-    if (isLogAutoscroll) {
-        LaunchedEffect(logList.size) {
-            coroutineScope.launch {
-                if (logList.isNotEmpty()) {
-                    lazyListState.animateScrollToItem(logList.size - 1)
-                }
-            }
-        }
-    }
+    val lazyListState = rememberForeverLazyListState(LogScreenList)
+    val coroutineScope = rememberCoroutineScope()
+
 
     val isDraggedState by lazyListState.interactionSource.collectIsDraggedAsState()
     LaunchedEffect(isDraggedState) {
@@ -132,13 +130,49 @@ private fun LogScreenContent(
         }
     }
 
+    val items: LazyPagingItems<LogElements> = logList.collectAsLazyPagingItems()
+
+    if (isLogAutoscroll) {
+        LaunchedEffect(items.itemCount) {
+            coroutineScope.launch {
+                lazyListState.animateScrollToItem(items.itemCount)
+            }
+        }
+    }
+
     LazyColumn(
+        Modifier.fillMaxWidth(),
         state = lazyListState,
-        modifier = Modifier.fillMaxHeight()
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        items(logList) { item ->
-            LogListElement(item)
-            CustomDivider()
+        @Suppress("USELESS_IS_CHECK")
+        when (val loadState = items.loadState.refresh) {
+            is LoadStateLoading -> {
+                item {
+                    CircularProgressIndicator()
+                }
+            }
+
+            is LoadStateNotLoading -> {
+
+                items(
+                    count = items.itemCount,
+                    key = { key -> items[key]?.id ?: Unit },
+                ) { index ->
+                    items[index]?.also {
+                        LogListElement(it)
+                        CustomDivider()
+                    }
+                }
+            }
+
+            is LoadStateError   -> {
+                item {
+                    Text(loadState.error.message!!)
+                }
+            }
+
+            else                -> Unit
         }
     }
 

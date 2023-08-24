@@ -6,7 +6,7 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.AppTest
+import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsUiEvent.Change.SelectLanguageOption
 import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsViewModel
 import kotlin.test.BeforeTest

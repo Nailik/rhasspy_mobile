@@ -167,6 +167,7 @@ fun Dialog(
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun Dialog(
     modifier: Modifier = Modifier,
@@ -268,10 +269,10 @@ private fun Dialog(
                         LocalTextStyle provides MaterialTheme.typography.labelLarge.copy(textAlign = TextAlign.Start)
                     ) {
                         //Text button
-                        Row(
+                        FlowRow(
                             modifier = Modifier.padding(top = 24.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalArrangement = Arrangement.Center
                         ) {
                             Spacer(modifier = Modifier.weight(1f))
 

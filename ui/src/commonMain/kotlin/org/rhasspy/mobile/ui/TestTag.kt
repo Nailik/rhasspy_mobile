@@ -143,7 +143,8 @@ enum class TestTag {
     DialogMicrophonePermissionInfo,
     DialogOverlayPermissionInfo,
     DialogSaveSettings,
-    DialogRestoreSettings
+    DialogRestoreSettings,
+    DialogRestoreDeprecatedSettings,
 }
 
 fun Modifier.combinedTestTag(IOption: IOption<*>, tag: TestTag) = semantics(

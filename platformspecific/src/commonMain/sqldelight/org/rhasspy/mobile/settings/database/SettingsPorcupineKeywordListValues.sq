@@ -1,0 +1,22 @@
+CREATE TABLE porcupineKeywordValues (
+    id TEXT NOT NULL,
+    value TEXT NOT NULL,
+    enabled INTEGER NOT NULL CHECK (enabled IN (0, 1)),
+    sensitivity REAL NOT NULL CHECK (sensitivity >= 0 AND sensitivity <= 1),
+    FOREIGN KEY (id) REFERENCES settingsIds(id) ON DELETE CASCADE,
+    PRIMARY KEY (id, value)
+);
+
+insertOrUpdate:
+INSERT INTO porcupineKeywordValues(id, value, enabled, sensitivity)
+VALUES (:id, :value, :enabled, :sensitivity)
+ON CONFLICT(id, value) DO UPDATE SET enabled = excluded.enabled, sensitivity = excluded.sensitivity;
+
+delete:
+DELETE FROM porcupineKeywordValues
+WHERE id = :id;
+
+select:
+SELECT *
+FROM porcupineKeywordValues
+WHERE id = :id;

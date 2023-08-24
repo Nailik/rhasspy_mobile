@@ -8,8 +8,8 @@ import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.OpenBatteryOptimizationSettings
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.AppTest
-import org.rhasspy.mobile.viewmodel.nVerify
+import org.rhasspy.mobile.testutils.AppTest
+import org.rhasspy.mobile.testutils.nVerify
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Action.DisableBatteryOptimization
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Change.SetBackgroundServiceSettingsEnabled
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel

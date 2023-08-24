@@ -6,6 +6,8 @@ import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.background.BackgroundService
 import org.rhasspy.mobile.platformspecific.background.IBackgroundService
+import org.rhasspy.mobile.platformspecific.database.DriverFactory
+import org.rhasspy.mobile.platformspecific.database.IDriverFactory
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.firebase.Crashlytics
@@ -24,6 +26,7 @@ val platformSpecificModule = module {
     includes(
         koinApplicationModule
     )
+    single<IDriverFactory> { DriverFactory() }
 
     single<ICrashlytics> {
         Crashlytics()
@@ -77,7 +80,8 @@ val platformSpecificModule = module {
     single<ISettingsUtils> {
         SettingsUtils(
             externalResultRequest = get(),
-            nativeApplication = get()
+            nativeApplication = get(),
+            databaseDriverFactory = get()
         )
     }
 }

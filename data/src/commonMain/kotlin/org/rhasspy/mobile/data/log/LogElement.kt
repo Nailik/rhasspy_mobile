@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 @Stable
 @Serializable
 data class LogElement(
+    val id: Long,
     val time: String,
     val severity: Severity,
     val tag: String,
