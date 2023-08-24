@@ -3942,29 +3942,6 @@
 			};
 			name = Release;
 		};
-		0F5FE0386C487312DE4CD17BD2AE6041 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BB015AE28ADD9D7833B23C82641D4E3C /* PromisesObjC.debug.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
-				MODULEMAP_FILE = Headers/Public/FBLPromises/PromisesObjC.modulemap;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = FBLPromises;
-				PRODUCT_NAME = PromisesObjC;
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
 		15B552FDDE2A6F9E6E9DCC387C2F7850 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 114A6E21A4BFB5CAF246829A3AEF4FC8 /* FirebaseCoreExtension.release.xcconfig */;
@@ -4037,30 +4014,6 @@
 			};
 			name = Debug;
 		};
-		243C1A8BE648DE5B3512A2020C1E6F11 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A09E07AD154E355E14E76EEC2840FEEC /* nanopb.debug.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/nanopb/nanopb-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
-				MODULEMAP_FILE = Headers/Public/nanopb/nanopb.modulemap;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = nanopb;
-				PRODUCT_NAME = nanopb;
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
 		2490699EC7806A683CD0F24519C3EA40 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9382723B6B4226B4323790C49017EAA3 /* app.release.xcconfig */;
@@ -4121,30 +4074,6 @@
 			};
 			name = Release;
 		};
-		3693969601B0EC7303F32D02186CAF06 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = C1A897544366D1B7C18E8380D9EE39AB /* GoogleUtilities.release.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
-				MODULEMAP_FILE = Headers/Public/GoogleUtilities/GoogleUtilities.modulemap;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = GoogleUtilities;
-				PRODUCT_NAME = GoogleUtilities;
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 		3C3BB880418FDF1C3AD190AA2B5D4F45 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 72527A4C5FCD7C31E1A20F740B1BB41C /* FirebaseInstallations.debug.xcconfig */;
@@ -4169,6 +4098,29 @@
 			};
 			name = Debug;
 		};
+		3FD51B5DD9BB7B2B8AD8C8F81C736AB9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A70E4E424A0710AFDE54DC4545DD0FF6 /* GoogleDataTransport.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				MODULEMAP_FILE = Headers/Public/GoogleDataTransport/GoogleDataTransport.modulemap;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = GoogleDataTransport;
+				PRODUCT_NAME = GoogleDataTransport;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 		44DC67A66B748F2800AC367C997CFC82 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A35892906BD0D7A6773469DE914575B7 /* Firebase.debug.xcconfig */;
@@ -4185,6 +4137,55 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
+		};
+		4A27D0AF8E1D64CDC6DB7DB35DA9AC82 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C1A897544366D1B7C18E8380D9EE39AB /* GoogleUtilities.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				MODULEMAP_FILE = Headers/Public/GoogleUtilities/GoogleUtilities.modulemap;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = GoogleUtilities;
+				PRODUCT_NAME = GoogleUtilities;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4B35B771C580FB15E510A956796D2864 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 55191540409A2A0B64D101A6C3412177 /* nanopb.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/nanopb/nanopb-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				MODULEMAP_FILE = Headers/Public/nanopb/nanopb.modulemap;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = nanopb;
+				PRODUCT_NAME = nanopb;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
 		};
 		4F7231C3ADADAB3CCE26926FD88417DC /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -4272,49 +4273,49 @@
 			};
 			name = Release;
 		};
-		616C1F73D5A47500C202ECFA72B881B7 /* Release */ = {
+		6322B369A73E7C4A8D1026725E90930F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 29FF59208CFDD99A1C12FBAC1B5B4009 /* PromisesObjC.release.xcconfig */;
+			baseConfigurationReference = A09E07AD154E355E14E76EEC2840FEEC /* nanopb.debug.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/nanopb/nanopb-prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
-				MODULEMAP_FILE = Headers/Public/FBLPromises/PromisesObjC.modulemap;
+				MODULEMAP_FILE = Headers/Public/nanopb/nanopb.modulemap;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = FBLPromises;
-				PRODUCT_NAME = PromisesObjC;
+				PRODUCT_MODULE_NAME = nanopb;
+				PRODUCT_NAME = nanopb;
 				PUBLIC_HEADERS_FOLDER_PATH = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = "";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
 			};
-			name = Release;
+			name = Debug;
 		};
-		6AC4A155771717057000C97AD8B9745F /* Debug */ = {
+		7692BC0D9BB4C5DF6B06221DFA77B318 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A70E4E424A0710AFDE54DC4545DD0FF6 /* GoogleDataTransport.debug.xcconfig */;
+			baseConfigurationReference = 3143B13F752EB542C8D3DB5650D9C0B9 /* GoogleUtilities.debug.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
-				MODULEMAP_FILE = Headers/Public/GoogleDataTransport/GoogleDataTransport.modulemap;
+				MODULEMAP_FILE = Headers/Public/GoogleUtilities/GoogleUtilities.modulemap;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = GoogleDataTransport;
-				PRODUCT_NAME = GoogleDataTransport;
+				PRODUCT_MODULE_NAME = GoogleUtilities;
+				PRODUCT_NAME = GoogleUtilities;
 				PUBLIC_HEADERS_FOLDER_PATH = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = "";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -4389,31 +4390,6 @@
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_VERSION = 5.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		83C923788551CDC425136216A5AE196D /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 55191540409A2A0B64D101A6C3412177 /* nanopb.release.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/nanopb/nanopb-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
-				MODULEMAP_FILE = Headers/Public/nanopb/nanopb.modulemap;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = nanopb;
-				PRODUCT_NAME = nanopb;
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -4528,6 +4504,30 @@
 			};
 			name = Debug;
 		};
+		A13A8EDE341EAF3712E913A86FE8FDD7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 18871B50B1450B1463791B14CD6BCD29 /* GoogleDataTransport.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				MODULEMAP_FILE = Headers/Public/GoogleDataTransport/GoogleDataTransport.modulemap;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = GoogleDataTransport;
+				PRODUCT_NAME = GoogleDataTransport;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		BF7786E722F56F7765FCA46283E08E8C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D81B84F17F8C9CB94DF34B3CAB2E9F8E /* app.debug.xcconfig */;
@@ -4595,30 +4595,6 @@
 			};
 			name = Debug;
 		};
-		D10DFD0E5263082D666601A27F213FE1 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 18871B50B1450B1463791B14CD6BCD29 /* GoogleDataTransport.release.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
-				MODULEMAP_FILE = Headers/Public/GoogleDataTransport/GoogleDataTransport.modulemap;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = GoogleDataTransport;
-				PRODUCT_NAME = GoogleDataTransport;
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 		DA089D93587CC3CD5494E5C6B57E4438 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6AD5DB75CAEA05DE08A00ABF83D2507E /* resources.debug.xcconfig */;
@@ -4636,28 +4612,52 @@
 			};
 			name = Debug;
 		};
-		E6213905B128EC0784E3016BF77D159D /* Debug */ = {
+		DC32883B84441F764339E688F6627C7C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3143B13F752EB542C8D3DB5650D9C0B9 /* GoogleUtilities.debug.xcconfig */;
+			baseConfigurationReference = BB015AE28ADD9D7833B23C82641D4E3C /* PromisesObjC.debug.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
-				MODULEMAP_FILE = Headers/Public/GoogleUtilities/GoogleUtilities.modulemap;
+				MODULEMAP_FILE = Headers/Public/FBLPromises/PromisesObjC.modulemap;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = GoogleUtilities;
-				PRODUCT_NAME = GoogleUtilities;
+				PRODUCT_MODULE_NAME = FBLPromises;
+				PRODUCT_NAME = PromisesObjC;
 				PUBLIC_HEADERS_FOLDER_PATH = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = "";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
+		};
+		F4861889B1034640D0A9A04B8A8BEECB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 29FF59208CFDD99A1C12FBAC1B5B4009 /* PromisesObjC.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				MODULEMAP_FILE = Headers/Public/FBLPromises/PromisesObjC.modulemap;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = FBLPromises;
+				PRODUCT_NAME = PromisesObjC;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
 		};
 		F8B8B6CE199EA48E311921DF6B9D4960 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -4722,8 +4722,8 @@
 		0B284E9F5F585C15A9313B5DBA056DAE /* Build configuration list for PBXNativeTarget "nanopb" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				243C1A8BE648DE5B3512A2020C1E6F11 /* Debug */,
-				83C923788551CDC425136216A5AE196D /* Release */,
+				6322B369A73E7C4A8D1026725E90930F /* Debug */,
+				4B35B771C580FB15E510A956796D2864 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -4731,8 +4731,8 @@
 		1C1A032EBC93F4A6D595240F9FBD2336 /* Build configuration list for PBXNativeTarget "GoogleDataTransport" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				6AC4A155771717057000C97AD8B9745F /* Debug */,
-				D10DFD0E5263082D666601A27F213FE1 /* Release */,
+				3FD51B5DD9BB7B2B8AD8C8F81C736AB9 /* Debug */,
+				A13A8EDE341EAF3712E913A86FE8FDD7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -4749,8 +4749,8 @@
 		2572C7462381AA65D47C291D76B6F508 /* Build configuration list for PBXNativeTarget "PromisesObjC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0F5FE0386C487312DE4CD17BD2AE6041 /* Debug */,
-				616C1F73D5A47500C202ECFA72B881B7 /* Release */,
+				DC32883B84441F764339E688F6627C7C /* Debug */,
+				F4861889B1034640D0A9A04B8A8BEECB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -4812,8 +4812,8 @@
 		8A0E1CCD459EF3D1CBA53BD99D865597 /* Build configuration list for PBXNativeTarget "GoogleUtilities" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E6213905B128EC0784E3016BF77D159D /* Debug */,
-				3693969601B0EC7303F32D02186CAF06 /* Release */,
+				7692BC0D9BB4C5DF6B06221DFA77B318 /* Debug */,
+				4A27D0AF8E1D64CDC6DB7DB35DA9AC82 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

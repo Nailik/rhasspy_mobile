@@ -147,7 +147,7 @@ private fun LogScreenContent(
     ) {
         @Suppress("USELESS_IS_CHECK")
         when (val loadState = items.loadState.refresh) {
-            is LoadStateLoading    -> {
+            is LoadStateLoading -> {
                 item {
                     CircularProgressIndicator()
                 }
@@ -166,13 +166,13 @@ private fun LogScreenContent(
                 }
             }
 
-            is LoadStateError      -> {
+            is LoadStateError   -> {
                 item {
                     Text(loadState.error.message!!)
                 }
             }
 
-            else                   -> Unit
+            else                -> Unit
         }
     }
 
