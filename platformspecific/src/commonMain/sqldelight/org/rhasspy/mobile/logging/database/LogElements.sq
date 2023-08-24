@@ -1,0 +1,27 @@
+CREATE TABLE logElements (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  time TEXT NOT NULL,
+  severity INTEGER  NOT NULL CHECK (severity IN (0, 1, 2, 3, 4, 5)),
+  tag TEXT NOT NULL,
+  message TEXT NOT NULL,
+  throwable TEXT
+);
+
+
+insert:
+INSERT INTO logElements
+VALUES (?, ?, ?, ?, ?, ?);
+
+countLogElements:
+SELECT count(*) FROM logElements;
+
+logElements:
+SELECT *
+FROM logElements
+LIMIT :limit OFFSET :offset;
+
+CREATE TRIGGER deleteOldest AFTER INSERT ON logElements
+    BEGIN
+        DELETE FROM logElements
+        WHERE id NOT IN (SELECT id FROM logElements ORDER BY id DESC LIMIT 5000);
+    END;

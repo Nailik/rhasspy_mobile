@@ -3,8 +3,8 @@ package org.rhasspy.mobile.logic
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import org.rhasspy.mobile.logic.logger.FileLogger
-import org.rhasspy.mobile.logic.logger.IFileLogger
+import org.rhasspy.mobile.logic.logger.DatabaseLogger
+import org.rhasspy.mobile.logic.logger.IDatabaseLogger
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.services.audiofocus.AudioFocusService
@@ -176,10 +176,11 @@ fun logicModule() = module {
 
     factory { params -> UdpConnection(params[0], params[1]) }
 
-    single<IFileLogger> {
-        FileLogger(
+    single<IDatabaseLogger> {
+        DatabaseLogger(
             nativeApplication = get(),
-            externalResultRequest = get()
+            externalResultRequest = get(),
+            driverFactory = get()
         )
     }
 }

@@ -14,7 +14,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
-import org.rhasspy.mobile.logic.logger.IFileLogger
+import org.rhasspy.mobile.logic.logger.IDatabaseLogger
 import org.rhasspy.mobile.logic.logicModule
 import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
@@ -49,11 +49,8 @@ class Application : NativeApplication(), KoinComponent {
 
     @OptIn(ExperimentalKermitApi::class)
     override fun onCreated() {
-        logger.i { "######## Application \n started ########" }
 
         MigrateSettingsToDatabase.migrateIfNecessary(this)
-
-        logger.d { "startKoin" }
 
         startKoin {
             // declare used modules
@@ -67,11 +64,9 @@ class Application : NativeApplication(), KoinComponent {
             )
         }
 
-        logger.d { "Koin started" }
-
         CoroutineScope(get<IDispatcherProvider>().IO).launch {
 
-            Logger.addLogWriter(get<IFileLogger>() as LogWriter)
+            Logger.addLogWriter(get<IDatabaseLogger>() as LogWriter)
             if (!isInstrumentedTest()) {
                 Logger.addLogWriter(
                     CrashlyticsLogWriter(
@@ -80,6 +75,7 @@ class Application : NativeApplication(), KoinComponent {
                     )
                 )
             }
+            logger.i { "######## Application \n started ########" }
 
             //initialize/load the settings, generate the MutableStateFlow
             AppSetting

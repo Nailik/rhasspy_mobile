@@ -23,6 +23,7 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Compose.foundation)
+                implementation(Jetbrains.Compose.foundation)
                 implementation(Jetbrains.Compose.materialIconsExtended)
                 implementation(Koin.core)
                 implementation(Icerock.Mvvm.core)

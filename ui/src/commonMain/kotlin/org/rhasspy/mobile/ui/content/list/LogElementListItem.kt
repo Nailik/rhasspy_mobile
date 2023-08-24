@@ -12,12 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Severity
-import org.rhasspy.mobile.data.log.LogElement
+import database.LogElements
 import org.rhasspy.mobile.resources.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LogListElement(item: LogElement) {
+fun LogListElement(item: LogElements) {
     ListElement(
         overlineText = {
             Row {
@@ -26,7 +26,9 @@ fun LogListElement(item: LogElement) {
                     modifier = Modifier.weight(1f)
                 )
 
-                val color = when (item.severity) {
+                val severity = Severity.entries[item.severity.toInt()]
+
+                val color = when (severity) {
                     Severity.Verbose -> MaterialTheme.colorScheme.color_verbose
                     Severity.Debug   -> MaterialTheme.colorScheme.color_debug
                     Severity.Info    -> MaterialTheme.colorScheme.color_info
@@ -41,7 +43,7 @@ fun LogListElement(item: LogElement) {
                     modifier = Modifier.wrapContentSize()
                 ) {
                     Text(
-                        text = item.severity.name,
+                        text = severity.name,
                         modifier = Modifier
                             .wrapContentSize()
                             .padding(4.dp),
