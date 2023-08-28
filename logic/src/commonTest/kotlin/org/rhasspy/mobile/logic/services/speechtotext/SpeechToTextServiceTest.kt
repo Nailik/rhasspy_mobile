@@ -6,6 +6,7 @@ import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
+import org.rhasspy.mobile.logic.domains.speechtotext.ISpeechToTextService
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SilenceDetected
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder

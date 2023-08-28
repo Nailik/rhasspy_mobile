@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.viewmodel.screens.dialog
 
-import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
+import org.rhasspy.mobile.logic.domains.dialog.IDialogManagerService
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change

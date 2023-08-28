@@ -1,9 +1,9 @@
 package org.rhasspy.mobile.viewmodel.microphone
 
 import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.logic.domains.speechtotext.ISpeechToTextService
+import org.rhasspy.mobile.logic.domains.wakeword.IWakeWordService
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
-import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission

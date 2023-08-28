@@ -12,7 +12,7 @@ import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
+import org.rhasspy.mobile.logic.domains.wakeword.IWakeWordService
 import org.rhasspy.mobile.platformspecific.*
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
