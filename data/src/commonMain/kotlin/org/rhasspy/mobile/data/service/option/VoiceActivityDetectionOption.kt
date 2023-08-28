@@ -4,13 +4,12 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 
-enum class SpeechToTextOption(override val text: StableStringResource) : IOption<SpeechToTextOption> {
+enum class VoiceActivityDetectionOption(override val text: StableStringResource) : IOption<VoiceActivityDetectionOption> {
 
-    RemoteHTTP(MR.strings.remoteHTTP.stable),
-    RemoteMQTT(MR.strings.remoteMQTT.stable),
+    Enabled(MR.strings.enabled.stable),
     Disabled(MR.strings.disabled.stable);
 
-    override fun findValue(value: String): SpeechToTextOption {
+    override fun findValue(value: String): VoiceActivityDetectionOption {
         return valueOf(value)
     }
 }

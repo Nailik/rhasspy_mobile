@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration
+package org.rhasspy.mobile.ui.configuration.connection
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -40,7 +40,7 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewStat
  * connection timeout settings
  */
 @Composable
-fun MqttConfigurationScreen() {
+fun MqttConnectionScreen() {
 
     val viewModel: MqttConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
@@ -56,7 +56,7 @@ fun MqttConfigurationScreen() {
 
         val viewState by viewModel.viewState.collectAsState()
 
-        MqttEditContent(
+        MqttConnectionEditContent(
             editData = viewState.editData,
             onEvent = viewModel::onEvent
         )
@@ -66,7 +66,7 @@ fun MqttConfigurationScreen() {
 }
 
 @Composable
-private fun MqttEditContent(
+private fun MqttConnectionEditContent(
     editData: MqttConfigurationData,
     onEvent: (MqttConfigurationUiEvent) -> Unit
 ) {

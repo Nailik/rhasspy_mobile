@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
+package org.rhasspy.mobile.viewmodel.configuration.http
 
 sealed interface RemoteHermesHttpConfigurationUiEvent {
 

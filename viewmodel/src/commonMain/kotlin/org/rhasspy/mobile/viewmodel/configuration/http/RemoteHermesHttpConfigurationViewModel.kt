@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
+package org.rhasspy.mobile.viewmodel.configuration.http
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,11 +9,11 @@ import org.rhasspy.mobile.platformspecific.*
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewState.RemoteHermesHttpConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationUiEvent.Change
+import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationViewState.RemoteHermesHttpConfigurationData
 
 @Stable
 class RemoteHermesHttpConfigurationViewModel(

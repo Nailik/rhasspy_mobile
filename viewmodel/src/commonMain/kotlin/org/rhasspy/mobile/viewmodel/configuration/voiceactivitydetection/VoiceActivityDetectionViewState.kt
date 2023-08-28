@@ -1,0 +1,3 @@
+package org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection
+
+class VoiceActivityDetectionViewState

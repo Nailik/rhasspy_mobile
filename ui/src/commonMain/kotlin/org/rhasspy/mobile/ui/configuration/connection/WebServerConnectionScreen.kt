@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration
+package org.rhasspy.mobile.ui.configuration.connection
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -37,7 +37,7 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
  * select ssl certificate
  */
 @Composable
-fun WebServerConfigurationScreen() {
+fun WebServerConnectionScreen() {
 
     val viewModel: WebServerConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
@@ -53,7 +53,7 @@ fun WebServerConfigurationScreen() {
 
         val viewState by viewModel.viewState.collectAsState()
 
-        WebServerEditContent(
+        WebServerConnectionEditContent(
             editData = viewState.editData,
             onEvent = viewModel::onEvent
         )
@@ -63,7 +63,7 @@ fun WebServerConfigurationScreen() {
 }
 
 @Composable
-private fun WebServerEditContent(
+private fun WebServerConnectionEditContent(
     editData: WebServerConfigurationData,
     onEvent: (WebServerConfigurationUiEvent) -> Unit
 ) {

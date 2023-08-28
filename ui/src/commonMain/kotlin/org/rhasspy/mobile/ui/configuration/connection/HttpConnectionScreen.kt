@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration
+package org.rhasspy.mobile.ui.configuration.connection
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,17 +16,17 @@ import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewState.RemoteHermesHttpConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationViewState.RemoteHermesHttpConfigurationData
 
 /**
  * content to configure http configuration
  * switch to disable ssl verification
  */
 @Composable
-fun RemoteHermesHttpConfigurationScreen() {
+fun HttpConnectionScreen() {
 
     val viewModel: RemoteHermesHttpConfigurationViewModel =
         LocalViewModelFactory.current.getViewModel()
@@ -43,7 +43,7 @@ fun RemoteHermesHttpConfigurationScreen() {
 
         val viewState by viewModel.viewState.collectAsState()
 
-        WebServerEditContent(
+        HttpConnectionEditContent(
             editData = viewState.editData,
             onEvent = viewModel::onEvent
         )
@@ -53,7 +53,7 @@ fun RemoteHermesHttpConfigurationScreen() {
 }
 
 @Composable
-private fun WebServerEditContent(
+private fun HttpConnectionEditContent(
     editData: RemoteHermesHttpConfigurationData,
     onEvent: (RemoteHermesHttpConfigurationUiEvent) -> Unit
 ) {

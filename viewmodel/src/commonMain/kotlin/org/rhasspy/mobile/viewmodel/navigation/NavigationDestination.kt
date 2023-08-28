@@ -19,16 +19,25 @@ sealed interface NavigationDestination {
     @Stable
     enum class ConfigurationScreenNavigationDestination : NavigationDestination {
 
-        AudioPlayingConfigurationScreen,
+        ConnectionsConfigurationScreen,
         DialogManagementConfigurationScreen,
-        IntentHandlingConfigurationScreen,
-        IntentRecognitionConfigurationScreen,
-        MqttConfigurationScreen,
-        RemoteHermesHttpConfigurationScreen,
-        SpeechToTextConfigurationScreen,
-        TextToSpeechConfigurationScreen,
+        AudioInputConfigurationScreen,
         WakeWordConfigurationScreen,
-        WebServerConfigurationScreen
+        SpeechToTextConfigurationScreen,
+        VoiceActivityDetectionConfigurationScreen,
+        IntentRecognitionConfigurationScreen,
+        IntentHandlingConfigurationScreen,
+        TextToSpeechConfigurationScreen,
+        AudioPlayingConfigurationScreen,
+
+    }
+
+    @Stable
+    enum class ConnectionScreenNavigationDestination : NavigationDestination {
+
+        MqttConnectionScreen,
+        RemoteHermesHttpConnectionScreen,
+        WebServerConnectionScreen
 
     }
 

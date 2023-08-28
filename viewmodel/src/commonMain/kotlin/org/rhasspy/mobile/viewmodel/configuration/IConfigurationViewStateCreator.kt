@@ -7,7 +7,7 @@ import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.platformspecific.combineState
 
 class IConfigurationViewStateCreator(
-    private val service: IService,
+    private val service: IService?,
 ) {
 
     operator fun <T> invoke(
@@ -19,7 +19,7 @@ class IConfigurationViewStateCreator(
         return combineState(
             viewState,
             configurationViewState,
-            service.serviceState
+            service?.serviceState ?: MutableStateFlow(null)
         ) { viewStateValue, configurationViewStateValue, serviceState ->
 
             val isHasUnsavedChanges = viewStateValue.editData != init()
@@ -28,7 +28,7 @@ class IConfigurationViewStateCreator(
 
             configurationViewStateValue.copy(
                 hasUnsavedChanges = isHasUnsavedChanges,
-                isOpenServiceStateDialogEnabled = serviceState.isOpenServiceStateDialogEnabled(),
+                isOpenServiceStateDialogEnabled = serviceState?.isOpenServiceStateDialogEnabled() ?: false,
             )
 
         }

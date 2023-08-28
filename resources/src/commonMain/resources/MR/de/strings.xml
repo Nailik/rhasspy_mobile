@@ -32,7 +32,12 @@
     <string name="rhasspyTextToSpeechURL">Rhasspy-Text-zu-Sprache-URL (%s)</string>
     <string name="audioOutputURL">Audioausgabe-URL (%s)</string>
     <string name="audioPlaying">Audiowiedergabe</string>
-    <string name="dialogManagement">Dialogverwaltung</string>
+    <string name="dialog_pipeline">Dialog und Pipeline</string>
+    <string name="audio_input">Audioeingang</string>
+    <string name="audio_input_information">Sprache-zu-Text und Aktivierungswort</string>
+    <string name="voice_activity_detection">Sprachaktivitätserkennung</string>
+    <string name="connections">Verbindungen</string>
+    <string name="connections_information">Hermes/Mqtt (Rhasspy2) und Wyoming (Rhasspy3)</string>
     <string name="intentHandling">Intent-Behandlung</string>
     <string name="remoteURL">Entfernte URL</string>
     <string name="checkConnection">Verbindung prüfen</string>

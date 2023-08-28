@@ -12,11 +12,13 @@ import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.assist.AssistantViewModel
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
@@ -100,6 +102,9 @@ fun viewModelModule() = module {
     singleOf(::ConfigurationScreenViewModel)
 
     factoryOf(::IConfigurationViewStateCreator)
+
+    singleOf(::ConnectionsScreenViewStateCreator)
+    singleOf(::ConnectionsConfigurationViewModel)
 
     singleOf(::AudioPlayingConfigurationViewModel)
     singleOf(::DialogManagementConfigurationViewModel)

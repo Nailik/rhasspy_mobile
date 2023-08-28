@@ -7,16 +7,15 @@ import org.rhasspy.mobile.data.service.option.*
 @Stable
 data class ConfigurationScreenViewState internal constructor(
     val siteId: SiteIdViewState,
-    val remoteHermesHttp: RemoteHermesHttpViewState,
-    val webserver: WebServerViewState,
-    val mqtt: MqttViewState,
+    val dialogPipeline: DialogPipelineViewState,
+    val audioInput: AudioInputViewState,
     val wakeWord: WakeWordViewState,
     val speechToText: SpeechToTextViewState,
+    val voiceActivityDetection: VoiceActivityDetectionViewState,
     val intentRecognition: IntentRecognitionViewState,
+    val intentHandling: IntentHandlingViewState,
     val textToSpeech: TextToSpeechViewState,
     val audioPlaying: AudioPlayingViewState,
-    val dialogManagement: DialogManagementViewState,
-    val intentHandling: IntentHandlingViewState,
     val hasError: StateFlow<Boolean>,
     val firstErrorIndex: StateFlow<Int?>,
     val scrollToError: Int?
@@ -28,20 +27,13 @@ data class ConfigurationScreenViewState internal constructor(
     )
 
     @Stable
-    data class RemoteHermesHttpViewState internal constructor(
-        val isHttpSSLVerificationEnabled: Boolean,
+    data class DialogPipelineViewState internal constructor(
+        val dialogManagementOption: DialogManagementOption,
         val serviceState: ServiceViewState
     )
 
     @Stable
-    data class WebServerViewState internal constructor(
-        val isHttpServerEnabled: Boolean,
-        val serviceState: ServiceViewState
-    )
-
-    @Stable
-    data class MqttViewState internal constructor(
-        val isMQTTConnected: Boolean,
+    data class AudioInputViewState internal constructor(
         val serviceState: ServiceViewState
     )
 
@@ -58,8 +50,20 @@ data class ConfigurationScreenViewState internal constructor(
     )
 
     @Stable
+    data class VoiceActivityDetectionViewState internal constructor(
+        val voiceActivityDetectionOption: VoiceActivityDetectionOption,
+        val serviceState: ServiceViewState
+    )
+
+    @Stable
     data class IntentRecognitionViewState internal constructor(
         val intentRecognitionOption: IntentRecognitionOption,
+        val serviceState: ServiceViewState
+    )
+
+    @Stable
+    data class IntentHandlingViewState internal constructor(
+        val intentHandlingOption: IntentHandlingOption,
         val serviceState: ServiceViewState
     )
 
@@ -74,17 +78,4 @@ data class ConfigurationScreenViewState internal constructor(
         val audioPlayingOption: AudioPlayingOption,
         val serviceState: ServiceViewState
     )
-
-    @Stable
-    data class DialogManagementViewState internal constructor(
-        val dialogManagementOption: DialogManagementOption,
-        val serviceState: ServiceViewState
-    )
-
-    @Stable
-    data class IntentHandlingViewState internal constructor(
-        val intentHandlingOption: IntentHandlingOption,
-        val serviceState: ServiceViewState
-    )
-
 }

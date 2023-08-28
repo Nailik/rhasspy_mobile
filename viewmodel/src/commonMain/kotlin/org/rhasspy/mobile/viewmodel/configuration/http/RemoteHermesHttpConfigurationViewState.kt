@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
+package org.rhasspy.mobile.viewmodel.configuration.http
 
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.platformspecific.toStringOrEmpty

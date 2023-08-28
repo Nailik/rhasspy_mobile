@@ -44,7 +44,7 @@ fun DialogManagementConfigurationScreen() {
     ConfigurationScreenItemContent(
         modifier = Modifier,
         screenViewModel = viewModel,
-        title = MR.strings.dialogManagement.stable,
+        title = MR.strings.dialog_pipeline.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent
     ) {
