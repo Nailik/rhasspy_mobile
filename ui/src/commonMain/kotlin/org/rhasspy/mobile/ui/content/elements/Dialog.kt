@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.viewstate.TextWrapper
@@ -180,7 +181,7 @@ private fun Dialog(
     dismissOnOutside: Boolean = true,
     showDivider: Boolean = false
 ) {
-    DialogContainer {
+    Popup {
 
         //Scrim
         Surface(
