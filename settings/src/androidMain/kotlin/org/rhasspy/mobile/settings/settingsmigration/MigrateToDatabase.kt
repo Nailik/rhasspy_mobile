@@ -74,7 +74,6 @@ object MigrateToDatabase {
         NewAppSetting.didShowChangelogDialog.value = DeprecatedAppSetting.didShowChangelogDialog.value
         NewAppSetting.languageType.value = DeprecatedAppSetting.languageType.value
         NewAppSetting.themeType.value = DeprecatedAppSetting.themeType.value
-        NewAppSetting.isAutomaticSilenceDetectionEnabled.value = DeprecatedAppSetting.isAutomaticSilenceDetectionEnabled.value
         NewAppSetting.automaticSilenceDetectionAudioLevel.value = DeprecatedAppSetting.automaticSilenceDetectionAudioLevel.value
         NewAppSetting.automaticSilenceDetectionTime.value = DeprecatedAppSetting.automaticSilenceDetectionTime.value
         NewAppSetting.automaticSilenceDetectionMinimumTime.value = DeprecatedAppSetting.automaticSilenceDetectionMinimumTime.value

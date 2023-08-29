@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.first
 import okio.FileHandle
 import okio.Path
 import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
@@ -18,10 +19,12 @@ import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.httpclient.HttpClientResult
 import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
+import org.rhasspy.mobile.logic.domains.voiceactivitydetection.IVoiceActivityDetectionService
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocusService
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioService
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
 import org.rhasspy.mobile.logic.middleware.Source.Local
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
@@ -64,6 +67,7 @@ internal class SpeechToTextService(
     private val nativeApplication by inject<NativeApplication>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
     private val localAudioService by inject<ILocalAudioService>()
+    private val voiceActivityDetectionService by inject<IVoiceActivityDetectionService> { parametersOf(audioRecorder) }
 
     private val paramsFlow: StateFlow<SpeechToTextServiceParams> = paramsCreator()
     private val params: SpeechToTextServiceParams get() = paramsFlow.value
@@ -78,10 +82,6 @@ internal class SpeechToTextService(
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private var recorder: Job? = null
-
-    private val silenceDetection = SilenceDetection {
-        serviceMiddleware.action(SilenceDetected(Local))
-    }
 
     init {
         scope.launch {
@@ -115,6 +115,7 @@ internal class SpeechToTextService(
     override fun endSpeechToText(sessionId: String, fromMqtt: Boolean) {
         if (!isActive) return
         isActive = false
+        voiceActivityDetectionService.stop()
         logger.d { "endSpeechToText sessionId: $sessionId fromMqtt $fromMqtt" }
 
         audioRecorder.stopRecording()
@@ -186,6 +187,8 @@ internal class SpeechToTextService(
             }
         }
 
+        voiceActivityDetectionService.start()
+
         //start recorder
         recorder = scope.launch {
             record(sessionId, this)
@@ -225,7 +228,6 @@ internal class SpeechToTextService(
     }
 
     private suspend fun record(sessionId: String, coroutineScope: CoroutineScope) {
-        silenceDetection.reset()
         localAudioService.isPlayingState.first { !it }
 
         audioFocusService.request(Record)
@@ -237,14 +239,6 @@ internal class SpeechToTextService(
                     if (data.isNotEmpty()) {
                         audioFrame(sessionId, data)
                     }
-                }
-            }
-        }
-
-        if (AppSetting.isAutomaticSilenceDetectionEnabled.value) {
-            coroutineScope.launch {
-                audioRecorder.maxVolume.collect {
-                    silenceDetection.audioFrameVolume(it)
                 }
             }
         }

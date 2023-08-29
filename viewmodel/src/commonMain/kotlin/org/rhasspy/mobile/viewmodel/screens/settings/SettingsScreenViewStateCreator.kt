@@ -17,7 +17,6 @@ class SettingsScreenViewStateCreator {
             AppSetting.isSoundIndicationEnabled.data,
             AppSetting.isWakeWordLightIndicationEnabled.data,
             AppSetting.audioFocusOption.data,
-            AppSetting.isAutomaticSilenceDetectionEnabled.data,
             AppSetting.logLevel.data,
         ).mapReadonlyState {
             getViewState()
@@ -34,7 +33,6 @@ class SettingsScreenViewStateCreator {
             isSoundIndicationEnabled = AppSetting.isSoundIndicationEnabled.value,
             isWakeWordLightIndicationEnabled = AppSetting.isWakeWordLightIndicationEnabled.value,
             audioFocusOption = AppSetting.audioFocusOption.value,
-            isAutomaticSilenceDetectionEnabled = AppSetting.isAutomaticSilenceDetectionEnabled.value,
             logLevel = AppSetting.logLevel.value
         )
     }

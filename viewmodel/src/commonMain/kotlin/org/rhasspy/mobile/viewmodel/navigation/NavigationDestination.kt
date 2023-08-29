@@ -46,7 +46,6 @@ sealed interface NavigationDestination {
 
         AboutSettings,
         AudioFocusSettings,
-        SilenceDetectionSettings,
         BackgroundServiceSettings,
         DeviceSettings,
         IndicationSettings,

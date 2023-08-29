@@ -38,6 +38,9 @@ import org.rhasspy.mobile.logic.domains.speechtotext.SpeechToTextServiceParamsCr
 import org.rhasspy.mobile.logic.domains.texttospeech.ITextToSpeechService
 import org.rhasspy.mobile.logic.domains.texttospeech.TextToSpeechService
 import org.rhasspy.mobile.logic.domains.texttospeech.TextToSpeechServiceParamsCreator
+import org.rhasspy.mobile.logic.domains.voiceactivitydetection.IVoiceActivityDetectionService
+import org.rhasspy.mobile.logic.domains.voiceactivitydetection.VoiceActivityDetectionParamsCreator
+import org.rhasspy.mobile.logic.domains.voiceactivitydetection.VoiceActivityDetectionService
 import org.rhasspy.mobile.logic.domains.wakeword.IWakeWordService
 import org.rhasspy.mobile.logic.domains.wakeword.UdpConnection
 import org.rhasspy.mobile.logic.domains.wakeword.WakeWordService
@@ -181,6 +184,14 @@ fun logicModule() = module {
             nativeApplication = get(),
             externalResultRequest = get(),
             driverFactory = get()
+        )
+    }
+
+    factoryOf(::VoiceActivityDetectionParamsCreator)
+    single<IVoiceActivityDetectionService> { params ->
+        VoiceActivityDetectionService(
+            paramsCreator = get(),
+            audioRecorder = params[0]
         )
     }
 }

@@ -249,6 +249,7 @@ internal actual class SettingsUtils actual constructor(
         )
 
         val database = SettingsDatabase(databaseDriverFactory.createDriver(SettingsDatabase.Schema, "settings-export.db"))
+
         database.settingsIdsQueries.transaction {
             toRemove.forEach {
                 database.settingsIdsQueries.removeById(it)

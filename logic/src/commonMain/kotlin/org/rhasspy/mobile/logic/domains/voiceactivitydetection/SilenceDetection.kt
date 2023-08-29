@@ -1,28 +1,22 @@
-package org.rhasspy.mobile.logic.domains.speechtotext
+package org.rhasspy.mobile.logic.domains.voiceactivitydetection
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import org.rhasspy.mobile.settings.AppSetting
 import kotlin.time.Duration.Companion.milliseconds
 
 class SilenceDetection(
+    private val automaticSilenceDetectionTime: Long?,
+    private val automaticSilenceDetectionMinimumTime: Long?,
+    private val automaticSilenceDetectionAudioLevel: Float,
     private val onSilenceDetected: () -> Unit
 ) {
 
     private var silenceStartTime: Instant? = null
     private var recordingTillSilenceStartTime = Clock.System.now()
 
-    fun reset() {
-        silenceStartTime = null
-        recordingTillSilenceStartTime = Clock.System.now()
-    }
-
     fun audioFrameVolume(volume: Float) {
-        val automaticSilenceDetectionTime = AppSetting.automaticSilenceDetectionTime.value ?: 0
-        val automaticSilenceDetectionMinimumTime =
-            AppSetting.automaticSilenceDetectionMinimumTime.value ?: 0
-        //check enabled
-        if (!AppSetting.isAutomaticSilenceDetectionEnabled.value) return
+        val automaticSilenceDetectionTime = automaticSilenceDetectionTime ?: 0
+        val automaticSilenceDetectionMinimumTime = automaticSilenceDetectionMinimumTime ?: 0
 
         //check minimum recording time
         val currentTime = Clock.System.now()
@@ -33,7 +27,7 @@ class SilenceDetection(
         if (timeSinceStart < automaticSilenceDetectionMinimumTime.milliseconds) return
 
         //volume above threshold
-        if (volume > AppSetting.automaticSilenceDetectionAudioLevel.value) {
+        if (volume > automaticSilenceDetectionAudioLevel) {
             //reset silence time (was above threshold)
             silenceStartTime = null
             return

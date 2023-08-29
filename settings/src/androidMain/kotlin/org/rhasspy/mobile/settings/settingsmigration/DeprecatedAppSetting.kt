@@ -22,7 +22,6 @@ object DeprecatedAppSetting {
     val languageType = DeprecatedISetting(SettingsEnum.LanguageOption, LanguageType.English)
     val themeType = DeprecatedISetting(SettingsEnum.ThemeOption, ThemeType.System)
 
-    val isAutomaticSilenceDetectionEnabled = DeprecatedISetting(SettingsEnum.AutomaticSilenceDetection, false)
     val automaticSilenceDetectionAudioLevel = DeprecatedISetting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
     val automaticSilenceDetectionTime = DeprecatedISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
     val automaticSilenceDetectionMinimumTime = DeprecatedISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000)

@@ -6,7 +6,7 @@ import org.rhasspy.mobile.resources.MR
 
 enum class VoiceActivityDetectionOption(override val text: StableStringResource) : IOption<VoiceActivityDetectionOption> {
 
-    Enabled(MR.strings.enabled.stable),
+    Local(MR.strings.local.stable),
     Disabled(MR.strings.disabled.stable);
 
     override fun findValue(value: String): VoiceActivityDetectionOption {

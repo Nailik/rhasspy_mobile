@@ -9,7 +9,7 @@ enum class SettingsEnum {
     ThemeOption,
     DialogAutoScroll,
 
-    AutomaticSilenceDetection,
+    VoiceActivityDetectionOption,
     AutomaticSilenceDetectionAudioLevel,
     AutomaticSilenceDetectionTime,
     AutomaticSilenceDetectionMinimumTime,

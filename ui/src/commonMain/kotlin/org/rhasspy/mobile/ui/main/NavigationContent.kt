@@ -92,7 +92,6 @@ private fun SettingsNavigationContent(
     when (screen) {
         SettingsScreenDestination.AboutSettings             -> AboutScreen()
         SettingsScreenDestination.AudioFocusSettings        -> AudioFocusSettingsContent()
-        SettingsScreenDestination.SilenceDetectionSettings  -> SilenceDetectionSettingsContent()
         SettingsScreenDestination.BackgroundServiceSettings -> BackgroundServiceSettingsContent()
         SettingsScreenDestination.DeviceSettings            -> DeviceSettingsContent()
         SettingsScreenDestination.IndicationSettings        -> IndicationSettingsOverviewScreen()
