@@ -21,6 +21,7 @@ interface INavigator {
     fun popBackStack()
     fun onBackPressed()
     fun navigate(screen: NavigationDestination)
+    fun navigate(vararg screen: NavigationDestination)
     fun onComposed(viewModel: IScreenViewModel)
     fun onDisposed(viewModel: IScreenViewModel)
     fun replace(clazz: KClass<out NavigationDestination>, screen: NavigationDestination)
@@ -73,11 +74,17 @@ internal class Navigator(
      * navigate to screen (add to backstack)
      */
     override fun navigate(screen: NavigationDestination) {
-        if (navStack.value.lastOrNull() != screen) {
-            navStack.update {
-                it.updateList {
-                    add(screen)
-                }
+        navStack.update {
+            it.updateList {
+                add(screen)
+            }
+        }
+    }
+
+    override fun navigate(vararg screen: NavigationDestination) {
+        navStack.update {
+            it.updateList {
+                addAll(screen)
             }
         }
     }

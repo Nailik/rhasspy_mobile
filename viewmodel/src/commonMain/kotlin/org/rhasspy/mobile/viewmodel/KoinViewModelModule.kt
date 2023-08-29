@@ -11,6 +11,8 @@ import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.assist.AssistantViewModel
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewStateCreator
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsScreenViewStateCreator
@@ -105,6 +107,9 @@ fun viewModelModule() = module {
 
     singleOf(::ConnectionsScreenViewStateCreator)
     singleOf(::ConnectionsConfigurationViewModel)
+
+    singleOf(::AudioInputConfigurationViewStateCreator)
+    singleOf(::AudioInputConfigurationViewModel)
 
     singleOf(::AudioPlayingConfigurationViewModel)
     singleOf(::DialogManagementConfigurationViewModel)

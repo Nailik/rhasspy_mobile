@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -21,17 +22,15 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.ui.utils.ListType
-import org.rhasspy.mobile.ui.utils.rememberForeverScrollState
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewState.*
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConnectionScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConnectionScreenNavigationDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.ConfigurationScreen
 
 /**
  * configuration screens with list items that open bottom sheet
@@ -49,6 +48,7 @@ fun ConnectionsConfigurationScreen() {
             viewState = viewState
         )
     }
+
 }
 
 
@@ -58,11 +58,10 @@ private fun ConnectionsConfigurationScreenContent(
     onEvent: (ConnectionsConfigurationUiEvent) -> Unit,
     viewState: ConnectionsConfigurationViewState
 ) {
-    val scrollState = rememberForeverScrollState(ListType.ConfigurationScreenList)
 
     Scaffold(
         modifier = Modifier
-            .testTag(NavigationDestination.MainScreenNavigationDestination.ConfigurationScreen)
+            .testTag(ConfigurationScreen)
             .fillMaxSize(),
         topBar = {
             TopAppBar(
@@ -87,7 +86,7 @@ private fun ConnectionsConfigurationScreenContent(
                 .testTag(TestTag.List)
                 .padding(paddingValues)
                 .fillMaxSize()
-                .verticalScroll(scrollState)
+                .verticalScroll(rememberScrollState())
         ) {
 
             Http(

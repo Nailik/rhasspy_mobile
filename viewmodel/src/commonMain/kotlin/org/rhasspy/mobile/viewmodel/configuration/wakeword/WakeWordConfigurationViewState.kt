@@ -27,7 +27,7 @@ data class WakeWordConfigurationViewState internal constructor(
 ) : IConfigurationViewState {
 
     @Stable
-    data class PorcupineCustomKeywordViewState(
+    data class PorcupineCustomKeywordViewState internal constructor(
         val keyword: PorcupineCustomKeyword,
         val deleted: Boolean = false
     )

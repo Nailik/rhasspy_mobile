@@ -77,15 +77,15 @@ class SpeechToTextConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 copy(
-                    speechToTextAudioRecorderFormatData = when (event) {
-                        is SelectAudioRecorderChannelType    -> speechToTextAudioRecorderFormatData.copy(audioRecorderChannelType = event.value)
-                        is SelectAudioRecorderEncodingType   -> speechToTextAudioRecorderFormatData.copy(audioRecorderEncodingType = event.value)
-                        is SelectAudioRecorderSampleRateType -> speechToTextAudioRecorderFormatData.copy(audioRecorderSampleRateType = event.value)
+                    speechToTextAudioRecorderData = when (event) {
+                        is SelectAudioRecorderChannelType    -> speechToTextAudioRecorderData.copy(audioRecorderChannelType = event.value)
+                        is SelectAudioRecorderEncodingType   -> speechToTextAudioRecorderData.copy(audioRecorderEncodingType = event.value)
+                        is SelectAudioRecorderSampleRateType -> speechToTextAudioRecorderData.copy(audioRecorderSampleRateType = event.value)
                     },
                     //TODO #408
-                    speechToTextAudioOutputFormatData = when (event) {
-                        is SelectAudioRecorderEncodingType -> speechToTextAudioOutputFormatData.copy(audioOutputEncodingType = event.value)
-                        else                               -> speechToTextAudioOutputFormatData
+                    speechToTextAudioOutputData = when (event) {
+                        is SelectAudioRecorderEncodingType -> speechToTextAudioOutputData.copy(audioOutputEncodingType = event.value)
+                        else                               -> speechToTextAudioOutputData
                     }
                 )
             })
@@ -96,10 +96,10 @@ class SpeechToTextConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 copy(
-                    speechToTextAudioOutputFormatData = when (event) {
-                        is SelectAudioOutputChannelType    -> speechToTextAudioOutputFormatData.copy(audioOutputChannelType = event.value)
-                        is SelectAudioOutputEncodingType   -> speechToTextAudioOutputFormatData.copy(audioOutputEncodingType = event.value)
-                        is SelectAudioOutputSampleRateType -> speechToTextAudioOutputFormatData.copy(audioOutputSampleRateType = event.value)
+                    speechToTextAudioOutputData = when (event) {
+                        is SelectAudioOutputChannelType    -> speechToTextAudioOutputData.copy(audioOutputChannelType = event.value)
+                        is SelectAudioOutputEncodingType   -> speechToTextAudioOutputData.copy(audioOutputEncodingType = event.value)
+                        is SelectAudioOutputSampleRateType -> speechToTextAudioOutputData.copy(audioOutputSampleRateType = event.value)
                     }
                 )
             })
@@ -117,13 +117,13 @@ class SpeechToTextConfigurationViewModel(
             ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value = isUseSpeechToTextMqttSilenceDetection
             ConfigurationSetting.speechToTextHttpEndpoint.value = speechToTextHttpEndpoint
 
-            with(speechToTextAudioRecorderFormatData) {
+            with(speechToTextAudioRecorderData) {
                 ConfigurationSetting.speechToTextAudioRecorderChannel.value = audioRecorderChannelType
                 ConfigurationSetting.speechToTextAudioRecorderEncoding.value = audioRecorderEncodingType
                 ConfigurationSetting.speechToTextAudioRecorderSampleRate.value = audioRecorderSampleRateType
             }
 
-            with(speechToTextAudioOutputFormatData) {
+            with(speechToTextAudioOutputData) {
                 ConfigurationSetting.speechToTextAudioOutputChannel.value = audioOutputChannelType
                 ConfigurationSetting.speechToTextAudioOutputEncoding.value = audioOutputEncodingType
                 ConfigurationSetting.speechToTextAudioOutputSampleRate.value = audioOutputSampleRateType

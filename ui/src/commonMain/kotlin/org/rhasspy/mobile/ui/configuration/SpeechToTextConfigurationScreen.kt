@@ -31,8 +31,8 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData.SpeechToTextAudioOutputFormatConfigurationData
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData.SpeechToTextAudioRecorderFormatConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData.SpeechToTextAudioOutputConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData.SpeechToTextAudioRecorderConfigurationData
 
 /**
  * Content to configure speech to text
@@ -104,16 +104,16 @@ private fun SpeechToTextOption(
             SpeechToTextOption.RemoteHTTP -> SpeechToTextHTTP(
                 isUseCustomSpeechToTextHttpEndpoint = editData.isUseCustomSpeechToTextHttpEndpoint,
                 speechToTextHttpEndpointText = editData.speechToTextHttpEndpointText,
-                speechToTextAudioRecorderFormatData = editData.speechToTextAudioRecorderFormatData,
-                speechToTextAudioOutputFormatData = editData.speechToTextAudioOutputFormatData,
+                speechToTextAudioRecorderData = editData.speechToTextAudioRecorderData,
+                speechToTextAudioOutputData = editData.speechToTextAudioOutputData,
                 onEvent = onEvent
             )
 
             SpeechToTextOption.RemoteMQTT -> SpeechToTextMqtt(
                 isUseSpeechToTextMqttSilenceDetection = editData.isUseSpeechToTextMqttSilenceDetection,
                 onEvent = onEvent,
-                speechToTextAudioRecorderFormatData = editData.speechToTextAudioRecorderFormatData,
-                speechToTextAudioOutputFormatData = editData.speechToTextAudioOutputFormatData,
+                speechToTextAudioRecorderData = editData.speechToTextAudioRecorderData,
+                speechToTextAudioOutputData = editData.speechToTextAudioOutputData,
             )
 
             else                          -> Unit
@@ -129,8 +129,8 @@ private fun SpeechToTextOption(
 private fun SpeechToTextHTTP(
     isUseCustomSpeechToTextHttpEndpoint: Boolean,
     speechToTextHttpEndpointText: String,
-    speechToTextAudioRecorderFormatData: SpeechToTextAudioRecorderFormatConfigurationData,
-    speechToTextAudioOutputFormatData: SpeechToTextAudioOutputFormatConfigurationData,
+    speechToTextAudioRecorderData: SpeechToTextAudioRecorderConfigurationData,
+    speechToTextAudioOutputData: SpeechToTextAudioOutputConfigurationData,
     onEvent: (SpeechToTextConfigurationUiEvent) -> Unit
 ) {
 
@@ -159,9 +159,9 @@ private fun SpeechToTextHTTP(
             modifier = Modifier.clickable { onEvent(OpenAudioRecorderFormat) },
             text = { Text(resource = MR.strings.audioRecorderFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(speechToTextAudioRecorderFormatData.audioRecorderChannelType.text)} | " +
-                        "${translate(speechToTextAudioRecorderFormatData.audioRecorderEncodingType.text)} | " +
-                        translate(speechToTextAudioRecorderFormatData.audioRecorderSampleRateType.text)
+                val text = "${translate(speechToTextAudioRecorderData.audioRecorderChannelType.text)} | " +
+                        "${translate(speechToTextAudioRecorderData.audioRecorderEncodingType.text)} | " +
+                        translate(speechToTextAudioRecorderData.audioRecorderSampleRateType.text)
                 Text(text = text)
             }
         )
@@ -171,9 +171,9 @@ private fun SpeechToTextHTTP(
             modifier = Modifier.clickable { onEvent(OpenAudioOutputFormat) },
             text = { Text(MR.strings.audioOutputFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(speechToTextAudioOutputFormatData.audioOutputChannelType.text)} | " +
-                        "${translate(speechToTextAudioOutputFormatData.audioOutputEncodingType.text)} | " +
-                        translate(speechToTextAudioOutputFormatData.audioOutputSampleRateType.text)
+                val text = "${translate(speechToTextAudioOutputData.audioOutputChannelType.text)} | " +
+                        "${translate(speechToTextAudioOutputData.audioOutputEncodingType.text)} | " +
+                        translate(speechToTextAudioOutputData.audioOutputSampleRateType.text)
                 Text(text = text)
             }
         )
@@ -187,8 +187,8 @@ private fun SpeechToTextHTTP(
 @Composable
 private fun SpeechToTextMqtt(
     isUseSpeechToTextMqttSilenceDetection: Boolean,
-    speechToTextAudioRecorderFormatData: SpeechToTextAudioRecorderFormatConfigurationData,
-    speechToTextAudioOutputFormatData: SpeechToTextAudioOutputFormatConfigurationData,
+    speechToTextAudioRecorderData: SpeechToTextAudioRecorderConfigurationData,
+    speechToTextAudioOutputData: SpeechToTextAudioOutputConfigurationData,
     onEvent: (SpeechToTextConfigurationUiEvent) -> Unit
 ) {
 
@@ -207,9 +207,9 @@ private fun SpeechToTextMqtt(
             modifier = Modifier.clickable { onEvent(OpenAudioRecorderFormat) },
             text = { Text(MR.strings.audioRecorderFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(speechToTextAudioRecorderFormatData.audioRecorderChannelType.text)} | " +
-                        "${translate(speechToTextAudioRecorderFormatData.audioRecorderEncodingType.text)} | " +
-                        translate(speechToTextAudioRecorderFormatData.audioRecorderSampleRateType.text)
+                val text = "${translate(speechToTextAudioRecorderData.audioRecorderChannelType.text)} | " +
+                        "${translate(speechToTextAudioRecorderData.audioRecorderEncodingType.text)} | " +
+                        translate(speechToTextAudioRecorderData.audioRecorderSampleRateType.text)
                 Text(text = text)
             }
         )
@@ -219,9 +219,9 @@ private fun SpeechToTextMqtt(
             modifier = Modifier.clickable { onEvent(OpenAudioOutputFormat) },
             text = { Text(MR.strings.audioOutputFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(speechToTextAudioOutputFormatData.audioOutputChannelType.text)} | " +
-                        "${translate(speechToTextAudioOutputFormatData.audioOutputEncodingType.text)} | " +
-                        translate(speechToTextAudioOutputFormatData.audioOutputSampleRateType.text)
+                val text = "${translate(speechToTextAudioOutputData.audioOutputChannelType.text)} | " +
+                        "${translate(speechToTextAudioOutputData.audioOutputEncodingType.text)} | " +
+                        translate(speechToTextAudioOutputData.audioOutputSampleRateType.text)
                 Text(text = text)
             }
         )
