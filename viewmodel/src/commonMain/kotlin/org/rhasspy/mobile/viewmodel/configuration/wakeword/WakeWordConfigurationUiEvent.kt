@@ -36,7 +36,7 @@ sealed interface WakeWordConfigurationUiEvent {
             data class SelectWakeWordPorcupineLanguage(val option: PorcupineLanguageOption) : Change
             data class UpdateWakeWordPorcupineKeywordDefaultSensitivity(
                 val item: PorcupineDefaultKeyword,
-                val value: Float
+                val value: Double
             ) : Change
 
             data class ClickPorcupineKeywordDefault(val item: PorcupineDefaultKeyword) : Change
@@ -47,7 +47,7 @@ sealed interface WakeWordConfigurationUiEvent {
 
             data class UpdateWakeWordPorcupineKeywordCustomSensitivity(
                 val item: PorcupineCustomKeyword,
-                val value: Float
+                val value: Double
             ) : Change
 
             data class ClickPorcupineKeywordCustom(val item: PorcupineCustomKeyword) : Change

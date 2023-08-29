@@ -5,12 +5,12 @@ import okio.Path
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
-import org.rhasspy.mobile.viewmodel.AppTest
+import org.rhasspy.mobile.testutils.AppTest
+import org.rhasspy.mobile.testutils.getRandomString
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewState.MqttConfigurationData
-import org.rhasspy.mobile.viewmodel.getRandomString
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

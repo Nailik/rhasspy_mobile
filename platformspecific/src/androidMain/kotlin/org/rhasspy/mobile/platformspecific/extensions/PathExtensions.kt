@@ -3,27 +3,23 @@ package org.rhasspy.mobile.platformspecific.extensions
 import android.net.Uri
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
-import co.touchlab.kermit.Severity
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
 import okio.*
-import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Result
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Success
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
-import java.io.ByteArrayInputStream
-import java.io.InputStream
-import java.io.SequenceInputStream
-import java.util.Collections
+import java.io.File
 
 actual fun Path.Companion.commonInternalPath(
     nativeApplication: NativeApplication,
     fileName: String
 ): Path = "${nativeApplication.filesDir?.let { "$it/" } ?: ""}$fileName".toPath()
+
+actual fun Path.Companion.commonDatabasePath(
+    nativeApplication: NativeApplication,
+    fileName: String
+): Path = nativeApplication.getDatabasePath(fileName).toOkioPath()
 
 actual fun Path?.commonExists(): Boolean = this?.let { !FileSystem.SYSTEM.exists(this) } ?: false
 
@@ -37,38 +33,17 @@ actual fun Path.commonSource(): Source = this.toFile().source()
 
 actual fun Path.commonReadWrite(): FileHandle = FileSystem.SYSTEM.openReadWrite(this, !FileSystem.SYSTEM.exists(this))
 
-@OptIn(ExperimentalSerializationApi::class)
-actual inline fun <reified T> Path.commonDecodeLogList(): T =
-    Json.decodeFromStream(this.toFile().inputStream().modify())
-
-fun InputStream.modify(): InputStream {
-    val streams = listOf(
-        ByteArrayInputStream(
-            "[${
-                Json.encodeToString(
-                    LogElement(
-                        time = "",
-                        severity = Severity.Assert,
-                        tag = "",
-                        message = "",
-                        throwable = null
-                    )
-                )
-            }".toByteArray()
-        ),
-        this,
-        ByteArrayInputStream("]".toByteArray())
-    )
-    return SequenceInputStream(Collections.enumeration(streams))
-}
-
 actual fun Path.commonShare(
     nativeApplication: NativeApplication,
     externalResultRequest: IExternalResultRequest
 ): Boolean {
+    val shareFile = File("${nativeApplication.filesDir}/share-${this.name}")
+    this.toFile().copyTo(shareFile, overwrite = true)
+
     val fileUri: Uri = FileProvider.getUriForFile(
-        nativeApplication, nativeApplication.packageName.toString() + ".provider",
-        this.toFile()
+        nativeApplication,
+        nativeApplication.packageName.toString() + ".provider",
+        shareFile
     )
 
     val result = externalResultRequest.launch(

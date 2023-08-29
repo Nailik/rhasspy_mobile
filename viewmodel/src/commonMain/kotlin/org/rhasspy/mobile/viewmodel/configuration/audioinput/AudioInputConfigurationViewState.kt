@@ -1,0 +1,15 @@
+package org.rhasspy.mobile.viewmodel.configuration.audioinput
+
+import androidx.compose.runtime.Stable
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData.SpeechToTextAudioOutputConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData.SpeechToTextAudioRecorderConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordAudioOutputConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordAudioRecorderConfigurationData
+
+@Stable
+data class AudioInputConfigurationViewState internal constructor(
+    val wakeWordAudioRecorderData: WakeWordAudioRecorderConfigurationData,
+    val wakeWordAudioOutputData: WakeWordAudioOutputConfigurationData,
+    val speechToTextAudioRecorderData: SpeechToTextAudioRecorderConfigurationData,
+    val speechToTextAudioOutputData: SpeechToTextAudioOutputConfigurationData,
+)

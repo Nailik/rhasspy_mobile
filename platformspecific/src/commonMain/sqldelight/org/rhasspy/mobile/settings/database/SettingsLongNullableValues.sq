@@ -1,0 +1,15 @@
+CREATE TABLE settingsLongNullableValues (
+    id TEXT PRIMARY KEY,
+    value INTEGER,
+    FOREIGN KEY (id) REFERENCES settingsIds(id) ON DELETE CASCADE
+);
+
+insertOrUpdate:
+INSERT INTO settingsLongNullableValues(id, value)
+VALUES (:id, :value)
+ON CONFLICT(id) DO UPDATE SET value = excluded.value;
+
+select:
+SELECT value
+FROM settingsLongNullableValues
+WHERE id = :id;

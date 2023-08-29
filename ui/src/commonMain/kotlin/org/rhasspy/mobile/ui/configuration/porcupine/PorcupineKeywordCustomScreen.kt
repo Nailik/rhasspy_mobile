@@ -99,8 +99,8 @@ private fun KeywordListItem(
             onUpdateSensitivity = {
                 onEvent(
                     UpdateWakeWordPorcupineKeywordCustomSensitivity(
-                        option.keyword,
-                        it
+                        item = option.keyword,
+                        value = it.toDouble()
                     )
                 )
             }
@@ -152,7 +152,7 @@ private fun CustomKeywordListItem(
         SliderListItem(
             modifier = Modifier.padding(horizontal = 12.dp),
             text = MR.strings.sensitivity.stable,
-            value = keyword.sensitivity,
+            value = keyword.sensitivity.toFloat(),
             onValueChange = onUpdateSensitivity
         )
     }

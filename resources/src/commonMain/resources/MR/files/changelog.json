@@ -1,3 +1,7 @@
 [
-  "fixed possible issue starting the Background Service"
+  "fixed possible issue starting the Background Service",
+  "update Ui to new Domain Settings",
+  "fixed possible issue with AudioRecorder in combination with Pause on Media Playback",
+  "updated Log to be stored in a Database",
+  "updated Settings to be stored in a Database"
 ]

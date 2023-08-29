@@ -4,7 +4,7 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState

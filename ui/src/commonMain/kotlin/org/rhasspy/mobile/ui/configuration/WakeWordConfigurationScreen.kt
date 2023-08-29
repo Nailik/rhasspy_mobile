@@ -115,7 +115,8 @@ private fun WakeWordConfigurationOptionContent(
                     onEvent = onEvent
                 )
 
-            else                     -> Unit
+            WakeWordOption.MQTT,
+            WakeWordOption.Disabled -> Unit
         }
 
     }

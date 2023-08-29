@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.viewmodel.settings.indication.sound
 
 import androidx.compose.runtime.Stable
-import org.rhasspy.mobile.logic.services.localaudio.ILocalAudioService
+import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.file.FolderType.SoundFolder.Error
 import org.rhasspy.mobile.settings.AppSetting

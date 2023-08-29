@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.viewmodel
 
-
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.parameter.parametersOf
@@ -11,14 +10,20 @@ import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.assist.AssistantViewModel
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewStateCreator
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.AudioRecorderViewStateCreator
+import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
@@ -61,8 +66,6 @@ import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewStateCreator
 
 
 fun viewModelModule() = module {
@@ -101,6 +104,12 @@ fun viewModelModule() = module {
 
     factoryOf(::IConfigurationViewStateCreator)
 
+    singleOf(::ConnectionsScreenViewStateCreator)
+    singleOf(::ConnectionsConfigurationViewModel)
+
+    singleOf(::AudioInputConfigurationViewStateCreator)
+    singleOf(::AudioInputConfigurationViewModel)
+
     singleOf(::AudioPlayingConfigurationViewModel)
     singleOf(::DialogManagementConfigurationViewModel)
     singleOf(::IntentHandlingConfigurationViewModel)
@@ -112,6 +121,21 @@ fun viewModelModule() = module {
     singleOf(::WakeWordConfigurationViewModel)
     singleOf(::WebServerConfigurationViewModel)
 
+    factory { params ->
+        AudioRecorderViewStateCreator(
+            audioRecorder = params[0]
+        )
+    }
+    single {
+        val audioRecorder: IAudioRecorder = get()
+        VoiceActivityDetectionViewModel(
+            nativeApplication = get(),
+            audioRecorderViewStateCreator = get { parametersOf(audioRecorder) },
+            service = get { parametersOf(audioRecorder) },
+            audioRecorder = audioRecorder
+        )
+    }
+
     factoryOf(::LogScreenViewStateCreator)
     singleOf(::LogScreenViewModel)
 
@@ -120,16 +144,6 @@ fun viewModelModule() = module {
 
     factoryOf(::AboutScreenViewStateCreator)
     singleOf(::AboutScreenViewModel)
-
-    factory { params -> SilenceDetectionSettingsViewStateCreator(audioRecorder = params.get()) }
-    single {
-        val audioRecorder: IAudioRecorder = get()
-        SilenceDetectionSettingsViewModel(
-            nativeApplication = get(),
-            viewStateCreator = get { parametersOf(audioRecorder) },
-            audioRecorder = audioRecorder
-        )
-    }
 
     factoryOf(::AudioFocusSettingsViewStateCreator)
     singleOf(::AudioFocusSettingsViewModel)

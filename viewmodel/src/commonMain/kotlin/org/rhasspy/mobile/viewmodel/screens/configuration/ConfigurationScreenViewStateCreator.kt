@@ -5,16 +5,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
-import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
-import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
-import org.rhasspy.mobile.logic.services.intenthandling.IIntentHandlingService
-import org.rhasspy.mobile.logic.services.intentrecognition.IIntentRecognitionService
-import org.rhasspy.mobile.logic.services.mqtt.IMqttService
-import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
-import org.rhasspy.mobile.logic.services.texttospeech.ITextToSpeechService
-import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
-import org.rhasspy.mobile.logic.services.webserver.IWebServerService
+import org.rhasspy.mobile.data.service.ServiceState.Disabled
+import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
+import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
+import org.rhasspy.mobile.logic.connections.webserver.IWebServerService
+import org.rhasspy.mobile.logic.domains.audioplaying.IAudioPlayingService
+import org.rhasspy.mobile.logic.domains.dialog.IDialogManagerService
+import org.rhasspy.mobile.logic.domains.intenthandling.IIntentHandlingService
+import org.rhasspy.mobile.logic.domains.intentrecognition.IIntentRecognitionService
+import org.rhasspy.mobile.logic.domains.speechtotext.ISpeechToTextService
+import org.rhasspy.mobile.logic.domains.texttospeech.ITextToSpeechService
+import org.rhasspy.mobile.logic.domains.wakeword.IWakeWordService
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
@@ -23,9 +25,9 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenVie
 
 class ConfigurationScreenViewStateCreator(
     dispatcherProvider: IDispatcherProvider,
-    private val httpClientService: IHttpClientService,
-    private val webServerService: IWebServerService,
-    private val mqttService: IMqttService,
+    httpClientService: IHttpClientService,
+    webServerService: IWebServerService,
+    mqttService: IMqttService,
     private val wakeWordService: IWakeWordService,
     private val speechToTextService: ISpeechToTextService,
     private val intentRecognitionService: IIntentRecognitionService,
@@ -52,7 +54,7 @@ class ConfigurationScreenViewStateCreator(
             val index =
                 array.indexOfFirst { it is ServiceState.Error || it is ServiceState.Exception }
             return@mapReadonlyState if (index != -1) index else null
-        }
+        } //TODO
     private val hasError = firstErrorIndex.mapReadonlyState { it != null }
 
     private val viewState = MutableStateFlow(getViewState(null))
@@ -61,16 +63,13 @@ class ConfigurationScreenViewStateCreator(
         CoroutineScope(dispatcherProvider.IO).launch {
             combineStateFlow(
                 ConfigurationSetting.siteId.data,
-                ConfigurationSetting.isHttpClientSSLVerificationDisabled.data,
-                ConfigurationSetting.isHttpServerEnabled.data,
+                ConfigurationSetting.dialogManagementOption.data,
                 ConfigurationSetting.wakeWordOption.data,
                 ConfigurationSetting.speechToTextOption.data,
                 ConfigurationSetting.intentRecognitionOption.data,
                 ConfigurationSetting.textToSpeechOption.data,
                 ConfigurationSetting.audioPlayingOption.data,
-                ConfigurationSetting.dialogManagementOption.data,
                 ConfigurationSetting.intentHandlingOption.data,
-                mqttService.isConnected
             ).collect {
                 viewState.value = getViewState(viewState.value.scrollToError)
             }
@@ -84,17 +83,12 @@ class ConfigurationScreenViewStateCreator(
             siteId = SiteIdViewState(
                 text = ConfigurationSetting.siteId.data
             ),
-            remoteHermesHttp = RemoteHermesHttpViewState(
-                isHttpSSLVerificationEnabled = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value,
-                serviceState = ServiceViewState(httpClientService.serviceState)
+            dialogPipeline = DialogPipelineViewState(
+                dialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
+                serviceState = ServiceViewState(dialogManagerService.serviceState)
             ),
-            webserver = WebServerViewState(
-                isHttpServerEnabled = ConfigurationSetting.isHttpServerEnabled.value,
-                serviceState = ServiceViewState(webServerService.serviceState)
-            ),
-            mqtt = MqttViewState(
-                isMQTTConnected = mqttService.isConnected.value,
-                serviceState = ServiceViewState(mqttService.serviceState)
+            audioInput = AudioInputViewState(
+                serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO
             ),
             wakeWord = WakeWordViewState(
                 wakeWordValueOption = ConfigurationSetting.wakeWordOption.value,
@@ -104,9 +98,17 @@ class ConfigurationScreenViewStateCreator(
                 speechToTextOption = ConfigurationSetting.speechToTextOption.value,
                 serviceState = ServiceViewState(speechToTextService.serviceState)
             ),
+            voiceActivityDetection = VoiceActivityDetectionViewState(
+                voiceActivityDetectionOption = VoiceActivityDetectionOption.Disabled,
+                serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO
+            ),
             intentRecognition = IntentRecognitionViewState(
                 intentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
                 serviceState = ServiceViewState(intentRecognitionService.serviceState)
+            ),
+            intentHandling = IntentHandlingViewState(
+                intentHandlingOption = ConfigurationSetting.intentHandlingOption.value,
+                serviceState = ServiceViewState(intentHandlingService.serviceState)
             ),
             textToSpeech = TextToSpeechViewState(
                 textToSpeechOption = ConfigurationSetting.textToSpeechOption.value,
@@ -115,14 +117,6 @@ class ConfigurationScreenViewStateCreator(
             audioPlaying = AudioPlayingViewState(
                 audioPlayingOption = ConfigurationSetting.audioPlayingOption.value,
                 serviceState = ServiceViewState(audioPlayingService.serviceState)
-            ),
-            dialogManagement = DialogManagementViewState(
-                dialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
-                serviceState = ServiceViewState(dialogManagerService.serviceState)
-            ),
-            intentHandling = IntentHandlingViewState(
-                intentHandlingOption = ConfigurationSetting.intentHandlingOption.value,
-                serviceState = ServiceViewState(intentHandlingService.serviceState)
             ),
             hasError = hasError,
             firstErrorIndex = firstErrorIndex,

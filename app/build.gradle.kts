@@ -25,6 +25,7 @@ kotlin {
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "app"
+            linkerOpts.add("-lsqlite3")
         }
     }
 
@@ -59,7 +60,6 @@ kotlin {
                 implementation(Benasher.uuid)
                 implementation(Koin.core)
                 implementation(Square.okio)
-                implementation(Russhwolf.multiplatformSettingsNoArg)
             }
         }
         val commonTest by getting {

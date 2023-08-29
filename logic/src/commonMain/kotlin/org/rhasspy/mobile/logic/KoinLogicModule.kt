@@ -3,58 +3,61 @@ package org.rhasspy.mobile.logic
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import org.rhasspy.mobile.logic.logger.FileLogger
-import org.rhasspy.mobile.logic.logger.IFileLogger
+import org.rhasspy.mobile.logic.connections.homeassistant.HomeAssistantService
+import org.rhasspy.mobile.logic.connections.homeassistant.HomeAssistantServiceParamsCreator
+import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantService
+import org.rhasspy.mobile.logic.connections.httpclient.HttpClientService
+import org.rhasspy.mobile.logic.connections.httpclient.HttpClientServiceParamsCreator
+import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
+import org.rhasspy.mobile.logic.connections.mqtt.MqttService
+import org.rhasspy.mobile.logic.connections.mqtt.MqttServiceParamsCreator
+import org.rhasspy.mobile.logic.connections.webserver.IWebServerService
+import org.rhasspy.mobile.logic.connections.webserver.WebServerService
+import org.rhasspy.mobile.logic.connections.webserver.WebServerServiceParamsCreator
+import org.rhasspy.mobile.logic.domains.audioplaying.AudioPlayingService
+import org.rhasspy.mobile.logic.domains.audioplaying.AudioPlayingServiceParamsCreator
+import org.rhasspy.mobile.logic.domains.audioplaying.IAudioPlayingService
+import org.rhasspy.mobile.logic.domains.dialog.DialogManagerService
+import org.rhasspy.mobile.logic.domains.dialog.DialogManagerServiceParamsCreator
+import org.rhasspy.mobile.logic.domains.dialog.IDialogManagerService
+import org.rhasspy.mobile.logic.domains.dialog.dialogmanager.disabled.DialogManagerDisabled
+import org.rhasspy.mobile.logic.domains.dialog.dialogmanager.local.*
+import org.rhasspy.mobile.logic.domains.dialog.dialogmanager.mqtt.DialogManagerMqtt
+import org.rhasspy.mobile.logic.domains.dialog.states.IStateTransition
+import org.rhasspy.mobile.logic.domains.dialog.states.StateTransition
+import org.rhasspy.mobile.logic.domains.intenthandling.IIntentHandlingService
+import org.rhasspy.mobile.logic.domains.intenthandling.IntentHandlingService
+import org.rhasspy.mobile.logic.domains.intenthandling.IntentHandlingServiceParamsCreator
+import org.rhasspy.mobile.logic.domains.intentrecognition.IIntentRecognitionService
+import org.rhasspy.mobile.logic.domains.intentrecognition.IntentRecognitionService
+import org.rhasspy.mobile.logic.domains.intentrecognition.IntentRecognitionServiceParamsCreator
+import org.rhasspy.mobile.logic.domains.speechtotext.ISpeechToTextService
+import org.rhasspy.mobile.logic.domains.speechtotext.SpeechToTextService
+import org.rhasspy.mobile.logic.domains.speechtotext.SpeechToTextServiceParamsCreator
+import org.rhasspy.mobile.logic.domains.texttospeech.ITextToSpeechService
+import org.rhasspy.mobile.logic.domains.texttospeech.TextToSpeechService
+import org.rhasspy.mobile.logic.domains.texttospeech.TextToSpeechServiceParamsCreator
+import org.rhasspy.mobile.logic.domains.voiceactivitydetection.IVoiceActivityDetectionService
+import org.rhasspy.mobile.logic.domains.voiceactivitydetection.VoiceActivityDetectionParamsCreator
+import org.rhasspy.mobile.logic.domains.voiceactivitydetection.VoiceActivityDetectionService
+import org.rhasspy.mobile.logic.domains.wakeword.IWakeWordService
+import org.rhasspy.mobile.logic.domains.wakeword.UdpConnection
+import org.rhasspy.mobile.logic.domains.wakeword.WakeWordService
+import org.rhasspy.mobile.logic.domains.wakeword.WakeWordServiceParamsCreator
+import org.rhasspy.mobile.logic.local.audiofocus.AudioFocusService
+import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocusService
+import org.rhasspy.mobile.logic.local.indication.IIndicationService
+import org.rhasspy.mobile.logic.local.indication.IndicationService
+import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioService
+import org.rhasspy.mobile.logic.local.localaudio.LocalAudioService
+import org.rhasspy.mobile.logic.local.localaudio.LocalAudioServiceParamsCreator
+import org.rhasspy.mobile.logic.local.settings.AppSettingsService
+import org.rhasspy.mobile.logic.local.settings.IAppSettingsService
+import org.rhasspy.mobile.logic.logger.DatabaseLogger
+import org.rhasspy.mobile.logic.logger.IDatabaseLogger
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.logic.services.audiofocus.AudioFocusService
-import org.rhasspy.mobile.logic.services.audiofocus.IAudioFocusService
-import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
-import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParamsCreator
-import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParamsCreator
-import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
-import org.rhasspy.mobile.logic.services.dialog.dialogmanager.disabled.DialogManagerDisabled
-import org.rhasspy.mobile.logic.services.dialog.dialogmanager.local.*
-import org.rhasspy.mobile.logic.services.dialog.dialogmanager.mqtt.DialogManagerMqtt
-import org.rhasspy.mobile.logic.services.dialog.states.IStateTransition
-import org.rhasspy.mobile.logic.services.dialog.states.StateTransition
-import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantService
-import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantServiceParamsCreator
-import org.rhasspy.mobile.logic.services.homeassistant.IHomeAssistantService
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParamsCreator
-import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
-import org.rhasspy.mobile.logic.services.indication.IIndicationService
-import org.rhasspy.mobile.logic.services.indication.IndicationService
-import org.rhasspy.mobile.logic.services.intenthandling.IIntentHandlingService
-import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingService
-import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingServiceParamsCreator
-import org.rhasspy.mobile.logic.services.intentrecognition.IIntentRecognitionService
-import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionService
-import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionServiceParamsCreator
-import org.rhasspy.mobile.logic.services.localaudio.ILocalAudioService
-import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
-import org.rhasspy.mobile.logic.services.localaudio.LocalAudioServiceParamsCreator
-import org.rhasspy.mobile.logic.services.mqtt.IMqttService
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParamsCreator
-import org.rhasspy.mobile.logic.services.settings.AppSettingsService
-import org.rhasspy.mobile.logic.services.settings.IAppSettingsService
-import org.rhasspy.mobile.logic.services.speechtotext.ISpeechToTextService
-import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
-import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextServiceParamsCreator
-import org.rhasspy.mobile.logic.services.texttospeech.ITextToSpeechService
-import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
-import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechServiceParamsCreator
-import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
-import org.rhasspy.mobile.logic.services.wakeword.UdpConnection
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParamsCreator
-import org.rhasspy.mobile.logic.services.webserver.IWebServerService
-import org.rhasspy.mobile.logic.services.webserver.WebServerService
-import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParamsCreator
 
 fun logicModule() = module {
     single<IServiceMiddleware> {
@@ -176,10 +179,19 @@ fun logicModule() = module {
 
     factory { params -> UdpConnection(params[0], params[1]) }
 
-    single<IFileLogger> {
-        FileLogger(
+    single<IDatabaseLogger> {
+        DatabaseLogger(
             nativeApplication = get(),
-            externalResultRequest = get()
+            externalResultRequest = get(),
+            driverFactory = get()
+        )
+    }
+
+    factoryOf(::VoiceActivityDetectionParamsCreator)
+    single<IVoiceActivityDetectionService> { params ->
+        VoiceActivityDetectionService(
+            paramsCreator = get(),
+            audioRecorder = params[0]
         )
     }
 }

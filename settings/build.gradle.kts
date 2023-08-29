@@ -18,17 +18,18 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.coroutines)
                 implementation(Touchlab.kermit)
                 implementation(Koin.core)
-                implementation(Russhwolf.multiplatformSettingsNoArg)
-                implementation(Russhwolf.multiplatformSettingsSerialization)
                 implementation(Square.okio)
             }
         }
-        val commonTest by getting {
+        val commonTest by getting
+        val androidMain by getting {
             dependencies {
-                implementation(Kotlin.test)
+                //only for migration
+                implementation(CashApp.Sqldelight.android)
+                implementation("com.russhwolf:multiplatform-settings-no-arg:_")
+                implementation("com.russhwolf:multiplatform-settings-serialization:_")
             }
         }
-        val androidMain by getting
         val androidUnitTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting

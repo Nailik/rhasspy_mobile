@@ -4,10 +4,10 @@ import kotlinx.collections.immutable.persistentListOf
 import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
-import org.rhasspy.mobile.viewmodel.AppTest
-import org.rhasspy.mobile.viewmodel.nVerify
+import org.rhasspy.mobile.testutils.AppTest
+import org.rhasspy.mobile.testutils.nVerify
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WebServerConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.SpeechToTextConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.ConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.HomeScreen
@@ -62,7 +62,7 @@ class NavigatorTest : AppTest() {
     }
 
     @Test
-    fun `when user wants to navigate to a screen it's added to the backstack if it is not the most recent screen`() {
+    fun `when user wants to navigate to a screen it's always added to the backstack event if it is the most recent screen`() {
         assertEquals(1, navigator.navStack.value.size)
 
         navigator.navigate(ConfigurationScreen)
@@ -73,7 +73,7 @@ class NavigatorTest : AppTest() {
         navigator.navigate(ConfigurationScreen)
 
         assertEquals(ConfigurationScreen, navigator.navStack.value.last())
-        assertEquals(2, navigator.navStack.value.size)
+        assertEquals(3, navigator.navStack.value.size)
     }
 
     @Test
@@ -92,12 +92,9 @@ class NavigatorTest : AppTest() {
         navigator.updateNavStack(persistentListOf(HomeScreen))
         assertEquals(1, navigator.navStack.value.size)
 
-        navigator.replace(
-            ConfigurationScreenNavigationDestination::class,
-            WebServerConfigurationScreen
-        )
+        navigator.replace(ConfigurationScreenNavigationDestination::class, SpeechToTextConfigurationScreen)
 
-        assertEquals(WebServerConfigurationScreen, navigator.navStack.value.last())
+        assertEquals(SpeechToTextConfigurationScreen, navigator.navStack.value.last())
         assertEquals(2, navigator.navStack.value.size)
     }
 

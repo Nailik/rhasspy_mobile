@@ -8,12 +8,12 @@ import org.koin.test.get
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.viewmodel.AppTest
-import org.rhasspy.mobile.viewmodel.coEvery
-import org.rhasspy.mobile.viewmodel.coVerify
+import org.rhasspy.mobile.testutils.AppTest
+import org.rhasspy.mobile.testutils.coEvery
+import org.rhasspy.mobile.testutils.coVerify
+import org.rhasspy.mobile.testutils.nVerify
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabUiEvent.Action.MicrophoneFabClick
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
-import org.rhasspy.mobile.viewmodel.nVerify
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 

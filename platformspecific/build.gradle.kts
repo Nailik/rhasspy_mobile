@@ -5,6 +5,7 @@ plugins {
     kotlin("plugin.serialization")
     id("com.android.library")
     id("base-gradle")
+    id("app.cash.sqldelight")
 }
 
 kotlin {
@@ -29,6 +30,8 @@ kotlin {
                 implementation(Ktor2.Server.statusPages)
                 implementation(Ktor2.Plugins.network)
                 implementation(Ktor2.Server.core)
+                api(CashApp.Paging.runtime)
+                api(CashApp.Sqldelight.paging)
             }
         }
         val commonTest by getting {
@@ -38,10 +41,9 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation(Square.Okio.jvm)
+                api(AndroidX.multidex)
                 implementation(Square.okio)
                 implementation(AndroidX.appCompat)
-                implementation(AndroidX.multidex)
                 implementation(AndroidX.lifecycle.process)
                 implementation(AndroidX.appCompat)
                 implementation(Ktor2.Server.compression)
@@ -58,6 +60,8 @@ kotlin {
                 implementation(Nailik.androidResampler)
                 implementation(Journeyapps.zXingAndroid)
                 implementation(AndroidX.browser)
+                implementation(CashApp.Sqldelight.android)
+                api(Requery.sqliteAndroid)
             }
         }
         val androidUnitTest by getting {
@@ -65,24 +69,14 @@ kotlin {
                 implementation(AndroidX.archCore.testing)
             }
         }
-        val iosX64Main by getting {
-            dependencies {
-                implementation(Square.Okio.iosx64)
-            }
-        }
-        val iosArm64Main by getting {
-            dependencies {
-                implementation(Square.Okio.iosarm64)
-            }
-        }
-        val iosSimulatorArm64Main by getting {
-            dependencies {
-                implementation(Square.Okio.iossimulatorarm64)
-            }
-        }
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
         val iosMain by creating {
             dependencies {
+                implementation(Kotlin.Stdlib.common)
                 implementation(Square.okio)
+                implementation(CashApp.Sqldelight.ios)
             }
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)
@@ -109,6 +103,25 @@ android {
         }
         debug {
             buildConfigField("boolean", "IS_DEBUG", "true")
+        }
+    }
+}
+
+sqldelight {
+    databases {
+        create("SettingsDatabase") {
+            dialect("app.cash.sqldelight:sqlite-3-30-dialect:_")
+            packageName.set("org.rhasspy.mobile.settings")
+            schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
+            srcDirs("src/commonMain/sqldelight/org/rhasspy/mobile/settings")
+            verifyMigrations.set(true)
+        }
+        create("LogDatabase") {
+            dialect("app.cash.sqldelight:sqlite-3-30-dialect:_")
+            packageName.set("org.rhasspy.mobile.logging")
+            schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
+            srcDirs("src/commonMain/sqldelight/org/rhasspy/mobile/logging")
+            verifyMigrations.set(true)
         }
     }
 }

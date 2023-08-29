@@ -8,20 +8,21 @@ import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
-import org.rhasspy.mobile.logic.logger.IFileLogger
+import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
+import org.rhasspy.mobile.logic.connections.webserver.IWebServerService
+import org.rhasspy.mobile.logic.domains.audioplaying.IAudioPlayingService
+import org.rhasspy.mobile.logic.domains.dialog.IDialogManagerService
+import org.rhasspy.mobile.logic.domains.intenthandling.IIntentHandlingService
+import org.rhasspy.mobile.logic.domains.intentrecognition.IIntentRecognitionService
+import org.rhasspy.mobile.logic.logger.IDatabaseLogger
 import org.rhasspy.mobile.logic.logicModule
-import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
-import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
-import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
-import org.rhasspy.mobile.logic.services.intenthandling.IIntentHandlingService
-import org.rhasspy.mobile.logic.services.intentrecognition.IIntentRecognitionService
-import org.rhasspy.mobile.logic.services.mqtt.IMqttService
-import org.rhasspy.mobile.logic.services.webserver.IWebServerService
 import org.rhasspy.mobile.overlay.IIndicationOverlay
 import org.rhasspy.mobile.overlay.IMicrophoneOverlay
 import org.rhasspy.mobile.overlay.koinOverlayModule
@@ -36,6 +37,7 @@ import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.MigrateSettingsToDatabase
 import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.viewModelModule
 
@@ -47,6 +49,9 @@ class Application : NativeApplication(), KoinComponent {
 
     @OptIn(ExperimentalKermitApi::class)
     override fun onCreated() {
+
+        MigrateSettingsToDatabase.migrateIfNecessary(this)
+
         startKoin {
             // declare used modules
             modules(
@@ -61,7 +66,7 @@ class Application : NativeApplication(), KoinComponent {
 
         CoroutineScope(get<IDispatcherProvider>().IO).launch {
 
-            Logger.addLogWriter(get<IFileLogger>() as LogWriter)
+            Logger.addLogWriter(get<IDatabaseLogger>() as LogWriter)
             if (!isInstrumentedTest()) {
                 Logger.addLogWriter(
                     CrashlyticsLogWriter(
@@ -70,7 +75,6 @@ class Application : NativeApplication(), KoinComponent {
                     )
                 )
             }
-
             logger.i { "######## Application \n started ########" }
 
             //initialize/load the settings, generate the MutableStateFlow
@@ -93,12 +97,13 @@ class Application : NativeApplication(), KoinComponent {
             }
 
             //check if overlay permission is granted
-            resume()
             _isHasStarted.value = true
+            resume()
         }
     }
 
     override suspend fun resume() {
+        _isHasStarted.first { it } //await for app start
         get<IMicrophonePermission>().update()
         get<IOverlayPermission>().update()
         //start services

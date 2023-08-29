@@ -159,6 +159,7 @@ fun AppIcon(onEvent: (AboutScreenUiEvent) -> Unit) {
 /**
  * Chips to show data privacy, link to source code and changelog
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AppInformationChips(
     viewState: AboutScreenViewState,
@@ -179,18 +180,20 @@ fun AppInformationChips(
         )
     }
 
-    Row(
+    FlowRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+
         OutlinedButton(
             onClick = { onEvent(OpenDataPrivacy) },
             modifier = Modifier.testTag(TestTag.DialogDataPrivacyButton)
         ) {
             Text(MR.strings.dataPrivacy.stable)
         }
+
 
         OutlinedButton(onClick = { onEvent(OpenSourceCode) }) {
             Text(MR.strings.sourceCode.stable)
@@ -202,6 +205,7 @@ fun AppInformationChips(
         ) {
             Text(MR.strings.changelog.stable)
         }
+
     }
 }
 

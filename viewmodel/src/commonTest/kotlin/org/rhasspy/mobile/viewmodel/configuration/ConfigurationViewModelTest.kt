@@ -9,14 +9,14 @@ import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
-import org.rhasspy.mobile.viewmodel.AppTest
+import org.rhasspy.mobile.testutils.AppTest
+import org.rhasspy.mobile.testutils.nVerify
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.UnsavedChangesDialogState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction.Confirm
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction.Dismiss
-import org.rhasspy.mobile.viewmodel.nVerify
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
 import kotlin.test.*
 

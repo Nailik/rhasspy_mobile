@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.ui.configuration.*
+import org.rhasspy.mobile.ui.configuration.connection.HttpConnectionScreen
+import org.rhasspy.mobile.ui.configuration.connection.MqttConnectionScreen
+import org.rhasspy.mobile.ui.configuration.connection.WebServerConnectionScreen
 import org.rhasspy.mobile.ui.configuration.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.ui.configuration.porcupine.PorcupineLanguageScreen
 import org.rhasspy.mobile.ui.configuration.speechtotext.SpeechToTextAudioOutputFormatScreen
@@ -23,6 +26,7 @@ fun NavigationContent(
     Crossfade(targetState = screen) {
         when (it) {
             is ConfigurationScreenNavigationDestination   -> ConfigurationNavigationContent(it)
+            is ConnectionScreenNavigationDestination      -> ConnectionScreenNavigationContent(it)
             is MainScreenNavigationDestination            -> MainNavigationContent(it)
             is SettingsScreenDestination                  -> SettingsNavigationContent(it)
             is WakeWordConfigurationScreenDestination     -> WakeWordNavigationContent(it)
@@ -57,19 +61,29 @@ private fun ConfigurationNavigationContent(
     screen: ConfigurationScreenNavigationDestination
 ) {
     when (screen) {
-        ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen      -> AudioPlayingConfigurationScreen()
-        ConfigurationScreenNavigationDestination.DialogManagementConfigurationScreen  -> DialogManagementConfigurationScreen()
-        ConfigurationScreenNavigationDestination.IntentHandlingConfigurationScreen    -> IntentHandlingConfigurationScreen()
-        ConfigurationScreenNavigationDestination.IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationScreen()
-        ConfigurationScreenNavigationDestination.MqttConfigurationScreen              -> MqttConfigurationScreen()
-        ConfigurationScreenNavigationDestination.RemoteHermesHttpConfigurationScreen  -> RemoteHermesHttpConfigurationScreen()
-        ConfigurationScreenNavigationDestination.SpeechToTextConfigurationScreen      -> SpeechToTextConfigurationScreen()
-        ConfigurationScreenNavigationDestination.TextToSpeechConfigurationScreen      -> TextToSpeechConfigurationScreen()
-        ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen          -> WakeWordConfigurationOverviewScreen()
-        ConfigurationScreenNavigationDestination.WebServerConfigurationScreen         -> WebServerConfigurationScreen()
+        ConfigurationScreenNavigationDestination.ConnectionsConfigurationScreen            -> ConnectionsConfigurationScreen()
+        ConfigurationScreenNavigationDestination.DialogManagementConfigurationScreen       -> DialogManagementConfigurationScreen()
+        ConfigurationScreenNavigationDestination.AudioInputConfigurationScreen             -> AudioInputConfigurationScreen()
+        ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen               -> WakeWordConfigurationOverviewScreen()
+        ConfigurationScreenNavigationDestination.SpeechToTextConfigurationScreen           -> SpeechToTextConfigurationScreen()
+        ConfigurationScreenNavigationDestination.VoiceActivityDetectionConfigurationScreen -> VoiceActivityDetectionConfigurationScreen()
+        ConfigurationScreenNavigationDestination.IntentRecognitionConfigurationScreen      -> IntentRecognitionConfigurationScreen()
+        ConfigurationScreenNavigationDestination.IntentHandlingConfigurationScreen         -> IntentHandlingConfigurationScreen()
+        ConfigurationScreenNavigationDestination.TextToSpeechConfigurationScreen           -> TextToSpeechConfigurationScreen()
+        ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen           -> AudioPlayingConfigurationScreen()
     }
 }
 
+@Composable
+private fun ConnectionScreenNavigationContent(
+    screen: ConnectionScreenNavigationDestination
+) {
+    when (screen) {
+        ConnectionScreenNavigationDestination.MqttConnectionScreen             -> MqttConnectionScreen()
+        ConnectionScreenNavigationDestination.RemoteHermesHttpConnectionScreen -> HttpConnectionScreen()
+        ConnectionScreenNavigationDestination.WebServerConnectionScreen        -> WebServerConnectionScreen()
+    }
+}
 
 @Composable
 private fun SettingsNavigationContent(
@@ -78,7 +92,6 @@ private fun SettingsNavigationContent(
     when (screen) {
         SettingsScreenDestination.AboutSettings             -> AboutScreen()
         SettingsScreenDestination.AudioFocusSettings        -> AudioFocusSettingsContent()
-        SettingsScreenDestination.SilenceDetectionSettings  -> SilenceDetectionSettingsContent()
         SettingsScreenDestination.BackgroundServiceSettings -> BackgroundServiceSettingsContent()
         SettingsScreenDestination.DeviceSettings            -> DeviceSettingsContent()
         SettingsScreenDestination.IndicationSettings        -> IndicationSettingsOverviewScreen()

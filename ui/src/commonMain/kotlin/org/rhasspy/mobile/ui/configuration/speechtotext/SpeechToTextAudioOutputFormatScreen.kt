@@ -26,7 +26,7 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.AudioOutputFormatUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData.SpeechToTextAudioOutputFormatConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData.SpeechToTextAudioOutputConfigurationData
 
 @Composable
 fun SpeechToTextAudioOutputFormatScreen() {
@@ -54,7 +54,7 @@ fun SpeechToTextAudioOutputFormatScreen() {
 
                 WakeWordAudioOutputFormatScreenContent(
                     isEncodingChangeEnabled = viewState.isOutputEncodingChangeEnabled,
-                    viewState = editData.speechToTextAudioOutputFormatData,
+                    viewState = editData.speechToTextAudioOutputData,
                     onEvent = viewModel::onEvent
                 )
 
@@ -66,7 +66,7 @@ fun SpeechToTextAudioOutputFormatScreen() {
 @Composable
 private fun WakeWordAudioOutputFormatScreenContent(
     isEncodingChangeEnabled: Boolean,
-    viewState: SpeechToTextAudioOutputFormatConfigurationData,
+    viewState: SpeechToTextAudioOutputConfigurationData,
     onEvent: (event: SpeechToTextConfigurationUiEvent) -> Unit
 ) {
     Card(

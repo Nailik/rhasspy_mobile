@@ -1,0 +1,15 @@
+CREATE TABLE settingsBooleanValues (
+    id TEXT PRIMARY KEY,
+    value INTEGER NOT NULL CHECK (value IN (0, 1)),
+    FOREIGN KEY (id) REFERENCES settingsIds(id) ON DELETE CASCADE
+);
+
+insertOrUpdate:
+INSERT INTO settingsBooleanValues(id, value)
+VALUES (:id, :value)
+ON CONFLICT(id) DO UPDATE SET value = excluded.value;
+
+select:
+SELECT value
+FROM settingsBooleanValues
+WHERE id = :id;

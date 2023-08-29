@@ -11,6 +11,12 @@ expect fun Path.Companion.commonInternalPath(
     fileName: String
 ): Path
 
+expect fun Path.Companion.commonDatabasePath(
+    nativeApplication: NativeApplication,
+    fileName: String
+): Path
+
+
 expect fun Path?.commonExists(): Boolean
 
 expect fun Path.commonDelete()
@@ -20,8 +26,6 @@ expect fun Path.commonSize(): Long?
 expect fun Path.commonSource(): Source
 
 expect fun Path.commonReadWrite(): FileHandle
-
-expect inline fun <reified T> Path.commonDecodeLogList(): T
 
 expect fun Path.commonShare(
     nativeApplication: NativeApplication,

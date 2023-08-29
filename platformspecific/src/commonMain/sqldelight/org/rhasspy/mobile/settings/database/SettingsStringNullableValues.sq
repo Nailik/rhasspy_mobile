@@ -1,0 +1,15 @@
+CREATE TABLE settingsStringNullableValues (
+    id TEXT PRIMARY KEY,
+    value TEXT,
+    FOREIGN KEY (id) REFERENCES settingsIds(id) ON DELETE CASCADE
+);
+
+insertOrUpdate:
+INSERT INTO settingsStringNullableValues(id, value)
+VALUES (?, ?)
+ON CONFLICT(id) DO UPDATE SET value = excluded.value;
+
+select:
+SELECT value
+FROM settingsStringNullableValues
+WHERE id = ?;

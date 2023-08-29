@@ -9,7 +9,7 @@ import okio.Path
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.logic.services.localaudio.ILocalAudioService
+import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath

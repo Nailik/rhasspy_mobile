@@ -16,6 +16,5 @@ data class SettingsScreenViewState internal constructor(
     val isSoundIndicationEnabled: Boolean,
     val isWakeWordLightIndicationEnabled: Boolean,
     val audioFocusOption: AudioFocusOption,
-    val isAutomaticSilenceDetectionEnabled: Boolean,
     val logLevel: LogLevel
 )
