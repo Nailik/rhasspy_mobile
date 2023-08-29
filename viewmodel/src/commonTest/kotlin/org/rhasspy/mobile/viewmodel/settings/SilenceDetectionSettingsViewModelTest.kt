@@ -1,18 +1,20 @@
 package org.rhasspy.mobile.viewmodel.settings
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
-import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.nVerify
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.ToggleAudioLevelTest
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.UpdateSilenceDetectionAudioLevelLogarithm
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.LocalSilenceDetectionUiEvent.Action.ToggleAudioLevelTest
+import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.LocalSilenceDetectionUiEvent.Change.UpdateSilenceDetectionAudioLevelLogarithm
+import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionViewModel
 import kotlin.math.pow
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -30,7 +32,7 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
     lateinit var overlayPermission: IOverlayPermission
 
 
-    private lateinit var silenceDetectionSettingsViewModel: SilenceDetectionSettingsViewModel
+    private lateinit var voiceActivityDetectionViewModel: VoiceActivityDetectionViewModel
 
     private val isAppInBackground = MutableStateFlow(false)
 
@@ -50,24 +52,19 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
         every { audioRecorder.absoluteMaxVolume } returns 100f
         every { audioRecorder.isRecording } returns MutableStateFlow(false)
 
-        silenceDetectionSettingsViewModel = get()
+        voiceActivityDetectionViewModel = get()
     }
 
     @Test
-    fun `when the user updates the audio level logarithm it's correctly updated`() {
-        silenceDetectionSettingsViewModel.onEvent(UpdateSilenceDetectionAudioLevelLogarithm(0f))
-        assertEquals(0f, AppSetting.automaticSilenceDetectionAudioLevel.value)
+    fun `when the user updates the audio level logarithm it's correctly updated`() = runTest {
+        voiceActivityDetectionViewModel.onEvent(UpdateSilenceDetectionAudioLevelLogarithm(0f))
+        voiceActivityDetectionViewModel.onEvent(Save)
+        assertEquals(0f, ConfigurationSetting.automaticSilenceDetectionAudioLevel.value)
 
         arrayOf(0.25f, 0.5f, 0.75f, 1f).forEach { percentage ->
-            silenceDetectionSettingsViewModel.onEvent(
-                UpdateSilenceDetectionAudioLevelLogarithm(
-                    percentage
-                )
-            )
-            assertEquals(
-                audioRecorder.absoluteMaxVolume.pow(percentage),
-                AppSetting.automaticSilenceDetectionAudioLevel.value
-            )
+            voiceActivityDetectionViewModel.onEvent(UpdateSilenceDetectionAudioLevelLogarithm(percentage))
+            voiceActivityDetectionViewModel.onEvent(Save)
+            assertEquals(audioRecorder.absoluteMaxVolume.pow(percentage), ConfigurationSetting.automaticSilenceDetectionAudioLevel.value)
         }
     }
 
@@ -79,7 +76,7 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
         every { microphonePermission.granted } returns MutableStateFlow(true)
         assertEquals(false, audioRecorder.isRecording.value)
 
-        silenceDetectionSettingsViewModel.onEvent(ToggleAudioLevelTest)
+        voiceActivityDetectionViewModel.onEvent(ToggleAudioLevelTest)
         nVerify {
             audioRecorder.startRecording(isAny(), isAny(), isAny(), isAny(), isAny(), isAny(), isAny())
         }
