@@ -18,6 +18,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
@@ -141,7 +142,7 @@ private fun AppBar(title: StableStringResource, onBackClick: () -> Unit) {
                 onClick = onBackClick,
                 modifier = Modifier.testTag(TestTag.AppBarBackButton)
             ) {
-                org.rhasspy.mobile.ui.content.elements.Icon(
+                Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = MR.strings.back.stable,
                 )

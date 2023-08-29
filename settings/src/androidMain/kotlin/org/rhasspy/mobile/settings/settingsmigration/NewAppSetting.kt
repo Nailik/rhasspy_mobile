@@ -22,7 +22,6 @@ object NewAppSetting {
     val languageType = NewIOptionSetting(NewSettingsEnum.LanguageOption, LanguageType.English)
     val themeType = NewIOptionSetting(NewSettingsEnum.ThemeOption, ThemeType.System)
 
-    val isAutomaticSilenceDetectionEnabled = NewBooleanSetting(NewSettingsEnum.AutomaticSilenceDetection, false)
     val automaticSilenceDetectionAudioLevel = NewFloatSetting(NewSettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
     val automaticSilenceDetectionTime = NewLongNullableSetting(NewSettingsEnum.AutomaticSilenceDetectionTime, 2000)
     val automaticSilenceDetectionMinimumTime = NewLongNullableSetting(NewSettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000)

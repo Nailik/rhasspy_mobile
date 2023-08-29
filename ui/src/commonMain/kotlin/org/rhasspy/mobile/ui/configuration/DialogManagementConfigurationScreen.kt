@@ -36,15 +36,14 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScr
 @Composable
 fun DialogManagementConfigurationScreen() {
 
-    val viewModel: DialogManagementConfigurationViewModel =
-        LocalViewModelFactory.current.getViewModel()
+    val viewModel: DialogManagementConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier,
         screenViewModel = viewModel,
-        title = MR.strings.dialogManagement.stable,
+        title = MR.strings.dialog_pipeline.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent
     ) {

@@ -2,7 +2,7 @@ package org.rhasspy.mobile.logic.audioplaying
 
 import org.kodein.mock.Mock
 import org.koin.dsl.module
-import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
+import org.rhasspy.mobile.logic.domains.audioplaying.IAudioPlayingService
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.nVerify
 import kotlin.test.BeforeTest

@@ -25,11 +25,6 @@ object AppSetting : KoinComponent {
     val languageType = IOptionSetting(SettingsEnum.LanguageOption, get<ILanguageUtils>().getDeviceLanguage())
     val themeType = IOptionSetting(SettingsEnum.ThemeOption, ThemeType.System)
 
-    val isAutomaticSilenceDetectionEnabled = BooleanSetting(SettingsEnum.AutomaticSilenceDetection, false)
-    val automaticSilenceDetectionAudioLevel = FloatSetting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
-    val automaticSilenceDetectionTime = LongNullableSetting(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
-    val automaticSilenceDetectionMinimumTime = LongNullableSetting(SettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000)
-
     val isBackgroundServiceEnabled = BooleanSetting(SettingsEnum.BackgroundEnabled, false)
     val microphoneOverlaySizeOption = IOptionSetting(SettingsEnum.MicrophoneOverlaySize, MicrophoneOverlaySizeOption.Disabled)
     val isMicrophoneOverlayWhileAppEnabled = BooleanSetting(SettingsEnum.MicrophoneOverlayWhileApp, false)

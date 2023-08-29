@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
+@file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -46,7 +46,10 @@ kotlin {
                 implementation(AndroidX.Activity.compose)
                 implementation(AndroidX.Compose.ui)
                 implementation(AndroidX.Compose.Ui.toolingPreview)
-                implementation(Google.accompanist.systemUiController)
+                // Deprecated in favor of Activity.enableEdgeToEdge from androidx.activity 1.8+
+                //FIXME: See the example PR in the migration guide here:
+                // https://google.github.io/accompanist/systemuicontroller/
+                implementation("com.google.accompanist:accompanist-systemuicontroller:_")
                 implementation(AndroidX.core)
                 implementation(AndroidX.multidex)
             }

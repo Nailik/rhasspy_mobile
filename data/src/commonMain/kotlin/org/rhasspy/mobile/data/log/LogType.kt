@@ -17,7 +17,8 @@ enum class LogType {
     TextToSpeechService,
     AppSettingsService,
     WakeWordService,
-    WebServerService;
+    WebServerService,
+    VoiceActivityDetectionService;
 
     fun logger(): Logger {
         return Logger.withTag(this.name)

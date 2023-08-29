@@ -137,14 +137,6 @@ fun SettingsScreenContent(
             }
 
             item {
-                SilenceDetection(
-                    viewState.isAutomaticSilenceDetectionEnabled,
-                    onEvent
-                )
-                CustomDivider()
-            }
-
-            item {
                 Log(
                     viewState.logLevel,
                     onEvent
@@ -262,21 +254,6 @@ private fun AudioFocus(
         text = MR.strings.audioFocus.stable,
         secondaryText = audioFocusOption.text,
         destination = AudioFocusSettings,
-        onEvent = onEvent
-    )
-
-}
-
-@Composable
-private fun SilenceDetection(
-    isSilenceDetectionEnabled: Boolean,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
-) {
-
-    SettingsListItem(
-        text = MR.strings.automaticSilenceDetection.stable,
-        secondaryText = isSilenceDetectionEnabled.toText(),
-        destination = SilenceDetectionSettings,
         onEvent = onEvent
     )
 

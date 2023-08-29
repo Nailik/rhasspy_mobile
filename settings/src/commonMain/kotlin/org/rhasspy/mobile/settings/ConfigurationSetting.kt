@@ -55,7 +55,7 @@ object ConfigurationSetting {
     val wakeWordPorcupineAccessToken = StringSetting(SettingsEnum.WakeWordPorcupineAccessToken, "")
     val wakeWordPorcupineKeywordDefaultOptions = PorcupineKeywordDefaultListSetting(
         SettingsEnum.WakeWordPorcupineKeywordDefaultSelectedOptions,
-        PorcupineKeywordOption.values().map { PorcupineDefaultKeyword(it, false, 0.5) }.toImmutableList(),
+        PorcupineKeywordOption.entries.map { PorcupineDefaultKeyword(it, false, 0.5) }.toImmutableList(),
     )
     val wakeWordPorcupineKeywordCustomOptions = PorcupineKeywordCustomListSetting(SettingsEnum.WakeWordPorcupineKeywordCustomOptions, persistentListOf())
     val wakeWordPorcupineLanguage = IOptionSetting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOption.EN)
@@ -101,5 +101,10 @@ object ConfigurationSetting {
     val intentHandlingHomeAssistantEndpoint = StringSetting(SettingsEnum.IntentHandlingHassUrl, "")
     val intentHandlingHomeAssistantAccessToken = StringSetting(SettingsEnum.IntentHandlingHassAccessToken, "")
     val intentHandlingHomeAssistantOption = IOptionSetting(SettingsEnum.IsIntentHandlingHassEvent, HomeAssistantIntentHandlingOption.Intent)
+
+    val voiceActivityDetectionOption = IOptionSetting(SettingsEnum.VoiceActivityDetectionOption, VoiceActivityDetectionOption.Disabled)
+    val automaticSilenceDetectionAudioLevel = FloatSetting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
+    val automaticSilenceDetectionTime = LongNullableSetting(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
+    val automaticSilenceDetectionMinimumTime = LongNullableSetting(SettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000)
 
 }

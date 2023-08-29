@@ -6,10 +6,11 @@ import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
+import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
+import org.rhasspy.mobile.logic.domains.speechtotext.ISpeechToTextService
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SilenceDetected
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
-import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.ISettingsDatabase
 import org.rhasspy.mobile.testutils.AppTest
@@ -42,9 +43,9 @@ class SpeechToTextServiceTest : AppTest() {
 
         get<ISettingsDatabase>()
         //enable silence detection
-        AppSetting.isAutomaticSilenceDetectionEnabled.value = true
+        ConfigurationSetting.voiceActivityDetectionOption.value = VoiceActivityDetectionOption.Local
         //set threshold, must be below may volume
-        AppSetting.automaticSilenceDetectionAudioLevel.value = threshold
+        ConfigurationSetting.automaticSilenceDetectionAudioLevel.value = threshold
     }
 
     @Test
@@ -56,8 +57,8 @@ class SpeechToTextServiceTest : AppTest() {
         val speechToTextService = get<ISpeechToTextService>()
 
         //setup minimum time for recording
-        AppSetting.automaticSilenceDetectionMinimumTime.value = 500 //ms
-        AppSetting.automaticSilenceDetectionTime.value = 0 //ms
+        ConfigurationSetting.automaticSilenceDetectionMinimumTime.value = 500 //ms
+        ConfigurationSetting.automaticSilenceDetectionTime.value = 0 //ms
 
         //sent varying (random) data below threshold
         val job = coroutineScope.launch {
@@ -91,9 +92,9 @@ class SpeechToTextServiceTest : AppTest() {
             val speechToTextService = get<ISpeechToTextService>()
 
             //setup silence detection time
-            AppSetting.automaticSilenceDetectionTime.value = 200 //ms
+            ConfigurationSetting.automaticSilenceDetectionTime.value = 200 //ms
             //setup minimum time for recording
-            AppSetting.automaticSilenceDetectionMinimumTime.value = 0 //ms
+            ConfigurationSetting.automaticSilenceDetectionMinimumTime.value = 0 //ms
 
             //sent varying (random) data below threshold
             val job = coroutineScope.launch {
@@ -127,9 +128,9 @@ class SpeechToTextServiceTest : AppTest() {
         val speechToTextService = get<ISpeechToTextService>()
 
         //setup silence detection time
-        AppSetting.automaticSilenceDetectionTime.value = 200 //ms
+        ConfigurationSetting.automaticSilenceDetectionTime.value = 200 //ms
         //setup minimum time for recording
-        AppSetting.automaticSilenceDetectionMinimumTime.value = 500 //ms
+        ConfigurationSetting.automaticSilenceDetectionMinimumTime.value = 500 //ms
 
         //sent varying (random) data below threshold
         val job = coroutineScope.launch {
@@ -165,9 +166,9 @@ class SpeechToTextServiceTest : AppTest() {
             val speechToTextService = get<ISpeechToTextService>()
 
             //setup silence detection time
-            AppSetting.automaticSilenceDetectionTime.value = 200 //ms
+            ConfigurationSetting.automaticSilenceDetectionTime.value = 200 //ms
             //setup minimum time for recording
-            AppSetting.automaticSilenceDetectionMinimumTime.value = 0 //ms
+            ConfigurationSetting.automaticSilenceDetectionMinimumTime.value = 0 //ms
 
             //sent varying (random) data below threshold
             val job = coroutineScope.launch {
@@ -208,9 +209,9 @@ class SpeechToTextServiceTest : AppTest() {
             val speechToTextService = get<ISpeechToTextService>()
 
             //setup silence detection time to 0
-            AppSetting.automaticSilenceDetectionTime.value = 0 //ms
+            ConfigurationSetting.automaticSilenceDetectionTime.value = 0 //ms
             //setup minimum time for recording to 0
-            AppSetting.automaticSilenceDetectionMinimumTime.value = 0 //ms
+            ConfigurationSetting.automaticSilenceDetectionMinimumTime.value = 0 //ms
 
             val job = coroutineScope.launch {
                 //sent varying (random) data below threshold
@@ -238,9 +239,9 @@ class SpeechToTextServiceTest : AppTest() {
         val speechToTextService = get<ISpeechToTextService>()
 
         //setup silence detection time
-        AppSetting.automaticSilenceDetectionTime.value = 200 //ms
+        ConfigurationSetting.automaticSilenceDetectionTime.value = 200 //ms
         //setup minimum time for recording
-        AppSetting.automaticSilenceDetectionMinimumTime.value = 500 //ms
+        ConfigurationSetting.automaticSilenceDetectionMinimumTime.value = 500 //ms
 
         //sent varying (random) data above threshold
         val job = coroutineScope.launch {

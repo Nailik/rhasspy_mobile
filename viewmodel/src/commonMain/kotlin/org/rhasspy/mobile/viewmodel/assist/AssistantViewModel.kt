@@ -5,10 +5,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import org.rhasspy.mobile.logic.local.indication.IIndicationService
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartListening
 import org.rhasspy.mobile.logic.middleware.Source
-import org.rhasspy.mobile.logic.services.indication.IIndicationService
 import org.rhasspy.mobile.viewmodel.assist.AssistantUiEvent.Activate
 
 class AssistantViewModel(

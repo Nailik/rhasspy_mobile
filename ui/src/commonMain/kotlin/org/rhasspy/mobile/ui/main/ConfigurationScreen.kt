@@ -17,7 +17,9 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.elements.*
+import org.rhasspy.mobile.ui.content.elements.CustomDivider
+import org.rhasspy.mobile.ui.content.elements.Icon
+import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.item.EventStateIconTinted
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
@@ -56,7 +58,7 @@ fun ConfigurationScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConfigurationScreenContent(
+private fun ConfigurationScreenContent(
     onEvent: (ConfigurationScreenUiEvent) -> Unit,
     viewState: ConfigurationScreenViewState
 ) {
@@ -114,41 +116,32 @@ fun ConfigurationScreenContent(
                 SiteId(viewState.siteId, onEvent)
                 CustomDivider()
 
-                RemoteHermesHttp(viewState.remoteHermesHttp, onEvent)
+                Connections(onEvent)
                 CustomDivider()
 
-
-                Webserver(viewState.webserver, onEvent)
+                DialogManagement(viewState.dialogPipeline, onEvent)
                 CustomDivider()
 
-
-                Mqtt(viewState.mqtt, onEvent)
+                AudioInput(viewState.audioInput, onEvent)
                 CustomDivider()
-
 
                 WakeWord(viewState.wakeWord, onEvent)
                 CustomDivider()
 
-
                 SpeechToText(viewState.speechToText, onEvent)
                 CustomDivider()
 
+                VoiceActivityDetection(viewState.voiceActivityDetection, onEvent)
+                CustomDivider()
 
                 IntentRecognition(viewState.intentRecognition, onEvent)
                 CustomDivider()
 
-
                 TextToSpeech(viewState.textToSpeech, onEvent)
                 CustomDivider()
 
-
                 AudioPlaying(viewState.audioPlaying, onEvent)
                 CustomDivider()
-
-
-                DialogManagement(viewState.dialogManagement, onEvent)
-                CustomDivider()
-
 
                 IntentHandling(viewState.intentHandling, onEvent)
                 CustomDivider()
@@ -219,66 +212,63 @@ private fun SiteId(
 
 }
 
+
 /**
- * List element for http configuration
- * shows if ssl verification is enabled
+ * Go to connections screen
  */
 @Composable
-private fun RemoteHermesHttp(
-    viewState: RemoteHermesHttpViewState,
+private fun Connections(
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
     ConfigurationListItem(
-        text = MR.strings.remoteHermesHTTP.stable,
-        secondaryText = "${translate(MR.strings.sslValidation.stable)} ${translate(viewState.isHttpSSLVerificationEnabled.not().toText())}",
-        viewState = viewState.serviceState,
-        destination = RemoteHermesHttpConfigurationScreen,
+        text = MR.strings.connections.stable,
+        secondaryText = MR.strings.connections_information.stable,
+        destination = ConnectionsConfigurationScreen,
         onEvent = onEvent
     )
 
 }
 
 /**
- * List element for text to speech configuration
- * shows if web server is enabled
+ * List element for dialog management setting
+ * shows which option is active
  */
 @Composable
-private fun Webserver(
-    viewState: WebServerViewState,
+private fun DialogManagement(
+    viewState: DialogPipelineViewState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
     ConfigurationListItem(
-        text = MR.strings.webserver.stable,
-        secondaryText = viewState.isHttpServerEnabled.toText(),
+        text = MR.strings.dialog_pipeline.stable,
+        secondaryText = viewState.dialogManagementOption.text,
         serviceViewState = viewState.serviceState,
-        destination = WebServerConfigurationScreen,
+        destination = DialogManagementConfigurationScreen,
         onEvent = onEvent
     )
 
 }
 
 /**
- * List element for mqtt configuration
- * shows connection state of mqtt
+ * List element for dialog management setting
+ * shows which option is active
  */
 @Composable
-private fun Mqtt(
-    viewState: MqttViewState,
+private fun AudioInput(
+    viewState: AudioInputViewState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
     ConfigurationListItem(
-        text = MR.strings.mqtt.stable,
-        secondaryText = if (viewState.isMQTTConnected) MR.strings.connected.stable else MR.strings.notConnected.stable,
+        text = MR.strings.audio_input.stable,
+        secondaryText = MR.strings.audio_input_information.stable,
         serviceViewState = viewState.serviceState,
-        destination = MqttConfigurationScreen,
+        destination = AudioInputConfigurationScreen,
         onEvent = onEvent
     )
 
 }
-
 
 /**
  * List element for wake word configuration
@@ -315,6 +305,26 @@ private fun SpeechToText(
         secondaryText = viewState.speechToTextOption.text,
         serviceViewState = viewState.serviceState,
         destination = SpeechToTextConfigurationScreen,
+        onEvent = onEvent
+    )
+
+}
+
+/**
+ * List element for speech to text configuration
+ * shows which option is selected
+ */
+@Composable
+private fun VoiceActivityDetection(
+    viewState: VoiceActivityDetectionViewState,
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
+) {
+
+    ConfigurationListItem(
+        text = MR.strings.voice_activity_detection.stable,
+        secondaryText = viewState.voiceActivityDetectionOption.text,
+        serviceViewState = viewState.serviceState,
+        destination = VoiceActivityDetectionConfigurationScreen,
         onEvent = onEvent
     )
 
@@ -382,26 +392,6 @@ private fun AudioPlaying(
 }
 
 /**
- * List element for dialog management setting
- * shows which option is active
- */
-@Composable
-private fun DialogManagement(
-    viewState: DialogManagementViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
-) {
-
-    ConfigurationListItem(
-        text = MR.strings.dialogManagement.stable,
-        secondaryText = viewState.dialogManagementOption.text,
-        serviceViewState = viewState.serviceState,
-        destination = DialogManagementConfigurationScreen,
-        onEvent = onEvent
-    )
-
-}
-
-/**
  * List element for intent handling configuration
  * shows which option is selected
  */
@@ -428,7 +418,7 @@ private fun IntentHandling(
 private fun ConfigurationListItem(
     text: StableStringResource,
     secondaryText: StableStringResource,
-    serviceViewState: ServiceViewState,
+    serviceViewState: ServiceViewState? = null,
     destination: ConfigurationScreenNavigationDestination,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
@@ -438,35 +428,12 @@ private fun ConfigurationListItem(
             .testTag(destination),
         text = { Text(text) },
         secondaryText = { Text(secondaryText) },
-        trailing = {
-            val serviceStateValue by serviceViewState.serviceState.collectAsState()
-            EventStateIconTinted(serviceStateValue)
+        trailing = serviceViewState?.let {
+            {
+                val serviceStateValue by serviceViewState.serviceState.collectAsState()
+                EventStateIconTinted(serviceStateValue)
+            }
         }
     )
 
-}
-
-/**
- * list item
- */
-@Suppress("SameParameterValue")
-@Composable
-private fun ConfigurationListItem(
-    text: StableStringResource,
-    secondaryText: String,
-    viewState: ServiceViewState,
-    destination: ConfigurationScreenNavigationDestination,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
-) {
-    ListElement(
-        modifier = Modifier
-            .clickable { onEvent(Navigate(destination)) }
-            .testTag(destination),
-        text = { Text(text) },
-        secondaryText = { Text(text = secondaryText) },
-        trailing = {
-            val serviceStateValue by viewState.serviceState.collectAsState()
-            EventStateIconTinted(serviceStateValue)
-        }
-    )
 }

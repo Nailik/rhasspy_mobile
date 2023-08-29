@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.viewmodel.overlay.indication
 
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.logic.services.indication.IIndicationService
+import org.rhasspy.mobile.logic.local.indication.IIndicationService
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 
