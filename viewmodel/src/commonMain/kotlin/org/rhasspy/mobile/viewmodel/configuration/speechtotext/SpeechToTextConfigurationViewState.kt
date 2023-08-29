@@ -29,7 +29,7 @@ data class SpeechToTextConfigurationViewState internal constructor(
         val speechToTextAudioOutputData: SpeechToTextAudioOutputConfigurationData = SpeechToTextAudioOutputConfigurationData()
     ) : IConfigurationData {
 
-        val speechToTextOptions: ImmutableList<SpeechToTextOption> = SpeechToTextOption.values().toImmutableList()
+        val speechToTextOptions: ImmutableList<SpeechToTextOption> = SpeechToTextOption.entries.toTypedArray().toImmutableList()
 
         val speechToTextHttpEndpointText: String
             get() = if (isUseCustomSpeechToTextHttpEndpoint) speechToTextHttpEndpoint else "${ConfigurationSetting.httpClientServerEndpointHost.value}:${ConfigurationSetting.httpClientServerEndpointPort.value}/${HttpClientPath.SpeechToText.path}"
@@ -40,9 +40,9 @@ data class SpeechToTextConfigurationViewState internal constructor(
             val audioRecorderEncodingType: AudioFormatEncodingType = ConfigurationSetting.speechToTextAudioRecorderEncoding.value,
             val audioRecorderSampleRateType: AudioFormatSampleRateType = ConfigurationSetting.speechToTextAudioRecorderSampleRate.value,
         ) {
-            val audioRecorderChannelTypes: ImmutableList<AudioFormatChannelType> = AudioFormatChannelType.values().toImmutableList()
+            val audioRecorderChannelTypes: ImmutableList<AudioFormatChannelType> = AudioFormatChannelType.entries.toTypedArray().toImmutableList()
             val audioRecorderEncodingTypes: ImmutableList<AudioFormatEncodingType> = AudioFormatEncodingType.supportedValues().toImmutableList()
-            val audioRecorderSampleRateTypes: ImmutableList<AudioFormatSampleRateType> = AudioFormatSampleRateType.values().toImmutableList()
+            val audioRecorderSampleRateTypes: ImmutableList<AudioFormatSampleRateType> = AudioFormatSampleRateType.entries.toTypedArray().toImmutableList()
         }
 
         @Stable
@@ -51,9 +51,9 @@ data class SpeechToTextConfigurationViewState internal constructor(
             val audioOutputEncodingType: AudioFormatEncodingType = ConfigurationSetting.speechToTextAudioOutputEncoding.value,
             val audioOutputSampleRateType: AudioFormatSampleRateType = ConfigurationSetting.speechToTextAudioOutputSampleRate.value,
         ) {
-            val audioOutputChannelTypes: ImmutableList<AudioFormatChannelType> = AudioFormatChannelType.values().toImmutableList()
+            val audioOutputChannelTypes: ImmutableList<AudioFormatChannelType> = AudioFormatChannelType.entries.toTypedArray().toImmutableList()
             val audioOutputEncodingTypes: ImmutableList<AudioFormatEncodingType> = AudioFormatEncodingType.supportedValues().toImmutableList()
-            val audioOutputSampleRateTypes: ImmutableList<AudioFormatSampleRateType> = AudioFormatSampleRateType.values().toImmutableList()
+            val audioOutputSampleRateTypes: ImmutableList<AudioFormatSampleRateType> = AudioFormatSampleRateType.entries.toTypedArray().toImmutableList()
         }
 
     }

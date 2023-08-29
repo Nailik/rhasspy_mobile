@@ -25,9 +25,9 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenVie
 
 class ConfigurationScreenViewStateCreator(
     dispatcherProvider: IDispatcherProvider,
-    private val httpClientService: IHttpClientService,
-    private val webServerService: IWebServerService,
-    private val mqttService: IMqttService,
+    httpClientService: IHttpClientService,
+    webServerService: IWebServerService,
+    mqttService: IMqttService,
     private val wakeWordService: IWakeWordService,
     private val speechToTextService: ISpeechToTextService,
     private val intentRecognitionService: IIntentRecognitionService,

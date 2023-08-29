@@ -11,7 +11,7 @@ import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.connection.WebServerConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.connection.WebServerConnectionScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
@@ -20,13 +20,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class WebServerServiceConfigurationContentTest : FlakyTest() {
+class WebServerConnectionContentTest : FlakyTest() {
 
     private val viewModel = get<WebServerConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
-        WebServerConfigurationScreen()
+        WebServerConnectionScreen()
     }
 
     /**

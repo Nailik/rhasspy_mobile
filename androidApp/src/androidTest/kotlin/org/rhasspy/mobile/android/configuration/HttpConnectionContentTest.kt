@@ -11,7 +11,7 @@ import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.connection.RemoteHermesHttpConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.connection.HttpConnectionScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationUiEvent.Change.SetHttpSSLVerificationDisabled
 import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationViewModel
@@ -19,13 +19,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class RemoteHermesHttpConfigurationContentTest : FlakyTest() {
+class HttpConnectionContentTest : FlakyTest() {
 
     private val viewModel = get<RemoteHermesHttpConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
-        RemoteHermesHttpConfigurationScreen()
+        HttpConnectionScreen()
     }
 
     /**

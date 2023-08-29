@@ -11,7 +11,7 @@ import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.connection.MqttConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.connection.MqttConnectionScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled
@@ -20,13 +20,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class MqttConfigurationContentTest : FlakyTest() {
+class MqttConnectionContentTest : FlakyTest() {
 
     private val viewModel = get<MqttConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
-        MqttConfigurationScreen()
+        MqttConnectionScreen()
     }
 
     /**
