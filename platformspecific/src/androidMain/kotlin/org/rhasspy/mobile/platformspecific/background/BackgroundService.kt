@@ -5,6 +5,10 @@ import android.content.Intent
 import android.os.IBinder
 import androidx.core.content.ContextCompat
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
@@ -42,9 +46,13 @@ internal actual class BackgroundService : IBackgroundService, Service(), KoinCom
     override fun onCreate() {
         super.onCreate()
         logger.d { "onCreate" }
-        //start as foreground service and instantly display notification
-        ContextCompat.startForegroundService(this, intent)
-        startForeground(ServiceNotification.ONGOING_NOTIFICATION_ID, ServiceNotification.create())
+        CoroutineScope(Dispatchers.IO).launch {
+            //await for app to be in foreground
+            nativeApplication.isAppInBackground.first { !it }
+            //start as foreground service and instantly display notification
+            ContextCompat.startForegroundService(nativeApplication, intent)
+            startForeground(ServiceNotification.ONGOING_NOTIFICATION_ID, ServiceNotification.create())
+        }
     }
 
     /**
