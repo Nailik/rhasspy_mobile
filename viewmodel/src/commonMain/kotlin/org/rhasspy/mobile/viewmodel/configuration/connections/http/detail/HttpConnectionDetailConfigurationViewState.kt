@@ -16,7 +16,10 @@ data class HttpConnectionDetailConfigurationViewState internal constructor(
         val httpClientServerEndpointHost: String = ConfigurationSetting.httpClientServerEndpointHost.value,
         val httpClientServerEndpointPort: Int? = ConfigurationSetting.httpClientServerEndpointPort.value,
         val httpClientTimeout: Long? = ConfigurationSetting.httpClientTimeout.value,
-        val isHttpSSLVerificationDisabled: Boolean = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value
+        val isHttpSSLVerificationDisabled: Boolean = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value,
+        val isRhasspy2Hermes: Boolean = false,
+        val isRhasspy3Wyoming: Boolean = false,
+        val isHomeAssistant: Boolean = false,
     ) : IConfigurationData {
 
         val httpClientServerEndpointPortText: String = httpClientServerEndpointPort.toStringOrEmpty()

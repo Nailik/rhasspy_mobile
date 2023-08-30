@@ -73,7 +73,7 @@ class HttpConnectionContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar()
-        HttpConnectionDetailConfigurationViewModel(get()).viewState.value.editData.also {
+        HttpConnectionDetailConfigurationViewModel(null, get()).viewState.value.editData.also {
             //disable ssl validation off is saved
             assertEquals(false, it.isHttpSSLVerificationDisabled)
             //host is saved

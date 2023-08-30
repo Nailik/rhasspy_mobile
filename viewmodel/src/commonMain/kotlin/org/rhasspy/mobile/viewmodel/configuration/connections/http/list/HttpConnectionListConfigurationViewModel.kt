@@ -6,13 +6,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationViewState.HttpConfigurationItemViewState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConnectionScreenNavigationDestination.HttpConnectionDetailScreen
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
 class HttpConnectionListConfigurationViewModel : ScreenViewModel() {
 
-    private val _viewState = MutableStateFlow(HttpConnectionListConfigurationViewState(persistentListOf()))
+    private val _viewState = MutableStateFlow(
+        HttpConnectionListConfigurationViewState(
+            persistentListOf(
+                HttpConfigurationItemViewState()
+            )
+        )
+    )
     val viewState = _viewState.readOnly
 
     fun onEvent(event: HttpConnectionListConfigurationUiEvent) {
@@ -26,6 +33,7 @@ class HttpConnectionListConfigurationViewModel : ScreenViewModel() {
             BackClick    -> navigator.onBackPressed()
             AddClick     -> navigator.navigate(HttpConnectionDetailScreen(null))
             is ItemClick -> navigator.navigate(HttpConnectionDetailScreen(action.id))
+            is ItemDeleteClick -> TODO()
         }
     }
 

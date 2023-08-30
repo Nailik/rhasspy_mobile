@@ -7,7 +7,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material3.Divider
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -79,6 +82,7 @@ private fun HttpConnectionListContent(
                 viewState = it,
                 onEvent = onEvent
             )
+            Divider()
         }
 
     }
@@ -103,7 +107,17 @@ private fun HttpConnectionListContent(
                 Text(viewState.name)
             }
         },
-        overlineText = { Text("${viewState.httpClientServerEndpointHost}:${viewState.httpClientServerEndpointPort}") }
+        overlineText = { Text("${viewState.httpClientServerEndpointHost}:${viewState.httpClientServerEndpointPort}") },
+        trailing = {
+            IconButton(
+                onClick = { onEvent(ItemDeleteClick(viewState.id)) }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.DeleteForever,
+                    contentDescription = MR.strings.delete.stable
+                )
+            }
+        }
     )
 
 }

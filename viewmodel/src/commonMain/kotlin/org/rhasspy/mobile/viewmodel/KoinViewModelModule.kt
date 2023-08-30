@@ -117,7 +117,12 @@ fun viewModelModule() = module {
     singleOf(::IntentRecognitionConfigurationViewModel)
     singleOf(::MqttConnectionConfigurationViewModel)
     singleOf(::HttpConnectionListConfigurationViewModel)
-    singleOf(::HttpConnectionDetailConfigurationViewModel)
+    factory { params ->
+        HttpConnectionDetailConfigurationViewModel(
+            id = params[0],
+            service = get()
+        )
+    }
     singleOf(::SpeechToTextConfigurationViewModel)
     singleOf(::TextToSpeechConfigurationViewModel)
     singleOf(::WakeWordConfigurationViewModel)

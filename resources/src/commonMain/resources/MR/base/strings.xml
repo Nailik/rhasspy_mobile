@@ -158,6 +158,13 @@
     <string name="disableSSLValidationInformation">Possibly necessary when using self signed Certificates</string>
     <string name="webserver">Local Webserver</string>
     <string name="server">Server</string>
+    <string name="protocols">Protocols</string>
+    <string name="rhasspy2_hermes">Rhasspy2 (Hermes Protocol)</string>
+    <string name="rhasspy2_hermes_info">Rhasspy 2.5</string>
+    <string name="rhasspy3_wyoming">Rhasspy3 (Wyoming Protocol)</string>
+    <string name="rhasspy3_wyoming_info">Home Assistant Assist, Rhasspy 3</string>
+    <string name="home_assistant">Home Assistant</string>
+    <string name="home_assistant_info">Home Assistant Intent Handling</string>
     <string name="add">Add</string>
     <string name="enableHTTPApi">Enable HTTP Api</string>
     <string name="english">English</string>
