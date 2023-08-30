@@ -15,9 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.LocalViewModelFactory
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
@@ -39,7 +39,7 @@ fun PorcupineKeywordScreen() {
     val viewState by viewModel.viewState.collectAsState()
     val editData = viewState.editData.wakeWordPorcupineConfigurationData
 
-    Screen(
+    ScreenContent(
         screenViewModel = viewModel
     ) {
 

@@ -11,7 +11,7 @@ data class ConnectionsConfigurationViewState internal constructor(
 
     @Stable
     data class HttpViewState internal constructor(
-        val isHttpSSLVerificationEnabled: Boolean,
+        val httpConnectionCount: Int,
         val serviceState: ServiceViewState
     )
 
@@ -28,22 +28,3 @@ data class ConnectionsConfigurationViewState internal constructor(
     )
 
 }
-
-/*
-
-
-
-
-            remoteHermesHttp = RemoteHermesHttpViewState(
-                isHttpSSLVerificationEnabled = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value,
-                serviceState = ServiceViewState(httpClientService.serviceState)
-            ),
-            webserver = WebServerViewState(
-                isHttpServerEnabled = ConfigurationSetting.isHttpServerEnabled.value,
-                serviceState = ServiceViewState(webServerService.serviceState)
-            ),
-            mqtt = MqttViewState(
-                isMQTTConnected = mqttService.isConnected.value,
-                serviceState = ServiceViewState(mqttService.serviceState)
-            ),
- */

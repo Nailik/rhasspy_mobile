@@ -15,8 +15,8 @@ import org.rhasspy.mobile.android.utils.waitUntilExists
 import org.rhasspy.mobile.data.indication.IndicationState
 import org.rhasspy.mobile.logic.local.indication.IIndicationService
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.main.MainScreen
 
 @RunWith(AndroidJUnit4::class)

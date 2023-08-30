@@ -1,8 +1,8 @@
-package org.rhasspy.mobile.viewmodel.configuration.http
+package org.rhasspy.mobile.viewmodel.configuration.connections.http.detail
 
-sealed interface RemoteHermesHttpConfigurationUiEvent {
+sealed interface HttpConnectionDetailConfigurationUiEvent {
 
-    sealed interface Change : RemoteHermesHttpConfigurationUiEvent {
+    sealed interface Change : HttpConnectionDetailConfigurationUiEvent {
 
         data class UpdateHttpClientServerEndpointHost(val host: String) : Change
         data class UpdateHttpClientTimeout(val text: String) : Change
@@ -11,7 +11,7 @@ sealed interface RemoteHermesHttpConfigurationUiEvent {
 
     }
 
-    sealed interface Action : RemoteHermesHttpConfigurationUiEvent {
+    sealed interface Action : HttpConnectionDetailConfigurationUiEvent {
 
         data object BackClick : Action
 

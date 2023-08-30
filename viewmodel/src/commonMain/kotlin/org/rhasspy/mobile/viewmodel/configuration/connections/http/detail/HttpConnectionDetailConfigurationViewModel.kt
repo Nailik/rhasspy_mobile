@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.http
+package org.rhasspy.mobile.viewmodel.configuration.connections.http.detail
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,20 +9,20 @@ import org.rhasspy.mobile.platformspecific.*
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationUiEvent.Action
-import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationViewState.RemoteHermesHttpConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Change
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewState.RemoteHermesHttpConfigurationData
 
 @Stable
-class RemoteHermesHttpConfigurationViewModel(
+class HttpConnectionDetailConfigurationViewModel(
     service: IHttpClientService
 ) : ConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState = MutableStateFlow(RemoteHermesHttpConfigurationViewState(RemoteHermesHttpConfigurationData()))
+    private val _viewState = MutableStateFlow(HttpConnectionDetailConfigurationViewState(RemoteHermesHttpConfigurationData()))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
@@ -35,7 +35,7 @@ class RemoteHermesHttpConfigurationViewModel(
         )
     }
 
-    fun onEvent(event: RemoteHermesHttpConfigurationUiEvent) {
+    fun onEvent(event: HttpConnectionDetailConfigurationUiEvent) {
         when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)

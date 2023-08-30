@@ -6,8 +6,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.ui.LocalSnackBarHostState
-import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.content.LocalSnackBarHostState
+import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 
 @Composable
 fun KoinComponent.TestContentProvider(

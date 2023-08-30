@@ -33,11 +33,12 @@ sealed interface NavigationDestination {
     }
 
     @Stable
-    enum class ConnectionScreenNavigationDestination : NavigationDestination {
+    sealed interface ConnectionScreenNavigationDestination : NavigationDestination {
 
-        MqttConnectionScreen,
-        RemoteHermesHttpConnectionScreen,
-        WebServerConnectionScreen
+        data object MqttConnectionScreen : ConnectionScreenNavigationDestination
+        data object HttpConnectionListScreen : ConnectionScreenNavigationDestination
+        data class HttpConnectionDetailScreen(val id: Int?) : ConnectionScreenNavigationDestination
+        data object WebServerConnectionScreen : ConnectionScreenNavigationDestination
 
     }
 

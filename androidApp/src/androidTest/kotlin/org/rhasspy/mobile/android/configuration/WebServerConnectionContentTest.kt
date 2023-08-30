@@ -13,16 +13,16 @@ import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.connection.WebServerConnectionScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Change.SetHttpServerEnabled
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Change.SetHttpServerSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class WebServerConnectionContentTest : FlakyTest() {
 
-    private val viewModel = get<WebServerConfigurationViewModel>()
+    private val viewModel = get<WebServerConnectionConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
@@ -111,7 +111,7 @@ class WebServerConnectionContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar()
-        WebServerConfigurationViewModel(get()).viewState.value.editData.also {
+        WebServerConnectionConfigurationViewModel(get()).viewState.value.editData.also {
             //enable http api is saved
             assertEquals(true, it.isHttpServerEnabled)
             //port is saved

@@ -10,40 +10,40 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationViewState.RemoteHermesHttpConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewState.RemoteHermesHttpConfigurationData
 
 /**
  * content to configure http configuration
  * switch to disable ssl verification
  */
 @Composable
-fun HttpConnectionScreen() {
+fun HttpConnectionDetailScreen(id: Int?) {
 
-    val viewModel: RemoteHermesHttpConfigurationViewModel =
-        LocalViewModelFactory.current.getViewModel()
+    val viewModel: HttpConnectionDetailConfigurationViewModel =
+        LocalViewModelFactory.current.getViewModel() //TODO params
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier,
         screenViewModel = viewModel,
-        title = MR.strings.remoteHermesHTTP.stable,
+        title = MR.strings.remote_http.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent
     ) {
 
         val viewState by viewModel.viewState.collectAsState()
 
-        HttpConnectionEditContent(
+        HttpConnectionDetailContent(
             editData = viewState.editData,
             onEvent = viewModel::onEvent
         )
@@ -53,9 +53,9 @@ fun HttpConnectionScreen() {
 }
 
 @Composable
-private fun HttpConnectionEditContent(
+private fun HttpConnectionDetailContent(
     editData: RemoteHermesHttpConfigurationData,
-    onEvent: (RemoteHermesHttpConfigurationUiEvent) -> Unit
+    onEvent: (HttpConnectionDetailConfigurationUiEvent) -> Unit
 ) {
 
     LazyColumn(

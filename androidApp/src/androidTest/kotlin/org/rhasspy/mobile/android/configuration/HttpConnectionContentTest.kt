@@ -13,15 +13,15 @@ import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.connection.HttpConnectionScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationUiEvent.Change.SetHttpSSLVerificationDisabled
-import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Change.SetHttpSSLVerificationDisabled
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class HttpConnectionContentTest : FlakyTest() {
 
-    private val viewModel = get<RemoteHermesHttpConfigurationViewModel>()
+    private val viewModel = get<HttpConnectionDetailConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
@@ -73,7 +73,7 @@ class HttpConnectionContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar()
-        RemoteHermesHttpConfigurationViewModel(get()).viewState.value.editData.also {
+        HttpConnectionDetailConfigurationViewModel(get()).viewState.value.editData.also {
             //disable ssl validation off is saved
             assertEquals(false, it.isHttpSSLVerificationDisabled)
             //host is saved

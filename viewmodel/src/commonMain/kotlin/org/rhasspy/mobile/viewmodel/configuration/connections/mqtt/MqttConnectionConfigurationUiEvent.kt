@@ -1,10 +1,10 @@
-package org.rhasspy.mobile.viewmodel.configuration.mqtt
+package org.rhasspy.mobile.viewmodel.configuration.connections.mqtt
 
 import okio.Path
 
-sealed interface MqttConfigurationUiEvent {
+sealed interface MqttConnectionConfigurationUiEvent {
 
-    sealed interface Change : MqttConfigurationUiEvent {
+    sealed interface Change : MqttConnectionConfigurationUiEvent {
 
         data class SetMqttEnabled(val enabled: Boolean) : Change
         data class UpdateMqttHost(val host: String) : Change
@@ -19,7 +19,7 @@ sealed interface MqttConfigurationUiEvent {
 
     }
 
-    sealed interface Action : MqttConfigurationUiEvent {
+    sealed interface Action : MqttConnectionConfigurationUiEvent {
 
         data object OpenMqttSSLWiki : Action
         data object SelectSSLCertificate : Action

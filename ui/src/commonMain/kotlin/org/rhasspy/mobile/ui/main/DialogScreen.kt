@@ -28,8 +28,8 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.resources.color_http
 import org.rhasspy.mobile.resources.color_local
 import org.rhasspy.mobile.resources.color_mqtt
-import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
+import org.rhasspy.mobile.ui.content.LocalViewModelFactory
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
@@ -49,7 +49,7 @@ import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewModel
 fun DialogScreen() {
     val viewModel: DialogScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(screenViewModel = viewModel) {
+    ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         Scaffold(

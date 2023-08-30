@@ -20,9 +20,9 @@ import org.rhasspy.mobile.resources.assistant_color_four
 import org.rhasspy.mobile.resources.assistant_color_one
 import org.rhasspy.mobile.resources.assistant_color_three
 import org.rhasspy.mobile.resources.assistant_color_two
-import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.combinedTestTag
+import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 import kotlin.math.abs

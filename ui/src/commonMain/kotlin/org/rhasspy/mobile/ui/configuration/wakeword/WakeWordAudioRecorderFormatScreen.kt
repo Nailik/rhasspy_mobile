@@ -16,8 +16,9 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.LocalViewModelFactory
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
@@ -34,33 +35,40 @@ fun WakeWordAudioRecorderFormatScreen() {
     val viewState by viewModel.viewState.collectAsState()
     val editData = viewState.editData
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            AppBar(
-                title = MR.strings.wakeWordAudioRecorderFormat.stable,
-                onBackClick = { viewModel.onEvent(BackClick) }
-            )
-        },
-    ) { paddingValues ->
-        Surface(tonalElevation = 1.dp) {
+    ScreenContent(
+        screenViewModel = viewModel
+    ) {
 
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ) {
-
-                WakeWordAudioRecorderFormatScreenContent(
-                    isEncodingChangeEnabled = viewState.isRecorderEncodingChangeEnabled,
-                    viewState = editData.wakeWordAudioRecorderData,
-                    onEvent = viewModel::onEvent
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                AppBar(
+                    title = MR.strings.wakeWordAudioRecorderFormat.stable,
+                    onBackClick = { viewModel.onEvent(BackClick) }
                 )
+            },
+        ) { paddingValues ->
+            Surface(tonalElevation = 1.dp) {
 
+                Column(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                ) {
+
+                    WakeWordAudioRecorderFormatScreenContent(
+                        isEncodingChangeEnabled = viewState.isRecorderEncodingChangeEnabled,
+                        viewState = editData.wakeWordAudioRecorderData,
+                        onEvent = viewModel::onEvent
+                    )
+
+                }
             }
         }
+
     }
+
 }
 
 @Composable

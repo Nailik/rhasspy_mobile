@@ -15,9 +15,9 @@ import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.LocalViewModelFactory
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.SecondaryContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -77,7 +77,7 @@ fun IndicationSettingsOverviewScreen() {
     val viewModel: IndicationSettingsViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
-    Screen(screenViewModel = viewModel) {
+    ScreenContent(screenViewModel = viewModel) {
 
         SettingsScreenItemContent(
             modifier = Modifier.testTag(IndicationSettings),

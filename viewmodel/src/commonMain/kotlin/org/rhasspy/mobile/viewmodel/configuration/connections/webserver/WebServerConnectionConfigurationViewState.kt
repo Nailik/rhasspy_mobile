@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.webserver
+package org.rhasspy.mobile.viewmodel.configuration.connections.webserver
 
 import androidx.compose.runtime.Stable
 import okio.Path
@@ -8,7 +8,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 
 @Stable
-data class WebServerConfigurationViewState internal constructor(
+data class WebServerConnectionConfigurationViewState internal constructor(
     override val editData: WebServerConfigurationData
 ) : IConfigurationViewState {
 

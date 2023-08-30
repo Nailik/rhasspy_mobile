@@ -32,7 +32,7 @@ class ConnectionsScreenViewStateCreator(
     private fun getViewState(): ConnectionsConfigurationViewState {
         return ConnectionsConfigurationViewState(
             http = HttpViewState(
-                isHttpSSLVerificationEnabled = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value,
+                httpConnectionCount = 2, //TODO
                 serviceState = ServiceViewState(httpClientService.serviceState)
             ),
             webserver = WebServerViewState(

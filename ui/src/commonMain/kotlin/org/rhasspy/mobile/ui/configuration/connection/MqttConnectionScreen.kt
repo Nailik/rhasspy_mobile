@@ -15,20 +15,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.*
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewState.MqttConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Action.OpenMqttSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Action.SelectSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewState.MqttConfigurationData
 
 /**
  * mqtt configuration content
@@ -42,7 +42,7 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewStat
 @Composable
 fun MqttConnectionScreen() {
 
-    val viewModel: MqttConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: MqttConnectionConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
@@ -68,7 +68,7 @@ fun MqttConnectionScreen() {
 @Composable
 private fun MqttConnectionEditContent(
     editData: MqttConfigurationData,
-    onEvent: (MqttConfigurationUiEvent) -> Unit
+    onEvent: (MqttConnectionConfigurationUiEvent) -> Unit
 ) {
 
     LazyColumn(
@@ -138,7 +138,7 @@ private fun MqttConnectionSettings(
     mqttPortText: String,
     mqttUserName: String,
     mqttPassword: String,
-    onEvent: (MqttConfigurationUiEvent) -> Unit
+    onEvent: (MqttConnectionConfigurationUiEvent) -> Unit
 ) {
 
     //host
@@ -186,7 +186,7 @@ private fun MqttConnectionSettings(
 private fun MqttSSL(
     isMqttSSLEnabled: Boolean,
     mqttKeyStoreFileName: String?,
-    onEvent: (MqttConfigurationUiEvent) -> Unit
+    onEvent: (MqttConnectionConfigurationUiEvent) -> Unit
 ) {
 
     SwitchListItem(
@@ -256,7 +256,7 @@ private fun MqttConnectionTiming(
     mqttConnectionTimeoutText: String,
     mqttKeepAliveIntervalText: String,
     mqttRetryIntervalText: String,
-    onEvent: (MqttConfigurationUiEvent) -> Unit
+    onEvent: (MqttConnectionConfigurationUiEvent) -> Unit
 ) {
 
     TextFieldListItem(

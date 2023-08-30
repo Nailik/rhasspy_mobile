@@ -32,6 +32,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.*
 
 @Stable
@@ -280,6 +281,14 @@ class WakeWordConfigurationViewModel(
         newFiles.clear()
         filesToDelete.clear()
         _viewState.update { it.copy(editData = WakeWordConfigurationData()) }
+    }
+
+    override fun onBackPressed(): Boolean {
+        return when (navigator.topScreen.value) {
+            //do navigate sub screens back even if there are changes
+            is WakeWordConfigurationScreenDestination -> false
+            else                                      -> super.onBackPressed()
+        }
     }
 
 }

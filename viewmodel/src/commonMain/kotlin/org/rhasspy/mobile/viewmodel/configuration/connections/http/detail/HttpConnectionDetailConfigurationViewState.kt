@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.http
+package org.rhasspy.mobile.viewmodel.configuration.connections.http.detail
 
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.platformspecific.toStringOrEmpty
@@ -7,7 +7,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 
 @Stable
-data class RemoteHermesHttpConfigurationViewState internal constructor(
+data class HttpConnectionDetailConfigurationViewState internal constructor(
     override val editData: RemoteHermesHttpConfigurationData
 ) : IConfigurationViewState {
 

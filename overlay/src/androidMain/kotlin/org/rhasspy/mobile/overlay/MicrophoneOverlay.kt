@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
-import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.native.nativeComposeView
 import org.rhasspy.mobile.ui.overlay.MicrophoneOverlay
 import org.rhasspy.mobile.ui.theme.AppTheme

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.webserver
+package org.rhasspy.mobile.viewmodel.configuration.connections.webserver
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,20 +14,20 @@ import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewState.WebServerConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Change
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewState.WebServerConfigurationData
 
 @Stable
-class WebServerConfigurationViewModel(
+class WebServerConnectionConfigurationViewModel(
     service: IWebServerService
 ) : ConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState = MutableStateFlow(WebServerConfigurationViewState(WebServerConfigurationData()))
+    private val _viewState = MutableStateFlow(WebServerConnectionConfigurationViewState(WebServerConfigurationData()))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
@@ -40,7 +40,7 @@ class WebServerConfigurationViewModel(
         )
     }
 
-    fun onEvent(event: WebServerConfigurationUiEvent) {
+    fun onEvent(event: WebServerConnectionConfigurationUiEvent) {
         when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)

@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.ServiceStateDialog
 import org.rhasspy.mobile.ui.content.ServiceStateHeader
 import org.rhasspy.mobile.ui.content.elements.Dialog
@@ -52,7 +52,7 @@ fun ConfigurationScreenItemContent(
     content: @Composable () -> Unit
 ) {
 
-    Screen(
+    ScreenContent(
         modifier = modifier,
         screenViewModel = screenViewModel
     ) {

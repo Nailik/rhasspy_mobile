@@ -19,10 +19,10 @@ import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalSnackBarHostState
-import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.LocalSnackBarHostState
+import org.rhasspy.mobile.ui.content.LocalViewModelFactory
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.theme.AppTheme
@@ -55,7 +55,7 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
                             val viewModel: MainScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
-                            Screen(screenViewModel = viewModel) {
+                            ScreenContent(screenViewModel = viewModel) {
                                 val viewState by viewModel.viewState.collectAsState()
 
                                 if (viewState.isShowCrashlyticsDialog) {

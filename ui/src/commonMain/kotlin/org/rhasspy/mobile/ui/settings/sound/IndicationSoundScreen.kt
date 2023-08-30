@@ -21,13 +21,17 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.sounds.SoundOption
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.*
+import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.combinedTestTag
+import org.rhasspy.mobile.ui.content.LocalSnackBarHostState
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.RadioButtonListItem
 import org.rhasspy.mobile.ui.content.list.SliderListItem
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.*
@@ -44,7 +48,7 @@ fun IndicationSoundScreen(
     screen: IndicationSettingsScreenDestination,
     title: StableStringResource
 ) {
-    Screen(screenViewModel = viewModel) {
+    ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         val snackBarHostState = LocalSnackBarHostState.current

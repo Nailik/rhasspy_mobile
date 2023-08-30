@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.mqtt
+package org.rhasspy.mobile.viewmodel.configuration.connections.mqtt
 
 import androidx.compose.runtime.Stable
 import okio.Path
@@ -8,7 +8,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 
 @Stable
-data class MqttConfigurationViewState internal constructor(
+data class MqttConnectionConfigurationViewState internal constructor(
     override val editData: MqttConfigurationData
 ) : IConfigurationViewState {
 

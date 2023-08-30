@@ -7,16 +7,16 @@ import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.getRandomString
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationViewState.RemoteHermesHttpConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewState.RemoteHermesHttpConfigurationData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
 
-    private lateinit var remoteHermesHttpConfigurationViewModel: RemoteHermesHttpConfigurationViewModel
+    private lateinit var remoteHermesHttpConfigurationViewModel: HttpConnectionDetailConfigurationViewModel
 
     private lateinit var initialRemoteHermesHttpConfigurationData: RemoteHermesHttpConfigurationData
     private lateinit var remoteHermesHttpConfigurationData: RemoteHermesHttpConfigurationData

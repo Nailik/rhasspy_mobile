@@ -15,17 +15,18 @@ import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigura
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.http.RemoteHermesHttpConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.AudioRecorderViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
@@ -114,12 +115,13 @@ fun viewModelModule() = module {
     singleOf(::DialogManagementConfigurationViewModel)
     singleOf(::IntentHandlingConfigurationViewModel)
     singleOf(::IntentRecognitionConfigurationViewModel)
-    singleOf(::MqttConfigurationViewModel)
-    singleOf(::RemoteHermesHttpConfigurationViewModel)
+    singleOf(::MqttConnectionConfigurationViewModel)
+    singleOf(::HttpConnectionListConfigurationViewModel)
+    singleOf(::HttpConnectionDetailConfigurationViewModel)
     singleOf(::SpeechToTextConfigurationViewModel)
     singleOf(::TextToSpeechConfigurationViewModel)
     singleOf(::WakeWordConfigurationViewModel)
-    singleOf(::WebServerConfigurationViewModel)
+    singleOf(::WebServerConnectionConfigurationViewModel)
 
     factory { params ->
         AudioRecorderViewStateCreator(

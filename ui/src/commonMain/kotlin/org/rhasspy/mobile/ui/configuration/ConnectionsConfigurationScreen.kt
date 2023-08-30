@@ -13,12 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.LocalViewModelFactory
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
@@ -28,9 +29,9 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigu
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewState.*
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.ConnectionsConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConnectionScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConnectionScreenNavigationDestination.*
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.ConfigurationScreen
 
 /**
  * configuration screens with list items that open bottom sheet
@@ -40,7 +41,7 @@ fun ConnectionsConfigurationScreen() {
 
     val viewModel: ConnectionsConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(screenViewModel = viewModel) {
+    ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         ConnectionsConfigurationScreenContent(
@@ -59,56 +60,58 @@ private fun ConnectionsConfigurationScreenContent(
     viewState: ConnectionsConfigurationViewState
 ) {
 
-    Scaffold(
-        modifier = Modifier
-            .testTag(ConfigurationScreen)
-            .fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = { Text(MR.strings.configuration.stable) },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { onEvent(BackClick) },
-                        modifier = Modifier.testTag(TestTag.AppBarBackButton)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = MR.strings.back.stable,
-                        )
-                    }
-                }
-            )
-        },
-    ) { paddingValues ->
-
-        Column(
+    Surface(tonalElevation = 3.dp) {
+        Scaffold(
             modifier = Modifier
-                .testTag(TestTag.List)
-                .padding(paddingValues)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-        ) {
+                .testTag(ConnectionsConfigurationScreen)
+                .fillMaxSize(),
+            topBar = {
+                TopAppBar(
+                    title = { Text(MR.strings.connections.stable) },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { onEvent(BackClick) },
+                            modifier = Modifier.testTag(TestTag.AppBarBackButton)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = MR.strings.back.stable,
+                            )
+                        }
+                    }
+                )
+            },
+        ) { paddingValues ->
 
-            Http(
-                viewState = viewState.http,
-                onEvent = onEvent
-            )
-            CustomDivider()
+            Column(
+                modifier = Modifier
+                    .testTag(TestTag.List)
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
+
+                Http(
+                    viewState = viewState.http,
+                    onEvent = onEvent
+                )
+                CustomDivider()
 
 
-            Mqtt(
-                viewState = viewState.mqtt,
-                onEvent = onEvent
-            )
-            CustomDivider()
+                Mqtt(
+                    viewState = viewState.mqtt,
+                    onEvent = onEvent
+                )
+                CustomDivider()
 
 
-            Webserver(
-                viewState = viewState.webserver,
-                onEvent = onEvent
-            )
-            CustomDivider()
+                Webserver(
+                    viewState = viewState.webserver,
+                    onEvent = onEvent
+                )
+                CustomDivider()
 
+            }
         }
     }
 
@@ -125,9 +128,9 @@ private fun Http(
 ) {
 
     ConnectionListItem(
-        text = MR.strings.remoteHermesHTTP.stable,
-        secondaryText = "${translate(MR.strings.sslValidation.stable)} ${translate(viewState.isHttpSSLVerificationEnabled.not().toText())}",
-        destination = RemoteHermesHttpConnectionScreen,
+        text = MR.strings.remote_http.stable,
+        secondaryText = "${viewState.httpConnectionCount} ${translate(MR.strings.server.stable)}",
+        destination = HttpConnectionListScreen,
         onEvent = onEvent
     )
 

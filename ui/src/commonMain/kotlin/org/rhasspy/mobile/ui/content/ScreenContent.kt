@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui
+package org.rhasspy.mobile.ui.content
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.SnackBar
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
@@ -32,7 +33,7 @@ val LocalViewModelFactory = compositionLocalOf<ViewModelFactory> {
 }
 
 @Composable
-fun Screen(
+fun ScreenContent(
     modifier: Modifier = Modifier,
     screenViewModel: IScreenViewModel,
     content: @Composable () -> Unit

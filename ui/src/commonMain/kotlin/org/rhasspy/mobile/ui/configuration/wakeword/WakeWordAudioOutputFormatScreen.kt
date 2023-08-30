@@ -16,8 +16,9 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.LocalViewModelFactory
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -35,33 +36,39 @@ fun WakeWordAudioOutputFormatScreen() {
     val viewState by viewModel.viewState.collectAsState()
     val editData = viewState.editData
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            AppBar(
-                title = MR.strings.wakeWordAudioOutputFormat.stable,
-                onBackClick = { viewModel.onEvent(BackClick) }
-            )
-        },
-    ) { paddingValues ->
-        Surface(tonalElevation = 1.dp) {
+    ScreenContent(
+        screenViewModel = viewModel
+    ) {
 
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ) {
-
-                WakeWordAudioOutputFormatScreenContent(
-                    isEncodingChangeEnabled = viewState.isOutputEncodingChangeEnabled,
-                    viewState = editData.wakeWordAudioOutputData,
-                    onEvent = viewModel::onEvent
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                AppBar(
+                    title = MR.strings.wakeWordAudioOutputFormat.stable,
+                    onBackClick = { viewModel.onEvent(BackClick) }
                 )
+            },
+        ) { paddingValues ->
+            Surface(tonalElevation = 1.dp) {
 
+                Column(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                ) {
+
+                    WakeWordAudioOutputFormatScreenContent(
+                        isEncodingChangeEnabled = viewState.isOutputEncodingChangeEnabled,
+                        viewState = editData.wakeWordAudioOutputData,
+                        onEvent = viewModel::onEvent
+                    )
+
+                }
             }
         }
     }
+
 }
 
 @Composable
