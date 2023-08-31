@@ -9,9 +9,7 @@ sealed interface SpeechToTextConfigurationUiEvent {
 
     sealed interface Change : SpeechToTextConfigurationUiEvent {
         data class SelectSpeechToTextOption(val option: SpeechToTextOption) : Change
-        data class SetUseCustomHttpEndpoint(val enabled: Boolean) : Change
         data class SetUseSpeechToTextMqttSilenceDetection(val enabled: Boolean) : Change
-        data class UpdateSpeechToTextHttpEndpoint(val endpoint: String) : Change
     }
 
     sealed interface Action : SpeechToTextConfigurationUiEvent {

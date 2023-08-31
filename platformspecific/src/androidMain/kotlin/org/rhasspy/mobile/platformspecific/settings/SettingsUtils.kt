@@ -221,7 +221,7 @@ internal actual class SettingsUtils actual constructor(
         }
     }
 
-    private fun removeSensitiveData() {
+    private fun removeSensitiveData() { //TODO new
         val toRemove = arrayOf(
             SettingsEnum.HttpServerPort.name,
             SettingsEnum.HttpServerSSLKeyStoreFile.name,
@@ -238,12 +238,6 @@ internal actual class SettingsUtils actual constructor(
             SettingsEnum.WakeWordUDPOutputPort.name,
             SettingsEnum.WakeWordPorcupineAccessToken.name,
             SettingsEnum.SpeechToTextHttpEndpoint.name,
-            SettingsEnum.IntentRecognitionHttpEndpoint.name,
-            SettingsEnum.TextToSpeechHttpEndpoint.name,
-            SettingsEnum.AudioPlayingHttpEndpoint.name,
-            SettingsEnum.IntentHandlingEndpoint.name,
-            SettingsEnum.IntentHandlingHassUrl.name,
-            SettingsEnum.IntentHandlingHassAccessToken.name
         )
 
         val database = SettingsDatabase(databaseDriverFactory.createDriver(SettingsDatabase.Schema, "settings-export.db"))

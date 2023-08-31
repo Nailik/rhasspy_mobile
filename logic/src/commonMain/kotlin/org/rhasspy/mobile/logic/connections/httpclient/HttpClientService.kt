@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import okio.Path
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.httpclient.HttpClientPath
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Success
@@ -75,37 +74,41 @@ internal class HttpClientService(
         get() =
             params.intentHandlingOption == IntentHandlingOption.WithRecognition
 
-    private val speechToTextUrl
+    private val speechToTextUrl = "" //TODO
+    /*
         get() =
             if (params.isUseCustomSpeechToTextHttpEndpoint) {
                 params.speechToTextHttpEndpoint
             } else {
                 "${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.SpeechToText.path}"
-            } + "?noheader=true"
+            } + "?noheader=true"*/
 
-    private val recognizeIntentUrl
-        get() =
-            if (params.isUseCustomIntentRecognitionHttpEndpoint) {
-                params.intentRecognitionHttpEndpoint
-            } else {
-                "${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.TextToIntent.path}"
-            } + if (!isHandleIntentDirectly) {
-                "?nohass=true"
-            } else ""
+    private val recognizeIntentUrl = "" //TODO
+    /*
+get() =
+   if (params.isUseCustomIntentRecognitionHttpEndpoint) {
+       params.intentRecognitionHttpEndpoint
+   } else {
+       "${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.TextToIntent.path}"
+   } + if (!isHandleIntentDirectly) {
+       "?nohass=true"
+   } else ""*/
 
-    private val textToSpeechUrl
-        get() = if (params.isUseCustomTextToSpeechHttpEndpoint) {
-            params.textToSpeechHttpEndpoint
-        } else {
-            "${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.TextToSpeech.path}"
-        }
+    private val textToSpeechUrl = "" //TODO
+    /*
+get() = if (params.isUseCustomTextToSpeechHttpEndpoint) {
+params.textToSpeechHttpEndpoint
+} else {
+"${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.TextToSpeech.path}"
+}*/
 
-    private val audioPlayingUrl
-        get() = if (params.isUseCustomAudioPlayingEndpoint) {
-            params.audioPlayingHttpEndpoint
-        } else {
-            "${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.PlayWav.path}"
-        }
+    private val audioPlayingUrl = "" //TODO
+    /*
+get() = if (params.isUseCustomAudioPlayingEndpoint) {
+params.audioPlayingHttpEndpoint
+} else {
+"${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.PlayWav.path}"
+}*/
 
     private val hassEventUrl get() = "${params.intentHandlingHomeAssistantEndpoint}/api/events/rhasspy_"
     private val hassIntentUrl get() = "${params.intentHandlingHomeAssistantEndpoint}/api/intent/handle"
@@ -132,11 +135,11 @@ internal class HttpClientService(
         _serviceState.value = ServiceState.Loading
 
         try {
-            //starting
+//starting
             httpClient = buildClient()
             _serviceState.value = Success
         } catch (exception: Exception) {
-            //start error
+//start error
             logger.e(exception) { "error on building client" }
             _serviceState.value = ServiceState.Exception(exception)
         }

@@ -37,7 +37,7 @@ sealed interface NavigationDestination {
 
         data object MqttConnectionScreen : ConnectionScreenNavigationDestination
         data object HttpConnectionListScreen : ConnectionScreenNavigationDestination
-        data class HttpConnectionDetailScreen(val id: Int?) : ConnectionScreenNavigationDestination
+        data class HttpConnectionDetailScreen(val id: Long?) : ConnectionScreenNavigationDestination
         data object WebServerConnectionScreen : ConnectionScreenNavigationDestination
 
     }

@@ -17,13 +17,10 @@ data class IntentHandlingConfigurationViewState internal constructor(
     @Stable
     data class IntentHandlingConfigurationData internal constructor(
         val intentHandlingOption: IntentHandlingOption = ConfigurationSetting.intentHandlingOption.value,
-        val intentHandlingHttpEndpoint: String = ConfigurationSetting.intentHandlingHttpEndpoint.value,
-        val intentHandlingHomeAssistantEndpoint: String = ConfigurationSetting.intentHandlingHomeAssistantEndpoint.value,
-        val intentHandlingHomeAssistantAccessToken: String = ConfigurationSetting.intentHandlingHomeAssistantAccessToken.value,
         val intentHandlingHomeAssistantOption: HomeAssistantIntentHandlingOption = ConfigurationSetting.intentHandlingHomeAssistantOption.value,
     ) : IConfigurationData {
 
-        val intentHandlingOptionList: ImmutableList<IntentHandlingOption> = IntentHandlingOption.values().toList().toImmutableList()
+        val intentHandlingOptionList: ImmutableList<IntentHandlingOption> = IntentHandlingOption.entries.toImmutableList()
 
     }
 

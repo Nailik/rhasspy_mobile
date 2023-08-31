@@ -35,7 +35,7 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpCo
  * switch to disable ssl verification
  */
 @Composable
-fun HttpConnectionDetailScreen(id: Int?) {
+fun HttpConnectionDetailScreen(id: Long?) {
 
     val viewModel: HttpConnectionDetailConfigurationViewModel = LocalViewModelFactory.current.getViewModel(id)
 

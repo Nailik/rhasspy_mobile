@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import org.rhasspy.mobile.data.httpclient.HttpClientPath
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.resources.MR
@@ -21,14 +20,14 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
-import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.OpenAudioOutputFormat
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.OpenAudioRecorderFormat
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SetUseSpeechToTextMqttSilenceDetection
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData.SpeechToTextAudioOutputConfigurationData
@@ -102,8 +101,6 @@ private fun SpeechToTextOption(
 
         when (it) {
             SpeechToTextOption.RemoteHTTP -> SpeechToTextHTTP(
-                isUseCustomSpeechToTextHttpEndpoint = editData.isUseCustomSpeechToTextHttpEndpoint,
-                speechToTextHttpEndpointText = editData.speechToTextHttpEndpointText,
                 speechToTextAudioRecorderData = editData.speechToTextAudioRecorderData,
                 speechToTextAudioOutputData = editData.speechToTextAudioOutputData,
                 onEvent = onEvent
@@ -127,8 +124,6 @@ private fun SpeechToTextOption(
  */
 @Composable
 private fun SpeechToTextHTTP(
-    isUseCustomSpeechToTextHttpEndpoint: Boolean,
-    speechToTextHttpEndpointText: String,
     speechToTextAudioRecorderData: SpeechToTextAudioRecorderConfigurationData,
     speechToTextAudioOutputData: SpeechToTextAudioOutputConfigurationData,
     onEvent: (SpeechToTextConfigurationUiEvent) -> Unit
@@ -136,23 +131,7 @@ private fun SpeechToTextHTTP(
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
-        //switch to use custom
-        SwitchListItem(
-            modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
-            text = MR.strings.useCustomEndpoint.stable,
-            isChecked = isUseCustomSpeechToTextHttpEndpoint,
-            onCheckedChange = { onEvent(SetUseCustomHttpEndpoint(it)) }
-        )
-
-        //input to edit http endpoint
-        TextFieldListItem(
-            enabled = isUseCustomSpeechToTextHttpEndpoint,
-            modifier = Modifier.testTag(TestTag.Endpoint),
-            value = speechToTextHttpEndpointText,
-            onValueChange = { onEvent(UpdateSpeechToTextHttpEndpoint(it)) },
-            label = translate(MR.strings.speechToTextURL.stable, HttpClientPath.SpeechToText.path)
-        )
-
+        //TODO server
 
         //button to open audio recorder format
         ListElement(

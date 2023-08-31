@@ -15,17 +15,7 @@ internal class HttpClientServiceParamsCreator {
             //TODO ConfigurationSetting.httpClientServerEndpointHost.data,
             //TODO ConfigurationSetting.httpClientServerEndpointPort.data,
             //TODO ConfigurationSetting.httpClientTimeout.data,
-            ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.data,
-            ConfigurationSetting.speechToTextHttpEndpoint.data,
-            ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.data,
-            ConfigurationSetting.intentRecognitionHttpEndpoint.data,
-            ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.data,
-            ConfigurationSetting.textToSpeechHttpEndpoint.data,
-            ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.data,
-            ConfigurationSetting.audioPlayingHttpEndpoint.data,
-            ConfigurationSetting.intentHandlingHttpEndpoint.data,
-            ConfigurationSetting.intentHandlingHomeAssistantEndpoint.data,
-            ConfigurationSetting.intentHandlingHomeAssistantAccessToken.data,
+            //TODO ConfigurationSetting.speechToTextHttpEndpoint.data,
             ConfigurationSetting.intentHandlingOption.data
         ).mapReadonlyState {
             getParams()
@@ -40,17 +30,13 @@ internal class HttpClientServiceParamsCreator {
             httpClientServerEndpointHost = "",//TODO ConfigurationSetting.httpClientServerEndpointHost.value,
             httpClientServerEndpointPort = 1,//TODO ConfigurationSetting.httpClientServerEndpointPort.value,
             httpClientTimeout = 5,//TODO ConfigurationSetting.httpClientTimeout.value,
-            isUseCustomSpeechToTextHttpEndpoint = ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value,
-            speechToTextHttpEndpoint = ConfigurationSetting.speechToTextHttpEndpoint.value,
-            isUseCustomIntentRecognitionHttpEndpoint = ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value,
-            intentRecognitionHttpEndpoint = ConfigurationSetting.intentRecognitionHttpEndpoint.value,
-            isUseCustomTextToSpeechHttpEndpoint = ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value,
-            textToSpeechHttpEndpoint = ConfigurationSetting.textToSpeechHttpEndpoint.value,
-            isUseCustomAudioPlayingEndpoint = ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value,
-            audioPlayingHttpEndpoint = ConfigurationSetting.audioPlayingHttpEndpoint.value,
-            intentHandlingHttpEndpoint = ConfigurationSetting.intentHandlingHttpEndpoint.value,
-            intentHandlingHomeAssistantEndpoint = ConfigurationSetting.intentHandlingHomeAssistantEndpoint.value,
-            intentHandlingHomeAssistantAccessToken = ConfigurationSetting.intentHandlingHomeAssistantAccessToken.value,
+            speechToTextHttpEndpoint = "",//TODO  ConfigurationSetting.speechToTextHttpEndpoint.value,
+            intentRecognitionHttpEndpoint = "",//TODO  ConfigurationSetting.intentRecognitionHttpEndpoint.value,
+            textToSpeechHttpEndpoint = "",//TODO  ConfigurationSetting.textToSpeechHttpEndpoint.value,
+            audioPlayingHttpEndpoint = "",//TODO ConfigurationSetting.audioPlayingHttpEndpoint.value,
+            intentHandlingHttpEndpoint = "",//TODO  ConfigurationSetting.intentHandlingHttpEndpoint.value,
+            intentHandlingHomeAssistantEndpoint = "",//TODO  ConfigurationSetting.intentHandlingHomeAssistantEndpoint.value,
+            intentHandlingHomeAssistantAccessToken = "",//TODO ConfigurationSetting.intentHandlingHomeAssistantAccessToken.value,
             intentHandlingOption = ConfigurationSetting.intentHandlingOption.value
         )
     }

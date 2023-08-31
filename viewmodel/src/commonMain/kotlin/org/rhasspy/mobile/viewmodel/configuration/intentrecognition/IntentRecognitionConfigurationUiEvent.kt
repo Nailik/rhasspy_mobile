@@ -7,8 +7,6 @@ sealed interface IntentRecognitionConfigurationUiEvent {
     sealed interface Change : IntentRecognitionConfigurationUiEvent {
 
         data class SelectIntentRecognitionOption(val option: IntentRecognitionOption) : Change
-        data class SetUseCustomHttpEndpoint(val enabled: Boolean) : Change
-        data class ChangeIntentRecognitionHttpEndpoint(val endpoint: String) : Change
 
     }
 

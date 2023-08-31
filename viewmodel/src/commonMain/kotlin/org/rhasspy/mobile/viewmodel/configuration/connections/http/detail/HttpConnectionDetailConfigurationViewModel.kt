@@ -18,7 +18,7 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpCo
 
 @Stable
 class HttpConnectionDetailConfigurationViewModel(
-    private val id: Int?,
+    private val id: Long?,
     service: IHttpClientService
 ) : ConfigurationViewModel(
     service = service

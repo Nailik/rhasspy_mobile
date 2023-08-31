@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationViewState.HttpConfigurationItemViewState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConnectionScreenNavigationDestination.HttpConnectionDetailScreen
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
@@ -16,7 +15,7 @@ class HttpConnectionListConfigurationViewModel : ScreenViewModel() {
     private val _viewState = MutableStateFlow(
         HttpConnectionListConfigurationViewState(
             persistentListOf(
-                HttpConfigurationItemViewState()
+                //TODO HttpConfigurationItemViewState()
             )
         )
     )

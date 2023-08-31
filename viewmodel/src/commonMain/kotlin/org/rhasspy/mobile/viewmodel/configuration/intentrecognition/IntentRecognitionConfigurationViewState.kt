@@ -2,8 +2,8 @@ package org.rhasspy.mobile.viewmodel.configuration.intentrecognition
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
-import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
@@ -16,14 +16,9 @@ data class IntentRecognitionConfigurationViewState internal constructor(
     @Stable
     data class IntentRecognitionConfigurationData internal constructor(
         val intentRecognitionOption: IntentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
-        val isUseCustomIntentRecognitionHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value,
-        val intentRecognitionHttpEndpoint: String = ConfigurationSetting.intentRecognitionHttpEndpoint.value
     ) : IConfigurationData {
 
-        val intentRecognitionOptionList: ImmutableList<IntentRecognitionOption> = IntentRecognitionOption.values().toImmutableList()
-
-        val intentRecognitionHttpEndpointText: String = ""
-        //TODO if (isUseCustomIntentRecognitionHttpEndpoint) intentRecognitionHttpEndpoint else "${ConfigurationSetting.httpClientServerEndpointHost.value}:${ConfigurationSetting.httpClientServerEndpointPort.value}/${HttpClientPath.TextToIntent.path}"
+        val intentRecognitionOptionList: ImmutableList<IntentRecognitionOption> = IntentRecognitionOption.entries.toImmutableList()
 
     }
 

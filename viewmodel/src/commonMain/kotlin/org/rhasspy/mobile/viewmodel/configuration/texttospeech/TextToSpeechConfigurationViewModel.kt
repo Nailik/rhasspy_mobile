@@ -12,7 +12,7 @@ import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SelectTextToSpeechOption
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewState.TextToSpeechConfigurationData
 
 @Stable
@@ -47,8 +47,6 @@ class TextToSpeechConfigurationViewModel(
             it.copy(editData = with(it.editData) {
                 when (change) {
                     is SelectTextToSpeechOption       -> copy(textToSpeechOption = change.option)
-                    is SetUseCustomHttpEndpoint       -> copy(isUseCustomTextToSpeechHttpEndpoint = change.enabled)
-                    is UpdateTextToSpeechHttpEndpoint -> copy(textToSpeechHttpEndpoint = change.endpoint)
                 }
             })
         }
@@ -67,8 +65,6 @@ class TextToSpeechConfigurationViewModel(
     override fun onSave() {
         with(_viewState.value.editData) {
             ConfigurationSetting.textToSpeechOption.value = textToSpeechOption
-            ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value = isUseCustomTextToSpeechHttpEndpoint
-            ConfigurationSetting.textToSpeechHttpEndpoint.value = textToSpeechHttpEndpoint
         }
     }
 

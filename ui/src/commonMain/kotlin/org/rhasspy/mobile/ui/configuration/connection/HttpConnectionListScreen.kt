@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import org.rhasspy.mobile.data.connection.HttpConnection
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.content.LocalViewModelFactory
@@ -28,7 +29,6 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConn
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationViewState.HttpConfigurationItemViewState
 
 /**
  * content to configure http configuration
@@ -79,7 +79,7 @@ private fun HttpConnectionListContent(
 
         items(viewState.items) {
             HttpConnectionListContent(
-                viewState = it,
+                viewState = it.connection,
                 onEvent = onEvent
             )
             Divider()
@@ -91,23 +91,21 @@ private fun HttpConnectionListContent(
 
 @Composable
 private fun HttpConnectionListContent(
-    viewState: HttpConfigurationItemViewState,
+    viewState: HttpConnection,
     onEvent: (HttpConnectionListConfigurationUiEvent) -> Unit
 ) {
 
     ListElement(
         modifier = Modifier.clickable { onEvent(ItemClick(viewState.id)) },
-        text = { Text(viewState.name) },
+        text = { Text("${viewState.host}:${viewState.port}") },
         secondaryText = {
             Column {
-                Text("isRhasspy2Hermes: ${translate(viewState.isRhasspy2Hermes.toText())}")
-                Text("isRhasspy3Wyoming: ${translate(viewState.isRhasspy3Wyoming.toText())}")
+                Text("isRhasspy2Hermes: ${translate(viewState.isHermes.toText())}")
+                Text("isRhasspy3Wyoming: ${translate(viewState.isWyoming.toText())}")
                 Text("isHomeAssistant: ${translate(viewState.isHomeAssistant.toText())}")
-                Text(viewState.name)
-                Text(viewState.name)
             }
         },
-        overlineText = { Text("${viewState.httpClientServerEndpointHost}:${viewState.httpClientServerEndpointPort}") },
+        overlineText = { Text("${viewState.host}:${viewState.port}") },
         trailing = {
             IconButton(
                 onClick = { onEvent(ItemDeleteClick(viewState.id)) }

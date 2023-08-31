@@ -102,22 +102,17 @@ enum class SettingsEnum {
     SpeechToTextAudioOutputChannel,
     SpeechToTextAudioOutputEncoding,
     SpeechToTextAudioOutputSampleRate,
-    CustomSpeechToTextEndpoint,
+
     SpeechToTextHttpEndpoint,
     SpeechToTextMqttSilenceDetection,
 
     IntentRecognitionOption,
-    CustomIntentRecognitionHttpEndpoint,
-    IntentRecognitionHttpEndpoint,
 
     TextToSpeechOption,
-    CustomTextToSpeechOptionHttpEndpoint,
-    TextToSpeechHttpEndpoint,
 
     AudioPlayingOption,
     AudioOutputOption,
-    CustomAudioPlayingHttpEndpoint,
-    AudioPlayingHttpEndpoint,
+
     AudioPlayingMqttSiteId,
 
     DialogManagementOption,
@@ -126,9 +121,6 @@ enum class SettingsEnum {
     DialogManagementLocalRecordingTimeout,
 
     IntentHandlingOption,
-    IntentHandlingEndpoint,
-    IntentHandlingHassUrl,
-    IntentHandlingHassAccessToken,
     IsIntentHandlingHassEvent;
 
 }

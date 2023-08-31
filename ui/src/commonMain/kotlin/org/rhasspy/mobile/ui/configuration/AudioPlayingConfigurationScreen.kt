@@ -9,7 +9,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import kotlinx.collections.immutable.ImmutableList
-import org.rhasspy.mobile.data.httpclient.HttpClientPath
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
@@ -19,7 +18,6 @@ import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.elements.translate
-import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
@@ -104,8 +102,6 @@ private fun AudioPlayingOptionContent(
             )
 
             AudioPlayingOption.RemoteHTTP -> HttpEndpointConfigurationContent(
-                isUseCustomAudioPlayingHttpEndpoint = editData.isUseCustomAudioPlayingHttpEndpoint,
-                audioPlayingHttpEndpoint = editData.audioPlayingHttpEndpoint,
                 onEvent = onEvent
             )
 
@@ -150,30 +146,13 @@ private fun LocalConfigurationContent(
  */
 @Composable
 private fun HttpEndpointConfigurationContent(
-    isUseCustomAudioPlayingHttpEndpoint: Boolean,
-    audioPlayingHttpEndpoint: String,
     onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
 ) {
 
     //visibility of endpoint option
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
-        //switch to use custom
-        SwitchListItem(
-            modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
-            text = MR.strings.useCustomEndpoint.stable,
-            isChecked = isUseCustomAudioPlayingHttpEndpoint,
-            onCheckedChange = { onEvent(SetUseCustomHttpEndpoint(it)) }
-        )
-
-        //http endpoint input field
-        TextFieldListItem(
-            enabled = isUseCustomAudioPlayingHttpEndpoint,
-            modifier = Modifier.testTag(TestTag.Endpoint),
-            value = audioPlayingHttpEndpoint,
-            onValueChange = { onEvent(ChangeEditAudioPlayingHttpEndpoint(it)) },
-            label = translate(MR.strings.audioOutputURL.stable, HttpClientPath.PlayWav.path)
-        )
+        //TODO server
 
     }
 
