@@ -10,13 +10,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import org.rhasspy.mobile.data.service.option.IOption
-import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.platformspecific.readOnly
 
 private val logger = Logger.withTag("ISetting")
 
 open class DeprecatedISetting<T>(
-    private val key: SettingsEnum,
+    private val key: DeprecatedSettingsEnum,
     private val initial: T,
     private val serializer: KSerializer<T>? = null
 ) {

@@ -65,7 +65,6 @@ class Application : NativeApplication(), KoinComponent {
         }
 
         CoroutineScope(get<IDispatcherProvider>().IO).launch {
-
             Logger.addLogWriter(get<IDatabaseLogger>() as LogWriter)
             if (!isInstrumentedTest()) {
                 Logger.addLogWriter(

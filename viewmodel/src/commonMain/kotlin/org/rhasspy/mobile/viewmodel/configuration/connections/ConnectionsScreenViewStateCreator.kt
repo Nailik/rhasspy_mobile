@@ -22,7 +22,6 @@ class ConnectionsScreenViewStateCreator(
             webServerService.serviceState,
             mqttService.serviceState,
             mqttService.isConnected,
-            ConfigurationSetting.isHttpClientSSLVerificationDisabled.data,
             ConfigurationSetting.isHttpServerEnabled.data,
         ).mapReadonlyState {
             getViewState()

@@ -6,7 +6,6 @@ import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
-import org.rhasspy.mobile.data.httpclient.HttpClientPath
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -31,8 +30,8 @@ data class SpeechToTextConfigurationViewState internal constructor(
 
         val speechToTextOptions: ImmutableList<SpeechToTextOption> = SpeechToTextOption.entries.toTypedArray().toImmutableList()
 
-        val speechToTextHttpEndpointText: String
-            get() = if (isUseCustomSpeechToTextHttpEndpoint) speechToTextHttpEndpoint else "${ConfigurationSetting.httpClientServerEndpointHost.value}:${ConfigurationSetting.httpClientServerEndpointPort.value}/${HttpClientPath.SpeechToText.path}"
+        val speechToTextHttpEndpointText: String = ""
+        //TODO get() = if (isUseCustomSpeechToTextHttpEndpoint) speechToTextHttpEndpoint else "${ConfigurationSetting.httpClientServerEndpointHost.value}:${ConfigurationSetting.httpClientServerEndpointPort.value}/${HttpClientPath.SpeechToText.path}"
 
         @Stable
         data class SpeechToTextAudioRecorderConfigurationData(

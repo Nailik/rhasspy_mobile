@@ -11,10 +11,10 @@ internal class HttpClientServiceParamsCreator {
 
         return combineStateFlow(
             ConfigurationSetting.siteId.data,
-            ConfigurationSetting.isHttpClientSSLVerificationDisabled.data,
-            ConfigurationSetting.httpClientServerEndpointHost.data,
-            ConfigurationSetting.httpClientServerEndpointPort.data,
-            ConfigurationSetting.httpClientTimeout.data,
+            //TODO ConfigurationSetting.isHttpClientSSLVerificationDisabled.data,
+            //TODO ConfigurationSetting.httpClientServerEndpointHost.data,
+            //TODO ConfigurationSetting.httpClientServerEndpointPort.data,
+            //TODO ConfigurationSetting.httpClientTimeout.data,
             ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.data,
             ConfigurationSetting.speechToTextHttpEndpoint.data,
             ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.data,
@@ -36,10 +36,10 @@ internal class HttpClientServiceParamsCreator {
     private fun getParams(): HttpClientServiceParams {
         return HttpClientServiceParams(
             siteId = ConfigurationSetting.siteId.value,
-            isHttpSSLVerificationDisabled = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value,
-            httpClientServerEndpointHost = ConfigurationSetting.httpClientServerEndpointHost.value,
-            httpClientServerEndpointPort = ConfigurationSetting.httpClientServerEndpointPort.value,
-            httpClientTimeout = ConfigurationSetting.httpClientTimeout.value,
+            isHttpSSLVerificationDisabled = false,//TODO ConfigurationSetting.isHttpClientSSLVerificationDisabled.value,
+            httpClientServerEndpointHost = "",//TODO ConfigurationSetting.httpClientServerEndpointHost.value,
+            httpClientServerEndpointPort = 1,//TODO ConfigurationSetting.httpClientServerEndpointPort.value,
+            httpClientTimeout = 5,//TODO ConfigurationSetting.httpClientTimeout.value,
             isUseCustomSpeechToTextHttpEndpoint = ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value,
             speechToTextHttpEndpoint = ConfigurationSetting.speechToTextHttpEndpoint.value,
             isUseCustomIntentRecognitionHttpEndpoint = ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value,

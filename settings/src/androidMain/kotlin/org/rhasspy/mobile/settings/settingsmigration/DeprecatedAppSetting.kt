@@ -6,7 +6,6 @@ import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
-import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.data.sounds.SoundOption
 import org.rhasspy.mobile.data.theme.ThemeType
 import org.rhasspy.mobile.platformspecific.utils.isDebug
@@ -16,59 +15,59 @@ import org.rhasspy.mobile.platformspecific.utils.isDebug
  */
 object DeprecatedAppSetting {
 
-    val didShowCrashlyticsDialog = DeprecatedISetting(SettingsEnum.CrashlyticsDialog, false)
-    val didShowChangelogDialog = DeprecatedISetting(SettingsEnum.ChangelogDialog, 0)
+    val didShowCrashlyticsDialog = DeprecatedISetting(DeprecatedSettingsEnum.CrashlyticsDialog, false)
+    val didShowChangelogDialog = DeprecatedISetting(DeprecatedSettingsEnum.ChangelogDialog, 0)
 
-    val languageType = DeprecatedISetting(SettingsEnum.LanguageOption, LanguageType.English)
-    val themeType = DeprecatedISetting(SettingsEnum.ThemeOption, ThemeType.System)
+    val languageType = DeprecatedISetting(DeprecatedSettingsEnum.LanguageOption, LanguageType.English)
+    val themeType = DeprecatedISetting(DeprecatedSettingsEnum.ThemeOption, ThemeType.System)
 
-    val automaticSilenceDetectionAudioLevel = DeprecatedISetting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
-    val automaticSilenceDetectionTime = DeprecatedISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
-    val automaticSilenceDetectionMinimumTime = DeprecatedISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000)
+    val automaticSilenceDetectionAudioLevel = DeprecatedISetting(DeprecatedSettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
+    val automaticSilenceDetectionTime = DeprecatedISetting<Long?>(DeprecatedSettingsEnum.AutomaticSilenceDetectionTime, 2000)
+    val automaticSilenceDetectionMinimumTime = DeprecatedISetting<Long?>(DeprecatedSettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000)
 
-    val isBackgroundServiceEnabled = DeprecatedISetting(SettingsEnum.BackgroundEnabled, false)
-    val microphoneOverlaySizeOption = DeprecatedISetting(SettingsEnum.MicrophoneOverlaySize, MicrophoneOverlaySizeOption.Disabled)
-    val isMicrophoneOverlayWhileAppEnabled = DeprecatedISetting(SettingsEnum.MicrophoneOverlayWhileApp, false)
-    val microphoneOverlayPositionX = DeprecatedISetting(SettingsEnum.MicrophoneOverlayPositionX, 0)
-    val microphoneOverlayPositionY = DeprecatedISetting(SettingsEnum.MicrophoneOverlayPositionY, 0)
+    val isBackgroundServiceEnabled = DeprecatedISetting(DeprecatedSettingsEnum.BackgroundEnabled, false)
+    val microphoneOverlaySizeOption = DeprecatedISetting(DeprecatedSettingsEnum.MicrophoneOverlaySize, MicrophoneOverlaySizeOption.Disabled)
+    val isMicrophoneOverlayWhileAppEnabled = DeprecatedISetting(DeprecatedSettingsEnum.MicrophoneOverlayWhileApp, false)
+    val microphoneOverlayPositionX = DeprecatedISetting(DeprecatedSettingsEnum.MicrophoneOverlayPositionX, 0)
+    val microphoneOverlayPositionY = DeprecatedISetting(DeprecatedSettingsEnum.MicrophoneOverlayPositionY, 0)
 
-    val isWakeWordDetectionTurnOnDisplayEnabled = DeprecatedISetting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
-    val isSoundIndicationEnabled = DeprecatedISetting(SettingsEnum.SoundIndication, true)
-    val soundIndicationOutputOption = DeprecatedISetting(SettingsEnum.SoundIndicationOutput, AudioOutputOption.Notification)
-    val isWakeWordLightIndicationEnabled = DeprecatedISetting(SettingsEnum.WakeWordLightIndication, false)
+    val isWakeWordDetectionTurnOnDisplayEnabled = DeprecatedISetting(DeprecatedSettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
+    val isSoundIndicationEnabled = DeprecatedISetting(DeprecatedSettingsEnum.SoundIndication, true)
+    val soundIndicationOutputOption = DeprecatedISetting(DeprecatedSettingsEnum.SoundIndicationOutput, AudioOutputOption.Notification)
+    val isWakeWordLightIndicationEnabled = DeprecatedISetting(DeprecatedSettingsEnum.WakeWordLightIndication, false)
 
-    val isMqttApiDeviceChangeEnabled = DeprecatedISetting(SettingsEnum.MqttApiDeviceChangeEnabled, false)
-    val isHttpApiDeviceChangeEnabled = DeprecatedISetting(SettingsEnum.HttpApiDeviceChangeEnabled, true)
-    val volume = DeprecatedISetting(SettingsEnum.Volume, 0.5F)
-    val isHotWordEnabled = DeprecatedISetting(SettingsEnum.HotWordEnabled, true)
-    val isAudioOutputEnabled = DeprecatedISetting(SettingsEnum.AudioOutputEnabled, true)
-    val isIntentHandlingEnabled = DeprecatedISetting(SettingsEnum.IntentHandlingEnabled, true)
+    val isMqttApiDeviceChangeEnabled = DeprecatedISetting(DeprecatedSettingsEnum.MqttApiDeviceChangeEnabled, false)
+    val isHttpApiDeviceChangeEnabled = DeprecatedISetting(DeprecatedSettingsEnum.HttpApiDeviceChangeEnabled, true)
+    val volume = DeprecatedISetting(DeprecatedSettingsEnum.Volume, 0.5F)
+    val isHotWordEnabled = DeprecatedISetting(DeprecatedSettingsEnum.HotWordEnabled, true)
+    val isAudioOutputEnabled = DeprecatedISetting(DeprecatedSettingsEnum.AudioOutputEnabled, true)
+    val isIntentHandlingEnabled = DeprecatedISetting(DeprecatedSettingsEnum.IntentHandlingEnabled, true)
 
-    val wakeSoundVolume = DeprecatedISetting(SettingsEnum.WakeSoundVolume, 0.5F)
-    val recordedSoundVolume = DeprecatedISetting(SettingsEnum.RecordedSoundVolume, 0.5F)
-    val errorSoundVolume = DeprecatedISetting(SettingsEnum.ErrorSoundVolume, 0.5F)
+    val wakeSoundVolume = DeprecatedISetting(DeprecatedSettingsEnum.WakeSoundVolume, 0.5F)
+    val recordedSoundVolume = DeprecatedISetting(DeprecatedSettingsEnum.RecordedSoundVolume, 0.5F)
+    val errorSoundVolume = DeprecatedISetting(DeprecatedSettingsEnum.ErrorSoundVolume, 0.5F)
 
-    val wakeSound = DeprecatedISetting(SettingsEnum.WakeSound, SoundOption.Default.name)
-    val recordedSound = DeprecatedISetting(SettingsEnum.RecordedSound, SoundOption.Default.name)
-    val errorSound = DeprecatedISetting(SettingsEnum.ErrorSound, SoundOption.Default.name)
+    val wakeSound = DeprecatedISetting(DeprecatedSettingsEnum.WakeSound, SoundOption.Default.name)
+    val recordedSound = DeprecatedISetting(DeprecatedSettingsEnum.RecordedSound, SoundOption.Default.name)
+    val errorSound = DeprecatedISetting(DeprecatedSettingsEnum.ErrorSound, SoundOption.Default.name)
 
     //saves sound as pair, first is fileName as String, second is used and indicates if this custom sound file is used
-    val customWakeSounds = DeprecatedISetting(SettingsEnum.CustomWakeSounds, persistentListOf(), StringListSerializer)
-    val customRecordedSounds = DeprecatedISetting(SettingsEnum.CustomRecordedSounds, persistentListOf(), StringListSerializer)
-    val customErrorSounds = DeprecatedISetting(SettingsEnum.CustomErrorSounds, persistentListOf(), StringListSerializer)
+    val customWakeSounds = DeprecatedISetting(DeprecatedSettingsEnum.CustomWakeSounds, persistentListOf(), StringListSerializer)
+    val customRecordedSounds = DeprecatedISetting(DeprecatedSettingsEnum.CustomRecordedSounds, persistentListOf(), StringListSerializer)
+    val customErrorSounds = DeprecatedISetting(DeprecatedSettingsEnum.CustomErrorSounds, persistentListOf(), StringListSerializer)
 
-    val isCrashlyticsEnabled = DeprecatedISetting(SettingsEnum.Crashlytics, false)
-    val isShowLogEnabled = DeprecatedISetting(SettingsEnum.ShowLog, isDebug())
-    val isLogAudioFramesEnabled = DeprecatedISetting(SettingsEnum.LogAudioFrames, false)
-    val logLevel = DeprecatedISetting(SettingsEnum.LogLevel, LogLevel.Debug)
-    val isLogAutoscroll = DeprecatedISetting(SettingsEnum.LogAutoscroll, true)
+    val isCrashlyticsEnabled = DeprecatedISetting(DeprecatedSettingsEnum.Crashlytics, false)
+    val isShowLogEnabled = DeprecatedISetting(DeprecatedSettingsEnum.ShowLog, isDebug())
+    val isLogAudioFramesEnabled = DeprecatedISetting(DeprecatedSettingsEnum.LogAudioFrames, false)
+    val logLevel = DeprecatedISetting(DeprecatedSettingsEnum.LogLevel, LogLevel.Debug)
+    val isLogAutoscroll = DeprecatedISetting(DeprecatedSettingsEnum.LogAutoscroll, true)
 
-    val audioFocusOption = DeprecatedISetting(SettingsEnum.AudioFocusOption, AudioFocusOption.Disabled)
-    val isAudioFocusOnNotification = DeprecatedISetting(SettingsEnum.AudioFocusOnNotification, false)
-    val isAudioFocusOnSound = DeprecatedISetting(SettingsEnum.AudioFocusOnSound, false)
-    val isAudioFocusOnRecord = DeprecatedISetting(SettingsEnum.AudioFocusOnRecord, false)
-    val isAudioFocusOnDialog = DeprecatedISetting(SettingsEnum.AudioFocusOnDialog, false)
-    val isPauseRecordingOnMedia = DeprecatedISetting(SettingsEnum.AudioRecorderPauseRecordingOnMedia, true)
+    val audioFocusOption = DeprecatedISetting(DeprecatedSettingsEnum.AudioFocusOption, AudioFocusOption.Disabled)
+    val isAudioFocusOnNotification = DeprecatedISetting(DeprecatedSettingsEnum.AudioFocusOnNotification, false)
+    val isAudioFocusOnSound = DeprecatedISetting(DeprecatedSettingsEnum.AudioFocusOnSound, false)
+    val isAudioFocusOnRecord = DeprecatedISetting(DeprecatedSettingsEnum.AudioFocusOnRecord, false)
+    val isAudioFocusOnDialog = DeprecatedISetting(DeprecatedSettingsEnum.AudioFocusOnDialog, false)
+    val isPauseRecordingOnMedia = DeprecatedISetting(DeprecatedSettingsEnum.AudioRecorderPauseRecordingOnMedia, true)
 
-    val isDialogAutoscroll = DeprecatedISetting(SettingsEnum.DialogAutoScroll, true)
+    val isDialogAutoscroll = DeprecatedISetting(DeprecatedSettingsEnum.DialogAutoScroll, true)
 }

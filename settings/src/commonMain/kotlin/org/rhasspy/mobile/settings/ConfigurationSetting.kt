@@ -25,11 +25,6 @@ object ConfigurationSetting {
     val httpServerSSLKeyAlias = StringSetting(SettingsEnum.HttpServerSSLKeyAlias, "")
     val httpServerSSLKeyPassword = StringSetting(SettingsEnum.HttpServerSSLKeyPassword, "")
 
-    val isHttpClientSSLVerificationDisabled = BooleanSetting(SettingsEnum.SSLVerificationDisabled, true)
-    val httpClientServerEndpointHost = StringSetting(SettingsEnum.HttpClientServerEndpointHost, "")
-    val httpClientServerEndpointPort = IntSetting(SettingsEnum.HttpClientServerEndpointPort, 12101)
-    val httpClientTimeout = LongSetting(SettingsEnum.HttpClientTimeout, 30000L)
-
     val isMqttEnabled = BooleanSetting(SettingsEnum.MQTTEnabled, false)
     val mqttHost = StringSetting(SettingsEnum.MQTTHost, "")
     val mqttPort = IntSetting(SettingsEnum.MQTTPort, 1883)

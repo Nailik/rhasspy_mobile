@@ -1,0 +1,13 @@
+DELETE FROM settingsBooleanValues WHERE id = "AutomaticSilenceDetection";
+
+INSERT INTO settingsHttpConnection (host, port, timeout, isSslVerificationDisabled, true, false, false)
+   SELECT
+       (SELECT value FROM settingsStringValues WHERE id = "HttpClientServerEndpointHost") AS host,
+       (SELECT value FROM settingsLongValues WHERE id = "HttpClientServerEndpointPort") AS port,
+       (SELECT value FROM settingsLongValues WHERE id = "HttpClientTimeout") AS timeout,
+       (SELECT value FROM settingsBooleanValues WHERE id = "SSLVerificationDisabled") AS isSslVerificationDisabled;
+
+DELETE FROM settingsStringValues WHERE id = "HttpClientServerEndpointHost";
+DELETE FROM settingsLongValues WHERE id = "HttpClientServerEndpointPort";
+DELETE FROM settingsLongValues WHERE id = "HttpClientTimeout";
+DELETE FROM settingsBooleanValues WHERE id = "SSLVerificationDisabled";

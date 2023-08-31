@@ -223,8 +223,6 @@ internal actual class SettingsUtils actual constructor(
 
     private fun removeSensitiveData() {
         val toRemove = arrayOf(
-            SettingsEnum.HttpClientServerEndpointHost.name,
-            SettingsEnum.HttpClientServerEndpointPort.name,
             SettingsEnum.HttpServerPort.name,
             SettingsEnum.HttpServerSSLKeyStoreFile.name,
             SettingsEnum.HttpServerSSLKeyStorePassword.name,

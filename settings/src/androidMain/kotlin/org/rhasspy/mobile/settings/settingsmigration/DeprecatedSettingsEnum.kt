@@ -1,6 +1,6 @@
-package org.rhasspy.mobile.data.settings
+package org.rhasspy.mobile.settings.settingsmigration
 
-enum class SettingsEnum {
+enum class DeprecatedSettingsEnum {
     //App Settings
     CrashlyticsDialog,
     ChangelogDialog,
@@ -15,6 +15,10 @@ enum class SettingsEnum {
     AutomaticSilenceDetectionMinimumTime,
 
     BackgroundEnabled,
+    SSLVerificationDisabled,
+    HttpClientServerEndpointHost,
+    HttpClientServerEndpointPort,
+    HttpClientTimeout,
 
     MicrophoneOverlaySize,
     MicrophoneOverlayWhileApp,

@@ -5,8 +5,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
-import org.rhasspy.mobile.platformspecific.*
-import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.platformspecific.toIntOrNullOrConstant
+import org.rhasspy.mobile.platformspecific.toLongOrNullOrConstant
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Action
@@ -68,10 +69,10 @@ class HttpConnectionDetailConfigurationViewModel(
 
     override fun onSave() {
         with(_viewState.value.editData) {
-            ConfigurationSetting.httpClientServerEndpointHost.value = httpClientServerEndpointHost
-            ConfigurationSetting.httpClientServerEndpointPort.value = httpClientServerEndpointPort.toIntOrZero()
-            ConfigurationSetting.isHttpClientSSLVerificationDisabled.value = isHttpSSLVerificationDisabled
-            ConfigurationSetting.httpClientTimeout.value = httpClientTimeout.toLongOrZero()
+            //TODO ConfigurationSetting.httpClientServerEndpointHost.value = httpClientServerEndpointHost
+            //TODO ConfigurationSetting.httpClientServerEndpointPort.value = httpClientServerEndpointPort.toIntOrZero()
+            //TODO ConfigurationSetting.isHttpClientSSLVerificationDisabled.value = isHttpSSLVerificationDisabled
+            //TODO ConfigurationSetting.httpClientTimeout.value = httpClientTimeout.toLongOrZero()
         }
     }
 
