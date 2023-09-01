@@ -9,7 +9,6 @@ sealed interface HttpConnectionListConfigurationUiEvent {
         data object BackClick : Action
         data object AddClick : Action
         data class ItemClick(val id: HttpConnection) : Action
-        data class ItemDeleteClick(val id: Long) : Action
 
     }
 

@@ -5,11 +5,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.connection.HttpConnection
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toIntOrNullOrConstant
 import org.rhasspy.mobile.platformspecific.toLongOrNullOrConstant
-import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.repositories.IHttpConnectionSettingRepository
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Action
@@ -21,9 +20,9 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpCo
 @Stable
 class HttpConnectionDetailConfigurationViewModel(
     private var connection: HttpConnection?,
-    service: IHttpClientService
+    private val httpConnectionSettingRepository: IHttpConnectionSettingRepository
 ) : ConfigurationViewModel(
-    service = service
+    service = null
 ) {
 
     private val _viewState = MutableStateFlow(HttpConnectionDetailConfigurationViewState(HttpConfigurationData(connection)))
@@ -74,8 +73,7 @@ class HttpConnectionDetailConfigurationViewModel(
 
     override fun onSave() {
         with(_viewState.value.editData) {
-
-            val newConnection = HttpConnection(
+            connection = HttpConnection(
                 id = connection?.id,
                 host = host,
                 port = port,
@@ -85,20 +83,9 @@ class HttpConnectionDetailConfigurationViewModel(
                 isWyoming = isWyoming,
                 isHomeAssistant = isHomeAssistant,
                 isSSLVerificationDisabled = isSSLVerificationDisabled,
-            )
-
-            ConfigurationSetting.httpConnections.value = ConfigurationSetting.httpConnections.value.toMutableList().apply {
-                val index = indexOf(connection)
-
-                if (index != -1) {
-                    this.removeAt(index)
-                    this.add(index, newConnection)
-                } else {
-                    this.add(newConnection)
-                }
+            ).also {
+                httpConnectionSettingRepository.addOrUpdateHttpConnection(it)
             }
-
-            connection = newConnection
         }
     }
 

@@ -83,7 +83,7 @@ private fun ConnectionScreenNavigationContent(
         ConnectionScreenNavigationDestination.MqttConnectionScreen          -> MqttConnectionScreen()
         ConnectionScreenNavigationDestination.HttpConnectionListScreen      -> HttpConnectionListScreen()
         ConnectionScreenNavigationDestination.WebServerConnectionScreen     -> WebServerConnectionScreen()
-        is ConnectionScreenNavigationDestination.HttpConnectionDetailScreen -> HttpConnectionDetailScreenWrapper(screen.id)
+        is ConnectionScreenNavigationDestination.HttpConnectionDetailScreen -> HttpConnectionDetailScreenWrapper(screen.viewModel)
     }
 }
 

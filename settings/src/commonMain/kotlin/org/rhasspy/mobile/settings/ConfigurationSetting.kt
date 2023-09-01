@@ -8,7 +8,6 @@ import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.data.settings.SettingsEnum
-import org.rhasspy.mobile.settings.configuration.HttpConnections
 import org.rhasspy.mobile.settings.types.*
 
 /**
@@ -36,8 +35,6 @@ object ConfigurationSetting {
     val mqttKeepAliveInterval = LongSetting(SettingsEnum.MQTTKeepAliveInterval, 30L)
     val mqttRetryInterval = LongSetting(SettingsEnum.MQTTRetryInterval, 10L)
     val mqttKeyStoreFile = PathNullableSetting(SettingsEnum.MQTTKeyStoreFile, null)
-
-    val httpConnections = HttpConnections()
 
     val wakeWordOption = IOptionSetting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled)
 

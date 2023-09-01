@@ -118,18 +118,12 @@ fun viewModelModule() = module {
     singleOf(::MqttConnectionConfigurationViewModel)
     singleOf(::HttpConnectionListConfigurationViewModel)
 
-    val connectionDetailCache = HashMap<Int, HttpConnectionDetailConfigurationViewModel>()
-
     factory { params ->
-        val hash = params.values.hashCode()
-        connectionDetailCache.getOrPut(hash) {
-            HttpConnectionDetailConfigurationViewModel(
-                connection = params[0],
-                service = get()
-            )
-        }
+        HttpConnectionDetailConfigurationViewModel(
+            connection = params[0],
+            httpConnectionSettingRepository = get(),
+        )
     }
-
     singleOf(::SpeechToTextConfigurationViewModel)
     singleOf(::TextToSpeechConfigurationViewModel)
     singleOf(::WakeWordConfigurationViewModel)

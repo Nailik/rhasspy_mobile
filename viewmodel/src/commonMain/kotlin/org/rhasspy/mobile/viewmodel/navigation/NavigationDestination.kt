@@ -1,7 +1,11 @@
 package org.rhasspy.mobile.viewmodel.navigation
 
 import androidx.compose.runtime.Stable
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.connection.HttpConnection
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewModel
 
 @Stable
 sealed interface NavigationDestination {
@@ -38,7 +42,11 @@ sealed interface NavigationDestination {
 
         data object MqttConnectionScreen : ConnectionScreenNavigationDestination
         data object HttpConnectionListScreen : ConnectionScreenNavigationDestination
-        data class HttpConnectionDetailScreen(val id: HttpConnection?) : ConnectionScreenNavigationDestination
+        data class HttpConnectionDetailScreen(val id: HttpConnection?) : ConnectionScreenNavigationDestination, KoinComponent {
+
+            val viewModel = get<HttpConnectionDetailConfigurationViewModel> { parametersOf(id) }
+
+        }
         data object WebServerConnectionScreen : ConnectionScreenNavigationDestination
 
     }

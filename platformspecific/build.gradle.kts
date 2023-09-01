@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
+@file:Suppress("UnstableApiUsage")
 
 plugins {
     kotlin("multiplatform")

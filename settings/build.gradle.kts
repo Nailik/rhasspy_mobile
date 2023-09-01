@@ -19,6 +19,7 @@ kotlin {
                 implementation(Touchlab.kermit)
                 implementation(Koin.core)
                 implementation(Square.okio)
+                implementation(CashApp.Sqldelight.coroutines)
             }
         }
         val commonTest by getting

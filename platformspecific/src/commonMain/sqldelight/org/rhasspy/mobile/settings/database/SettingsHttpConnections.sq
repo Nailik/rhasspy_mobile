@@ -19,3 +19,6 @@ DELETE FROM settingsHttpConnection WHERE id = :id;
 
 select:
 SELECT * FROM settingsHttpConnection;
+
+selectById:
+SELECT * FROM settingsHttpConnection WHERE id = :id;

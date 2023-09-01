@@ -14,11 +14,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import org.rhasspy.mobile.data.connection.HttpConnection
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.CheckBoxListItem
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
@@ -36,16 +34,7 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpCo
  * switch to disable ssl verification
  */
 @Composable
-fun HttpConnectionDetailScreenWrapper(id: HttpConnection?) {
-
-    val viewModel: HttpConnectionDetailConfigurationViewModel = LocalViewModelFactory.current.getViewModel(id)
-
-    HttpConnectionDetailScreen(viewModel)
-
-}
-
-@Composable
-fun HttpConnectionDetailScreen(viewModel: HttpConnectionDetailConfigurationViewModel) {
+fun HttpConnectionDetailScreenWrapper(viewModel: HttpConnectionDetailConfigurationViewModel) {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
