@@ -119,7 +119,7 @@ fun viewModelModule() = module {
     singleOf(::HttpConnectionListConfigurationViewModel)
     factory { params ->
         HttpConnectionDetailConfigurationViewModel(
-            id = params[0],
+            connection = params[0],
             service = get()
         )
     }

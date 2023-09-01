@@ -34,8 +34,8 @@ VALUES
    (SELECT value FROM settingsBooleanValues WHERE id = 'SSLVerificationDisabled'),
    (SELECT value FROM settingsBooleanValues WHERE id = 'IntentHandlingHassAccessToken'),
    false,
-   true,
-   false
+   false,
+   true
   );
 
 DELETE FROM settingsStringValues WHERE id = 'HttpClientServerEndpointHost';

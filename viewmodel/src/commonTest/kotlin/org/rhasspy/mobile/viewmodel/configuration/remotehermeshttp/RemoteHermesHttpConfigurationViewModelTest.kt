@@ -33,14 +33,14 @@ class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
             httpClientServerEndpointHost = "",
             httpClientServerEndpointPort = 12101,
             httpClientTimeout = 30000L,
-            isHttpSSLVerificationDisabled = true
+            isSSLVerificationDisabled = true
         )
 
         remoteHermesHttpConfigurationData = RemoteHermesHttpConfigurationData(
             httpClientServerEndpointHost = getRandomString(5),
             httpClientServerEndpointPort = 3245,
             httpClientTimeout = 23456L,
-            isHttpSSLVerificationDisabled = false
+            isSSLVerificationDisabled = false
         )
 
         remoteHermesHttpConfigurationViewModel = get()
@@ -56,7 +56,7 @@ class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
         with(remoteHermesHttpConfigurationData) {
             remoteHermesHttpConfigurationViewModel.onEvent(
                 SetHttpSSLVerificationDisabled(
-                    isHttpSSLVerificationDisabled
+                    isSSLVerificationDisabled
                 )
             )
             remoteHermesHttpConfigurationViewModel.onEvent(
@@ -96,7 +96,7 @@ class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
         with(remoteHermesHttpConfigurationData) {
             remoteHermesHttpConfigurationViewModel.onEvent(
                 SetHttpSSLVerificationDisabled(
-                    isHttpSSLVerificationDisabled
+                    isSSLVerificationDisabled
                 )
             )
             remoteHermesHttpConfigurationViewModel.onEvent(

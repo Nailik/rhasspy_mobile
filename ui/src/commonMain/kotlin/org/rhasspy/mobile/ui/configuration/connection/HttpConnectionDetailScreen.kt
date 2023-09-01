@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import org.rhasspy.mobile.data.connection.HttpConnection
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
@@ -35,7 +36,7 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpCo
  * switch to disable ssl verification
  */
 @Composable
-fun HttpConnectionDetailScreen(id: Long?) {
+fun HttpConnectionDetailScreen(id: HttpConnection?) {
 
     val viewModel: HttpConnectionDetailConfigurationViewModel = LocalViewModelFactory.current.getViewModel(id)
 
@@ -85,7 +86,7 @@ private fun HttpConnectionDetailContent(
                 modifier = Modifier.testTag(TestTag.AudioFocusOnSound),
                 text = MR.strings.rhasspy2_hermes.stable,
                 secondaryText = MR.strings.rhasspy2_hermes_info.stable,
-                isChecked = editData.isRhasspy2Hermes,
+                isChecked = editData.isHermes,
                 onCheckedChange = { }
             )
 
@@ -93,7 +94,7 @@ private fun HttpConnectionDetailContent(
                 modifier = Modifier.testTag(TestTag.AudioFocusOnRecord),
                 text = MR.strings.rhasspy3_wyoming.stable,
                 secondaryText = MR.strings.rhasspy3_wyoming_info.stable,
-                isChecked = editData.isRhasspy3Wyoming,
+                isChecked = editData.isWyoming,
                 onCheckedChange = { }
             )
 
@@ -141,7 +142,7 @@ private fun HttpConnectionDetailContent(
             text = MR.strings.disableSSLValidation.stable,
             modifier = Modifier.testTag(TestTag.SSLSwitch),
             secondaryText = MR.strings.disableSSLValidationInformation.stable,
-            isChecked = editData.isHttpSSLVerificationDisabled,
+            isChecked = editData.isSSLVerificationDisabled,
             onCheckedChange = { onEvent(SetHttpSSLVerificationDisabled(it)) },
         )
 

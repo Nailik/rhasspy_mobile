@@ -4,14 +4,13 @@ import androidx.compose.runtime.Stable
 
 @Stable
 data class HttpConnection(
-    val id: Long = 5,
-    val host: String = "host",
-    val port: Int? = 5,
-    val timeout: Long? = null,
-    val isUseBearer: Boolean = false,
-    val bearerToken: String? = "",
-    val isHermes: Boolean = false,
-    val isWyoming: Boolean = false,
-    val isHomeAssistant: Boolean = false,
-    val isSslVerificationDisabled: Boolean = false
+    val id: Long,
+    val host: String,
+    val port: Int?,
+    val timeout: Long?,
+    val bearerToken: String?,
+    val isHermes: Boolean,
+    val isWyoming: Boolean,
+    val isHomeAssistant: Boolean,
+    val isSslVerificationDisabled: Boolean
 )

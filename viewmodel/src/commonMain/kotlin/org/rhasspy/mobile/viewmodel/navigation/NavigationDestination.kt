@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.viewmodel.navigation
 
 import androidx.compose.runtime.Stable
+import org.rhasspy.mobile.data.connection.HttpConnection
 
 @Stable
 sealed interface NavigationDestination {
@@ -37,7 +38,7 @@ sealed interface NavigationDestination {
 
         data object MqttConnectionScreen : ConnectionScreenNavigationDestination
         data object HttpConnectionListScreen : ConnectionScreenNavigationDestination
-        data class HttpConnectionDetailScreen(val id: Long?) : ConnectionScreenNavigationDestination
+        data class HttpConnectionDetailScreen(val id: HttpConnection?) : ConnectionScreenNavigationDestination
         data object WebServerConnectionScreen : ConnectionScreenNavigationDestination
 
     }

@@ -16,19 +16,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import org.rhasspy.mobile.data.connection.HttpConnection
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.Screen
 import org.rhasspy.mobile.ui.content.elements.Icon
-import org.rhasspy.mobile.ui.content.elements.toText
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationViewState.HttpConfigurationItemViewState
 
 /**
  * content to configure http configuration
@@ -78,8 +77,8 @@ private fun HttpConnectionListContent(
     ) {
 
         items(viewState.items) {
-            HttpConnectionListContent(
-                viewState = it.connection,
+            HttpConnectionItemContent(
+                viewState = it,
                 onEvent = onEvent
             )
             Divider()
@@ -90,25 +89,24 @@ private fun HttpConnectionListContent(
 }
 
 @Composable
-private fun HttpConnectionListContent(
-    viewState: HttpConnection,
+private fun HttpConnectionItemContent(
+    viewState: HttpConfigurationItemViewState,
     onEvent: (HttpConnectionListConfigurationUiEvent) -> Unit
 ) {
 
     ListElement(
-        modifier = Modifier.clickable { onEvent(ItemClick(viewState.id)) },
-        text = { Text("${viewState.host}:${viewState.port}") },
+        modifier = Modifier.clickable { onEvent(ItemClick(viewState.connection)) },
+        text = { Text("${viewState.connection.host}:${viewState.connectionPortText}") },
         secondaryText = {
             Column {
-                Text("isRhasspy2Hermes: ${translate(viewState.isHermes.toText())}")
-                Text("isRhasspy3Wyoming: ${translate(viewState.isWyoming.toText())}")
-                Text("isHomeAssistant: ${translate(viewState.isHomeAssistant.toText())}")
+                Text("isRhasspy2Hermes: ${translate(viewState.isHermesText)}")
+                Text("isRhasspy3Wyoming: ${translate(viewState.isWyomingText)}")
+                Text("isHomeAssistant: ${translate(viewState.isHomeAssistantText)}")
             }
         },
-        overlineText = { Text("${viewState.host}:${viewState.port}") },
         trailing = {
             IconButton(
-                onClick = { onEvent(ItemDeleteClick(viewState.id)) }
+                onClick = { onEvent(ItemDeleteClick(viewState.connection.id)) }
             ) {
                 Icon(
                     imageVector = Icons.Filled.DeleteForever,

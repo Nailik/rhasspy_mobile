@@ -59,7 +59,7 @@ class HttpConnectionContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.Host).performTextInput(textInputTest)
         //disable ssl validation is on
         composeTestRule.awaitIdle()
-        assertTrue { viewModel.viewState.value.editData.isHttpSSLVerificationDisabled }
+        assertTrue { viewModel.viewState.value.editData.isSSLVerificationDisabled }
         //switch is on
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOn()
 
@@ -67,7 +67,7 @@ class HttpConnectionContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).performClick()
         //disable ssl validation is off
         composeTestRule.awaitIdle()
-        assertFalse { viewModel.viewState.value.editData.isHttpSSLVerificationDisabled }
+        assertFalse { viewModel.viewState.value.editData.isSSLVerificationDisabled }
         //switch is off
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOff()
 
@@ -75,7 +75,7 @@ class HttpConnectionContentTest : FlakyTest() {
         composeTestRule.saveBottomAppBar()
         HttpConnectionDetailConfigurationViewModel(null, get()).viewState.value.editData.also {
             //disable ssl validation off is saved
-            assertEquals(false, it.isHttpSSLVerificationDisabled)
+            assertEquals(false, it.isSSLVerificationDisabled)
             //host is saved
             assertEquals(textInputTest, it.httpClientServerEndpointHost)
         }

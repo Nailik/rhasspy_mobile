@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import org.rhasspy.mobile.data.connection.HttpConnection
 import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toIntOrNullOrConstant
@@ -18,20 +19,20 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpCo
 
 @Stable
 class HttpConnectionDetailConfigurationViewModel(
-    private val id: Long?,
+    private var connection: HttpConnection?,
     service: IHttpClientService
 ) : ConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState = MutableStateFlow(HttpConnectionDetailConfigurationViewState(RemoteHermesHttpConfigurationData()))
+    private val _viewState = MutableStateFlow(HttpConnectionDetailConfigurationViewState(RemoteHermesHttpConfigurationData(connection)))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = ::RemoteHermesHttpConfigurationData,
+            init = { RemoteHermesHttpConfigurationData(connection) },
             viewState = viewState,
             configurationViewState = configurationViewState
         )
@@ -48,7 +49,7 @@ class HttpConnectionDetailConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SetHttpSSLVerificationDisabled     -> copy(isHttpSSLVerificationDisabled = change.disabled)
+                    is SetHttpSSLVerificationDisabled -> copy(isSSLVerificationDisabled = change.disabled)
                     is UpdateHttpClientServerEndpointHost -> copy(httpClientServerEndpointHost = change.host)
                     is UpdateHttpClientServerEndpointPort -> copy(httpClientServerEndpointPort = change.port.toIntOrNullOrConstant())
                     is UpdateHttpClientTimeout            -> copy(httpClientTimeout = change.text.toLongOrNullOrConstant())
@@ -64,11 +65,14 @@ class HttpConnectionDetailConfigurationViewModel(
     }
 
     override fun onDiscard() {
-        _viewState.update { it.copy(editData = RemoteHermesHttpConfigurationData()) }
+        //TODO update connection
+        _viewState.update { it.copy(editData = RemoteHermesHttpConfigurationData(connection)) }
     }
 
     override fun onSave() {
         with(_viewState.value.editData) {
+            //TODO update connection
+
             //TODO ConfigurationSetting.httpClientServerEndpointHost.value = httpClientServerEndpointHost
             //TODO ConfigurationSetting.httpClientServerEndpointPort.value = httpClientServerEndpointPort.toIntOrZero()
             //TODO ConfigurationSetting.isHttpClientSSLVerificationDisabled.value = isHttpSSLVerificationDisabled

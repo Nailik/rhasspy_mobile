@@ -5,6 +5,9 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.resources.MR
 import kotlin.coroutines.resume
 import kotlin.math.roundToInt
 
@@ -182,4 +185,8 @@ fun <T> CancellableContinuation<T>.resumeSave(value: T, onCancellation: ((cause:
     if (!this.isCompleted) {
         this.resume(value, onCancellation)
     }
+}
+
+fun Boolean.toText(): StableStringResource {
+    return if (this) MR.strings.enabled.stable else MR.strings.disabled.stable
 }
