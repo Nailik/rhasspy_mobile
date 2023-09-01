@@ -77,7 +77,7 @@ class HttpConnectionContentTest : FlakyTest() {
             //disable ssl validation off is saved
             assertEquals(false, it.isSSLVerificationDisabled)
             //host is saved
-            assertEquals(textInputTest, it.httpClientServerEndpointHost)
+            assertEquals(textInputTest, it.host)
         }
     }
 }

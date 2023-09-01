@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.ui.configuration.*
-import org.rhasspy.mobile.ui.configuration.connection.HttpConnectionDetailScreen
+import org.rhasspy.mobile.ui.configuration.connection.HttpConnectionDetailScreenWrapper
 import org.rhasspy.mobile.ui.configuration.connection.HttpConnectionListScreen
 import org.rhasspy.mobile.ui.configuration.connection.MqttConnectionScreen
 import org.rhasspy.mobile.ui.configuration.connection.WebServerConnectionScreen
@@ -83,7 +83,7 @@ private fun ConnectionScreenNavigationContent(
         ConnectionScreenNavigationDestination.MqttConnectionScreen          -> MqttConnectionScreen()
         ConnectionScreenNavigationDestination.HttpConnectionListScreen      -> HttpConnectionListScreen()
         ConnectionScreenNavigationDestination.WebServerConnectionScreen     -> WebServerConnectionScreen()
-        is ConnectionScreenNavigationDestination.HttpConnectionDetailScreen -> HttpConnectionDetailScreen(screen.id)
+        is ConnectionScreenNavigationDestination.HttpConnectionDetailScreen -> HttpConnectionDetailScreenWrapper(screen.id)
     }
 }
 

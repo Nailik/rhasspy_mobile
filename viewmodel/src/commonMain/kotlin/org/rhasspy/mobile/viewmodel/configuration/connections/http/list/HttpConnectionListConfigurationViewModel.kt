@@ -1,18 +1,21 @@
 package org.rhasspy.mobile.viewmodel.configuration.connections.http.list
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.MutableStateFlow
-import org.rhasspy.mobile.platformspecific.readOnly
+import kotlinx.collections.immutable.toImmutableList
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationViewState.HttpConfigurationItemViewState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConnectionScreenNavigationDestination.HttpConnectionDetailScreen
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
 class HttpConnectionListConfigurationViewModel : ScreenViewModel() {
 
-    private val _viewState = MutableStateFlow(HttpConnectionListConfigurationViewState())
-    val viewState = _viewState.readOnly
+    val viewState = ConfigurationSetting.httpConnections.data.mapReadonlyState { list ->
+        HttpConnectionListConfigurationViewState(list.map { HttpConfigurationItemViewState(it) }.toImmutableList())
+    }
 
     fun onEvent(event: HttpConnectionListConfigurationUiEvent) {
         when (event) {

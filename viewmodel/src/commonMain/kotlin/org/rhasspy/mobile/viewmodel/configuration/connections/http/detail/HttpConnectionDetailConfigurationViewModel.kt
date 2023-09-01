@@ -9,13 +9,14 @@ import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toIntOrNullOrConstant
 import org.rhasspy.mobile.platformspecific.toLongOrNullOrConstant
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewState.RemoteHermesHttpConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewState.HttpConfigurationData
 
 @Stable
 class HttpConnectionDetailConfigurationViewModel(
@@ -25,14 +26,14 @@ class HttpConnectionDetailConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState = MutableStateFlow(HttpConnectionDetailConfigurationViewState(RemoteHermesHttpConfigurationData(connection)))
+    private val _viewState = MutableStateFlow(HttpConnectionDetailConfigurationViewState(HttpConfigurationData(connection)))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = { RemoteHermesHttpConfigurationData(connection) },
+            init = { HttpConfigurationData(connection) },
             viewState = viewState,
             configurationViewState = configurationViewState
         )
@@ -49,10 +50,13 @@ class HttpConnectionDetailConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SetHttpSSLVerificationDisabled -> copy(isSSLVerificationDisabled = change.disabled)
-                    is UpdateHttpClientServerEndpointHost -> copy(httpClientServerEndpointHost = change.host)
-                    is UpdateHttpClientServerEndpointPort -> copy(httpClientServerEndpointPort = change.port.toIntOrNullOrConstant())
-                    is UpdateHttpClientTimeout            -> copy(httpClientTimeout = change.text.toLongOrNullOrConstant())
+                    is SetHttpSSLVerificationDisabled     -> copy(isSSLVerificationDisabled = change.disabled)
+                    is UpdateHttpClientServerEndpointHost -> copy(host = change.host)
+                    is UpdateHttpClientServerEndpointPort -> copy(port = change.port.toIntOrNullOrConstant())
+                    is UpdateHttpClientTimeout            -> copy(timeout = change.text.toLongOrNullOrConstant())
+                    is SetHermesEnabled                   -> copy(isHermes = change.enabled)
+                    is SetHomeAssistantEnabled            -> copy(isHomeAssistant = change.enabled)
+                    is SetWyomingEnabled                  -> copy(isWyoming = change.enabled)
                 }
             })
         }
@@ -65,18 +69,36 @@ class HttpConnectionDetailConfigurationViewModel(
     }
 
     override fun onDiscard() {
-        //TODO update connection
-        _viewState.update { it.copy(editData = RemoteHermesHttpConfigurationData(connection)) }
+        _viewState.update { it.copy(editData = HttpConfigurationData(connection)) }
     }
 
     override fun onSave() {
         with(_viewState.value.editData) {
-            //TODO update connection
 
-            //TODO ConfigurationSetting.httpClientServerEndpointHost.value = httpClientServerEndpointHost
-            //TODO ConfigurationSetting.httpClientServerEndpointPort.value = httpClientServerEndpointPort.toIntOrZero()
-            //TODO ConfigurationSetting.isHttpClientSSLVerificationDisabled.value = isHttpSSLVerificationDisabled
-            //TODO ConfigurationSetting.httpClientTimeout.value = httpClientTimeout.toLongOrZero()
+            val newConnection = HttpConnection(
+                id = connection?.id,
+                host = host,
+                port = port,
+                timeout = timeout,
+                bearerToken = bearerToken,
+                isHermes = isHermes,
+                isWyoming = isWyoming,
+                isHomeAssistant = isHomeAssistant,
+                isSSLVerificationDisabled = isSSLVerificationDisabled,
+            )
+
+            ConfigurationSetting.httpConnections.value = ConfigurationSetting.httpConnections.value.toMutableList().apply {
+                val index = indexOf(connection)
+
+                if (index != -1) {
+                    this.removeAt(index)
+                    this.add(index, newConnection)
+                } else {
+                    this.add(newConnection)
+                }
+            }
+
+            connection = newConnection
         }
     }
 

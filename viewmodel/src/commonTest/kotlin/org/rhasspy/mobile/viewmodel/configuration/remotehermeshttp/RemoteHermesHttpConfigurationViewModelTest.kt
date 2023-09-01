@@ -9,7 +9,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.D
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewState.RemoteHermesHttpConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewState.HttpConfigurationData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -18,8 +18,8 @@ class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
 
     private lateinit var remoteHermesHttpConfigurationViewModel: HttpConnectionDetailConfigurationViewModel
 
-    private lateinit var initialRemoteHermesHttpConfigurationData: RemoteHermesHttpConfigurationData
-    private lateinit var remoteHermesHttpConfigurationData: RemoteHermesHttpConfigurationData
+    private lateinit var initialHttpConfigurationData: HttpConfigurationData
+    private lateinit var httpConfigurationData: HttpConfigurationData
 
     @BeforeTest
     fun before() {
@@ -29,17 +29,17 @@ class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
             }
         )
 
-        initialRemoteHermesHttpConfigurationData = RemoteHermesHttpConfigurationData(
-            httpClientServerEndpointHost = "",
-            httpClientServerEndpointPort = 12101,
-            httpClientTimeout = 30000L,
+        initialHttpConfigurationData = HttpConfigurationData(
+            host = "",
+            port = 12101,
+            timeout = 30000L,
             isSSLVerificationDisabled = true
         )
 
-        remoteHermesHttpConfigurationData = RemoteHermesHttpConfigurationData(
-            httpClientServerEndpointHost = getRandomString(5),
-            httpClientServerEndpointPort = 3245,
-            httpClientTimeout = 23456L,
+        httpConfigurationData = HttpConfigurationData(
+            host = getRandomString(5),
+            port = 3245,
+            timeout = 23456L,
             isSSLVerificationDisabled = false
         )
 
@@ -49,11 +49,11 @@ class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
         assertEquals(
-            initialRemoteHermesHttpConfigurationData,
+            initialHttpConfigurationData,
             remoteHermesHttpConfigurationViewModel.viewState.value.editData
         )
 
-        with(remoteHermesHttpConfigurationData) {
+        with(httpConfigurationData) {
             remoteHermesHttpConfigurationViewModel.onEvent(
                 SetHttpSSLVerificationDisabled(
                     isSSLVerificationDisabled
@@ -61,39 +61,39 @@ class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
             )
             remoteHermesHttpConfigurationViewModel.onEvent(
                 UpdateHttpClientServerEndpointHost(
-                    httpClientServerEndpointHost
+                    host
                 )
             )
             remoteHermesHttpConfigurationViewModel.onEvent(
                 UpdateHttpClientServerEndpointPort(
-                    httpClientServerEndpointPort.toString()
+                    port.toString()
                 )
             )
-            remoteHermesHttpConfigurationViewModel.onEvent(UpdateHttpClientTimeout(httpClientTimeout.toString()))
+            remoteHermesHttpConfigurationViewModel.onEvent(UpdateHttpClientTimeout(timeout.toString()))
         }
 
         assertEquals(
-            remoteHermesHttpConfigurationData,
+            httpConfigurationData,
             remoteHermesHttpConfigurationViewModel.viewState.value.editData
         )
 
         remoteHermesHttpConfigurationViewModel.onEvent(Save)
 
         assertEquals(
-            remoteHermesHttpConfigurationData,
+            httpConfigurationData,
             remoteHermesHttpConfigurationViewModel.viewState.value.editData
         )
-        assertEquals(remoteHermesHttpConfigurationData, RemoteHermesHttpConfigurationData())
+        assertEquals(httpConfigurationData, HttpConfigurationData())
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
         assertEquals(
-            initialRemoteHermesHttpConfigurationData,
+            initialHttpConfigurationData,
             remoteHermesHttpConfigurationViewModel.viewState.value.editData
         )
 
-        with(remoteHermesHttpConfigurationData) {
+        with(httpConfigurationData) {
             remoteHermesHttpConfigurationViewModel.onEvent(
                 SetHttpSSLVerificationDisabled(
                     isSSLVerificationDisabled
@@ -101,28 +101,28 @@ class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
             )
             remoteHermesHttpConfigurationViewModel.onEvent(
                 UpdateHttpClientServerEndpointHost(
-                    httpClientServerEndpointHost
+                    host
                 )
             )
             remoteHermesHttpConfigurationViewModel.onEvent(
                 UpdateHttpClientServerEndpointPort(
-                    httpClientServerEndpointPort.toString()
+                    port.toString()
                 )
             )
-            remoteHermesHttpConfigurationViewModel.onEvent(UpdateHttpClientTimeout(httpClientTimeout.toString()))
+            remoteHermesHttpConfigurationViewModel.onEvent(UpdateHttpClientTimeout(timeout.toString()))
         }
 
         assertEquals(
-            remoteHermesHttpConfigurationData,
+            httpConfigurationData,
             remoteHermesHttpConfigurationViewModel.viewState.value.editData
         )
 
         remoteHermesHttpConfigurationViewModel.onEvent(Discard)
 
         assertEquals(
-            initialRemoteHermesHttpConfigurationData,
+            initialHttpConfigurationData,
             remoteHermesHttpConfigurationViewModel.viewState.value.editData
         )
-        assertEquals(initialRemoteHermesHttpConfigurationData, RemoteHermesHttpConfigurationData())
+        assertEquals(initialHttpConfigurationData, HttpConfigurationData())
     }
 }

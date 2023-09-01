@@ -8,14 +8,15 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfi
 
 @Stable
 data class HttpConnectionDetailConfigurationViewState internal constructor(
-    override val editData: RemoteHermesHttpConfigurationData
+    override val editData: HttpConfigurationData
 ) : IConfigurationViewState {
 
     @Stable
-    data class RemoteHermesHttpConfigurationData internal constructor(
-        val httpClientServerEndpointHost: String,
-        val httpClientServerEndpointPort: Int?,
-        val httpClientTimeout: Long?,
+    data class HttpConfigurationData internal constructor(
+        val host: String,
+        val port: Int?,
+        val timeout: Long?,
+        val bearerToken: String?,
         val isSSLVerificationDisabled: Boolean,
         val isHermes: Boolean = false,
         val isWyoming: Boolean = false,
@@ -23,17 +24,18 @@ data class HttpConnectionDetailConfigurationViewState internal constructor(
     ) : IConfigurationData {
 
         internal constructor(connection: HttpConnection?) : this(
-            httpClientServerEndpointHost = connection?.host ?: "",
-            httpClientServerEndpointPort = connection?.port,
-            httpClientTimeout = connection?.timeout,
-            isSSLVerificationDisabled = connection?.isSslVerificationDisabled ?: false,
+            host = connection?.host ?: "",
+            port = connection?.port,
+            timeout = connection?.timeout,
+            bearerToken = connection?.bearerToken,
+            isSSLVerificationDisabled = connection?.isSSLVerificationDisabled ?: false,
             isHermes = connection?.isHermes ?: false,
             isWyoming = connection?.isWyoming ?: false,
             isHomeAssistant = connection?.isHomeAssistant ?: false
         )
 
-        val httpClientServerEndpointPortText: String = httpClientServerEndpointPort.toStringOrEmpty()
-        val httpClientTimeoutText: String = httpClientTimeout.toStringOrEmpty()
+        val portText: String = port.toStringOrEmpty()
+        val timeoutText: String = timeout.toStringOrEmpty()
 
     }
 

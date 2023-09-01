@@ -29,16 +29,23 @@ import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewState.RemoteHermesHttpConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewState.HttpConfigurationData
 
 /**
  * content to configure http configuration
  * switch to disable ssl verification
  */
 @Composable
-fun HttpConnectionDetailScreen(id: HttpConnection?) {
+fun HttpConnectionDetailScreenWrapper(id: HttpConnection?) {
 
     val viewModel: HttpConnectionDetailConfigurationViewModel = LocalViewModelFactory.current.getViewModel(id)
+
+    HttpConnectionDetailScreen(viewModel)
+
+}
+
+@Composable
+fun HttpConnectionDetailScreen(viewModel: HttpConnectionDetailConfigurationViewModel) {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
@@ -63,7 +70,7 @@ fun HttpConnectionDetailScreen(id: HttpConnection?) {
 
 @Composable
 private fun HttpConnectionDetailContent(
-    editData: RemoteHermesHttpConfigurationData,
+    editData: HttpConfigurationData,
     onEvent: (HttpConnectionDetailConfigurationUiEvent) -> Unit
 ) {
 
@@ -87,7 +94,7 @@ private fun HttpConnectionDetailContent(
                 text = MR.strings.rhasspy2_hermes.stable,
                 secondaryText = MR.strings.rhasspy2_hermes_info.stable,
                 isChecked = editData.isHermes,
-                onCheckedChange = { }
+                onCheckedChange = { onEvent(SetHermesEnabled(it)) }
             )
 
             CheckBoxListItem(
@@ -95,7 +102,7 @@ private fun HttpConnectionDetailContent(
                 text = MR.strings.rhasspy3_wyoming.stable,
                 secondaryText = MR.strings.rhasspy3_wyoming_info.stable,
                 isChecked = editData.isWyoming,
-                onCheckedChange = { }
+                onCheckedChange = { onEvent(SetWyomingEnabled(it)) }
             )
 
             CheckBoxListItem(
@@ -103,7 +110,7 @@ private fun HttpConnectionDetailContent(
                 text = MR.strings.home_assistant.stable,
                 secondaryText = MR.strings.home_assistant_info.stable,
                 isChecked = editData.isHomeAssistant,
-                onCheckedChange = { }
+                onCheckedChange = { onEvent(SetHomeAssistantEnabled(it)) }
             )
 
 
@@ -113,7 +120,7 @@ private fun HttpConnectionDetailContent(
         TextFieldListItem(
             label = MR.strings.baseHost.stable,
             modifier = Modifier.testTag(TestTag.Host),
-            value = editData.httpClientServerEndpointHost,
+            value = editData.host,
             onValueChange = { onEvent(UpdateHttpClientServerEndpointHost(it)) },
             isLastItem = false
         )
@@ -122,7 +129,7 @@ private fun HttpConnectionDetailContent(
         TextFieldListItem(
             label = MR.strings.port.stable,
             modifier = Modifier.testTag(TestTag.Port),
-            value = editData.httpClientServerEndpointPortText,
+            value = editData.portText,
             onValueChange = { onEvent(UpdateHttpClientServerEndpointPort(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             isLastItem = false
@@ -132,7 +139,7 @@ private fun HttpConnectionDetailContent(
         TextFieldListItem(
             label = MR.strings.requestTimeout.stable,
             modifier = Modifier.testTag(TestTag.Timeout),
-            value = editData.httpClientTimeoutText,
+            value = editData.timeoutText,
             onValueChange = { onEvent(UpdateHttpClientTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )

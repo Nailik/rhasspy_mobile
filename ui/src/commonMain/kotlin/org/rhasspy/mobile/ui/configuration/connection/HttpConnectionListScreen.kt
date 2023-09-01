@@ -106,7 +106,7 @@ private fun HttpConnectionItemContent(
         },
         trailing = {
             IconButton(
-                onClick = { onEvent(ItemDeleteClick(viewState.connection.id)) }
+                onClick = { } //TODO
             ) {
                 Icon(
                     imageVector = Icons.Filled.DeleteForever,

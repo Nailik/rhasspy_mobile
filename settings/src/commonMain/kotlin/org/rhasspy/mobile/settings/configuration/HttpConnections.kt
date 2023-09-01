@@ -17,7 +17,7 @@ class HttpConnections internal constructor() : ISettingObject<List<HttpConnectio
                     isHermes = if (it.isHermes) 1L else 0L,
                     isWyoming = if (it.isWyoming) 1L else 0L,
                     isHomeAssistant = if (it.isHomeAssistant) 1L else 0L,
-                    isSslVerificationDisabled = if (it.isSslVerificationDisabled) 1L else 0L,
+                    isSslVerificationDisabled = if (it.isSSLVerificationDisabled) 1L else 0L,
                 )
             }
         }
@@ -34,7 +34,7 @@ class HttpConnections internal constructor() : ISettingObject<List<HttpConnectio
                 isHermes = it.isHermes == 1L,
                 isWyoming = it.isWyoming == 1L,
                 isHomeAssistant = it.isHomeAssistant == 1L,
-                isSslVerificationDisabled = it.isSslVerificationDisabled == 1L,
+                isSSLVerificationDisabled = it.isSslVerificationDisabled == 1L,
             )
         }
     }
