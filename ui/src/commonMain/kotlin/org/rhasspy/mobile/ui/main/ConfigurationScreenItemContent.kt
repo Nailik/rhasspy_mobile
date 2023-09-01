@@ -88,15 +88,19 @@ fun ConfigurationScreenItemContent(
                         .fillMaxSize()
                 ) {
 
-                    ServiceStateHeader(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
-                            .padding(horizontal = 16.dp)
-                            .padding(bottom = 16.dp),
-                        serviceViewState = viewState.serviceViewState,
-                        enabled = viewState.isOpenServiceStateDialogEnabled,
-                        onClick = { onEvent(OpenServiceStateDialog) }
-                    )
+                    viewState.serviceViewState?.also { serviceViewState ->
+
+                        ServiceStateHeader(
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 16.dp),
+                            serviceViewState = serviceViewState,
+                            enabled = viewState.isOpenServiceStateDialogEnabled,
+                            onClick = { onEvent(OpenServiceStateDialog) }
+                        )
+
+                    }
 
                     content()
                 }

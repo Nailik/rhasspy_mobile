@@ -39,4 +39,10 @@ class HttpConnections internal constructor() : ISettingObject<List<HttpConnectio
         }
     }
 
+
+    //getList
+    //getbyid
+    //add
+
+
 }

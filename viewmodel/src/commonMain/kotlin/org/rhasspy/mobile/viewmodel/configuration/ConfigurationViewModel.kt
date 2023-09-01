@@ -20,13 +20,13 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
 abstract class ConfigurationViewModel(
-    private val service: IService
+    private val service: IService?
 ) : ScreenViewModel() {
 
     protected val viewStateCreator by inject<IConfigurationViewStateCreator> { parametersOf(service) }
     private val dispatcher by inject<IDispatcherProvider>()
 
-    private val _configurationViewState = MutableStateFlow(ConfigurationViewState(serviceViewState = ServiceViewState(service.serviceState)))
+    private val _configurationViewState = MutableStateFlow(ConfigurationViewState(serviceViewState = service?.let { ServiceViewState(service.serviceState) }))
     val configurationViewState by lazy { initViewStateCreator(_configurationViewState) }
     abstract fun initViewStateCreator(configurationViewState: MutableStateFlow<ConfigurationViewState>): StateFlow<ConfigurationViewState>
 
@@ -45,7 +45,11 @@ abstract class ConfigurationViewModel(
         when (action) {
             Discard                -> discard(false)
             Save                   -> save(false)
-            OpenServiceStateDialog -> _configurationViewState.update { it.copy(dialogState = ServiceStateDialogState(service.serviceState.value.getText())) }
+            OpenServiceStateDialog -> {
+                if (service != null) {
+                    _configurationViewState.update { it.copy(dialogState = ServiceStateDialogState(service.serviceState.value.getText())) }
+                }
+            }
             BackClick              -> navigator.onBackPressed()
         }
     }
