@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.screens.dialog
 
+import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.logic.domains.dialog.IDialogManagerService
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
@@ -7,6 +8,7 @@ import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change.ManualListScroll
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change.ToggleListAutoScroll
 
+@Stable
 class DialogScreenViewModel(
     viewStateCreator: DialogScreenViewStateCreator,
     private val dialogManagerService: IDialogManagerService

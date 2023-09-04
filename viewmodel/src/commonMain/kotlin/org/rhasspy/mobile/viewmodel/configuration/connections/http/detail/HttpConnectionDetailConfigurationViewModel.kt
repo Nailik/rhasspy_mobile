@@ -16,14 +16,17 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpCo
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewState.HttpConfigurationData
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConnectionScreenNavigationDestination.HttpConnectionDetailScreen
 
 @Stable
 class HttpConnectionDetailConfigurationViewModel(
-    private var connection: HttpConnection?,
+    destination: HttpConnectionDetailScreen,
     private val httpConnectionSettingRepository: IHttpConnectionSettingRepository
 ) : ConfigurationViewModel(
     service = null
 ) {
+
+    private var connection: HttpConnection? = destination.id
 
     private val _viewState = MutableStateFlow(HttpConnectionDetailConfigurationViewState(HttpConfigurationData(connection)))
     val viewState = _viewState.readOnly

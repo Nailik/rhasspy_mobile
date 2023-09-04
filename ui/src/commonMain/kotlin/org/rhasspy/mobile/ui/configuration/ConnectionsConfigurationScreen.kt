@@ -18,7 +18,6 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.list.ListElement
@@ -37,9 +36,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConnectionS
  * configuration screens with list items that open bottom sheet
  */
 @Composable
-fun ConnectionsConfigurationScreen() {
-
-    val viewModel: ConnectionsConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+fun ConnectionsConfigurationScreen(viewModel: ConnectionsConfigurationViewModel) {
 
     ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()

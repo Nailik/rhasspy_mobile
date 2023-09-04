@@ -15,7 +15,6 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.CustomDivider
 import org.rhasspy.mobile.ui.content.elements.Icon
@@ -42,9 +41,7 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
  * configuration screens with list items that open bottom sheet
  */
 @Composable
-fun ConfigurationScreen() {
-
-    val viewModel: ConfigurationScreenViewModel = LocalViewModelFactory.current.getViewModel()
+fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel) {
 
     ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()

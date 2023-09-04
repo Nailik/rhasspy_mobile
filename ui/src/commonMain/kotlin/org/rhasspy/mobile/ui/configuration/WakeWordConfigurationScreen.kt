@@ -19,7 +19,6 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -51,9 +50,8 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordCon
  * porcupine wake word settings
  */
 @Composable
-fun WakeWordConfigurationOverviewScreen() {
+fun WakeWordConfigurationOverviewScreen(viewModel: WakeWordConfigurationViewModel) {
 
-    val viewModel: WakeWordConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val configurationViewState by viewModel.configurationViewState.collectAsState()
     val viewState by viewModel.viewState.collectAsState()
 

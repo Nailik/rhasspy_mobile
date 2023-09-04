@@ -12,7 +12,6 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
@@ -28,9 +27,7 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
  * HTTP Endpoint
  */
 @Composable
-fun TextToSpeechConfigurationScreen() {
-
-    val viewModel: TextToSpeechConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+fun TextToSpeechConfigurationScreen(viewModel: TextToSpeechConfigurationViewModel) {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 

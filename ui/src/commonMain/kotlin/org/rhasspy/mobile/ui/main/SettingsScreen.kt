@@ -19,7 +19,6 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.list.ListElement
@@ -36,9 +35,7 @@ import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewState
 
 @Composable
-fun SettingsScreen() {
-
-    val viewModel: SettingsScreenViewModel = LocalViewModelFactory.current.getViewModel()
+fun SettingsScreen(viewModel: SettingsScreenViewModel) {
 
     ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()

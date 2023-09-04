@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
@@ -22,8 +21,7 @@ import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
  * Log settings
  */
 @Composable
-fun LogSettingsContent() {
-    val viewModel: LogSettingsViewModel = LocalViewModelFactory.current.getViewModel()
+fun LogSettingsContent(viewModel: LogSettingsViewModel) {
 
     ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()

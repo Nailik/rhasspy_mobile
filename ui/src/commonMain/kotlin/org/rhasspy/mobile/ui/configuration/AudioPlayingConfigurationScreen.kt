@@ -14,7 +14,6 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.elements.translate
@@ -33,9 +32,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
  * HTTP Endpoint
  */
 @Composable
-fun AudioPlayingConfigurationScreen() {
-
-    val viewModel: AudioPlayingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+fun AudioPlayingConfigurationScreen(viewModel: AudioPlayingConfigurationViewModel) {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 

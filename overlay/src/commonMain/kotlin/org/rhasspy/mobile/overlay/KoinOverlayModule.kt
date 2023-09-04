@@ -12,7 +12,6 @@ fun koinOverlayModule() = module {
 
     single<IIndicationOverlay> {
         IndicationOverlay(
-            viewModelFactory = get(),
             viewModel = get(),
             nativeApplication = get(),
             overlayPermission = get(),

@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.content.LocalSnackBarHostState
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.CustomDivider
 import org.rhasspy.mobile.ui.content.elements.Icon
@@ -48,9 +47,7 @@ import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
  * show log information
  */
 @Composable
-fun LogScreen() {
-
-    val viewModel: LogScreenViewModel = LocalViewModelFactory.current.getViewModel()
+fun LogScreen(viewModel: LogScreenViewModel) {
 
     ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()

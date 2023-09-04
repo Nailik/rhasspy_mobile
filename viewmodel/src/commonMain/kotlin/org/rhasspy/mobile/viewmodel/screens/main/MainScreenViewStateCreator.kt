@@ -35,7 +35,14 @@ class MainScreenViewStateCreator(
 
     private fun getViewState(): MainScreenViewState {
         return MainScreenViewState(
-            bottomNavigationIndex = (navigator.topScreen.value as? MainScreenNavigationDestination?)?.ordinal ?: 1,
+            bottomNavigationIndex = when (navigator.topScreen.value as? MainScreenNavigationDestination?) {
+                MainScreenNavigationDestination.HomeScreen          -> 0
+                MainScreenNavigationDestination.DialogScreen        -> 1
+                MainScreenNavigationDestination.ConfigurationScreen -> 2
+                MainScreenNavigationDestination.SettingsScreen      -> 3
+                MainScreenNavigationDestination.LogScreen           -> 4
+                null                                                -> 1
+            },
             isShowLogEnabled = AppSetting.isShowLogEnabled.value,
             isShowCrashlyticsDialog = !AppSetting.didShowCrashlyticsDialog.value,
             changelog = Json.decodeFromString<JsonArray>(MR.files.changelog.readToString(nativeApplication))

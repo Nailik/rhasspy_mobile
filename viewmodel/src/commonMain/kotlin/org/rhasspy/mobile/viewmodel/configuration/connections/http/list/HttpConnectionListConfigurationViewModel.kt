@@ -12,6 +12,7 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.repositories.IHttpConnectionSettingRepository
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationViewState.HttpConfigurationItemViewState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConnectionScreenNavigationDestination.HttpConnectionDetailScreen
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
@@ -29,8 +30,8 @@ class HttpConnectionListConfigurationViewModel(
 
     private fun collectHttpConnections() {
         viewModelScope.launch(Dispatchers.IO) {
-            httpConnectionSettingRepository.getAllHttpConnections().collect {
-                _viewState.update { it.copy(items = it.items.toImmutableList()) }
+            httpConnectionSettingRepository.getAllHttpConnections().collect { list ->
+                _viewState.update { it.copy(items = list.map { connection -> HttpConfigurationItemViewState(connection) }.toImmutableList()) }
             }
         }
     }

@@ -16,7 +16,6 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.SecondaryContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
@@ -43,27 +42,27 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoun
  */
 
 @Composable
-fun IndicationWakeScreen() {
+fun IndicationWakeScreen(viewModel: WakeIndicationSoundSettingsViewModel) {
     IndicationSoundScreen(
-        viewModel = LocalViewModelFactory.current.getViewModel<WakeIndicationSoundSettingsViewModel>(),
+        viewModel = viewModel,
         screen = WakeIndicationSoundScreen,
         title = MR.strings.wakeSound.stable
     )
 }
 
 @Composable
-fun IndicationRecordedScreen() {
+fun IndicationRecordedScreen(viewModel: RecordedIndicationSoundSettingsViewModel) {
     IndicationSoundScreen(
-        viewModel = LocalViewModelFactory.current.getViewModel<RecordedIndicationSoundSettingsViewModel>(),
+        viewModel = viewModel,
         screen = RecordedIndicationSoundScreen,
         title = MR.strings.recordedSound.stable
     )
 }
 
 @Composable
-fun IndicationErrorScreen() {
+fun IndicationErrorScreen(viewModel: ErrorIndicationSoundSettingsViewModel) {
     IndicationSoundScreen(
-        viewModel = LocalViewModelFactory.current.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
+        viewModel = viewModel,
         screen = ErrorIndicationSoundScreen,
         title = MR.strings.errorSound.stable
     )
@@ -73,8 +72,8 @@ fun IndicationErrorScreen() {
  * wake word indication settings
  */
 @Composable
-fun IndicationSettingsOverviewScreen() {
-    val viewModel: IndicationSettingsViewModel = LocalViewModelFactory.current.getViewModel()
+fun IndicationSettingsOverviewScreen(viewModel: IndicationSettingsViewModel) {
+
     val viewState by viewModel.viewState.collectAsState()
 
     ScreenContent(screenViewModel = viewModel) {

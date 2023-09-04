@@ -19,16 +19,18 @@ import org.rhasspy.mobile.ui.configuration.wakeword.WakeWordAudioRecorderFormatS
 import org.rhasspy.mobile.ui.settings.*
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.*
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
 
 @Composable
 fun NavigationContent(
-    screen: NavigationDestination
+    screen: NavigationDestination,
+    viewModel: MainScreenViewModel
 ) {
     Crossfade(targetState = screen) {
         when (it) {
             is ConfigurationScreenNavigationDestination   -> ConfigurationNavigationContent(it)
             is ConnectionScreenNavigationDestination      -> ConnectionScreenNavigationContent(it)
-            is MainScreenNavigationDestination            -> MainNavigationContent(it)
+            is MainScreenNavigationDestination            -> MainNavigationContent(it, viewModel)
             is SettingsScreenDestination                  -> SettingsNavigationContent(it)
             is WakeWordConfigurationScreenDestination     -> WakeWordNavigationContent(it)
             is IndicationSettingsScreenDestination        -> IndicationNavigationContent(it)
@@ -40,20 +42,21 @@ fun NavigationContent(
 
 @Composable
 private fun MainNavigationContent(
-    screen: MainScreenNavigationDestination
+    screen: MainScreenNavigationDestination,
+    viewModel: MainScreenViewModel
 ) {
     Column {
         Box(modifier = Modifier.weight(1f)) {
             when (screen) {
-                MainScreenNavigationDestination.HomeScreen          -> HomeScreen()
-                MainScreenNavigationDestination.DialogScreen        -> DialogScreen()
-                MainScreenNavigationDestination.ConfigurationScreen -> ConfigurationScreen()
-                MainScreenNavigationDestination.SettingsScreen      -> SettingsScreen()
-                MainScreenNavigationDestination.LogScreen           -> LogScreen()
+                is MainScreenNavigationDestination.HomeScreen          -> HomeScreen(screen.viewModel)
+                is MainScreenNavigationDestination.DialogScreen        -> DialogScreen(screen.viewModel)
+                is MainScreenNavigationDestination.ConfigurationScreen -> ConfigurationScreen(screen.viewModel)
+                is MainScreenNavigationDestination.SettingsScreen      -> SettingsScreen(screen.viewModel)
+                is MainScreenNavigationDestination.LogScreen           -> LogScreen(screen.viewModel)
             }
         }
 
-        BottomNavigation()
+        BottomNavigation(viewModel)
     }
 }
 
@@ -62,16 +65,16 @@ private fun ConfigurationNavigationContent(
     screen: ConfigurationScreenNavigationDestination
 ) {
     when (screen) {
-        ConfigurationScreenNavigationDestination.ConnectionsConfigurationScreen            -> ConnectionsConfigurationScreen()
-        ConfigurationScreenNavigationDestination.DialogManagementConfigurationScreen       -> DialogManagementConfigurationScreen()
-        ConfigurationScreenNavigationDestination.AudioInputConfigurationScreen             -> AudioInputConfigurationScreen()
-        ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen               -> WakeWordConfigurationOverviewScreen()
-        ConfigurationScreenNavigationDestination.SpeechToTextConfigurationScreen           -> SpeechToTextConfigurationScreen()
-        ConfigurationScreenNavigationDestination.VoiceActivityDetectionConfigurationScreen -> VoiceActivityDetectionConfigurationScreen()
-        ConfigurationScreenNavigationDestination.IntentRecognitionConfigurationScreen      -> IntentRecognitionConfigurationScreen()
-        ConfigurationScreenNavigationDestination.IntentHandlingConfigurationScreen         -> IntentHandlingConfigurationScreen()
-        ConfigurationScreenNavigationDestination.TextToSpeechConfigurationScreen           -> TextToSpeechConfigurationScreen()
-        ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen           -> AudioPlayingConfigurationScreen()
+        is ConfigurationScreenNavigationDestination.ConnectionsConfigurationScreen            -> ConnectionsConfigurationScreen(screen.viewModel)
+        is ConfigurationScreenNavigationDestination.DialogManagementConfigurationScreen       -> DialogManagementConfigurationScreen(screen.viewModel)
+        is ConfigurationScreenNavigationDestination.AudioInputConfigurationScreen             -> AudioInputConfigurationScreen(screen.viewModel)
+        is ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen               -> WakeWordConfigurationOverviewScreen(screen.viewModel)
+        is ConfigurationScreenNavigationDestination.SpeechToTextConfigurationScreen           -> SpeechToTextConfigurationScreen(screen.viewModel)
+        is ConfigurationScreenNavigationDestination.VoiceActivityDetectionConfigurationScreen -> VoiceActivityDetectionConfigurationScreen(screen.viewModel)
+        is ConfigurationScreenNavigationDestination.IntentRecognitionConfigurationScreen      -> IntentRecognitionConfigurationScreen(screen.viewModel)
+        is ConfigurationScreenNavigationDestination.IntentHandlingConfigurationScreen         -> IntentHandlingConfigurationScreen(screen.viewModel)
+        is ConfigurationScreenNavigationDestination.TextToSpeechConfigurationScreen           -> TextToSpeechConfigurationScreen(screen.viewModel)
+        is ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen           -> AudioPlayingConfigurationScreen(screen.viewModel)
     }
 }
 
@@ -80,9 +83,9 @@ private fun ConnectionScreenNavigationContent(
     screen: ConnectionScreenNavigationDestination
 ) {
     when (screen) {
-        ConnectionScreenNavigationDestination.MqttConnectionScreen          -> MqttConnectionScreen()
-        ConnectionScreenNavigationDestination.HttpConnectionListScreen      -> HttpConnectionListScreen()
-        ConnectionScreenNavigationDestination.WebServerConnectionScreen     -> WebServerConnectionScreen()
+        is ConnectionScreenNavigationDestination.MqttConnectionScreen      -> MqttConnectionScreen(screen.viewModel)
+        is ConnectionScreenNavigationDestination.HttpConnectionListScreen  -> HttpConnectionListScreen(screen.viewModel)
+        is ConnectionScreenNavigationDestination.WebServerConnectionScreen -> WebServerConnectionScreen(screen.viewModel)
         is ConnectionScreenNavigationDestination.HttpConnectionDetailScreen -> HttpConnectionDetailScreenWrapper(screen.viewModel)
     }
 }
@@ -92,15 +95,15 @@ private fun SettingsNavigationContent(
     screen: SettingsScreenDestination
 ) {
     when (screen) {
-        SettingsScreenDestination.AboutSettings             -> AboutScreen()
-        SettingsScreenDestination.AudioFocusSettings        -> AudioFocusSettingsContent()
-        SettingsScreenDestination.BackgroundServiceSettings -> BackgroundServiceSettingsContent()
-        SettingsScreenDestination.DeviceSettings            -> DeviceSettingsContent()
-        SettingsScreenDestination.IndicationSettings        -> IndicationSettingsOverviewScreen()
-        SettingsScreenDestination.AppearanceSettingsScreen  -> AppearanceSettingsScreenItemContent()
-        SettingsScreenDestination.LogSettings               -> LogSettingsContent()
-        SettingsScreenDestination.MicrophoneOverlaySettings -> MicrophoneOverlaySettingsContent()
-        SettingsScreenDestination.SaveAndRestoreSettings    -> SaveAndRestoreSettingsContent()
+        is SettingsScreenDestination.AboutSettings             -> AboutScreen(screen.viewModel)
+        is SettingsScreenDestination.AudioFocusSettings        -> AudioFocusSettingsContent(screen.viewModel)
+        is SettingsScreenDestination.BackgroundServiceSettings -> BackgroundServiceSettingsContent(screen.viewModel)
+        is SettingsScreenDestination.DeviceSettings            -> DeviceSettingsContent(screen.viewModel)
+        is SettingsScreenDestination.IndicationSettings        -> IndicationSettingsOverviewScreen(screen.viewModel)
+        is SettingsScreenDestination.AppearanceSettingsScreen  -> AppearanceSettingsScreenItemContent(screen.viewModel)
+        is SettingsScreenDestination.LogSettings               -> LogSettingsContent(screen.viewModel)
+        is SettingsScreenDestination.MicrophoneOverlaySettings -> MicrophoneOverlaySettingsContent(screen.viewModel)
+        is SettingsScreenDestination.SaveAndRestoreSettings    -> SaveAndRestoreSettingsContent(screen.viewModel)
     }
 }
 
@@ -109,10 +112,10 @@ private fun WakeWordNavigationContent(
     screen: WakeWordConfigurationScreenDestination
 ) {
     when (screen) {
-        WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen -> PorcupineLanguageScreen()
-        WakeWordConfigurationScreenDestination.EditPorcupineWakeWordScreen -> PorcupineKeywordScreen()
-        WakeWordConfigurationScreenDestination.AudioRecorderFormatScreen   -> WakeWordAudioRecorderFormatScreen()
-        WakeWordConfigurationScreenDestination.AudioOutputFormatScreen     -> WakeWordAudioOutputFormatScreen()
+        is WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen -> PorcupineLanguageScreen(screen.viewModel)
+        is WakeWordConfigurationScreenDestination.EditPorcupineWakeWordScreen -> PorcupineKeywordScreen(screen.viewModel)
+        is WakeWordConfigurationScreenDestination.AudioRecorderFormatScreen   -> WakeWordAudioRecorderFormatScreen(screen.viewModel)
+        is WakeWordConfigurationScreenDestination.AudioOutputFormatScreen     -> WakeWordAudioOutputFormatScreen(screen.viewModel)
     }
 }
 
@@ -121,8 +124,8 @@ private fun SpeechToTextConfigurationNavigationContent(
     screen: SpeechToTextConfigurationScreenDestination
 ) {
     when (screen) {
-        SpeechToTextConfigurationScreenDestination.AudioRecorderFormatScreen -> SpeechToTextAudioRecorderFormatScreen()
-        SpeechToTextConfigurationScreenDestination.AudioOutputFormatScreen   -> SpeechToTextAudioOutputFormatScreen()
+        is SpeechToTextConfigurationScreenDestination.AudioRecorderFormatScreen -> SpeechToTextAudioRecorderFormatScreen(screen.viewModel)
+        is SpeechToTextConfigurationScreenDestination.AudioOutputFormatScreen   -> SpeechToTextAudioOutputFormatScreen(screen.viewModel)
     }
 }
 
@@ -131,9 +134,9 @@ private fun IndicationNavigationContent(
     screen: IndicationSettingsScreenDestination
 ) {
     when (screen) {
-        IndicationSettingsScreenDestination.WakeIndicationSoundScreen     -> IndicationWakeScreen()
-        IndicationSettingsScreenDestination.RecordedIndicationSoundScreen -> IndicationRecordedScreen()
-        IndicationSettingsScreenDestination.ErrorIndicationSoundScreen    -> IndicationErrorScreen()
+        is IndicationSettingsScreenDestination.WakeIndicationSoundScreen     -> IndicationWakeScreen(screen.viewModel)
+        is IndicationSettingsScreenDestination.RecordedIndicationSoundScreen -> IndicationRecordedScreen(screen.viewModel)
+        is IndicationSettingsScreenDestination.ErrorIndicationSoundScreen    -> IndicationErrorScreen(screen.viewModel)
     }
 }
 

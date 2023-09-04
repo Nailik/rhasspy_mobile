@@ -15,7 +15,6 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.LocalSnackBarHostState
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
@@ -35,8 +34,7 @@ import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettin
  */
 
 @Composable
-fun SaveAndRestoreSettingsContent() {
-    val viewModel: SaveAndRestoreSettingsViewModel = LocalViewModelFactory.current.getViewModel()
+fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel) {
 
     ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()

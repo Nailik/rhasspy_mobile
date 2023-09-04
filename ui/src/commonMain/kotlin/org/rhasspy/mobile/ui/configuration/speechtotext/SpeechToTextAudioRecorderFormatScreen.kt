@@ -17,7 +17,6 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
@@ -29,8 +28,8 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData.SpeechToTextAudioRecorderConfigurationData
 
 @Composable
-fun SpeechToTextAudioRecorderFormatScreen() {
-    val viewModel: SpeechToTextConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+fun SpeechToTextAudioRecorderFormatScreen(viewModel: SpeechToTextConfigurationViewModel) {
+
     val viewState by viewModel.viewState.collectAsState()
     val editData = viewState.editData
 

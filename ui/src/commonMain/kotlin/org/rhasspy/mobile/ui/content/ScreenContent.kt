@@ -6,14 +6,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.SnackBar
-import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Confirm
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Dismiss
@@ -28,9 +30,9 @@ val LocalSnackBarHostState = compositionLocalOf<SnackbarHostState> {
     error("No SnackBarHostState provided")
 }
 
-val LocalViewModelFactory = compositionLocalOf<ViewModelFactory> {
-    error("No LocalViewModelFactory provided")
-}
+////val LocalViewModelFactory = compositionLocalOf<ViewModelFactory> {
+//    error("No LocalViewModelFactory provided")
+//}
 
 @Composable
 fun ScreenContent(
@@ -40,13 +42,6 @@ fun ScreenContent(
 ) {
 
     val screenViewState by screenViewModel.screenViewState.collectAsState()
-
-    DisposableEffect(Unit) {
-        screenViewModel.onComposed()
-        onDispose {
-            screenViewModel.onDisposed()
-        }
-    }
 
     screenViewState.dialogState?.also { dialogState ->
         when (dialogState) {

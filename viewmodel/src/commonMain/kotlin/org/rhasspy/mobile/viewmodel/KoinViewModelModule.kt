@@ -25,7 +25,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.AudioRecorderViewStateCreator
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionViewModel
+import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
@@ -103,7 +103,9 @@ fun viewModelModule() = module {
     factoryOf(::ConfigurationScreenViewStateCreator)
     singleOf(::ConfigurationScreenViewModel)
 
-    factoryOf(::IConfigurationViewStateCreator)
+    factory { params ->
+        IConfigurationViewStateCreator(params[0])
+    }
 
     singleOf(::ConnectionsScreenViewStateCreator)
     singleOf(::ConnectionsConfigurationViewModel)
@@ -120,7 +122,7 @@ fun viewModelModule() = module {
 
     factory { params ->
         HttpConnectionDetailConfigurationViewModel(
-            connection = params[0],
+            destination = params[0],
             httpConnectionSettingRepository = get(),
         )
     }
@@ -136,7 +138,7 @@ fun viewModelModule() = module {
     }
     single {
         val audioRecorder: IAudioRecorder = get()
-        VoiceActivityDetectionViewModel(
+        VoiceActivityDetectionConfigurationViewModel(
             nativeApplication = get(),
             audioRecorderViewStateCreator = get { parametersOf(audioRecorder) },
             service = get { parametersOf(audioRecorder) },

@@ -8,7 +8,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.*
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.getSystemService
@@ -24,7 +23,6 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.native.nativeComposeView
 import org.rhasspy.mobile.ui.overlay.MicrophoneOverlay
 import org.rhasspy.mobile.ui.theme.AppTheme
@@ -65,13 +63,10 @@ actual class MicrophoneOverlay actual constructor(
     private fun getView(): ComposeView {
         return nativeComposeView(context) { view ->
             AppTheme {
-                CompositionLocalProvider(
-                    LocalViewModelFactory provides viewModelFactory
-                ) {
-                    MicrophoneOverlay(
-                        onDrag = { drag -> onDrag(drag, view) }
-                    )
-                }
+                MicrophoneOverlay(
+                    viewModel = viewModel,
+                    onDrag = { drag -> onDrag(drag, view) }
+                )
             }
         }
     }

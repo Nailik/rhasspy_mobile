@@ -24,7 +24,6 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.resources.icons.RhasspyLogo
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.LocalSnackBarHostState
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.list.ListElement
@@ -44,9 +43,7 @@ import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewState
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AboutScreen() {
-
-    val viewModel: AboutScreenViewModel = LocalViewModelFactory.current.getViewModel()
+fun AboutScreen(viewModel: AboutScreenViewModel) {
 
     ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()

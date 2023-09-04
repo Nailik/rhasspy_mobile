@@ -1,7 +1,9 @@
 package org.rhasspy.mobile.viewmodel.screen
 
+import androidx.compose.runtime.Stable
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okio.Path
@@ -31,6 +33,16 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.Mic
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.OverlayPermissionInfo
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.*
 
+@Stable
+interface IScreenViewModel {
+
+    val screenViewState: StateFlow<ScreenViewState>
+
+    fun onEvent(event: ScreenViewModelUiEvent)
+    fun onBackPressedClick(): Boolean
+
+}
+
 abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
 
     protected val navigator by inject<INavigator>()
@@ -43,9 +55,6 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
 
     private val _screenViewState = MutableStateFlow(ScreenViewState())
     override val screenViewState = _screenViewState.readOnly
-
-    override fun onComposed() = navigator.onComposed(this)
-    override fun onDisposed() = navigator.onDisposed(this)
 
     fun requireMicrophonePermission(function: () -> Unit) {
         if (microphonePermission.granted.value) {

@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -29,8 +28,7 @@ import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsViewMo
  */
 
 @Composable
-fun AppearanceSettingsScreenItemContent() {
-    val viewModel: AppearanceSettingsViewModel = LocalViewModelFactory.current.getViewModel()
+fun AppearanceSettingsScreenItemContent(viewModel: AppearanceSettingsViewModel) {
 
     ScreenContent(
         modifier = Modifier.testTag(AppearanceSettingsScreen),

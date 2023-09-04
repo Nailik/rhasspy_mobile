@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.resources.icons.RhasspyLogo
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
@@ -29,9 +28,8 @@ import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
  * navigation bar on bottom
  */
 @Composable
-fun BottomNavigation() {
+fun BottomNavigation(viewModel: MainScreenViewModel) { //TODO separate viewmodel
 
-    val viewModel: MainScreenViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
     NavigationBar {

@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.settings.audiofocus
 
+import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
@@ -8,6 +9,7 @@ import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEven
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.*
 
+@Stable
 class AudioFocusSettingsViewModel(
     viewStateCreator: AudioFocusSettingsViewStateCreator
 ) : ScreenViewModel() {

@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection
 
+import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -24,7 +25,8 @@ import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceAc
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionViewState.VoiceActivityDetectionConfigurationData
 import kotlin.math.pow
 
-class VoiceActivityDetectionViewModel(
+@Stable
+class VoiceActivityDetectionConfigurationViewModel(
     private val nativeApplication: NativeApplication,
     audioRecorderViewStateCreator: AudioRecorderViewStateCreator,
     service: IVoiceActivityDetectionService,
@@ -149,9 +151,9 @@ class VoiceActivityDetectionViewModel(
 
     }
 
-    override fun onDisposed() {
+    override fun onCleared() {
         stopRecording()
-        super.onDisposed()
+        super.onCleared()
     }
 
     private fun startRecording() {

@@ -15,7 +15,6 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
@@ -34,9 +33,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScr
  * DropDown to select dialog management option
  */
 @Composable
-fun DialogManagementConfigurationScreen() {
-
-    val viewModel: DialogManagementConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+fun DialogManagementConfigurationScreen(viewModel: DialogManagementConfigurationViewModel) {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 

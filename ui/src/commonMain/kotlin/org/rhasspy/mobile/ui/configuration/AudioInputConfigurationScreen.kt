@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -37,9 +36,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
 @Composable
-fun AudioInputConfigurationScreen() {
-
-    val viewModel: AudioInputConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+fun AudioInputConfigurationScreen(viewModel: AudioInputConfigurationViewModel) {
 
     ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()

@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -34,8 +33,8 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
  *  bottom bar to switch between pages
  */
 @Composable
-fun PorcupineKeywordScreen() {
-    val viewModel: WakeWordConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
+
     val viewState by viewModel.viewState.collectAsState()
     val editData = viewState.editData.wakeWordPorcupineConfigurationData
 

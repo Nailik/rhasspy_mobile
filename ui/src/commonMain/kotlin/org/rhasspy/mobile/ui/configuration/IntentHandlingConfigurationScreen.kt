@@ -15,7 +15,6 @@ import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.list.RadioButtonListItem
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
@@ -34,10 +33,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
  * home assistant configuration
  */
 @Composable
-fun IntentHandlingConfigurationScreen() {
-
-    val viewModel: IntentHandlingConfigurationViewModel =
-        LocalViewModelFactory.current.getViewModel()
+fun IntentHandlingConfigurationScreen(viewModel: IntentHandlingConfigurationViewModel) {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 

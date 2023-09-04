@@ -12,7 +12,6 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
@@ -28,10 +27,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
  * text field for endpoint
  */
 @Composable
-fun IntentRecognitionConfigurationScreen() {
-
-    val viewModel: IntentRecognitionConfigurationViewModel =
-        LocalViewModelFactory.current.getViewModel()
+fun IntentRecognitionConfigurationScreen(viewModel: IntentRecognitionConfigurationViewModel) {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 

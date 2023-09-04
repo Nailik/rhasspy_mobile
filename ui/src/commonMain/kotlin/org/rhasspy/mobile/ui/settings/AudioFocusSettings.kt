@@ -9,7 +9,6 @@ import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.list.CheckBoxListItem
@@ -24,8 +23,7 @@ import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEven
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewModel
 
 @Composable
-fun AudioFocusSettingsContent() {
-    val viewModel: AudioFocusSettingsViewModel = LocalViewModelFactory.current.getViewModel()
+fun AudioFocusSettingsContent(viewModel: AudioFocusSettingsViewModel) {
 
     ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
