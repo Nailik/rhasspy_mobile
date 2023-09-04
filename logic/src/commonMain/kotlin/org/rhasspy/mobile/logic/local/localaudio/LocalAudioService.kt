@@ -43,7 +43,7 @@ internal class LocalAudioService(
     paramsCreator: LocalAudioServiceParamsCreator
 ) : ILocalAudioService {
 
-    override val logger = LogType.LocalAudioService.logger()
+    private val logger = LogType.LocalAudioService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly

@@ -58,7 +58,7 @@ internal class DialogManagerService(
 
     override val dialogHistory = MutableStateFlow<ImmutableList<DialogInformation>>(persistentListOf())
 
-    override val logger = LogType.DialogManagerService.logger()
+    private val logger = LogType.DialogManagerService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly

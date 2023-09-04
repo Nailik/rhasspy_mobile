@@ -1,7 +1,9 @@
 package org.rhasspy.mobile.logic.domains.intenthandling
 
+import org.rhasspy.mobile.data.connection.HttpConnectionParams
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 
 internal data class IntentHandlingServiceParams(
-    val intentHandlingOption: IntentHandlingOption
+    val intentHandlingOption: IntentHandlingOption,
+    val httpConnectionParams: HttpConnectionParams
 )

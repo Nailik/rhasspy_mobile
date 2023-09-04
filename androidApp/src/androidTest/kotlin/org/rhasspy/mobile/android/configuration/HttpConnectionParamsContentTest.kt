@@ -19,7 +19,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class HttpConnectionContentTest : FlakyTest() {
+class HttpConnectionParamsContentTest : FlakyTest() {
 
     private val viewModel = get<HttpConnectionDetailConfigurationViewModel>()
 

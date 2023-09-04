@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.data.connection.HttpConnection
+import org.rhasspy.mobile.data.connection.HttpConnectionParams
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toIntOrNullOrConstant
 import org.rhasspy.mobile.platformspecific.toLongOrNullOrConstant
@@ -26,7 +26,7 @@ class HttpConnectionDetailConfigurationViewModel(
     service = null
 ) {
 
-    private var connection: HttpConnection? = destination.id
+    private var connection: HttpConnectionParams? = destination.id
 
     private val _viewState = MutableStateFlow(HttpConnectionDetailConfigurationViewState(HttpConfigurationData(connection)))
     val viewState = _viewState.readOnly
@@ -76,7 +76,7 @@ class HttpConnectionDetailConfigurationViewModel(
 
     override fun onSave() {
         with(_viewState.value.editData) {
-            connection = HttpConnection(
+            connection = HttpConnectionParams(
                 id = connection?.id,
                 host = host,
                 port = port,

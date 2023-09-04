@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.connections.http.list
 
-import org.rhasspy.mobile.data.connection.HttpConnection
+import org.rhasspy.mobile.data.connection.HttpConnectionParams
 
 sealed interface HttpConnectionListConfigurationUiEvent {
 
@@ -8,7 +8,7 @@ sealed interface HttpConnectionListConfigurationUiEvent {
 
         data object BackClick : Action
         data object AddClick : Action
-        data class ItemClick(val id: HttpConnection) : Action
+        data class ItemClick(val id: HttpConnectionParams) : Action
 
     }
 

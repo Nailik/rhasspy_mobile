@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.viewmodel.configuration.connections.http.detail
 
 import androidx.compose.runtime.Stable
-import org.rhasspy.mobile.data.connection.HttpConnection
+import org.rhasspy.mobile.data.connection.HttpConnectionParams
 import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
@@ -23,7 +23,7 @@ data class HttpConnectionDetailConfigurationViewState internal constructor(
         val isHomeAssistant: Boolean = false,
     ) : IConfigurationData {
 
-        internal constructor(connection: HttpConnection?) : this(
+        internal constructor(connection: HttpConnectionParams?) : this(
             host = connection?.host ?: "",
             port = connection?.port,
             timeout = connection?.timeout,

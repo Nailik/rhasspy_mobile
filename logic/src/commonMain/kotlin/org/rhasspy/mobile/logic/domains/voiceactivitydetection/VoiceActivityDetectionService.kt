@@ -26,7 +26,7 @@ internal class VoiceActivityDetectionService(
     private val audioRecorder: IAudioRecorder
 ) : IVoiceActivityDetectionService {
 
-    override val logger = LogType.VoiceActivityDetectionService.logger()
+    private val logger = LogType.VoiceActivityDetectionService.logger()
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
 

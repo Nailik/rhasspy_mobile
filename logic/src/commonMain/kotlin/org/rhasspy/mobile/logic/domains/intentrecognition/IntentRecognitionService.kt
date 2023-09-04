@@ -43,7 +43,7 @@ internal class IntentRecognitionService(
     paramsCreator: IntentRecognitionServiceParamsCreator
 ) : IIntentRecognitionService {
 
-    override val logger = LogType.IntentRecognitionService.logger()
+    private val logger = LogType.IntentRecognitionService.logger()
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
     private val httpClientService by inject<IHttpClientService>()
@@ -103,6 +103,8 @@ internal class IntentRecognitionService(
                             intentName = readIntentNameFromJson(result.data),
                             intent = result.data
                         )
+
+                        is HttpClientResult.KnownError -> IntentRecognitionError(Source.Local)
                     }
                     serviceMiddleware.action(action)
                 }

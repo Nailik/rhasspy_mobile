@@ -37,7 +37,7 @@ internal class AudioPlayingService(
     paramsCreator: AudioPlayingServiceParamsCreator
 ) : IAudioPlayingService {
 
-    override val logger = LogType.AudioPlayingService.logger()
+    private val logger = LogType.AudioPlayingService.logger()
 
     private val audioFocusService by inject<IAudioFocusService>()
     private val localAudioService by inject<ILocalAudioService>()

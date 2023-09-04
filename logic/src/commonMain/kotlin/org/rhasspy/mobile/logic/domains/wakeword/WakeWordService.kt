@@ -43,7 +43,7 @@ internal class WakeWordService(
     private val audioRecorder: IAudioRecorder,
 ) : IWakeWordService {
 
-    override val logger = LogType.WakeWordService.logger()
+    private val logger = LogType.WakeWordService.logger()
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
     private val scope = CoroutineScope(Dispatchers.IO)

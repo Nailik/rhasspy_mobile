@@ -69,7 +69,7 @@ internal class WebServerService(
     paramsCreator: WebServerServiceParamsCreator
 ) : IWebServerService {
 
-    override val logger = LogType.WebServerService.logger()
+    private val logger = LogType.WebServerService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly

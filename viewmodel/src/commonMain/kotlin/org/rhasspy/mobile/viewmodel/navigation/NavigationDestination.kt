@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.data.connection.HttpConnection
+import org.rhasspy.mobile.data.connection.HttpConnectionParams
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
@@ -122,7 +122,7 @@ sealed class NavigationDestination : KoinComponent {
             override val viewModel get() = get<HttpConnectionListConfigurationViewModel> { parametersOf(this) }
         }
 
-        data class HttpConnectionDetailScreen(val id: HttpConnection?) : ConnectionScreenNavigationDestination() {
+        data class HttpConnectionDetailScreen(val id: HttpConnectionParams?) : ConnectionScreenNavigationDestination() {
             override val viewModel get() = get<HttpConnectionDetailConfigurationViewModel> { parametersOf(this) }
         }
 

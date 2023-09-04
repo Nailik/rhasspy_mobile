@@ -30,7 +30,7 @@ interface IIndicationService : IService {
 
 internal class IndicationService : IIndicationService {
 
-    override val logger = LogType.IndicationService.logger()
+    private val logger = LogType.IndicationService.logger()
     private val localAudioService by inject<ILocalAudioService>()
 
     //states are used by overlay

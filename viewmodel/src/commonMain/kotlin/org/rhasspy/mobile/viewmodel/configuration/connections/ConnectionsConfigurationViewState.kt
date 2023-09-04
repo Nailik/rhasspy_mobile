@@ -11,8 +11,7 @@ data class ConnectionsConfigurationViewState internal constructor(
 
     @Stable
     data class HttpViewState internal constructor(
-        val httpConnectionCount: Int,
-        val serviceState: ServiceViewState
+        val httpConnectionCount: Int
     )
 
     @Stable

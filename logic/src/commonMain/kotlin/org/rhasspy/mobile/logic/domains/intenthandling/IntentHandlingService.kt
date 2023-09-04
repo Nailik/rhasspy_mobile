@@ -33,7 +33,7 @@ internal class IntentHandlingService(
     paramsCreator: IntentHandlingServiceParamsCreator
 ) : IIntentHandlingService {
 
-    override val logger = LogType.IntentHandlingService.logger()
+    private val logger = LogType.IntentHandlingService.logger()
 
     private val httpClientService by inject<IHttpClientService>()
     private val homeAssistantService by inject<IHomeAssistantService>()

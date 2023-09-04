@@ -31,7 +31,7 @@ internal class HomeAssistantService(
     paramsCreator: HomeAssistantServiceParamsCreator,
 ) : IHomeAssistantService {
 
-    override val logger = LogType.HomeAssistanceService.logger()
+    private val logger = LogType.HomeAssistanceService.logger()
 
     private val httpClientService by inject<IHttpClientService>()
 

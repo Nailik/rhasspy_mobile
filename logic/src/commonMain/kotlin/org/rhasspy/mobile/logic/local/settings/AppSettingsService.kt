@@ -26,7 +26,7 @@ interface IAppSettingsService : IService {
  */
 internal class AppSettingsService : IAppSettingsService {
 
-    override val logger = LogType.AppSettingsService.logger()
+    private val logger = LogType.AppSettingsService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
     override val serviceState = _serviceState.readOnly

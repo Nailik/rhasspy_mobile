@@ -13,19 +13,19 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.data.connection.HttpConnection
+import org.rhasspy.mobile.data.connection.HttpConnectionParams
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ISettingsDatabase
 
 interface IHttpConnectionSettingRepository {
 
-    fun addOrUpdateHttpConnection(connection: HttpConnection)
+    fun addOrUpdateHttpConnection(connection: HttpConnectionParams)
 
-    fun removeHttpConnection(connection: HttpConnection)
+    fun removeHttpConnection(connection: HttpConnectionParams)
 
-    suspend fun getHttpConnection(id: Long): StateFlow<HttpConnection>
+    suspend fun getHttpConnection(id: Long): StateFlow<HttpConnectionParams>
 
-    fun getAllHttpConnections(): Flow<List<HttpConnection>>
+    fun getAllHttpConnections(): Flow<List<HttpConnectionParams>>
 
 
 }
@@ -34,7 +34,7 @@ class HttpConnectionSettingRepository internal constructor() : IHttpConnectionSe
 
     val database = get<ISettingsDatabase>().database
 
-    override fun addOrUpdateHttpConnection(connection: HttpConnection) {
+    override fun addOrUpdateHttpConnection(connection: HttpConnectionParams) {
         with(connection) {
             database.settingsHttpConnectionsQueries.insertOrUpdate(
                 id = id,
@@ -50,13 +50,13 @@ class HttpConnectionSettingRepository internal constructor() : IHttpConnectionSe
         }
     }
 
-    override fun removeHttpConnection(connection: HttpConnection) {
+    override fun removeHttpConnection(connection: HttpConnectionParams) {
         connection.id?.also {
             database.settingsHttpConnectionsQueries.remove(it)
         }
     }
 
-    override suspend fun getHttpConnection(id: Long): StateFlow<HttpConnection> {
+    override suspend fun getHttpConnection(id: Long): StateFlow<HttpConnectionParams> {
         return database.settingsHttpConnectionsQueries.select()
             .asFlow()
             .mapToOne(Dispatchers.IO)
@@ -64,15 +64,15 @@ class HttpConnectionSettingRepository internal constructor() : IHttpConnectionSe
             .mapReadonlyState { it.mapToHttpConnection() }
     }
 
-    override fun getAllHttpConnections(): Flow<List<HttpConnection>> {
+    override fun getAllHttpConnections(): Flow<List<HttpConnectionParams>> {
         return database.settingsHttpConnectionsQueries.select()
             .asFlow()
             .mapToList(Dispatchers.IO)
             .map { list -> list.map { it.mapToHttpConnection() } }
     }
 
-    private fun SettingsHttpConnection.mapToHttpConnection(): HttpConnection {
-        return HttpConnection(
+    private fun SettingsHttpConnection.mapToHttpConnection(): HttpConnectionParams {
+        return HttpConnectionParams(
             id = id,
             host = host,
             port = port?.toInt(),

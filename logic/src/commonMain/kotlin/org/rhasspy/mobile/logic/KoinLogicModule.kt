@@ -6,9 +6,8 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.logic.connections.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.logic.connections.homeassistant.HomeAssistantServiceParamsCreator
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantService
-import org.rhasspy.mobile.logic.connections.httpclient.HttpClientService
-import org.rhasspy.mobile.logic.connections.httpclient.HttpClientServiceParamsCreator
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.connections.httpclient.HttpClientConnection
+import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientConnection
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
 import org.rhasspy.mobile.logic.connections.mqtt.MqttService
 import org.rhasspy.mobile.logic.connections.mqtt.MqttServiceParamsCreator
@@ -134,8 +133,7 @@ fun logicModule() = module {
     factoryOf(::HomeAssistantServiceParamsCreator)
     single<IHomeAssistantService> { HomeAssistantService(paramsCreator = get()) }
 
-    factoryOf(::HttpClientServiceParamsCreator)
-    single<IHttpClientService> { HttpClientService(paramsCreator = get()) }
+    factory<IHttpClientConnection> { params -> HttpClientConnection(connectionParams = params[0]) }
 
     single<IIndicationService> {
         IndicationService()

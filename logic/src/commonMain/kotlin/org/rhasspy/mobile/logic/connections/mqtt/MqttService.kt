@@ -59,7 +59,7 @@ internal class MqttService(
     paramsCreator: MqttServiceParamsCreator
 ) : IMqttService {
 
-    override val logger = LogType.MqttService.logger()
+    private val logger = LogType.MqttService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly

@@ -7,7 +7,6 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerService
 import org.rhasspy.mobile.logic.domains.audioplaying.IAudioPlayingService
@@ -25,7 +24,6 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenVie
 
 class ConfigurationScreenViewStateCreator(
     dispatcherProvider: IDispatcherProvider,
-    httpClientService: IHttpClientService,
     webServerService: IWebServerService,
     mqttService: IMqttService,
     private val wakeWordService: IWakeWordService,
@@ -38,7 +36,6 @@ class ConfigurationScreenViewStateCreator(
 ) {
 
     private val serviceStateFlow = combineStateFlow(
-        httpClientService.serviceState,
         webServerService.serviceState,
         mqttService.serviceState,
         wakeWordService.serviceState,

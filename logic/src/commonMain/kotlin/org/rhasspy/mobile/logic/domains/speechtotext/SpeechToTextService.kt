@@ -17,7 +17,6 @@ import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.httpclient.HttpClientResult
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
 import org.rhasspy.mobile.logic.domains.voiceactivitydetection.IVoiceActivityDetectionService
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocusService
@@ -59,10 +58,9 @@ internal class SpeechToTextService(
     private val audioRecorder: IAudioRecorder
 ) : ISpeechToTextService {
 
-    override val logger = LogType.SpeechToTextService.logger()
+    private val logger = LogType.SpeechToTextService.logger()
 
     private val audioFocusService by inject<IAudioFocusService>()
-    private val httpClientService by inject<IHttpClientService>()
     private val mqttClientService by inject<IMqttService>()
     private val nativeApplication by inject<NativeApplication>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
@@ -147,6 +145,7 @@ internal class SpeechToTextService(
                     val action = when (result) {
                         is HttpClientResult.Error   -> AsrError(Local)
                         is HttpClientResult.Success -> AsrTextCaptured(Local, result.data)
+                        is HttpClientResult.KnownError -> AsrError(Local)
                     }
                     serviceMiddleware.action(action)
                 }

@@ -14,26 +14,21 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMessageBuilder
 import io.ktor.http.contentType
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import okio.Path
+import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.connection.HttpConnectionParams
 import org.rhasspy.mobile.data.log.LogType
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.Success
-import org.rhasspy.mobile.data.service.option.IntentHandlingOption
-import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.logic.connections.httpclient.HttpClientResult.Error
+import org.rhasspy.mobile.logic.connections.httpclient.HttpClientResult.KnownError
 import org.rhasspy.mobile.logic.domains.speechtotext.StreamContent
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.*
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.ktor.configureEngine
-import org.rhasspy.mobile.platformspecific.readOnly
 
-interface IHttpClientService : IService {
-
-    override val serviceState: StateFlow<ServiceState>
+interface IHttpClientConnection : KoinComponent {
 
     fun speechToText(audioFilePath: Path, onResult: (result: HttpClientResult<String>) -> Unit)
     fun recognizeIntent(text: String, onResult: (result: HttpClientResult<String>) -> Unit)
@@ -42,6 +37,7 @@ interface IHttpClientService : IService {
     fun intentHandling(intent: String, onResult: (result: HttpClientResult<String>) -> Unit)
     fun homeAssistantEvent(json: String, intentName: String, onResult: (result: HttpClientResult<String>) -> Unit)
     fun homeAssistantIntent(intentJson: String, onResult: (result: HttpClientResult<String>) -> Unit)
+
 }
 
 /**
@@ -49,107 +45,42 @@ interface IHttpClientService : IService {
  *
  * functions return the result or an exception
  */
-internal class HttpClientService(
-    paramsCreator: HttpClientServiceParamsCreator
-) : IHttpClientService {
+internal class HttpClientConnection(
+    private val httpConnectionParams: HttpConnectionParams
+) : IHttpClientConnection {
 
-    override val logger = LogType.HttpClientService.logger()
+    private val logger = LogType.HttpClientService.logger()
 
     private val nativeApplication by inject<NativeApplication>()
 
     private var coroutineScope = CoroutineScope(Dispatchers.IO)
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
-    override val serviceState = _serviceState.readOnly
-
-    private val paramsFlow: StateFlow<HttpClientServiceParams> = paramsCreator()
-    private val params get() = paramsFlow.value
-
     private val audioContentType = ContentType("audio", "wav")
     private val jsonContentType = ContentType("application", "json")
-    private fun HttpMessageBuilder.hassAuthorization() =
-        this.header("Authorization", "Bearer ${params.intentHandlingHomeAssistantAccessToken}")
-
-    private val isHandleIntentDirectly
-        get() =
-            params.intentHandlingOption == IntentHandlingOption.WithRecognition
-
-    private val speechToTextUrl = "" //TODO
-    /*
-        get() =
-            if (params.isUseCustomSpeechToTextHttpEndpoint) {
-                params.speechToTextHttpEndpoint
-            } else {
-                "${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.SpeechToText.path}"
-            } + "?noheader=true"*/
-
-    private val recognizeIntentUrl = "" //TODO
-    /*
-get() =
-   if (params.isUseCustomIntentRecognitionHttpEndpoint) {
-       params.intentRecognitionHttpEndpoint
-   } else {
-       "${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.TextToIntent.path}"
-   } + if (!isHandleIntentDirectly) {
-       "?nohass=true"
-   } else ""*/
-
-    private val textToSpeechUrl = "" //TODO
-    /*
-get() = if (params.isUseCustomTextToSpeechHttpEndpoint) {
-params.textToSpeechHttpEndpoint
-} else {
-"${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.TextToSpeech.path}"
-}*/
-
-    private val audioPlayingUrl = "" //TODO
-    /*
-get() = if (params.isUseCustomAudioPlayingEndpoint) {
-params.audioPlayingHttpEndpoint
-} else {
-"${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.PlayWav.path}"
-}*/
-
-    private val hassEventUrl get() = "${params.intentHandlingHomeAssistantEndpoint}/api/events/rhasspy_"
-    private val hassIntentUrl get() = "${params.intentHandlingHomeAssistantEndpoint}/api/intent/handle"
+    private fun HttpMessageBuilder.authorization() = this.header("Authorization", "Bearer ${httpConnectionParams.bearerToken}")
 
     private var httpClient: HttpClient? = null
 
     /**
-     * starts client and updates event
-     */
-    init {
-        coroutineScope.launch {
-            paramsFlow.collect {
-                stop()
-                start()
-            }
-        }
-    }
-
-    /**
      * starts client
      */
-    private fun start() {
-        logger.d { "initialize" }
-        _serviceState.value = ServiceState.Loading
-
-        try {
-//starting
+    fun open(): Exception? {
+        logger.d { "start" }
+        return try {
             httpClient = buildClient()
-            _serviceState.value = Success
+            null
         } catch (exception: Exception) {
-//start error
             logger.e(exception) { "error on building client" }
-            _serviceState.value = ServiceState.Exception(exception)
+            exception
         }
     }
 
     /**
      * stops client
      */
-    private fun stop() {
-        logger.d { "onClose" }
+    fun close() {
+        logger.d { "stop" }
+        coroutineScope.cancel()
         httpClient?.cancel()
     }
 
@@ -161,10 +92,10 @@ params.audioPlayingHttpEndpoint
             expectSuccess = true
             install(WebSockets)
             install(HttpTimeout) {
-                requestTimeoutMillis = params.httpClientTimeout
+                requestTimeoutMillis = httpConnectionParams.timeout
             }
             engine {
-                configureEngine(params.isHttpSSLVerificationDisabled)
+                configureEngine(httpConnectionParams.isSSLVerificationDisabled)
             }
         }
     }
@@ -180,8 +111,11 @@ params.audioPlayingHttpEndpoint
         logger.d { "speechToText: audioFilePath.name" }
 
         post(
-            url = speechToTextUrl,
+            url = "${httpConnectionParams.host}/api/speech-to-text",
             block = {
+                buildHeaders {
+                    authorization()
+                }
                 setBody(StreamContent(audioFilePath))
             },
             onResult = onResult
@@ -201,8 +135,11 @@ params.audioPlayingHttpEndpoint
         logger.d { "recognizeIntent text: $text" }
 
         post(
-            url = recognizeIntentUrl,
+            url = "${httpConnectionParams.host}/api/text-to-intent",
             block = {
+                buildHeaders {
+                    authorization()
+                }
                 setBody(text)
             },
             onResult = onResult
@@ -222,8 +159,11 @@ params.audioPlayingHttpEndpoint
         logger.d { "textToSpeech text: $text" }
 
         post(
-            url = "$textToSpeechUrl${volume?.let { "?volume=$it" } ?: ""}${siteId?.let { "?siteId=$it" } ?: ""}",
+            url = "${httpConnectionParams.host}/api/text-to-speech/${volume?.let { "?volume=$it" } ?: ""}${siteId?.let { "?siteId=$it" } ?: ""}",
             block = {
+                buildHeaders {
+                    authorization()
+                }
                 setBody(text)
             },
             onResult = onResult
@@ -246,9 +186,10 @@ params.audioPlayingHttpEndpoint
             is Resource -> audioSource.fileResource.commonData(nativeApplication)
         }
         return post(
-            url = audioPlayingUrl,
+            url = "${httpConnectionParams.host}/api/play-wav",
             block = {
-                setAttributes {
+                buildHeaders {
+                    authorization()
                     contentType(audioContentType)
                 }
                 setBody(body)
@@ -276,7 +217,11 @@ params.audioPlayingHttpEndpoint
     override fun intentHandling(intent: String, onResult: (result: HttpClientResult<String>) -> Unit) {
         logger.d { "intentHandling intent: $intent" }
         return post(
-            url = params.intentHandlingHttpEndpoint, block = {
+            url = httpConnectionParams.host,
+            block = {
+                buildHeaders {
+                    authorization()
+                }
                 setBody(intent)
             },
             onResult = onResult
@@ -289,9 +234,10 @@ params.audioPlayingHttpEndpoint
     override fun homeAssistantEvent(json: String, intentName: String, onResult: (result: HttpClientResult<String>) -> Unit) {
         logger.d { "homeAssistantEvent json: $json intentName: $intentName" }
         return post(
-            url = "$hassEventUrl$intentName", block = {
+            url = "${httpConnectionParams.host}/api/events/rhasspy_$intentName",
+            block = {
                 buildHeaders {
-                    hassAuthorization()
+                    authorization()
                     contentType(jsonContentType)
                 }
                 setBody(json)
@@ -307,9 +253,9 @@ params.audioPlayingHttpEndpoint
     override fun homeAssistantIntent(intentJson: String, onResult: (result: HttpClientResult<String>) -> Unit) {
         logger.d { "homeAssistantIntent json: $intentJson" }
         return post(
-            url = hassIntentUrl, block = {
+            url = "${httpConnectionParams.host}/api/intent/handle", block = {
                 buildHeaders {
-                    hassAuthorization()
+                    authorization()
                     contentType(jsonContentType)
                 }
                 setBody(intentJson)
@@ -339,21 +285,19 @@ params.audioPlayingHttpEndpoint
                         logger.d { "post result data: $result" }
                     }
 
-                    _serviceState.value = Success
                     HttpClientResult.Success(result)
 
                 } catch (exception: Exception) {
 
                     logger.e(exception) { "post result error" }
-                    _serviceState.value = mapError(exception)
-                    HttpClientResult.Error(exception)
+                    mapError(exception)
 
                 }
             } ?: run {
                 logger.a { "post client not initialized" }
-                _serviceState.value = ServiceState.Exception()
-                HttpClientResult.Error(Exception())
+                Error(Exception())
             }
+
             onResult(result)
         }
     }
@@ -361,27 +305,27 @@ params.audioPlayingHttpEndpoint
     /**
      * Evaluate if the Error is a know exception to help the user
      */
-    private fun mapError(exception: Exception): ServiceState {
+    private fun <T> mapError(exception: Exception): HttpClientResult<T> {
         val type = if (exception::class.simpleName == "IllegalArgumentException") {
             if (exception.message == "Invalid TLS record type code: 72") {
-                HttpClientServiceStateType.InvalidTLSRecordType
+                HttpClientErrorType.InvalidTLSRecordType
             } else {
-                HttpClientServiceStateType.IllegalArgumentException
+                HttpClientErrorType.IllegalArgumentError
             }
         } else if (exception::class.simpleName == "UnresolvedAddressException") {
-            HttpClientServiceStateType.UnresolvedAddressException
+            HttpClientErrorType.UnresolvedAddressError
         } else if (exception::class.simpleName == "ConnectException") {
             if (exception.message == "Connection refused") {
-                HttpClientServiceStateType.ConnectionRefused
+                HttpClientErrorType.ConnectionRefused
             } else {
-                HttpClientServiceStateType.ConnectException
+                HttpClientErrorType.ConnectError
             }
-            HttpClientServiceStateType.UnresolvedAddressException
+            HttpClientErrorType.UnresolvedAddressError
         } else {
             null
         }
 
-        return type?.serviceState ?: ServiceState.Exception(exception)
+        return if (type == null) Error<T>(exception) else KnownError<T>(type)
     }
 
 }

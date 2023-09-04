@@ -6,15 +6,17 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.get
 import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.logic.connections.httpclient.HttpClientConnection
 import org.rhasspy.mobile.logic.connections.httpclient.HttpClientResult
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
@@ -39,14 +41,16 @@ internal class TextToSpeechService(
     paramsCreator: TextToSpeechServiceParamsCreator
 ) : ITextToSpeechService {
 
-    override val logger = LogType.TextToSpeechService.logger()
+    private val logger = LogType.TextToSpeechService.logger()
 
-    private val httpClientService by inject<IHttpClientService>()
-    private val mqttClientService by inject<IMqttService>()
-    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val paramsFlow: StateFlow<TextToSpeechServiceParams> = paramsCreator()
     private val params: TextToSpeechServiceParams get() = paramsFlow.value
+
+    private val mqttClientService by inject<IMqttService>()
+    private val serviceMiddleware by inject<IServiceMiddleware>()
+
+    private lateinit var httpClientConnection: HttpClientConnection
 
     private val _serviceState = MutableStateFlow<ServiceState>(Success)
     override val serviceState = _serviceState.readOnly
@@ -55,15 +59,27 @@ internal class TextToSpeechService(
     private val mqttSessionId = "ITextToSpeechService"
 
     init {
+        initDependencies()
         scope.launch {
             paramsFlow.collect {
-                _serviceState.value =
-                    when (it.textToSpeechOption) {
-                        TextToSpeechOption.RemoteHTTP -> Success
-                        TextToSpeechOption.RemoteMQTT -> Success
-                        TextToSpeechOption.Disabled   -> Disabled
-                    }
+                initDependencies()
+                setupState()
             }
+        }
+    }
+
+    private fun initDependencies() {
+        if (this::httpClientConnection.isInitialized) {
+            httpClientConnection.close()
+        }
+        httpClientConnection = get<HttpClientConnection> { parametersOf(params.httpConnectionParams) }.apply { open() }
+    }
+
+    private fun setupState() {
+        _serviceState.value = when (params.textToSpeechOption) {
+            TextToSpeechOption.RemoteHTTP -> Success
+            TextToSpeechOption.RemoteMQTT -> Success
+            TextToSpeechOption.Disabled   -> Disabled
         }
     }
 
@@ -83,14 +99,16 @@ internal class TextToSpeechService(
         logger.d { "textToSpeech sessionId: $sessionId text: $text" }
         when (params.textToSpeechOption) {
             TextToSpeechOption.RemoteHTTP -> {
-                httpClientService.textToSpeech(text, volume, null) { result ->
+                httpClientConnection.textToSpeech(text, volume, null) { result ->
                     _serviceState.value = when (result) {
-                        is HttpClientResult.Error   -> ServiceState.Exception(result.exception)
-                        is HttpClientResult.Success -> Success
+                        is HttpClientResult.Error      -> result.toServiceState()
+                        is HttpClientResult.Success    -> Success
+                        is HttpClientResult.KnownError -> result.toServiceState()
                     }
                     val action = when (result) {
-                        is HttpClientResult.Error   -> AsrError(Source.Local)
-                        is HttpClientResult.Success -> PlayAudio(Source.Local, result.data)
+                        is HttpClientResult.Error      -> AsrError(Source.Local)
+                        is HttpClientResult.Success    -> PlayAudio(Source.Local, result.data)
+                        is HttpClientResult.KnownError -> AsrError(Source.Local)
                     }
                     serviceMiddleware.action(action)
                 }
