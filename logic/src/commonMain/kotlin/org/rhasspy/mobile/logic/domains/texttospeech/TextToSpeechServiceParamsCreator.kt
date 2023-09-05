@@ -19,7 +19,8 @@ internal class TextToSpeechServiceParamsCreator {
     private fun getParams(): TextToSpeechServiceParams {
         return TextToSpeechServiceParams(
             siteId = ConfigurationSetting.siteId.value,
-            textToSpeechOption = ConfigurationSetting.textToSpeechOption.value
+            textToSpeechOption = ConfigurationSetting.textToSpeechOption.value,
+            httpConnectionId = null
         )
     }
 

@@ -15,13 +15,14 @@ import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.connections.httpclient.HttpClientConnection
 import org.rhasspy.mobile.logic.connections.httpclient.HttpClientResult
+import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientConnection
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
 import org.rhasspy.mobile.logic.middleware.Source
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 
 interface ITextToSpeechService : IService {
@@ -50,7 +51,7 @@ internal class TextToSpeechService(
     private val mqttClientService by inject<IMqttService>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
-    private lateinit var httpClientConnection: HttpClientConnection
+    private var httpClientConnection = get<IHttpClientConnection> { parametersOf(paramsFlow.mapReadonlyState { it.httpConnectionId }) }
 
     private val _serviceState = MutableStateFlow<ServiceState>(Success)
     override val serviceState = _serviceState.readOnly
@@ -59,20 +60,11 @@ internal class TextToSpeechService(
     private val mqttSessionId = "ITextToSpeechService"
 
     init {
-        initDependencies()
         scope.launch {
             paramsFlow.collect {
-                initDependencies()
                 setupState()
             }
         }
-    }
-
-    private fun initDependencies() {
-        if (this::httpClientConnection.isInitialized) {
-            httpClientConnection.close()
-        }
-        httpClientConnection = get<HttpClientConnection> { parametersOf(params.httpConnectionParams) }.apply { open() }
     }
 
     private fun setupState() {

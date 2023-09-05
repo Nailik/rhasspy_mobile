@@ -10,19 +10,22 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.koin.core.component.get
 import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.httpclient.HttpClientResult
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientConnection
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionResult
 import org.rhasspy.mobile.logic.middleware.Source
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import kotlin.Exception
 
@@ -46,11 +49,12 @@ internal class IntentRecognitionService(
     private val logger = LogType.IntentRecognitionService.logger()
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
-    private val httpClientService by inject<IHttpClientService>()
     private val mqttClientService by inject<IMqttService>()
 
     private val paramsFlow: StateFlow<IntentRecognitionServiceParams> = paramsCreator()
     private val params get() = paramsFlow.value
+
+    private var httpClientConnection = get<IHttpClientConnection> { parametersOf(paramsFlow.mapReadonlyState { it.httpConnectionId }) }
 
     private val _serviceState = MutableStateFlow<ServiceState>(Pending)
     override val serviceState = _serviceState.readOnly
@@ -60,12 +64,12 @@ internal class IntentRecognitionService(
     init {
         scope.launch {
             paramsFlow.collect {
-                updateState()
+                setupState()
             }
         }
     }
 
-    private fun updateState() {
+    private fun setupState() {
         _serviceState.value = when (params.intentRecognitionOption) {
             IntentRecognitionOption.RemoteHTTP -> Success
             IntentRecognitionOption.RemoteMQTT -> Success
@@ -94,7 +98,7 @@ internal class IntentRecognitionService(
         logger.d { "recognizeIntent sessionId: $sessionId text: $text" }
         when (params.intentRecognitionOption) {
             IntentRecognitionOption.RemoteHTTP -> {
-                httpClientService.recognizeIntent(text) { result ->
+                httpClientConnection.recognizeIntent(text) { result ->
                     _serviceState.value = result.toServiceState()
                     val action = when (result) {
                         is HttpClientResult.Error   -> IntentRecognitionError(Source.Local)

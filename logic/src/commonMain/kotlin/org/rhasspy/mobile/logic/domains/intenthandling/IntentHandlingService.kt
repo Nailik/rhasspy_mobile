@@ -6,14 +6,17 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.get
 import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantService
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientConnection
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 
 interface IIntentHandlingService : IService {
@@ -35,7 +38,6 @@ internal class IntentHandlingService(
 
     private val logger = LogType.IntentHandlingService.logger()
 
-    private val httpClientService by inject<IHttpClientService>()
     private val homeAssistantService by inject<IHomeAssistantService>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(Pending)
@@ -44,17 +46,19 @@ internal class IntentHandlingService(
     private val paramsFlow: StateFlow<IntentHandlingServiceParams> = paramsCreator()
     private val params get() = paramsFlow.value
 
+    private var httpClientConnection = get<IHttpClientConnection> { parametersOf(paramsFlow.mapReadonlyState { it.httpConnectionId }) }
+
     private val scope = CoroutineScope(Dispatchers.IO)
 
     init {
         scope.launch {
             paramsFlow.collect {
-                updateState()
+                setupState()
             }
         }
     }
 
-    private fun updateState() {
+    private fun setupState() {
         _serviceState.value = when (params.intentHandlingOption) {
             IntentHandlingOption.HomeAssistant   -> Success
             IntentHandlingOption.RemoteHTTP      -> Success
@@ -87,7 +91,7 @@ internal class IntentHandlingService(
                 }
 
             IntentHandlingOption.RemoteHTTP      ->
-                httpClientService.intentHandling(intent) {
+                httpClientConnection.intentHandling(intent) {
                     _serviceState.value = it.toServiceState()
                 }
 

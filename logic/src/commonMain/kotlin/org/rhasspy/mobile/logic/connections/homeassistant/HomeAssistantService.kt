@@ -4,13 +4,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
-import org.koin.core.component.inject
+import org.koin.core.component.get
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Event
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Intent
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientConnection
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 
 interface IHomeAssistantService : IService {
@@ -27,16 +29,17 @@ interface IHomeAssistantService : IService {
  * events
  * intent
  */
+//TODO make it to only a mapper is not really a service
 internal class HomeAssistantService(
     paramsCreator: HomeAssistantServiceParamsCreator,
 ) : IHomeAssistantService {
 
     private val logger = LogType.HomeAssistanceService.logger()
 
-    private val httpClientService by inject<IHttpClientService>()
-
     private val paramsFlow: StateFlow<HomeAssistantServiceParams> = paramsCreator()
     private val params get() = paramsFlow.value
+
+    private var httpClientConnection = get<IHttpClientConnection> { parametersOf(paramsFlow.mapReadonlyState { it.httpConnectionId }) }
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
     override val serviceState = _serviceState.readOnly
@@ -77,11 +80,11 @@ internal class HomeAssistantService(
             val intentRes = Json.encodeToString(slots)
 
             when (params.intentHandlingHomeAssistantOption) {
-                Event  -> httpClientService.homeAssistantEvent(intentRes, intentName) {
+                Event  -> httpClientConnection.homeAssistantEvent(intentRes, intentName) {
                     onResult(it.toServiceState())
                 }
 
-                Intent -> httpClientService.homeAssistantIntent("{\"name\" : \"$intentName\", \"data\": $intent }") {
+                Intent -> httpClientConnection.homeAssistantIntent("{\"name\" : \"$intentName\", \"data\": $intent }") {
                     onResult(it.toServiceState())
                 }
             }

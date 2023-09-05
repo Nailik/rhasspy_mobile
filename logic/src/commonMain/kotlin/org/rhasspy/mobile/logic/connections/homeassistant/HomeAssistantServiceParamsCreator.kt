@@ -21,7 +21,8 @@ internal class HomeAssistantServiceParamsCreator {
     private fun getParams(): HomeAssistantServiceParams {
         return HomeAssistantServiceParams(
             siteId = ConfigurationSetting.siteId.value,
-            intentHandlingHomeAssistantOption = ConfigurationSetting.intentHandlingHomeAssistantOption.value
+            intentHandlingHomeAssistantOption = ConfigurationSetting.intentHandlingHomeAssistantOption.value,
+            httpConnectionId = null
         )
     }
 

@@ -14,6 +14,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMessageBuilder
 import io.ktor.http.contentType
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.StateFlow
 import okio.Path
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -27,6 +28,7 @@ import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.*
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.ktor.configureEngine
+import org.rhasspy.mobile.settings.repositories.IHttpConnectionSettingRepository
 
 interface IHttpClientConnection : KoinComponent {
 
@@ -46,56 +48,63 @@ interface IHttpClientConnection : KoinComponent {
  * functions return the result or an exception
  */
 internal class HttpClientConnection(
-    private val httpConnectionParams: HttpConnectionParams
+    private val connectionId: StateFlow<Long?>
 ) : IHttpClientConnection {
 
     private val logger = LogType.HttpClientService.logger()
 
     private val nativeApplication by inject<NativeApplication>()
+    private val httpConnectionSettingRepository by inject<IHttpConnectionSettingRepository>()
+
+    private var httpConnectionParams: HttpConnectionParams? = null
 
     private var coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val audioContentType = ContentType("audio", "wav")
     private val jsonContentType = ContentType("application", "json")
-    private fun HttpMessageBuilder.authorization() = this.header("Authorization", "Bearer ${httpConnectionParams.bearerToken}")
+    private fun HttpMessageBuilder.authorization(bearerToken: String?) = bearerToken?.let { this.header("Authorization", "Bearer $bearerToken") } ?: this
 
     private var httpClient: HttpClient? = null
 
-    /**
-     * starts client
-     */
-    fun open(): Exception? {
-        logger.d { "start" }
-        return try {
-            httpClient = buildClient()
-            null
-        } catch (exception: Exception) {
-            logger.e(exception) { "error on building client" }
-            exception
+    init {
+        coroutineScope.launch {
+            connectionId.collect { id ->
+                if (id != null) collectParams(id)
+            }
         }
     }
 
-    /**
-     * stops client
-     */
+    private suspend fun collectParams(connectionId: Long) {
+        httpConnectionSettingRepository.getHttpConnection(connectionId).collect {
+            httpConnectionParams = it
+            httpClient?.cancel()
+
+            try {
+                httpClient = buildClient(it)
+            } catch (exception: Exception) {
+                logger.e(exception) { "error on building client" }
+                //TODO send exception somewhere
+            }
+        }
+    }
+
     fun close() {
-        logger.d { "stop" }
         coroutineScope.cancel()
-        httpClient?.cancel()
+        httpClient?.close()
     }
 
     /**
      * builds client
      */
-    private fun buildClient(): HttpClient {
+    private fun buildClient(params: HttpConnectionParams): HttpClient {
         return HttpClient(CIO) {
             expectSuccess = true
             install(WebSockets)
             install(HttpTimeout) {
-                requestTimeoutMillis = httpConnectionParams.timeout
+                requestTimeoutMillis = params.timeout
             }
             engine {
-                configureEngine(httpConnectionParams.isSSLVerificationDisabled)
+                configureEngine(params.isSSLVerificationDisabled)
             }
         }
     }
@@ -108,18 +117,20 @@ internal class HttpClientConnection(
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
     override fun speechToText(audioFilePath: Path, onResult: (result: HttpClientResult<String>) -> Unit) {
+        httpConnectionParams?.apply {
         logger.d { "speechToText: audioFilePath.name" }
 
-        post(
-            url = "${httpConnectionParams.host}/api/speech-to-text",
-            block = {
-                buildHeaders {
-                    authorization()
-                }
-                setBody(StreamContent(audioFilePath))
-            },
-            onResult = onResult
-        )
+            post(
+                url = "$host/api/speech-to-text",
+                block = {
+                    buildHeaders {
+                        authorization(bearerToken)
+                    }
+                    setBody(StreamContent(audioFilePath))
+                },
+                onResult = onResult
+            )
+        }
     }
 
     /**
@@ -132,18 +143,20 @@ internal class HttpClientConnection(
      * returns null if the intent is not found
      */
     override fun recognizeIntent(text: String, onResult: (result: HttpClientResult<String>) -> Unit) {
+        httpConnectionParams?.apply {
         logger.d { "recognizeIntent text: $text" }
 
-        post(
-            url = "${httpConnectionParams.host}/api/text-to-intent",
-            block = {
-                buildHeaders {
-                    authorization()
-                }
-                setBody(text)
-            },
-            onResult = onResult
-        )
+            post(
+                url = "$host/api/text-to-intent",
+                block = {
+                    buildHeaders {
+                        authorization(bearerToken)
+                    }
+                    setBody(text)
+                },
+                onResult = onResult
+            )
+        }
     }
 
     /**
@@ -156,18 +169,20 @@ internal class HttpClientConnection(
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     override fun textToSpeech(text: String, volume: Float?, siteId: String?, onResult: (result: HttpClientResult<ByteArray>) -> Unit) {
+        httpConnectionParams?.apply {
         logger.d { "textToSpeech text: $text" }
 
-        post(
-            url = "${httpConnectionParams.host}/api/text-to-speech/${volume?.let { "?volume=$it" } ?: ""}${siteId?.let { "?siteId=$it" } ?: ""}",
-            block = {
-                buildHeaders {
-                    authorization()
-                }
-                setBody(text)
-            },
-            onResult = onResult
-        )
+            post(
+                url = "$host/api/text-to-speech/${volume?.let { "?volume=$it" } ?: ""}${siteId?.let { "?siteId=$it" } ?: ""}",
+                block = {
+                    buildHeaders {
+                        authorization(bearerToken)
+                    }
+                    setBody(text)
+                },
+                onResult = onResult
+            )
+        }
     }
 
     /**
@@ -178,24 +193,26 @@ internal class HttpClientConnection(
      */
     @Suppress("IMPLICIT_CAST_TO_ANY")
     override fun playWav(audioSource: AudioSource, onResult: (result: HttpClientResult<String>) -> Unit) {
-        logger.d { "playWav size: $audioSource" }
-        @Suppress("DEPRECATION")
-        val body = when (audioSource) {
-            is Data -> audioSource.data
-            is File -> StreamContent(audioSource.path)
-            is Resource -> audioSource.fileResource.commonData(nativeApplication)
+        httpConnectionParams?.apply {
+            logger.d { "playWav size: $audioSource" }
+            @Suppress("DEPRECATION")
+            val body = when (audioSource) {
+                is Data -> audioSource.data
+                is File -> StreamContent(audioSource.path)
+                is Resource -> audioSource.fileResource.commonData(nativeApplication)
+            }
+            return post(
+                url = "$host/api/play-wav",
+                block = {
+                    buildHeaders {
+                        authorization(bearerToken)
+                        contentType(audioContentType)
+                    }
+                    setBody(body)
+                },
+                onResult = onResult
+            )
         }
-        return post(
-            url = "${httpConnectionParams.host}/api/play-wav",
-            block = {
-                buildHeaders {
-                    authorization()
-                    contentType(audioContentType)
-                }
-                setBody(body)
-            },
-            onResult = onResult
-        )
     }
 
     /**
@@ -215,35 +232,39 @@ internal class HttpClientConnection(
      * Implemented by rhasspy-remote-http-hermes
      */
     override fun intentHandling(intent: String, onResult: (result: HttpClientResult<String>) -> Unit) {
-        logger.d { "intentHandling intent: $intent" }
-        return post(
-            url = httpConnectionParams.host,
-            block = {
-                buildHeaders {
-                    authorization()
-                }
-                setBody(intent)
-            },
-            onResult = onResult
-        )
+        httpConnectionParams?.apply {
+            logger.d { "intentHandling intent: $intent" }
+            post(
+                url = host,
+                block = {
+                    buildHeaders {
+                        authorization(bearerToken)
+                    }
+                    setBody(intent)
+                },
+                onResult = onResult
+            )
+        }
     }
 
     /**
      * send intent as Event to Home Assistant
      */
     override fun homeAssistantEvent(json: String, intentName: String, onResult: (result: HttpClientResult<String>) -> Unit) {
-        logger.d { "homeAssistantEvent json: $json intentName: $intentName" }
-        return post(
-            url = "${httpConnectionParams.host}/api/events/rhasspy_$intentName",
-            block = {
-                buildHeaders {
-                    authorization()
-                    contentType(jsonContentType)
-                }
-                setBody(json)
-            },
-            onResult = onResult
-        )
+        httpConnectionParams?.apply {
+            logger.d { "homeAssistantEvent json: $json intentName: $intentName" }
+            post(
+                url = "$host/api/events/rhasspy_$intentName",
+                block = {
+                    buildHeaders {
+                        authorization(bearerToken)
+                        contentType(jsonContentType)
+                    }
+                    setBody(json)
+                },
+                onResult = onResult
+            )
+        }
     }
 
 
@@ -251,17 +272,19 @@ internal class HttpClientConnection(
      * send intent as Intent to Home Assistant
      */
     override fun homeAssistantIntent(intentJson: String, onResult: (result: HttpClientResult<String>) -> Unit) {
-        logger.d { "homeAssistantIntent json: $intentJson" }
-        return post(
-            url = "${httpConnectionParams.host}/api/intent/handle", block = {
-                buildHeaders {
-                    authorization()
-                    contentType(jsonContentType)
-                }
-                setBody(intentJson)
-            },
-            onResult = onResult
-        )
+        httpConnectionParams?.apply {
+            logger.d { "homeAssistantIntent json: $intentJson" }
+            post(
+                url = "$host/api/intent/handle", block = {
+                    buildHeaders {
+                        authorization(bearerToken)
+                        contentType(jsonContentType)
+                    }
+                    setBody(intentJson)
+                },
+                onResult = onResult
+            )
+        }
     }
 
 

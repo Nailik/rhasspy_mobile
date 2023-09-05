@@ -14,7 +14,6 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerService
 import org.rhasspy.mobile.logic.domains.audioplaying.IAudioPlayingService
@@ -106,7 +105,6 @@ class Application : NativeApplication(), KoinComponent {
         get<IMicrophonePermission>().update()
         get<IOverlayPermission>().update()
         //start services
-        get<IHttpClientService>()
         get<IWebServerService>()
         get<IMqttService>()
         get<IDialogManagerService>()

@@ -6,14 +6,16 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.get
 import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Sound
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientConnection
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocusService
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioService
@@ -21,6 +23,7 @@ import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 
 interface IAudioPlayingService : IService {
@@ -41,7 +44,6 @@ internal class AudioPlayingService(
 
     private val audioFocusService by inject<IAudioFocusService>()
     private val localAudioService by inject<ILocalAudioService>()
-    private val httpClientService by inject<IHttpClientService>()
     private val mqttClientService by inject<IMqttService>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
@@ -51,17 +53,19 @@ internal class AudioPlayingService(
     private var paramsFlow: StateFlow<AudioPlayingServiceParams> = paramsCreator()
     private val params: AudioPlayingServiceParams get() = paramsFlow.value
 
+    private var httpClientConnection = get<IHttpClientConnection> { parametersOf(paramsFlow.mapReadonlyState { it.httpConnectionId }) }
+
     private val scope = CoroutineScope(Dispatchers.IO)
 
     init {
         scope.launch {
             paramsFlow.collect {
-                updateState()
+                setupState()
             }
         }
     }
 
-    private fun updateState() {
+    private fun setupState() {
         _serviceState.value = when (params.audioPlayingOption) {
             AudioPlayingOption.Local      -> Success
             AudioPlayingOption.RemoteHTTP -> Success
@@ -101,7 +105,7 @@ internal class AudioPlayingService(
             }
 
             AudioPlayingOption.RemoteHTTP -> {
-                httpClientService.playWav(audioSource) {
+                httpClientConnection.playWav(audioSource) {
                     _serviceState.value = it.toServiceState()
                     serviceMiddleware.action(PlayFinished(Source.Local))
                 }

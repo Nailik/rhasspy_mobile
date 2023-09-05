@@ -37,6 +37,7 @@ internal class SpeechToTextServiceParamsCreator {
             audioOutputChannelType = ConfigurationSetting.speechToTextAudioOutputChannel.value,
             audioOutputEncodingType = ConfigurationSetting.speechToTextAudioOutputEncoding.value,
             audioOutputSampleRateType = ConfigurationSetting.speechToTextAudioOutputSampleRate.value,
+            httpConnectionId = null
         )
     }
 

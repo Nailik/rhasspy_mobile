@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import okio.FileHandle
 import okio.Path
+import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
@@ -17,6 +18,7 @@ import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.httpclient.HttpClientResult
+import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientConnection
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
 import org.rhasspy.mobile.logic.domains.voiceactivitydetection.IVoiceActivityDetectionService
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocusService
@@ -32,6 +34,7 @@ import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 
@@ -67,8 +70,11 @@ internal class SpeechToTextService(
     private val localAudioService by inject<ILocalAudioService>()
     private val voiceActivityDetectionService by inject<IVoiceActivityDetectionService> { parametersOf(audioRecorder) }
 
+
     private val paramsFlow: StateFlow<SpeechToTextServiceParams> = paramsCreator()
     private val params: SpeechToTextServiceParams get() = paramsFlow.value
+
+    private var httpClientConnection = get<IHttpClientConnection> { parametersOf(paramsFlow.mapReadonlyState { it.httpConnectionId }) }
 
     private val _serviceState = MutableStateFlow<ServiceState>(Success)
     override val serviceState = _serviceState.readOnly
@@ -86,17 +92,18 @@ internal class SpeechToTextService(
             paramsFlow.collect {
                 recorder?.cancel()
                 recorder = null
-
-                _serviceState.value =
-                    when (it.speechToTextOption) {
-                        SpeechToTextOption.RemoteHTTP -> Success
-                        SpeechToTextOption.RemoteMQTT -> Success
-                        SpeechToTextOption.Disabled   -> Disabled
-                    }
+                setupState()
             }
         }
     }
 
+    private fun setupState() {
+        _serviceState.value = when (params.speechToTextOption) {
+            SpeechToTextOption.RemoteHTTP -> Success
+            SpeechToTextOption.RemoteMQTT -> Success
+            SpeechToTextOption.Disabled   -> Disabled
+        }
+    }
 
     /**
      * Speech to Text (Wav Data)
@@ -140,7 +147,7 @@ internal class SpeechToTextService(
         //evaluate result
         when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> {
-                httpClientService.speechToText(speechToTextAudioFile) { result ->
+                httpClientConnection.speechToText(speechToTextAudioFile) { result ->
                     _serviceState.value = result.toServiceState()
                     val action = when (result) {
                         is HttpClientResult.Error   -> AsrError(Local)
