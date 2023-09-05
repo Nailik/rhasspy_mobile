@@ -92,9 +92,7 @@ private fun DialogManagementOptionContent(
         values = editData.dialogManagementOptionList
     ) { option ->
 
-
-        Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
-            when (option) {
+        when (option) {
                 DialogManagementOption.Local ->
                     DialogManagementSettingsLocal(
                         textAsrTimeoutText = editData.textAsrTimeoutText,
@@ -116,8 +114,6 @@ private fun DialogManagementOptionContent(
 
         }
 
-    }
-
 }
 
 @Composable
@@ -127,23 +123,25 @@ private fun DialogManagementSettingsLocal(
     recordingTimeoutText: String,
     onEvent: (DialogManagementConfigurationUiEvent) -> Unit
 ) {
+    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
-    DialogManagementSettings(
-        textAsrTimeoutText = textAsrTimeoutText,
-        intentRecognitionTimeoutText = intentRecognitionTimeoutText,
-        recordingTimeoutText = recordingTimeoutText,
-        onEvent = onEvent
-    )
+        DialogManagementSettings(
+            textAsrTimeoutText = textAsrTimeoutText,
+            intentRecognitionTimeoutText = intentRecognitionTimeoutText,
+            recordingTimeoutText = recordingTimeoutText,
+            onEvent = onEvent
+        )
 
-    //opens page for device settings
-    ListElement(
-        modifier = Modifier
-            .testTag(TestTag.PorcupineLanguage)
-            .clickable { onEvent(Navigate(DeviceSettings)) },
-        text = { Text(MR.strings.device.stable) },
-        secondaryText = { Text(MR.strings.deviceSettingsLocalDialogInformation.stable) }
-    )
+        //opens page for device settings
+        ListElement(
+            modifier = Modifier
+                .testTag(TestTag.PorcupineLanguage)
+                .clickable { onEvent(Navigate(DeviceSettings)) },
+            text = { Text(MR.strings.device.stable) },
+            secondaryText = { Text(MR.strings.deviceSettingsLocalDialogInformation.stable) }
+        )
 
+    }
 }
 
 @Composable
@@ -153,23 +151,25 @@ private fun DialogManagementSettingsMqtt(
     recordingTimeoutText: String,
     onEvent: (DialogManagementConfigurationUiEvent) -> Unit
 ) {
+    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
-    DialogManagementSettings(
-        textAsrTimeoutText = textAsrTimeoutText,
-        intentRecognitionTimeoutText = intentRecognitionTimeoutText,
-        recordingTimeoutText = recordingTimeoutText,
-        onEvent = onEvent
-    )
+        DialogManagementSettings(
+            textAsrTimeoutText = textAsrTimeoutText,
+            intentRecognitionTimeoutText = intentRecognitionTimeoutText,
+            recordingTimeoutText = recordingTimeoutText,
+            onEvent = onEvent
+        )
 
-    //opens page for device settings
-    ListElement(
-        modifier = Modifier
-            .testTag(TestTag.PorcupineLanguage)
-            .clickable { onEvent(Navigate(DeviceSettings)) },
-        text = { Text(MR.strings.device.stable) },
-        secondaryText = { Text(MR.strings.deviceSettingsMqttDialogInformation.stable) }
-    )
+        //opens page for device settings
+        ListElement(
+            modifier = Modifier
+                .testTag(TestTag.PorcupineLanguage)
+                .clickable { onEvent(Navigate(DeviceSettings)) },
+            text = { Text(MR.strings.device.stable) },
+            secondaryText = { Text(MR.strings.deviceSettingsMqttDialogInformation.stable) }
+        )
 
+    }
 }
 
 /**

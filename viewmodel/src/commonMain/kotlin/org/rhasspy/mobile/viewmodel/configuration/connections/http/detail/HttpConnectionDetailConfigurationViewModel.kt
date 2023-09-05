@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.connection.HttpConnectionParams
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.toIntOrNullOrConstant
 import org.rhasspy.mobile.platformspecific.toLongOrNullOrConstant
 import org.rhasspy.mobile.settings.repositories.IHttpConnectionSettingRepository
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
@@ -54,11 +53,7 @@ class HttpConnectionDetailConfigurationViewModel(
                 when (change) {
                     is SetHttpSSLVerificationDisabled     -> copy(isSSLVerificationDisabled = change.disabled)
                     is UpdateHttpClientServerEndpointHost -> copy(host = change.host)
-                    is UpdateHttpClientServerEndpointPort -> copy(port = change.port.toIntOrNullOrConstant())
                     is UpdateHttpClientTimeout            -> copy(timeout = change.text.toLongOrNullOrConstant())
-                    is SetHermesEnabled                   -> copy(isHermes = change.enabled)
-                    is SetHomeAssistantEnabled            -> copy(isHomeAssistant = change.enabled)
-                    is SetWyomingEnabled                  -> copy(isWyoming = change.enabled)
                 }
             })
         }
@@ -79,12 +74,8 @@ class HttpConnectionDetailConfigurationViewModel(
             connection = HttpConnectionParams(
                 id = connection?.id,
                 host = host,
-                port = port,
                 timeout = timeout,
                 bearerToken = bearerToken,
-                isHermes = isHermes,
-                isWyoming = isWyoming,
-                isHomeAssistant = isHomeAssistant,
                 isSSLVerificationDisabled = isSSLVerificationDisabled,
             ).also {
                 httpConnectionSettingRepository.addOrUpdateHttpConnection(it)

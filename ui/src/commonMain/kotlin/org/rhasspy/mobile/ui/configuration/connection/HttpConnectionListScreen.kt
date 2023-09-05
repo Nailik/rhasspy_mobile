@@ -1,29 +1,22 @@
 package org.rhasspy.mobile.ui.configuration.connection
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ElevatedAssistChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.content.Screen
 import org.rhasspy.mobile.ui.content.elements.Icon
-import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationUiEvent.Action.*
@@ -88,7 +81,6 @@ private fun HttpConnectionListContent(
 
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class)
 @Composable
 private fun HttpConnectionItemContent(
     viewState: HttpConfigurationItemViewState,
@@ -97,37 +89,7 @@ private fun HttpConnectionItemContent(
 
     ListElement(
         modifier = Modifier.clickable { onEvent(ItemClick(viewState.connection)) },
-        text = { Text("${viewState.connection.host}:${viewState.connectionPortText}") },
-        secondaryText = {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (viewState.connection.isHermes) {
-                    ElevatedAssistChip(
-                        onClick = {},
-                        label = {
-                            Text(resource = MR.strings.rhasspy2_hermes.stable)
-                        }
-                    )
-                }
-
-                if (viewState.connection.isHermes) {
-                    ElevatedAssistChip(
-                        onClick = {},
-                        label = {
-                            Text(resource = MR.strings.rhasspy3_wyoming.stable)
-                        }
-                    )
-                }
-
-                if (viewState.connection.isHermes) {
-                    ElevatedAssistChip(
-                        onClick = {},
-                        label = {
-                            Text(resource = MR.strings.home_assistant.stable)
-                        }
-                    )
-                }
-            }
-        },
+        text = { Text(viewState.connection.host) },
     )
 
 }

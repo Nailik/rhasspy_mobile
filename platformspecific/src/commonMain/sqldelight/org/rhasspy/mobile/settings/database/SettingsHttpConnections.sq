@@ -1,18 +1,14 @@
 CREATE TABLE settingsHttpConnection (
     id INTEGER PRIMARY KEY,
     host TEXT NOT NULL,
-    port INTEGER,
     timeout INTEGER,
     isSslVerificationDisabled INTEGER NOT NULL CHECK (isSslVerificationDisabled IN (0, 1)),
-    bearerToken TEXT,
-    isHermes INTEGER NOT NULL CHECK (isHermes IN (0, 1)),
-    isWyoming INTEGER NOT NULL CHECK (isWyoming IN (0, 1)),
-    isHomeAssistant INTEGER NOT NULL CHECK (isHomeAssistant IN (0, 1))
+    bearerToken TEXT
 );
 
 insertOrUpdate:
-INSERT OR REPLACE INTO settingsHttpConnection(id, host, port, timeout, isSslVerificationDisabled, bearerToken, isHermes, isWyoming, isHomeAssistant)
-VALUES (:id, :host, :port, :timeout, :isSslVerificationDisabled,:bearerToken,:isHermes, :isWyoming, :isHomeAssistant);
+INSERT OR REPLACE INTO settingsHttpConnection(id, host, timeout, isSslVerificationDisabled, bearerToken)
+VALUES (:id, :host, :timeout, :isSslVerificationDisabled,:bearerToken);
 
 remove:
 DELETE FROM settingsHttpConnection WHERE id = :id;

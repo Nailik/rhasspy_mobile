@@ -1,41 +1,29 @@
 CREATE TABLE settingsHttpConnection (
     id INTEGER PRIMARY KEY,
     host TEXT NOT NULL,
-    port INTEGER,
     timeout INTEGER,
     isSslVerificationDisabled INTEGER NOT NULL CHECK (isSslVerificationDisabled IN (0, 1)),
-    bearerToken TEXT,
-    isHermes INTEGER NOT NULL CHECK (isHermes IN (0, 1)),
-    isWyoming INTEGER NOT NULL CHECK (isWyoming IN (0, 1)),
-    isHomeAssistant INTEGER NOT NULL CHECK (isHomeAssistant IN (0, 1))
+    bearerToken TEXT
 );
 
 DELETE FROM settingsBooleanValues WHERE id = 'AutomaticSilenceDetection';
 
-INSERT INTO settingsHttpConnection(id, host, port, timeout, isSslVerificationDisabled, bearerToken, isHermes, isWyoming, isHomeAssistant)
+INSERT INTO settingsHttpConnection(id, host, timeout, isSslVerificationDisabled, bearerToken)
 VALUES
   (0,
-   (SELECT value FROM settingsStringValues WHERE id = 'HttpClientServerEndpointHost'),
-   (SELECT value FROM settingsLongValues WHERE id = 'HttpClientServerEndpointPort'),
+   (SELECT value FROM settingsStringValues WHERE id = 'HttpClientServerEndpointHost') || ':' || (SELECT value FROM settingsLongValues WHERE id = 'HttpClientServerEndpointPort'),
    (SELECT value FROM settingsLongValues WHERE id = 'HttpClientTimeout'),
    (SELECT value FROM settingsBooleanValues WHERE id = 'SSLVerificationDisabled'),
-   false,
-   true,
-   false,
-   false
+   ""
   );
 
-INSERT INTO settingsHttpConnection(id, host, port, timeout, isSslVerificationDisabled, bearerToken, isHermes, isWyoming, isHomeAssistant)
+INSERT INTO settingsHttpConnection(id, host, timeout, isSslVerificationDisabled, bearerToken)
 VALUES
   (1,
    (SELECT value FROM settingsStringValues WHERE id = 'IntentHandlingHassUrl'),
-   NULL,
    (SELECT value FROM settingsLongValues WHERE id = 'HttpClientTimeout'),
    (SELECT value FROM settingsBooleanValues WHERE id = 'SSLVerificationDisabled'),
-   (SELECT value FROM settingsBooleanValues WHERE id = 'IntentHandlingHassAccessToken'),
-   false,
-   false,
-   true
+   (SELECT value FROM settingsBooleanValues WHERE id = 'IntentHandlingHassAccessToken')
   );
 
 DELETE FROM settingsStringValues WHERE id = 'HttpClientServerEndpointHost';

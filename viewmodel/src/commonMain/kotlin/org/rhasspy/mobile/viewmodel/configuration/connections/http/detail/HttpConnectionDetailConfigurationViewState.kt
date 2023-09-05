@@ -14,27 +14,18 @@ data class HttpConnectionDetailConfigurationViewState internal constructor(
     @Stable
     data class HttpConfigurationData internal constructor(
         val host: String,
-        val port: Int?,
         val timeout: Long?,
         val bearerToken: String?,
         val isSSLVerificationDisabled: Boolean,
-        val isHermes: Boolean = false,
-        val isWyoming: Boolean = false,
-        val isHomeAssistant: Boolean = false,
     ) : IConfigurationData {
 
         internal constructor(connection: HttpConnectionParams?) : this(
             host = connection?.host ?: "",
-            port = connection?.port,
             timeout = connection?.timeout,
             bearerToken = connection?.bearerToken,
             isSSLVerificationDisabled = connection?.isSSLVerificationDisabled ?: false,
-            isHermes = connection?.isHermes ?: false,
-            isWyoming = connection?.isWyoming ?: false,
-            isHomeAssistant = connection?.isHomeAssistant ?: false
         )
 
-        val portText: String = port.toStringOrEmpty()
         val timeoutText: String = timeout.toStringOrEmpty()
 
     }
