@@ -27,11 +27,14 @@ class ConnectionsScreenViewStateCreator(
 
     private fun getViewState(): ConnectionsConfigurationViewState {
         return ConnectionsConfigurationViewState(
-            http = HttpViewState(
-                httpConnectionCount = 2, //TODO
+            rhassyp2Hermes = HttpViewState(
+                host = "rhassyp2Hermes",
             ),
-            homeAssistant = HomeAssistantViewState(
-                httpConnectionCount = 2, //TODO
+            rhassyp3Wyoming = HttpViewState(
+                host = "rhassyp3Wyoming",
+            ),
+            homeAssistant = HttpViewState(
+                host = "homeAssistant",
             ),
             webserver = WebServerViewState(
                 isHttpServerEnabled = ConfigurationSetting.isHttpServerEnabled.value,

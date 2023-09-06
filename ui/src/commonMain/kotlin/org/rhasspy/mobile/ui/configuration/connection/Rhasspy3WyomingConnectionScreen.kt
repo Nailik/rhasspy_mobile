@@ -3,6 +3,7 @@ package org.rhasspy.mobile.ui.configuration.connection
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -27,24 +28,24 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewState.HttpConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationViewState.HttpConfigurationData
 
 /**
  * content to configure http configuration
  * switch to disable ssl verification
  */
 @Composable
-fun HomeAssistantConnectionScreen(viewModel: HomeAssistantConnectionConfigurationViewModel) {
+fun Rhasspy3WyomingConnectionScreen(viewModel: Rhasspy3WyomingConnectionConfigurationViewModel) {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier,
         screenViewModel = viewModel,
-        title = MR.strings.home_assistant_server.stable,
+        title = MR.strings.rhasspy3_wyoming_server.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent
     ) {
@@ -63,7 +64,7 @@ fun HomeAssistantConnectionScreen(viewModel: HomeAssistantConnectionConfiguratio
 @Composable
 private fun HttpConnectionDetailContent(
     editData: HttpConfigurationData,
-    onEvent: (HomeAssistantConnectionConfigurationUiEvent) -> Unit
+    onEvent: (Rhasspy3WyomingConnectionConfigurationUiEvent) -> Unit
 ) {
 
     Column(
@@ -90,15 +91,6 @@ private fun HttpConnectionDetailContent(
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
 
-        //switch to toggle validation of SSL certificate
-        SwitchListItem(
-            text = MR.strings.disableSSLValidation.stable,
-            modifier = Modifier.testTag(TestTag.SSLSwitch),
-            secondaryText = MR.strings.disableSSLValidationInformation.stable,
-            isChecked = editData.isSSLVerificationDisabled,
-            onCheckedChange = { onEvent(SetHomeAssistantSSLVerificationDisabled(it)) },
-        )
-
         //home assistant access token
         TextFieldListItemVisibility(
             modifier = Modifier.testTag(TestTag.AccessToken),
@@ -108,6 +100,7 @@ private fun HttpConnectionDetailContent(
             action = {
                 IconButton(
                     modifier = Modifier
+                        .padding(start = 8.dp)
                         .size(48.dp)
                         .background(MaterialTheme.colorScheme.secondaryContainer, shape = CircleShape),
                     onClick = { }
@@ -119,6 +112,15 @@ private fun HttpConnectionDetailContent(
                     )
                 }
             }
+        )
+
+        //switch to toggle validation of SSL certificate
+        SwitchListItem(
+            text = MR.strings.disableSSLValidation.stable,
+            modifier = Modifier.testTag(TestTag.SSLSwitch),
+            secondaryText = MR.strings.disableSSLValidationInformation.stable,
+            isChecked = editData.isSSLVerificationDisabled,
+            onCheckedChange = { onEvent(SetHomeAssistantSSLVerificationDisabled(it)) },
         )
 
     }

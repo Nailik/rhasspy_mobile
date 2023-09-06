@@ -13,7 +13,7 @@ import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.connection.HttpConnectionScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationUiEvent.Change.SetHttpSSLVerificationDisabled
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Change.SetHomeAssistantSSLVerificationDisabled
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -46,7 +46,7 @@ class HttpConnectionParamsContentTest : FlakyTest() {
     fun testHttpContent() = runTest {
         setupContent()
 
-        viewModel.onEvent(SetHttpSSLVerificationDisabled(true))
+        viewModel.onEvent(SetHomeAssistantSSLVerificationDisabled(true))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 

@@ -6,19 +6,19 @@ import org.rhasspy.mobile.settings.newtypes.ISettingNew
 
 class HttpConnectionSetting internal constructor() : ISettingNew<HttpConnectionParams>() {
 
+    private val initial = HttpConnectionParams(
+        id = 0,
+        host = "",
+        timeout = 10,
+        bearerToken = null,
+        isSSLVerificationDisabled = false,
+    )
+
     init {
-        saveValue(
-            HttpConnectionParams(
-                id = null,
-                host = "",
-                timeout = 10,
-                bearerToken = null,
-                isSSLVerificationDisabled = false,
-            ), true
-        )
+        saveValue(initial, true)
     }
 
-    override fun saveValue(newValue: HttpConnectionParams, ignoreIfExists: Boolean) {
+    override fun saveValue(newValue: HttpConnectionParams, ignoreIfExists: Boolean) { //TODO ignore
         with(newValue) {
             database.settingsHttpConnectionsQueries.insertOrUpdate(
                 id = id,
@@ -31,7 +31,7 @@ class HttpConnectionSetting internal constructor() : ISettingNew<HttpConnectionP
     }
 
     override fun readValue(): HttpConnectionParams {
-        return database.settingsHttpConnectionsQueries.select().executeAsOne().mapToHttpConnection()
+        return database.settingsHttpConnectionsQueries.select().executeAsOneOrNull()?.mapToHttpConnection() ?: initial
     }
 
     private fun SettingsHttpConnection.mapToHttpConnection(): HttpConnectionParams {

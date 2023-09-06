@@ -7,8 +7,10 @@ import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
@@ -112,12 +114,16 @@ sealed class NavigationDestination : KoinComponent {
     @Stable
     sealed class ConnectionScreenNavigationDestination : NavigationDestination() {
 
-        data object HttpConnectionScreen : ConnectionScreenNavigationDestination() {
-            override val viewModel get() = get<HttpConnectionConfigurationViewModel> { parametersOf(this) }
+        data object Rhasspy2HermesConnectionScreen : ConnectionScreenNavigationDestination() {
+            override val viewModel get() = get<Rhasspy2HermesConnectionConfigurationViewModel> { parametersOf(this) }
+        }
+
+        data object Rhasspy3WyomingConnectionScreen : ConnectionScreenNavigationDestination() {
+            override val viewModel get() = get<Rhasspy3WyomingConnectionConfigurationViewModel> { parametersOf(this) }
         }
 
         data object HomeAssistantConnectionScreen : ConnectionScreenNavigationDestination() {
-            override val viewModel get() = get<HttpConnectionConfigurationViewModel> { parametersOf(this) }
+            override val viewModel get() = get<HomeAssistantConnectionConfigurationViewModel> { parametersOf(this) }
         }
 
         data object MqttConnectionScreen : ConnectionScreenNavigationDestination() {

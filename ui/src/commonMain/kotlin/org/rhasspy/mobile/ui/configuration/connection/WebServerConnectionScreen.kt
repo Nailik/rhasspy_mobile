@@ -43,7 +43,7 @@ fun WebServerConnectionScreen(viewModel: WebServerConnectionConfigurationViewMod
     ConfigurationScreenItemContent(
         modifier = Modifier,
         screenViewModel = viewModel,
-        title = MR.strings.webserver.stable,
+        title = MR.strings.local_webserver.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent
     ) {

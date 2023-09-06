@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.connections.http
+package org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,18 +10,18 @@ import org.rhasspy.mobile.platformspecific.toLongOrNullOrConstant
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationUiEvent.Action
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationViewState.HttpConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Change
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewState.HttpConfigurationData
 
 @Stable
-class HttpConnectionConfigurationViewModel : ConfigurationViewModel(
+class HomeAssistantConnectionConfigurationViewModel : ConfigurationViewModel(
     service = null
 ) {
 
-    private val _viewState = MutableStateFlow(HttpConnectionConfigurationViewState(HttpConfigurationData()))
+    private val _viewState = MutableStateFlow(HomeAssistantConnectionConfigurationViewState(HttpConfigurationData()))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
@@ -34,7 +34,7 @@ class HttpConnectionConfigurationViewModel : ConfigurationViewModel(
         )
     }
 
-    fun onEvent(event: HttpConnectionConfigurationUiEvent) {
+    fun onEvent(event: HomeAssistantConnectionConfigurationUiEvent) {
         when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)
@@ -45,9 +45,9 @@ class HttpConnectionConfigurationViewModel : ConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SetHttpSSLVerificationDisabled     -> copy(isSSLVerificationDisabled = change.disabled)
-                    is UpdateHttpClientServerEndpointHost -> copy(host = change.host)
-                    is UpdateHttpClientTimeout            -> copy(timeout = change.text.toLongOrNullOrConstant())
+                    is SetHomeAssistantSSLVerificationDisabled     -> copy(isSSLVerificationDisabled = change.disabled)
+                    is UpdateHomeAssistantClientServerEndpointHost -> copy(host = change.host)
+                    is UpdateHomeAssistantClientTimeout            -> copy(timeout = change.text.toLongOrNullOrConstant())
                 }
             })
         }

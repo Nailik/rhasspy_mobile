@@ -7,8 +7,8 @@ import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.getRandomString
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationViewState.HttpConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewState.HttpConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewModel
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -55,12 +55,12 @@ class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
 
         with(httpConfigurationData) {
             remoteHermesHttpConfigurationViewModel.onEvent(
-                SetHttpSSLVerificationDisabled(
+                SetHomeAssistantSSLVerificationDisabled(
                     isSSLVerificationDisabled
                 )
             )
             remoteHermesHttpConfigurationViewModel.onEvent(
-                UpdateHttpClientServerEndpointHost(
+                UpdateHomeAssistantClientServerEndpointHost(
                     host
                 )
             )
@@ -69,7 +69,7 @@ class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
                     port.toString()
                 )
             )
-            remoteHermesHttpConfigurationViewModel.onEvent(UpdateHttpClientTimeout(timeout.toString()))
+            remoteHermesHttpConfigurationViewModel.onEvent(UpdateHomeAssistantClientTimeout(timeout.toString()))
         }
 
         assertEquals(
@@ -95,12 +95,12 @@ class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
 
         with(httpConfigurationData) {
             remoteHermesHttpConfigurationViewModel.onEvent(
-                SetHttpSSLVerificationDisabled(
+                SetHomeAssistantSSLVerificationDisabled(
                     isSSLVerificationDisabled
                 )
             )
             remoteHermesHttpConfigurationViewModel.onEvent(
-                UpdateHttpClientServerEndpointHost(
+                UpdateHomeAssistantClientServerEndpointHost(
                     host
                 )
             )
@@ -109,7 +109,7 @@ class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
                     port.toString()
                 )
             )
-            remoteHermesHttpConfigurationViewModel.onEvent(UpdateHttpClientTimeout(timeout.toString()))
+            remoteHermesHttpConfigurationViewModel.onEvent(UpdateHomeAssistantClientTimeout(timeout.toString()))
         }
 
         assertEquals(
