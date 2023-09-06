@@ -112,12 +112,16 @@ sealed class NavigationDestination : KoinComponent {
     @Stable
     sealed class ConnectionScreenNavigationDestination : NavigationDestination() {
 
-        data object MqttConnectionScreen : ConnectionScreenNavigationDestination() {
-            override val viewModel get() = get<MqttConnectionConfigurationViewModel> { parametersOf(this) }
-        }
-
         data object HttpConnectionScreen : ConnectionScreenNavigationDestination() {
             override val viewModel get() = get<HttpConnectionConfigurationViewModel> { parametersOf(this) }
+        }
+
+        data object HomeAssistantConnectionScreen : ConnectionScreenNavigationDestination() {
+            override val viewModel get() = get<HttpConnectionConfigurationViewModel> { parametersOf(this) }
+        }
+
+        data object MqttConnectionScreen : ConnectionScreenNavigationDestination() {
+            override val viewModel get() = get<MqttConnectionConfigurationViewModel> { parametersOf(this) }
         }
 
         data object WebServerConnectionScreen : ConnectionScreenNavigationDestination() {

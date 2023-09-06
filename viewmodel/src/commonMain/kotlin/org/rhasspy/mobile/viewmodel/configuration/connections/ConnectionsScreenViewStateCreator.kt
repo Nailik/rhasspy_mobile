@@ -30,6 +30,9 @@ class ConnectionsScreenViewStateCreator(
             http = HttpViewState(
                 httpConnectionCount = 2, //TODO
             ),
+            homeAssistant = HomeAssistantViewState(
+                httpConnectionCount = 2, //TODO
+            ),
             webserver = WebServerViewState(
                 isHttpServerEnabled = ConfigurationSetting.isHttpServerEnabled.value,
                 serviceState = ServiceViewState(webServerService.serviceState)

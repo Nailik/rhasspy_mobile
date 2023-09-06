@@ -5,12 +5,18 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 data class ConnectionsConfigurationViewState internal constructor(
     val http: HttpViewState,
+    val homeAssistant: HomeAssistantViewState,
     val webserver: WebServerViewState,
     val mqtt: MqttViewState,
 ) {
 
     @Stable
     data class HttpViewState internal constructor(
+        val httpConnectionCount: Int
+    )
+
+    @Stable
+    data class HomeAssistantViewState internal constructor(
         val httpConnectionCount: Int
     )
 

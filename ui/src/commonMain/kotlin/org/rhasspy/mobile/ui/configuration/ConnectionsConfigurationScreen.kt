@@ -92,13 +92,21 @@ private fun ConnectionsConfigurationScreenContent(
                     viewState = viewState.http,
                     onEvent = onEvent
                 )
+
                 CustomDivider()
 
+                HomeAssistant(
+                    viewState = viewState.homeAssistant,
+                    onEvent = onEvent
+                )
+
+                CustomDivider()
 
                 Mqtt(
                     viewState = viewState.mqtt,
                     onEvent = onEvent
                 )
+
                 CustomDivider()
 
 
@@ -106,6 +114,7 @@ private fun ConnectionsConfigurationScreenContent(
                     viewState = viewState.webserver,
                     onEvent = onEvent
                 )
+
                 CustomDivider()
 
             }
@@ -121,6 +130,25 @@ private fun ConnectionsConfigurationScreenContent(
 @Composable
 private fun Http(
     viewState: HttpViewState,
+    onEvent: (ConnectionsConfigurationUiEvent) -> Unit
+) {
+
+    ConnectionListItem(
+        text = MR.strings.remote_http.stable,
+        secondaryText = "${viewState.httpConnectionCount} ${translate(MR.strings.server.stable)}",
+        destination = HttpConnectionScreen,
+        onEvent = onEvent
+    )
+
+}
+
+/**
+ * List element for http configuration
+ * shows if ssl verification is enabled
+ */
+@Composable
+private fun HomeAssistant(
+    viewState: HomeAssistantViewState,
     onEvent: (ConnectionsConfigurationUiEvent) -> Unit
 ) {
 
