@@ -17,6 +17,8 @@ object ConfigurationSetting {
 
     val siteId = StringSetting(SettingsEnum.SiteId, "mobile")
 
+    val httpConnection = HttpConnectionSetting()
+
     val isHttpServerEnabled = BooleanSetting(SettingsEnum.HttpServerEnabled, true)
     val httpServerPort = IntSetting(SettingsEnum.HttpServerPort, 12101)
     val isHttpServerSSLEnabledEnabled = BooleanSetting(SettingsEnum.HttpServerSSLEnabled, false)

@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import okio.FileHandle
 import okio.Path
-import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
@@ -34,7 +33,6 @@ import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 
@@ -69,12 +67,11 @@ internal class SpeechToTextService(
     private val serviceMiddleware by inject<IServiceMiddleware>()
     private val localAudioService by inject<ILocalAudioService>()
     private val voiceActivityDetectionService by inject<IVoiceActivityDetectionService> { parametersOf(audioRecorder) }
+    private val httpClientConnection by inject<IHttpClientConnection>()
 
 
     private val paramsFlow: StateFlow<SpeechToTextServiceParams> = paramsCreator()
     private val params: SpeechToTextServiceParams get() = paramsFlow.value
-
-    private var httpClientConnection = get<IHttpClientConnection> { parametersOf(paramsFlow.mapReadonlyState { it.httpConnectionId }) }
 
     private val _serviceState = MutableStateFlow<ServiceState>(Success)
     override val serviceState = _serviceState.readOnly

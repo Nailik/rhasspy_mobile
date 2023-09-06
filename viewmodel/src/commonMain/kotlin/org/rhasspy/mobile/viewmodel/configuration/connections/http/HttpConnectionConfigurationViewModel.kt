@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.connections.http.detail
+package org.rhasspy.mobile.viewmodel.configuration.connections.http
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -7,40 +7,34 @@ import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.connection.HttpConnectionParams
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toLongOrNullOrConstant
-import org.rhasspy.mobile.settings.repositories.IHttpConnectionSettingRepository
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Action
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewState.HttpConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConnectionScreenNavigationDestination.HttpConnectionDetailScreen
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationUiEvent.Change
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationViewState.HttpConfigurationData
 
 @Stable
-class HttpConnectionDetailConfigurationViewModel(
-    destination: HttpConnectionDetailScreen,
-    private val httpConnectionSettingRepository: IHttpConnectionSettingRepository
-) : ConfigurationViewModel(
+class HttpConnectionConfigurationViewModel : ConfigurationViewModel(
     service = null
 ) {
 
-    private var connection: HttpConnectionParams? = destination.id
-
-    private val _viewState = MutableStateFlow(HttpConnectionDetailConfigurationViewState(HttpConfigurationData(connection)))
+    private val _viewState = MutableStateFlow(HttpConnectionConfigurationViewState(HttpConfigurationData()))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = { HttpConfigurationData(connection) },
+            init = { HttpConfigurationData() },
             viewState = viewState,
             configurationViewState = configurationViewState
         )
     }
 
-    fun onEvent(event: HttpConnectionDetailConfigurationUiEvent) {
+    fun onEvent(event: HttpConnectionConfigurationUiEvent) {
         when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)
@@ -66,20 +60,18 @@ class HttpConnectionDetailConfigurationViewModel(
     }
 
     override fun onDiscard() {
-        _viewState.update { it.copy(editData = HttpConfigurationData(connection)) }
+        _viewState.update { it.copy(editData = HttpConfigurationData()) }
     }
 
     override fun onSave() {
         with(_viewState.value.editData) {
-            connection = HttpConnectionParams(
-                id = connection?.id,
+            ConfigurationSetting.httpConnection.value = HttpConnectionParams(
+                id = id,
                 host = host,
                 timeout = timeout,
                 bearerToken = bearerToken,
                 isSSLVerificationDisabled = isSSLVerificationDisabled,
-            ).also {
-                httpConnectionSettingRepository.addOrUpdateHttpConnection(it)
-            }
+            )
         }
     }
 

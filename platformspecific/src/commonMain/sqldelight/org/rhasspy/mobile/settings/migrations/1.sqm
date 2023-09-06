@@ -10,20 +10,11 @@ DELETE FROM settingsBooleanValues WHERE id = 'AutomaticSilenceDetection';
 
 INSERT INTO settingsHttpConnection(id, host, timeout, isSslVerificationDisabled, bearerToken)
 VALUES
-  (0,
+  (NULL,
    (SELECT value FROM settingsStringValues WHERE id = 'HttpClientServerEndpointHost') || ':' || (SELECT value FROM settingsLongValues WHERE id = 'HttpClientServerEndpointPort'),
    (SELECT value FROM settingsLongValues WHERE id = 'HttpClientTimeout'),
    (SELECT value FROM settingsBooleanValues WHERE id = 'SSLVerificationDisabled'),
    ""
-  );
-
-INSERT INTO settingsHttpConnection(id, host, timeout, isSslVerificationDisabled, bearerToken)
-VALUES
-  (1,
-   (SELECT value FROM settingsStringValues WHERE id = 'IntentHandlingHassUrl'),
-   (SELECT value FROM settingsLongValues WHERE id = 'HttpClientTimeout'),
-   (SELECT value FROM settingsBooleanValues WHERE id = 'SSLVerificationDisabled'),
-   (SELECT value FROM settingsBooleanValues WHERE id = 'IntentHandlingHassAccessToken')
   );
 
 DELETE FROM settingsStringValues WHERE id = 'HttpClientServerEndpointHost';

@@ -14,7 +14,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMessageBuilder
 import io.ktor.http.contentType
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import okio.Path
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -28,7 +28,7 @@ import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.*
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.ktor.configureEngine
-import org.rhasspy.mobile.settings.repositories.IHttpConnectionSettingRepository
+import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface IHttpClientConnection : KoinComponent {
 
@@ -47,16 +47,13 @@ interface IHttpClientConnection : KoinComponent {
  *
  * functions return the result or an exception
  */
-internal class HttpClientConnection(
-    private val connectionId: StateFlow<Long?>
-) : IHttpClientConnection {
+internal class HttpClientConnection : IHttpClientConnection {
 
     private val logger = LogType.HttpClientService.logger()
 
     private val nativeApplication by inject<NativeApplication>()
-    private val httpConnectionSettingRepository by inject<IHttpConnectionSettingRepository>()
 
-    private var httpConnectionParams: HttpConnectionParams? = null
+    private var httpConnectionParams = ConfigurationSetting.httpConnection.value
 
     private var coroutineScope = CoroutineScope(Dispatchers.IO)
 
@@ -68,23 +65,19 @@ internal class HttpClientConnection(
 
     init {
         coroutineScope.launch {
-            connectionId.collect { id ->
-                if (id != null) collectParams(id)
-            }
+            ConfigurationSetting.httpConnection.data.collectLatest(::collectParams)
         }
     }
 
-    private suspend fun collectParams(connectionId: Long) {
-        httpConnectionSettingRepository.getHttpConnection(connectionId).collect {
-            httpConnectionParams = it
-            httpClient?.cancel()
+    private fun collectParams(params: HttpConnectionParams) {
+        httpConnectionParams = params
+        httpClient?.cancel()
 
-            try {
-                httpClient = buildClient(it)
-            } catch (exception: Exception) {
-                logger.e(exception) { "error on building client" }
-                //TODO send exception somewhere
-            }
+        try {
+            httpClient = buildClient(params)
+        } catch (exception: Exception) {
+            logger.e(exception) { "error on building client" }
+            //TODO send exception somewhere
         }
     }
 
@@ -117,8 +110,8 @@ internal class HttpClientConnection(
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
     override fun speechToText(audioFilePath: Path, onResult: (result: HttpClientResult<String>) -> Unit) {
-        httpConnectionParams?.apply {
-        logger.d { "speechToText: audioFilePath.name" }
+        httpConnectionParams.apply {
+            logger.d { "speechToText: audioFilePath.name" }
 
             post(
                 url = "$host/api/speech-to-text",
@@ -143,8 +136,8 @@ internal class HttpClientConnection(
      * returns null if the intent is not found
      */
     override fun recognizeIntent(text: String, onResult: (result: HttpClientResult<String>) -> Unit) {
-        httpConnectionParams?.apply {
-        logger.d { "recognizeIntent text: $text" }
+        httpConnectionParams.apply {
+            logger.d { "recognizeIntent text: $text" }
 
             post(
                 url = "$host/api/text-to-intent",
@@ -169,8 +162,8 @@ internal class HttpClientConnection(
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     override fun textToSpeech(text: String, volume: Float?, siteId: String?, onResult: (result: HttpClientResult<ByteArray>) -> Unit) {
-        httpConnectionParams?.apply {
-        logger.d { "textToSpeech text: $text" }
+        httpConnectionParams.apply {
+            logger.d { "textToSpeech text: $text" }
 
             post(
                 url = "$host/api/text-to-speech/${volume?.let { "?volume=$it" } ?: ""}${siteId?.let { "?siteId=$it" } ?: ""}",
@@ -193,7 +186,7 @@ internal class HttpClientConnection(
      */
     @Suppress("IMPLICIT_CAST_TO_ANY")
     override fun playWav(audioSource: AudioSource, onResult: (result: HttpClientResult<String>) -> Unit) {
-        httpConnectionParams?.apply {
+        httpConnectionParams.apply {
             logger.d { "playWav size: $audioSource" }
             @Suppress("DEPRECATION")
             val body = when (audioSource) {
@@ -232,7 +225,7 @@ internal class HttpClientConnection(
      * Implemented by rhasspy-remote-http-hermes
      */
     override fun intentHandling(intent: String, onResult: (result: HttpClientResult<String>) -> Unit) {
-        httpConnectionParams?.apply {
+        httpConnectionParams.apply {
             logger.d { "intentHandling intent: $intent" }
             post(
                 url = host,
@@ -251,7 +244,7 @@ internal class HttpClientConnection(
      * send intent as Event to Home Assistant
      */
     override fun homeAssistantEvent(json: String, intentName: String, onResult: (result: HttpClientResult<String>) -> Unit) {
-        httpConnectionParams?.apply {
+        httpConnectionParams.apply {
             logger.d { "homeAssistantEvent json: $json intentName: $intentName" }
             post(
                 url = "$host/api/events/rhasspy_$intentName",
@@ -272,7 +265,7 @@ internal class HttpClientConnection(
      * send intent as Intent to Home Assistant
      */
     override fun homeAssistantIntent(intentJson: String, onResult: (result: HttpClientResult<String>) -> Unit) {
-        httpConnectionParams?.apply {
+        httpConnectionParams.apply {
             logger.d { "homeAssistantIntent json: $intentJson" }
             post(
                 url = "$host/api/intent/handle", block = {

@@ -1,8 +1,8 @@
-package org.rhasspy.mobile.viewmodel.configuration.connections.http.detail
+package org.rhasspy.mobile.viewmodel.configuration.connections.http
 
-sealed interface HttpConnectionDetailConfigurationUiEvent {
+sealed interface HttpConnectionConfigurationUiEvent {
 
-    sealed interface Change : HttpConnectionDetailConfigurationUiEvent {
+    sealed interface Change : HttpConnectionConfigurationUiEvent {
 
         data class UpdateHttpClientServerEndpointHost(val host: String) : Change
         data class UpdateHttpClientTimeout(val text: String) : Change
@@ -10,7 +10,7 @@ sealed interface HttpConnectionDetailConfigurationUiEvent {
 
     }
 
-    sealed interface Action : HttpConnectionDetailConfigurationUiEvent {
+    sealed interface Action : HttpConnectionConfigurationUiEvent {
 
         data object BackClick : Action
 

@@ -127,7 +127,7 @@ private fun Http(
     ConnectionListItem(
         text = MR.strings.remote_http.stable,
         secondaryText = "${viewState.httpConnectionCount} ${translate(MR.strings.server.stable)}",
-        destination = HttpConnectionListScreen,
+        destination = HttpConnectionScreen,
         onEvent = onEvent
     )
 

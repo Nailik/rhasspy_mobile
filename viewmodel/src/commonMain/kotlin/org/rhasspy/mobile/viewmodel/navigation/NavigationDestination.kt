@@ -4,12 +4,10 @@ import androidx.compose.runtime.Stable
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.data.connection.HttpConnectionParams
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
@@ -118,12 +116,8 @@ sealed class NavigationDestination : KoinComponent {
             override val viewModel get() = get<MqttConnectionConfigurationViewModel> { parametersOf(this) }
         }
 
-        data object HttpConnectionListScreen : ConnectionScreenNavigationDestination() {
-            override val viewModel get() = get<HttpConnectionListConfigurationViewModel> { parametersOf(this) }
-        }
-
-        data class HttpConnectionDetailScreen(val id: HttpConnectionParams?) : ConnectionScreenNavigationDestination() {
-            override val viewModel get() = get<HttpConnectionDetailConfigurationViewModel> { parametersOf(this) }
+        data object HttpConnectionScreen : ConnectionScreenNavigationDestination() {
+            override val viewModel get() = get<HttpConnectionConfigurationViewModel> { parametersOf(this) }
         }
 
         data object WebServerConnectionScreen : ConnectionScreenNavigationDestination() {

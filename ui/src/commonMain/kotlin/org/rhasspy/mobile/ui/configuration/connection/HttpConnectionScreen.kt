@@ -17,17 +17,17 @@ import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewState.HttpConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationViewState.HttpConfigurationData
 
 /**
  * content to configure http configuration
  * switch to disable ssl verification
  */
 @Composable
-fun HttpConnectionDetailScreenWrapper(viewModel: HttpConnectionDetailConfigurationViewModel) {
+fun HttpConnectionScreen(viewModel: HttpConnectionConfigurationViewModel) {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
@@ -53,7 +53,7 @@ fun HttpConnectionDetailScreenWrapper(viewModel: HttpConnectionDetailConfigurati
 @Composable
 private fun HttpConnectionDetailContent(
     editData: HttpConfigurationData,
-    onEvent: (HttpConnectionDetailConfigurationUiEvent) -> Unit
+    onEvent: (HttpConnectionConfigurationUiEvent) -> Unit
 ) {
 
     Column(

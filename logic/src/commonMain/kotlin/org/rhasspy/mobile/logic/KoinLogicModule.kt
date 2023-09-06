@@ -133,7 +133,7 @@ fun logicModule() = module {
     factoryOf(::HomeAssistantServiceParamsCreator)
     single<IHomeAssistantService> { HomeAssistantService(paramsCreator = get()) }
 
-    factory<IHttpClientConnection> { params -> HttpClientConnection(connectionId = params[0]) }
+    single<IHttpClientConnection> { HttpClientConnection() }
 
     single<IIndicationService> {
         IndicationService()

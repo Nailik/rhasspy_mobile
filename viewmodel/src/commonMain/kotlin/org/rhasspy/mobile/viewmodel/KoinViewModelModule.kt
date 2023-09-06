@@ -15,8 +15,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigura
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsScreenViewStateCreator
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.list.HttpConnectionListConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.http.HttpConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
@@ -118,14 +117,8 @@ fun viewModelModule() = module {
     singleOf(::IntentHandlingConfigurationViewModel)
     singleOf(::IntentRecognitionConfigurationViewModel)
     singleOf(::MqttConnectionConfigurationViewModel)
-    singleOf(::HttpConnectionListConfigurationViewModel)
+    singleOf(::HttpConnectionConfigurationViewModel)
 
-    factory { params ->
-        HttpConnectionDetailConfigurationViewModel(
-            destination = params[0],
-            httpConnectionSettingRepository = get(),
-        )
-    }
     singleOf(::SpeechToTextConfigurationViewModel)
     singleOf(::TextToSpeechConfigurationViewModel)
     singleOf(::WakeWordConfigurationViewModel)
