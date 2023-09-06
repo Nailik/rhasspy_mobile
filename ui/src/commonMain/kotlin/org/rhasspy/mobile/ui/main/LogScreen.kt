@@ -163,13 +163,13 @@ private fun LogScreenContent(
                 }
             }
 
-            is LoadStateError   -> {
+            is LoadStateError -> {
                 item {
                     Text(loadState.error.message!!)
                 }
             }
 
-            else                -> Unit
+            else              -> Unit
         }
     }
 

@@ -47,8 +47,8 @@ class IntentHandlingConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SelectIntentHandlingHomeAssistantOption      -> copy(intentHandlingHomeAssistantOption = change.option)
-                    is SelectIntentHandlingOption                   -> copy(intentHandlingOption = change.option)
+                    is SelectIntentHandlingHomeAssistantOption -> copy(intentHandlingHomeAssistantOption = change.option)
+                    is SelectIntentHandlingOption              -> copy(intentHandlingOption = change.option)
                 }
             })
         }
@@ -56,7 +56,7 @@ class IntentHandlingConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick                    -> navigator.onBackPressed()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

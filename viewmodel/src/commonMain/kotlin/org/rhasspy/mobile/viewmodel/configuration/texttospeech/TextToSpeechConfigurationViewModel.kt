@@ -46,7 +46,7 @@ class TextToSpeechConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SelectTextToSpeechOption       -> copy(textToSpeechOption = change.option)
+                    is SelectTextToSpeechOption -> copy(textToSpeechOption = change.option)
                 }
             })
         }

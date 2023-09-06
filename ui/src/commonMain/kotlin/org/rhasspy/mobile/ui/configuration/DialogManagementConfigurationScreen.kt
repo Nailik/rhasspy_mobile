@@ -93,26 +93,26 @@ private fun DialogManagementOptionContent(
     ) { option ->
 
         when (option) {
-                DialogManagementOption.Local ->
-                    DialogManagementSettingsLocal(
-                        textAsrTimeoutText = editData.textAsrTimeoutText,
-                        intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
-                        recordingTimeoutText = editData.recordingTimeoutText,
-                        onEvent = onEvent
-                    )
+            DialogManagementOption.Local      ->
+                DialogManagementSettingsLocal(
+                    textAsrTimeoutText = editData.textAsrTimeoutText,
+                    intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
+                    recordingTimeoutText = editData.recordingTimeoutText,
+                    onEvent = onEvent
+                )
 
-                DialogManagementOption.RemoteMQTT ->
-                    DialogManagementSettingsMqtt(
-                        textAsrTimeoutText = editData.textAsrTimeoutText,
-                        intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
-                        recordingTimeoutText = editData.recordingTimeoutText,
-                        onEvent = onEvent
-                    )
+            DialogManagementOption.RemoteMQTT ->
+                DialogManagementSettingsMqtt(
+                    textAsrTimeoutText = editData.textAsrTimeoutText,
+                    intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
+                    recordingTimeoutText = editData.recordingTimeoutText,
+                    onEvent = onEvent
+                )
 
-                else -> Unit
-            }
-
+            else                              -> Unit
         }
+
+    }
 
 }
 

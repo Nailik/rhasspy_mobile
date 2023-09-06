@@ -54,9 +54,9 @@ class AudioPlayingConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SelectEditAudioPlayingOption       -> copy(audioPlayingOption = change.option)
-                    is SelectAudioOutputOption            -> copy(audioOutputOption = change.option)
-                    is ChangeEditAudioPlayingMqttSiteId   -> copy(audioPlayingMqttSiteId = change.siteId)
+                    is SelectEditAudioPlayingOption     -> copy(audioPlayingOption = change.option)
+                    is SelectAudioOutputOption          -> copy(audioOutputOption = change.option)
+                    is ChangeEditAudioPlayingMqttSiteId -> copy(audioPlayingMqttSiteId = change.siteId)
                 }
             })
         }

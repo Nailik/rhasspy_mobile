@@ -50,6 +50,7 @@ abstract class ConfigurationViewModel(
                     _configurationViewState.update { it.copy(dialogState = ServiceStateDialogState(service.serviceState.value.getText())) }
                 }
             }
+
             BackClick              -> navigator.onBackPressed()
         }
     }
