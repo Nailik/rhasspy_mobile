@@ -2,9 +2,9 @@ package org.rhasspy.mobile.viewmodel.configuration.dialogmanagement
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
+import org.rhasspy.mobile.data.data.toStringOrEmpty
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
-import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
@@ -22,7 +22,7 @@ data class DialogManagementConfigurationViewState internal constructor(
         val recordingTimeout: Long? = ConfigurationSetting.recordingTimeout.value
     ) : IConfigurationData {
 
-        val dialogManagementOptionList: ImmutableList<DialogManagementOption> = DialogManagementOption.values().toImmutableList()
+        val dialogManagementOptionList: ImmutableList<DialogManagementOption> = DialogManagementOption.entries.toTypedArray().toImmutableList()
 
         val textAsrTimeoutText: String = textAsrTimeout.toStringOrEmpty()
         val intentRecognitionTimeoutText: String = intentRecognitionTimeout.toStringOrEmpty()

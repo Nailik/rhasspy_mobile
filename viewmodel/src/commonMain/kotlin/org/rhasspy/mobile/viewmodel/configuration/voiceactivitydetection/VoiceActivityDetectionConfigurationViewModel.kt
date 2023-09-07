@@ -6,13 +6,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption.Local
 import org.rhasspy.mobile.logic.domains.voiceactivitydetection.IVoiceActivityDetectionService
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.toLongOrNullOrConstant
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel

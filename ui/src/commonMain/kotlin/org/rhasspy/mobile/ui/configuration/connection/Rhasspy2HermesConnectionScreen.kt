@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import org.rhasspy.mobile.data.connection.HttpConnectionData
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
@@ -31,7 +32,6 @@ import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationViewState.HttpConfigurationData
 
 /**
  * content to configure http configuration
@@ -63,7 +63,7 @@ fun Rhasspy2HermesConnectionScreen(viewModel: Rhasspy2HermesConnectionConfigurat
 
 @Composable
 private fun HttpConnectionDetailContent(
-    editData: HttpConfigurationData,
+    editData: HttpConnectionData,
     onEvent: (Rhasspy2HermesConnectionConfigurationUiEvent) -> Unit
 ) {
 

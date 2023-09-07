@@ -11,14 +11,14 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.connections.httpclient.HttpClientResult
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientConnection
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionResult
@@ -46,8 +46,8 @@ internal class IntentRecognitionService(
     private val logger = LogType.IntentRecognitionService.logger()
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
-    private val mqttClientService by inject<IMqttService>()
-    private val httpClientConnection by inject<IHttpClientConnection>()
+    private val mqttClientService by inject<IMqttConnection>()
+    private val httpClientConnection by inject<IRhasspy2HermesConnection>()
 
     private val paramsFlow: StateFlow<IntentRecognitionServiceParams> = paramsCreator()
     private val params get() = paramsFlow.value

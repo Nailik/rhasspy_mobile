@@ -3,17 +3,18 @@ package org.rhasspy.mobile.logic
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import org.rhasspy.mobile.logic.connections.homeassistant.HomeAssistantService
+import org.rhasspy.mobile.logic.connections.homeassistant.HomeAssistantConnection
 import org.rhasspy.mobile.logic.connections.homeassistant.HomeAssistantServiceParamsCreator
-import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantService
-import org.rhasspy.mobile.logic.connections.httpclient.HttpClientConnection
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientConnection
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
-import org.rhasspy.mobile.logic.connections.mqtt.MqttService
-import org.rhasspy.mobile.logic.connections.mqtt.MqttServiceParamsCreator
-import org.rhasspy.mobile.logic.connections.webserver.IWebServerService
-import org.rhasspy.mobile.logic.connections.webserver.WebServerService
-import org.rhasspy.mobile.logic.connections.webserver.WebServerServiceParamsCreator
+import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnection
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionParamsCreator
+import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
+import org.rhasspy.mobile.logic.connections.rhasspy2hermes.Rhasspy2HermesConnection
+import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
+import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.Rhasspy3WyomingConnection
+import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
+import org.rhasspy.mobile.logic.connections.webserver.WebServerConnection
 import org.rhasspy.mobile.logic.domains.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.domains.audioplaying.AudioPlayingServiceParamsCreator
 import org.rhasspy.mobile.logic.domains.audioplaying.IAudioPlayingService
@@ -131,9 +132,10 @@ fun logicModule() = module {
     singleOf(::DialogManagerDisabled)
 
     factoryOf(::HomeAssistantServiceParamsCreator)
-    single<IHomeAssistantService> { HomeAssistantService(paramsCreator = get()) }
+    single<IHomeAssistantConnection> { HomeAssistantConnection() }
 
-    single<IHttpClientConnection> { HttpClientConnection() }
+    single<IRhasspy2HermesConnection> { Rhasspy2HermesConnection() }
+    single<IRhasspy3WyomingConnection> { Rhasspy3WyomingConnection() }
 
     single<IIndicationService> {
         IndicationService()
@@ -150,8 +152,8 @@ fun logicModule() = module {
 
     single<IAppSettingsService> { AppSettingsService() }
 
-    factoryOf(::MqttServiceParamsCreator)
-    single<IMqttService> { MqttService(paramsCreator = get()) }
+    factoryOf(::MqttConnectionParamsCreator)
+    single<IMqttConnection> { MqttConnection(paramsCreator = get()) }
 
     factoryOf(::SpeechToTextServiceParamsCreator)
     single<ISpeechToTextService> {
@@ -172,8 +174,7 @@ fun logicModule() = module {
         )
     }
 
-    factoryOf(::WebServerServiceParamsCreator)
-    single<IWebServerService> { WebServerService(paramsCreator = get()) }
+    single<IWebServerConnection> { WebServerConnection() }
 
     factory { params -> UdpConnection(params[0], params[1]) }
 

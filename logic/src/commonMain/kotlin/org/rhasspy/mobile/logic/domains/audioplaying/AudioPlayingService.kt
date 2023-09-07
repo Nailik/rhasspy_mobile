@@ -13,8 +13,8 @@ import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientConnection
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocusService
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioService
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
@@ -41,9 +41,9 @@ internal class AudioPlayingService(
 
     private val audioFocusService by inject<IAudioFocusService>()
     private val localAudioService by inject<ILocalAudioService>()
-    private val mqttClientService by inject<IMqttService>()
+    private val mqttClientService by inject<IMqttConnection>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
-    private val httpClientConnection by inject<IHttpClientConnection>()
+    private val httpClientConnection by inject<IRhasspy2HermesConnection>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(Pending)
     override val serviceState = _serviceState.readOnly

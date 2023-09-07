@@ -14,8 +14,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
-import org.rhasspy.mobile.logic.connections.webserver.IWebServerService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.domains.audioplaying.IAudioPlayingService
 import org.rhasspy.mobile.logic.domains.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.domains.intenthandling.IIntentHandlingService
@@ -36,7 +36,6 @@ import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.settings.MigrateSettingsToDatabase
 import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.viewModelModule
 
@@ -49,7 +48,7 @@ class Application : NativeApplication(), KoinComponent {
     @OptIn(ExperimentalKermitApi::class)
     override fun onCreated() {
 
-        MigrateSettingsToDatabase.migrateIfNecessary(this)
+        //TODO MigrateSettingsToDatabase.migrateIfNecessary(this)
 
         startKoin {
             // declare used modules
@@ -105,8 +104,8 @@ class Application : NativeApplication(), KoinComponent {
         get<IMicrophonePermission>().update()
         get<IOverlayPermission>().update()
         //start services
-        get<IWebServerService>()
-        get<IMqttService>()
+        get<IWebServerConnection>()
+        get<IMqttConnection>()
         get<IDialogManagerService>()
         get<IIntentRecognitionService>()
         get<IIntentHandlingService>()

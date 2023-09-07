@@ -1,10 +1,12 @@
 package org.rhasspy.mobile.data.service.option
 
 import dev.icerock.moko.resources.FileResource
+import kotlinx.serialization.Serializable
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 
+@Serializable
 enum class PorcupineKeywordOption(
     override val text: StableStringResource,
     val file: FileResource,

@@ -1,21 +1,23 @@
 package org.rhasspy.mobile.logic.connections.homeassistant
 
+import io.ktor.client.request.setBody
+import io.ktor.client.utils.buildHeaders
+import io.ktor.http.contentType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
-import org.koin.core.component.get
-import org.koin.core.parameter.parametersOf
+import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Event
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Intent
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientConnection
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.logic.connections.IHttpConnection
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.settings.ConfigurationSetting
 
-interface IHomeAssistantService : IService {
+interface IHomeAssistantConnection : IService {
 
     override val serviceState: StateFlow<ServiceState>
 
@@ -29,17 +31,9 @@ interface IHomeAssistantService : IService {
  * events
  * intent
  */
-//TODO make it to only a mapper is not really a service
-internal class HomeAssistantService(
-    paramsCreator: HomeAssistantServiceParamsCreator,
-) : IHomeAssistantService {
+internal class HomeAssistantConnection : IHomeAssistantConnection, IHttpConnection(ConfigurationSetting.homeAssistantConnection) {
 
-    private val logger = LogType.HomeAssistanceService.logger()
-
-    private val paramsFlow: StateFlow<HomeAssistantServiceParams> = paramsCreator()
-    private val params get() = paramsFlow.value
-
-    private var httpClientConnection = get<IHttpClientConnection> { parametersOf(paramsFlow.mapReadonlyState { it.httpConnectionId }) }
+    override val logger = LogType.HomeAssistanceService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
     override val serviceState = _serviceState.readOnly
@@ -75,16 +69,16 @@ internal class HomeAssistantService(
             //add meta slots
             slots["_text"] = json["text"]?.jsonPrimitive
             slots["_raw_text"] = json["raw_text"]?.jsonPrimitive
-            slots["_site_id"] = JsonPrimitive(params.siteId)
+            slots["_site_id"] = JsonPrimitive(ConfigurationSetting.siteId.value)
 
             val intentRes = Json.encodeToString(slots)
 
-            when (params.intentHandlingHomeAssistantOption) {
-                Event  -> httpClientConnection.homeAssistantEvent(intentRes, intentName) {
+            when (ConfigurationSetting.intentHandlingHomeAssistantOption.value) {
+                Event  -> homeAssistantEvent(intentRes, intentName) {
                     onResult(it.toServiceState())
                 }
 
-                Intent -> httpClientConnection.homeAssistantIntent("{\"name\" : \"$intentName\", \"data\": $intent }") {
+                Intent -> homeAssistantIntent("{\"name\" : \"$intentName\", \"data\": $intent }") {
                     onResult(it.toServiceState())
                 }
             }
@@ -93,4 +87,41 @@ internal class HomeAssistantService(
             onResult(ServiceState.Exception(exception))
         }
     }
+
+
+    /**
+     * send intent as Event to Home Assistant
+     */
+    private fun homeAssistantEvent(json: String, intentName: String, onResult: (result: HttpClientResult<String>) -> Unit) {
+        logger.d { "homeAssistantEvent json: $json intentName: $intentName" }
+        post(
+            url = "/api/events/rhasspy_$intentName",
+            block = {
+                buildHeaders {
+                    contentType(jsonContentType)
+                }
+                setBody(json)
+            },
+            onResult = onResult
+        )
+    }
+
+
+    /**
+     * send intent as Intent to Home Assistant
+     */
+    private fun homeAssistantIntent(intentJson: String, onResult: (result: HttpClientResult<String>) -> Unit) {
+        logger.d { "homeAssistantIntent json: $intentJson" }
+        post(
+            url = "/api/intent/handle",
+            block = {
+                buildHeaders {
+                    contentType(jsonContentType)
+                }
+                setBody(intentJson)
+            },
+            onResult = onResult
+        )
+    }
+
 }

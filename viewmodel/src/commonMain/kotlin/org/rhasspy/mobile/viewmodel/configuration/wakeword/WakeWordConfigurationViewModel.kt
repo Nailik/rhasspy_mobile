@@ -9,6 +9,8 @@ import okio.Path
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
+import org.rhasspy.mobile.data.data.toIntOrNullOrConstant
+import org.rhasspy.mobile.data.data.toIntOrZero
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.service.option.WakeWordOption

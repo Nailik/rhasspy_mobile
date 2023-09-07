@@ -4,13 +4,13 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import okio.Path.Companion.toPath
+import org.rhasspy.mobile.data.data.toIntOrNullOrConstant
 import org.rhasspy.mobile.data.link.LinkType
-import org.rhasspy.mobile.logic.connections.webserver.IWebServerService
+import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.toIntOrNullOrConstant
-import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
@@ -18,23 +18,22 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServe
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewState.WebServerConfigurationData
 
 @Stable
 class WebServerConnectionConfigurationViewModel(
-    service: IWebServerService
+    service: IWebServerConnection
 ) : ConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState = MutableStateFlow(WebServerConnectionConfigurationViewState(WebServerConfigurationData()))
+    private val _viewState = MutableStateFlow(WebServerConnectionConfigurationViewState(ConfigurationSetting.localWebserverConnection.value))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = ::WebServerConfigurationData,
+            init = { ConfigurationSetting.localWebserverConnection.value },
             viewState = viewState,
             configurationViewState = configurationViewState
         )
@@ -51,13 +50,13 @@ class WebServerConnectionConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SetHttpServerEnabled          -> copy(isHttpServerEnabled = change.value)
-                    is SetHttpServerSSLEnabled       -> copy(isHttpServerSSLEnabled = change.value)
-                    is UpdateHttpSSLKeyAlias         -> copy(httpServerSSLKeyAlias = change.value)
-                    is UpdateHttpSSLKeyPassword      -> copy(httpServerSSLKeyPassword = change.value)
-                    is UpdateHttpSSLKeyStorePassword -> copy(httpServerSSLKeyStorePassword = change.value)
-                    is UpdateHttpServerPort          -> copy(httpServerPort = change.value.toIntOrNullOrConstant())
-                    is SetHttpServerSSLKeyStoreFile  -> copy(httpServerSSLKeyStoreFile = change.value)
+                    is SetHttpServerEnabled          -> copy(isEnabled = change.value)
+                    is SetHttpServerSSLEnabled       -> copy(isSSLEnabled = change.value)
+                    is UpdateHttpSSLKeyAlias         -> copy(keyAlias = change.value)
+                    is UpdateHttpSSLKeyPassword      -> copy(keyPassword = change.value)
+                    is UpdateHttpSSLKeyStorePassword -> copy(keyStorePassword = change.value)
+                    is UpdateHttpServerPort          -> copy(port = change.value.toIntOrNullOrConstant())
+                    is SetHttpServerSSLKeyStoreFile  -> copy(keyStoreFile = change.value.name)
                 }
             })
         }
@@ -76,33 +75,23 @@ class WebServerConnectionConfigurationViewModel(
      * undo all changes
      */
     override fun onDiscard() {
-        with(_viewState.value.editData) {
-            //delete new keystore file if changed
-            if (httpServerSSLKeyStoreFile != ConfigurationSetting.httpServerSSLKeyStoreFile.value) {
-                httpServerSSLKeyStoreFile?.commonDelete()
-            }
+        //delete new keystore file if changed
+        if (_viewState.value.editData.keyStoreFile != ConfigurationSetting.localWebserverConnection.value.keyStoreFile) {
+            _viewState.value.editData.keyStoreFile?.toPath()?.commonDelete()
         }
-        _viewState.update { it.copy(editData = WebServerConfigurationData()) }
+        _viewState.update { it.copy(editData = ConfigurationSetting.localWebserverConnection.value) }
     }
 
     /**
      * save data configuration
      */
     override fun onSave() {
-        with(_viewState.value.editData) {
-            //delete old keystore file if changed
-            if (httpServerSSLKeyStoreFile != ConfigurationSetting.httpServerSSLKeyStoreFile.value) {
-                ConfigurationSetting.httpServerSSLKeyStoreFile.value?.commonDelete()
-            }
-
-            ConfigurationSetting.isHttpServerEnabled.value = isHttpServerEnabled
-            ConfigurationSetting.httpServerPort.value = httpServerPort.toIntOrZero()
-            ConfigurationSetting.isHttpServerSSLEnabledEnabled.value = isHttpServerSSLEnabled
-            ConfigurationSetting.httpServerSSLKeyStoreFile.value = httpServerSSLKeyStoreFile
-            ConfigurationSetting.httpServerSSLKeyStorePassword.value = httpServerSSLKeyStorePassword
-            ConfigurationSetting.httpServerSSLKeyAlias.value = httpServerSSLKeyAlias
-            ConfigurationSetting.httpServerSSLKeyPassword.value = httpServerSSLKeyPassword
+        //delete old keystore file if changed
+        if (_viewState.value.editData.keyStoreFile != ConfigurationSetting.localWebserverConnection.value.keyStoreFile) {
+            ConfigurationSetting.localWebserverConnection.value.keyStoreFile?.toPath()?.commonDelete()
         }
+
+        ConfigurationSetting.localWebserverConnection.value = _viewState.value.editData
     }
 
 }

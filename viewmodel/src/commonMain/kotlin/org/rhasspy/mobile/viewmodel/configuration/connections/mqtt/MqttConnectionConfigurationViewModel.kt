@@ -4,11 +4,14 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import okio.Path.Companion.toPath
+import org.rhasspy.mobile.data.data.toIntOrNullOrConstant
+import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
 import org.rhasspy.mobile.data.link.LinkType
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
-import org.rhasspy.mobile.platformspecific.*
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
@@ -16,23 +19,22 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectio
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewState.MqttConfigurationData
 
 @Stable
 class MqttConnectionConfigurationViewModel(
-    service: IMqttService
+    service: IMqttConnection
 ) : ConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState = MutableStateFlow(MqttConnectionConfigurationViewState(MqttConfigurationData()))
+    private val _viewState = MutableStateFlow(MqttConnectionConfigurationViewState(ConfigurationSetting.mqttConnection.value))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = ::MqttConfigurationData,
+            init = { ConfigurationSetting.mqttConnection.value },
             viewState = viewState,
             configurationViewState = configurationViewState
         )
@@ -49,16 +51,15 @@ class MqttConnectionConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SetMqttEnabled              -> copy(isMqttEnabled = change.enabled)
-                    is SetMqttSSLEnabled           -> copy(isMqttSSLEnabled = change.enabled)
-                    is UpdateMqttConnectionTimeout -> copy(mqttConnectionTimeout = change.timeout.toLongOrNullOrConstant())
-                    is UpdateMqttHost              -> copy(mqttHost = change.host)
-                    is UpdateMqttKeepAliveInterval -> copy(mqttKeepAliveInterval = change.keepAliveInterval.toLongOrNullOrConstant())
-                    is UpdateMqttPassword          -> copy(mqttPassword = change.password)
-                    is UpdateMqttPort              -> copy(mqttPort = change.port.toIntOrNullOrConstant())
-                    is UpdateMqttRetryInterval     -> copy(mqttRetryInterval = change.retryInterval.toLongOrNullOrConstant())
-                    is UpdateMqttUserName          -> copy(mqttUserName = change.userName)
-                    is UpdateMqttKeyStoreFile      -> copy(mqttKeyStoreFile = change.file)
+                    is SetMqttEnabled              -> copy(enabled = change.enabled)
+                    is SetMqttSSLEnabled           -> copy(sslEnabled = change.enabled)
+                    is UpdateMqttConnectionTimeout -> copy(connectionTimeout = change.timeout.toIntOrNullOrConstant())
+                    is UpdateMqttHost              -> copy(host = change.host)
+                    is UpdateMqttKeepAliveInterval -> copy(keepAliveInterval = change.keepAliveInterval.toIntOrNullOrConstant())
+                    is UpdateMqttPassword          -> copy(password = change.password)
+                    is UpdateMqttRetryInterval     -> copy(retryInterval = change.retryInterval.toLongOrNullOrConstant())
+                    is UpdateMqttUserName          -> copy(userName = change.userName)
+                    is UpdateMqttKeyStoreFile      -> copy(keystoreFile = change.file.name)
                 }
             })
         }
@@ -74,30 +75,20 @@ class MqttConnectionConfigurationViewModel(
 
     override fun onDiscard() {
         with(_viewState.value.editData) {
-            if (ConfigurationSetting.mqttKeyStoreFile.value != mqttKeyStoreFile) {
-                mqttKeyStoreFile?.commonDelete()
+            if (ConfigurationSetting.mqttConnection.value.keystoreFile != _viewState.value.editData.keystoreFile) {
+                _viewState.value.editData.keystoreFile?.toPath()?.commonDelete()
             }
         }
-        _viewState.update { it.copy(editData = MqttConfigurationData()) }
+        _viewState.update { it.copy(editData = ConfigurationSetting.mqttConnection.value) }
     }
 
     override fun onSave() {
         with(_viewState.value.editData) {
-            if (ConfigurationSetting.mqttKeyStoreFile.value != mqttKeyStoreFile) {
-                ConfigurationSetting.mqttKeyStoreFile.value?.commonDelete()
+            if (ConfigurationSetting.mqttConnection.value.keystoreFile != _viewState.value.editData.keystoreFile) {
+                ConfigurationSetting.mqttConnection.value.keystoreFile?.toPath()?.commonDelete()
             }
-
-            ConfigurationSetting.isMqttEnabled.value = isMqttEnabled
-            ConfigurationSetting.mqttHost.value = mqttHost
-            ConfigurationSetting.mqttPort.value = mqttPort.toIntOrZero()
-            ConfigurationSetting.mqttUserName.value = mqttUserName
-            ConfigurationSetting.mqttPassword.value = mqttPassword
-            ConfigurationSetting.isMqttSSLEnabled.value = isMqttSSLEnabled
-            ConfigurationSetting.mqttKeyStoreFile.value = mqttKeyStoreFile
-            ConfigurationSetting.mqttConnectionTimeout.value = mqttConnectionTimeout.toLongOrZero()
-            ConfigurationSetting.mqttKeepAliveInterval.value = mqttKeepAliveInterval.toLongOrZero()
-            ConfigurationSetting.mqttRetryInterval.value = mqttRetryInterval.toLongOrZero()
         }
+        ConfigurationSetting.mqttConnection.value = _viewState.value.editData
     }
 
 }

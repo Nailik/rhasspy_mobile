@@ -7,15 +7,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.connections.httpclient.HttpClientResult
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientConnection
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
@@ -45,9 +45,9 @@ internal class TextToSpeechService(
     private val paramsFlow: StateFlow<TextToSpeechServiceParams> = paramsCreator()
     private val params: TextToSpeechServiceParams get() = paramsFlow.value
 
-    private val mqttClientService by inject<IMqttService>()
+    private val mqttClientService by inject<IMqttConnection>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
-    private val httpClientConnection by inject<IHttpClientConnection>()
+    private val httpClientConnection by inject<IRhasspy2HermesConnection>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(Success)
     override val serviceState = _serviceState.readOnly

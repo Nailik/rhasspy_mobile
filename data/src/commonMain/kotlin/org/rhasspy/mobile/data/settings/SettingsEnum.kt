@@ -1,6 +1,12 @@
 package org.rhasspy.mobile.data.settings
 
 enum class SettingsEnum {
+    Version,
+    Rhasspy2Connection,
+    Rhasspy3Connection,
+    HomeAssistantConnection,
+    MqttConnection,
+    LocalWebserverConnection,
     //App Settings
     CrashlyticsDialog,
     ChangelogDialog,
@@ -57,25 +63,6 @@ enum class SettingsEnum {
 
     //Configuration Settings
     SiteId,
-
-    HttpServerEnabled,
-    HttpServerPort,
-    HttpServerSSLEnabled,
-    HttpServerSSLKeyStoreFile,
-    HttpServerSSLKeyStorePassword,
-    HttpServerSSLKeyAlias,
-    HttpServerSSLKeyPassword,
-
-    MQTTEnabled,
-    MQTTHost,
-    MQTTPort,
-    MQTTUserName,
-    MQTTSSLEnabled,
-    MQTTPassword,
-    MQTTConnectionTimeout,
-    MQTTKeepAliveInterval,
-    MQTTRetryInterval,
-    MQTTKeyStoreFile,
 
     WakeWordUDPOutputHost,
     WakeWordUDPOutputPort,

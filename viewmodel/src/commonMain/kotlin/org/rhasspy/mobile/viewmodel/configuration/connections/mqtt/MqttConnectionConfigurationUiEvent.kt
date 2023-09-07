@@ -8,7 +8,6 @@ sealed interface MqttConnectionConfigurationUiEvent {
 
         data class SetMqttEnabled(val enabled: Boolean) : Change
         data class UpdateMqttHost(val host: String) : Change
-        data class UpdateMqttPort(val port: String) : Change
         data class UpdateMqttUserName(val userName: String) : Change
         data class UpdateMqttPassword(val password: String) : Change
         data class SetMqttSSLEnabled(val enabled: Boolean) : Change

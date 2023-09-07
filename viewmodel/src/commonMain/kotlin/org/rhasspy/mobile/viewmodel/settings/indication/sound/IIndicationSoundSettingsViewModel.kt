@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.viewmodel.settings.indication.sound
 
 import androidx.compose.runtime.Stable
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -16,7 +15,6 @@ import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ISetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
@@ -30,7 +28,7 @@ import kotlin.reflect.KFunction1
 abstract class IIndicationSoundSettingsViewModel(
     private val localAudioService: ILocalAudioService,
     private val nativeApplication: NativeApplication,
-    private val customSoundOptions: ISetting<ImmutableList<String>>,
+    private val customSoundOptions: ISetting<List<String>>,
     private val soundSetting: ISetting<String>,
     private val soundVolume: ISetting<Float>,
     private val soundFolderType: FolderType,
@@ -57,7 +55,7 @@ abstract class IIndicationSoundSettingsViewModel(
             is SetSoundIndicationOption -> soundSetting.value = change.option.name
             is UpdateSoundVolume        -> soundVolume.value = change.volume
             is AddSoundFile             -> {
-                val customSounds = customSoundOptions.value.updateList {
+                val customSounds = customSoundOptions.value.toMutableList().apply {
                     add(change.file)
                 }
                 customSoundOptions.value = customSounds
@@ -66,7 +64,7 @@ abstract class IIndicationSoundSettingsViewModel(
 
             is DeleteSoundFile          -> {
                 if (viewState.value.soundSetting != change.file) {
-                    val customSounds = customSoundOptions.value.updateList {
+                    val customSounds = customSoundOptions.value.toMutableList().apply {
                         remove(change.file)
                     }
                     customSoundOptions.value = customSounds

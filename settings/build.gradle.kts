@@ -20,11 +20,8 @@ kotlin {
                 implementation(Koin.core)
                 implementation(Square.okio)
                 implementation(CashApp.Sqldelight.coroutines)
-                implementation("androidx.collection:collection:_")
-                // Lower-level APIs with support for custom serialization
-                implementation("androidx.datastore:datastore-core-okio:_")
-                // Higher-level APIs for storing values of basic types
-                implementation("androidx.datastore:datastore-preferences-core:_")
+                implementation("com.russhwolf:multiplatform-settings-no-arg:_")
+                implementation("com.russhwolf:multiplatform-settings-serialization:_")
             }
         }
         val commonTest by getting
@@ -32,8 +29,6 @@ kotlin {
             dependencies {
                 //only for migration
                 implementation(CashApp.Sqldelight.android)
-                implementation("com.russhwolf:multiplatform-settings-no-arg:_")
-                implementation("com.russhwolf:multiplatform-settings-serialization:_")
             }
         }
         val androidUnitTest by getting

@@ -13,7 +13,7 @@ import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.domains.dialog.DialogInformation.Action
 import org.rhasspy.mobile.logic.domains.dialog.DialogInformation.State
 import org.rhasspy.mobile.logic.domains.dialog.DialogManagerState.IdleState
@@ -49,7 +49,7 @@ interface IDialogManagerService : IService {
  */
 internal class DialogManagerService(
     dispatcherProvider: IDispatcherProvider,
-    private val mqttService: IMqttService
+    private val mqttService: IMqttConnection
 ) : IDialogManagerService {
 
     private val dialogManagerLocal by inject<DialogManagerLocal>()

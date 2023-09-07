@@ -7,12 +7,12 @@ import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
+import org.rhasspy.mobile.data.data.toStringOrEmpty
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
-import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
@@ -69,8 +69,8 @@ data class WakeWordConfigurationViewState internal constructor(
         data class WakeWordPorcupineConfigurationData internal constructor(
             val accessToken: String = ConfigurationSetting.wakeWordPorcupineAccessToken.value,
             val porcupineLanguage: PorcupineLanguageOption = ConfigurationSetting.wakeWordPorcupineLanguage.value,
-            val defaultOptions: ImmutableList<PorcupineDefaultKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value,
-            val customOptions: ImmutableList<PorcupineCustomKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value,
+            val defaultOptions: ImmutableList<PorcupineDefaultKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value.toImmutableList(),
+            val customOptions: ImmutableList<PorcupineCustomKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value.toImmutableList(),
             val deletedCustomOptions: ImmutableList<PorcupineCustomKeyword> = persistentListOf(),
         ) {
 

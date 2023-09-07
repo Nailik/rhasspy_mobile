@@ -10,15 +10,15 @@ import okio.Path
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
+import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.connections.httpclient.HttpClientResult
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientConnection
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.domains.voiceactivitydetection.IVoiceActivityDetectionService
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocusService
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioService
@@ -62,12 +62,12 @@ internal class SpeechToTextService(
     private val logger = LogType.SpeechToTextService.logger()
 
     private val audioFocusService by inject<IAudioFocusService>()
-    private val mqttClientService by inject<IMqttService>()
+    private val mqttClientService by inject<IMqttConnection>()
     private val nativeApplication by inject<NativeApplication>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
     private val localAudioService by inject<ILocalAudioService>()
     private val voiceActivityDetectionService by inject<IVoiceActivityDetectionService> { parametersOf(audioRecorder) }
-    private val httpClientConnection by inject<IHttpClientConnection>()
+    private val httpClientConnection by inject<IRhasspy2HermesConnection>()
 
 
     private val paramsFlow: StateFlow<SpeechToTextServiceParams> = paramsCreator()

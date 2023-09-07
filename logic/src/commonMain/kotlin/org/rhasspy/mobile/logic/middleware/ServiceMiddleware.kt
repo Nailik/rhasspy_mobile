@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import okio.Path
 import org.rhasspy.mobile.data.service.option.*
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.domains.dialog.DialogManagerState.IdleState
 import org.rhasspy.mobile.logic.domains.dialog.DialogManagerState.SessionState.RecordingIntentState
 import org.rhasspy.mobile.logic.domains.dialog.IDialogManagerService
@@ -44,7 +44,7 @@ internal class ServiceMiddleware(
     private val textToSpeechService: ITextToSpeechService,
     private val appSettingsService: IAppSettingsService,
     private val localAudioService: ILocalAudioService,
-    private val mqttService: IMqttService
+    private val mqttService: IMqttConnection
 ) : IServiceMiddleware {
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)

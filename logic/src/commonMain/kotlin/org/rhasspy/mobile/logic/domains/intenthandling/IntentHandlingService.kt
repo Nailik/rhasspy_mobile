@@ -12,8 +12,8 @@ import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantService
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientConnection
+import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
+import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.platformspecific.readOnly
 
 interface IIntentHandlingService : IService {
@@ -35,8 +35,8 @@ internal class IntentHandlingService(
 
     private val logger = LogType.IntentHandlingService.logger()
 
-    private val homeAssistantService by inject<IHomeAssistantService>()
-    private val httpClientConnection by inject<IHttpClientConnection>()
+    private val homeAssistantService by inject<IHomeAssistantConnection>()
+    private val httpClientConnection by inject<IRhasspy2HermesConnection>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(Pending)
     override val serviceState = _serviceState.readOnly

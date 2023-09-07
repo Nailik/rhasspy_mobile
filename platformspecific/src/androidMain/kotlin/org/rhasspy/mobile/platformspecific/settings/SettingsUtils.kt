@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -16,7 +18,6 @@ import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntenti
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.file.SystemFolderType
-import org.rhasspy.mobile.settings.SettingsDatabase
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
@@ -56,13 +57,16 @@ internal actual class SettingsUtils actual constructor(
                         ZipOutputStream(BufferedOutputStream(outputStream))
 
                     //shared Prefs file
-                    zipOutputStream.putNextEntry(ZipEntry("databases/"))
+                    zipOutputStream.putNextEntry(ZipEntry("shared_prefs/"))
 
                     //copy org.rhasspy.mobile.android_prefenrences.xml
-                    val databaseFile = nativeApplication.getDatabasePath("settings.db")
-                    if (databaseFile.exists()) {
-                        zipOutputStream.putNextEntry(ZipEntry("databases/settings.db"))
-                        zipOutputStream.write(databaseFile.readBytes())
+                    val sharedPreferencesFile = File(
+                        nativeApplication.filesDir.parent,
+                        "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
+                    )
+                    if (sharedPreferencesFile.exists()) {
+                        zipOutputStream.putNextEntry(ZipEntry("shared_prefs/${sharedPreferencesFile.name}"))
+                        zipOutputStream.write(sharedPreferencesFile.readBytes())
                     }
 
                     zipOutputStream.closeEntry()
@@ -153,10 +157,10 @@ internal actual class SettingsUtils actual constructor(
                             //go to next entry
                             entry = zipInputStream.nextEntry
                         }
-                        logger.d { "restoreSettingsFromFile inputStream.close()" }
 
                         inputStream.close()
                         nativeApplication.restart()
+
                         true
                     } ?: false
             } ?: false
@@ -174,29 +178,50 @@ internal actual class SettingsUtils actual constructor(
         return try {
             logger.d { "shareSettingsFile" }
 
-            //copy org.rhasspy.mobile.android_prefenrences.xml
-            val databaseFile = nativeApplication.getDatabasePath("settings.db")
-            val intermediateFile = nativeApplication.getDatabasePath("settings-export.db")
-            val exportFile = File(nativeApplication.filesDir, "settings-export.db")
-
-            //write data
-            if (databaseFile.exists()) {
-                databaseFile.copyTo(
-                    target = intermediateFile,
-                    overwrite = true
-                )
-            }
-
-            removeSensitiveData()
-
-
-            intermediateFile.copyTo(
-                target = exportFile,
-                overwrite = true
+            val toRemove = arrayOf(
+                //TODO new
+                SettingsEnum.WakeWordUDPOutputHost.name,
+                SettingsEnum.WakeWordUDPOutputPort.name,
+                SettingsEnum.WakeWordPorcupineAccessToken.name,
+                SettingsEnum.SpeechToTextHttpEndpoint.name,
             )
 
-            intermediateFile.delete()
-
+            //copy org.rhasspy.mobile.android_prefenrences.xml
+            val sharedPreferencesFile = File(
+                nativeApplication.filesDir.parent,
+                "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
+            )
+            val exportFile = File(
+                nativeApplication.filesDir,
+                "org.rhasspy.mobile.android_preferences_export.xml"
+            )
+            //create new empty file
+            if (!exportFile.exists()) {
+                withContext(Dispatchers.IO) {
+                    exportFile.createNewFile()
+                }
+            }
+            exportFile.writeText("")
+            //write data
+            if (sharedPreferencesFile.exists()) {
+                sharedPreferencesFile.readLines().forEach { line ->
+                    val name = line.substringAfter("\"").substringBefore("\"")
+                    val text = if (toRemove.contains(name)) {
+                        if (line.contains("int")) { //value="1"
+                            //replace value
+                            line.replace(Regex("value=\".*\""), "value=\"***\"")
+                        } else if (line.contains("string")) {
+                            //replace between ><
+                            line.replace(Regex(">.*</string>"), ">***</string>")
+                        } else {
+                            ""
+                        }
+                    } else {
+                        line
+                    }
+                    exportFile.appendText("$text\r\n")
+                }
+            }
             //share file
             val fileUri: Uri = FileProvider.getUriForFile(
                 nativeApplication,
@@ -204,48 +229,16 @@ internal actual class SettingsUtils actual constructor(
                 exportFile
             )
 
-            val result = externalResultRequest.launch(
+            return externalResultRequest.launch(
                 ExternalResultRequestIntention.ShareFile(
                     fileUri = fileUri.toString(),
                     mimeType = "application/xml"
                 )
             ) is ExternalRedirectResult.Success
 
-            exportFile.delete()
-
-            return result
-
         } catch (exception: Exception) {
             logger.e(exception) { "shareSettingsFile" }
             false
-        }
-    }
-
-    private fun removeSensitiveData() { //TODO new
-        val toRemove = arrayOf(
-            SettingsEnum.HttpServerPort.name,
-            SettingsEnum.HttpServerSSLKeyStoreFile.name,
-            SettingsEnum.HttpServerSSLKeyStorePassword.name,
-            SettingsEnum.HttpServerSSLKeyAlias.name,
-            SettingsEnum.HttpServerSSLKeyPassword.name,
-            SettingsEnum.MQTTHost.name,
-            SettingsEnum.MQTTPort.name,
-            SettingsEnum.MQTTUserName.name,
-            SettingsEnum.MQTTSSLEnabled.name,
-            SettingsEnum.MQTTPassword.name,
-            SettingsEnum.MQTTKeyStoreFile.name,
-            SettingsEnum.WakeWordUDPOutputHost.name,
-            SettingsEnum.WakeWordUDPOutputPort.name,
-            SettingsEnum.WakeWordPorcupineAccessToken.name,
-            SettingsEnum.SpeechToTextHttpEndpoint.name,
-        )
-
-        val database = SettingsDatabase(databaseDriverFactory.createDriver(SettingsDatabase.Schema, "settings-export.db"))
-
-        database.settingsIdsQueries.transaction {
-            toRemove.forEach {
-                database.settingsIdsQueries.removeById(it)
-            }
         }
     }
 

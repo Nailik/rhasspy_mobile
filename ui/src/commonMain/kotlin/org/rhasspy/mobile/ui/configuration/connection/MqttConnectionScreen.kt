@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import org.rhasspy.mobile.data.connection.MqttConnectionData
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
@@ -27,7 +28,6 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectio
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewState.MqttConfigurationData
 
 /**
  * mqtt configuration content
@@ -64,7 +64,7 @@ fun MqttConnectionScreen(viewModel: MqttConnectionConfigurationViewModel) {
 
 @Composable
 private fun MqttConnectionEditContent(
-    editData: MqttConfigurationData,
+    editData: MqttConnectionData,
     onEvent: (MqttConnectionConfigurationUiEvent) -> Unit
 ) {
 
@@ -78,7 +78,7 @@ private fun MqttConnectionEditContent(
             SwitchListItem(
                 text = MR.strings.externalMQTT.stable,
                 modifier = Modifier.testTag(TestTag.MqttSwitch),
-                isChecked = editData.isMqttEnabled,
+                isChecked = editData.enabled,
                 onCheckedChange = { onEvent(SetMqttEnabled(it)) }
             )
         }
@@ -88,29 +88,28 @@ private fun MqttConnectionEditContent(
             AnimatedVisibility(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
-                visible = editData.isMqttEnabled
+                visible = editData.enabled
             ) {
 
                 Column {
 
                     MqttConnectionSettings(
-                        mqttHost = editData.mqttHost,
-                        mqttPortText = editData.mqttPortText,
-                        mqttUserName = editData.mqttUserName,
-                        mqttPassword = editData.mqttPassword,
+                        mqttHost = editData.host,
+                        mqttUserName = editData.userName,
+                        mqttPassword = editData.password,
                         onEvent = onEvent
                     )
 
                     MqttSSL(
-                        isMqttSSLEnabled = editData.isMqttSSLEnabled,
-                        mqttKeyStoreFileName = editData.mqttKeyStoreFileName,
+                        isMqttSSLEnabled = editData.sslEnabled,
+                        mqttKeyStoreFileName = editData.keystoreFile,
                         onEvent = onEvent
                     )
 
                     MqttConnectionTiming(
-                        mqttConnectionTimeoutText = editData.mqttConnectionTimeoutText,
-                        mqttKeepAliveIntervalText = editData.mqttKeepAliveIntervalText,
-                        mqttRetryIntervalText = editData.mqttRetryIntervalText,
+                        mqttConnectionTimeoutText = editData.connectionTimeoutText,
+                        mqttKeepAliveIntervalText = editData.keepAliveIntervalText,
+                        mqttRetryIntervalText = editData.retryIntervalText,
                         onEvent = onEvent
                     )
 
@@ -132,7 +131,6 @@ private fun MqttConnectionEditContent(
 @Composable
 private fun MqttConnectionSettings(
     mqttHost: String,
-    mqttPortText: String,
     mqttUserName: String,
     mqttPassword: String,
     onEvent: (MqttConnectionConfigurationUiEvent) -> Unit
@@ -144,16 +142,6 @@ private fun MqttConnectionSettings(
         modifier = Modifier.testTag(TestTag.Host),
         value = mqttHost,
         onValueChange = { onEvent(UpdateMqttHost(it)) },
-        isLastItem = false
-    )
-
-    //port
-    TextFieldListItem(
-        label = MR.strings.port.stable,
-        modifier = Modifier.testTag(TestTag.Port),
-        value = mqttPortText,
-        onValueChange = { onEvent(UpdateMqttPort(it)) },
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         isLastItem = false
     )
 

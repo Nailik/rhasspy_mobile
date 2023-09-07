@@ -7,8 +7,8 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
-import org.rhasspy.mobile.logic.connections.webserver.IWebServerService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.domains.audioplaying.IAudioPlayingService
 import org.rhasspy.mobile.logic.domains.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.domains.intenthandling.IIntentHandlingService
@@ -24,8 +24,8 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenVie
 
 class ConfigurationScreenViewStateCreator(
     dispatcherProvider: IDispatcherProvider,
-    webServerService: IWebServerService,
-    mqttService: IMqttService,
+    webServerService: IWebServerConnection,
+    mqttService: IMqttConnection,
     private val wakeWordService: IWakeWordService,
     private val speechToTextService: ISpeechToTextService,
     private val intentRecognitionService: IIntentRecognitionService,

@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
@@ -27,7 +28,6 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServe
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewState.WebServerConfigurationData
 
 /**
  * Content to configure text to speech
@@ -61,7 +61,7 @@ fun WebServerConnectionScreen(viewModel: WebServerConnectionConfigurationViewMod
 
 @Composable
 private fun WebServerConnectionEditContent(
-    editData: WebServerConfigurationData,
+    editData: LocalWebserverConnectionData,
     onEvent: (WebServerConnectionConfigurationUiEvent) -> Unit
 ) {
 
@@ -75,7 +75,7 @@ private fun WebServerConnectionEditContent(
             SwitchListItem(
                 text = MR.strings.enableHTTPApi.stable,
                 modifier = Modifier.testTag(TestTag.ServerSwitch),
-                isChecked = editData.isHttpServerEnabled,
+                isChecked = editData.isEnabled,
                 onCheckedChange = { onEvent(SetHttpServerEnabled(it)) }
             )
         }
@@ -85,7 +85,7 @@ private fun WebServerConnectionEditContent(
             AnimatedVisibility(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
-                visible = editData.isHttpServerEnabled
+                visible = editData.isEnabled
             ) {
 
                 Column {
@@ -94,18 +94,18 @@ private fun WebServerConnectionEditContent(
                     TextFieldListItem(
                         label = MR.strings.port.stable,
                         modifier = Modifier.testTag(TestTag.Port),
-                        value = editData.httpServerPortText,
+                        value = editData.portText,
                         isLastItem = true,
                         onValueChange = { onEvent(UpdateHttpServerPort(it)) },
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                     )
 
                     WebserverSSL(
-                        isHttpServerSSLEnabled = editData.isHttpServerSSLEnabled,
-                        httpServerSSLKeyStoreFileName = editData.httpServerSSLKeyStoreFileName,
-                        httpServerSSLKeyStorePassword = editData.httpServerSSLKeyStorePassword,
-                        httpServerSSLKeyAlias = editData.httpServerSSLKeyAlias,
-                        httpServerSSLKeyPassword = editData.httpServerSSLKeyPassword,
+                        isHttpServerSSLEnabled = editData.isSSLEnabled,
+                        httpServerSSLKeyStoreFileName = editData.keyStoreFile,
+                        httpServerSSLKeyStorePassword = editData.keyStorePassword,
+                        httpServerSSLKeyAlias = editData.keyAlias,
+                        httpServerSSLKeyPassword = editData.keyPassword,
                         onEvent = onEvent
                     )
 
