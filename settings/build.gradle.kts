@@ -1,4 +1,4 @@
-@file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE")
+@file:Suppress("UnstableApiUsage")
 
 plugins {
     kotlin("multiplatform")
@@ -20,6 +20,11 @@ kotlin {
                 implementation(Koin.core)
                 implementation(Square.okio)
                 implementation(CashApp.Sqldelight.coroutines)
+                implementation("androidx.collection:collection:_")
+                // Lower-level APIs with support for custom serialization
+                implementation("androidx.datastore:datastore-core-okio:_")
+                // Higher-level APIs for storing values of basic types
+                implementation("androidx.datastore:datastore-preferences-core:_")
             }
         }
         val commonTest by getting
