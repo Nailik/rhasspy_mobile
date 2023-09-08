@@ -15,10 +15,15 @@ import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigura
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
@@ -119,16 +124,24 @@ fun viewModelModule() = module {
     singleOf(::IntentHandlingConfigurationViewModel)
     singleOf(::IntentRecognitionConfigurationViewModel)
 
+    singleOf(::Rhasspy2HermesConnectionConfigurationDataMapper)
     singleOf(::Rhasspy2HermesConnectionConfigurationViewModel)
+
+    singleOf(::Rhasspy3WyomingConnectionConfigurationDataMapper)
     singleOf(::Rhasspy3WyomingConnectionConfigurationViewModel)
+
+    singleOf(::MqttConnectionConfigurationDataMapper)
     singleOf(::MqttConnectionConfigurationViewModel)
-    singleOf(::MqttConnectionConfigurationViewModel)
+
+    singleOf(::HomeAssistantConnectionConfigurationDataMapper)
     singleOf(::HomeAssistantConnectionConfigurationViewModel)
+
+    singleOf(::WebServerConnectionConfigurationDataMapper)
+    singleOf(::WebServerConnectionConfigurationViewModel)
 
     singleOf(::SpeechToTextConfigurationViewModel)
     singleOf(::TextToSpeechConfigurationViewModel)
     singleOf(::WakeWordConfigurationViewModel)
-    singleOf(::WebServerConnectionConfigurationViewModel)
 
     factory { params ->
         AudioRecorderViewStateCreator(

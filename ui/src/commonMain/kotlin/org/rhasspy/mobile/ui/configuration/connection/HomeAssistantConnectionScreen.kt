@@ -18,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import org.rhasspy.mobile.data.connection.HttpConnectionData
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
@@ -31,6 +30,7 @@ import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewState.HomeAssistantConnectionConfigurationData
 
 /**
  * content to configure http configuration
@@ -62,7 +62,7 @@ fun HomeAssistantConnectionScreen(viewModel: HomeAssistantConnectionConfiguratio
 
 @Composable
 private fun HttpConnectionDetailContent(
-    editData: HttpConnectionData,
+    editData: HomeAssistantConnectionConfigurationData,
     onEvent: (HomeAssistantConnectionConfigurationUiEvent) -> Unit
 ) {
 

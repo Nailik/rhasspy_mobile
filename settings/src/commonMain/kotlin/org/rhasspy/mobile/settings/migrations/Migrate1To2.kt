@@ -77,11 +77,11 @@ class Migrate0To1 : IMigration(0, 1) {
             isSSLVerificationDisabled = isHttpClientSSLVerificationDisabled.value
         )
         ConfigurationSetting.mqttConnection.value = MqttConnectionData(
-            enabled = isMqttEnabled.value,
+            isEnabled = isMqttEnabled.value,
             host = "tcp://${mqttHost.value}:${mqttPort.value}",
             userName = mqttUserName.value,
             password = mqttPassword.value,
-            sslEnabled = isMqttSSLEnabled.value,
+            isSslEnabled = isMqttSSLEnabled.value,
             connectionTimeout = mqttConnectionTimeout.value.toInt(),
             keepAliveInterval = mqttKeepAliveInterval.value.toInt(),
             retryInterval = mqttRetryInterval.value,

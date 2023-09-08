@@ -55,11 +55,11 @@ object ConfigurationSetting {
     val mqttConnection = ISetting(
         key = SettingsEnum.MqttConnection,
         initial = MqttConnectionData(
-            enabled = false,
+            isEnabled = false,
             host = "tcp://<server>:1883",
             userName = "",
             password = "",
-            sslEnabled = false,
+            isSslEnabled = false,
             connectionTimeout = 5,
             keepAliveInterval = 30,
             retryInterval = 10L,
@@ -78,7 +78,8 @@ object ConfigurationSetting {
             keyStorePassword = "",
             keyAlias = "",
             keyPassword = "",
-        )
+        ),
+        serializer = LocalWebserverConnectionData.serializer()
     )
 
     val wakeWordOption = ISetting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled)

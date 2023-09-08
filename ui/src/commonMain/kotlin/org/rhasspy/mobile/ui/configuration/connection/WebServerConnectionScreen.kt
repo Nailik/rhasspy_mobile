@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
@@ -28,6 +27,7 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServe
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewState.WebServerConnectionConfigurationData
 
 /**
  * Content to configure text to speech
@@ -61,7 +61,7 @@ fun WebServerConnectionScreen(viewModel: WebServerConnectionConfigurationViewMod
 
 @Composable
 private fun WebServerConnectionEditContent(
-    editData: LocalWebserverConnectionData,
+    editData: WebServerConnectionConfigurationData,
     onEvent: (WebServerConnectionConfigurationUiEvent) -> Unit
 ) {
 

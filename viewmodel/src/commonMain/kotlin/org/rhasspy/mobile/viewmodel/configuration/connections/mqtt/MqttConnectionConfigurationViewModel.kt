@@ -22,19 +22,21 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectio
 
 @Stable
 class MqttConnectionConfigurationViewModel(
+    private val mapper: MqttConnectionConfigurationDataMapper,
     service: IMqttConnection
 ) : ConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState = MutableStateFlow(MqttConnectionConfigurationViewState(ConfigurationSetting.mqttConnection.value))
+    private val initialData get() = mapper(ConfigurationSetting.mqttConnection.value)
+    private val _viewState = MutableStateFlow(MqttConnectionConfigurationViewState(initialData))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = { ConfigurationSetting.mqttConnection.value },
+            init = ::initialData,
             viewState = viewState,
             configurationViewState = configurationViewState
         )
@@ -51,8 +53,8 @@ class MqttConnectionConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SetMqttEnabled              -> copy(enabled = change.enabled)
-                    is SetMqttSSLEnabled           -> copy(sslEnabled = change.enabled)
+                    is SetMqttEnabled    -> copy(isEnabled = change.enabled)
+                    is SetMqttSSLEnabled -> copy(isSSLEnabled = change.enabled)
                     is UpdateMqttConnectionTimeout -> copy(connectionTimeout = change.timeout.toIntOrNullOrConstant())
                     is UpdateMqttHost              -> copy(host = change.host)
                     is UpdateMqttKeepAliveInterval -> copy(keepAliveInterval = change.keepAliveInterval.toIntOrNullOrConstant())
@@ -74,21 +76,18 @@ class MqttConnectionConfigurationViewModel(
     }
 
     override fun onDiscard() {
-        with(_viewState.value.editData) {
-            if (ConfigurationSetting.mqttConnection.value.keystoreFile != _viewState.value.editData.keystoreFile) {
-                _viewState.value.editData.keystoreFile?.toPath()?.commonDelete()
-            }
+        if (ConfigurationSetting.mqttConnection.value.keystoreFile != _viewState.value.editData.keystoreFile) {
+            _viewState.value.editData.keystoreFile?.toPath()?.commonDelete()
         }
-        _viewState.update { it.copy(editData = ConfigurationSetting.mqttConnection.value) }
+        _viewState.update { it.copy(editData = initialData) }
     }
 
     override fun onSave() {
-        with(_viewState.value.editData) {
-            if (ConfigurationSetting.mqttConnection.value.keystoreFile != _viewState.value.editData.keystoreFile) {
-                ConfigurationSetting.mqttConnection.value.keystoreFile?.toPath()?.commonDelete()
-            }
+        if (ConfigurationSetting.mqttConnection.value.keystoreFile != _viewState.value.editData.keystoreFile) {
+            ConfigurationSetting.mqttConnection.value.keystoreFile?.toPath()?.commonDelete()
         }
-        ConfigurationSetting.mqttConnection.value = _viewState.value.editData
+        ConfigurationSetting.mqttConnection.value = mapper(_viewState.value.editData)
+        _viewState.update { it.copy(editData = initialData) }
     }
 
 }

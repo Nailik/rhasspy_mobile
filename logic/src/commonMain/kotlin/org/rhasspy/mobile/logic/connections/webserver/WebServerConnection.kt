@@ -146,7 +146,7 @@ internal class WebServerConnection : IWebServerConnection {
         val environment = applicationEngineEnvironment {
             installConnector(
                 nativeApplication = nativeApplication,
-                port = params.port ?: 0,
+                port = params.port,
                 isUseSSL = params.isSSLEnabled,
                 keyStoreFile = "${FolderType.CertificateFolder.WebServer}/${params.keyStoreFile ?: ""}",
                 keyStorePassword = params.keyStorePassword,
@@ -200,7 +200,7 @@ internal class WebServerConnection : IWebServerConnection {
      */
     private fun Application.buildRouting() {
         routing {
-            WebServerPath.values().forEach { path ->
+            WebServerPath.entries.forEach { path ->
                 when (path.type) {
                     WebServerPath.WebServerCallType.POST -> post(path.path) {
                         evaluateCall(path, call)

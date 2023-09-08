@@ -103,7 +103,7 @@ internal class MqttConnection(
     }
 
     private fun start() {
-        if (params.mqttConnectionData.enabled) {
+        if (params.mqttConnectionData.isEnabled) {
             logger.d { "initialize" }
             _serviceState.value = ServiceState.Loading
 
@@ -171,10 +171,10 @@ internal class MqttConnection(
                 //connect to server
                 it.connect(
                     MqttServiceConnectionOptions(
-                        isSSLEnabled = params.mqttConnectionData.sslEnabled,
+                        isSSLEnabled = params.mqttConnectionData.isSslEnabled,
                         keyStorePath = params.mqttConnectionData.keystoreFile?.toPath(),
-                        connectionTimeout = params.mqttConnectionData.connectionTimeout ?: 0,
-                        keepAliveInterval = params.mqttConnectionData.keepAliveInterval ?: 0,
+                        connectionTimeout = params.mqttConnectionData.connectionTimeout,
+                        keepAliveInterval = params.mqttConnectionData.keepAliveInterval,
                         connUsername = params.mqttConnectionData.userName,
                         connPassword = params.mqttConnectionData.password,
                     )
@@ -206,7 +206,7 @@ internal class MqttConnection(
                 client?.also {
                     while (!it.isConnected.value) {
                         connectClient()
-                        delay(params.mqttConnectionData.retryInterval ?: 0)
+                        delay(params.mqttConnectionData.retryInterval)
                     }
                     retryJob?.cancel()
                     retryJob = null
@@ -329,7 +329,7 @@ internal class MqttConnection(
      */
     private fun publishMessage(topic: String, message: MqttMessage, onResult: ((result: ServiceState) -> Unit)? = null) {
         scope.launch {
-            val status = if (params.mqttConnectionData.sslEnabled) {
+            val status = if (params.mqttConnectionData.isSslEnabled) {
                 message.msgId = id
 
                 client?.let { mqttClient ->

@@ -15,18 +15,21 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rh
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Change.*
 
 @Stable
-class Rhasspy3WyomingConnectionConfigurationViewModel : ConfigurationViewModel(
+class Rhasspy3WyomingConnectionConfigurationViewModel(
+    private val mapper: Rhasspy3WyomingConnectionConfigurationDataMapper
+) : ConfigurationViewModel(
     service = null
 ) {
 
-    private val _viewState = MutableStateFlow(Rhasspy3WyomingConnectionConfigurationViewState(ConfigurationSetting.rhasspy3Connection.value))
+    private val initialData get() = mapper(ConfigurationSetting.rhasspy3Connection.value)
+    private val _viewState = MutableStateFlow(Rhasspy3WyomingConnectionConfigurationViewState(initialData))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = { ConfigurationSetting.rhasspy3Connection.value },
+            init = ::initialData,
             viewState = viewState,
             configurationViewState = configurationViewState
         )
@@ -58,11 +61,12 @@ class Rhasspy3WyomingConnectionConfigurationViewModel : ConfigurationViewModel(
     }
 
     override fun onDiscard() {
-        _viewState.update { it.copy(editData = ConfigurationSetting.rhasspy3Connection.value) }
+        _viewState.update { it.copy(editData = initialData) }
     }
 
     override fun onSave() {
-        ConfigurationSetting.rhasspy3Connection.value = _viewState.value.editData
+        ConfigurationSetting.rhasspy3Connection.value = mapper(_viewState.value.editData)
+        _viewState.update { it.copy(editData = initialData) }
     }
 
 }

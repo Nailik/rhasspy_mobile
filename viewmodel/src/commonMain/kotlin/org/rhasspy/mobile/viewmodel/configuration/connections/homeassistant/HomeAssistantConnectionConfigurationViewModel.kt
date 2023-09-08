@@ -15,18 +15,21 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.Home
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Change.*
 
 @Stable
-class HomeAssistantConnectionConfigurationViewModel : ConfigurationViewModel(
+class HomeAssistantConnectionConfigurationViewModel(
+    private val mapper: HomeAssistantConnectionConfigurationDataMapper
+) : ConfigurationViewModel(
     service = null
 ) {
 
-    private val _viewState = MutableStateFlow(HomeAssistantConnectionConfigurationViewState(ConfigurationSetting.homeAssistantConnection.value))
+    private val initialData get() = mapper(ConfigurationSetting.homeAssistantConnection.value)
+    private val _viewState = MutableStateFlow(HomeAssistantConnectionConfigurationViewState(initialData))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = { ConfigurationSetting.homeAssistantConnection.value },
+            init = ::initialData,
             viewState = viewState,
             configurationViewState = configurationViewState
         )
@@ -58,11 +61,12 @@ class HomeAssistantConnectionConfigurationViewModel : ConfigurationViewModel(
     }
 
     override fun onDiscard() {
-        _viewState.update { it.copy(editData = ConfigurationSetting.homeAssistantConnection.value) }
+        _viewState.update { it.copy(editData = initialData) }
     }
 
     override fun onSave() {
-        ConfigurationSetting.homeAssistantConnection.value = _viewState.value.editData
+        ConfigurationSetting.homeAssistantConnection.value = mapper(_viewState.value.editData)
+        _viewState.update { it.copy(editData = initialData) }
     }
 
 }

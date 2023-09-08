@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import org.rhasspy.mobile.data.connection.MqttConnectionData
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
@@ -28,6 +27,7 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectio
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewState.MqttConnectionConfigurationData
 
 /**
  * mqtt configuration content
@@ -64,7 +64,7 @@ fun MqttConnectionScreen(viewModel: MqttConnectionConfigurationViewModel) {
 
 @Composable
 private fun MqttConnectionEditContent(
-    editData: MqttConnectionData,
+    editData: MqttConnectionConfigurationData,
     onEvent: (MqttConnectionConfigurationUiEvent) -> Unit
 ) {
 
@@ -78,7 +78,7 @@ private fun MqttConnectionEditContent(
             SwitchListItem(
                 text = MR.strings.externalMQTT.stable,
                 modifier = Modifier.testTag(TestTag.MqttSwitch),
-                isChecked = editData.enabled,
+                isChecked = editData.isEnabled,
                 onCheckedChange = { onEvent(SetMqttEnabled(it)) }
             )
         }
@@ -88,7 +88,7 @@ private fun MqttConnectionEditContent(
             AnimatedVisibility(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
-                visible = editData.enabled
+                visible = editData.isEnabled
             ) {
 
                 Column {
@@ -101,7 +101,7 @@ private fun MqttConnectionEditContent(
                     )
 
                     MqttSSL(
-                        isMqttSSLEnabled = editData.sslEnabled,
+                        isMqttSSLEnabled = editData.isSSLEnabled,
                         mqttKeyStoreFileName = editData.keystoreFile,
                         onEvent = onEvent
                     )

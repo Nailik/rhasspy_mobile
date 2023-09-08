@@ -21,19 +21,21 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServe
 
 @Stable
 class WebServerConnectionConfigurationViewModel(
+    private val mapper: WebServerConnectionConfigurationDataMapper,
     service: IWebServerConnection
 ) : ConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState = MutableStateFlow(WebServerConnectionConfigurationViewState(ConfigurationSetting.localWebserverConnection.value))
+    private val initialData get() = mapper(ConfigurationSetting.localWebserverConnection.value)
+    private val _viewState = MutableStateFlow(WebServerConnectionConfigurationViewState(initialData))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = { ConfigurationSetting.localWebserverConnection.value },
+            init = ::initialData,
             viewState = viewState,
             configurationViewState = configurationViewState
         )
@@ -79,7 +81,7 @@ class WebServerConnectionConfigurationViewModel(
         if (_viewState.value.editData.keyStoreFile != ConfigurationSetting.localWebserverConnection.value.keyStoreFile) {
             _viewState.value.editData.keyStoreFile?.toPath()?.commonDelete()
         }
-        _viewState.update { it.copy(editData = ConfigurationSetting.localWebserverConnection.value) }
+        _viewState.update { it.copy(editData = initialData) }
     }
 
     /**
@@ -91,7 +93,8 @@ class WebServerConnectionConfigurationViewModel(
             ConfigurationSetting.localWebserverConnection.value.keyStoreFile?.toPath()?.commonDelete()
         }
 
-        ConfigurationSetting.localWebserverConnection.value = _viewState.value.editData
+        ConfigurationSetting.localWebserverConnection.value = mapper(_viewState.value.editData)
+        _viewState.update { it.copy(editData = initialData) }
     }
 
 }

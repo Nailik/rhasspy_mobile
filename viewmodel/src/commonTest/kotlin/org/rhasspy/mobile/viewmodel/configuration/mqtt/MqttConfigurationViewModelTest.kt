@@ -11,7 +11,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.D
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewState.MqttConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewState.MqttConnectionData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,8 +20,8 @@ class MqttConfigurationViewModelTest : AppTest() {
 
     private lateinit var mqttConfigurationViewModel: MqttConnectionConfigurationViewModel
 
-    private lateinit var initialMqttConfigurationData: MqttConfigurationData
-    private lateinit var mqttConfigurationData: MqttConfigurationData
+    private lateinit var initialMqttConnectionData: MqttConnectionData
+    private lateinit var mqttConnectionData: MqttConnectionData
 
     @BeforeTest
     fun before() {
@@ -31,7 +31,7 @@ class MqttConfigurationViewModelTest : AppTest() {
             }
         )
 
-        initialMqttConfigurationData = MqttConfigurationData(
+        initialMqttConnectionData = MqttConnectionData(
             isMqttEnabled = false,
             mqttHost = "",
             mqttPort = 1883,
@@ -44,7 +44,7 @@ class MqttConfigurationViewModelTest : AppTest() {
             mqttKeyStoreFile = null
         )
 
-        mqttConfigurationData = MqttConfigurationData(
+        mqttConnectionData = MqttConnectionData(
             isMqttEnabled = true,
             mqttHost = getRandomString(5),
             mqttPort = 1652,
@@ -63,11 +63,11 @@ class MqttConfigurationViewModelTest : AppTest() {
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
         assertEquals(
-            initialMqttConfigurationData,
+            initialMqttConnectionData,
             mqttConfigurationViewModel.viewState.value.editData
         )
 
-        with(mqttConfigurationData) {
+        with(mqttConnectionData) {
             mqttConfigurationViewModel.onEvent(SetMqttEnabled(isMqttEnabled))
             mqttConfigurationViewModel.onEvent(SetMqttSSLEnabled(isMqttSSLEnabled))
             mqttConfigurationViewModel.onEvent(UpdateMqttConnectionTimeout(mqttConnectionTimeout.toString()))
@@ -80,22 +80,22 @@ class MqttConfigurationViewModelTest : AppTest() {
             mqttConfigurationViewModel.onEvent(UpdateMqttKeyStoreFile(mqttKeyStoreFile!!))
         }
 
-        assertEquals(mqttConfigurationData, mqttConfigurationViewModel.viewState.value.editData)
+        assertEquals(mqttConnectionData, mqttConfigurationViewModel.viewState.value.editData)
 
         mqttConfigurationViewModel.onEvent(Save)
 
-        assertEquals(mqttConfigurationData, mqttConfigurationViewModel.viewState.value.editData)
-        assertEquals(mqttConfigurationData, MqttConfigurationData())
+        assertEquals(mqttConnectionData, mqttConfigurationViewModel.viewState.value.editData)
+        assertEquals(mqttConnectionData, MqttConnectionData())
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
         assertEquals(
-            initialMqttConfigurationData,
+            initialMqttConnectionData,
             mqttConfigurationViewModel.viewState.value.editData
         )
 
-        with(mqttConfigurationData) {
+        with(mqttConnectionData) {
             mqttConfigurationViewModel.onEvent(SetMqttEnabled(isMqttEnabled))
             mqttConfigurationViewModel.onEvent(SetMqttSSLEnabled(isMqttSSLEnabled))
             mqttConfigurationViewModel.onEvent(UpdateMqttConnectionTimeout(mqttConnectionTimeout.toString()))
@@ -108,14 +108,14 @@ class MqttConfigurationViewModelTest : AppTest() {
             mqttConfigurationViewModel.onEvent(UpdateMqttKeyStoreFile(mqttKeyStoreFile!!))
         }
 
-        assertEquals(mqttConfigurationData, mqttConfigurationViewModel.viewState.value.editData)
+        assertEquals(mqttConnectionData, mqttConfigurationViewModel.viewState.value.editData)
 
         mqttConfigurationViewModel.onEvent(Discard)
 
         assertEquals(
-            initialMqttConfigurationData,
+            initialMqttConnectionData,
             mqttConfigurationViewModel.viewState.value.editData
         )
-        assertEquals(initialMqttConfigurationData, MqttConfigurationData())
+        assertEquals(initialMqttConnectionData, MqttConnectionData())
     }
 }
