@@ -36,6 +36,7 @@ import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.migrations.SettingsInitializer
 import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.viewModelModule
 
@@ -47,8 +48,6 @@ class Application : NativeApplication(), KoinComponent {
 
     @OptIn(ExperimentalKermitApi::class)
     override fun onCreated() {
-
-        //TODO MigrateSettingsToDatabase.migrateIfNecessary(this)
 
         startKoin {
             // declare used modules
@@ -75,6 +74,7 @@ class Application : NativeApplication(), KoinComponent {
             logger.i { "######## Application \n started ########" }
 
             //initialize/load the settings, generate the MutableStateFlow
+            SettingsInitializer.initialize()
             AppSetting
             ConfigurationSetting
 

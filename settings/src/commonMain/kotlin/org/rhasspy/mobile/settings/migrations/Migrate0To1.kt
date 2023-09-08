@@ -6,7 +6,7 @@ import org.rhasspy.mobile.data.connection.MqttConnectionData
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.ISetting
 
-class Migrate0To1 : IMigration(0, 1) {
+internal class Migrate0To1 : IMigration(0, 1) {
 
     private enum class DeprecatedSettingsEnum {
         MQTTEnabled,

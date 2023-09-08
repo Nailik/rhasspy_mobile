@@ -18,7 +18,7 @@ import org.rhasspy.mobile.platformspecific.utils.isDebug
  * directly consumed
  */
 object AppSetting : KoinComponent {
-    val version = ISetting(SettingsEnum.Version, 0)
+    val version = ISetting(SettingsEnum.Version, 1)
 
     val didShowCrashlyticsDialog = ISetting(SettingsEnum.CrashlyticsDialog, false)
     val didShowChangelogDialog = ISetting(SettingsEnum.ChangelogDialog, 0)
