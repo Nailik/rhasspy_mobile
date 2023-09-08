@@ -76,7 +76,6 @@ open class ISetting<T>(
             if (serializer != null) {
                 settings.decodeValue(serializer, key.name, initial)
             } else {
-                @Suppress("IMPLICIT_CAST_TO_ANY")
                 when (initial) {
                     is String     -> settings[key.name, initial]
                     is Int        -> settings[key.name, initial]
@@ -84,7 +83,7 @@ open class ISetting<T>(
                     is Long?      -> settings[key.name, initial ?: 0L]
                     is Long       -> settings[key.name, initial]
                     is Boolean    -> settings[key.name, initial]
-                    is IOption<*> -> initial.findValue(settings[key.name, initial.name])
+                    is IOption<*> -> initial.findValue(settings[key.name, initial.name]) ?: initial
                     else          -> {
                         logger.a { "could not read ${key.name} resetting it to $initial" }
                         initial

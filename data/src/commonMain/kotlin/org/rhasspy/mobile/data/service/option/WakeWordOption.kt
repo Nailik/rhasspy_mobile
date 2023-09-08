@@ -10,7 +10,7 @@ enum class WakeWordOption(override val text: StableStringResource) : IOption<Wak
     Udp(MR.strings.udpAudioOutput.stable),
     Disabled(MR.strings.disabled.stable);
 
-    override fun findValue(value: String): WakeWordOption {
-        return valueOf(value)
+    override fun findValue(value: String): WakeWordOption? {
+        return entries.firstOrNull { it.name == name }
     }
 }

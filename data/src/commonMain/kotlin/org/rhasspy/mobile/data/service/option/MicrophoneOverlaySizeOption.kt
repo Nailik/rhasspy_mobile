@@ -11,7 +11,7 @@ enum class MicrophoneOverlaySizeOption(override val text: StableStringResource, 
     Big(MR.strings.big.stable, 128),
     Disabled(MR.strings.disabled.stable, 0);
 
-    override fun findValue(value: String): MicrophoneOverlaySizeOption {
-        return valueOf(value)
+    override fun findValue(value: String): MicrophoneOverlaySizeOption? {
+        return entries.firstOrNull { it.name == name }
     }
 }

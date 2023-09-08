@@ -9,7 +9,7 @@ enum class HomeAssistantIntentHandlingOption(override val text: StableStringReso
     Event(MR.strings.hassEvent.stable),
     Intent(MR.strings.intentHandling.stable);
 
-    override fun findValue(value: String): HomeAssistantIntentHandlingOption {
-        return HomeAssistantIntentHandlingOption.valueOf(value)
+    override fun findValue(value: String): HomeAssistantIntentHandlingOption? {
+        return entries.firstOrNull { it.name == name }
     }
 }

@@ -28,7 +28,7 @@ enum class PorcupineLanguageOption(
     VN(MR.strings.vietnamese.stable, MR.files.porcupine_params_vn),
     ZH(MR.strings.chinese.stable, MR.files.porcupine_params_zh);
 
-    override fun findValue(value: String): PorcupineLanguageOption {
-        return valueOf(value)
+    override fun findValue(value: String): PorcupineLanguageOption? {
+        return entries.firstOrNull { it.name == name }
     }
 }

@@ -8,6 +8,6 @@ interface IOption<T : Enum<T>> {
     val text: StableStringResource
     val name: String
 
-    fun findValue(value: String): T
+    fun findValue(value: String): T?
 }
 

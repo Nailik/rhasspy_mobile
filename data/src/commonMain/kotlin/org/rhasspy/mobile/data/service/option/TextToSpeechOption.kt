@@ -10,7 +10,7 @@ enum class TextToSpeechOption(override val text: StableStringResource) :
     RemoteMQTT(MR.strings.remoteMQTT.stable),
     Disabled(MR.strings.disabled.stable);
 
-    override fun findValue(value: String): TextToSpeechOption {
-        return valueOf(value)
+    override fun findValue(value: String): TextToSpeechOption? {
+        return entries.firstOrNull { it.name == name }
     }
 }

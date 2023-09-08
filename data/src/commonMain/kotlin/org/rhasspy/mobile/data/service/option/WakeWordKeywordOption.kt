@@ -21,7 +21,7 @@ enum class WakeWordKeywordOption(override val text: StableStringResource) :
     PORCUPINE(MR.strings.porcupine.stable),
     TERMINATOR(MR.strings.terminator.stable);
 
-    override fun findValue(value: String): WakeWordKeywordOption {
-        return valueOf(value)
+    override fun findValue(value: String): WakeWordKeywordOption? {
+        return entries.firstOrNull { it.name == name }
     }
 }

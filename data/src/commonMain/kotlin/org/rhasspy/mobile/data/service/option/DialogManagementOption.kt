@@ -10,7 +10,7 @@ enum class DialogManagementOption(override val text: StableStringResource) :
     RemoteMQTT(MR.strings.remoteMQTT.stable),
     Disabled(MR.strings.disabled.stable);
 
-    override fun findValue(value: String): DialogManagementOption {
-        return valueOf(value)
+    override fun findValue(value: String): DialogManagementOption? {
+        return entries.firstOrNull { it.name == name }
     }
 }
