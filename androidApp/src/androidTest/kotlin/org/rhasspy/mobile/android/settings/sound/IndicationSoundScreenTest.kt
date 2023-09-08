@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.settings.content.sound
+package org.rhasspy.mobile.android.settings.sound
 
 import android.os.Environment
 import androidx.activity.compose.setContent

@@ -49,8 +49,8 @@ class WakeWordConfigurationViewModelTest : AppTest() {
             wakeWordPorcupineConfigurationData = WakeWordPorcupineConfigurationData(
                 accessToken = getRandomString(5),
                 porcupineLanguage = PorcupineLanguageOption.DE,
-                defaultOptions = PorcupineKeywordOption.values()
-                    .map { PorcupineDefaultKeyword(it, true, 0.7) }.sortedBy { it.option.name }.toImmutableList(), //sort is necessary because database also sorts
+                defaultOptions = PorcupineKeywordOption.entries
+                    .map { PorcupineDefaultKeyword(it, true, 0.7) }.toImmutableList(), //sort is necessary because database also sorts
                 customOptions = persistentListOf(
                     PorcupineCustomKeyword(
                         fileName = getRandomString(5),

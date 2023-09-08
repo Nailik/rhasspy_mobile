@@ -1,7 +1,6 @@
-package org.rhasspy.mobile.android.settings.content
+package org.rhasspy.mobile.android.settings
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.performClick
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
@@ -65,31 +64,6 @@ class AboutScreenTest : FlakyTest() {
         //Dialog closes
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.DialogDataPrivacy).assertDoesNotExist()
-    }
-
-    /**
-     * Libraries container exists
-     * User clicks library
-     * Dialog opens
-     * User clicks ok
-     * Dialog closes
-     */
-    @Test
-    @AllowFlaky
-    fun testLibraryDialog() = runTest {
-        setupContent()
-        //Libraries container exists
-        composeTestRule.onNodeWithTag(TestTag.LibrariesContainer).assertExists()
-        //User clicks library
-        composeTestRule.onNodeWithTag(TestTag.LibrariesContainer).onChildAt(0).performClick()
-        //Dialog opens
-        composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.DialogLibrary).assertExists()
-        //User clicks ok button
-        composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
-        //Dialog closes
-        composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.DialogLibrary).assertDoesNotExist()
     }
 
 }

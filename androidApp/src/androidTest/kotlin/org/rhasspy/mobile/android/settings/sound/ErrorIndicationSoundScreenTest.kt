@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.settings.content.sound
+package org.rhasspy.mobile.android.settings.sound
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice

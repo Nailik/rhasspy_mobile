@@ -5,10 +5,9 @@ import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.testutils.AppTest
-import org.rhasspy.mobile.testutils.getRandomString
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SelectTextToSpeechOption
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewState.TextToSpeechConfigurationData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -31,14 +30,10 @@ class TextToSpeechConfigurationViewModelTest : AppTest() {
 
         initialTextToSpeechConfigurationData = TextToSpeechConfigurationData(
             textToSpeechOption = TextToSpeechOption.Disabled,
-            isUseCustomTextToSpeechHttpEndpoint = false,
-            textToSpeechHttpEndpoint = ""
         )
 
         textToSpeechConfigurationData = TextToSpeechConfigurationData(
             textToSpeechOption = TextToSpeechOption.RemoteHTTP,
-            isUseCustomTextToSpeechHttpEndpoint = true,
-            textToSpeechHttpEndpoint = getRandomString(5)
         )
 
         textToSpeechConfigurationViewModel = get()
@@ -53,16 +48,6 @@ class TextToSpeechConfigurationViewModelTest : AppTest() {
 
         with(textToSpeechConfigurationData) {
             textToSpeechConfigurationViewModel.onEvent(SelectTextToSpeechOption(textToSpeechOption))
-            textToSpeechConfigurationViewModel.onEvent(
-                SetUseCustomHttpEndpoint(
-                    isUseCustomTextToSpeechHttpEndpoint
-                )
-            )
-            textToSpeechConfigurationViewModel.onEvent(
-                UpdateTextToSpeechHttpEndpoint(
-                    textToSpeechHttpEndpoint
-                )
-            )
         }
 
         assertEquals(
@@ -88,16 +73,6 @@ class TextToSpeechConfigurationViewModelTest : AppTest() {
 
         with(textToSpeechConfigurationData) {
             textToSpeechConfigurationViewModel.onEvent(SelectTextToSpeechOption(textToSpeechOption))
-            textToSpeechConfigurationViewModel.onEvent(
-                SetUseCustomHttpEndpoint(
-                    isUseCustomTextToSpeechHttpEndpoint
-                )
-            )
-            textToSpeechConfigurationViewModel.onEvent(
-                UpdateTextToSpeechHttpEndpoint(
-                    textToSpeechHttpEndpoint
-                )
-            )
         }
 
         assertEquals(

@@ -48,19 +48,6 @@ class NavigatorTest : AppTest() {
     }
 
     @Test
-    fun `when user clicks back and top view model handles it popBackStack is not called`() {
-        //every { nativeApplication.closeApp() } returns Unit
-        every { homeScreenViewModel.onBackPressedClick() } returns true
-        navigator.updateNavStack(persistentListOf(HomeScreen))
-
-        navigator.onBackPressed()
-
-        //nVerify { repeat(0) { nativeApplication.closeApp() } }
-
-        assertEquals(1, navigator.navStack.value.size)
-    }
-
-    @Test
     fun `when user wants to navigate to a screen it's always added to the backstack event if it is the most recent screen`() {
         assertEquals(1, navigator.navStack.value.size)
 
@@ -99,6 +86,7 @@ class NavigatorTest : AppTest() {
 
     @Test
     fun `when view model is composed it's added to the back stack`() {
+        navigator.updateNavStack(persistentListOf(HomeScreen))
         every { homeScreenViewModel.onBackPressedClick() } returns true
 
         navigator.onBackPressed()

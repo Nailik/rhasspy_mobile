@@ -4,7 +4,6 @@ import kotlinx.coroutines.test.runTest
 import okio.Path.Companion.toPath
 import org.koin.core.component.get
 import org.koin.dsl.module
-import org.rhasspy.mobile.data.connection.MqttConnectionData
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.getRandomString
@@ -35,7 +34,7 @@ class MqttConfigurationViewModelTest : AppTest() {
 
         initialMqttConnectionData = MqttConnectionConfigurationData(
             isEnabled = false,
-            host = "",
+            host = "tcp://<server>:1883",
             userName = "",
             password = "",
             isSSLEnabled = false,

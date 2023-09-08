@@ -57,7 +57,6 @@ class MqttConfigurationConnectionContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.MqttSwitch).onListItemSwitch().assertIsOff()
         //MQTT Settings not visible
         composeTestRule.onNodeWithTag(TestTag.Host).assertDoesNotExist()
-        composeTestRule.onNodeWithTag(TestTag.Port).assertDoesNotExist()
         composeTestRule.onNodeWithTag(TestTag.UserName).assertDoesNotExist()
         composeTestRule.onNodeWithTag(TestTag.Password).assertDoesNotExist()
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).assertDoesNotExist()
@@ -75,7 +74,6 @@ class MqttConfigurationConnectionContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.MqttSwitch).onListItemSwitch().assertIsOn()
         //settings visible
         composeTestRule.onNodeWithTag(TestTag.Host).assertExists()
-        composeTestRule.onNodeWithTag(TestTag.Port).assertExists()
         composeTestRule.onNodeWithTag(TestTag.UserName).assertExists()
         composeTestRule.onNodeWithTag(TestTag.Password).assertExists()
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).assertExists()
@@ -94,13 +92,11 @@ class MqttConfigurationConnectionContentTest : FlakyTest() {
     /**
      * mqtt is enabled
      * host is changed
-     * port is changed
      * username is changed
      * password is changed
      *
      * user click save
      * host is saved
-     * port is saved
      * username is saved
      * password is saved
      */
@@ -114,7 +110,6 @@ class MqttConfigurationConnectionContentTest : FlakyTest() {
         composeTestRule.awaitIdle()
 
         val textInputTestHost = "hostTestInput"
-        val textInputTestPort = "1672"
         val textInputTestUsername = "usernameTestInput"
         val textInputTestPassword = "passwordTestInput"
 
@@ -125,12 +120,6 @@ class MqttConfigurationConnectionContentTest : FlakyTest() {
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Host).performTextClearance()
         composeTestRule.onNodeWithTag(TestTag.Host).performTextInput(textInputTestHost)
-        composeTestRule.awaitIdle()
-        //port is changed
-        composeTestRule.onNodeWithTag(TestTag.Port).performScrollTo().performClick()
-        composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.Port).performTextClearance()
-        composeTestRule.onNodeWithTag(TestTag.Port).performTextInput(textInputTestPort)
         composeTestRule.awaitIdle()
         //username is changed
         composeTestRule.onNodeWithTag(TestTag.UserName).performScrollTo().performClick()

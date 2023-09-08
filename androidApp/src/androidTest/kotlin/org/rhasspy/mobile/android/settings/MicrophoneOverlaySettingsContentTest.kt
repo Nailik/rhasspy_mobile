@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.settings.content
+package org.rhasspy.mobile.android.settings
 
 import android.widget.Switch
 import androidx.compose.runtime.Composable

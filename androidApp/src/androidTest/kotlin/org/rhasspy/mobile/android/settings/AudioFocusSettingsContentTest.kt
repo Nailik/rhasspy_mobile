@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.settings.content
+package org.rhasspy.mobile.android.settings
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.*

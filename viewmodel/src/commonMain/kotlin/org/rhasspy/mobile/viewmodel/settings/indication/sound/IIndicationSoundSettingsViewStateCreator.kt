@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.viewmodel.settings.indication.sound
 
-import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -14,7 +14,7 @@ import org.rhasspy.mobile.settings.ISetting
 
 class IIndicationSoundSettingsViewStateCreator(
     private val localAudioService: ILocalAudioService,
-    private val customSoundOptions: ISetting<ImmutableList<String>>,
+    private val customSoundOptions: ISetting<List<String>>,
     private val soundSetting: ISetting<String>,
     private val soundVolume: ISetting<Float>
 ) {
@@ -45,7 +45,7 @@ class IIndicationSoundSettingsViewStateCreator(
     private fun getViewState(): IIndicationSoundSettingsViewState {
         return IIndicationSoundSettingsViewState(
             soundSetting = soundSetting.value,
-            customSoundFiles = customSoundOptions.value,
+            customSoundFiles = customSoundOptions.value.toImmutableList(),
             soundVolume = soundVolume.value,
             isAudioPlaying = localAudioService.isPlayingState.value,
             audioOutputOption = AppSetting.soundIndicationOutputOption.value,

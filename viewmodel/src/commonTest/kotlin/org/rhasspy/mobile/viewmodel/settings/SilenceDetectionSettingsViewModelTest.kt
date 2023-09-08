@@ -51,6 +51,7 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
         every { audioRecorder.maxVolume } returns MutableStateFlow(0f)
         every { audioRecorder.absoluteMaxVolume } returns 100f
         every { audioRecorder.isRecording } returns MutableStateFlow(false)
+        every { audioRecorder.stopRecording() } returns Unit
 
         voiceActivityDetectionConfigurationViewModel = get()
     }

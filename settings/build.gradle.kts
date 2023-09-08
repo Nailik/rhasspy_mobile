@@ -20,8 +20,8 @@ kotlin {
                 implementation(Koin.core)
                 implementation(Square.okio)
                 implementation(CashApp.Sqldelight.coroutines)
-                implementation("com.russhwolf:multiplatform-settings-no-arg:_")
-                implementation("com.russhwolf:multiplatform-settings-serialization:_")
+                implementation(Russhwolf.multiplatformSettingsNoArg)
+                implementation(Russhwolf.multiplatformSettingsSerialization)
             }
         }
         val commonTest by getting
