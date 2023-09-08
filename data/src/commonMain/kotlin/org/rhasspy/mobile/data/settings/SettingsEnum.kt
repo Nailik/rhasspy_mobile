@@ -7,6 +7,7 @@ enum class SettingsEnum {
     HomeAssistantConnection,
     MqttConnection,
     LocalWebserverConnection,
+
     //App Settings
     CrashlyticsDialog,
     ChangelogDialog,

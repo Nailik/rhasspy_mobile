@@ -93,7 +93,7 @@ private fun DialogManagementOptionContent(
     ) { option ->
 
         when (option) {
-            DialogManagementOption.Local      ->
+            DialogManagementOption.Local ->
                 DialogManagementSettingsLocal(
                     textAsrTimeoutText = editData.textAsrTimeoutText,
                     intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
@@ -109,7 +109,7 @@ private fun DialogManagementOptionContent(
                     onEvent = onEvent
                 )
 
-            else                              -> Unit
+            else                         -> Unit
         }
 
     }

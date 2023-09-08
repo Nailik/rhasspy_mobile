@@ -169,7 +169,7 @@ private fun LogScreenContent(
                 }
             }
 
-            else              -> Unit
+            else -> Unit
         }
     }
 
