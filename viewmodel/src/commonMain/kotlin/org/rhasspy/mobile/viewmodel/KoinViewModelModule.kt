@@ -79,7 +79,7 @@ fun viewModelModule() = module {
     includes(
         logicModule(),
         platformSpecificModule,
-        settingsModule
+        settingsModule()
     )
 
     single<INavigator> {

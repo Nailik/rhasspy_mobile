@@ -56,7 +56,7 @@ class Application : NativeApplication(), KoinComponent {
                 logicModule(),
                 viewModelModule(),
                 koinOverlayModule(),
-                settingsModule,
+                settingsModule(),
                 platformSpecificModule
             )
         }
