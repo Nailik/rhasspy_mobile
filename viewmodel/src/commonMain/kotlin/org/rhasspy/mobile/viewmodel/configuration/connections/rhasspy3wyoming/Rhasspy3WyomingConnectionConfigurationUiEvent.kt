@@ -4,9 +4,9 @@ sealed interface Rhasspy3WyomingConnectionConfigurationUiEvent {
 
     sealed interface Change : Rhasspy3WyomingConnectionConfigurationUiEvent {
 
-        data class UpdateHomeAssistantClientServerEndpointHost(val host: String) : Change
-        data class UpdateHomeAssistantClientTimeout(val text: String) : Change
-        data class SetHomeAssistantSSLVerificationDisabled(val disabled: Boolean) : Change
+        data class UpdateRhasspy3WyomingServerEndpointHost(val host: String) : Change
+        data class UpdateRhasspy3WyomingTimeout(val text: String) : Change
+        data class SetRhasspy3WyomingSSLVerificationDisabled(val disabled: Boolean) : Change
 
     }
 

@@ -46,9 +46,9 @@ class Rhasspy3WyomingConnectionConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SetHomeAssistantSSLVerificationDisabled     -> copy(isSSLVerificationDisabled = change.disabled)
-                    is UpdateHomeAssistantClientServerEndpointHost -> copy(host = change.host)
-                    is UpdateHomeAssistantClientTimeout            -> copy(timeout = change.text.toLongOrNullOrConstant())
+                    is SetRhasspy3WyomingSSLVerificationDisabled -> copy(isSSLVerificationDisabled = change.disabled)
+                    is UpdateRhasspy3WyomingServerEndpointHost   -> copy(host = change.host)
+                    is UpdateRhasspy3WyomingTimeout              -> copy(timeout = change.text.toLongOrNullOrConstant())
                 }
             })
         }

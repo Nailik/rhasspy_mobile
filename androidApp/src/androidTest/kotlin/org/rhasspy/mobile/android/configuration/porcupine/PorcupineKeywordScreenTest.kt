@@ -7,17 +7,21 @@ import androidx.compose.ui.test.performClick
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.porcupine.PorcupineKeywordScreen
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertTrue
 
 class PorcupineKeywordScreenTest : FlakyTest() {
 
+    private val viewModel = get<WakeWordConfigurationViewModel>()
+
     @Composable
     override fun ComposableContent() {
-        PorcupineKeywordScreen()
+        PorcupineKeywordScreen(viewModel)
     }
 
     /**

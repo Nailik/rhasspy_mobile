@@ -11,11 +11,12 @@ import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.hasTestTag
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.main.MainScreen
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.SettingsScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
 
 /**
  * Test Settings Screen
@@ -24,9 +25,11 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScr
  */
 class SettingsScreenTest : FlakyTest() {
 
+    private val viewModel = get<MainScreenViewModel>()
+
     @Composable
     override fun ComposableContent() {
-        MainScreen(LocalViewModelFactory.current)
+        MainScreen(viewModel)
     }
 
     /**
@@ -44,13 +47,13 @@ class SettingsScreenTest : FlakyTest() {
         setupContent()
 
         //each item exists and navigates
-        SettingsScreenDestination.entries.forEach { tag ->
+        SettingsScreenDestination::class.sealedSubclasses.forEach { tag ->
             composeTestRule.awaitIdle()
-            composeTestRule.onNodeWithTag(TestTag.List).performScrollToNode(hasTestTag(tag)).assertExists()
-            composeTestRule.onNodeWithTag(tag).performClick()
+            composeTestRule.onNodeWithTag(TestTag.List).performScrollToNode(hasTestTag(tag as NavigationDestination)).assertExists()
+            composeTestRule.onNodeWithTag(tag as NavigationDestination).performClick()
             //content exists
             composeTestRule.awaitIdle()
-            composeTestRule.onNodeWithTag(tag).assertExists()
+            composeTestRule.onNodeWithTag(tag as NavigationDestination).assertExists()
             //press toolbar back button
             composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
         }

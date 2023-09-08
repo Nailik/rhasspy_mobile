@@ -45,16 +45,12 @@ class AudioPlayingConfigurationViewModelTest : AppTest() {
         initialAudioPlayingConfigurationData = AudioPlayingConfigurationData(
             audioPlayingOption = AudioPlayingOption.Local,
             audioOutputOption = AudioOutputOption.Sound,
-            isUseCustomAudioPlayingHttpEndpoint = false,
-            audioPlayingHttpEndpoint = "",
             audioPlayingMqttSiteId = ""
         )
 
         audioPlayingConfigurationData = AudioPlayingConfigurationData(
             audioPlayingOption = AudioPlayingOption.RemoteMQTT,
             audioOutputOption = AudioOutputOption.Notification,
-            isUseCustomAudioPlayingHttpEndpoint = true,
-            audioPlayingHttpEndpoint = getRandomString(5),
             audioPlayingMqttSiteId = getRandomString(5)
         )
 
@@ -75,16 +71,6 @@ class AudioPlayingConfigurationViewModelTest : AppTest() {
                 )
             )
             audioPlayingConfigurationViewModel.onEvent(SelectAudioOutputOption(audioOutputOption))
-            audioPlayingConfigurationViewModel.onEvent(
-                SetUseCustomHttpEndpoint(
-                    isUseCustomAudioPlayingHttpEndpoint
-                )
-            )
-            audioPlayingConfigurationViewModel.onEvent(
-                ChangeEditAudioPlayingHttpEndpoint(
-                    audioPlayingHttpEndpoint
-                )
-            )
             audioPlayingConfigurationViewModel.onEvent(
                 ChangeEditAudioPlayingMqttSiteId(
                     audioPlayingMqttSiteId
@@ -120,16 +106,6 @@ class AudioPlayingConfigurationViewModelTest : AppTest() {
                 )
             )
             audioPlayingConfigurationViewModel.onEvent(SelectAudioOutputOption(audioOutputOption))
-            audioPlayingConfigurationViewModel.onEvent(
-                SetUseCustomHttpEndpoint(
-                    isUseCustomAudioPlayingHttpEndpoint
-                )
-            )
-            audioPlayingConfigurationViewModel.onEvent(
-                ChangeEditAudioPlayingHttpEndpoint(
-                    audioPlayingHttpEndpoint
-                )
-            )
             audioPlayingConfigurationViewModel.onEvent(
                 ChangeEditAudioPlayingMqttSiteId(
                     audioPlayingMqttSiteId

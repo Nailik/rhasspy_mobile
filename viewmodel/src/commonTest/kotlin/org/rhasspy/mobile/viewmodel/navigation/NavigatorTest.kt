@@ -52,7 +52,6 @@ class NavigatorTest : AppTest() {
         //every { nativeApplication.closeApp() } returns Unit
         every { homeScreenViewModel.onBackPressedClick() } returns true
         navigator.updateNavStack(persistentListOf(HomeScreen))
-        navigator.onComposed(homeScreenViewModel)
 
         navigator.onBackPressed()
 
@@ -102,8 +101,6 @@ class NavigatorTest : AppTest() {
     fun `when view model is composed it's added to the back stack`() {
         every { homeScreenViewModel.onBackPressedClick() } returns true
 
-        navigator.onComposed(homeScreenViewModel)
-
         navigator.onBackPressed()
         nVerify { homeScreenViewModel.onBackPressedClick() }
     }
@@ -113,10 +110,6 @@ class NavigatorTest : AppTest() {
         //every { nativeApplication.closeApp() } returns Unit
         navigator.updateNavStack(persistentListOf(ConfigurationScreen, HomeScreen))
         every { homeScreenViewModel.onBackPressedClick() } returns true
-
-        navigator.onComposed(homeScreenViewModel)
-
-        navigator.onDisposed(homeScreenViewModel)
 
         navigator.onBackPressed()
         nVerify { repeat(0) { homeScreenViewModel.onBackPressedClick() } }

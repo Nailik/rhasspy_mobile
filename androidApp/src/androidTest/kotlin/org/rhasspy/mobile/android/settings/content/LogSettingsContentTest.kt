@@ -25,7 +25,7 @@ class LogSettingsContentTest : FlakyTest() {
 
     @Composable
     override fun ComposableContent() {
-        LogSettingsContent()
+        LogSettingsContent(viewModel)
     }
 
     /**

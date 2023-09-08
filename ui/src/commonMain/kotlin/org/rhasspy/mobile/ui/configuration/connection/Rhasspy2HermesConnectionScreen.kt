@@ -78,7 +78,7 @@ private fun HttpConnectionDetailContent(
             label = MR.strings.baseHost.stable,
             modifier = Modifier.testTag(TestTag.Host),
             value = editData.host,
-            onValueChange = { onEvent(UpdateHomeAssistantClientServerEndpointHost(it)) },
+            onValueChange = { onEvent(UpdateRhasspy2HermesServerEndpointHost(it)) },
             isLastItem = false
         )
 
@@ -87,7 +87,7 @@ private fun HttpConnectionDetailContent(
             label = MR.strings.requestTimeout.stable,
             modifier = Modifier.testTag(TestTag.Timeout),
             value = editData.timeoutText,
-            onValueChange = { onEvent(UpdateHomeAssistantClientTimeout(it)) },
+            onValueChange = { onEvent(UpdateRhasspy2HermesTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
 
@@ -120,7 +120,7 @@ private fun HttpConnectionDetailContent(
             modifier = Modifier.testTag(TestTag.SSLSwitch),
             secondaryText = MR.strings.disableSSLValidationInformation.stable,
             isChecked = editData.isSSLVerificationDisabled,
-            onCheckedChange = { onEvent(SetHomeAssistantSSLVerificationDisabled(it)) },
+            onCheckedChange = { onEvent(SetRhasspy2HermesSSLVerificationDisabled(it)) },
         )
 
     }

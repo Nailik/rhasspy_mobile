@@ -8,7 +8,7 @@ data class MqttConnectionData(
     val host: String,
     val userName: String,
     val password: String,
-    val isSslEnabled: Boolean,
+    val isSSLEnabled: Boolean,
     val connectionTimeout: Int,
     val keepAliveInterval: Int,
     val retryInterval: Long,

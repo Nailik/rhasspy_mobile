@@ -25,7 +25,7 @@ class AudioFocusSettingsContentTest : FlakyTest() {
 
     @Composable
     override fun ComposableContent() {
-        AudioFocusSettingsContent()
+        AudioFocusSettingsContent(viewModel)
     }
 
     /**

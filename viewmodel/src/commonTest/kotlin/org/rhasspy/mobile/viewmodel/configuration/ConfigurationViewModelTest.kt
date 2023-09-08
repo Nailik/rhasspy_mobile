@@ -31,7 +31,6 @@ class ConfigurationViewModelTest : AppTest() {
     private var onSave: Boolean = false
 
     private val testService = object : IService {
-        override val logger = Logger.withTag("TestService")
         override val serviceState = MutableStateFlow(ServiceState.Success)
     }
 

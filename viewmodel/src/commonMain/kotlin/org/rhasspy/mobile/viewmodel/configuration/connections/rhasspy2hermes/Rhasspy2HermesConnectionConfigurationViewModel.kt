@@ -46,9 +46,9 @@ class Rhasspy2HermesConnectionConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SetHomeAssistantSSLVerificationDisabled     -> copy(isSSLVerificationDisabled = change.disabled)
-                    is UpdateHomeAssistantClientServerEndpointHost -> copy(host = change.host)
-                    is UpdateHomeAssistantClientTimeout            -> copy(timeout = change.text.toLongOrNullOrConstant())
+                    is SetRhasspy2HermesSSLVerificationDisabled -> copy(isSSLVerificationDisabled = change.disabled)
+                    is UpdateRhasspy2HermesServerEndpointHost   -> copy(host = change.host)
+                    is UpdateRhasspy2HermesTimeout              -> copy(timeout = change.text.toLongOrNullOrConstant())
                 }
             })
         }

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
+/*package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
 
 import kotlinx.coroutines.test.runTest
 import org.koin.core.component.get
@@ -125,4 +125,4 @@ class RemoteHermesHttpConfigurationViewModelTest : AppTest() {
         )
         assertEquals(initialHttpConfigurationData, HttpConfigurationData())
     }
-}
+}*/

@@ -35,7 +35,7 @@ class BackgroundSettingsContentTest : FlakyTest() {
 
     @Composable
     override fun ComposableContent() {
-        BackgroundServiceSettingsContent()
+        BackgroundServiceSettingsContent(viewModel)
     }
 
     /**

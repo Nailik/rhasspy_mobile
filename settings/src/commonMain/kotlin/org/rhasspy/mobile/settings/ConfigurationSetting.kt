@@ -59,7 +59,7 @@ object ConfigurationSetting {
             host = "tcp://<server>:1883",
             userName = "",
             password = "",
-            isSslEnabled = false,
+            isSSLEnabled = false,
             connectionTimeout = 5,
             keepAliveInterval = 30,
             retryInterval = 10L,

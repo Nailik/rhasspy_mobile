@@ -4,9 +4,9 @@ sealed interface Rhasspy2HermesConnectionConfigurationUiEvent {
 
     sealed interface Change : Rhasspy2HermesConnectionConfigurationUiEvent {
 
-        data class UpdateHomeAssistantClientServerEndpointHost(val host: String) : Change
-        data class UpdateHomeAssistantClientTimeout(val text: String) : Change
-        data class SetHomeAssistantSSLVerificationDisabled(val disabled: Boolean) : Change
+        data class UpdateRhasspy2HermesServerEndpointHost(val host: String) : Change
+        data class UpdateRhasspy2HermesTimeout(val text: String) : Change
+        data class SetRhasspy2HermesSSLVerificationDisabled(val disabled: Boolean) : Change
 
     }
 

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.configuration
+package org.rhasspy.mobile.android.configuration.connection
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.*
@@ -20,13 +20,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class WebServerConnectionContentTest : FlakyTest() {
+class WebServerConnectionConfigurationContentTest : FlakyTest() {
 
     private val viewModel = get<WebServerConnectionConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
-        WebServerConnectionScreen()
+        WebServerConnectionScreen(viewModel)
     }
 
     /**
@@ -68,7 +68,7 @@ class WebServerConnectionContentTest : FlakyTest() {
         val textInputTest = "6541"
 
         //http api is disabled
-        assertFalse { viewModel.viewState.value.editData.isHttpServerEnabled }
+        assertFalse { viewModel.viewState.value.editData.isEnabled }
         //switch is off
         composeTestRule.onNodeWithTag(TestTag.ServerSwitch).onListItemSwitch().assertIsOff()
         //settings not visible
@@ -80,7 +80,7 @@ class WebServerConnectionContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.ServerSwitch).performClick()
         //http api is enabled
         composeTestRule.awaitIdle()
-        assertTrue { viewModel.viewState.value.editData.isHttpServerEnabled }
+        assertTrue { viewModel.viewState.value.editData.isEnabled }
         //switch is on
         composeTestRule.onNodeWithTag(TestTag.ServerSwitch).onListItemSwitch().assertIsOn()
         //settings visible
@@ -93,7 +93,7 @@ class WebServerConnectionContentTest : FlakyTest() {
 
         //enable ssl is off
         composeTestRule.awaitIdle()
-        assertFalse { viewModel.viewState.value.editData.isHttpServerSSLEnabled }
+        assertFalse { viewModel.viewState.value.editData.isSSLEnabled }
         //enable ssl switch is off
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOff()
         //certificate button not visible
@@ -103,7 +103,7 @@ class WebServerConnectionContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).performScrollTo().performClick()
         //ssl is on
         composeTestRule.awaitIdle()
-        assertTrue { viewModel.viewState.value.editData.isHttpServerSSLEnabled }
+        assertTrue { viewModel.viewState.value.editData.isSSLEnabled }
         //enable ssl switch is on
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOn()
         //certificate button visible
@@ -111,13 +111,13 @@ class WebServerConnectionContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar()
-        WebServerConnectionConfigurationViewModel(get()).viewState.value.editData.also {
+        WebServerConnectionConfigurationViewModel(get(), get()).viewState.value.editData.also {
             //enable http api is saved
-            assertEquals(true, it.isHttpServerEnabled)
+            assertEquals(true, it.isEnabled)
             //port is saved
-            assertEquals(textInputTest, it.httpServerPortText)
+            assertEquals(textInputTest, it.portText)
             //enable ssl is saved
-            assertEquals(true, it.isHttpServerSSLEnabled)
+            assertEquals(true, it.isSSLEnabled)
         }
     }
 }

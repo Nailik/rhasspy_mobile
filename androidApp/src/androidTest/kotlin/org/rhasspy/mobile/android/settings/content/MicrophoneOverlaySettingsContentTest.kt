@@ -32,7 +32,7 @@ class MicrophoneOverlaySettingsContentTest : FlakyTest() {
 
     @Composable
     override fun ComposableContent() {
-        MicrophoneOverlaySettingsContent()
+        MicrophoneOverlaySettingsContent(viewModel)
     }
 
     /**

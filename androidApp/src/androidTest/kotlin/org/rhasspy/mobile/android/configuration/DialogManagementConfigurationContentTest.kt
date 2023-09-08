@@ -24,7 +24,7 @@ class DialogManagementConfigurationContentTest : FlakyTest() {
 
     @Composable
     override fun ComposableContent() {
-        DialogManagementConfigurationScreen()
+        DialogManagementConfigurationScreen(viewModel)
     }
 
     /**

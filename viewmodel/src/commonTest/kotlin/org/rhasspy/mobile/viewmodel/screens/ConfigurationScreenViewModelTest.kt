@@ -1,12 +1,7 @@
 package org.rhasspy.mobile.viewmodel.screens
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import org.kodein.mock.Mock
 import org.koin.dsl.module
 import org.koin.test.get
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IHttpClientService
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.getRandomString
@@ -21,22 +16,17 @@ import kotlin.test.assertNotEquals
 
 class ConfigurationScreenViewModelTest : AppTest() {
 
-    @Mock
-    lateinit var httpClientService: IHttpClientService
-
     private lateinit var configurationScreenViewModel: ConfigurationScreenViewModel
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() {}
 
     @BeforeTest
     fun before() {
         super.before(
             module {
-                single { httpClientService }
             }
         )
 
-        every { httpClientService.serviceState } returns MutableStateFlow(ServiceState.Exception()).readOnly
         configurationScreenViewModel = get()
     }
 

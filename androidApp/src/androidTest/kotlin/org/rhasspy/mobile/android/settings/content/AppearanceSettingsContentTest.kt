@@ -23,7 +23,7 @@ class AppearanceSettingsContentTest : FlakyTest() {
 
     @Composable
     override fun ComposableContent() {
-        AppearanceSettingsScreenItemContent()
+        AppearanceSettingsScreenItemContent(viewModel)
     }
 
     /**

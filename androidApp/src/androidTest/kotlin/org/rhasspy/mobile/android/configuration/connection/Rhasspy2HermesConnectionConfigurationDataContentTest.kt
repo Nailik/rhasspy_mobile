@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.configuration
+package org.rhasspy.mobile.android.configuration.connection
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.*
@@ -11,21 +11,21 @@ import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.connection.HttpConnectionScreen
+import org.rhasspy.mobile.ui.configuration.connection.Rhasspy2HermesConnectionScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Change.SetHomeAssistantSSLVerificationDisabled
-import org.rhasspy.mobile.viewmodel.configuration.connections.http.detail.HttpConnectionDetailConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Change.SetRhasspy2HermesSSLVerificationDisabled
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class HttpConnectionDataContentTest : FlakyTest() {
+class Rhasspy2HermesConnectionConfigurationDataContentTest : FlakyTest() {
 
-    private val viewModel = get<HttpConnectionDetailConfigurationViewModel>()
+    private val viewModel = get<Rhasspy2HermesConnectionConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
-        HttpConnectionScreen()
+        Rhasspy2HermesConnectionScreen(viewModel)
     }
 
     /**
@@ -46,7 +46,7 @@ class HttpConnectionDataContentTest : FlakyTest() {
     fun testHttpContent() = runTest {
         setupContent()
 
-        viewModel.onEvent(SetHomeAssistantSSLVerificationDisabled(true))
+        viewModel.onEvent(SetRhasspy2HermesSSLVerificationDisabled(true))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
@@ -73,7 +73,7 @@ class HttpConnectionDataContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar()
-        HttpConnectionDetailConfigurationViewModel(null, get()).viewState.value.editData.also {
+        Rhasspy2HermesConnectionConfigurationViewModel(get()).viewState.value.editData.also {
             //disable ssl validation off is saved
             assertEquals(false, it.isSSLVerificationDisabled)
             //host is saved

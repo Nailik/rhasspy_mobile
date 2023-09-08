@@ -6,16 +6,20 @@ import androidx.compose.ui.test.performClick
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.settings.AboutScreen
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewModel
 
 class AboutScreenTest : FlakyTest() {
 
+    private val viewModel = get<AboutScreenViewModel>()
+
     @Composable
     override fun ComposableContent() {
-        AboutScreen()
+        AboutScreen(viewModel)
     }
 
     /**

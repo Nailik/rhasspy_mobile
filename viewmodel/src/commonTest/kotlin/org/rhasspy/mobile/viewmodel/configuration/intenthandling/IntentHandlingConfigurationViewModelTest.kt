@@ -32,17 +32,11 @@ class IntentHandlingConfigurationViewModelTest : AppTest() {
 
         initialIntentHandlingConfigurationData = IntentHandlingConfigurationData(
             intentHandlingOption = IntentHandlingOption.Disabled,
-            intentHandlingHttpEndpoint = "",
-            intentHandlingHomeAssistantEndpoint = "",
-            intentHandlingHomeAssistantAccessToken = "",
             intentHandlingHomeAssistantOption = HomeAssistantIntentHandlingOption.Intent
         )
 
         intentHandlingConfigurationData = IntentHandlingConfigurationData(
             intentHandlingOption = IntentHandlingOption.HomeAssistant,
-            intentHandlingHttpEndpoint = getRandomString(5),
-            intentHandlingHomeAssistantEndpoint = getRandomString(5),
-            intentHandlingHomeAssistantAccessToken = getRandomString(5),
             intentHandlingHomeAssistantOption = HomeAssistantIntentHandlingOption.Event
         )
 
@@ -57,19 +51,6 @@ class IntentHandlingConfigurationViewModelTest : AppTest() {
         )
 
         with(intentHandlingConfigurationData) {
-            intentHandlingConfigurationViewModel.onEvent(
-                ChangeIntentHandlingHomeAssistantAccessToken(intentHandlingHomeAssistantAccessToken)
-            )
-            intentHandlingConfigurationViewModel.onEvent(
-                ChangeIntentHandlingHomeAssistantEndpoint(
-                    intentHandlingHomeAssistantEndpoint
-                )
-            )
-            intentHandlingConfigurationViewModel.onEvent(
-                ChangeIntentHandlingHttpEndpoint(
-                    intentHandlingHttpEndpoint
-                )
-            )
             intentHandlingConfigurationViewModel.onEvent(
                 SelectIntentHandlingHomeAssistantOption(
                     intentHandlingHomeAssistantOption
@@ -104,19 +85,6 @@ class IntentHandlingConfigurationViewModelTest : AppTest() {
         )
 
         with(intentHandlingConfigurationData) {
-            intentHandlingConfigurationViewModel.onEvent(
-                ChangeIntentHandlingHomeAssistantAccessToken(intentHandlingHomeAssistantAccessToken)
-            )
-            intentHandlingConfigurationViewModel.onEvent(
-                ChangeIntentHandlingHomeAssistantEndpoint(
-                    intentHandlingHomeAssistantEndpoint
-                )
-            )
-            intentHandlingConfigurationViewModel.onEvent(
-                ChangeIntentHandlingHttpEndpoint(
-                    intentHandlingHttpEndpoint
-                )
-            )
             intentHandlingConfigurationViewModel.onEvent(
                 SelectIntentHandlingHomeAssistantOption(
                     intentHandlingHomeAssistantOption

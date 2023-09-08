@@ -57,8 +57,8 @@ internal class IntentHandlingService(
     private fun setupState() {
         _serviceState.value = when (params.intentHandlingOption) {
             IntentHandlingOption.HomeAssistant   -> Success
-            IntentHandlingOption.RemoteHTTP      -> Success
             IntentHandlingOption.WithRecognition -> Success
+            IntentHandlingOption.RemoteHTTP      -> Success
             IntentHandlingOption.Disabled        -> Disabled
         }
     }

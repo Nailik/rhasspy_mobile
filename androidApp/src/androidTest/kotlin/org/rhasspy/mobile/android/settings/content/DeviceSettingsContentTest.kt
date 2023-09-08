@@ -20,9 +20,11 @@ import kotlin.test.assertTrue
 
 class DeviceSettingsContentTest : FlakyTest() {
 
+    private val viewModel = get<DeviceSettingsViewModel>()
+
     @Composable
     override fun ComposableContent() {
-        DeviceSettingsContent()
+        DeviceSettingsContent(viewModel)
     }
 
     /**

@@ -43,14 +43,10 @@ class IntentRecognitionConfigurationViewModelTest : AppTest() {
 
         initialIntentHandlingConfigurationData = IntentRecognitionConfigurationData(
             intentRecognitionOption = IntentRecognitionOption.Disabled,
-            isUseCustomIntentRecognitionHttpEndpoint = false,
-            intentRecognitionHttpEndpoint = ""
         )
 
         intentHandlingConfigurationData = IntentRecognitionConfigurationData(
             intentRecognitionOption = IntentRecognitionOption.RemoteMQTT,
-            isUseCustomIntentRecognitionHttpEndpoint = true,
-            intentRecognitionHttpEndpoint = getRandomString(5)
         )
 
         intentRecognitionConfigurationViewModel = get()
@@ -66,18 +62,8 @@ class IntentRecognitionConfigurationViewModelTest : AppTest() {
 
         with(intentHandlingConfigurationData) {
             intentRecognitionConfigurationViewModel.onEvent(
-                ChangeIntentRecognitionHttpEndpoint(
-                    intentRecognitionHttpEndpoint
-                )
-            )
-            intentRecognitionConfigurationViewModel.onEvent(
                 SelectIntentRecognitionOption(
                     intentRecognitionOption
-                )
-            )
-            intentRecognitionConfigurationViewModel.onEvent(
-                SetUseCustomHttpEndpoint(
-                    isUseCustomIntentRecognitionHttpEndpoint
                 )
             )
         }
@@ -105,18 +91,8 @@ class IntentRecognitionConfigurationViewModelTest : AppTest() {
 
         with(intentHandlingConfigurationData) {
             intentRecognitionConfigurationViewModel.onEvent(
-                ChangeIntentRecognitionHttpEndpoint(
-                    intentRecognitionHttpEndpoint
-                )
-            )
-            intentRecognitionConfigurationViewModel.onEvent(
                 SelectIntentRecognitionOption(
                     intentRecognitionOption
-                )
-            )
-            intentRecognitionConfigurationViewModel.onEvent(
-                SetUseCustomHttpEndpoint(
-                    isUseCustomIntentRecognitionHttpEndpoint
                 )
             )
         }

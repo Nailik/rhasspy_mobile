@@ -16,7 +16,6 @@ import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.LocalViewModelFactory
 import org.rhasspy.mobile.ui.main.MainScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
@@ -24,6 +23,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -31,11 +31,12 @@ class WakeWordConfigurationContentTest : FlakyTest() {
 
     private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
+    private val mainViewModel = get<MainScreenViewModel>()
     private val viewModel = get<WakeWordConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
-        MainScreen(LocalViewModelFactory.current)
+        MainScreen(mainViewModel)
     }
 
 

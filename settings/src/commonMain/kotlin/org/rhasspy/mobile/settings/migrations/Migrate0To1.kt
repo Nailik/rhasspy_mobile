@@ -81,7 +81,7 @@ internal class Migrate0To1 : IMigration(0, 1) {
             host = "tcp://${mqttHost.value}:${mqttPort.value}",
             userName = mqttUserName.value,
             password = mqttPassword.value,
-            isSslEnabled = isMqttSSLEnabled.value,
+            isSSLEnabled = isMqttSSLEnabled.value,
             connectionTimeout = mqttConnectionTimeout.value.toInt(),
             keepAliveInterval = mqttKeepAliveInterval.value.toInt(),
             retryInterval = mqttRetryInterval.value,

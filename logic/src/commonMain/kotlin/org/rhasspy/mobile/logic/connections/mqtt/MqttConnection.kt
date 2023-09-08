@@ -171,7 +171,7 @@ internal class MqttConnection(
                 //connect to server
                 it.connect(
                     MqttServiceConnectionOptions(
-                        isSSLEnabled = params.mqttConnectionData.isSslEnabled,
+                        isSSLEnabled = params.mqttConnectionData.isSSLEnabled,
                         keyStorePath = params.mqttConnectionData.keystoreFile?.toPath(),
                         connectionTimeout = params.mqttConnectionData.connectionTimeout,
                         keepAliveInterval = params.mqttConnectionData.keepAliveInterval,
@@ -329,7 +329,7 @@ internal class MqttConnection(
      */
     private fun publishMessage(topic: String, message: MqttMessage, onResult: ((result: ServiceState) -> Unit)? = null) {
         scope.launch {
-            val status = if (params.mqttConnectionData.isSslEnabled) {
+            val status = if (params.mqttConnectionData.isSSLEnabled) {
                 message.msgId = id
 
                 client?.let { mqttClient ->

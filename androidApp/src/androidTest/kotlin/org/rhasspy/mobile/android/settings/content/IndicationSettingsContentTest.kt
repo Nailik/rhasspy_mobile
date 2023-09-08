@@ -34,7 +34,7 @@ class IndicationSettingsContentTest : FlakyTest() {
 
     @Composable
     override fun ComposableContent() {
-        IndicationSettingsOverviewScreen()
+        IndicationSettingsOverviewScreen(viewModel)
     }
 
     /**

@@ -150,7 +150,7 @@
     <string name="sslValidation">SSL-Validierung</string>
     <string name="disableSSLValidation">Deaktiviere SSL-Zertifikat-Validierung</string>
     <string name="disableSSLValidationInformation">Möglicherweise erforderlich bei der Verwendung von selbstsignierten Zertifikaten</string>
-    <string name="webserver">Lokaler Webserver</string>
+    <string name="local_webserver">Lokaler Webserver</string>
     <string name="server">Server</string>
     <string name="protocols">Protokolle</string>
     <string name="rhasspy2_hermes_server">Rhasspy2/Hermes Server</string>
