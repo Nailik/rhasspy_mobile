@@ -92,7 +92,7 @@ private fun AudioPlayingOptionContent(
     ) { option ->
 
         when (option) {
-            AudioPlayingOption.Local -> LocalConfigurationContent(
+            AudioPlayingOption.Local      -> LocalConfigurationContent(
                 audioOutputOption = editData.audioOutputOption,
                 audioOutputOptionList = editData.audioOutputOptionList,
                 onEvent = onEvent
@@ -107,7 +107,7 @@ private fun AudioPlayingOptionContent(
                 onEvent = onEvent
             )
 
-            else                     -> Unit
+            else                          -> Unit
         }
 
     }

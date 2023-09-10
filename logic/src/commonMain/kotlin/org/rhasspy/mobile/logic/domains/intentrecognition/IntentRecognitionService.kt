@@ -24,7 +24,6 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogService
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionResult
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.platformspecific.readOnly
-import kotlin.Exception
 
 interface IIntentRecognitionService : IService {
 
@@ -97,8 +96,8 @@ internal class IntentRecognitionService(
                 httpClientConnection.recognizeIntent(text) { result ->
                     _serviceState.value = result.toServiceState()
                     val action = when (result) {
-                        is HttpClientResult.Error   -> IntentRecognitionError(Source.Local)
-                        is HttpClientResult.Success -> IntentRecognitionResult(
+                        is HttpClientResult.Error      -> IntentRecognitionError(Source.Local)
+                        is HttpClientResult.Success    -> IntentRecognitionResult(
                             source = Source.Local,
                             intentName = readIntentNameFromJson(result.data),
                             intent = result.data

@@ -109,7 +109,7 @@ private fun DialogManagementOptionContent(
                     onEvent = onEvent
                 )
 
-            else                         -> Unit
+            else -> Unit
         }
 
     }

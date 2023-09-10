@@ -53,8 +53,8 @@ class MqttConnectionConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SetMqttEnabled    -> copy(isEnabled = change.enabled)
-                    is SetMqttSSLEnabled -> copy(isSSLEnabled = change.enabled)
+                    is SetMqttEnabled              -> copy(isEnabled = change.enabled)
+                    is SetMqttSSLEnabled           -> copy(isSSLEnabled = change.enabled)
                     is UpdateMqttConnectionTimeout -> copy(connectionTimeout = change.timeout.toIntOrNullOrConstant())
                     is UpdateMqttHost              -> copy(host = change.host)
                     is UpdateMqttKeepAliveInterval -> copy(keepAliveInterval = change.keepAliveInterval.toIntOrNullOrConstant())

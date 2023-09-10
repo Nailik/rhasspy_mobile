@@ -147,8 +147,8 @@ internal class SpeechToTextService(
                 httpClientConnection.speechToText(speechToTextAudioFile) { result ->
                     _serviceState.value = result.toServiceState()
                     val action = when (result) {
-                        is HttpClientResult.Error   -> AsrError(Local)
-                        is HttpClientResult.Success -> AsrTextCaptured(Local, result.data)
+                        is HttpClientResult.Error      -> AsrError(Local)
+                        is HttpClientResult.Success    -> AsrTextCaptured(Local, result.data)
                         is HttpClientResult.KnownError -> AsrError(Local)
                     }
                     serviceMiddleware.action(action)

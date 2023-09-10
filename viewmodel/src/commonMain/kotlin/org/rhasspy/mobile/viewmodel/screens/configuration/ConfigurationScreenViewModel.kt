@@ -21,8 +21,8 @@ class ConfigurationScreenViewModel(
 
     fun onEvent(event: ConfigurationScreenUiEvent) {
         when (event) {
-            is Change   -> onChange(event)
-            is Action   -> onAction(event)
+            is Change -> onChange(event)
+            is Action -> onAction(event)
         }
     }
 
@@ -34,9 +34,9 @@ class ConfigurationScreenViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick          -> navigator.onBackPressed()
-            is Navigate        -> navigator.navigate(action.destination)
-            OpenWikiLink       -> openLink(LinkType.WikiConfiguration)
+            BackClick    -> navigator.onBackPressed()
+            is Navigate  -> navigator.navigate(action.destination)
+            OpenWikiLink -> openLink(LinkType.WikiConfiguration)
         }
     }
 

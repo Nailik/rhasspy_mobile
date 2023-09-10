@@ -29,14 +29,15 @@ sealed class ServiceState {
 
     fun getText(): TextWrapper {
         return when (this) {
-            Disabled     -> TextWrapperStableStringResource(MR.strings.disabled.stable)
+            Disabled      -> TextWrapperStableStringResource(MR.strings.disabled.stable)
             is ErrorState -> when (this) {
                 is ErrorState.Error     -> TextWrapperStableStringResource(this.information)
                 is ErrorState.Exception -> this.exception?.message?.let { TextWrapperString(it) } ?: TextWrapperStableStringResource(MR.strings.error.stable)
             }
-            Loading      -> TextWrapperStableStringResource(MR.strings.loading.stable)
-            Pending      -> TextWrapperStableStringResource(MR.strings.pending.stable)
-            Success      -> TextWrapperStableStringResource(MR.strings.success.stable)
+
+            Loading       -> TextWrapperStableStringResource(MR.strings.loading.stable)
+            Pending       -> TextWrapperStableStringResource(MR.strings.pending.stable)
+            Success       -> TextWrapperStableStringResource(MR.strings.success.stable)
         }
     }
 

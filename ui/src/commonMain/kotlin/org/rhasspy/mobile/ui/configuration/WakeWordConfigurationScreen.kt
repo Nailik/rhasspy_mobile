@@ -114,7 +114,7 @@ private fun WakeWordConfigurationOptionContent(
                 )
 
             WakeWordOption.MQTT,
-            WakeWordOption.Disabled -> Unit
+            WakeWordOption.Disabled  -> Unit
         }
 
     }

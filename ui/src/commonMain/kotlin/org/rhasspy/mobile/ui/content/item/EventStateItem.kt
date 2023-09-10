@@ -81,25 +81,25 @@ fun EventStateIconTinted(serviceState: ServiceState) {
     Icon(
         modifier = Modifier.rotate(rotation),
         imageVector = when (serviceState) {
-            is Pending   -> Icons.Outlined.Pending
-            is Loading   -> Icons.Outlined.RotateRight
-            is Success   -> Icons.Outlined.Done
+            is Pending    -> Icons.Outlined.Pending
+            is Loading    -> Icons.Outlined.RotateRight
+            is Success    -> Icons.Outlined.Done
             is ErrorState -> Icons.Filled.Error
-            is Disabled  -> Icons.Outlined.Circle
+            is Disabled   -> Icons.Outlined.Circle
         },
         contentDescription = when (serviceState) {
-            is Pending   -> MR.strings.pending.stable
-            is Loading   -> MR.strings.loading.stable
-            is Success   -> MR.strings.success.stable
+            is Pending    -> MR.strings.pending.stable
+            is Loading    -> MR.strings.loading.stable
+            is Success    -> MR.strings.success.stable
             is ErrorState -> MR.strings.error.stable
-            is Disabled  -> MR.strings.disabled.stable
+            is Disabled   -> MR.strings.disabled.stable
         },
         tint = when (serviceState) {
-            is Pending   -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-            is Loading   -> MaterialTheme.colorScheme.secondary
-            is Success   -> MaterialTheme.colorScheme.primary
+            is Pending    -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+            is Loading    -> MaterialTheme.colorScheme.secondary
+            is Success    -> MaterialTheme.colorScheme.primary
             is ErrorState -> MaterialTheme.colorScheme.errorContainer
-            is Disabled  -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+            is Disabled   -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
         }
     )
 }
@@ -110,11 +110,11 @@ fun EventStateContent(
     content: @Composable () -> Unit
 ) {
     val contentColor = when (serviceState) {
-        is Pending   -> MaterialTheme.colorScheme.onSurfaceVariant
-        is Loading   -> MaterialTheme.colorScheme.onSecondaryContainer
-        is Success   -> MaterialTheme.colorScheme.onPrimaryContainer
+        is Pending    -> MaterialTheme.colorScheme.onSurfaceVariant
+        is Loading    -> MaterialTheme.colorScheme.onSecondaryContainer
+        is Success    -> MaterialTheme.colorScheme.onPrimaryContainer
         is ErrorState -> MaterialTheme.colorScheme.onErrorContainer
-        is Disabled  -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+        is Disabled   -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
     }
 
     CompositionLocalProvider(
@@ -135,11 +135,11 @@ fun EventStateCard(
             .let { onClick?.let { it1 -> it.clickable(enabled = enabled, onClick = it1) } ?: it },
         colors = CardDefaults.outlinedCardColors(
             containerColor = when (serviceState) {
-                is Pending   -> MaterialTheme.colorScheme.surfaceVariant
-                is Loading   -> MaterialTheme.colorScheme.secondaryContainer
-                is Success   -> MaterialTheme.colorScheme.primaryContainer
+                is Pending    -> MaterialTheme.colorScheme.surfaceVariant
+                is Loading    -> MaterialTheme.colorScheme.secondaryContainer
+                is Success    -> MaterialTheme.colorScheme.primaryContainer
                 is ErrorState -> MaterialTheme.colorScheme.errorContainer
-                is Disabled  -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
+                is Disabled   -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
             }
         ),
         content = {

@@ -58,7 +58,7 @@ class HomeAssistantConnectionConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick -> navigator.onBackPressed()
+            BackClick              -> navigator.onBackPressed()
             AccessTokenQRCodeClick -> scanQRCode { onChange(UpdateHomeAssistantAccessToken(it)) }
         }
     }

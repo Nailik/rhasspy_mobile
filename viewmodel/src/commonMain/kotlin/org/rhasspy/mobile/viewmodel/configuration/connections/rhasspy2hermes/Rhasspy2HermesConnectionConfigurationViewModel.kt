@@ -58,7 +58,7 @@ class Rhasspy2HermesConnectionConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick -> navigator.onBackPressed()
+            BackClick              -> navigator.onBackPressed()
             AccessTokenQRCodeClick -> scanQRCode { onChange(UpdateRhasspy2HermesAccessToken(it)) }
         }
     }
