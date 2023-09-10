@@ -29,6 +29,7 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationViewState.Rhasspy3WyomingConnectionConfigurationData
@@ -94,8 +95,8 @@ private fun HttpConnectionDetailContent(
         //home assistant access token
         TextFieldListItemVisibility(
             modifier = Modifier.testTag(TestTag.AccessToken),
-            value = "",
-            onValueChange = { },
+            value = editData.bearerToken,
+            onValueChange = { onEvent(UpdateRhasspy3WyomingAccessToken(it)) },
             label = MR.strings.accessToken.stable,
             action = {
                 IconButton(
@@ -103,7 +104,7 @@ private fun HttpConnectionDetailContent(
                         .padding(start = 8.dp)
                         .size(48.dp)
                         .background(MaterialTheme.colorScheme.secondaryContainer, shape = CircleShape),
-                    onClick = { }
+                    onClick = { onEvent(AccessTokenQRCodeClick) }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.QrCodeScanner,

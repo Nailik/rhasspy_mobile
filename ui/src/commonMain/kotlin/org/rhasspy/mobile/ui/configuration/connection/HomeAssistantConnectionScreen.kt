@@ -28,6 +28,7 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewState.HomeAssistantConnectionConfigurationData
@@ -102,15 +103,15 @@ private fun HttpConnectionDetailContent(
         //home assistant access token
         TextFieldListItemVisibility(
             modifier = Modifier.testTag(TestTag.AccessToken),
-            value = "",
-            onValueChange = { },
+            value = editData.bearerToken,
+            onValueChange = { onEvent(UpdateHomeAssistantAccessToken(it)) },
             label = MR.strings.accessToken.stable,
             action = {
                 IconButton(
                     modifier = Modifier
                         .size(48.dp)
                         .background(MaterialTheme.colorScheme.secondaryContainer, shape = CircleShape),
-                    onClick = { }
+                    onClick = { onEvent(AccessTokenQRCodeClick) }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.QrCodeScanner,

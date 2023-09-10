@@ -10,6 +10,7 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Change.*
@@ -49,6 +50,7 @@ class Rhasspy2HermesConnectionConfigurationViewModel(
                     is SetRhasspy2HermesSSLVerificationDisabled -> copy(isSSLVerificationDisabled = change.disabled)
                     is UpdateRhasspy2HermesServerEndpointHost   -> copy(host = change.host)
                     is UpdateRhasspy2HermesTimeout              -> copy(timeout = change.text.toLongOrNullOrConstant())
+                    is UpdateRhasspy2HermesAccessToken          -> copy(bearerToken = change.text)
                 }
             })
         }
@@ -57,6 +59,7 @@ class Rhasspy2HermesConnectionConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             BackClick -> navigator.onBackPressed()
+            AccessTokenQRCodeClick -> scanQRCode { onChange(UpdateRhasspy2HermesAccessToken(it)) }
         }
     }
 

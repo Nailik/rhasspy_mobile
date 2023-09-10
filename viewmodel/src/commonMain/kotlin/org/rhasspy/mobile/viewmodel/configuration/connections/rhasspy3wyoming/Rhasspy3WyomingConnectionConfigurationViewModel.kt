@@ -10,6 +10,7 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Change.*
@@ -49,6 +50,7 @@ class Rhasspy3WyomingConnectionConfigurationViewModel(
                     is SetRhasspy3WyomingSSLVerificationDisabled -> copy(isSSLVerificationDisabled = change.disabled)
                     is UpdateRhasspy3WyomingServerEndpointHost   -> copy(host = change.host)
                     is UpdateRhasspy3WyomingTimeout              -> copy(timeout = change.text.toLongOrNullOrConstant())
+                    is UpdateRhasspy3WyomingAccessToken          -> copy(bearerToken = change.text)
                 }
             })
         }
@@ -56,7 +58,8 @@ class Rhasspy3WyomingConnectionConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick -> navigator.onBackPressed()
+            BackClick              -> navigator.onBackPressed()
+            AccessTokenQRCodeClick -> scanQRCode { onChange(UpdateRhasspy3WyomingAccessToken(it)) }
         }
     }
 

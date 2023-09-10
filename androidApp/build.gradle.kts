@@ -177,6 +177,7 @@ dependencies {
     implementation(Icerock.Mvvm.core)
     implementation(Kotlin.test)
     implementation(Kotlin.Test.junit)
+    implementation(Journeyapps.zXingAndroid)
 
     implementation(Kotlin.test)
     implementation(AndroidX.Activity.compose)

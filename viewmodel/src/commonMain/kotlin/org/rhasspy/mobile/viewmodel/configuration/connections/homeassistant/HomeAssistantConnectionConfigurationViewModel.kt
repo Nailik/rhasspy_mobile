@@ -10,6 +10,7 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Change.*
@@ -49,6 +50,7 @@ class HomeAssistantConnectionConfigurationViewModel(
                     is SetHomeAssistantSSLVerificationDisabled     -> copy(isSSLVerificationDisabled = change.disabled)
                     is UpdateHomeAssistantClientServerEndpointHost -> copy(host = change.host)
                     is UpdateHomeAssistantClientTimeout            -> copy(timeout = change.text.toLongOrNullOrConstant())
+                    is UpdateHomeAssistantAccessToken              -> copy(bearerToken = change.text)
                 }
             })
         }
@@ -57,6 +59,7 @@ class HomeAssistantConnectionConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             BackClick -> navigator.onBackPressed()
+            AccessTokenQRCodeClick -> scanQRCode { onChange(UpdateHomeAssistantAccessToken(it)) }
         }
     }
 
