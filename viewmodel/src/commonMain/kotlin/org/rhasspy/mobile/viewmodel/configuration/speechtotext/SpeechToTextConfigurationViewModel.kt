@@ -23,7 +23,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SpeechToTex
 class SpeechToTextConfigurationViewModel(
     service: ISpeechToTextService
 ) : ConfigurationViewModel(
-    service = service
+    serviceState = service.serviceState
 ) {
 
     private val _viewState = MutableStateFlow(

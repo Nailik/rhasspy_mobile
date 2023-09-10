@@ -19,7 +19,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 class IntentRecognitionConfigurationViewModel(
     service: IIntentRecognitionService
 ) : ConfigurationViewModel(
-    service = service
+    serviceState = service.serviceState
 ) {
 
     private val _viewState = MutableStateFlow(IntentRecognitionConfigurationViewState(IntentRecognitionConfigurationData()))

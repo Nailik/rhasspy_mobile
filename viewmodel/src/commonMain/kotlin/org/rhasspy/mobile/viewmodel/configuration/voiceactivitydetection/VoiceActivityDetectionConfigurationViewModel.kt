@@ -32,7 +32,7 @@ class VoiceActivityDetectionConfigurationViewModel(
     service: IVoiceActivityDetectionService,
     private val audioRecorder: IAudioRecorder,
 ) : ConfigurationViewModel(
-    service = service
+    serviceState = service.serviceState
 ) {
     private val dispatcher by inject<IDispatcherProvider>()
     private var wakeWordSetting = AppSetting.isHotWordEnabled.value

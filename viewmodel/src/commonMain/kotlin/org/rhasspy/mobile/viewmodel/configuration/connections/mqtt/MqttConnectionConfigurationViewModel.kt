@@ -23,9 +23,9 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectio
 @Stable
 class MqttConnectionConfigurationViewModel(
     private val mapper: MqttConnectionConfigurationDataMapper,
-    service: IMqttConnection
+    mqttConnection: IMqttConnection
 ) : ConfigurationViewModel(
-    service = null
+    serviceState = mqttConnection.connectionState
 ) {
 
     private val initialData get() = mapper(ConfigurationSetting.mqttConnection.value)

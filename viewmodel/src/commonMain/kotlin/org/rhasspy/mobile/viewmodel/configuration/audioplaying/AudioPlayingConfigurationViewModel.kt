@@ -27,7 +27,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
 class AudioPlayingConfigurationViewModel(
     service: IAudioPlayingService
 ) : ConfigurationViewModel(
-    service = service
+    serviceState = service.serviceState
 ) {
 
     private val _viewState = MutableStateFlow(AudioPlayingConfigurationViewState(AudioPlayingConfigurationData()))

@@ -27,7 +27,7 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
 class DialogManagementConfigurationViewModel(
     service: IDialogManagerService,
 ) : ConfigurationViewModel(
-    service = service
+    serviceState = service.serviceState
 ) {
 
     private val _viewState = MutableStateFlow(DialogManagementConfigurationViewState(DialogManagementConfigurationData()))

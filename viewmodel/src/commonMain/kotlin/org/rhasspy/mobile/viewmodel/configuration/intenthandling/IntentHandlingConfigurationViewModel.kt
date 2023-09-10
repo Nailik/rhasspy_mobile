@@ -20,7 +20,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
 class IntentHandlingConfigurationViewModel(
     service: IIntentHandlingService
 ) : ConfigurationViewModel(
-    service = service
+    serviceState = service.serviceState
 ) {
 
     private val _viewState = MutableStateFlow(IntentHandlingConfigurationViewState(IntentHandlingConfigurationData()))

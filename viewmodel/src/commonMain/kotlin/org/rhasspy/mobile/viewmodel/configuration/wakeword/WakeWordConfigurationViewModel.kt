@@ -42,7 +42,7 @@ class WakeWordConfigurationViewModel(
     microphonePermission: IMicrophonePermission,
     service: IWakeWordService
 ) : ConfigurationViewModel(
-    service = service
+    serviceState = service.serviceState
 ) {
 
     private val dispatcher by inject<IDispatcherProvider>()

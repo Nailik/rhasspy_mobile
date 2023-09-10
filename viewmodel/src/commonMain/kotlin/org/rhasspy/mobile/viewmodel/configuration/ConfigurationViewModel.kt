@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.ServiceStateDialogState
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.UnsavedChangesDialogState
@@ -20,13 +20,13 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
 abstract class ConfigurationViewModel(
-    private val service: IService?
+    private val serviceState: StateFlow<ServiceState>
 ) : ScreenViewModel() {
 
-    protected val viewStateCreator by inject<IConfigurationViewStateCreator> { parametersOf(service) }
+    protected val viewStateCreator by inject<IConfigurationViewStateCreator> { parametersOf(serviceState) }
     private val dispatcher by inject<IDispatcherProvider>()
 
-    private val _configurationViewState = MutableStateFlow(ConfigurationViewState(serviceViewState = service?.let { ServiceViewState(service.serviceState) }))
+    private val _configurationViewState = MutableStateFlow(ConfigurationViewState(serviceViewState = ServiceViewState(serviceState)))
     val configurationViewState by lazy { initViewStateCreator(_configurationViewState) }
     abstract fun initViewStateCreator(configurationViewState: MutableStateFlow<ConfigurationViewState>): StateFlow<ConfigurationViewState>
 
@@ -46,9 +46,7 @@ abstract class ConfigurationViewModel(
             Discard                -> discard(false)
             Save                   -> save(false)
             OpenServiceStateDialog -> {
-                if (service != null) {
-                    _configurationViewState.update { it.copy(dialogState = ServiceStateDialogState(service.serviceState.value.getText())) }
-                }
+                _configurationViewState.update { it.copy(dialogState = ServiceStateDialogState(serviceState.value.getText())) }
             }
 
             BackClick              -> navigator.onBackPressed()

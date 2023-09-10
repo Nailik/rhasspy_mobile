@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
+import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
@@ -17,9 +18,10 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rha
 
 @Stable
 class Rhasspy2HermesConnectionConfigurationViewModel(
-    private val mapper: Rhasspy2HermesConnectionConfigurationDataMapper
+    private val mapper: Rhasspy2HermesConnectionConfigurationDataMapper,
+    rhasspy2HermesConnection: IRhasspy2HermesConnection
 ) : ConfigurationViewModel(
-    service = null
+    serviceState = rhasspy2HermesConnection.connectionState
 ) {
 
     private val initialData get() = mapper(ConfigurationSetting.rhasspy2Connection.value)

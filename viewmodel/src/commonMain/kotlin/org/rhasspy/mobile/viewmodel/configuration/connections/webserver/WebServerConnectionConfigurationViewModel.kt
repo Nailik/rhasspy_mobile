@@ -22,9 +22,9 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServe
 @Stable
 class WebServerConnectionConfigurationViewModel(
     private val mapper: WebServerConnectionConfigurationDataMapper,
-    service: IWebServerConnection
+    webServerConnection: IWebServerConnection
 ) : ConfigurationViewModel(
-    service = null
+    serviceState = webServerConnection.connectionState
 ) {
 
     private val initialData get() = mapper(ConfigurationSetting.localWebserverConnection.value)
