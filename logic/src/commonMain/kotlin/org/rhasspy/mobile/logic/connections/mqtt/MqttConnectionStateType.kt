@@ -7,17 +7,17 @@ import org.rhasspy.mobile.resources.MR
 
 enum class MqttConnectionStateType(val serviceState: ServiceState) {
     SUCCESS(ServiceState.Success),
-    UNACCEPTABLE_PROTOCOL(ServiceState.Error(MR.strings.unacceptable_protocol.stable)),
-    IDENTIFIER_REJECTED(ServiceState.Error(MR.strings.identifier_rejected.stable)),
-    SERVER_UNAVAILABLE(ServiceState.Error(MR.strings.server_unavailable.stable)),
-    INVALID_CREDENTIALS(ServiceState.Error(MR.strings.invalid_credentials.stable)),
-    NOT_AUTHORIZED(ServiceState.Error(MR.strings.not_authorized.stable)),
-    ALREADY_CONNECTED(ServiceState.Error(MR.strings.already_connected.stable)),
-    MSG_DELIVERY_FAILED(ServiceState.Error(MR.strings.msg_delivery_failed.stable)),
-    MSG_PERSISTENCE_FAILED(ServiceState.Error(MR.strings.msg_persistence_failed.stable)),
-    SUBSCRIBE_FAILED(ServiceState.Error(MR.strings.subscribe_failed.stable)),
-    UNKNOWN(ServiceState.Exception()),
-    TopicSubscriptionFailed(ServiceState.Error(MR.strings.topic_subscription_failed.stable));
+    UNACCEPTABLE_PROTOCOL(ServiceState.ErrorState.Error(MR.strings.unacceptable_protocol.stable)),
+    IDENTIFIER_REJECTED(ServiceState.ErrorState.Error(MR.strings.identifier_rejected.stable)),
+    SERVER_UNAVAILABLE(ServiceState.ErrorState.Error(MR.strings.server_unavailable.stable)),
+    INVALID_CREDENTIALS(ServiceState.ErrorState.Error(MR.strings.invalid_credentials.stable)),
+    NOT_AUTHORIZED(ServiceState.ErrorState.Error(MR.strings.not_authorized.stable)),
+    ALREADY_CONNECTED(ServiceState.ErrorState.Error(MR.strings.already_connected.stable)),
+    MSG_DELIVERY_FAILED(ServiceState.ErrorState.Error(MR.strings.msg_delivery_failed.stable)),
+    MSG_PERSISTENCE_FAILED(ServiceState.ErrorState.Error(MR.strings.msg_persistence_failed.stable)),
+    SUBSCRIBE_FAILED(ServiceState.ErrorState.Error(MR.strings.subscribe_failed.stable)),
+    UNKNOWN(ServiceState.ErrorState.Exception()),
+    TopicSubscriptionFailed(ServiceState.ErrorState.Error(MR.strings.topic_subscription_failed.stable));
 
     companion object {
         fun fromMqttStatus(mqttStatus: MqttStatus): MqttConnectionStateType {

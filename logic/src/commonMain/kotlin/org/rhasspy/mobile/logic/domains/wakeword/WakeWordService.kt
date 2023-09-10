@@ -20,7 +20,6 @@ import org.rhasspy.mobile.platformspecific.porcupine.PorcupineWakeWordClient
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
-import kotlin.Exception
 
 interface IWakeWordService : IService {
 
@@ -95,7 +94,7 @@ internal class WakeWordService(
             WakeWordOption.Porcupine -> {
                 if (!params.isMicrophonePermissionEnabled) {
                     //post error when microphone permission is missing
-                    Error(MR.strings.microphonePermissionDenied.stable)
+                    ErrorState.Error(MR.strings.microphonePermissionDenied.stable)
                 } else Pending
             }
 
@@ -103,7 +102,7 @@ internal class WakeWordService(
             WakeWordOption.Udp       -> {
                 if (!params.isMicrophonePermissionEnabled) {
                     //post error when microphone permission is missing
-                    Error(MR.strings.microphonePermissionDenied.stable)
+                    ErrorState.Error(MR.strings.microphonePermissionDenied.stable)
                 } else Pending
             }
 
@@ -167,9 +166,9 @@ internal class WakeWordService(
             val error = client.start()
             error?.let {
                 logger.e(it) { "porcupineError" }
-                ServiceState.Exception(it)
+                ErrorState.Exception(it)
             } ?: Success
-        } ?: Error(MR.strings.notInitialized.stable)
+        } ?: ErrorState.Error(MR.strings.notInitialized.stable)
         startRecording()
     }
 
@@ -178,9 +177,9 @@ internal class WakeWordService(
             val error = client.connect()
             error?.let {
                 logger.e(it) { "porcupineError" }
-                ServiceState.Exception(it)
+                ErrorState.Exception(it)
             } ?: Success
-        } ?: Error(MR.strings.notInitialized.stable)
+        } ?: ErrorState.Error(MR.strings.notInitialized.stable)
         startRecording()
     }
 

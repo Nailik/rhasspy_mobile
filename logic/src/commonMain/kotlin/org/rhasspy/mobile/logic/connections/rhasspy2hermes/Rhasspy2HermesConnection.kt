@@ -3,10 +3,12 @@ package org.rhasspy.mobile.logic.connections.rhasspy2hermes
 import io.ktor.client.request.setBody
 import io.ktor.client.utils.buildHeaders
 import io.ktor.http.contentType
+import kotlinx.coroutines.flow.MutableStateFlow
 import okio.Path
-import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.log.LogType
+import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.IHttpConnection
 import org.rhasspy.mobile.logic.domains.speechtotext.StreamContent
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
@@ -14,7 +16,7 @@ import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.*
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-interface IRhasspy2HermesConnection : KoinComponent {
+interface IRhasspy2HermesConnection : IConnection {
 
     fun speechToText(audioFilePath: Path, onResult: (result: HttpClientResult<String>) -> Unit)
     fun recognizeIntent(text: String, onResult: (result: HttpClientResult<String>) -> Unit)
@@ -32,6 +34,8 @@ interface IRhasspy2HermesConnection : KoinComponent {
 internal class Rhasspy2HermesConnection : IRhasspy2HermesConnection, IHttpConnection(ConfigurationSetting.rhasspy2Connection) {
 
     override val logger = LogType.HttpClientService.logger()
+
+    override val connectionState = MutableStateFlow<ServiceState>(ServiceState.Pending)
 
     /**
      * /api/speech-to-text

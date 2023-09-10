@@ -3,6 +3,7 @@ package org.rhasspy.mobile.viewmodel.configuration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.platformspecific.combineState
 
@@ -28,7 +29,7 @@ class IConfigurationViewStateCreator(
 
             configurationViewStateValue.copy(
                 hasUnsavedChanges = isHasUnsavedChanges,
-                isOpenServiceStateDialogEnabled = serviceState?.isOpenServiceStateDialogEnabled() ?: false,
+                isOpenServiceStateDialogEnabled = serviceState is ServiceState.ErrorState,
             )
 
         }

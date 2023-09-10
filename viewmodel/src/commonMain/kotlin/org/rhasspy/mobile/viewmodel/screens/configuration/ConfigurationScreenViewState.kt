@@ -17,8 +17,6 @@ data class ConfigurationScreenViewState internal constructor(
     val textToSpeech: TextToSpeechViewState,
     val audioPlaying: AudioPlayingViewState,
     val hasError: StateFlow<Boolean>,
-    val firstErrorIndex: StateFlow<Int?>,
-    val scrollToError: Int?
 ) {
 
     @Stable

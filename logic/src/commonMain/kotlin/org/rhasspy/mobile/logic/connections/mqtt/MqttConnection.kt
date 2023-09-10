@@ -15,7 +15,7 @@ import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
@@ -30,9 +30,8 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import kotlin.random.Random
 
-interface IMqttConnection : IService {
+interface IMqttConnection : IConnection {
 
-    override val serviceState: StateFlow<ServiceState>
     val isConnected: StateFlow<Boolean>
     val isHasStarted: StateFlow<Boolean>
 
@@ -63,8 +62,7 @@ internal class MqttConnection(
 
     private val logger = LogType.MqttService.logger()
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
-    override val serviceState = _serviceState.readOnly
+    override val connectionState = MutableStateFlow<ServiceState>(ServiceState.Pending)
 
     private val nativeApplication by inject<NativeApplication>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
@@ -105,32 +103,32 @@ internal class MqttConnection(
     private fun start() {
         if (params.mqttConnectionData.isEnabled) {
             logger.d { "initialize" }
-            _serviceState.value = ServiceState.Loading
+            connectionState.value = ServiceState.Loading
 
             try {
                 client = buildClient()
                 scope.launch {
                     try {
                         if (connectClient()) {
-                            _serviceState.value = subscribeTopics()
+                            connectionState.value = subscribeTopics()
                             _isHasStarted.value = true
                         } else {
-                            _serviceState.value = ServiceState.Error(MR.strings.notConnected.stable)
+                            connectionState.value = ServiceState.ErrorState.Error(MR.strings.notConnected.stable)
                             logger.e { "client could not connect" }
                         }
                     } catch (exception: Exception) {
                         //start error
                         logger.e(exception) { "client connect error" }
-                        _serviceState.value = ServiceState.Exception(exception)
+                        connectionState.value = ServiceState.ErrorState.Exception(exception)
                     }
                 }
             } catch (exception: Exception) {
                 //start error
                 logger.e(exception) { "client initialization error" }
-                _serviceState.value = ServiceState.Exception(exception)
+                connectionState.value = ServiceState.ErrorState.Exception(exception)
             }
         } else {
-            _serviceState.value = ServiceState.Disabled
+            connectionState.value = ServiceState.Disabled
         }
     }
 
@@ -144,7 +142,7 @@ internal class MqttConnection(
         retryJob = null
         client?.disconnect()
         client = null
-        _serviceState.value = ServiceState.Disabled
+        connectionState.value = ServiceState.Disabled
         _isHasStarted.value = false
         _isConnected.value = false
     }
@@ -180,10 +178,10 @@ internal class MqttConnection(
                     )
                 )?.also { error ->
                     logger.e { "connectClient error $error" }
-                    _serviceState.value = MqttConnectionStateType.fromMqttStatus(error.statusCode).serviceState
+                    connectionState.value = MqttConnectionStateType.fromMqttStatus(error.statusCode).serviceState
                 }
             } else {
-                _serviceState.value = ServiceState.Success
+                connectionState.value = ServiceState.Success
             }
             //update value, may be used from reconnect
             _isConnected.value = it.isConnected.value == true
@@ -342,13 +340,13 @@ internal class MqttConnection(
                     }
                 } ?: run {
                     logger.a { "mqttClient not initialized" }
-                    ServiceState.Exception()
+                    ServiceState.ErrorState.Exception()
                 }
 
             } else {
                 ServiceState.Success
             }
-            _serviceState.value = status
+            connectionState.value = status
             onResult?.invoke(status)
         }
     }

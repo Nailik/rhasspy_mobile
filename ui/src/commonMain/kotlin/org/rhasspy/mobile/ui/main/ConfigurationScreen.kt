@@ -7,10 +7,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.HelpCenter
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
@@ -29,9 +30,9 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.Configurati
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.ConfigurationScreen
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.OpenWikiLink
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Consumed.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
@@ -82,17 +83,6 @@ private fun ConfigurationScreenContent(
         },
     ) { paddingValues ->
 
-        val coroutineScope = rememberCoroutineScope()
-
-        LaunchedEffect(viewState.scrollToError) {
-            viewState.scrollToError?.also { index ->
-                coroutineScope.launch {
-                    scrollState.animateScrollTo(index * 2 + 2) //duplicate for divider
-                    onEvent(ScrollToError)
-                }
-            }
-        }
-
         Column(
             modifier = Modifier
                 .padding(paddingValues)
@@ -100,7 +90,7 @@ private fun ConfigurationScreenContent(
         ) {
 
             if (viewState.hasError.collectAsState().value) {
-                ServiceErrorInformation(onEvent)
+                ServiceErrorInformation()
             }
 
             Column(
@@ -152,11 +142,8 @@ private fun ConfigurationScreenContent(
 /**
  * error information for service
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ServiceErrorInformation(
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
-) {
+private fun ServiceErrorInformation() {
 
     Surface {
         Card(
@@ -167,7 +154,6 @@ private fun ServiceErrorInformation(
             colors = CardDefaults.outlinedCardColors(
                 containerColor = MaterialTheme.colorScheme.errorContainer
             ),
-            onClick = { onEvent(ScrollToErrorClick) }
         ) {
             Row(
                 modifier = Modifier

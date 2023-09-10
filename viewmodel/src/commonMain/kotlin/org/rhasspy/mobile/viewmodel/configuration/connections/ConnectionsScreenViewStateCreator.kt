@@ -16,8 +16,8 @@ class ConnectionsScreenViewStateCreator(
 
     operator fun invoke(): StateFlow<ConnectionsConfigurationViewState> {
         return combineStateFlow(
-            webServerService.serviceState,
-            mqttService.serviceState,
+            webServerService.connectionState,
+            mqttService.connectionState,
             mqttService.isConnected,
             ConfigurationSetting.localWebserverConnection.data,
         ).mapReadonlyState {
@@ -38,11 +38,11 @@ class ConnectionsScreenViewStateCreator(
             ),
             webserver = WebServerViewState(
                 isHttpServerEnabled = ConfigurationSetting.localWebserverConnection.value.isEnabled,
-                serviceState = ServiceViewState(webServerService.serviceState)
+                serviceState = ServiceViewState(webServerService.connectionState)
             ),
             mqtt = MqttViewState(
                 isMQTTConnected = mqttService.isConnected.value,
-                serviceState = ServiceViewState(mqttService.serviceState)
+                serviceState = ServiceViewState(mqttService.connectionState)
             ),
         )
     }

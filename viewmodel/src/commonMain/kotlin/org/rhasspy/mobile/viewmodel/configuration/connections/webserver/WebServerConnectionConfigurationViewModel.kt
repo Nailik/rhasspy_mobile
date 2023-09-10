@@ -24,7 +24,7 @@ class WebServerConnectionConfigurationViewModel(
     private val mapper: WebServerConnectionConfigurationDataMapper,
     service: IWebServerConnection
 ) : ConfigurationViewModel(
-    service = service
+    service = null
 ) {
 
     private val initialData get() = mapper(ConfigurationSetting.localWebserverConnection.value)

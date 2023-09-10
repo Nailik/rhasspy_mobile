@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.connections.webserver
 
+import co.touchlab.kermit.Logger
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -24,16 +25,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import okio.Path.Companion.toPath
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionErrorType.WakeOptionInvalid
 import org.rhasspy.mobile.logic.connections.webserver.WebServerResult.*
 import org.rhasspy.mobile.logic.domains.speechtotext.StreamContent
@@ -50,15 +49,10 @@ import org.rhasspy.mobile.platformspecific.ktor.getEngine
 import org.rhasspy.mobile.platformspecific.ktor.installCallLogging
 import org.rhasspy.mobile.platformspecific.ktor.installCompression
 import org.rhasspy.mobile.platformspecific.ktor.installConnector
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-interface IWebServerConnection : IService {
-
-    override val serviceState: StateFlow<ServiceState>
-
-}
+interface IWebServerConnection : IConnection
 
 /**
  * Web server service holds all routes for WebServerPath values
@@ -71,10 +65,9 @@ interface IWebServerConnection : IService {
  */
 internal class WebServerConnection : IWebServerConnection {
 
-    private val logger = LogType.WebServerService.logger()
+    private val logger = Logger.withTag("WebServerConnection")
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
-    override val serviceState = _serviceState.readOnly
+    override val connectionState = MutableStateFlow<ServiceState>(ServiceState.Pending)
 
     private val nativeApplication by inject<NativeApplication>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
@@ -108,24 +101,24 @@ internal class WebServerConnection : IWebServerConnection {
     private fun start() {
         if (params.isEnabled) {
             logger.d { "initialization" }
-            _serviceState.value = ServiceState.Loading
+            connectionState.value = ServiceState.Loading
 
             if (params.isSSLEnabled && !params.keyStoreFile?.toPath().commonExists()) {
-                _serviceState.value = ServiceState.Error(MR.strings.certificate_missing.stable)
+                connectionState.value = ServiceState.ErrorState.Error(MR.strings.certificate_missing.stable)
                 return
             }
 
             try {
                 server = buildServer()
                 server?.start()
-                _serviceState.value = ServiceState.Success
+                connectionState.value = ServiceState.Success
             } catch (exception: Exception) {
                 //start error
                 logger.a(exception) { "initialization error" }
-                _serviceState.value = ServiceState.Exception(exception)
+                connectionState.value = ServiceState.ErrorState.Exception(exception)
             }
         } else {
-            _serviceState.value = ServiceState.Disabled
+            connectionState.value = ServiceState.Disabled
         }
     }
 
@@ -219,7 +212,7 @@ internal class WebServerConnection : IWebServerConnection {
      */
     private suspend fun evaluateCall(path: WebServerPath, call: ApplicationCall) {
         logger.d { "evaluateCall ${path.path} ${call.parameters}" }
-        try {
+        connectionState.value = try {
             val result = when (path) {
                 WebServerPath.ListenForCommand  -> listenForCommand()
                 WebServerPath.ListenForWake     -> listenForWake(call)
@@ -244,11 +237,11 @@ internal class WebServerConnection : IWebServerConnection {
                 Ok          -> call.respond(HttpStatusCode.OK)
                 else        -> Unit
             }
-            _serviceState.value = ServiceState.Success
+            ServiceState.Success
 
         } catch (exception: Exception) {
             logger.e(exception) { "evaluateCall error" }
-            _serviceState.value = ServiceState.Exception(exception)
+            ServiceState.ErrorState.Exception(exception)
         }
     }
 
