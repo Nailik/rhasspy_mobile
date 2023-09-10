@@ -154,7 +154,7 @@ private fun LogScreenContent(
 
                 items(
                     count = items.itemCount,
-                    key = { key -> items[key]?.id ?: Unit },
+                    key = { index -> items[index]?.id ?: index },
                 ) { index ->
                     items[index]?.also {
                         LogListElement(it)
