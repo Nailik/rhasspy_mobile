@@ -21,7 +21,7 @@ actual fun Path.Companion.commonDatabasePath(
     fileName: String
 ): Path = nativeApplication.getDatabasePath(fileName).toOkioPath()
 
-actual fun Path?.commonExists(): Boolean = this?.let { !FileSystem.SYSTEM.exists(this) } ?: false
+actual fun Path?.commonExists(): Boolean = this?.let { FileSystem.SYSTEM.exists(this) } ?: false
 
 actual fun Path.commonDelete() {
     FileSystem.SYSTEM.delete(this)

@@ -47,7 +47,7 @@ actual fun Path.Companion.commonDatabasePath(
 ): Path = "${readDocumentsDirectory().replace("file:", "")}/$fileName".toPath()
 
 
-actual fun Path?.commonExists(): Boolean = this?.let { !FileSystem.SYSTEM.exists(this) } ?: false
+actual fun Path?.commonExists(): Boolean = this?.let { FileSystem.SYSTEM.exists(this) } ?: false
 actual fun Path.commonDelete() {
     FileSystem.SYSTEM.delete(this, mustExist = false)
 }

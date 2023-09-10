@@ -15,9 +15,8 @@ object SettingsInitializer : KoinComponent {
         //1. App newly installed/ no settings
         //2. Settings without version
         //3. Settings with older version
-        //TODO already created but when??
         if ("shared_prefs/org.rhasspy.mobile.android_preferences.xml".toPath().commonExists()) {
-            //    AppSetting.version.value = Migrate0To1().migrateIfNecessary(0)
+            AppSetting.version.value = Migrate0To1().migrateIfNecessary(0)
         }
     }
 
