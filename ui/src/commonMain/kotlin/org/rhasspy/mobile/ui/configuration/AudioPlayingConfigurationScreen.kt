@@ -98,11 +98,9 @@ private fun AudioPlayingOptionContent(
                 onEvent = onEvent
             )
 
-            AudioPlayingOption.RemoteHTTP -> HttpEndpointConfigurationContent(
-                onEvent = onEvent
-            )
+            AudioPlayingOption.Rhasspy2HermesHttp -> Unit
 
-            AudioPlayingOption.RemoteMQTT -> MqttSiteIdConfigurationContent(
+            AudioPlayingOption.Rhasspy2HermesMQTT -> MqttSiteIdConfigurationContent(
                 audioPlayingMqttSiteId = editData.audioPlayingMqttSiteId,
                 onEvent = onEvent
             )
@@ -137,24 +135,6 @@ private fun LocalConfigurationContent(
     }
 
 }
-
-/**
- * show http endpoint options
- */
-@Composable
-private fun HttpEndpointConfigurationContent(
-    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
-) {
-
-    //visibility of endpoint option
-    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
-
-        //TODO server
-
-    }
-
-}
-
 
 /**
  * show mqtt site id options

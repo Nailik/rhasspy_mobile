@@ -49,7 +49,7 @@ class AudioPlayingConfigurationViewModelTest : AppTest() {
         )
 
         audioPlayingConfigurationData = AudioPlayingConfigurationData(
-            audioPlayingOption = AudioPlayingOption.RemoteMQTT,
+            audioPlayingOption = AudioPlayingOption.MQTT,
             audioOutputOption = AudioOutputOption.Notification,
             audioPlayingMqttSiteId = getRandomString(5)
         )

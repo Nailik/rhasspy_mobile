@@ -58,7 +58,7 @@ internal class IntentHandlingService(
         _serviceState.value = when (params.intentHandlingOption) {
             IntentHandlingOption.HomeAssistant   -> Success
             IntentHandlingOption.WithRecognition -> Success
-            IntentHandlingOption.RemoteHTTP      -> Success
+            IntentHandlingOption.Rhasspy2HermesHttp -> Success
             IntentHandlingOption.Disabled        -> Disabled
         }
     }
@@ -86,7 +86,7 @@ internal class IntentHandlingService(
                     _serviceState.value = it
                 }
 
-            IntentHandlingOption.RemoteHTTP      ->
+            IntentHandlingOption.Rhasspy2HermesHttp ->
                 httpClientConnection.intentHandling(intent) {
                     _serviceState.value = it.toServiceState()
                 }

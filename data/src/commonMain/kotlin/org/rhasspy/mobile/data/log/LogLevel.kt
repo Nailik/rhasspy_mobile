@@ -16,7 +16,6 @@ enum class LogLevel(override val text: StableStringResource, val severity: Sever
     Error(MR.strings.error.stable, Severity.Error),
     Assert(MR.strings.assert_level.stable, Severity.Assert);
 
-    override fun findValue(value: String): LogLevel {
-        return valueOf(value)
-    }
+    override val internalEntries = entries
+
 }

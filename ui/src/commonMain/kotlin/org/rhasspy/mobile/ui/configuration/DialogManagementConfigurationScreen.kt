@@ -101,7 +101,7 @@ private fun DialogManagementOptionContent(
                     onEvent = onEvent
                 )
 
-            DialogManagementOption.RemoteMQTT ->
+            DialogManagementOption.Rhasspy2HermesMQTT ->
                 DialogManagementSettingsMqtt(
                     textAsrTimeoutText = editData.textAsrTimeoutText,
                     intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,

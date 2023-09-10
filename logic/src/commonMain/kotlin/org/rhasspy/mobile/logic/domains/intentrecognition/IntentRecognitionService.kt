@@ -66,8 +66,8 @@ internal class IntentRecognitionService(
 
     private fun setupState() {
         _serviceState.value = when (params.intentRecognitionOption) {
-            IntentRecognitionOption.RemoteHTTP -> Success
-            IntentRecognitionOption.RemoteMQTT -> Success
+            IntentRecognitionOption.Rhasspy2HermesHttp -> Success
+            IntentRecognitionOption.Rhasspy2HermesMQTT -> Success
             IntentRecognitionOption.Disabled   -> Disabled
         }
     }
@@ -92,7 +92,7 @@ internal class IntentRecognitionService(
     override fun recognizeIntent(sessionId: String, text: String) {
         logger.d { "recognizeIntent sessionId: $sessionId text: $text" }
         when (params.intentRecognitionOption) {
-            IntentRecognitionOption.RemoteHTTP -> {
+            IntentRecognitionOption.Rhasspy2HermesHttp -> {
                 httpClientConnection.recognizeIntent(text) { result ->
                     _serviceState.value = result.toServiceState()
                     val action = when (result) {
@@ -109,7 +109,7 @@ internal class IntentRecognitionService(
                 }
             }
 
-            IntentRecognitionOption.RemoteMQTT -> mqttClientService.recognizeIntent(sessionId, text) {
+            IntentRecognitionOption.Rhasspy2HermesMQTT -> mqttClientService.recognizeIntent(sessionId, text) {
                 _serviceState.value = it
             }
 

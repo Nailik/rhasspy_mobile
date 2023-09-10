@@ -97,13 +97,13 @@ private fun SpeechToTextOption(
     ) {
 
         when (it) {
-            SpeechToTextOption.RemoteHTTP -> SpeechToTextHTTP(
+            SpeechToTextOption.Rhasspy2HermesHttp -> SpeechToTextHTTP(
                 speechToTextAudioRecorderData = editData.speechToTextAudioRecorderData,
                 speechToTextAudioOutputData = editData.speechToTextAudioOutputData,
                 onEvent = onEvent
             )
 
-            SpeechToTextOption.RemoteMQTT -> SpeechToTextMqtt(
+            SpeechToTextOption.Rhasspy2HermesMQTT -> SpeechToTextMqtt(
                 isUseSpeechToTextMqttSilenceDetection = editData.isUseSpeechToTextMqttSilenceDetection,
                 onEvent = onEvent,
                 speechToTextAudioRecorderData = editData.speechToTextAudioRecorderData,

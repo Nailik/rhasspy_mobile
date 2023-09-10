@@ -96,8 +96,8 @@ internal class SpeechToTextService(
 
     private fun setupState() {
         _serviceState.value = when (params.speechToTextOption) {
-            SpeechToTextOption.RemoteHTTP -> Success
-            SpeechToTextOption.RemoteMQTT -> Success
+            SpeechToTextOption.Rhasspy2HermesHttp -> Success
+            SpeechToTextOption.Rhasspy2HermesMQTT -> Success
             SpeechToTextOption.Disabled   -> Disabled
         }
     }
@@ -143,7 +143,7 @@ internal class SpeechToTextService(
 
         //evaluate result
         when (params.speechToTextOption) {
-            SpeechToTextOption.RemoteHTTP -> {
+            SpeechToTextOption.Rhasspy2HermesHttp -> {
                 httpClientConnection.speechToText(speechToTextAudioFile) { result ->
                     _serviceState.value = result.toServiceState()
                     val action = when (result) {
@@ -156,7 +156,7 @@ internal class SpeechToTextService(
 
             }
 
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) {
+            SpeechToTextOption.Rhasspy2HermesMQTT -> if (!fromMqtt) {
                 mqttClientService.stopListening(sessionId) {
                     _serviceState.value = it
                 }
@@ -182,8 +182,8 @@ internal class SpeechToTextService(
 
 
         when (params.speechToTextOption) {
-            SpeechToTextOption.RemoteHTTP -> _serviceState.value = Success
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.startListening(sessionId) { _serviceState.value = it }
+            SpeechToTextOption.Rhasspy2HermesHttp -> _serviceState.value = Success
+            SpeechToTextOption.Rhasspy2HermesMQTT -> if (!fromMqtt) mqttClientService.startListening(sessionId) { _serviceState.value = it }
             SpeechToTextOption.Disabled   -> {
                 _serviceState.value = Disabled
                 return //recorder doesn't need to be started
@@ -206,8 +206,8 @@ internal class SpeechToTextService(
         }
 
         when (params.speechToTextOption) {
-            SpeechToTextOption.RemoteHTTP -> _serviceState.value = Success
-            SpeechToTextOption.RemoteMQTT -> {
+            SpeechToTextOption.Rhasspy2HermesHttp -> _serviceState.value = Success
+            SpeechToTextOption.Rhasspy2HermesMQTT -> {
                 mqttClientService.asrAudioSessionFrame(
                     sessionId = sessionId,
                     data.appendWavHeader(

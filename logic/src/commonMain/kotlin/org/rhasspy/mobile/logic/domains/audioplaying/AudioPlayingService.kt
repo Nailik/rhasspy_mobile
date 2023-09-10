@@ -63,10 +63,10 @@ internal class AudioPlayingService(
 
     private fun setupState() {
         _serviceState.value = when (params.audioPlayingOption) {
-            AudioPlayingOption.Local      -> Success
-            AudioPlayingOption.RemoteHTTP -> Success
-            AudioPlayingOption.RemoteMQTT -> Success
-            AudioPlayingOption.Disabled   -> Disabled
+            AudioPlayingOption.Local              -> Success
+            AudioPlayingOption.Rhasspy2HermesHttp -> Success
+            AudioPlayingOption.Rhasspy2HermesMQTT -> Success
+            AudioPlayingOption.Disabled           -> Disabled
         }
     }
 
@@ -100,14 +100,14 @@ internal class AudioPlayingService(
                 }
             }
 
-            AudioPlayingOption.RemoteHTTP -> {
+            AudioPlayingOption.Rhasspy2HermesHttp -> {
                 httpClientConnection.playWav(audioSource) {
                     _serviceState.value = it.toServiceState()
                     serviceMiddleware.action(PlayFinished(Source.Local))
                 }
             }
 
-            AudioPlayingOption.RemoteMQTT -> {
+            AudioPlayingOption.Rhasspy2HermesMQTT -> {
                 mqttClientService.playAudioRemote(audioSource) {
                     _serviceState.value = it
                 }

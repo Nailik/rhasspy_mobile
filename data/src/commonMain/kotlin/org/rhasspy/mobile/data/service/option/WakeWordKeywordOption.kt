@@ -4,8 +4,8 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 
-enum class WakeWordKeywordOption(override val text: StableStringResource) :
-    IOption<WakeWordKeywordOption> {
+enum class WakeWordKeywordOption(override val text: StableStringResource) : IOption<WakeWordKeywordOption> {
+
     ALEXA(MR.strings.alexa.stable),
     AMERICANO(MR.strings.americano.stable),
     BLUEBERRY(MR.strings.blueberry.stable),
@@ -21,7 +21,6 @@ enum class WakeWordKeywordOption(override val text: StableStringResource) :
     PORCUPINE(MR.strings.porcupine.stable),
     TERMINATOR(MR.strings.terminator.stable);
 
-    override fun findValue(value: String): WakeWordKeywordOption? {
-        return entries.firstOrNull { it.name == name }
-    }
+    override val internalEntries = entries
+
 }

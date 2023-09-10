@@ -16,9 +16,7 @@ actual enum class AudioFormatChannelType(
     Mono(MR.strings.channel_type_mono.stable, CHANNEL_IN_MONO, 1),
     Stereo(MR.strings.channel_type_stereo.stable, CHANNEL_IN_STEREO, 2);
 
-    override fun findValue(value: String): AudioFormatChannelType {
-        return AudioFormatChannelType.valueOf(value)
-    }
+    override val internalEntries = entries
 
     actual companion object {
         actual val default: AudioFormatChannelType get() = Mono

@@ -86,7 +86,7 @@ internal class DialogManagerService(
                 Success
             }
 
-            DialogManagementOption.RemoteMQTT -> {
+            DialogManagementOption.Rhasspy2HermesMQTT -> {
                 dialogManagerMqtt.onInit()
                 Success
             }
@@ -120,7 +120,7 @@ internal class DialogManagerService(
     override suspend fun onAction(action: DialogServiceMiddlewareAction) {
         when (ConfigurationSetting.dialogManagementOption.value) {
             DialogManagementOption.Local      -> dialogManagerLocal.onAction(action)
-            DialogManagementOption.RemoteMQTT -> dialogManagerMqtt.onAction(action)
+            DialogManagementOption.Rhasspy2HermesMQTT -> dialogManagerMqtt.onAction(action)
             DialogManagementOption.Disabled   -> dialogManagerDisabled.onAction(action)
         }
     }

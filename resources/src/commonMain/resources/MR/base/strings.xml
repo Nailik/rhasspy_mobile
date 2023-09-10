@@ -47,8 +47,8 @@
     <string name="local">Local</string>
     <string name="remote">Remote</string>
     <string name="disabled">Disabled</string>
-    <string name="remoteMQTT">Remote Hermes MQTT</string>
-    <string name="remoteHTTP">Remote HTTP</string>
+    <string name="rhasspy2hermes_mqtt">Rhasspy2 MQTT (Hermes)</string>
+    <string name="rhasspy2hermes_http">Rhasspy2 HTTP (Hermes)</string>
     <string name="withRecognition">With Recognition</string>
     <string name="homeAssistant">Home Assistant</string>
     <string name="hassURL">Hass URL</string>

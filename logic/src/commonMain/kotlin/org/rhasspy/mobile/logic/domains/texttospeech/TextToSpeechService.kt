@@ -65,8 +65,8 @@ internal class TextToSpeechService(
 
     private fun setupState() {
         _serviceState.value = when (params.textToSpeechOption) {
-            TextToSpeechOption.RemoteHTTP -> Success
-            TextToSpeechOption.RemoteMQTT -> Success
+            TextToSpeechOption.Rhasspy2HermesHttp -> Success
+            TextToSpeechOption.Rhasspy2HermesMQTT -> Success
             TextToSpeechOption.Disabled   -> Disabled
         }
     }
@@ -86,7 +86,7 @@ internal class TextToSpeechService(
 
         logger.d { "textToSpeech sessionId: $sessionId text: $text" }
         when (params.textToSpeechOption) {
-            TextToSpeechOption.RemoteHTTP -> {
+            TextToSpeechOption.Rhasspy2HermesHttp -> {
                 httpClientConnection.textToSpeech(text, volume, null) { result ->
                     _serviceState.value = when (result) {
                         is HttpClientResult.Error      -> result.toServiceState()
@@ -102,7 +102,7 @@ internal class TextToSpeechService(
                 }
             }
 
-            TextToSpeechOption.RemoteMQTT -> {
+            TextToSpeechOption.Rhasspy2HermesMQTT -> {
                 if (sessionId == mqttSessionId) return
                 mqttClientService.say(mqttSessionId, text, siteId) { _serviceState.value = it }
             }

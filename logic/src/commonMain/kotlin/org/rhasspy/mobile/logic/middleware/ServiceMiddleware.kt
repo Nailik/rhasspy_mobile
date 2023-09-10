@@ -142,11 +142,11 @@ internal class ServiceMiddleware(
     override fun getRecordedFile(): Path = speechToTextService.speechToTextAudioFile
 
     private fun isAnyServiceUsingMqtt(): Boolean {
-        return ConfigurationSetting.audioPlayingOption.value == AudioPlayingOption.RemoteMQTT ||
-                ConfigurationSetting.dialogManagementOption.value == DialogManagementOption.RemoteMQTT ||
-                ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.RemoteMQTT ||
-                ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteMQTT ||
-                ConfigurationSetting.textToSpeechOption.value == TextToSpeechOption.RemoteMQTT
+        return ConfigurationSetting.audioPlayingOption.value == AudioPlayingOption.Rhasspy2HermesMQTT ||
+                ConfigurationSetting.dialogManagementOption.value == DialogManagementOption.Rhasspy2HermesMQTT ||
+                ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.Rhasspy2HermesMQTT ||
+                ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.Rhasspy2HermesMQTT ||
+                ConfigurationSetting.textToSpeechOption.value == TextToSpeechOption.Rhasspy2HermesMQTT
     }
 
 }

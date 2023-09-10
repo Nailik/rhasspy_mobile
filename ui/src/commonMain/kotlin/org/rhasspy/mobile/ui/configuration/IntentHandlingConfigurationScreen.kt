@@ -93,33 +93,14 @@ private fun IntentHandlingOptionContent(
 
         when (option) {
             IntentHandlingOption.HomeAssistant -> HomeAssistantOption(
-                intentHandlingHassOption = editData.intentHandlingHomeAssistantOption,
+                intentHandlingHomeAssistantOption = editData.intentHandlingHomeAssistantOption,
                 onEvent = onEvent
             )
 
-            IntentHandlingOption.RemoteHTTP    -> RemoteHTTPOption(
-                onEvent = onEvent
-            )
+            IntentHandlingOption.Rhasspy2HermesHttp -> Unit
 
             else                               -> Unit
         }
-
-    }
-
-}
-
-/**
- * http configuration for intent handling
- * field to set endpoint
- */
-@Composable
-private fun RemoteHTTPOption(
-    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
-) {
-
-    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
-
-        //TODO server
 
     }
 
@@ -133,26 +114,24 @@ private fun RemoteHTTPOption(
  */
 @Composable
 private fun HomeAssistantOption(
-    intentHandlingHassOption: HomeAssistantIntentHandlingOption,
+    intentHandlingHomeAssistantOption: HomeAssistantIntentHandlingOption,
     onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
-        //TODO server
-
         //select home assistant event or home assistant intent
         RadioButtonListItem(
             modifier = Modifier.testTag(TestTag.SendEvents),
             text = MR.strings.homeAssistantEvents.stable,
-            isChecked = intentHandlingHassOption == Event,
+            isChecked = intentHandlingHomeAssistantOption == Event,
             onClick = { onEvent(SelectIntentHandlingHomeAssistantOption(Event)) }
         )
 
         RadioButtonListItem(
             modifier = Modifier.testTag(TestTag.SendIntents),
             text = MR.strings.homeAssistantIntents.stable,
-            isChecked = intentHandlingHassOption == Intent,
+            isChecked = intentHandlingHomeAssistantOption == Intent,
             onClick = { onEvent(SelectIntentHandlingHomeAssistantOption(Intent)) }
         )
 

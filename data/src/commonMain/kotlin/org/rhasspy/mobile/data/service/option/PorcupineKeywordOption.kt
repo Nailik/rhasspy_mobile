@@ -442,7 +442,6 @@ enum class PorcupineKeywordOption(
         PorcupineLanguageOption.ZH
     );
 
-    override fun findValue(value: String): PorcupineKeywordOption? {
-        return entries.firstOrNull { it.name == name }
-    }
+    override val internalEntries = entries
+
 }

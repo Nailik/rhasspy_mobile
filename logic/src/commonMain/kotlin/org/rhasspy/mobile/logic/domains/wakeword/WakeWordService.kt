@@ -98,7 +98,7 @@ internal class WakeWordService(
                 } else Pending
             }
 
-            WakeWordOption.MQTT      -> Success
+            WakeWordOption.Rhasspy2HermesMQTT -> Success
             WakeWordOption.Udp       -> {
                 if (!params.isMicrophonePermissionEnabled) {
                     //post error when microphone permission is missing
@@ -212,7 +212,7 @@ internal class WakeWordService(
             if (it == params.copy(isEnabled = it.isEnabled)) {
                 when (params.wakeWordOption) {
                     WakeWordOption.Porcupine -> if (porcupineWakeWordClient != null) return
-                    WakeWordOption.MQTT      -> return
+                    WakeWordOption.Rhasspy2HermesMQTT -> return
                     WakeWordOption.Udp       -> if (udpConnection != null) return
                     WakeWordOption.Disabled  -> return
                 }
@@ -239,7 +239,7 @@ internal class WakeWordService(
                 Success
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
-            WakeWordOption.MQTT      -> Success
+            WakeWordOption.Rhasspy2HermesMQTT -> Success
             WakeWordOption.Udp       -> {
                 _serviceState.value = Loading
 
@@ -279,7 +279,7 @@ internal class WakeWordService(
 
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> porcupineWakeWordClient?.audioFrame(data)
-            WakeWordOption.MQTT      -> Unit //nothing will wait for mqtt message
+            WakeWordOption.Rhasspy2HermesMQTT -> Unit //nothing will wait for mqtt message
             WakeWordOption.Udp       -> udpConnection?.streamAudio(
                 data = data.appendWavHeader(
                     audioRecorderChannelType = params.audioOutputChannelType,

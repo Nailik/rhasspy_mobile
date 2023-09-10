@@ -113,7 +113,7 @@ private fun WakeWordConfigurationOptionContent(
                     onEvent = onEvent
                 )
 
-            WakeWordOption.MQTT,
+            WakeWordOption.Rhasspy2HermesMQTT,
             WakeWordOption.Disabled  -> Unit
         }
 

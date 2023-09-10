@@ -1,12 +1,52 @@
 package org.rhasspy.mobile.settings.migrations
 
+import com.russhwolf.settings.get
+import com.russhwolf.settings.set
 import org.rhasspy.mobile.data.connection.HttpConnectionData
 import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
 import org.rhasspy.mobile.data.connection.MqttConnectionData
+import org.rhasspy.mobile.data.service.option.*
+import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.ISetting
 
 internal class Migrate0To1 : IMigration(0, 1) {
+
+    override fun preMigrate() {
+        if (settings[SettingsEnum.AudioPlayingOption.name, ""] == "RemoteHTTP") {
+            settings[SettingsEnum.AudioPlayingOption.name] = AudioPlayingOption.Rhasspy2HermesHttp.name
+        }
+        if (settings[SettingsEnum.AudioPlayingOption.name, ""] == "RemoteMQTT") {
+            settings[SettingsEnum.AudioPlayingOption.name] = AudioPlayingOption.Rhasspy2HermesMQTT.name
+        }
+        if (settings[SettingsEnum.DialogManagementOption.name, ""] == "RemoteMQTT") {
+            settings[SettingsEnum.DialogManagementOption.name] = DialogManagementOption.Rhasspy2HermesMQTT.name
+        }
+        if (settings[SettingsEnum.IntentHandlingOption.name, ""] == "RemoteHTTP") {
+            settings[SettingsEnum.IntentHandlingOption.name] = IntentHandlingOption.Rhasspy2HermesHttp.name
+        }
+        if (settings[SettingsEnum.IntentRecognitionOption.name, ""] == "RemoteHTTP") {
+            settings[SettingsEnum.IntentRecognitionOption.name] = IntentRecognitionOption.Rhasspy2HermesHttp.name
+        }
+        if (settings[SettingsEnum.IntentRecognitionOption.name, ""] == "RemoteMQTT") {
+            settings[SettingsEnum.IntentRecognitionOption.name] = IntentRecognitionOption.Rhasspy2HermesMQTT.name
+        }
+        if (settings[SettingsEnum.SpeechToTextOption.name, ""] == "RemoteMQTT") {
+            settings[SettingsEnum.SpeechToTextOption.name] = SpeechToTextOption.Rhasspy2HermesMQTT.name
+        }
+        if (settings[SettingsEnum.SpeechToTextOption.name, ""] == "RemoteMQTT") {
+            settings[SettingsEnum.SpeechToTextOption.name] = SpeechToTextOption.Rhasspy2HermesMQTT.name
+        }
+        if (settings[SettingsEnum.TextToSpeechOption.name, ""] == "RemoteMQTT") {
+            settings[SettingsEnum.TextToSpeechOption.name] = TextToSpeechOption.Rhasspy2HermesMQTT.name
+        }
+        if (settings[SettingsEnum.TextToSpeechOption.name, ""] == "RemoteMQTT") {
+            settings[SettingsEnum.TextToSpeechOption.name] = TextToSpeechOption.Rhasspy2HermesMQTT.name
+        }
+        if (settings[SettingsEnum.WakeWordOption.name, ""] == "MQTT") {
+            settings[SettingsEnum.WakeWordOption.name] = WakeWordOption.Rhasspy2HermesMQTT.name
+        }
+    }
 
     private enum class DeprecatedSettingsEnum {
         MQTTEnabled,
@@ -64,6 +104,7 @@ internal class Migrate0To1 : IMigration(0, 1) {
     private val httpServerSSLKeyPassword = ISetting(DeprecatedSettingsEnum.HttpServerSSLKeyPassword, "")
 
     override fun migrate() {
+
         ConfigurationSetting.rhasspy2Connection.value = HttpConnectionData(
             host = "${httpClientServerEndpointHost.value}:${httpClientServerEndpointPort.value}",
             timeout = httpClientTimeout.value,

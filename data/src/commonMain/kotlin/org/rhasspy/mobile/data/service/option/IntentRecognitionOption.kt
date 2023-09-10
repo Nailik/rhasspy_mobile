@@ -4,13 +4,12 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 
-enum class IntentRecognitionOption(override val text: StableStringResource) :
-    IOption<IntentRecognitionOption> {
-    RemoteHTTP(MR.strings.remoteHTTP.stable),
-    RemoteMQTT(MR.strings.remoteMQTT.stable),
+enum class IntentRecognitionOption(override val text: StableStringResource) : IOption<IntentRecognitionOption> {
+
+    Rhasspy2HermesHttp(MR.strings.rhasspy2hermes_http.stable),
+    Rhasspy2HermesMQTT(MR.strings.rhasspy2hermes_mqtt.stable),
     Disabled(MR.strings.disabled.stable);
 
-    override fun findValue(value: String): IntentRecognitionOption? {
-        return entries.firstOrNull { it.name == name }
-    }
+    override val internalEntries = entries
+
 }
