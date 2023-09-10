@@ -29,7 +29,7 @@ internal actual class SettingsUtils actual constructor(
     /**
      * share settings file but without sensitive data
      */
-    actual override suspend fun shareSettingsFile(): Boolean {
+    actual override suspend fun shareSettingsFile(toRemove: List<String>): Boolean {
         //TODO("Not yet implemented")
         return true
     }

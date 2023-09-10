@@ -9,7 +9,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.database.IDriverFactory
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
@@ -174,17 +173,9 @@ internal actual class SettingsUtils actual constructor(
     /**
      * share settings file but without sensitive data
      */
-    actual override suspend fun shareSettingsFile(): Boolean {
+    actual override suspend fun shareSettingsFile(toRemove: List<String>): Boolean {
         return try {
             logger.d { "shareSettingsFile" }
-
-            val toRemove = arrayOf(
-                //TODO new
-                SettingsEnum.WakeWordUDPOutputHost.name,
-                SettingsEnum.WakeWordUDPOutputPort.name,
-                SettingsEnum.WakeWordPorcupineAccessToken.name,
-                SettingsEnum.SpeechToTextHttpEndpoint.name,
-            )
 
             //copy org.rhasspy.mobile.android_prefenrences.xml
             val sharedPreferencesFile = File(
@@ -204,24 +195,13 @@ internal actual class SettingsUtils actual constructor(
             exportFile.writeText("")
             //write data
             if (sharedPreferencesFile.exists()) {
-                sharedPreferencesFile.readLines().forEach { line ->
-                    val name = line.substringAfter("\"").substringBefore("\"")
-                    val text = if (toRemove.contains(name)) {
-                        if (line.contains("int")) { //value="1"
-                            //replace value
-                            line.replace(Regex("value=\".*\""), "value=\"***\"")
-                        } else if (line.contains("string")) {
-                            //replace between ><
-                            line.replace(Regex(">.*</string>"), ">***</string>")
-                        } else {
-                            ""
-                        }
-                    } else {
-                        line
-                    }
-                    exportFile.appendText("$text\r\n")
+                var text = sharedPreferencesFile.readText()
+                toRemove.filter { it.isNotEmpty() && it.isNotBlank() }.forEach { content ->
+                    println("replace $content")
+                    text = text.replace("\"$content\"", "*hidden*")
                 }
             }
+
             //share file
             val fileUri: Uri = FileProvider.getUriForFile(
                 nativeApplication,
