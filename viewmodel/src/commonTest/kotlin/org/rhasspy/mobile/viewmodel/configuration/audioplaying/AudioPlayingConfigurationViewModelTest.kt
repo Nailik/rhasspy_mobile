@@ -49,7 +49,7 @@ class AudioPlayingConfigurationViewModelTest : AppTest() {
         )
 
         audioPlayingConfigurationData = AudioPlayingConfigurationData(
-            audioPlayingOption = AudioPlayingOption.MQTT,
+            audioPlayingOption = AudioPlayingOption.Rhasspy2HermesMQTT,
             audioOutputOption = AudioOutputOption.Notification,
             audioPlayingMqttSiteId = getRandomString(5)
         )

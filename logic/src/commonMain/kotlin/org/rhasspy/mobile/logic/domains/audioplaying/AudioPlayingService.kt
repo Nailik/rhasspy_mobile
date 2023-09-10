@@ -91,7 +91,7 @@ internal class AudioPlayingService(
     override fun playAudio(audioSource: AudioSource) {
         logger.d { "playAudio" }
         when (params.audioPlayingOption) {
-            AudioPlayingOption.Local      -> {
+            AudioPlayingOption.Local    -> {
                 audioFocusService.request(Sound)
                 localAudioService.playAudio(audioSource) {
                     _serviceState.value = it
@@ -114,7 +114,7 @@ internal class AudioPlayingService(
                 serviceMiddleware.action(PlayFinished(Source.Local))
             }
 
-            AudioPlayingOption.Disabled   -> serviceMiddleware.action(PlayFinished(Source.Local))
+            AudioPlayingOption.Disabled -> serviceMiddleware.action(PlayFinished(Source.Local))
         }
     }
 

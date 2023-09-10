@@ -67,7 +67,7 @@ internal class TextToSpeechService(
         _serviceState.value = when (params.textToSpeechOption) {
             TextToSpeechOption.Rhasspy2HermesHttp -> Success
             TextToSpeechOption.Rhasspy2HermesMQTT -> Success
-            TextToSpeechOption.Disabled   -> Disabled
+            TextToSpeechOption.Disabled           -> Disabled
         }
     }
 
@@ -107,7 +107,7 @@ internal class TextToSpeechService(
                 mqttClientService.say(mqttSessionId, text, siteId) { _serviceState.value = it }
             }
 
-            TextToSpeechOption.Disabled   -> _serviceState.value = Disabled
+            TextToSpeechOption.Disabled -> _serviceState.value = Disabled
         }
     }
 

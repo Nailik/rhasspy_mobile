@@ -56,10 +56,10 @@ internal class IntentHandlingService(
 
     private fun setupState() {
         _serviceState.value = when (params.intentHandlingOption) {
-            IntentHandlingOption.HomeAssistant   -> Success
-            IntentHandlingOption.WithRecognition -> Success
+            IntentHandlingOption.HomeAssistant      -> Success
+            IntentHandlingOption.WithRecognition    -> Success
             IntentHandlingOption.Rhasspy2HermesHttp -> Success
-            IntentHandlingOption.Disabled        -> Disabled
+            IntentHandlingOption.Disabled           -> Disabled
         }
     }
 

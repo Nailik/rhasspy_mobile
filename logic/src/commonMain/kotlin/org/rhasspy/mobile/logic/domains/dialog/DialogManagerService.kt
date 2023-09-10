@@ -81,7 +81,7 @@ internal class DialogManagerService(
     private fun updateOptionAndInitServiceState(dialogManagementOption: DialogManagementOption) {
         dialogHistory.value = persistentListOf()
         _serviceState.value = when (dialogManagementOption) {
-            DialogManagementOption.Local      -> {
+            DialogManagementOption.Local    -> {
                 dialogManagerLocal.onInit()
                 Success
             }
@@ -91,7 +91,7 @@ internal class DialogManagerService(
                 Success
             }
 
-            DialogManagementOption.Disabled   -> {
+            DialogManagementOption.Disabled -> {
                 dialogManagerDisabled.onInit()
                 Disabled
             }
@@ -119,9 +119,9 @@ internal class DialogManagerService(
 
     override suspend fun onAction(action: DialogServiceMiddlewareAction) {
         when (ConfigurationSetting.dialogManagementOption.value) {
-            DialogManagementOption.Local      -> dialogManagerLocal.onAction(action)
+            DialogManagementOption.Local              -> dialogManagerLocal.onAction(action)
             DialogManagementOption.Rhasspy2HermesMQTT -> dialogManagerMqtt.onAction(action)
-            DialogManagementOption.Disabled   -> dialogManagerDisabled.onAction(action)
+            DialogManagementOption.Disabled           -> dialogManagerDisabled.onAction(action)
         }
     }
 

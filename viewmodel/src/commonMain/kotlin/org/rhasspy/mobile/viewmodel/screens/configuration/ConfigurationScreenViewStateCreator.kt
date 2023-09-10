@@ -16,19 +16,17 @@ import org.rhasspy.mobile.logic.domains.intentrecognition.IIntentRecognitionServ
 import org.rhasspy.mobile.logic.domains.speechtotext.ISpeechToTextService
 import org.rhasspy.mobile.logic.domains.texttospeech.ITextToSpeechService
 import org.rhasspy.mobile.logic.domains.wakeword.IWakeWordService
-import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
 
 class ConfigurationScreenViewStateCreator(
-    dispatcherProvider: IDispatcherProvider,
-    private val rhasspy2HermesConnection: IRhasspy2HermesConnection,
-    private val rhasspy3WyomingConnection: IRhasspy3WyomingConnection,
-    private val homeAssistantConnection: IHomeAssistantConnection,
-    private val mqttConnection: IMqttConnection,
-    private val webServerConnection: IWebServerConnection,
+    rhasspy2HermesConnection: IRhasspy2HermesConnection,
+    rhasspy3WyomingConnection: IRhasspy3WyomingConnection,
+    homeAssistantConnection: IHomeAssistantConnection,
+    mqttConnection: IMqttConnection,
+    webServerConnection: IWebServerConnection,
     private val wakeWordService: IWakeWordService,
     private val speechToTextService: ISpeechToTextService,
     private val intentRecognitionService: IIntentRecognitionService,

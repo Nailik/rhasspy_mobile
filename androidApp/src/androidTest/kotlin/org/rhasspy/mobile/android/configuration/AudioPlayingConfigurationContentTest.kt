@@ -54,22 +54,22 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
             .assertIsSelected()
 
         //User clicks option remote http
-        composeTestRule.onNodeWithTag(AudioPlayingOption.Rhasspy2Hermes).onListItemRadioButton()
+        composeTestRule.onNodeWithTag(AudioPlayingOption.Rhasspy2HermesHttp).onListItemRadioButton()
             .performClick()
         //new option is selected
         composeTestRule.awaitIdle()
         assertEquals(
-            AudioPlayingOption.Rhasspy2Hermes,
+            AudioPlayingOption.Rhasspy2HermesHttp,
             viewModel.viewState.value.editData.audioPlayingOption
         )
-        composeTestRule.onNodeWithTag(AudioPlayingOption.Rhasspy2Hermes).onListItemRadioButton()
+        composeTestRule.onNodeWithTag(AudioPlayingOption.Rhasspy2HermesHttp).onListItemRadioButton()
             .assertIsSelected()
 
         //User clicks save
         composeTestRule.saveBottomAppBar()
         AudioPlayingConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
-            assertEquals(AudioPlayingOption.Rhasspy2Hermes, it.audioPlayingOption)
+            assertEquals(AudioPlayingOption.Rhasspy2HermesHttp, it.audioPlayingOption)
         }
     }
 

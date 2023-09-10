@@ -110,7 +110,7 @@ private fun SpeechToTextOption(
                 speechToTextAudioOutputData = editData.speechToTextAudioOutputData,
             )
 
-            else                          -> Unit
+            else -> Unit
         }
 
     }

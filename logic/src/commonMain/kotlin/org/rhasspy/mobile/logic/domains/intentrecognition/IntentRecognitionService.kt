@@ -68,7 +68,7 @@ internal class IntentRecognitionService(
         _serviceState.value = when (params.intentRecognitionOption) {
             IntentRecognitionOption.Rhasspy2HermesHttp -> Success
             IntentRecognitionOption.Rhasspy2HermesMQTT -> Success
-            IntentRecognitionOption.Disabled   -> Disabled
+            IntentRecognitionOption.Disabled           -> Disabled
         }
     }
 
@@ -113,7 +113,7 @@ internal class IntentRecognitionService(
                 _serviceState.value = it
             }
 
-            IntentRecognitionOption.Disabled   -> serviceMiddleware.action(
+            IntentRecognitionOption.Disabled -> serviceMiddleware.action(
                 IntentRecognitionResult(
                     Source.Local,
                     "",

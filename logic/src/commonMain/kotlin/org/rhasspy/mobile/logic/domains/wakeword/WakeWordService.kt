@@ -91,7 +91,7 @@ internal class WakeWordService(
 
     private fun updateState() {
         _serviceState.value = when (params.wakeWordOption) {
-            WakeWordOption.Porcupine -> {
+            WakeWordOption.Porcupine          -> {
                 if (!params.isMicrophonePermissionEnabled) {
                     //post error when microphone permission is missing
                     ErrorState.Error(MR.strings.microphonePermissionDenied.stable)
@@ -99,14 +99,14 @@ internal class WakeWordService(
             }
 
             WakeWordOption.Rhasspy2HermesMQTT -> Success
-            WakeWordOption.Udp       -> {
+            WakeWordOption.Udp                -> {
                 if (!params.isMicrophonePermissionEnabled) {
                     //post error when microphone permission is missing
                     ErrorState.Error(MR.strings.microphonePermissionDenied.stable)
                 } else Pending
             }
 
-            WakeWordOption.Disabled  -> Disabled
+            WakeWordOption.Disabled           -> Disabled
         }
     }
 
@@ -211,10 +211,10 @@ internal class WakeWordService(
             //ignore enabled flag when comparing
             if (it == params.copy(isEnabled = it.isEnabled)) {
                 when (params.wakeWordOption) {
-                    WakeWordOption.Porcupine -> if (porcupineWakeWordClient != null) return
+                    WakeWordOption.Porcupine          -> if (porcupineWakeWordClient != null) return
                     WakeWordOption.Rhasspy2HermesMQTT -> return
-                    WakeWordOption.Udp       -> if (udpConnection != null) return
-                    WakeWordOption.Disabled  -> return
+                    WakeWordOption.Udp                -> if (udpConnection != null) return
+                    WakeWordOption.Disabled           -> return
                 }
             }
         }
@@ -225,7 +225,7 @@ internal class WakeWordService(
         initializedParams = params
 
         _serviceState.value = when (params.wakeWordOption) {
-            WakeWordOption.Porcupine -> {
+            WakeWordOption.Porcupine          -> {
                 _serviceState.value = Loading
                 //when porcupine is used for hotWord then start local service
                 porcupineWakeWordClient = PorcupineWakeWordClient(
@@ -240,7 +240,7 @@ internal class WakeWordService(
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
             WakeWordOption.Rhasspy2HermesMQTT -> Success
-            WakeWordOption.Udp       -> {
+            WakeWordOption.Udp                -> {
                 _serviceState.value = Loading
 
                 udpConnection = UdpConnection(
@@ -251,7 +251,7 @@ internal class WakeWordService(
                 Success
             }
 
-            WakeWordOption.Disabled  -> Disabled
+            WakeWordOption.Disabled           -> Disabled
         }
     }
 

@@ -98,7 +98,7 @@ internal class SpeechToTextService(
         _serviceState.value = when (params.speechToTextOption) {
             SpeechToTextOption.Rhasspy2HermesHttp -> Success
             SpeechToTextOption.Rhasspy2HermesMQTT -> Success
-            SpeechToTextOption.Disabled   -> Disabled
+            SpeechToTextOption.Disabled           -> Disabled
         }
     }
 
@@ -162,7 +162,7 @@ internal class SpeechToTextService(
                 }
             }
 
-            SpeechToTextOption.Disabled   -> Unit
+            SpeechToTextOption.Disabled -> Unit
         }
     }
 
@@ -184,7 +184,7 @@ internal class SpeechToTextService(
         when (params.speechToTextOption) {
             SpeechToTextOption.Rhasspy2HermesHttp -> _serviceState.value = Success
             SpeechToTextOption.Rhasspy2HermesMQTT -> if (!fromMqtt) mqttClientService.startListening(sessionId) { _serviceState.value = it }
-            SpeechToTextOption.Disabled   -> {
+            SpeechToTextOption.Disabled           -> {
                 _serviceState.value = Disabled
                 return //recorder doesn't need to be started
             }
@@ -218,7 +218,7 @@ internal class SpeechToTextService(
                 ) { _serviceState.value = it }
             }
 
-            SpeechToTextOption.Disabled   -> _serviceState.value = Disabled
+            SpeechToTextOption.Disabled -> _serviceState.value = Disabled
         }
 
         //write async after data was send

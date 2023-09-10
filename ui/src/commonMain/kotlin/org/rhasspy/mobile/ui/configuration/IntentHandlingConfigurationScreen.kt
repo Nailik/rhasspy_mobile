@@ -99,7 +99,7 @@ private fun IntentHandlingOptionContent(
 
             IntentHandlingOption.Rhasspy2HermesHttp -> Unit
 
-            else                               -> Unit
+            else -> Unit
         }
 
     }
