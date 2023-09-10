@@ -49,7 +49,6 @@ fun EventStateIcon(serviceState: ServiceState) {
             is Loading    -> Icons.Outlined.RotateRight
             is Success    -> Icons.Outlined.Done
             is ErrorState -> Icons.Filled.Error
-
             is Disabled   -> Icons.Outlined.Circle
         },
         contentDescription = when (serviceState) {

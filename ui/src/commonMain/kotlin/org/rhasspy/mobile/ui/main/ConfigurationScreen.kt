@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.ServiceState.ErrorState
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.ScreenContent
@@ -103,7 +104,7 @@ private fun ConfigurationScreenContent(
                 SiteId(viewState.siteId, onEvent)
                 CustomDivider()
 
-                Connections(onEvent)
+                Connections(viewState.connectionsViewState, onEvent)
                 CustomDivider()
 
                 DialogManagement(viewState.dialogPipeline, onEvent)
@@ -201,14 +202,19 @@ private fun SiteId(
  */
 @Composable
 private fun Connections(
+    connectionsViewState: ConnectionsViewState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
-    ConfigurationListItem(
-        text = MR.strings.connections.stable,
-        secondaryText = MR.strings.connections_information.stable,
-        destination = ConnectionsConfigurationScreen,
-        onEvent = onEvent
+    ListElement(
+        modifier = Modifier
+            .clickable { onEvent(Navigate(ConnectionsConfigurationScreen)) }
+            .testTag(ConnectionsConfigurationScreen),
+        text = { Text(MR.strings.connections.stable) },
+        secondaryText = { Text(MR.strings.connections_information.stable) },
+        trailing = if (connectionsViewState.hasError) {
+            { EventStateIconTinted(ErrorState.Exception()) }
+        } else null
     )
 
 }

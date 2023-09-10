@@ -37,6 +37,15 @@ class ConfigurationScreenViewStateCreator(
     private val dialogManagerService: IDialogManagerService,
     private val intentHandlingService: IIntentHandlingService,
 ) {
+    private val hasConnectionError = combineStateFlow(
+        rhasspy2HermesConnection.connectionState,
+        rhasspy3WyomingConnection.connectionState,
+        homeAssistantConnection.connectionState,
+        mqttConnection.connectionState,
+        webServerConnection.connectionState,
+    ).mapReadonlyState { arr ->
+        arr.any { it is ServiceState.ErrorState }
+    }
 
     private val hasError = combineStateFlow(
         rhasspy2HermesConnection.connectionState,
@@ -59,6 +68,7 @@ class ConfigurationScreenViewStateCreator(
 
     init {
         combineStateFlow(
+            hasConnectionError,
             ConfigurationSetting.siteId.data,
             ConfigurationSetting.dialogManagementOption.data,
             ConfigurationSetting.wakeWordOption.data,
@@ -78,6 +88,9 @@ class ConfigurationScreenViewStateCreator(
         return ConfigurationScreenViewState(
             siteId = SiteIdViewState(
                 text = ConfigurationSetting.siteId.data
+            ),
+            connectionsViewState = ConnectionsViewState(
+                hasError = hasConnectionError.value
             ),
             dialogPipeline = DialogPipelineViewState(
                 dialogManagementOption = ConfigurationSetting.dialogManagementOption.value,

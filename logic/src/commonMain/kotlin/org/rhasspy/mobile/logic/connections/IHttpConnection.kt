@@ -21,7 +21,8 @@ import org.rhasspy.mobile.data.connection.HttpClientErrorType
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.connection.HttpConnectionData
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.*
+import org.rhasspy.mobile.data.service.ServiceState.ErrorState
+import org.rhasspy.mobile.data.service.ServiceState.Pending
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.ktor.configureEngine
 import org.rhasspy.mobile.settings.ISetting
@@ -30,7 +31,7 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
 
     protected abstract val logger: Logger
 
-    override val connectionState = MutableStateFlow<ServiceState>(Disabled)
+    override val connectionState = MutableStateFlow<ServiceState>(Pending)
 
     protected val nativeApplication by inject<NativeApplication>()
 
@@ -74,7 +75,7 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
 
         try {
             httpClient = buildClient(params)
-            connectionState.value = Success
+            connectionState.value = Pending
         } catch (exception: Exception) {
             logger.e(exception) { "error on building client" }
             connectionState.value = ErrorState.Exception(exception = exception)

@@ -13,19 +13,20 @@ data class ConnectionsConfigurationViewState internal constructor(
 
     @Stable
     data class HttpViewState internal constructor(
-        val host: String
+        val host: String,
+        val serviceViewState: ServiceViewState
     )
 
     @Stable
     data class MqttViewState internal constructor(
         val isMQTTConnected: Boolean,
-        val serviceState: ServiceViewState
+        val serviceViewState: ServiceViewState
     )
 
     @Stable
     data class WebServerViewState internal constructor(
         val isHttpServerEnabled: Boolean,
-        val serviceState: ServiceViewState
+        val serviceViewState: ServiceViewState
     )
 
 }

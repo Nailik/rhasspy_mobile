@@ -91,15 +91,6 @@ private fun HttpConnectionDetailContent(
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
 
-        //switch to toggle validation of SSL certificate
-        SwitchListItem(
-            text = MR.strings.disableSSLValidation.stable,
-            modifier = Modifier.testTag(TestTag.SSLSwitch),
-            secondaryText = MR.strings.disableSSLValidationInformation.stable,
-            isChecked = editData.isSSLVerificationDisabled,
-            onCheckedChange = { onEvent(SetHomeAssistantSSLVerificationDisabled(it)) },
-        )
-
         //home assistant access token
         TextFieldListItemVisibility(
             modifier = Modifier.testTag(TestTag.AccessToken),
@@ -120,6 +111,15 @@ private fun HttpConnectionDetailContent(
                     )
                 }
             }
+        )
+
+        //switch to toggle validation of SSL certificate
+        SwitchListItem(
+            text = MR.strings.disableSSLValidation.stable,
+            modifier = Modifier.testTag(TestTag.SSLSwitch),
+            secondaryText = MR.strings.disableSSLValidationInformation.stable,
+            isChecked = editData.isSSLVerificationDisabled,
+            onCheckedChange = { onEvent(SetHomeAssistantSSLVerificationDisabled(it)) },
         )
 
     }
