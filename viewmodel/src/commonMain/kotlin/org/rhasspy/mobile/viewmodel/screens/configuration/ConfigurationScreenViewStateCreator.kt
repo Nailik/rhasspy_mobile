@@ -95,7 +95,7 @@ class ConfigurationScreenViewStateCreator(
                 serviceState = ServiceViewState(dialogManagerService.serviceState)
             ),
             audioInput = AudioInputViewState(
-                serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO
+                serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO #466
             ),
             wakeWord = WakeWordViewState(
                 wakeWordValueOption = ConfigurationSetting.wakeWordOption.value,
@@ -107,7 +107,7 @@ class ConfigurationScreenViewStateCreator(
             ),
             voiceActivityDetection = VoiceActivityDetectionViewState(
                 voiceActivityDetectionOption = VoiceActivityDetectionOption.Disabled,
-                serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO
+                serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO #469
             ),
             intentRecognition = IntentRecognitionViewState(
                 intentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,

@@ -98,10 +98,7 @@ private fun MainScreenContent(viewModel: MainScreenViewModel) {
         }
 
         val screen by viewModel.screen.collectAsState()
-        NavigationContent(
-            screen = screen,
-            viewModel = viewModel
-        )
+        NavigationContent(screen = screen)
     }
 }
 

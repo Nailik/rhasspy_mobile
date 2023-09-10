@@ -14,7 +14,7 @@ actual class MqttClient actual constructor(
 ) {
     /** If *true* then there is a connection to the MQTT Broker. */
     actual val isConnected: StateFlow<Boolean>
-        get() = MutableStateFlow(false) //TODO("Not yet implemented")
+        get() = MutableStateFlow(false) //TODO #261
 
     /**
      * Publishes a message to the MQTT Broker.
@@ -30,7 +30,7 @@ actual class MqttClient actual constructor(
         msg: MqttMessage,
         timeout: Long
     ): MqttError? {
-        //TODO("Not yet implemented")
+        //TODO #261
         return null
     }
 
@@ -41,7 +41,7 @@ actual class MqttClient actual constructor(
      * @return Will return a [error][MqttError] if a problem has occurred.
      */
     actual suspend fun subscribe(topic: String, qos: MqttQos): MqttError? {
-        //TODO("Not yet implemented")
+        //TODO #261
         return null
     }
 
@@ -51,7 +51,7 @@ actual class MqttClient actual constructor(
      * @return Will return a [error][MqttError] if a problem has occurred.
      */
     actual suspend fun connect(connOptions: MqttServiceConnectionOptions): MqttError? {
-        //TODO("Not yet implemented")
+        //TODO #261
         return null
     }
 
@@ -60,7 +60,7 @@ actual class MqttClient actual constructor(
      * @return Will return a [error][MqttError] if a problem has occurred.
      */
     actual fun disconnect(): MqttError? {
-        //TODO("Not yet implemented")
+        //TODO #261
         return null
     }
 

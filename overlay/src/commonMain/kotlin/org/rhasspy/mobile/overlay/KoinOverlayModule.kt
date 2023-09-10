@@ -20,7 +20,6 @@ fun koinOverlayModule() = module {
     }
     single<IMicrophoneOverlay> {
         MicrophoneOverlay(
-            viewModelFactory = get(),
             viewModel = get(),
             nativeApplication = get(),
             overlayPermission = get(),

@@ -13,11 +13,11 @@ internal actual class AudioRecorder : IAudioRecorder {
      * max volume since start recording
      */
     actual override val maxVolume: StateFlow<Float>
-        get() = MutableStateFlow(Float.MAX_VALUE) //TODO("Not yet implemented")
+        get() = MutableStateFlow(Float.MAX_VALUE) //TODO #509
     actual override val isRecording: StateFlow<Boolean>
-        get() = MutableStateFlow(true) //TODO("Not yet implemented")
+        get() = MutableStateFlow(true) //TODO #509
     actual override val absoluteMaxVolume: Float
-        get() = 0f //TODO("Not yet implemented")
+        get() = 0f //TODO #509
 
     /**
      * start recording
@@ -31,20 +31,20 @@ internal actual class AudioRecorder : IAudioRecorder {
         audioRecorderOutputSampleRateType: AudioFormatSampleRateType,
         isAutoPauseOnMediaPlayback: Boolean,
     ) {
-        //TODO("Not yet implemented")
+        //TODO #509
     }
 
     /**
      * stop recording
      */
     actual override fun stopRecording() {
-        //TODO("Not yet implemented")
+        //TODO #509
     }
 
     /**
      * output data as flow
      */
     actual override val output: Flow<ByteArray>
-        get() = MutableStateFlow(ByteArray(0)) //TODO("Not yet implemented")
+        get() = MutableStateFlow(ByteArray(0)) //TODO #509
 
 }

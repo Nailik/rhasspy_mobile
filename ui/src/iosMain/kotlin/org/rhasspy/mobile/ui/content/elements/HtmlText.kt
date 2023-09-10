@@ -9,5 +9,5 @@ import androidx.compose.ui.graphics.Color
  */
 @Composable
 actual fun HtmlText(html: String, modifier: Modifier, color: Color) {
-    //TODO("Not yet implemented")
+    //TODO #518
 }

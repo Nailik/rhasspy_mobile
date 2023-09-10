@@ -10,7 +10,7 @@ actual class AudioPlayer : Closeable {
      * represents if audio player is currently playing
      */
     actual val isPlayingState: StateFlow<Boolean>
-        get() = MutableStateFlow(false) //TODO("Not yet implemented")
+        get() = MutableStateFlow(false) //TODO #512
 
     /**
      * play byte list
@@ -24,18 +24,18 @@ actual class AudioPlayer : Closeable {
         audioOutputOption: AudioOutputOption,
         onFinished: () -> Unit
     ) {
-        //TODO("Not yet implemented")
+        //TODO #512
     }
 
     /**
      * stop playback
      */
     actual fun stop() {
-        //TODO("Not yet implemented")
+        //TODO #512
     }
 
     override fun close() {
-        //TODO("Not yet implemented")
+        //TODO #512
     }
 
 

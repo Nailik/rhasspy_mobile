@@ -128,8 +128,6 @@ private fun SpeechToTextHTTP(
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
-        //TODO server
-
         //button to open audio recorder format
         ListElement(
             modifier = Modifier.clickable { onEvent(OpenAudioRecorderFormat) },

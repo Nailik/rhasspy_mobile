@@ -26,7 +26,6 @@ import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.ui.native.nativeComposeView
 import org.rhasspy.mobile.ui.overlay.MicrophoneOverlay
 import org.rhasspy.mobile.ui.theme.AppTheme
-import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayUiEvent.Change.UpdateMicrophoneOverlayPosition
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewModel
 
@@ -34,7 +33,6 @@ import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewMode
  * show overlay with microphone button
  */
 actual class MicrophoneOverlay actual constructor(
-    private val viewModelFactory: ViewModelFactory,
     private val viewModel: MicrophoneOverlayViewModel,
     private val nativeApplication: NativeApplication,
     private val overlayPermission: IOverlayPermission,

@@ -13,7 +13,6 @@ import org.rhasspy.mobile.platformspecific.resource.readToString
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination
 
 class MainScreenViewStateCreator(
     private val navigator: INavigator,
@@ -35,20 +34,11 @@ class MainScreenViewStateCreator(
 
     private fun getViewState(): MainScreenViewState {
         return MainScreenViewState(
-            bottomNavigationIndex = when (navigator.topScreen.value as? MainScreenNavigationDestination?) {
-                MainScreenNavigationDestination.HomeScreen          -> 0
-                MainScreenNavigationDestination.DialogScreen        -> 1
-                MainScreenNavigationDestination.ConfigurationScreen -> 2
-                MainScreenNavigationDestination.SettingsScreen      -> 3
-                MainScreenNavigationDestination.LogScreen           -> 4
-                null                                                -> 1
-            },
-            isShowLogEnabled = AppSetting.isShowLogEnabled.value,
             isShowCrashlyticsDialog = !AppSetting.didShowCrashlyticsDialog.value,
             changelog = Json.decodeFromString<JsonArray>(MR.files.changelog.readToString(nativeApplication))
                 .map { "· ${it.jsonPrimitive.content}\n" }
                 .toImmutableList(),
-            isChangelogDialogVisible = AppSetting.didShowChangelogDialog.value < BuildKonfig.versionCode
+            isChangelogDialogVisible = AppSetting.didShowChangelogDialog.value < BuildKonfig.versionCode,
         )
     }
 }

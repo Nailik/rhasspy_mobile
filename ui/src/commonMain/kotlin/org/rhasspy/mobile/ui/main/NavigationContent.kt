@@ -16,18 +16,16 @@ import org.rhasspy.mobile.ui.configuration.wakeword.WakeWordAudioRecorderFormatS
 import org.rhasspy.mobile.ui.settings.*
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.*
-import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
 
 @Composable
 fun NavigationContent(
-    screen: NavigationDestination,
-    viewModel: MainScreenViewModel
+    screen: NavigationDestination
 ) {
     Crossfade(targetState = screen) {
         when (it) {
             is ConfigurationScreenNavigationDestination   -> ConfigurationNavigationContent(it)
             is ConnectionScreenNavigationDestination      -> ConnectionScreenNavigationContent(it)
-            is MainScreenNavigationDestination            -> MainNavigationContent(it, viewModel)
+            is MainScreenNavigationDestination            -> MainNavigationContent(it)
             is SettingsScreenDestination                  -> SettingsNavigationContent(it)
             is WakeWordConfigurationScreenDestination     -> WakeWordNavigationContent(it)
             is IndicationSettingsScreenDestination        -> IndicationNavigationContent(it)
@@ -39,8 +37,7 @@ fun NavigationContent(
 
 @Composable
 private fun MainNavigationContent(
-    screen: MainScreenNavigationDestination,
-    viewModel: MainScreenViewModel
+    screen: MainScreenNavigationDestination
 ) {
     Column {
         Box(modifier = Modifier.weight(1f)) {
@@ -53,7 +50,7 @@ private fun MainNavigationContent(
             }
         }
 
-        BottomNavigation(viewModel)
+        BottomNavigation(screen.bottomViewModel)
     }
 }
 

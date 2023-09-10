@@ -9,6 +9,8 @@ import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.assist.AssistantViewModel
+import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewModel
+import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewStateCreator
@@ -88,7 +90,8 @@ fun viewModelModule() = module {
         )
     }
 
-    singleOf(::ViewModelFactory)
+    singleOf(::BottomNavigationViewStateCreator)
+    singleOf(::BottomNavigationViewModel)
 
     singleOf(::AssistantViewModel)
 

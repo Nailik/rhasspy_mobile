@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
+import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
@@ -63,6 +64,8 @@ sealed class NavigationDestination : KoinComponent {
         data object LogScreen : MainScreenNavigationDestination() {
             override val viewModel get() = get<LogScreenViewModel> { parametersOf(this) }
         }
+
+        val bottomViewModel get() = get<BottomNavigationViewModel> { parametersOf(this) }
 
     }
 

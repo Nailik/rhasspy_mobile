@@ -11,18 +11,16 @@ actual enum class AudioFormatEncodingType(
     actual val bitRate: Int
 ) : IOption<AudioFormatEncodingType> {
 
-    //TODO("Not yet implemented")
+    //TODO #509
     Default(MR.strings.defaultText.stable, 1, 1);
 
-    override fun findValue(value: String): AudioFormatEncodingType {
-        return AudioFormatEncodingType.valueOf(value)
-    }
+    override val internalEntries = entries
 
     actual companion object {
         actual val default: AudioFormatEncodingType = Default
         actual val porcupine: AudioFormatEncodingType = Default
         actual fun supportedValues(): List<AudioFormatEncodingType> {
-            //TODO("Not yet implemented")
+            //TODO #509
             return listOf()
         }
 
