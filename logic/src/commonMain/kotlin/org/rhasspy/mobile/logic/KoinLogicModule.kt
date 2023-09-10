@@ -4,7 +4,6 @@ import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.connections.homeassistant.HomeAssistantConnection
-import org.rhasspy.mobile.logic.connections.homeassistant.HomeAssistantServiceParamsCreator
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnection
@@ -131,7 +130,6 @@ fun logicModule() = module {
     singleOf(::DialogManagerMqtt)
     singleOf(::DialogManagerDisabled)
 
-    factoryOf(::HomeAssistantServiceParamsCreator)
     single<IHomeAssistantConnection> { HomeAssistantConnection() }
 
     single<IRhasspy2HermesConnection> { Rhasspy2HermesConnection() }

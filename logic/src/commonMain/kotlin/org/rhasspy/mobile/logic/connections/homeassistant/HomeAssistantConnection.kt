@@ -3,12 +3,12 @@ package org.rhasspy.mobile.logic.connections.homeassistant
 import io.ktor.client.request.setBody
 import io.ktor.client.utils.buildHeaders
 import io.ktor.http.contentType
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.ErrorState
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Event
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Intent
 import org.rhasspy.mobile.logic.connections.IConnection
@@ -30,8 +30,6 @@ interface IHomeAssistantConnection : IConnection {
 internal class HomeAssistantConnection : IHomeAssistantConnection, IHttpConnection(ConfigurationSetting.homeAssistantConnection) {
 
     override val logger = LogType.HomeAssistanceService.logger()
-
-    override val connectionState = MutableStateFlow<ServiceState>(ServiceState.Success)
 
     /**
      * simplified conversion from intent to hass event or hass intent
@@ -79,7 +77,7 @@ internal class HomeAssistantConnection : IHomeAssistantConnection, IHttpConnecti
             }
         } catch (exception: Exception) {
             logger.e(exception) { "sendIntent error" }
-            onResult(ServiceState.ErrorState.Exception(exception))
+            onResult(ErrorState.Exception(exception))
         }
     }
 

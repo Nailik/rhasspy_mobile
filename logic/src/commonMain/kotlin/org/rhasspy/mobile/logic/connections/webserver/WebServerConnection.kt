@@ -32,6 +32,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.ErrorState
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionErrorType.WakeOptionInvalid
 import org.rhasspy.mobile.logic.connections.webserver.WebServerResult.*
@@ -104,7 +105,7 @@ internal class WebServerConnection : IWebServerConnection {
             connectionState.value = ServiceState.Loading
 
             if (params.isSSLEnabled && !params.keyStoreFile?.toPath().commonExists()) {
-                connectionState.value = ServiceState.ErrorState.Error(MR.strings.certificate_missing.stable)
+                connectionState.value = ErrorState.Error(MR.strings.certificate_missing.stable)
                 return
             }
 
@@ -115,7 +116,7 @@ internal class WebServerConnection : IWebServerConnection {
             } catch (exception: Exception) {
                 //start error
                 logger.a(exception) { "initialization error" }
-                connectionState.value = ServiceState.ErrorState.Exception(exception)
+                connectionState.value = ErrorState.Exception(exception)
             }
         } else {
             connectionState.value = ServiceState.Disabled
@@ -241,7 +242,7 @@ internal class WebServerConnection : IWebServerConnection {
 
         } catch (exception: Exception) {
             logger.e(exception) { "evaluateCall error" }
-            ServiceState.ErrorState.Exception(exception)
+            ErrorState.Exception(exception)
         }
     }
 

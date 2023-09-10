@@ -13,19 +13,24 @@ import io.ktor.client.utils.buildHeaders
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMessageBuilder
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.connection.HttpClientErrorType
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.connection.HttpConnectionData
+import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.ktor.configureEngine
 import org.rhasspy.mobile.settings.ISetting
 
-abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : KoinComponent {
+abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnection, KoinComponent {
 
     protected abstract val logger: Logger
+
+    override val connectionState = MutableStateFlow<ServiceState>(Disabled)
 
     protected val nativeApplication by inject<NativeApplication>()
 
@@ -63,14 +68,16 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : KoinCom
     }
 
     private fun collectParams(params: HttpConnectionData) {
+        connectionState.value = Pending
         httpConnectionParams = params
         httpClient?.cancel()
 
         try {
             httpClient = buildClient(params)
+            connectionState.value = Success
         } catch (exception: Exception) {
             logger.e(exception) { "error on building client" }
-            //TODO send exception somewhere
+            connectionState.value = ErrorState.Exception(exception = exception)
         }
     }
 
@@ -116,6 +123,8 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : KoinCom
                 logger.a { "post client not initialized" }
                 HttpClientResult.Error(Exception())
             }
+
+            connectionState.value = result.toServiceState()
 
             onResult(result)
         }
