@@ -38,7 +38,7 @@ interface IDatabaseLogger {
 internal class DatabaseLogger(
     private val nativeApplication: NativeApplication,
     private val externalResultRequest: IExternalResultRequest,
-    private val driverFactory: IDriverFactory
+    driverFactory: IDriverFactory
 ) : IDatabaseLogger, LogWriter() {
 
     private val _flow = MutableSharedFlow<LogElement>()

@@ -6,6 +6,7 @@ import org.rhasspy.mobile.platformspecific.mqtt.MqttStatus
 import org.rhasspy.mobile.resources.MR
 
 enum class MqttConnectionStateType(val serviceState: ServiceState) {
+
     SUCCESS(ServiceState.Success),
     UNACCEPTABLE_PROTOCOL(ServiceState.ErrorState.Error(MR.strings.unacceptable_protocol.stable)),
     IDENTIFIER_REJECTED(ServiceState.ErrorState.Error(MR.strings.identifier_rejected.stable)),

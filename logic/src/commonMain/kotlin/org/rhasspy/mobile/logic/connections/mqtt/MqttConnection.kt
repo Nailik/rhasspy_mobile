@@ -13,7 +13,6 @@ import okio.buffer
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
-import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
@@ -27,7 +26,6 @@ import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.extensions.commonSource
 import org.rhasspy.mobile.platformspecific.mqtt.*
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.resources.MR
 import kotlin.random.Random
 
 interface IMqttConnection : IConnection {
@@ -112,9 +110,6 @@ internal class MqttConnection(
                         if (connectClient()) {
                             connectionState.value = subscribeTopics()
                             _isHasStarted.value = true
-                        } else {
-                            connectionState.value = ServiceState.ErrorState.Error(MR.strings.notConnected.stable)
-                            logger.e { "client could not connect" }
                         }
                     } catch (exception: Exception) {
                         //start error

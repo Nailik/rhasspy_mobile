@@ -119,7 +119,6 @@ private fun LogScreenContent(
     val lazyListState = rememberForeverLazyListState(LogScreenList)
     val coroutineScope = rememberCoroutineScope()
 
-
     val isDraggedState by lazyListState.interactionSource.collectIsDraggedAsState()
     LaunchedEffect(isDraggedState) {
         if (isDraggedState) {

@@ -50,7 +50,6 @@ class LogScreenViewStateCreator(
             config = PagingConfig(
                 pageSize = 20,
                 prefetchDistance = 20,
-                enablePlaceholders = true,
                 initialLoadSize = 20 * 3,
                 maxSize = Int.MAX_VALUE,
                 jumpThreshold = Int.MIN_VALUE,
