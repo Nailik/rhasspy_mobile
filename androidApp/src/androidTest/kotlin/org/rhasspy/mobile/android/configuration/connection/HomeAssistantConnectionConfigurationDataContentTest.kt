@@ -73,7 +73,7 @@ class HomeAssistantConnectionConfigurationDataContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar()
-        HomeAssistantConnectionConfigurationViewModel(get()).viewState.value.editData.also {
+        HomeAssistantConnectionConfigurationViewModel(get(), get()).viewState.value.editData.also {
             //disable ssl validation off is saved
             assertEquals(false, it.isSSLVerificationDisabled)
             //host is saved

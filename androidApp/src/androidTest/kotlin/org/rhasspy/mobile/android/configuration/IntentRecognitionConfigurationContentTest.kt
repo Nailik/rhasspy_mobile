@@ -49,11 +49,11 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
             .onListItemRadioButton().assertIsSelected()
 
         //User clicks option remote http
-        composeTestRule.onNodeWithTag(IntentRecognitionOption.RemoteHTTP).performClick()
+        composeTestRule.onNodeWithTag(IntentRecognitionOption.Rhasspy2HermesHttp).performClick()
         //new option is selected
         composeTestRule.awaitIdle()
         assertEquals(
-            IntentRecognitionOption.RemoteHTTP,
+            IntentRecognitionOption.Rhasspy2HermesHttp,
             viewModel.viewState.value.editData.intentRecognitionOption
         )
 
@@ -61,7 +61,7 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
         composeTestRule.saveBottomAppBar()
         IntentRecognitionConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
-            assertEquals(IntentRecognitionOption.RemoteHTTP, it.intentRecognitionOption)
+            assertEquals(IntentRecognitionOption.Rhasspy2HermesHttp, it.intentRecognitionOption)
         }
     }
 

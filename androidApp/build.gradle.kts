@@ -53,6 +53,9 @@ android {
 
     buildTypes {
         release {
+            isDebuggable = false
+            enableUnitTestCoverage = false
+            enableAndroidTestCoverage = false
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -65,8 +68,8 @@ android {
         }
         debug {
             isDebuggable = true
-            enableUnitTestCoverage = true
-            enableAndroidTestCoverage = true
+            enableUnitTestCoverage = false
+            enableAndroidTestCoverage = false
             isMinifyEnabled = false
             isShrinkResources = false
             if (signingEnabled) {

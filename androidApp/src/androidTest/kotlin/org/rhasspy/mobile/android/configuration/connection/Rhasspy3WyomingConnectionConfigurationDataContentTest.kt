@@ -73,7 +73,7 @@ class Rhasspy3WyomingConnectionConfigurationDataContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar()
-        Rhasspy3WyomingConnectionConfigurationViewModel(get()).viewState.value.editData.also {
+        Rhasspy3WyomingConnectionConfigurationViewModel(get(), get()).viewState.value.editData.also {
             //disable ssl validation off is saved
             assertEquals(false, it.isSSLVerificationDisabled)
             //host is saved

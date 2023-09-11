@@ -49,11 +49,11 @@ class SpeechToTextConfigurationContentTest : FlakyTest() {
             .assertIsSelected()
 
         //User clicks option remote http
-        composeTestRule.onNodeWithTag(SpeechToTextOption.RemoteHTTP).performClick()
+        composeTestRule.onNodeWithTag(SpeechToTextOption.Rhasspy2HermesHttp).performClick()
         //new option is selected
         composeTestRule.awaitIdle()
         assertEquals(
-            SpeechToTextOption.RemoteHTTP,
+            SpeechToTextOption.Rhasspy2HermesHttp,
             viewModel.viewState.value.editData.speechToTextOption
         )
 
@@ -61,7 +61,7 @@ class SpeechToTextConfigurationContentTest : FlakyTest() {
         composeTestRule.saveBottomAppBar()
         SpeechToTextConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
-            assertEquals(SpeechToTextOption.RemoteHTTP, it.speechToTextOption)
+            assertEquals(SpeechToTextOption.Rhasspy2HermesHttp, it.speechToTextOption)
         }
     }
 

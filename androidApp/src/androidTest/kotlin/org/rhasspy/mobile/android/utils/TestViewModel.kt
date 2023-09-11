@@ -24,7 +24,7 @@ data class TestConfigurationViewState(
 }
 
 class TestViewModel : ConfigurationViewModel(
-    service = TestService()
+    serviceState = TestService().serviceState
 ) {
 
     private val _stateFlow = MutableStateFlow(
