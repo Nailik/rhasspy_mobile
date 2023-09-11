@@ -18,7 +18,7 @@ actual enum class AudioFormatSampleRateType(
     SR44100(MR.strings.sample_rate_type_44100.stable, 44100),
     SR48000(MR.strings.sample_rate_type_48000.stable, 48000);
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
     actual companion object {
         actual val default: AudioFormatSampleRateType get() = SR16000

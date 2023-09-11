@@ -9,6 +9,6 @@ enum class HomeAssistantIntentHandlingOption(override val text: StableStringReso
     Event(MR.strings.hassEvent.stable),
     Intent(MR.strings.intentHandling.stable);
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
 }

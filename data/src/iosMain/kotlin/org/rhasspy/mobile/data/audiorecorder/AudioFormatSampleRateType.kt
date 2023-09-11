@@ -12,7 +12,7 @@ actual enum class AudioFormatSampleRateType(
     //TODO #509
     Default(MR.strings.defaultText.stable, 1);
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
     actual companion object {
         actual val default: AudioFormatSampleRateType get() = Default

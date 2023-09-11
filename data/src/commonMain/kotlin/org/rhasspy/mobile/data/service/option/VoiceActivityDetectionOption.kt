@@ -9,6 +9,6 @@ enum class VoiceActivityDetectionOption(override val text: StableStringResource)
     Local(MR.strings.local.stable),
     Disabled(MR.strings.disabled.stable);
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
 }

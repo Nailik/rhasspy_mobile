@@ -10,6 +10,7 @@ enum class LanguageType(override val text: StableStringResource, val code: Strin
     English(MR.strings.en.stable, "en"),
     German(MR.strings.de.stable, "de");
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
+
 
 }

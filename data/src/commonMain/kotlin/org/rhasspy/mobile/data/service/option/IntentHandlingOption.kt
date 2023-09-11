@@ -11,6 +11,6 @@ enum class IntentHandlingOption(override val text: StableStringResource) : IOpti
     WithRecognition(MR.strings.withRecognition.stable),
     Disabled(MR.strings.disabled.stable);
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
 }

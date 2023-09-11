@@ -14,7 +14,7 @@ actual enum class AudioFormatEncodingType(
     //TODO #509
     Default(MR.strings.defaultText.stable, 1, 1);
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
     actual companion object {
         actual val default: AudioFormatEncodingType = Default

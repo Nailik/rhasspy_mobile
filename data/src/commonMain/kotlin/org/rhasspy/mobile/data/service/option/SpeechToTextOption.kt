@@ -10,6 +10,6 @@ enum class SpeechToTextOption(override val text: StableStringResource) : IOption
     Rhasspy2HermesMQTT(MR.strings.rhasspy2hermes_mqtt.stable),
     Disabled(MR.strings.disabled.stable);
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
 }

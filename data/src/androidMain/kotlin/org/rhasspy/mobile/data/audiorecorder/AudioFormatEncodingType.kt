@@ -20,7 +20,7 @@ actual enum class AudioFormatEncodingType(
     @SuppressLint("InlinedApi")
     PCM_32BIT(MR.strings.encoding_type_PCM_32BIT.stable, ENCODING_PCM_32BIT, 32);
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
     actual companion object {
         actual val default: AudioFormatEncodingType get() = PCM16Bit

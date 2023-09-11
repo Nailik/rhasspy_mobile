@@ -11,6 +11,6 @@ enum class MicrophoneOverlaySizeOption(override val text: StableStringResource, 
     Big(MR.strings.big.stable, 128),
     Disabled(MR.strings.disabled.stable, 0);
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
 }

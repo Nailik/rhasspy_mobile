@@ -11,6 +11,6 @@ enum class WakeWordOption(override val text: StableStringResource) : IOption<Wak
     Udp(MR.strings.udpAudioOutput.stable),
     Disabled(MR.strings.disabled.stable);
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
 }

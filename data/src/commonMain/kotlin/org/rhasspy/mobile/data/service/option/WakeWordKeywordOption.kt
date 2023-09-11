@@ -21,6 +21,6 @@ enum class WakeWordKeywordOption(override val text: StableStringResource) : IOpt
     PORCUPINE(MR.strings.porcupine.stable),
     TERMINATOR(MR.strings.terminator.stable);
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
 }

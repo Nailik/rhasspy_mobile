@@ -16,11 +16,11 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.resources.icons.RhasspyLogo
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.main.MainScreen
-import org.rhasspy.mobile.viewmodel.ViewModelFactory
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
 
 @Composable
 fun MainUi(
-    viewModelFactory: ViewModelFactory,
+    viewModel: MainScreenViewModel,
     isHasStarted: StateFlow<Boolean>
 ) {
 
@@ -28,7 +28,7 @@ fun MainUi(
 
         Crossfade(targetState = isHasStarted.collectAsState().value) { hasStarted ->
             when (hasStarted) {
-                true  -> MainScreen(viewModelFactory)
+                true -> MainScreen(viewModel)
                 false -> SplashScreen()
             }
         }

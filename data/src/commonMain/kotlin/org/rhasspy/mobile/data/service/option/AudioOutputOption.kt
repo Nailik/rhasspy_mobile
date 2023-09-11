@@ -9,6 +9,6 @@ enum class AudioOutputOption(override val text: StableStringResource) : IOption<
     Sound(MR.strings.sound.stable),
     Notification(MR.strings.notification.stable);
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
 }

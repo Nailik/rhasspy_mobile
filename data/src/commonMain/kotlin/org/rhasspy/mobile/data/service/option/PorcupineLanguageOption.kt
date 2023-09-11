@@ -28,6 +28,6 @@ enum class PorcupineLanguageOption(
     VN(MR.strings.vietnamese.stable, MR.files.porcupine_params_vn),
     ZH(MR.strings.chinese.stable, MR.files.porcupine_params_zh);
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
 }

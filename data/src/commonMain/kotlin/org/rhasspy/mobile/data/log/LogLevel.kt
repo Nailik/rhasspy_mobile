@@ -15,6 +15,6 @@ enum class LogLevel(override val text: StableStringResource, val severity: Sever
     Error(MR.strings.error.stable, Severity.Error),
     Assert(MR.strings.assert_level.stable, Severity.Assert);
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
 }

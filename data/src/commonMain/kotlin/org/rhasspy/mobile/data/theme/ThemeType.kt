@@ -11,6 +11,6 @@ enum class ThemeType(override val text: StableStringResource) : IOption<ThemeTyp
     Light(MR.strings.light.stable),
     Dark(MR.strings.dark.stable);
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
 }

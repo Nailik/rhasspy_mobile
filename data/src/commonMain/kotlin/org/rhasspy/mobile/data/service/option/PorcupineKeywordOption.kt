@@ -442,6 +442,6 @@ enum class PorcupineKeywordOption(
         PorcupineLanguageOption.ZH
     );
 
-    override val internalEntries = entries
+    override val internalEntries get() = entries
 
 }
