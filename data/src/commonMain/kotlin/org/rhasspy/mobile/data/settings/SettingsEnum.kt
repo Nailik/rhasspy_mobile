@@ -91,7 +91,6 @@ enum class SettingsEnum {
     SpeechToTextAudioOutputEncoding,
     SpeechToTextAudioOutputSampleRate,
 
-    SpeechToTextHttpEndpoint,
     SpeechToTextMqttSilenceDetection,
 
     IntentRecognitionOption,

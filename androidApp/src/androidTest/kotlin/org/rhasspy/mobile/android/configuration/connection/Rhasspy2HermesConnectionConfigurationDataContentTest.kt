@@ -73,7 +73,7 @@ class Rhasspy2HermesConnectionConfigurationDataContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar()
-        Rhasspy2HermesConnectionConfigurationViewModel(get()).viewState.value.editData.also {
+        Rhasspy2HermesConnectionConfigurationViewModel(get(), get()).viewState.value.editData.also {
             //disable ssl validation off is saved
             assertEquals(false, it.isSSLVerificationDisabled)
             //host is saved

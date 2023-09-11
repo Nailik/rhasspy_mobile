@@ -22,7 +22,6 @@ object SettingsInitializer : KoinComponent {
         //2. Settings without version
         //3. Settings with older version
         if (Path.commonInternalPath(get<NativeApplication>(), "shared_prefs/org.rhasspy.mobile.android_preferences.xml").commonExists()) {
-            //TODO only if app version doesn't exist?
             if (get<Settings>()[SettingsEnum.Version.name, -1] == -1) {
                 AppSetting.version.value = Migrate0To1().migrateIfNecessary(0)
             }
