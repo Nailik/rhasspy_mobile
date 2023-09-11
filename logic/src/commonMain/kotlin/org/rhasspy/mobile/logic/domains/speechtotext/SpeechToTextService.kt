@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.domains.speechtotext
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,7 +12,6 @@ import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
 import org.rhasspy.mobile.data.connection.HttpClientResult
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.ServiceState.Success
@@ -59,7 +59,7 @@ internal class SpeechToTextService(
     private val audioRecorder: IAudioRecorder
 ) : ISpeechToTextService {
 
-    private val logger = LogType.SpeechToTextService.logger()
+    private val logger = Logger.withTag("SpeechToTextService")
 
     private val audioFocusService by inject<IAudioFocusService>()
     private val mqttClientService by inject<IMqttConnection>()

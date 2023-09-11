@@ -1,10 +1,10 @@
 package org.rhasspy.mobile.logic.domains.voiceactivitydetection
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
 import org.rhasspy.mobile.logic.IService
@@ -26,7 +26,7 @@ internal class VoiceActivityDetectionService(
     private val audioRecorder: IAudioRecorder
 ) : IVoiceActivityDetectionService {
 
-    private val logger = LogType.VoiceActivityDetectionService.logger()
+    private val logger = Logger.withTag("VoiceActivityDetectionService")
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
 

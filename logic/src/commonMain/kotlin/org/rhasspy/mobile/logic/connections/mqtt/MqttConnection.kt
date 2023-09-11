@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.connections.mqtt
 
+import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
 import io.ktor.utils.io.core.toByteArray
 import kotlinx.coroutines.*
@@ -11,7 +12,6 @@ import okio.Path
 import okio.Path.Companion.toPath
 import okio.buffer
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.connections.IConnection
@@ -58,7 +58,7 @@ internal class MqttConnection(
     paramsCreator: MqttConnectionParamsCreator
 ) : IMqttConnection {
 
-    private val logger = LogType.MqttService.logger()
+    private val logger = Logger.withTag("MqttConnection")
 
     override val connectionState = MutableStateFlow<ServiceState>(ServiceState.Pending)
 

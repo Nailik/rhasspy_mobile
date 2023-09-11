@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.local.localaudio
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -9,7 +10,6 @@ import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Notification
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.sounds.SoundOption
@@ -43,7 +43,7 @@ internal class LocalAudioService(
     paramsCreator: LocalAudioServiceParamsCreator
 ) : ILocalAudioService {
 
-    private val logger = LogType.LocalAudioService.logger()
+    private val logger = Logger.withTag("LocalAudioService")
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly

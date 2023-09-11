@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.domains.texttospeech
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -8,7 +9,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.connection.HttpClientResult
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.ServiceState.Success
@@ -39,7 +39,7 @@ internal class TextToSpeechService(
     paramsCreator: TextToSpeechServiceParamsCreator
 ) : ITextToSpeechService {
 
-    private val logger = LogType.TextToSpeechService.logger()
+    private val logger = Logger.withTag("TextToSpeechService")
 
 
     private val paramsFlow: StateFlow<TextToSpeechServiceParams> = paramsCreator()

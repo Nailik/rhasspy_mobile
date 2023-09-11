@@ -1,11 +1,11 @@
 package org.rhasspy.mobile.logic.domains.wakeword
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
@@ -42,7 +42,7 @@ internal class WakeWordService(
     private val audioRecorder: IAudioRecorder,
 ) : IWakeWordService {
 
-    private val logger = LogType.WakeWordService.logger()
+    private val logger = Logger.withTag("WakeWordService")
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
     private val scope = CoroutineScope(Dispatchers.IO)

@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.domains.intentrecognition
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -12,7 +13,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.connection.HttpClientResult
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
@@ -42,7 +42,7 @@ internal class IntentRecognitionService(
     paramsCreator: IntentRecognitionServiceParamsCreator
 ) : IIntentRecognitionService {
 
-    private val logger = LogType.IntentRecognitionService.logger()
+    private val logger = Logger.withTag("IntentRecognitionService")
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
     private val mqttClientService by inject<IMqttConnection>()

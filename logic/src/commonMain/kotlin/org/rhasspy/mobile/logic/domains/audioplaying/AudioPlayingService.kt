@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.domains.audioplaying
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -8,7 +9,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Sound
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
@@ -37,7 +37,7 @@ internal class AudioPlayingService(
     paramsCreator: AudioPlayingServiceParamsCreator
 ) : IAudioPlayingService {
 
-    private val logger = LogType.AudioPlayingService.logger()
+    private val logger = Logger.withTag("AudioPlayingService")
 
     private val audioFocusService by inject<IAudioFocusService>()
     private val localAudioService by inject<ILocalAudioService>()

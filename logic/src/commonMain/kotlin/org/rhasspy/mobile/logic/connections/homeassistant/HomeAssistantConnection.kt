@@ -1,12 +1,12 @@
 package org.rhasspy.mobile.logic.connections.homeassistant
 
+import co.touchlab.kermit.Logger
 import io.ktor.client.request.setBody
 import io.ktor.client.utils.buildHeaders
 import io.ktor.http.contentType
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.rhasspy.mobile.data.connection.HttpClientResult
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.ErrorState
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Event
@@ -29,7 +29,7 @@ interface IHomeAssistantConnection : IConnection {
  */
 internal class HomeAssistantConnection : IHomeAssistantConnection, IHttpConnection(ConfigurationSetting.homeAssistantConnection) {
 
-    override val logger = LogType.HomeAssistanceService.logger()
+    override val logger = Logger.withTag("HomeAssistantConnection")
 
     /**
      * simplified conversion from intent to hass event or hass intent

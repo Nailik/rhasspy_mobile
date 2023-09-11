@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.domains.dialog
 
+import co.touchlab.kermit.Logger
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
@@ -7,7 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.ServiceState.Success
@@ -58,7 +58,7 @@ internal class DialogManagerService(
 
     override val dialogHistory = MutableStateFlow<ImmutableList<DialogInformation>>(persistentListOf())
 
-    private val logger = LogType.DialogManagerService.logger()
+    private val logger = Logger.withTag("DialogManagerService")
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly

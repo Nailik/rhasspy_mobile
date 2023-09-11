@@ -1,11 +1,11 @@
 package org.rhasspy.mobile.logic.connections.rhasspy2hermes
 
+import co.touchlab.kermit.Logger
 import io.ktor.client.request.setBody
 import io.ktor.client.utils.buildHeaders
 import io.ktor.http.contentType
 import okio.Path
 import org.rhasspy.mobile.data.connection.HttpClientResult
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.IHttpConnection
 import org.rhasspy.mobile.logic.domains.speechtotext.StreamContent
@@ -31,7 +31,7 @@ interface IRhasspy2HermesConnection : IConnection {
  */
 internal class Rhasspy2HermesConnection : IRhasspy2HermesConnection, IHttpConnection(ConfigurationSetting.rhasspy2Connection) {
 
-    override val logger = LogType.HttpClientService.logger()
+    override val logger = Logger.withTag("Rhasspy2HermesConnection")
 
     /**
      * /api/speech-to-text

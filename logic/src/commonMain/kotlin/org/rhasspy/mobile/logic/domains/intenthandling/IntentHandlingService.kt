@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.domains.intenthandling
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -7,7 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
@@ -33,7 +33,7 @@ internal class IntentHandlingService(
     paramsCreator: IntentHandlingServiceParamsCreator
 ) : IIntentHandlingService {
 
-    private val logger = LogType.IntentHandlingService.logger()
+    private val logger = Logger.withTag("IntentHandlingService")
 
     private val homeAssistantService by inject<IHomeAssistantConnection>()
     private val httpClientConnection by inject<IRhasspy2HermesConnection>()
