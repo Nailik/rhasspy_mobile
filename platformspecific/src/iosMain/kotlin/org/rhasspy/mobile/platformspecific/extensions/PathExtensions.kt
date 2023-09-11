@@ -36,6 +36,11 @@ private fun createDirectoryIfNotExists(parentDirectory: NSURL) {
     }
 }
 
+actual fun Path.Companion.commonInternalFilePath(
+    nativeApplication: NativeApplication,
+    fileName: String
+): Path = "${readDocumentsDirectory().replace("file:", "")}/$fileName".toPath()
+
 actual fun Path.Companion.commonInternalPath(
     nativeApplication: NativeApplication,
     fileName: String

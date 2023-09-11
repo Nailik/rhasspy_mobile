@@ -173,7 +173,7 @@ private fun HomeAssistant(
         text = MR.strings.home_assistant_server.stable,
         secondaryText = viewState.host,
         serviceViewState = viewState.serviceViewState,
-        destination = MqttConnectionScreen,
+        destination = HomeAssistantConnectionScreen,
         onEvent = onEvent
     )
 

@@ -1,8 +1,14 @@
 package org.rhasspy.mobile.settings.migrations
 
-import okio.Path.Companion.toPath
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.get
+import okio.Path
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.rhasspy.mobile.data.settings.SettingsEnum
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonExists
+import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.settings.AppSetting
 
 object SettingsInitializer : KoinComponent {
@@ -15,8 +21,11 @@ object SettingsInitializer : KoinComponent {
         //1. App newly installed/ no settings
         //2. Settings without version
         //3. Settings with older version
-        if ("shared_prefs/org.rhasspy.mobile.android_preferences.xml".toPath().commonExists()) {
-            AppSetting.version.value = Migrate0To1().migrateIfNecessary(0)
+        if (Path.commonInternalPath(get<NativeApplication>(), "shared_prefs/org.rhasspy.mobile.android_preferences.xml").commonExists()) {
+            //TODO only if app version doesn't exist?
+            if (get<Settings>()[SettingsEnum.Version.name, -1] == -1) {
+                AppSetting.version.value = Migrate0To1().migrateIfNecessary(0)
+            }
         }
     }
 

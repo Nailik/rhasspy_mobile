@@ -17,7 +17,7 @@ import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.domains.wakeword.IWakeWordService
 import org.rhasspy.mobile.platformspecific.*
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
-import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
+import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -269,7 +269,7 @@ class WakeWordConfigurationViewModel(
         }
 
         filesToDelete.forEach {
-            Path.commonInternalPath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
+            Path.commonInternalFilePath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
         }
         filesToDelete.clear()
         newFiles.clear()
@@ -278,7 +278,7 @@ class WakeWordConfigurationViewModel(
 
     override fun onDiscard() {
         newFiles.forEach {
-            Path.commonInternalPath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
+            Path.commonInternalFilePath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
         }
         newFiles.clear()
         filesToDelete.clear()

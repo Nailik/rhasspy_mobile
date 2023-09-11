@@ -11,7 +11,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
-import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
+import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -68,7 +68,7 @@ abstract class IIndicationSoundSettingsViewModel(
                         remove(change.file)
                     }
                     customSoundOptions.value = customSounds
-                    Path.commonInternalPath(
+                    Path.commonInternalFilePath(
                         nativeApplication = nativeApplication,
                         fileName = "${soundFolderType}/${change.file}"
                     ).commonDelete()

@@ -84,7 +84,7 @@ internal class Migrate0To1 : IMigration(0, 1) {
     private val mqttConnectionTimeout = ISetting(DeprecatedSettingsEnum.MQTTConnectionTimeout, 5L)
     private val mqttKeepAliveInterval = ISetting(DeprecatedSettingsEnum.MQTTKeepAliveInterval, 30L)
     private val mqttRetryInterval = ISetting(DeprecatedSettingsEnum.MQTTRetryInterval, 10L)
-    private val mqttKeyStoreFile = ISetting<String?>(DeprecatedSettingsEnum.MQTTKeyStoreFile, null)
+    private val mqttKeyStoreFile = ISetting(DeprecatedSettingsEnum.MQTTKeyStoreFile, "")
 
     private val isHttpClientSSLVerificationDisabled = ISetting(DeprecatedSettingsEnum.SSLVerificationDisabled, true)
     private val httpClientServerEndpointHost = ISetting(DeprecatedSettingsEnum.HttpClientServerEndpointHost, "")
@@ -98,7 +98,7 @@ internal class Migrate0To1 : IMigration(0, 1) {
     private val isHttpServerEnabled = ISetting(DeprecatedSettingsEnum.HttpServerEnabled, true)
     private val httpServerPort = ISetting(DeprecatedSettingsEnum.HttpServerPort, 12101)
     private val isHttpServerSSLEnabledEnabled = ISetting(DeprecatedSettingsEnum.HttpServerSSLEnabled, false)
-    private val httpServerSSLKeyStoreFile = ISetting<String?>(DeprecatedSettingsEnum.HttpServerSSLKeyStoreFile, null)
+    private val httpServerSSLKeyStoreFile = ISetting(DeprecatedSettingsEnum.HttpServerSSLKeyStoreFile, "")
     private val httpServerSSLKeyStorePassword = ISetting(DeprecatedSettingsEnum.HttpServerSSLKeyStorePassword, "")
     private val httpServerSSLKeyAlias = ISetting(DeprecatedSettingsEnum.HttpServerSSLKeyAlias, "")
     private val httpServerSSLKeyPassword = ISetting(DeprecatedSettingsEnum.HttpServerSSLKeyPassword, "")
@@ -126,13 +126,13 @@ internal class Migrate0To1 : IMigration(0, 1) {
             connectionTimeout = mqttConnectionTimeout.value.toInt(),
             keepAliveInterval = mqttKeepAliveInterval.value.toInt(),
             retryInterval = mqttRetryInterval.value,
-            keystoreFile = mqttKeyStoreFile.value
+            keystoreFile = mqttKeyStoreFile.value.ifEmpty { null }
         )
         ConfigurationSetting.localWebserverConnection.value = LocalWebserverConnectionData(
             isEnabled = isHttpServerEnabled.value,
             port = httpServerPort.value,
             isSSLEnabled = isHttpServerSSLEnabledEnabled.value,
-            keyStoreFile = httpServerSSLKeyStoreFile.value,
+            keyStoreFile = httpServerSSLKeyStoreFile.value.ifEmpty { null },
             keyStorePassword = httpServerSSLKeyStorePassword.value,
             keyAlias = httpServerSSLKeyAlias.value,
             keyPassword = httpServerSSLKeyPassword.value,

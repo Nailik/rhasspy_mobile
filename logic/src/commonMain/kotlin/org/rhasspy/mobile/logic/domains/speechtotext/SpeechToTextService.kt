@@ -31,7 +31,7 @@ import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appe
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeader
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
-import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
+import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
@@ -76,7 +76,7 @@ internal class SpeechToTextService(
     private val _serviceState = MutableStateFlow<ServiceState>(Success)
     override val serviceState = _serviceState.readOnly
 
-    override val speechToTextAudioFile: Path = Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
+    override val speechToTextAudioFile: Path = Path.commonInternalFilePath(nativeApplication, "SpeechToTextAudio.wav")
     override var isActive: Boolean = false
     override val isRecording: StateFlow<Boolean> = audioRecorder.isRecording
     private var fileHandle: FileHandle? = null

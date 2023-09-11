@@ -11,7 +11,7 @@ import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineKeywordOption
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
+import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.getRandomString
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
@@ -95,7 +95,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                 customOptions.forEach {
                     wakeWordConfigurationViewModel.onEvent(
                         AddPorcupineKeywordCustom(
-                            Path.commonInternalPath(
+                            Path.commonInternalFilePath(
                                 get(),
                                 it.fileName
                             )
@@ -210,7 +210,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
                 customOptions.forEach {
                     wakeWordConfigurationViewModel.onEvent(
                         AddPorcupineKeywordCustom(
-                            Path.commonInternalPath(
+                            Path.commonInternalFilePath(
                                 get(),
                                 it.fileName
                             )

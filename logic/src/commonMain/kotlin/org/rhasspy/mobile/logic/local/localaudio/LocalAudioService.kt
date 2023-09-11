@@ -18,7 +18,7 @@ import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocusService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioPlayer
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
-import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
+import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
@@ -102,7 +102,7 @@ internal class LocalAudioService(
 
             else                      -> playAudio(
                 AudioSource.File(
-                    Path.commonInternalPath(
+                    Path.commonInternalFilePath(
                         nativeApplication = nativeApplication,
                         fileName = "${FolderType.SoundFolder.Wake}/${AppSetting.wakeSound.value}"
                     )
@@ -126,7 +126,7 @@ internal class LocalAudioService(
 
             else                      -> playAudio(
                 AudioSource.File(
-                    Path.commonInternalPath(
+                    Path.commonInternalFilePath(
                         nativeApplication = nativeApplication,
                         fileName = "${FolderType.SoundFolder.Recorded}/${AppSetting.recordedSound.value}"
                     )
@@ -149,7 +149,7 @@ internal class LocalAudioService(
 
             else                      -> playAudio(
                 AudioSource.File(
-                    Path.commonInternalPath(
+                    Path.commonInternalFilePath(
                         nativeApplication = nativeApplication,
                         fileName = "${FolderType.SoundFolder.Error}/${AppSetting.errorSound.value}"
                     )
