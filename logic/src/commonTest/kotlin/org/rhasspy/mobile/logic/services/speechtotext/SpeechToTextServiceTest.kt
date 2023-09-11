@@ -48,7 +48,7 @@ class SpeechToTextServiceTest : AppTest() {
 
     @Test
     fun `when minimum duration is set silence detection is only triggered after the time even though volume is below threshold`() = runTest {
-        ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.RemoteHTTP
+        ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.Rhasspy2HermesHttp
 
         every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
@@ -84,7 +84,7 @@ class SpeechToTextServiceTest : AppTest() {
     @Test
     fun `when silence detection time is set the detection is only triggered when it is silent for a specific amount of time`() =
         runTest {
-            ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.RemoteHTTP
+            ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.Rhasspy2HermesHttp
             every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
             val speechToTextService = get<ISpeechToTextService>()
@@ -119,7 +119,7 @@ class SpeechToTextServiceTest : AppTest() {
 
     @Test
     fun `when silence detection time and minimum duration work together`() = runTest {
-        ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.RemoteHTTP
+        ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.Rhasspy2HermesHttp
 
         every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
@@ -157,7 +157,7 @@ class SpeechToTextServiceTest : AppTest() {
     @Test
     fun `when silence detection time is set the detection is not triggered when volume increases above threshold after being below it for not the full silence detection time`() =
         runBlocking {
-            ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.RemoteHTTP
+            ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.Rhasspy2HermesHttp
 
             every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
@@ -200,7 +200,7 @@ class SpeechToTextServiceTest : AppTest() {
     @Test
     fun `when neither minimum duration nor silence detection time is set the detection is instantly triggered when a value falls below threshold`() =
         runBlocking {
-            ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.RemoteHTTP
+            ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.Rhasspy2HermesHttp
 
             every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
@@ -231,7 +231,7 @@ class SpeechToTextServiceTest : AppTest() {
 
     @Test
     fun `when volume stays above threshold silence detection is not triggered`() = runBlocking {
-        ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.RemoteHTTP
+        ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.Rhasspy2HermesHttp
         every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
         val speechToTextService = get<ISpeechToTextService>()

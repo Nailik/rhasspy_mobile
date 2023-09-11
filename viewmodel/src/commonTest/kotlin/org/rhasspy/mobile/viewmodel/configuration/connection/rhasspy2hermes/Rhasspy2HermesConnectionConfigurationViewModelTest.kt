@@ -33,14 +33,14 @@ class Rhasspy2HermesConnectionConfigurationViewModelTest : AppTest() {
             host = "",
             timeout = 30000L,
             bearerToken = "",
-            isSSLVerificationDisabled = true
+            isSSLVerificationDisabled = false
         )
 
         httpConfigurationData = Rhasspy2HermesConnectionConfigurationData(
             host = getRandomString(5),
             timeout = 23456L,
             bearerToken = getRandomString(5),
-            isSSLVerificationDisabled = false
+            isSSLVerificationDisabled = true
         )
 
         rhasspy2HermesConnectionConfigurationViewModel = get()

@@ -33,14 +33,14 @@ class HomeAssistantConnectionConfigurationViewModelTest : AppTest() {
             host = "",
             timeout = 30000L,
             bearerToken = "",
-            isSSLVerificationDisabled = true
+            isSSLVerificationDisabled = false
         )
 
         httpConfigurationData = HomeAssistantConnectionConfigurationData(
             host = getRandomString(5),
             timeout = 23456L,
             bearerToken = getRandomString(5),
-            isSSLVerificationDisabled = false
+            isSSLVerificationDisabled = true
         )
 
         homeAssistantConnectionConfigurationViewModel = get()

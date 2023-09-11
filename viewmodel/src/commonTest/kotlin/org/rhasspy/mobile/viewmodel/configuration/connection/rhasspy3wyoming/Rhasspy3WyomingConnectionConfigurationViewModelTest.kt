@@ -33,14 +33,14 @@ class Rhasspy3WyomingConnectionConfigurationViewModelTest : AppTest() {
             host = "",
             timeout = 30000L,
             bearerToken = "",
-            isSSLVerificationDisabled = true
+            isSSLVerificationDisabled = false
         )
 
         httpConfigurationData = Rhasspy3WyomingConnectionConfigurationData(
             host = getRandomString(5),
             timeout = 23456L,
             bearerToken = getRandomString(5),
-            isSSLVerificationDisabled = false
+            isSSLVerificationDisabled = true
         )
 
         rhasspy3WyomingConnectionConfigurationViewModel = get()
