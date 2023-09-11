@@ -91,10 +91,7 @@ abstract class IIndicationSoundSettingsViewModel(
                 }
             }
 
-            ToggleAudioPlayerActive ->
-                if (localAudioService.isPlayingState.value) localAudioService.stop() else playSound(
-                    localAudioService
-                )
+            ToggleAudioPlayerActive -> if (localAudioService.isPlayingState.value) localAudioService.stop() else playSound(localAudioService)
 
             BackClick               -> navigator.onBackPressed()
         }
@@ -109,8 +106,10 @@ abstract class IIndicationSoundSettingsViewModel(
         }
     }
 
-    fun onPause() {
+
+    override fun onDismissed() {
         localAudioService.stop()
+        super.onDismissed()
     }
 
 }

@@ -57,7 +57,7 @@ fun VoiceActivityDetectionConfigurationScreen(viewModel: VoiceActivityDetectionC
     ConfigurationScreenItemContent(
         modifier = Modifier,
         screenViewModel = viewModel,
-        title = MR.strings.dialog_pipeline.stable,
+        title = MR.strings.voice_activity_detection.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent
     ) {

@@ -151,11 +151,6 @@ class VoiceActivityDetectionConfigurationViewModel(
 
     }
 
-    override fun onCleared() {
-        stopRecording()
-        super.onCleared()
-    }
-
     private fun startRecording() {
         //save to restore later
         wakeWordSetting = AppSetting.isHotWordEnabled.value
@@ -177,6 +172,11 @@ class VoiceActivityDetectionConfigurationViewModel(
         audioRecorder.stopRecording()
         //reset to previous setting
         AppSetting.isHotWordEnabled.value = wakeWordSetting
+    }
+
+    override fun onDismissed() {
+        stopRecording()
+        super.onDismissed()
     }
 
 }

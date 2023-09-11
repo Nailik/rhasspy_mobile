@@ -49,7 +49,7 @@ internal class Navigator(
         } else {
             navStack.update {
                 it.updateList {
-                    removeLast()
+                    removeLast().viewModel.onDismissed()
                 }
             }
         }
