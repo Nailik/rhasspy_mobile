@@ -57,10 +57,7 @@ class WebServerConfigurationViewModelTest : AppTest() {
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(
-            initialWebServerConfigurationData,
-            webServerConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialWebServerConfigurationData, webServerConfigurationViewModel.viewState.value.editData)
 
         with(webServerConfigurationData) {
             webServerConfigurationViewModel.onEvent(SetHttpServerEnabled(isEnabled))
@@ -72,26 +69,17 @@ class WebServerConfigurationViewModelTest : AppTest() {
             webServerConfigurationViewModel.onEvent(SetHttpServerSSLKeyStoreFile(keyStoreFile?.toPath()!!))
         }
 
-        assertEquals(
-            webServerConfigurationData,
-            webServerConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(webServerConfigurationData, webServerConfigurationViewModel.viewState.value.editData)
 
         webServerConfigurationViewModel.onEvent(Save)
 
-        assertEquals(
-            webServerConfigurationData,
-            webServerConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(webServerConfigurationData, webServerConfigurationViewModel.viewState.value.editData)
         assertEquals(webServerConfigurationData, WebServerConnectionConfigurationDataMapper().invoke(ConfigurationSetting.localWebserverConnection.value))
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
-        assertEquals(
-            initialWebServerConfigurationData,
-            webServerConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialWebServerConfigurationData, webServerConfigurationViewModel.viewState.value.editData)
 
         with(webServerConfigurationData) {
             webServerConfigurationViewModel.onEvent(SetHttpServerEnabled(isEnabled))
@@ -103,17 +91,11 @@ class WebServerConfigurationViewModelTest : AppTest() {
             webServerConfigurationViewModel.onEvent(SetHttpServerSSLKeyStoreFile(keyStoreFile?.toPath()!!))
         }
 
-        assertEquals(
-            webServerConfigurationData,
-            webServerConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(webServerConfigurationData, webServerConfigurationViewModel.viewState.value.editData)
 
         webServerConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(
-            initialWebServerConfigurationData,
-            webServerConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialWebServerConfigurationData, webServerConfigurationViewModel.viewState.value.editData)
         assertEquals(initialWebServerConfigurationData, WebServerConnectionConfigurationDataMapper().invoke(ConfigurationSetting.localWebserverConnection.value))
     }
 }

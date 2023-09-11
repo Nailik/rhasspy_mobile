@@ -32,7 +32,7 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rha
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationViewState.HttpConnectionConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationViewState.Rhasspy2HermesConnectionConfigurationData
 
 /**
  * content to configure http configuration
@@ -64,7 +64,7 @@ fun Rhasspy2HermesConnectionScreen(viewModel: Rhasspy2HermesConnectionConfigurat
 
 @Composable
 private fun HttpConnectionDetailContent(
-    editData: HttpConnectionConfigurationData,
+    editData: Rhasspy2HermesConnectionConfigurationData,
     onEvent: (Rhasspy2HermesConnectionConfigurationUiEvent) -> Unit
 ) {
 

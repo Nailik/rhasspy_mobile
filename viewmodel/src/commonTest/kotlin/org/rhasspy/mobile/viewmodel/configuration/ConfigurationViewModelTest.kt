@@ -44,7 +44,7 @@ class ConfigurationViewModelTest : AppTest() {
             }
         )
 
-        configurationViewModel = object : ConfigurationViewModel(testService) {
+        configurationViewModel = object : ConfigurationViewModel(testService.serviceState) {
             override fun initViewStateCreator(configurationViewState: MutableStateFlow<ConfigurationViewState>): StateFlow<ConfigurationViewState> {
                 this@ConfigurationViewModelTest.configurationViewState = configurationViewState
                 return configurationViewState

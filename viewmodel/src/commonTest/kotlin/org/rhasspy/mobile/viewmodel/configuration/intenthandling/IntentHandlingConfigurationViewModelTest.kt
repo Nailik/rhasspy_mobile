@@ -45,69 +45,35 @@ class IntentHandlingConfigurationViewModelTest : AppTest() {
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(
-            initialIntentHandlingConfigurationData,
-            intentHandlingConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialIntentHandlingConfigurationData, intentHandlingConfigurationViewModel.viewState.value.editData)
 
         with(intentHandlingConfigurationData) {
-            intentHandlingConfigurationViewModel.onEvent(
-                SelectIntentHandlingHomeAssistantOption(
-                    intentHandlingHomeAssistantOption
-                )
-            )
-            intentHandlingConfigurationViewModel.onEvent(
-                SelectIntentHandlingOption(
-                    intentHandlingOption
-                )
-            )
+            intentHandlingConfigurationViewModel.onEvent(SelectIntentHandlingHomeAssistantOption(intentHandlingHomeAssistantOption))
+            intentHandlingConfigurationViewModel.onEvent(SelectIntentHandlingOption(intentHandlingOption))
         }
 
-        assertEquals(
-            intentHandlingConfigurationData,
-            intentHandlingConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(intentHandlingConfigurationData, intentHandlingConfigurationViewModel.viewState.value.editData)
 
         intentHandlingConfigurationViewModel.onEvent(Save)
 
-        assertEquals(
-            intentHandlingConfigurationData,
-            intentHandlingConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(intentHandlingConfigurationData, intentHandlingConfigurationViewModel.viewState.value.editData)
         assertEquals(intentHandlingConfigurationData, IntentHandlingConfigurationData())
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
-        assertEquals(
-            initialIntentHandlingConfigurationData,
-            intentHandlingConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialIntentHandlingConfigurationData, intentHandlingConfigurationViewModel.viewState.value.editData)
 
         with(intentHandlingConfigurationData) {
-            intentHandlingConfigurationViewModel.onEvent(
-                SelectIntentHandlingHomeAssistantOption(
-                    intentHandlingHomeAssistantOption
-                )
-            )
-            intentHandlingConfigurationViewModel.onEvent(
-                SelectIntentHandlingOption(
-                    intentHandlingOption
-                )
-            )
+            intentHandlingConfigurationViewModel.onEvent(SelectIntentHandlingHomeAssistantOption(intentHandlingHomeAssistantOption))
+            intentHandlingConfigurationViewModel.onEvent(SelectIntentHandlingOption(intentHandlingOption))
         }
 
-        assertEquals(
-            intentHandlingConfigurationData,
-            intentHandlingConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(intentHandlingConfigurationData, intentHandlingConfigurationViewModel.viewState.value.editData)
 
         intentHandlingConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(
-            initialIntentHandlingConfigurationData,
-            intentHandlingConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialIntentHandlingConfigurationData, intentHandlingConfigurationViewModel.viewState.value.editData)
         assertEquals(initialIntentHandlingConfigurationData, IntentHandlingConfigurationData())
     }
 }

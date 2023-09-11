@@ -35,7 +35,7 @@ class SpeechToTextConfigurationViewModelTest : AppTest() {
         )
 
         speechToTextConfigurationData = SpeechToTextConfigurationData(
-            speechToTextOption = SpeechToTextOption.RemoteMQTT,
+            speechToTextOption = SpeechToTextOption.Rhasspy2HermesMQTT,
             isUseSpeechToTextMqttSilenceDetection = false
         )
 
@@ -44,53 +44,35 @@ class SpeechToTextConfigurationViewModelTest : AppTest() {
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(
-            initialSpeechToTextConfigurationData,
-            speechToTextConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialSpeechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
 
         with(speechToTextConfigurationData) {
             speechToTextConfigurationViewModel.onEvent(SelectSpeechToTextOption(speechToTextOption))
             speechToTextConfigurationViewModel.onEvent(SetUseSpeechToTextMqttSilenceDetection(isUseSpeechToTextMqttSilenceDetection))
         }
 
-        assertEquals(
-            speechToTextConfigurationData,
-            speechToTextConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(speechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
 
         speechToTextConfigurationViewModel.onEvent(Save)
 
-        assertEquals(
-            speechToTextConfigurationData,
-            speechToTextConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(speechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
         assertEquals(speechToTextConfigurationData, SpeechToTextConfigurationData())
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
-        assertEquals(
-            initialSpeechToTextConfigurationData,
-            speechToTextConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialSpeechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
 
         with(speechToTextConfigurationData) {
             speechToTextConfigurationViewModel.onEvent(SelectSpeechToTextOption(speechToTextOption))
             speechToTextConfigurationViewModel.onEvent(SetUseSpeechToTextMqttSilenceDetection(isUseSpeechToTextMqttSilenceDetection))
         }
 
-        assertEquals(
-            speechToTextConfigurationData,
-            speechToTextConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(speechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
 
         speechToTextConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(
-            initialSpeechToTextConfigurationData,
-            speechToTextConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialSpeechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
         assertEquals(initialSpeechToTextConfigurationData, SpeechToTextConfigurationData())
     }
 }

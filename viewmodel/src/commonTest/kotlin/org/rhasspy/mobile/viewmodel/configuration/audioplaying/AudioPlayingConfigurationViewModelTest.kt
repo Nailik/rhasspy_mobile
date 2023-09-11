@@ -59,71 +59,37 @@ class AudioPlayingConfigurationViewModelTest : AppTest() {
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(
-            initialAudioPlayingConfigurationData,
-            audioPlayingConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialAudioPlayingConfigurationData, audioPlayingConfigurationViewModel.viewState.value.editData)
 
         with(audioPlayingConfigurationData) {
-            audioPlayingConfigurationViewModel.onEvent(
-                SelectEditAudioPlayingOption(
-                    audioPlayingOption
-                )
-            )
+            audioPlayingConfigurationViewModel.onEvent(SelectEditAudioPlayingOption(audioPlayingOption))
             audioPlayingConfigurationViewModel.onEvent(SelectAudioOutputOption(audioOutputOption))
-            audioPlayingConfigurationViewModel.onEvent(
-                ChangeEditAudioPlayingMqttSiteId(
-                    audioPlayingMqttSiteId
-                )
-            )
+            audioPlayingConfigurationViewModel.onEvent(ChangeEditAudioPlayingMqttSiteId(audioPlayingMqttSiteId))
         }
 
-        assertEquals(
-            audioPlayingConfigurationData,
-            audioPlayingConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(audioPlayingConfigurationData, audioPlayingConfigurationViewModel.viewState.value.editData)
 
         audioPlayingConfigurationViewModel.onEvent(Save)
 
-        assertEquals(
-            audioPlayingConfigurationData,
-            audioPlayingConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(audioPlayingConfigurationData, audioPlayingConfigurationViewModel.viewState.value.editData)
         assertEquals(audioPlayingConfigurationData, AudioPlayingConfigurationData())
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
-        assertEquals(
-            initialAudioPlayingConfigurationData,
-            audioPlayingConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialAudioPlayingConfigurationData, audioPlayingConfigurationViewModel.viewState.value.editData)
 
         with(audioPlayingConfigurationData) {
-            audioPlayingConfigurationViewModel.onEvent(
-                SelectEditAudioPlayingOption(
-                    audioPlayingOption
-                )
-            )
+            audioPlayingConfigurationViewModel.onEvent(SelectEditAudioPlayingOption(audioPlayingOption))
             audioPlayingConfigurationViewModel.onEvent(SelectAudioOutputOption(audioOutputOption))
-            audioPlayingConfigurationViewModel.onEvent(
-                ChangeEditAudioPlayingMqttSiteId(
-                    audioPlayingMqttSiteId
-                )
-            )
+            audioPlayingConfigurationViewModel.onEvent(ChangeEditAudioPlayingMqttSiteId(audioPlayingMqttSiteId))
         }
 
-        assertEquals(
-            audioPlayingConfigurationData,
-            audioPlayingConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(audioPlayingConfigurationData, audioPlayingConfigurationViewModel.viewState.value.editData)
 
         audioPlayingConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(
-            initialAudioPlayingConfigurationData,
-            audioPlayingConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialAudioPlayingConfigurationData, audioPlayingConfigurationViewModel.viewState.value.editData)
         assertEquals(initialAudioPlayingConfigurationData, AudioPlayingConfigurationData())
     }
 

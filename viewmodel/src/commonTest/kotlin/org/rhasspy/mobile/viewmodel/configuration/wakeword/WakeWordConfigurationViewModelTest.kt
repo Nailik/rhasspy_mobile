@@ -45,7 +45,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
         initialWakeWordConfigurationData = WakeWordConfigurationData()
 
         wakeWordConfigurationData = WakeWordConfigurationData(
-            wakeWordOption = WakeWordOption.MQTT,
+            wakeWordOption = WakeWordOption.Rhasspy2HermesMQTT,
             wakeWordPorcupineConfigurationData = WakeWordPorcupineConfigurationData(
                 accessToken = getRandomString(5),
                 porcupineLanguage = PorcupineLanguageOption.DE,
@@ -71,45 +71,21 @@ class WakeWordConfigurationViewModelTest : AppTest() {
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(
-            initialWakeWordConfigurationData,
-            wakeWordConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialWakeWordConfigurationData, wakeWordConfigurationViewModel.viewState.value.editData)
 
         with(wakeWordConfigurationData) {
             wakeWordConfigurationViewModel.onEvent(SelectWakeWordOption(wakeWordOption))
 
             with(wakeWordPorcupineConfigurationData) {
-                wakeWordConfigurationViewModel.onEvent(
-                    UpdateWakeWordPorcupineAccessToken(
-                        accessToken
-                    )
-                )
-                wakeWordConfigurationViewModel.onEvent(
-                    SelectWakeWordPorcupineLanguage(
-                        porcupineLanguage
-                    )
-                )
+                wakeWordConfigurationViewModel.onEvent(UpdateWakeWordPorcupineAccessToken(accessToken))
+                wakeWordConfigurationViewModel.onEvent(SelectWakeWordPorcupineLanguage(porcupineLanguage))
 
 
                 customOptions.forEach {
-                    wakeWordConfigurationViewModel.onEvent(
-                        AddPorcupineKeywordCustom(
-                            Path.commonInternalFilePath(
-                                get(),
-                                it.fileName
-                            )
-                        )
-                    )
+                    wakeWordConfigurationViewModel.onEvent(AddPorcupineKeywordCustom(Path.commonInternalFilePath(get(), it.fileName)))
                 }
                 customOptions.forEach {
-                    wakeWordConfigurationViewModel.onEvent(
-                        SetPorcupineKeywordCustom(
-                            it.copy(
-                                sensitivity = 0.5
-                            ), false
-                        )
-                    )
+                    wakeWordConfigurationViewModel.onEvent(SetPorcupineKeywordCustom(it.copy(sensitivity = 0.5), false))
                 }
                 customOptions.forEach {
                     wakeWordConfigurationViewModel.onEvent(
@@ -170,52 +146,29 @@ class WakeWordConfigurationViewModelTest : AppTest() {
             }
         }
 
-        assertEquals(
-            wakeWordConfigurationData,
-            wakeWordConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(wakeWordConfigurationData, wakeWordConfigurationViewModel.viewState.value.editData)
 
         wakeWordConfigurationViewModel.onEvent(Save)
 
-        assertEquals(
-            wakeWordConfigurationData,
-            wakeWordConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(wakeWordConfigurationData, wakeWordConfigurationViewModel.viewState.value.editData)
         assertEquals(wakeWordConfigurationData, WakeWordConfigurationData())
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
-        assertEquals(
-            initialWakeWordConfigurationData,
-            wakeWordConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialWakeWordConfigurationData, wakeWordConfigurationViewModel.viewState.value.editData)
 
         with(wakeWordConfigurationData) {
             wakeWordConfigurationViewModel.onEvent(SelectWakeWordOption(wakeWordOption))
 
             with(wakeWordPorcupineConfigurationData) {
+                wakeWordConfigurationViewModel.onEvent(UpdateWakeWordPorcupineAccessToken(accessToken))
                 wakeWordConfigurationViewModel.onEvent(
-                    UpdateWakeWordPorcupineAccessToken(
-                        accessToken
-                    )
+                    SelectWakeWordPorcupineLanguage(porcupineLanguage)
                 )
-                wakeWordConfigurationViewModel.onEvent(
-                    SelectWakeWordPorcupineLanguage(
-                        porcupineLanguage
-                    )
-                )
-
 
                 customOptions.forEach {
-                    wakeWordConfigurationViewModel.onEvent(
-                        AddPorcupineKeywordCustom(
-                            Path.commonInternalFilePath(
-                                get(),
-                                it.fileName
-                            )
-                        )
-                    )
+                    wakeWordConfigurationViewModel.onEvent(AddPorcupineKeywordCustom(Path.commonInternalFilePath(get(), it.fileName)))
                 }
                 customOptions.forEach {
                     wakeWordConfigurationViewModel.onEvent(
@@ -285,17 +238,11 @@ class WakeWordConfigurationViewModelTest : AppTest() {
             }
         }
 
-        assertEquals(
-            wakeWordConfigurationData,
-            wakeWordConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(wakeWordConfigurationData, wakeWordConfigurationViewModel.viewState.value.editData)
 
         wakeWordConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(
-            initialWakeWordConfigurationData,
-            wakeWordConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialWakeWordConfigurationData, wakeWordConfigurationViewModel.viewState.value.editData)
         assertEquals(initialWakeWordConfigurationData, WakeWordConfigurationData())
     }
 

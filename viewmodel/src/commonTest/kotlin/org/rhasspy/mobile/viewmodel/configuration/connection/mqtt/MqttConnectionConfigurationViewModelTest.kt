@@ -17,7 +17,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class MqttConfigurationViewModelTest : AppTest() {
+class MqttConnectionConfigurationViewModelTest : AppTest() {
 
     private lateinit var mqttConfigurationViewModel: MqttConnectionConfigurationViewModel
 
@@ -61,10 +61,7 @@ class MqttConfigurationViewModelTest : AppTest() {
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(
-            initialMqttConnectionData,
-            mqttConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialMqttConnectionData, mqttConfigurationViewModel.viewState.value.editData)
 
         with(mqttConnectionData) {
             mqttConfigurationViewModel.onEvent(SetMqttEnabled(isEnabled))
@@ -88,10 +85,7 @@ class MqttConfigurationViewModelTest : AppTest() {
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
-        assertEquals(
-            initialMqttConnectionData,
-            mqttConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialMqttConnectionData, mqttConfigurationViewModel.viewState.value.editData)
 
         with(mqttConnectionData) {
             mqttConfigurationViewModel.onEvent(SetMqttEnabled(isEnabled))
@@ -109,10 +103,7 @@ class MqttConfigurationViewModelTest : AppTest() {
 
         mqttConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(
-            initialMqttConnectionData,
-            mqttConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialMqttConnectionData, mqttConfigurationViewModel.viewState.value.editData)
         assertEquals(initialMqttConnectionData, MqttConnectionConfigurationDataMapper().invoke(ConfigurationSetting.mqttConnection.value))
     }
 }

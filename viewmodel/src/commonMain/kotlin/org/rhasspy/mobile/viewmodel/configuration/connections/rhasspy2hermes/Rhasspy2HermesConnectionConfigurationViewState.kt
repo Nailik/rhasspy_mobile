@@ -7,11 +7,11 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfi
 
 @Stable
 data class Rhasspy2HermesConnectionConfigurationViewState internal constructor(
-    override val editData: HttpConnectionConfigurationData
+    override val editData: Rhasspy2HermesConnectionConfigurationData
 ) : IConfigurationViewState {
 
     @Stable
-    data class HttpConnectionConfigurationData internal constructor(
+    data class Rhasspy2HermesConnectionConfigurationData internal constructor(
         val host: String,
         val timeout: Long?,
         val bearerToken: String,
