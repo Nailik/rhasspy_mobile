@@ -4,11 +4,13 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import okio.Path.Companion.toPath
+import okio.Path
 import org.rhasspy.mobile.data.data.toIntOrNullOrConstant
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
+import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -22,6 +24,7 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServe
 @Stable
 class WebServerConnectionConfigurationViewModel(
     private val mapper: WebServerConnectionConfigurationDataMapper,
+    private val nativeApplication: NativeApplication,
     webServerConnection: IWebServerConnection
 ) : ConfigurationViewModel(
     serviceState = webServerConnection.connectionState
@@ -58,7 +61,7 @@ class WebServerConnectionConfigurationViewModel(
                     is UpdateHttpSSLKeyPassword      -> copy(keyPassword = change.value)
                     is UpdateHttpSSLKeyStorePassword -> copy(keyStorePassword = change.value)
                     is UpdateHttpServerPort          -> copy(port = change.value.toIntOrNullOrConstant())
-                    is SetHttpServerSSLKeyStoreFile  -> copy(keyStoreFile = change.value.name)
+                    is SetHttpServerSSLKeyStoreFile  -> copy(keyStoreFile = "${FolderType.CertificateFolder.WebServer}/${change.value.name}")
                 }
             })
         }
@@ -79,7 +82,9 @@ class WebServerConnectionConfigurationViewModel(
     override fun onDiscard() {
         //delete new keystore file if changed
         if (_viewState.value.editData.keyStoreFile != ConfigurationSetting.localWebserverConnection.value.keyStoreFile) {
-            _viewState.value.editData.keyStoreFile?.toPath()?.commonDelete()
+            _viewState.value.editData.keyStoreFile?.also {
+                Path.commonInternalFilePath(nativeApplication, it).commonDelete()
+            }
         }
         _viewState.update { it.copy(editData = initialData) }
     }
@@ -90,7 +95,9 @@ class WebServerConnectionConfigurationViewModel(
     override fun onSave() {
         //delete old keystore file if changed
         if (_viewState.value.editData.keyStoreFile != ConfigurationSetting.localWebserverConnection.value.keyStoreFile) {
-            ConfigurationSetting.localWebserverConnection.value.keyStoreFile?.toPath()?.commonDelete()
+            ConfigurationSetting.localWebserverConnection.value.keyStoreFile?.also {
+                Path.commonInternalFilePath(nativeApplication, it).commonDelete()
+            }
         }
 
         ConfigurationSetting.localWebserverConnection.value = mapper(_viewState.value.editData)

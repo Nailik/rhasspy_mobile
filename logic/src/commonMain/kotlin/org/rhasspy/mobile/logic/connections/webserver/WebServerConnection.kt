@@ -25,7 +25,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import okio.Path.Companion.toPath
+import okio.Path
 import org.koin.core.component.inject
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
@@ -44,7 +44,7 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogService
 import org.rhasspy.mobile.logic.middleware.Source.HttpApi
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonExists
-import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 import org.rhasspy.mobile.platformspecific.ktor.buildServer
 import org.rhasspy.mobile.platformspecific.ktor.installCallLogging
 import org.rhasspy.mobile.platformspecific.ktor.installCompression
@@ -103,7 +103,7 @@ internal class WebServerConnection : IWebServerConnection {
             logger.d { "initialization" }
             connectionState.value = ServiceState.Loading
 
-            if (params.isSSLEnabled && !params.keyStoreFile?.toPath().commonExists()) {
+            if (params.isSSLEnabled && !params.keyStoreFile?.let { Path.commonInternalFilePath(nativeApplication, it) }.commonExists()) {
                 connectionState.value = ErrorState.Error(MR.strings.certificate_missing.stable)
                 return
             }
