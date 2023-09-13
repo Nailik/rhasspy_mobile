@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.viewmodel.configuration
 
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -31,7 +30,6 @@ class ConfigurationViewModelTest : AppTest() {
     private var onSave: Boolean = false
 
     private val testService = object : IService {
-        override val logger = Logger.withTag("TestService")
         override val serviceState = MutableStateFlow(ServiceState.Success)
     }
 
@@ -46,7 +44,7 @@ class ConfigurationViewModelTest : AppTest() {
             }
         )
 
-        configurationViewModel = object : ConfigurationViewModel(testService) {
+        configurationViewModel = object : ConfigurationViewModel(testService.serviceState) {
             override fun initViewStateCreator(configurationViewState: MutableStateFlow<ConfigurationViewState>): StateFlow<ConfigurationViewState> {
                 this@ConfigurationViewModelTest.configurationViewState = configurationViewState
                 return configurationViewState

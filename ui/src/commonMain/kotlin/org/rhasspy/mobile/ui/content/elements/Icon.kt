@@ -10,11 +10,12 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 
 @Composable
 fun Icon(
-    imageVector: ImageVector,
+    imageVector: ImageVector?,
     contentDescription: StableStringResource,
     modifier: Modifier = Modifier,
     tint: Color = LocalContentColor.current
 ) {
+    if (imageVector == null) return
     Icon(
         imageVector = imageVector,
         contentDescription = translate(contentDescription),

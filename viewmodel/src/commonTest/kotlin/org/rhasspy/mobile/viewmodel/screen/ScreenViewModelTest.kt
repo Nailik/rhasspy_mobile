@@ -9,7 +9,6 @@ import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.coVerify
-import org.rhasspy.mobile.testutils.nVerify
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Confirm
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.MicrophonePermissionInfo
@@ -43,21 +42,6 @@ class ScreenViewModelTest : AppTest() {
         )
 
         screenViewModel = object : ScreenViewModel() {}
-    }
-
-    @Test
-    fun `when a view model is composed it informs the navigator`() {
-        every { navigator.onComposed(isAny()) } returns Unit
-
-        screenViewModel.onComposed()
-        nVerify { navigator.onComposed(screenViewModel) }
-    }
-
-    @Test
-    fun `when a view model is disposed it informs the navigator`() {
-        every { navigator.onDisposed(isAny()) } returns Unit
-        screenViewModel.onDisposed()
-        nVerify { navigator.onDisposed(screenViewModel) }
     }
 
     @Test

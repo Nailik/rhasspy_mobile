@@ -19,14 +19,13 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.theme.AppTheme
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -57,7 +56,7 @@ class OverlayPermissionTest : KoinComponent {
         composeTestRule.activity.setContent {
             AppTheme {
                 TestContentProvider {
-                    Screen(screenViewModel = testViewModel) {
+                    ScreenContent(screenViewModel = testViewModel) {
                         Button(onClick = testViewModel::onRequestOverlayPermission) {
                             Text(btnRequestPermission)
                         }

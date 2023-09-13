@@ -12,14 +12,12 @@ import androidx.core.view.WindowCompat
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.ui.assistant.AssistantScreen
-import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.assist.AssistantUiEvent.Activate
 import org.rhasspy.mobile.viewmodel.assist.AssistantViewModel
 
 class AssistantActivity : AppCompatActivity(), KoinComponent {
 
     private val viewModel: AssistantViewModel by inject()
-    private val viewModelFactory: ViewModelFactory by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +35,7 @@ class AssistantActivity : AppCompatActivity(), KoinComponent {
         }
 
         setContent {
-            AssistantScreen(viewModelFactory)
+            AssistantScreen(viewModel)
         }
     }
 

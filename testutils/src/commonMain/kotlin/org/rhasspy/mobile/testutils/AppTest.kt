@@ -1,5 +1,7 @@
 package org.rhasspy.mobile.testutils
 
+import com.russhwolf.settings.MapSettings
+import com.russhwolf.settings.Settings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,10 +45,13 @@ abstract class AppTest : IAppTest(), KoinTest {
         startKoin {
             modules(
                 platformSpecificModule,
-                settingsModule,
+                settingsModule(),
                 logicModule(),
                 viewModelModule(),
                 module {
+                    single<Settings> {
+                        MapSettings()
+                    }
                     single<IDriverFactory> {
                         TestDriverFactory()
                     }

@@ -22,9 +22,12 @@ import org.rhasspy.mobile.data.libraries.StableLibrary
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.resources.icons.RhasspyLogo
-import org.rhasspy.mobile.ui.*
+import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.LocalSnackBarHostState
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.list.ListElement
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.AboutSettings
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.BackClick
@@ -40,11 +43,9 @@ import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewState
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AboutScreen() {
+fun AboutScreen(viewModel: AboutScreenViewModel) {
 
-    val viewModel: AboutScreenViewModel = LocalViewModelFactory.current.getViewModel()
-
-    Screen(screenViewModel = viewModel) {
+    ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
         val snackBarHostState = LocalSnackBarHostState.current
         val snackBarText = viewState.snackBarText?.let { translate(it) }

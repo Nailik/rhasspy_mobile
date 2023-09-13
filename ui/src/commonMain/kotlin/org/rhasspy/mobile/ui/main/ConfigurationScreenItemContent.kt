@@ -6,11 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.*
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
@@ -20,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.ServiceStateDialog
 import org.rhasspy.mobile.ui.content.ServiceStateHeader
 import org.rhasspy.mobile.ui.content.elements.Dialog
@@ -52,7 +50,7 @@ fun ConfigurationScreenItemContent(
     content: @Composable () -> Unit
 ) {
 
-    Screen(
+    ScreenContent(
         modifier = modifier,
         screenViewModel = screenViewModel
     ) {
@@ -90,15 +88,19 @@ fun ConfigurationScreenItemContent(
                         .fillMaxSize()
                 ) {
 
-                    ServiceStateHeader(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
-                            .padding(horizontal = 16.dp)
-                            .padding(bottom = 16.dp),
-                        serviceViewState = viewState.serviceViewState,
-                        enabled = viewState.isOpenServiceStateDialogEnabled,
-                        onClick = { onEvent(OpenServiceStateDialog) }
-                    )
+                    viewState.serviceViewState?.also { serviceViewState ->
+
+                        ServiceStateHeader(
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 16.dp),
+                            serviceViewState = serviceViewState,
+                            enabled = viewState.isOpenServiceStateDialogEnabled,
+                            onClick = { onEvent(OpenServiceStateDialog) }
+                        )
+
+                    }
 
                     content()
                 }
@@ -161,7 +163,7 @@ private fun BottomAppBar(
                 enabled = hasUnsavedChanges
             ) {
                 Icon(
-                    imageVector = if (hasUnsavedChanges) Icons.Outlined.Delete else Icons.Filled.Delete,
+                    imageVector = Icons.Filled.Undo,
                     contentDescription = MR.strings.discard.stable,
                 )
             }
@@ -171,7 +173,7 @@ private fun BottomAppBar(
                 enabled = hasUnsavedChanges
             ) {
                 Icon(
-                    imageVector = if (hasUnsavedChanges) Icons.Outlined.Save else Icons.Filled.Save,
+                    imageVector = Icons.Filled.Save,
                     contentDescription = MR.strings.save.stable
                 )
             }

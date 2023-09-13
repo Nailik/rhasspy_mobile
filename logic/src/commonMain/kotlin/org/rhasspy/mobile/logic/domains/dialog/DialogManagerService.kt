@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.domains.dialog
 
+import co.touchlab.kermit.Logger
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
@@ -7,13 +8,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.domains.dialog.DialogInformation.Action
 import org.rhasspy.mobile.logic.domains.dialog.DialogInformation.State
 import org.rhasspy.mobile.logic.domains.dialog.DialogManagerState.IdleState
@@ -49,7 +49,7 @@ interface IDialogManagerService : IService {
  */
 internal class DialogManagerService(
     dispatcherProvider: IDispatcherProvider,
-    private val mqttService: IMqttService
+    private val mqttService: IMqttConnection
 ) : IDialogManagerService {
 
     private val dialogManagerLocal by inject<DialogManagerLocal>()
@@ -58,7 +58,7 @@ internal class DialogManagerService(
 
     override val dialogHistory = MutableStateFlow<ImmutableList<DialogInformation>>(persistentListOf())
 
-    override val logger = LogType.DialogManagerService.logger()
+    private val logger = Logger.withTag("DialogManagerService")
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
@@ -81,17 +81,17 @@ internal class DialogManagerService(
     private fun updateOptionAndInitServiceState(dialogManagementOption: DialogManagementOption) {
         dialogHistory.value = persistentListOf()
         _serviceState.value = when (dialogManagementOption) {
-            DialogManagementOption.Local      -> {
+            DialogManagementOption.Local    -> {
                 dialogManagerLocal.onInit()
                 Success
             }
 
-            DialogManagementOption.RemoteMQTT -> {
+            DialogManagementOption.Rhasspy2HermesMQTT -> {
                 dialogManagerMqtt.onInit()
                 Success
             }
 
-            DialogManagementOption.Disabled   -> {
+            DialogManagementOption.Disabled -> {
                 dialogManagerDisabled.onInit()
                 Disabled
             }
@@ -119,9 +119,9 @@ internal class DialogManagerService(
 
     override suspend fun onAction(action: DialogServiceMiddlewareAction) {
         when (ConfigurationSetting.dialogManagementOption.value) {
-            DialogManagementOption.Local      -> dialogManagerLocal.onAction(action)
-            DialogManagementOption.RemoteMQTT -> dialogManagerMqtt.onAction(action)
-            DialogManagementOption.Disabled   -> dialogManagerDisabled.onAction(action)
+            DialogManagementOption.Local              -> dialogManagerLocal.onAction(action)
+            DialogManagementOption.Rhasspy2HermesMQTT -> dialogManagerMqtt.onAction(action)
+            DialogManagementOption.Disabled           -> dialogManagerDisabled.onAction(action)
         }
     }
 

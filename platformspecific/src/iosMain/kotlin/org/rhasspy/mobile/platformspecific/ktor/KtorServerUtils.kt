@@ -12,14 +12,14 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
  * adds call logging to web server
  */
 actual fun Application.installCompression() {
-    //TODO("Not yet implemented")
+    //TODO #515
 }
 
 /**
  * enables compression for web server
  */
 actual fun Application.installCallLogging() {
-    //TODO("Not yet implemented")
+    //TODO #515
 }
 
 /**
@@ -34,12 +34,12 @@ actual fun ApplicationEngineEnvironmentBuilder.installConnector(
     keyAlias: String,
     keyPassword: String
 ) {
-    //TODO("Not yet implemented")
+    //TODO #515
 }
 
 /**
  * get server engine
  */
 actual fun getEngine(environment: ApplicationEngineEnvironment): BaseApplicationEngine {
-    return embeddedServer(factory = CIO, environment = environment) //TODO("Not yet implemented")
+    return embeddedServer(factory = CIO, environment = environment) //TODO #515
 }

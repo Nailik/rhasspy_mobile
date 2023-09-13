@@ -92,6 +92,3 @@ android {
         compose = true
     }
 }
-dependencies {
-    debugImplementation("androidx.compose.ui:ui-tooling:1.4.3")
-}

@@ -6,11 +6,11 @@ import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason
 actual object AudioFocusUtil {
 
     actual fun request(reason: AudioFocusRequestReason, audioFocusOption: AudioFocusOption) {
-        //TODO("Not yet implemented")
+        //TODO #514
     }
 
     actual fun abandon(reason: AudioFocusRequestReason, audioFocusOption: AudioFocusOption) {
-        //TODO("Not yet implemented")
+        //TODO #514
     }
 
 }

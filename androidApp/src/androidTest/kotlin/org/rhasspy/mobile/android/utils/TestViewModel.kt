@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.android.utils
 
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.service.ServiceState
@@ -11,8 +10,6 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 class TestService : IService {
-    override val logger: Logger
-        get() = Logger.withTag("TestService")
     override val serviceState: StateFlow<ServiceState>
         get() = MutableStateFlow(ServiceState.Disabled)
 }
@@ -27,7 +24,7 @@ data class TestConfigurationViewState(
 }
 
 class TestViewModel : ConfigurationViewModel(
-    service = TestService()
+    serviceState = TestService().serviceState
 ) {
 
     private val _stateFlow = MutableStateFlow(

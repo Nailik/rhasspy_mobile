@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.domains.intentrecognition
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -11,20 +12,18 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.log.LogType
+import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.connections.httpclient.HttpClientResult
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionResult
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.platformspecific.readOnly
-import kotlin.Exception
 
 interface IIntentRecognitionService : IService {
 
@@ -43,11 +42,11 @@ internal class IntentRecognitionService(
     paramsCreator: IntentRecognitionServiceParamsCreator
 ) : IIntentRecognitionService {
 
-    override val logger = LogType.IntentRecognitionService.logger()
+    private val logger = Logger.withTag("IntentRecognitionService")
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
-    private val httpClientService by inject<IHttpClientService>()
-    private val mqttClientService by inject<IMqttService>()
+    private val mqttClientService by inject<IMqttConnection>()
+    private val httpClientConnection by inject<IRhasspy2HermesConnection>()
 
     private val paramsFlow: StateFlow<IntentRecognitionServiceParams> = paramsCreator()
     private val params get() = paramsFlow.value
@@ -60,16 +59,16 @@ internal class IntentRecognitionService(
     init {
         scope.launch {
             paramsFlow.collect {
-                updateState()
+                setupState()
             }
         }
     }
 
-    private fun updateState() {
+    private fun setupState() {
         _serviceState.value = when (params.intentRecognitionOption) {
-            IntentRecognitionOption.RemoteHTTP -> Success
-            IntentRecognitionOption.RemoteMQTT -> Success
-            IntentRecognitionOption.Disabled   -> Disabled
+            IntentRecognitionOption.Rhasspy2HermesHttp -> Success
+            IntentRecognitionOption.Rhasspy2HermesMQTT -> Success
+            IntentRecognitionOption.Disabled           -> Disabled
         }
     }
 
@@ -93,26 +92,28 @@ internal class IntentRecognitionService(
     override fun recognizeIntent(sessionId: String, text: String) {
         logger.d { "recognizeIntent sessionId: $sessionId text: $text" }
         when (params.intentRecognitionOption) {
-            IntentRecognitionOption.RemoteHTTP -> {
-                httpClientService.recognizeIntent(text) { result ->
+            IntentRecognitionOption.Rhasspy2HermesHttp -> {
+                httpClientConnection.recognizeIntent(text) { result ->
                     _serviceState.value = result.toServiceState()
                     val action = when (result) {
-                        is HttpClientResult.Error   -> IntentRecognitionError(Source.Local)
-                        is HttpClientResult.Success -> IntentRecognitionResult(
+                        is HttpClientResult.Error      -> IntentRecognitionError(Source.Local)
+                        is HttpClientResult.Success    -> IntentRecognitionResult(
                             source = Source.Local,
                             intentName = readIntentNameFromJson(result.data),
                             intent = result.data
                         )
+
+                        is HttpClientResult.KnownError -> IntentRecognitionError(Source.Local)
                     }
                     serviceMiddleware.action(action)
                 }
             }
 
-            IntentRecognitionOption.RemoteMQTT -> mqttClientService.recognizeIntent(sessionId, text) {
+            IntentRecognitionOption.Rhasspy2HermesMQTT -> mqttClientService.recognizeIntent(sessionId, text) {
                 _serviceState.value = it
             }
 
-            IntentRecognitionOption.Disabled   -> serviceMiddleware.action(
+            IntentRecognitionOption.Disabled -> serviceMiddleware.action(
                 IntentRecognitionResult(
                     Source.Local,
                     "",

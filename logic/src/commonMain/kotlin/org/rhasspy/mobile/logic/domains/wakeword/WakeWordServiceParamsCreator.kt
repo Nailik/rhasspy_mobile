@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.domains.wakeword
 
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
@@ -49,8 +50,8 @@ internal class WakeWordServiceParamsCreator(
             audioOutputSampleRateType = ConfigurationSetting.wakeWordAudioOutputSampleRate.value,
             wakeWordOption = ConfigurationSetting.wakeWordOption.value,
             wakeWordPorcupineAccessToken = ConfigurationSetting.wakeWordPorcupineAccessToken.value,
-            wakeWordPorcupineKeywordDefaultOptions = ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value,
-            wakeWordPorcupineKeywordCustomOptions = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value,
+            wakeWordPorcupineKeywordDefaultOptions = ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value.toImmutableList(),
+            wakeWordPorcupineKeywordCustomOptions = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value.toImmutableList(),
             wakeWordPorcupineLanguage = ConfigurationSetting.wakeWordPorcupineLanguage.value,
             wakeWordUdpOutputHost = ConfigurationSetting.wakeWordUdpOutputHost.value,
             wakeWordUdpOutputPort = ConfigurationSetting.wakeWordUdpOutputPort.value

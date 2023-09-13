@@ -15,18 +15,19 @@ import org.rhasspy.mobile.android.utils.waitUntilExists
 import org.rhasspy.mobile.data.indication.IndicationState
 import org.rhasspy.mobile.logic.local.indication.IIndicationService
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.main.MainScreen
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
 
 @RunWith(AndroidJUnit4::class)
 class IndicationOverlayTest : FlakyTest() {
 
     private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private val viewModel = get<MainScreenViewModel>()
 
     @Composable
     override fun ComposableContent() {
-        MainScreen(LocalViewModelFactory.current)
+        MainScreen(viewModel)
     }
 
     @Test

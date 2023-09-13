@@ -16,4 +16,5 @@ internal data class SpeechToTextServiceParams(
     val audioOutputChannelType: AudioFormatChannelType,
     val audioOutputEncodingType: AudioFormatEncodingType,
     val audioOutputSampleRateType: AudioFormatSampleRateType,
+    val httpConnectionId: Long?
 )

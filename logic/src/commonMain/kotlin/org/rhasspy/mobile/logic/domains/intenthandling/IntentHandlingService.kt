@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.domains.intenthandling
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -7,13 +8,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantService
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
+import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
+import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.platformspecific.readOnly
 
 interface IIntentHandlingService : IService {
@@ -33,10 +33,10 @@ internal class IntentHandlingService(
     paramsCreator: IntentHandlingServiceParamsCreator
 ) : IIntentHandlingService {
 
-    override val logger = LogType.IntentHandlingService.logger()
+    private val logger = Logger.withTag("IntentHandlingService")
 
-    private val httpClientService by inject<IHttpClientService>()
-    private val homeAssistantService by inject<IHomeAssistantService>()
+    private val homeAssistantService by inject<IHomeAssistantConnection>()
+    private val httpClientConnection by inject<IRhasspy2HermesConnection>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(Pending)
     override val serviceState = _serviceState.readOnly
@@ -49,17 +49,17 @@ internal class IntentHandlingService(
     init {
         scope.launch {
             paramsFlow.collect {
-                updateState()
+                setupState()
             }
         }
     }
 
-    private fun updateState() {
+    private fun setupState() {
         _serviceState.value = when (params.intentHandlingOption) {
-            IntentHandlingOption.HomeAssistant   -> Success
-            IntentHandlingOption.RemoteHTTP      -> Success
-            IntentHandlingOption.WithRecognition -> Success
-            IntentHandlingOption.Disabled        -> Disabled
+            IntentHandlingOption.HomeAssistant      -> Success
+            IntentHandlingOption.WithRecognition    -> Success
+            IntentHandlingOption.Rhasspy2HermesHttp -> Success
+            IntentHandlingOption.Disabled           -> Disabled
         }
     }
 
@@ -86,8 +86,8 @@ internal class IntentHandlingService(
                     _serviceState.value = it
                 }
 
-            IntentHandlingOption.RemoteHTTP      ->
-                httpClientService.intentHandling(intent) {
+            IntentHandlingOption.Rhasspy2HermesHttp ->
+                httpClientConnection.intentHandling(intent) {
                     _serviceState.value = it.toServiceState()
                 }
 

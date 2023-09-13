@@ -1,15 +1,14 @@
 package org.rhasspy.mobile.viewmodel.screens.configuration
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
-import org.rhasspy.mobile.logic.connections.webserver.IWebServerService
+import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
+import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
+import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.domains.audioplaying.IAudioPlayingService
 import org.rhasspy.mobile.logic.domains.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.domains.intenthandling.IIntentHandlingService
@@ -17,30 +16,41 @@ import org.rhasspy.mobile.logic.domains.intentrecognition.IIntentRecognitionServ
 import org.rhasspy.mobile.logic.domains.speechtotext.ISpeechToTextService
 import org.rhasspy.mobile.logic.domains.texttospeech.ITextToSpeechService
 import org.rhasspy.mobile.logic.domains.wakeword.IWakeWordService
-import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
 
 class ConfigurationScreenViewStateCreator(
-    dispatcherProvider: IDispatcherProvider,
-    httpClientService: IHttpClientService,
-    webServerService: IWebServerService,
-    mqttService: IMqttService,
+    rhasspy2HermesConnection: IRhasspy2HermesConnection,
+    rhasspy3WyomingConnection: IRhasspy3WyomingConnection,
+    homeAssistantConnection: IHomeAssistantConnection,
+    mqttConnection: IMqttConnection,
+    webServerConnection: IWebServerConnection,
     private val wakeWordService: IWakeWordService,
     private val speechToTextService: ISpeechToTextService,
     private val intentRecognitionService: IIntentRecognitionService,
     private val textToSpeechService: ITextToSpeechService,
     private val audioPlayingService: IAudioPlayingService,
     private val dialogManagerService: IDialogManagerService,
-    private val intentHandlingService: IIntentHandlingService
+    private val intentHandlingService: IIntentHandlingService,
 ) {
+    private val hasConnectionError = combineStateFlow(
+        rhasspy2HermesConnection.connectionState,
+        rhasspy3WyomingConnection.connectionState,
+        homeAssistantConnection.connectionState,
+        mqttConnection.connectionState,
+        webServerConnection.connectionState,
+    ).mapReadonlyState { arr ->
+        arr.any { it is ServiceState.ErrorState }
+    }
 
-    private val serviceStateFlow = combineStateFlow(
-        httpClientService.serviceState,
-        webServerService.serviceState,
-        mqttService.serviceState,
+    private val hasError = combineStateFlow(
+        rhasspy2HermesConnection.connectionState,
+        rhasspy3WyomingConnection.connectionState,
+        homeAssistantConnection.connectionState,
+        mqttConnection.connectionState,
+        webServerConnection.connectionState,
         wakeWordService.serviceState,
         speechToTextService.serviceState,
         intentRecognitionService.serviceState,
@@ -48,47 +58,44 @@ class ConfigurationScreenViewStateCreator(
         audioPlayingService.serviceState,
         dialogManagerService.serviceState,
         intentHandlingService.serviceState
-    )
-    private val firstErrorIndex =
-        serviceStateFlow.mapReadonlyState(sharingStarted = SharingStarted.Eagerly) { array ->
-            val index =
-                array.indexOfFirst { it is ServiceState.Error || it is ServiceState.Exception }
-            return@mapReadonlyState if (index != -1) index else null
-        } //TODO
-    private val hasError = firstErrorIndex.mapReadonlyState { it != null }
+    ).mapReadonlyState { arr ->
+        arr.any { it is ServiceState.ErrorState }
+    }
 
-    private val viewState = MutableStateFlow(getViewState(null))
+    private val viewState = MutableStateFlow(getViewState())
 
     init {
-        CoroutineScope(dispatcherProvider.IO).launch {
-            combineStateFlow(
-                ConfigurationSetting.siteId.data,
-                ConfigurationSetting.dialogManagementOption.data,
-                ConfigurationSetting.wakeWordOption.data,
-                ConfigurationSetting.speechToTextOption.data,
-                ConfigurationSetting.intentRecognitionOption.data,
-                ConfigurationSetting.textToSpeechOption.data,
-                ConfigurationSetting.audioPlayingOption.data,
-                ConfigurationSetting.intentHandlingOption.data,
-            ).collect {
-                viewState.value = getViewState(viewState.value.scrollToError)
-            }
+        combineStateFlow(
+            hasConnectionError,
+            ConfigurationSetting.siteId.data,
+            ConfigurationSetting.dialogManagementOption.data,
+            ConfigurationSetting.wakeWordOption.data,
+            ConfigurationSetting.speechToTextOption.data,
+            ConfigurationSetting.intentRecognitionOption.data,
+            ConfigurationSetting.textToSpeechOption.data,
+            ConfigurationSetting.audioPlayingOption.data,
+            ConfigurationSetting.intentHandlingOption.data,
+        ).mapReadonlyState {
+            viewState.value = getViewState()
         }
     }
 
     operator fun invoke(): MutableStateFlow<ConfigurationScreenViewState> = viewState
 
-    private fun getViewState(scrollToError: Int?): ConfigurationScreenViewState {
+    private fun getViewState(): ConfigurationScreenViewState {
         return ConfigurationScreenViewState(
             siteId = SiteIdViewState(
                 text = ConfigurationSetting.siteId.data
+            ),
+            connectionsViewState = ConnectionsViewState(
+                hasError = hasConnectionError.value
             ),
             dialogPipeline = DialogPipelineViewState(
                 dialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
                 serviceState = ServiceViewState(dialogManagerService.serviceState)
             ),
             audioInput = AudioInputViewState(
-                serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO
+                serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO #466
             ),
             wakeWord = WakeWordViewState(
                 wakeWordValueOption = ConfigurationSetting.wakeWordOption.value,
@@ -100,7 +107,7 @@ class ConfigurationScreenViewStateCreator(
             ),
             voiceActivityDetection = VoiceActivityDetectionViewState(
                 voiceActivityDetectionOption = VoiceActivityDetectionOption.Disabled,
-                serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO
+                serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO #469
             ),
             intentRecognition = IntentRecognitionViewState(
                 intentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
@@ -118,9 +125,7 @@ class ConfigurationScreenViewStateCreator(
                 audioPlayingOption = ConfigurationSetting.audioPlayingOption.value,
                 serviceState = ServiceViewState(audioPlayingService.serviceState)
             ),
-            hasError = hasError,
-            firstErrorIndex = firstErrorIndex,
-            scrollToError = scrollToError
+            hasError = hasError
         )
     }
 

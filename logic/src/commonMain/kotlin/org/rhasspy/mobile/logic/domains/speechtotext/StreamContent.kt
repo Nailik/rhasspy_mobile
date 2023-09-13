@@ -6,7 +6,7 @@ import io.ktor.utils.io.ByteWriteChannel
 import okio.Path
 import okio.buffer
 import okio.use
-import org.rhasspy.mobile.logic.connections.webserver.WebServerService
+import org.rhasspy.mobile.logic.connections.webserver.WebServerConnection
 import org.rhasspy.mobile.platformspecific.extensions.commonSize
 import org.rhasspy.mobile.platformspecific.extensions.commonSource
 
@@ -25,7 +25,7 @@ internal class StreamContent(private val filePath: Path) : OutgoingContent.Write
         }
     }
 
-    override val contentType = WebServerService.audioContentType
+    override val contentType = WebServerConnection.audioContentType
 
     override val contentLength: Long = filePath.commonSize() ?: run {
         logger.a { "contentLength is null for ${filePath.name}" }

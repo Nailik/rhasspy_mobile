@@ -36,6 +36,11 @@ private fun createDirectoryIfNotExists(parentDirectory: NSURL) {
     }
 }
 
+actual fun Path.Companion.commonInternalFilePath(
+    nativeApplication: NativeApplication,
+    fileName: String
+): Path = "${readDocumentsDirectory().replace("file:", "")}/$fileName".toPath()
+
 actual fun Path.Companion.commonInternalPath(
     nativeApplication: NativeApplication,
     fileName: String
@@ -47,7 +52,7 @@ actual fun Path.Companion.commonDatabasePath(
 ): Path = "${readDocumentsDirectory().replace("file:", "")}/$fileName".toPath()
 
 
-actual fun Path?.commonExists(): Boolean = this?.let { !FileSystem.SYSTEM.exists(this) } ?: false
+actual fun Path?.commonExists(): Boolean = this?.let { FileSystem.SYSTEM.exists(this) } ?: false
 actual fun Path.commonDelete() {
     FileSystem.SYSTEM.delete(this, mustExist = false)
 }
@@ -63,7 +68,7 @@ actual fun Path.commonShare(
     nativeApplication: NativeApplication,
     externalResultRequest: IExternalResultRequest
 ): Boolean {
-    //TODO("Not yet implemented")
+    //TODO #514
     return true
 }
 
@@ -73,6 +78,6 @@ actual suspend fun Path.commonSave(
     fileName: String,
     fileType: String
 ): Boolean {
-    //TODO("Not yet implemented")
+    //TODO #514
     return true
 }

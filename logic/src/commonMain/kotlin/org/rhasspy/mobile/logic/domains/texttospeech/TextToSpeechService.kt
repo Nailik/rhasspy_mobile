@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.domains.texttospeech
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -7,15 +8,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.log.LogType
+import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.connections.httpclient.HttpClientResult
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
@@ -39,14 +39,15 @@ internal class TextToSpeechService(
     paramsCreator: TextToSpeechServiceParamsCreator
 ) : ITextToSpeechService {
 
-    override val logger = LogType.TextToSpeechService.logger()
+    private val logger = Logger.withTag("TextToSpeechService")
 
-    private val httpClientService by inject<IHttpClientService>()
-    private val mqttClientService by inject<IMqttService>()
-    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val paramsFlow: StateFlow<TextToSpeechServiceParams> = paramsCreator()
     private val params: TextToSpeechServiceParams get() = paramsFlow.value
+
+    private val mqttClientService by inject<IMqttConnection>()
+    private val serviceMiddleware by inject<IServiceMiddleware>()
+    private val httpClientConnection by inject<IRhasspy2HermesConnection>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(Success)
     override val serviceState = _serviceState.readOnly
@@ -57,13 +58,16 @@ internal class TextToSpeechService(
     init {
         scope.launch {
             paramsFlow.collect {
-                _serviceState.value =
-                    when (it.textToSpeechOption) {
-                        TextToSpeechOption.RemoteHTTP -> Success
-                        TextToSpeechOption.RemoteMQTT -> Success
-                        TextToSpeechOption.Disabled   -> Disabled
-                    }
+                setupState()
             }
+        }
+    }
+
+    private fun setupState() {
+        _serviceState.value = when (params.textToSpeechOption) {
+            TextToSpeechOption.Rhasspy2HermesHttp -> Success
+            TextToSpeechOption.Rhasspy2HermesMQTT -> Success
+            TextToSpeechOption.Disabled           -> Disabled
         }
     }
 
@@ -82,26 +86,28 @@ internal class TextToSpeechService(
 
         logger.d { "textToSpeech sessionId: $sessionId text: $text" }
         when (params.textToSpeechOption) {
-            TextToSpeechOption.RemoteHTTP -> {
-                httpClientService.textToSpeech(text, volume, null) { result ->
+            TextToSpeechOption.Rhasspy2HermesHttp -> {
+                httpClientConnection.textToSpeech(text, volume, null) { result ->
                     _serviceState.value = when (result) {
-                        is HttpClientResult.Error   -> ServiceState.Exception(result.exception)
-                        is HttpClientResult.Success -> Success
+                        is HttpClientResult.Error      -> result.toServiceState()
+                        is HttpClientResult.Success    -> Success
+                        is HttpClientResult.KnownError -> result.toServiceState()
                     }
                     val action = when (result) {
-                        is HttpClientResult.Error   -> AsrError(Source.Local)
-                        is HttpClientResult.Success -> PlayAudio(Source.Local, result.data)
+                        is HttpClientResult.Error      -> AsrError(Source.Local)
+                        is HttpClientResult.Success    -> PlayAudio(Source.Local, result.data)
+                        is HttpClientResult.KnownError -> AsrError(Source.Local)
                     }
                     serviceMiddleware.action(action)
                 }
             }
 
-            TextToSpeechOption.RemoteMQTT -> {
+            TextToSpeechOption.Rhasspy2HermesMQTT -> {
                 if (sessionId == mqttSessionId) return
                 mqttClientService.say(mqttSessionId, text, siteId) { _serviceState.value = it }
             }
 
-            TextToSpeechOption.Disabled   -> _serviceState.value = Disabled
+            TextToSpeechOption.Disabled -> _serviceState.value = Disabled
         }
     }
 

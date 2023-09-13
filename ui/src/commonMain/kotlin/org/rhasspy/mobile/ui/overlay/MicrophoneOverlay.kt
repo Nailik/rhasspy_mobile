@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.combinedTestTag
 import org.rhasspy.mobile.ui.main.MicrophoneFab
@@ -17,9 +16,9 @@ import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewMode
 
 @Composable
 fun MicrophoneOverlay(
+    viewModel: MicrophoneOverlayViewModel,
     onDrag: (offset: Offset) -> Unit
 ) {
-    val viewModel: MicrophoneOverlayViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
     MicrophoneFab(

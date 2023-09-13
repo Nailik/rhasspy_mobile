@@ -12,7 +12,7 @@ import platform.UIKit.UIViewController
 class MainView : KoinComponent {
     fun controller(): UIViewController = ComposeUIViewController {
         MainUi(
-            viewModelFactory = get(),
+            viewModel = get(),
             isHasStarted = get<NativeApplication>().isHasStarted
         )
     }

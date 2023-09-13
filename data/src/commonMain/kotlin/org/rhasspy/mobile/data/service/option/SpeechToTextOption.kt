@@ -6,11 +6,10 @@ import org.rhasspy.mobile.resources.MR
 
 enum class SpeechToTextOption(override val text: StableStringResource) : IOption<SpeechToTextOption> {
 
-    RemoteHTTP(MR.strings.remoteHTTP.stable),
-    RemoteMQTT(MR.strings.remoteMQTT.stable),
+    Rhasspy2HermesHttp(MR.strings.rhasspy2hermes_http.stable),
+    Rhasspy2HermesMQTT(MR.strings.rhasspy2hermes_mqtt.stable),
     Disabled(MR.strings.disabled.stable);
 
-    override fun findValue(value: String): SpeechToTextOption {
-        return valueOf(value)
-    }
+    override val internalEntries get() = entries
+
 }

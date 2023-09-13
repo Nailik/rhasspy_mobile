@@ -6,6 +6,6 @@ sealed interface WebServerResult {
 
     class Accepted(val data: String) : WebServerResult
 
-    class Error(val errorType: WebServerServiceErrorType) : WebServerResult
+    class Error(val errorType: WebServerConnectionErrorType) : WebServerResult
 
 }

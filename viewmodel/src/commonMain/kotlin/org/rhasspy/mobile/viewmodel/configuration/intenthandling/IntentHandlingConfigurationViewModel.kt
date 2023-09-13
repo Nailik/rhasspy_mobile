@@ -11,16 +11,16 @@ import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action.ScanHomeAssistantAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingHomeAssistantOption
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewState.IntentHandlingConfigurationData
 
 @Stable
 class IntentHandlingConfigurationViewModel(
     service: IIntentHandlingService
 ) : ConfigurationViewModel(
-    service = service
+    serviceState = service.serviceState
 ) {
 
     private val _viewState = MutableStateFlow(IntentHandlingConfigurationViewState(IntentHandlingConfigurationData()))
@@ -47,11 +47,8 @@ class IntentHandlingConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is ChangeIntentHandlingHomeAssistantAccessToken -> copy(intentHandlingHomeAssistantAccessToken = change.token)
-                    is ChangeIntentHandlingHomeAssistantEndpoint    -> copy(intentHandlingHomeAssistantEndpoint = change.endpoint)
-                    is ChangeIntentHandlingHttpEndpoint             -> copy(intentHandlingHttpEndpoint = change.endpoint)
-                    is SelectIntentHandlingHomeAssistantOption      -> copy(intentHandlingHomeAssistantOption = change.option)
-                    is SelectIntentHandlingOption                   -> copy(intentHandlingOption = change.option)
+                    is SelectIntentHandlingHomeAssistantOption -> copy(intentHandlingHomeAssistantOption = change.option)
+                    is SelectIntentHandlingOption              -> copy(intentHandlingOption = change.option)
                 }
             })
         }
@@ -59,8 +56,7 @@ class IntentHandlingConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick                    -> navigator.onBackPressed()
-            ScanHomeAssistantAccessToken -> scanQRCode { onChange(ChangeIntentHandlingHomeAssistantAccessToken(it)) }
+            BackClick -> navigator.onBackPressed()
         }
     }
 
@@ -71,9 +67,6 @@ class IntentHandlingConfigurationViewModel(
     override fun onSave() {
         with(_viewState.value.editData) {
             ConfigurationSetting.intentHandlingOption.value = intentHandlingOption
-            ConfigurationSetting.intentHandlingHttpEndpoint.value = intentHandlingHttpEndpoint
-            ConfigurationSetting.intentHandlingHomeAssistantEndpoint.value = intentHandlingHomeAssistantEndpoint
-            ConfigurationSetting.intentHandlingHomeAssistantAccessToken.value = intentHandlingHomeAssistantAccessToken
             ConfigurationSetting.intentHandlingHomeAssistantOption.value = intentHandlingHomeAssistantOption
         }
     }

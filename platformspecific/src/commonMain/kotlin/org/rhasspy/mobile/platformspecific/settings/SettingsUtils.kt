@@ -8,7 +8,7 @@ interface ISettingsUtils {
 
     suspend fun exportSettingsFile(): Boolean
     suspend fun restoreSettingsFromFile(): Boolean
-    suspend fun shareSettingsFile(): Boolean
+    suspend fun shareSettingsFile(toRemove: List<String>): Boolean
 
 }
 
@@ -31,6 +31,6 @@ internal expect class SettingsUtils(
     /**
      * share settings file but without sensitive data
      */
-    override suspend fun shareSettingsFile(): Boolean
+    override suspend fun shareSettingsFile(toRemove: List<String>): Boolean
 
 }

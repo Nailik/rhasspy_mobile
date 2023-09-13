@@ -27,7 +27,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
 class AudioPlayingConfigurationViewModel(
     service: IAudioPlayingService
 ) : ConfigurationViewModel(
-    service = service
+    serviceState = service.serviceState
 ) {
 
     private val _viewState = MutableStateFlow(AudioPlayingConfigurationViewState(AudioPlayingConfigurationData()))
@@ -54,11 +54,9 @@ class AudioPlayingConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SelectEditAudioPlayingOption       -> copy(audioPlayingOption = change.option)
-                    is SelectAudioOutputOption            -> copy(audioOutputOption = change.option)
-                    is SetUseCustomHttpEndpoint           -> copy(isUseCustomAudioPlayingHttpEndpoint = change.enabled)
-                    is ChangeEditAudioPlayingHttpEndpoint -> copy(audioPlayingHttpEndpoint = change.enabled)
-                    is ChangeEditAudioPlayingMqttSiteId   -> copy(audioPlayingMqttSiteId = change.siteId)
+                    is SelectEditAudioPlayingOption     -> copy(audioPlayingOption = change.option)
+                    is SelectAudioOutputOption          -> copy(audioOutputOption = change.option)
+                    is ChangeEditAudioPlayingMqttSiteId -> copy(audioPlayingMqttSiteId = change.siteId)
                 }
             })
         }
@@ -78,8 +76,6 @@ class AudioPlayingConfigurationViewModel(
         with(_viewState.value.editData) {
             ConfigurationSetting.audioPlayingOption.value = audioPlayingOption
             ConfigurationSetting.audioOutputOption.value = audioOutputOption
-            ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value = isUseCustomAudioPlayingHttpEndpoint
-            ConfigurationSetting.audioPlayingHttpEndpoint.value = audioPlayingHttpEndpoint
             ConfigurationSetting.audioPlayingMqttSiteId.value = audioPlayingMqttSiteId
         }
     }

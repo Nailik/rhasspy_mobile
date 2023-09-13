@@ -1,11 +1,11 @@
 package org.rhasspy.mobile.logic.local.indication
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.indication.IndicationState
 import org.rhasspy.mobile.data.indication.IndicationState.*
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioService
@@ -30,7 +30,7 @@ interface IIndicationService : IService {
 
 internal class IndicationService : IIndicationService {
 
-    override val logger = LogType.IndicationService.logger()
+    private val logger = Logger.withTag("IndicationService")
     private val localAudioService by inject<ILocalAudioService>()
 
     //states are used by overlay

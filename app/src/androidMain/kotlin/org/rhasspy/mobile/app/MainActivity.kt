@@ -10,15 +10,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.application.IMainActivity
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.intent.IntentActionType
 import org.rhasspy.mobile.ui.main.MainScreen
-import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action.MicrophoneFabClick
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
 import org.rhasspy.mobile.widget.microphone.MicrophoneWidgetUtils
 
 
@@ -27,7 +28,7 @@ import org.rhasspy.mobile.widget.microphone.MicrophoneWidgetUtils
  */
 class MainActivity : IMainActivity(), KoinComponent {
 
-    private val viewModelFactory: ViewModelFactory by inject()
+    private val viewModel: MainScreenViewModel by inject()
     private val nativeApplication: NativeApplication by inject()
     private val navigator: INavigator by inject()
 
@@ -56,11 +57,11 @@ class MainActivity : IMainActivity(), KoinComponent {
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
         if (intent.getBooleanExtra(IntentActionType.StartRecording.param, false)) {
-            viewModelFactory.getViewModel<HomeScreenViewModel>().onEvent(MicrophoneFabClick)
+            get<HomeScreenViewModel>().onEvent(MicrophoneFabClick)
         }
 
         this.setContent {
-            MainScreen(viewModelFactory)
+            MainScreen(viewModel)
         }
 
         CoroutineScope(Dispatchers.IO).launch {

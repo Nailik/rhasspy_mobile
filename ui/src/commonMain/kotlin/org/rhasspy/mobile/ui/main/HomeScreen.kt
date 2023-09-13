@@ -14,8 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.ui.overlay.IndicationContent
@@ -38,10 +37,9 @@ import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
-    val viewModel: HomeScreenViewModel = LocalViewModelFactory.current.getViewModel()
+fun HomeScreen(viewModel: HomeScreenViewModel) {
 
-    Screen(screenViewModel = viewModel) {
+    ScreenContent(screenViewModel = viewModel) {
         Scaffold(
             modifier = Modifier
                 .testTag(HomeScreen)
@@ -71,7 +69,7 @@ fun HomeScreen() {
 
                     Column {
                         Spacer(modifier = Modifier.weight(1f))
-                        IndicationContent()
+                        IndicationContent(viewModel.indicationOverlayViewModel)
                     }
                 }
 

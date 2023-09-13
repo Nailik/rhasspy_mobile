@@ -4,9 +4,9 @@ import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
 actual fun NativeApplication.shortToast(resource: StringResource) {
-    //TODO("Not yet implemented")
+    //TODO #518
 }
 
 actual fun NativeApplication.longToast(resource: StringResource) {
-    //TODO("Not yet implemented")
+    //TODO #518
 }

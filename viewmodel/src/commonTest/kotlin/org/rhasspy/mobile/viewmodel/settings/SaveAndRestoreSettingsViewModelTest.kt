@@ -38,7 +38,7 @@ class SaveAndRestoreSettingsViewModelTest : AppTest() {
     @Test
     fun `when the user wants to share a settings file and it returns false a snack bar is shown`() =
         runTest {
-            coEvery { settingsUtils.shareSettingsFile() } returns false
+            coEvery { settingsUtils.shareSettingsFile(isAny()) } returns false
 
             saveAndRestoreSettingsViewModel.onEvent(ShareSettingsFile)
 
@@ -48,7 +48,7 @@ class SaveAndRestoreSettingsViewModelTest : AppTest() {
     @Test
     fun `when the user wants to share a settings file and it returns true no snack bar is shown`() =
         runTest {
-            coEvery { settingsUtils.shareSettingsFile() } returns true
+            coEvery { settingsUtils.shareSettingsFile(isAny()) } returns true
 
             saveAndRestoreSettingsViewModel.onEvent(ShareSettingsFile)
 

@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -23,12 +22,12 @@ import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.*
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewState.MqttConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Action.OpenMqttSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Action.SelectSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewState.MqttConnectionConfigurationData
 
 /**
  * mqtt configuration content
@@ -40,9 +39,7 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewStat
  * connection timeout settings
  */
 @Composable
-fun MqttConnectionScreen() {
-
-    val viewModel: MqttConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+fun MqttConnectionScreen(viewModel: MqttConnectionConfigurationViewModel) {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
@@ -67,8 +64,8 @@ fun MqttConnectionScreen() {
 
 @Composable
 private fun MqttConnectionEditContent(
-    editData: MqttConfigurationData,
-    onEvent: (MqttConfigurationUiEvent) -> Unit
+    editData: MqttConnectionConfigurationData,
+    onEvent: (MqttConnectionConfigurationUiEvent) -> Unit
 ) {
 
     LazyColumn(
@@ -81,7 +78,7 @@ private fun MqttConnectionEditContent(
             SwitchListItem(
                 text = MR.strings.externalMQTT.stable,
                 modifier = Modifier.testTag(TestTag.MqttSwitch),
-                isChecked = editData.isMqttEnabled,
+                isChecked = editData.isEnabled,
                 onCheckedChange = { onEvent(SetMqttEnabled(it)) }
             )
         }
@@ -91,29 +88,28 @@ private fun MqttConnectionEditContent(
             AnimatedVisibility(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
-                visible = editData.isMqttEnabled
+                visible = editData.isEnabled
             ) {
 
                 Column {
 
                     MqttConnectionSettings(
-                        mqttHost = editData.mqttHost,
-                        mqttPortText = editData.mqttPortText,
-                        mqttUserName = editData.mqttUserName,
-                        mqttPassword = editData.mqttPassword,
+                        mqttHost = editData.host,
+                        mqttUserName = editData.userName,
+                        mqttPassword = editData.password,
                         onEvent = onEvent
                     )
 
                     MqttSSL(
-                        isMqttSSLEnabled = editData.isMqttSSLEnabled,
-                        mqttKeyStoreFileName = editData.mqttKeyStoreFileName,
+                        isMqttSSLEnabled = editData.isSSLEnabled,
+                        mqttKeyStoreFileName = editData.keystoreFile,
                         onEvent = onEvent
                     )
 
                     MqttConnectionTiming(
-                        mqttConnectionTimeoutText = editData.mqttConnectionTimeoutText,
-                        mqttKeepAliveIntervalText = editData.mqttKeepAliveIntervalText,
-                        mqttRetryIntervalText = editData.mqttRetryIntervalText,
+                        mqttConnectionTimeoutText = editData.connectionTimeoutText,
+                        mqttKeepAliveIntervalText = editData.keepAliveIntervalText,
+                        mqttRetryIntervalText = editData.retryIntervalText,
                         onEvent = onEvent
                     )
 
@@ -135,10 +131,9 @@ private fun MqttConnectionEditContent(
 @Composable
 private fun MqttConnectionSettings(
     mqttHost: String,
-    mqttPortText: String,
     mqttUserName: String,
     mqttPassword: String,
-    onEvent: (MqttConfigurationUiEvent) -> Unit
+    onEvent: (MqttConnectionConfigurationUiEvent) -> Unit
 ) {
 
     //host
@@ -147,16 +142,6 @@ private fun MqttConnectionSettings(
         modifier = Modifier.testTag(TestTag.Host),
         value = mqttHost,
         onValueChange = { onEvent(UpdateMqttHost(it)) },
-        isLastItem = false
-    )
-
-    //port
-    TextFieldListItem(
-        label = MR.strings.port.stable,
-        modifier = Modifier.testTag(TestTag.Port),
-        value = mqttPortText,
-        onValueChange = { onEvent(UpdateMqttPort(it)) },
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         isLastItem = false
     )
 
@@ -186,7 +171,7 @@ private fun MqttConnectionSettings(
 private fun MqttSSL(
     isMqttSSLEnabled: Boolean,
     mqttKeyStoreFileName: String?,
-    onEvent: (MqttConfigurationUiEvent) -> Unit
+    onEvent: (MqttConnectionConfigurationUiEvent) -> Unit
 ) {
 
     SwitchListItem(
@@ -256,7 +241,7 @@ private fun MqttConnectionTiming(
     mqttConnectionTimeoutText: String,
     mqttKeepAliveIntervalText: String,
     mqttRetryIntervalText: String,
-    onEvent: (MqttConfigurationUiEvent) -> Unit
+    onEvent: (MqttConnectionConfigurationUiEvent) -> Unit
 ) {
 
     TextFieldListItem(

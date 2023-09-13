@@ -13,8 +13,6 @@ enum class AudioFocusOption(override val text: StableStringResource) : IOption<A
     PauseAndResume(MR.strings.pauseAndResume.stable),
     Duck(MR.strings.duck.stable);
 
-    override fun findValue(value: String): AudioFocusOption {
-        return AudioFocusOption.valueOf(value)
-    }
+    override val internalEntries get() = entries
 
 }

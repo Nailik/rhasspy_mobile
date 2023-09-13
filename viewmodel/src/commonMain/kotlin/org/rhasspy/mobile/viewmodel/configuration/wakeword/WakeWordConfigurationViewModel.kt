@@ -9,13 +9,15 @@ import okio.Path
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
+import org.rhasspy.mobile.data.data.toIntOrNullOrConstant
+import org.rhasspy.mobile.data.data.toIntOrZero
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.domains.wakeword.IWakeWordService
 import org.rhasspy.mobile.platformspecific.*
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
-import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
+import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -32,6 +34,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.*
 
 @Stable
@@ -39,7 +42,7 @@ class WakeWordConfigurationViewModel(
     microphonePermission: IMicrophonePermission,
     service: IWakeWordService
 ) : ConfigurationViewModel(
-    service = service
+    serviceState = service.serviceState
 ) {
 
     private val dispatcher by inject<IDispatcherProvider>()
@@ -266,7 +269,7 @@ class WakeWordConfigurationViewModel(
         }
 
         filesToDelete.forEach {
-            Path.commonInternalPath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
+            Path.commonInternalFilePath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
         }
         filesToDelete.clear()
         newFiles.clear()
@@ -275,11 +278,19 @@ class WakeWordConfigurationViewModel(
 
     override fun onDiscard() {
         newFiles.forEach {
-            Path.commonInternalPath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
+            Path.commonInternalFilePath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
         }
         newFiles.clear()
         filesToDelete.clear()
         _viewState.update { it.copy(editData = WakeWordConfigurationData()) }
+    }
+
+    override fun onBackPressed(): Boolean {
+        return when (navigator.topScreen.value) {
+            //do navigate sub screens back even if there are changes
+            is WakeWordConfigurationScreenDestination -> false
+            else                                      -> super.onBackPressed()
+        }
     }
 
 }

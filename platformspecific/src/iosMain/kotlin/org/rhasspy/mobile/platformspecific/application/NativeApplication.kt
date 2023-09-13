@@ -23,22 +23,22 @@ actual abstract class NativeApplication {
     }
 
     actual val currentlyAppInBackground: MutableStateFlow<Boolean>
-        get() = MutableStateFlow(false) //TODO("Not yet implemented")
+        get() = MutableStateFlow(false) //TODO #511
     actual val isAppInBackground: StateFlow<Boolean>
-        get() = MutableStateFlow(false) //TODO("Not yet implemented")
+        get() = MutableStateFlow(false) //TODO#511
     actual abstract val isHasStarted: StateFlow<Boolean>
     actual fun isInstrumentedTest(): Boolean {
-        //TODO("Not yet implemented")
+        //TODO #511
         return true
     }
 
     actual fun restart() {
-        //TODO("Not yet implemented")
+        //TODO #511
     }
 
     actual abstract suspend fun resume()
     actual fun closeApp() {
-        //TODO("Not yet implemented")
+        //TODO #511
     }
 
     actual abstract fun onCreated()

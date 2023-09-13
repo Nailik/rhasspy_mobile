@@ -7,6 +7,7 @@ import org.rhasspy.mobile.data.service.option.*
 @Stable
 data class ConfigurationScreenViewState internal constructor(
     val siteId: SiteIdViewState,
+    val connectionsViewState: ConnectionsViewState,
     val dialogPipeline: DialogPipelineViewState,
     val audioInput: AudioInputViewState,
     val wakeWord: WakeWordViewState,
@@ -17,13 +18,16 @@ data class ConfigurationScreenViewState internal constructor(
     val textToSpeech: TextToSpeechViewState,
     val audioPlaying: AudioPlayingViewState,
     val hasError: StateFlow<Boolean>,
-    val firstErrorIndex: StateFlow<Int?>,
-    val scrollToError: Int?
 ) {
 
     @Stable
     data class SiteIdViewState internal constructor(
         val text: StateFlow<String>
+    )
+
+    @Stable
+    data class ConnectionsViewState internal constructor(
+        val hasError: Boolean
     )
 
     @Stable

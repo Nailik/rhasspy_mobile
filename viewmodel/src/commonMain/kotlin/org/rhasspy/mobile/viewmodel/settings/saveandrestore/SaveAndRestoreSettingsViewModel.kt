@@ -4,14 +4,13 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.settings.ISettingsUtils
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.settings.ISettingsDatabase
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
@@ -35,6 +34,26 @@ class SaveAndRestoreSettingsViewModel(
         }
     }
 
+    private val toRemove: List<String>
+        get() = listOfNotNull(
+            ConfigurationSetting.rhasspy2Connection.value.host,
+            ConfigurationSetting.rhasspy2Connection.value.bearerToken,
+            ConfigurationSetting.rhasspy3Connection.value.host,
+            ConfigurationSetting.rhasspy3Connection.value.bearerToken,
+            ConfigurationSetting.homeAssistantConnection.value.host,
+            ConfigurationSetting.homeAssistantConnection.value.bearerToken,
+            ConfigurationSetting.mqttConnection.value.host,
+            ConfigurationSetting.mqttConnection.value.userName,
+            ConfigurationSetting.mqttConnection.value.password,
+            ConfigurationSetting.localWebserverConnection.value.keyStoreFile,
+            ConfigurationSetting.localWebserverConnection.value.keyStorePassword,
+            ConfigurationSetting.localWebserverConnection.value.keyAlias,
+            ConfigurationSetting.localWebserverConnection.value.keyPassword,
+            ConfigurationSetting.wakeWordPorcupineAccessToken.value,
+            ConfigurationSetting.wakeWordUdpOutputHost.value,
+            ConfigurationSetting.wakeWordUdpOutputPort.value.toString()
+        )
+
     private fun onAction(action: Action) {
         viewModelScope.launch(dispatcher.IO) {
             _viewState.update {
@@ -46,7 +65,7 @@ class SaveAndRestoreSettingsViewModel(
                         it.copy(isRestoreSettingsFromFileDialogVisible = true)
 
                     ShareSettingsFile                      ->
-                        if (!settingsUtils.shareSettingsFile()) {
+                        if (!settingsUtils.shareSettingsFile(toRemove)) {
                             it.copy(snackBarText = MR.strings.shareSettingsFileFailed.stable)
                         } else it
 
@@ -70,7 +89,6 @@ class SaveAndRestoreSettingsViewModel(
 
                     is RestoreSettingsFromFileDialogResult -> {
                         if (action.confirmed) {
-                            get<ISettingsDatabase>().close() //stop settings database connection
                             if (!settingsUtils.restoreSettingsFromFile())
                                 it.copy(
                                     snackBarText = MR.strings.restoreSettingsFromFileFailed.stable,

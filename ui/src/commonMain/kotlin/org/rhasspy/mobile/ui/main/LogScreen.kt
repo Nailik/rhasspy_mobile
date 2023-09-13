@@ -24,9 +24,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalSnackBarHostState
-import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
+import org.rhasspy.mobile.ui.content.LocalSnackBarHostState
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.CustomDivider
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -48,11 +47,9 @@ import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
  * show log information
  */
 @Composable
-fun LogScreen() {
+fun LogScreen(viewModel: LogScreenViewModel) {
 
-    val viewModel: LogScreenViewModel = LocalViewModelFactory.current.getViewModel()
-
-    Screen(screenViewModel = viewModel) {
+    ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         val snackBarHostState = LocalSnackBarHostState.current
@@ -122,7 +119,6 @@ private fun LogScreenContent(
     val lazyListState = rememberForeverLazyListState(LogScreenList)
     val coroutineScope = rememberCoroutineScope()
 
-
     val isDraggedState by lazyListState.interactionSource.collectIsDraggedAsState()
     LaunchedEffect(isDraggedState) {
         if (isDraggedState) {
@@ -157,7 +153,7 @@ private fun LogScreenContent(
 
                 items(
                     count = items.itemCount,
-                    key = { key -> items[key]?.id ?: Unit },
+                    key = { index -> items[index]?.id ?: index },
                 ) { index ->
                     items[index]?.also {
                         LogListElement(it)
@@ -166,13 +162,13 @@ private fun LogScreenContent(
                 }
             }
 
-            is LoadStateError   -> {
+            is LoadStateError -> {
                 item {
                     Text(loadState.error.message!!)
                 }
             }
 
-            else                -> Unit
+            else -> Unit
         }
     }
 

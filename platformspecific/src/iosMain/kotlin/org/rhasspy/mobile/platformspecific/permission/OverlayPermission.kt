@@ -14,13 +14,13 @@ internal actual class OverlayPermission actual constructor(
      * to observe if microphone permission is granted
      */
     actual override val granted: StateFlow<Boolean>
-        get() = MutableStateFlow(true) //TODO("Not yet implemented")
+        get() = MutableStateFlow(true) //TODO #260
 
     /**
      * check if the permission is currently granted
      */
     actual override fun isGranted(): Boolean {
-        //TODO("Not yet implemented")
+        //TODO #260
         return true
     }
 
@@ -28,14 +28,14 @@ internal actual class OverlayPermission actual constructor(
      * read from system
      */
     actual override fun update() {
-        //TODO("Not yet implemented")
+        //TODO #260
     }
 
     /**
      * to request the permission externally, redirect user to settings
      */
     actual override fun request(): Boolean {
-        //TODO("Not yet implemented")
+        //TODO #260
         return true
     }
 

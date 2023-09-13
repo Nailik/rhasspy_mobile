@@ -10,10 +10,12 @@ import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartListening
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.viewmodel.assist.AssistantUiEvent.Activate
+import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 
 class AssistantViewModel(
     private val serviceMiddleware: IServiceMiddleware,
-    private val indicationService: IIndicationService
+    private val indicationService: IIndicationService,
+    val indicationViewModel: IndicationOverlayViewModel
 ) : ViewModel() {
 
     fun awaitIdle(function: () -> Unit) {

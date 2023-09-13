@@ -2,9 +2,9 @@ package org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
+import org.rhasspy.mobile.data.data.toStringOrEmpty
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
-import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData

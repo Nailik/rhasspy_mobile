@@ -1,11 +1,11 @@
 package org.rhasspy.mobile.logic.domains.wakeword
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
@@ -20,7 +20,6 @@ import org.rhasspy.mobile.platformspecific.porcupine.PorcupineWakeWordClient
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
-import kotlin.Exception
 
 interface IWakeWordService : IService {
 
@@ -43,7 +42,7 @@ internal class WakeWordService(
     private val audioRecorder: IAudioRecorder,
 ) : IWakeWordService {
 
-    override val logger = LogType.WakeWordService.logger()
+    private val logger = Logger.withTag("WakeWordService")
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -92,22 +91,22 @@ internal class WakeWordService(
 
     private fun updateState() {
         _serviceState.value = when (params.wakeWordOption) {
-            WakeWordOption.Porcupine -> {
+            WakeWordOption.Porcupine          -> {
                 if (!params.isMicrophonePermissionEnabled) {
                     //post error when microphone permission is missing
-                    Error(MR.strings.microphonePermissionDenied.stable)
+                    ErrorState.Error(MR.strings.microphonePermissionDenied.stable)
                 } else Pending
             }
 
-            WakeWordOption.MQTT      -> Success
-            WakeWordOption.Udp       -> {
+            WakeWordOption.Rhasspy2HermesMQTT -> Success
+            WakeWordOption.Udp                -> {
                 if (!params.isMicrophonePermissionEnabled) {
                     //post error when microphone permission is missing
-                    Error(MR.strings.microphonePermissionDenied.stable)
+                    ErrorState.Error(MR.strings.microphonePermissionDenied.stable)
                 } else Pending
             }
 
-            WakeWordOption.Disabled  -> Disabled
+            WakeWordOption.Disabled           -> Disabled
         }
     }
 
@@ -167,9 +166,9 @@ internal class WakeWordService(
             val error = client.start()
             error?.let {
                 logger.e(it) { "porcupineError" }
-                ServiceState.Exception(it)
+                ErrorState.Exception(it)
             } ?: Success
-        } ?: Error(MR.strings.notInitialized.stable)
+        } ?: ErrorState.Error(MR.strings.notInitialized.stable)
         startRecording()
     }
 
@@ -178,9 +177,9 @@ internal class WakeWordService(
             val error = client.connect()
             error?.let {
                 logger.e(it) { "porcupineError" }
-                ServiceState.Exception(it)
+                ErrorState.Exception(it)
             } ?: Success
-        } ?: Error(MR.strings.notInitialized.stable)
+        } ?: ErrorState.Error(MR.strings.notInitialized.stable)
         startRecording()
     }
 
@@ -212,10 +211,10 @@ internal class WakeWordService(
             //ignore enabled flag when comparing
             if (it == params.copy(isEnabled = it.isEnabled)) {
                 when (params.wakeWordOption) {
-                    WakeWordOption.Porcupine -> if (porcupineWakeWordClient != null) return
-                    WakeWordOption.MQTT      -> return
-                    WakeWordOption.Udp       -> if (udpConnection != null) return
-                    WakeWordOption.Disabled  -> return
+                    WakeWordOption.Porcupine          -> if (porcupineWakeWordClient != null) return
+                    WakeWordOption.Rhasspy2HermesMQTT -> return
+                    WakeWordOption.Udp                -> if (udpConnection != null) return
+                    WakeWordOption.Disabled           -> return
                 }
             }
         }
@@ -226,7 +225,7 @@ internal class WakeWordService(
         initializedParams = params
 
         _serviceState.value = when (params.wakeWordOption) {
-            WakeWordOption.Porcupine -> {
+            WakeWordOption.Porcupine          -> {
                 _serviceState.value = Loading
                 //when porcupine is used for hotWord then start local service
                 porcupineWakeWordClient = PorcupineWakeWordClient(
@@ -240,8 +239,8 @@ internal class WakeWordService(
                 Success
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
-            WakeWordOption.MQTT      -> Success
-            WakeWordOption.Udp       -> {
+            WakeWordOption.Rhasspy2HermesMQTT -> Success
+            WakeWordOption.Udp                -> {
                 _serviceState.value = Loading
 
                 udpConnection = UdpConnection(
@@ -252,7 +251,7 @@ internal class WakeWordService(
                 Success
             }
 
-            WakeWordOption.Disabled  -> Disabled
+            WakeWordOption.Disabled           -> Disabled
         }
     }
 
@@ -280,7 +279,7 @@ internal class WakeWordService(
 
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> porcupineWakeWordClient?.audioFrame(data)
-            WakeWordOption.MQTT      -> Unit //nothing will wait for mqtt message
+            WakeWordOption.Rhasspy2HermesMQTT -> Unit //nothing will wait for mqtt message
             WakeWordOption.Udp       -> udpConnection?.streamAudio(
                 data = data.appendWavHeader(
                     audioRecorderChannelType = params.audioOutputChannelType,

@@ -53,6 +53,9 @@ android {
 
     buildTypes {
         release {
+            isDebuggable = false
+            enableUnitTestCoverage = false
+            enableAndroidTestCoverage = false
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -65,8 +68,8 @@ android {
         }
         debug {
             isDebuggable = true
-            enableUnitTestCoverage = true
-            enableAndroidTestCoverage = true
+            enableUnitTestCoverage = false
+            enableAndroidTestCoverage = false
             isMinifyEnabled = false
             isShrinkResources = false
             if (signingEnabled) {
@@ -177,6 +180,7 @@ dependencies {
     implementation(Icerock.Mvvm.core)
     implementation(Kotlin.test)
     implementation(Kotlin.Test.junit)
+    implementation(Journeyapps.zXingAndroid)
 
     implementation(Kotlin.test)
     implementation(AndroidX.Activity.compose)

@@ -5,7 +5,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.domains.dialog.*
 import org.rhasspy.mobile.logic.domains.dialog.DialogManagerState.IdleState
 import org.rhasspy.mobile.logic.domains.dialog.DialogManagerState.PlayingAudioState
@@ -44,7 +44,7 @@ internal class StateTransition(
     private val intentRecognitionService: IIntentRecognitionService,
     private val speechToTextService: ISpeechToTextService,
     private val indicationService: IIndicationService,
-    private val mqttService: IMqttService
+    private val mqttService: IMqttConnection
 ) : IStateTransition {
 
     private val paramsFlow: StateFlow<DialogManagerServiceParams> = paramsCreator()

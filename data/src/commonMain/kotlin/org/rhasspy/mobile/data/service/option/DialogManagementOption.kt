@@ -7,10 +7,9 @@ import org.rhasspy.mobile.resources.MR
 enum class DialogManagementOption(override val text: StableStringResource) :
     IOption<DialogManagementOption> {
     Local(MR.strings.local.stable),
-    RemoteMQTT(MR.strings.remoteMQTT.stable),
+    Rhasspy2HermesMQTT(MR.strings.rhasspy2hermes_mqtt.stable),
     Disabled(MR.strings.disabled.stable);
 
-    override fun findValue(value: String): DialogManagementOption {
-        return valueOf(value)
-    }
+    override val internalEntries get() = entries
+
 }

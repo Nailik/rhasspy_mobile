@@ -17,7 +17,8 @@ internal class AudioPlayingServiceParamsCreator {
 
     private fun getParams(): AudioPlayingServiceParams {
         return AudioPlayingServiceParams(
-            audioPlayingOption = ConfigurationSetting.audioPlayingOption.value
+            audioPlayingOption = ConfigurationSetting.audioPlayingOption.value,
+            httpConnectionId = null
         )
     }
 

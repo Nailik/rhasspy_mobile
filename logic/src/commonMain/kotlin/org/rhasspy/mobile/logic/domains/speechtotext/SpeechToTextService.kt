@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.domains.speechtotext
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,15 +11,14 @@ import okio.Path
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
-import org.rhasspy.mobile.data.log.LogType
+import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.connections.httpclient.HttpClientResult
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.domains.voiceactivitydetection.IVoiceActivityDetectionService
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocusService
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioService
@@ -31,7 +31,7 @@ import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appe
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeader
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
-import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
+import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
@@ -59,15 +59,16 @@ internal class SpeechToTextService(
     private val audioRecorder: IAudioRecorder
 ) : ISpeechToTextService {
 
-    override val logger = LogType.SpeechToTextService.logger()
+    private val logger = Logger.withTag("SpeechToTextService")
 
     private val audioFocusService by inject<IAudioFocusService>()
-    private val httpClientService by inject<IHttpClientService>()
-    private val mqttClientService by inject<IMqttService>()
+    private val mqttClientService by inject<IMqttConnection>()
     private val nativeApplication by inject<NativeApplication>()
     private val serviceMiddleware by inject<IServiceMiddleware>()
     private val localAudioService by inject<ILocalAudioService>()
     private val voiceActivityDetectionService by inject<IVoiceActivityDetectionService> { parametersOf(audioRecorder) }
+    private val httpClientConnection by inject<IRhasspy2HermesConnection>()
+
 
     private val paramsFlow: StateFlow<SpeechToTextServiceParams> = paramsCreator()
     private val params: SpeechToTextServiceParams get() = paramsFlow.value
@@ -75,7 +76,7 @@ internal class SpeechToTextService(
     private val _serviceState = MutableStateFlow<ServiceState>(Success)
     override val serviceState = _serviceState.readOnly
 
-    override val speechToTextAudioFile: Path = Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
+    override val speechToTextAudioFile: Path = Path.commonInternalFilePath(nativeApplication, "SpeechToTextAudio.wav")
     override var isActive: Boolean = false
     override val isRecording: StateFlow<Boolean> = audioRecorder.isRecording
     private var fileHandle: FileHandle? = null
@@ -88,17 +89,18 @@ internal class SpeechToTextService(
             paramsFlow.collect {
                 recorder?.cancel()
                 recorder = null
-
-                _serviceState.value =
-                    when (it.speechToTextOption) {
-                        SpeechToTextOption.RemoteHTTP -> Success
-                        SpeechToTextOption.RemoteMQTT -> Success
-                        SpeechToTextOption.Disabled   -> Disabled
-                    }
+                setupState()
             }
         }
     }
 
+    private fun setupState() {
+        _serviceState.value = when (params.speechToTextOption) {
+            SpeechToTextOption.Rhasspy2HermesHttp -> Success
+            SpeechToTextOption.Rhasspy2HermesMQTT -> Success
+            SpeechToTextOption.Disabled           -> Disabled
+        }
+    }
 
     /**
      * Speech to Text (Wav Data)
@@ -141,25 +143,26 @@ internal class SpeechToTextService(
 
         //evaluate result
         when (params.speechToTextOption) {
-            SpeechToTextOption.RemoteHTTP -> {
-                httpClientService.speechToText(speechToTextAudioFile) { result ->
+            SpeechToTextOption.Rhasspy2HermesHttp -> {
+                httpClientConnection.speechToText(speechToTextAudioFile) { result ->
                     _serviceState.value = result.toServiceState()
                     val action = when (result) {
-                        is HttpClientResult.Error   -> AsrError(Local)
-                        is HttpClientResult.Success -> AsrTextCaptured(Local, result.data)
+                        is HttpClientResult.Error      -> AsrError(Local)
+                        is HttpClientResult.Success    -> AsrTextCaptured(Local, result.data)
+                        is HttpClientResult.KnownError -> AsrError(Local)
                     }
                     serviceMiddleware.action(action)
                 }
 
             }
 
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) {
+            SpeechToTextOption.Rhasspy2HermesMQTT -> if (!fromMqtt) {
                 mqttClientService.stopListening(sessionId) {
                     _serviceState.value = it
                 }
             }
 
-            SpeechToTextOption.Disabled   -> Unit
+            SpeechToTextOption.Disabled -> Unit
         }
     }
 
@@ -179,9 +182,9 @@ internal class SpeechToTextService(
 
 
         when (params.speechToTextOption) {
-            SpeechToTextOption.RemoteHTTP -> _serviceState.value = Success
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.startListening(sessionId) { _serviceState.value = it }
-            SpeechToTextOption.Disabled   -> {
+            SpeechToTextOption.Rhasspy2HermesHttp -> _serviceState.value = Success
+            SpeechToTextOption.Rhasspy2HermesMQTT -> if (!fromMqtt) mqttClientService.startListening(sessionId) { _serviceState.value = it }
+            SpeechToTextOption.Disabled           -> {
                 _serviceState.value = Disabled
                 return //recorder doesn't need to be started
             }
@@ -203,8 +206,8 @@ internal class SpeechToTextService(
         }
 
         when (params.speechToTextOption) {
-            SpeechToTextOption.RemoteHTTP -> _serviceState.value = Success
-            SpeechToTextOption.RemoteMQTT -> {
+            SpeechToTextOption.Rhasspy2HermesHttp -> _serviceState.value = Success
+            SpeechToTextOption.Rhasspy2HermesMQTT -> {
                 mqttClientService.asrAudioSessionFrame(
                     sessionId = sessionId,
                     data.appendWavHeader(
@@ -215,7 +218,7 @@ internal class SpeechToTextService(
                 ) { _serviceState.value = it }
             }
 
-            SpeechToTextOption.Disabled   -> _serviceState.value = Disabled
+            SpeechToTextOption.Disabled -> _serviceState.value = Disabled
         }
 
         //write async after data was send

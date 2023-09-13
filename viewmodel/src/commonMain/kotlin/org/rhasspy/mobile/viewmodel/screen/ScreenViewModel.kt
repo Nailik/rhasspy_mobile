@@ -1,7 +1,9 @@
 package org.rhasspy.mobile.viewmodel.screen
 
+import androidx.compose.runtime.Stable
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okio.Path
@@ -11,8 +13,8 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
-import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.RequestMicrophonePermissionExternally
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.ScanQRCode
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
@@ -31,6 +33,17 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.Mic
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.OverlayPermissionInfo
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.*
 
+@Stable
+interface IScreenViewModel {
+
+    val screenViewState: StateFlow<ScreenViewState>
+
+    fun onEvent(event: ScreenViewModelUiEvent)
+    fun onBackPressedClick(): Boolean
+    fun onDismissed()
+
+}
+
 abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
 
     protected val navigator by inject<INavigator>()
@@ -43,9 +56,6 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
 
     private val _screenViewState = MutableStateFlow(ScreenViewState())
     override val screenViewState = _screenViewState.readOnly
-
-    override fun onComposed() = navigator.onComposed(this)
-    override fun onDisposed() = navigator.onDisposed(this)
 
     fun requireMicrophonePermission(function: () -> Unit) {
         if (microphonePermission.granted.value) {
@@ -79,7 +89,7 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
 
     fun scanQRCode(onResult: (String) -> Unit) {
         viewModelScope.launch(dispatcher.IO) {
-            when (val result = externalResultRequest.launchForResult(ExternalResultRequestIntention.ScanQRCode)) {
+            when (val result = externalResultRequest.launchForResult(ScanQRCode)) {
                 is ExternalRedirectResult.Result -> onResult(result.data)
                 else                             -> _screenViewState.update { it.copy(snackBarState = ScanQRCodeFailed) }
             }
@@ -182,6 +192,10 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
                 }
             }
         }
+    }
+
+    override fun onDismissed() {
+        //blank
     }
 
 }

@@ -7,16 +7,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.HelpCenter
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.ServiceState.ErrorState
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.CustomDivider
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -30,9 +31,9 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.Configurati
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.ConfigurationScreen
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.OpenWikiLink
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Consumed.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
@@ -42,11 +43,9 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
  * configuration screens with list items that open bottom sheet
  */
 @Composable
-fun ConfigurationScreen() {
+fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel) {
 
-    val viewModel: ConfigurationScreenViewModel = LocalViewModelFactory.current.getViewModel()
-
-    Screen(screenViewModel = viewModel) {
+    ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         ConfigurationScreenContent(
@@ -85,17 +84,6 @@ private fun ConfigurationScreenContent(
         },
     ) { paddingValues ->
 
-        val coroutineScope = rememberCoroutineScope()
-
-        LaunchedEffect(viewState.scrollToError) {
-            viewState.scrollToError?.also { index ->
-                coroutineScope.launch {
-                    scrollState.animateScrollTo(index * 2 + 2) //duplicate for divider
-                    onEvent(ScrollToError)
-                }
-            }
-        }
-
         Column(
             modifier = Modifier
                 .padding(paddingValues)
@@ -103,7 +91,7 @@ private fun ConfigurationScreenContent(
         ) {
 
             if (viewState.hasError.collectAsState().value) {
-                ServiceErrorInformation(onEvent)
+                ServiceErrorInformation()
             }
 
             Column(
@@ -116,7 +104,7 @@ private fun ConfigurationScreenContent(
                 SiteId(viewState.siteId, onEvent)
                 CustomDivider()
 
-                Connections(onEvent)
+                Connections(viewState.connectionsViewState, onEvent)
                 CustomDivider()
 
                 DialogManagement(viewState.dialogPipeline, onEvent)
@@ -155,11 +143,8 @@ private fun ConfigurationScreenContent(
 /**
  * error information for service
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ServiceErrorInformation(
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
-) {
+private fun ServiceErrorInformation() {
 
     Surface {
         Card(
@@ -170,7 +155,6 @@ private fun ServiceErrorInformation(
             colors = CardDefaults.outlinedCardColors(
                 containerColor = MaterialTheme.colorScheme.errorContainer
             ),
-            onClick = { onEvent(ScrollToErrorClick) }
         ) {
             Row(
                 modifier = Modifier
@@ -218,14 +202,19 @@ private fun SiteId(
  */
 @Composable
 private fun Connections(
+    connectionsViewState: ConnectionsViewState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
-    ConfigurationListItem(
-        text = MR.strings.connections.stable,
-        secondaryText = MR.strings.connections_information.stable,
-        destination = ConnectionsConfigurationScreen,
-        onEvent = onEvent
+    ListElement(
+        modifier = Modifier
+            .clickable { onEvent(Navigate(ConnectionsConfigurationScreen)) }
+            .testTag(ConnectionsConfigurationScreen),
+        text = { Text(MR.strings.connections.stable) },
+        secondaryText = { Text(MR.strings.connections_information.stable) },
+        trailing = if (connectionsViewState.hasError) {
+            { EventStateIconTinted(ErrorState.Exception()) }
+        } else null
     )
 
 }

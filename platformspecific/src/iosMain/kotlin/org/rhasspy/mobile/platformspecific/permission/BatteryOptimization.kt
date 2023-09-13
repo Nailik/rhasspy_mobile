@@ -7,7 +7,7 @@ actual class BatteryOptimization actual constructor(
 ) {
 
     actual fun isBatteryOptimizationDisabled(): Boolean {
-        //TODO("Not yet implemented")
+        //TODO #260
         return true
     }
 

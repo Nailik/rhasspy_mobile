@@ -8,8 +8,8 @@ import org.rhasspy.mobile.resources.MR
 enum class PorcupineLanguageOption(
     override val text: StableStringResource,
     val file: FileResource
-) :
-    IOption<PorcupineLanguageOption> {
+) : IOption<PorcupineLanguageOption> {
+
     EN(MR.strings.english.stable, MR.files.porcupine_params),
     AR(MR.strings.arabic.stable, MR.files.porcupine_params_ar),
     DE(MR.strings.german.stable, MR.files.porcupine_params_de),
@@ -28,7 +28,6 @@ enum class PorcupineLanguageOption(
     VN(MR.strings.vietnamese.stable, MR.files.porcupine_params_vn),
     ZH(MR.strings.chinese.stable, MR.files.porcupine_params_zh);
 
-    override fun findValue(value: String): PorcupineLanguageOption {
-        return valueOf(value)
-    }
+    override val internalEntries get() = entries
+
 }

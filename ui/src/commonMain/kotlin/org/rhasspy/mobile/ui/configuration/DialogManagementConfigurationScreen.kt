@@ -14,7 +14,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -34,9 +33,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScr
  * DropDown to select dialog management option
  */
 @Composable
-fun DialogManagementConfigurationScreen() {
-
-    val viewModel: DialogManagementConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+fun DialogManagementConfigurationScreen(viewModel: DialogManagementConfigurationViewModel) {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
@@ -95,28 +92,24 @@ private fun DialogManagementOptionContent(
         values = editData.dialogManagementOptionList
     ) { option ->
 
+        when (option) {
+            DialogManagementOption.Local ->
+                DialogManagementSettingsLocal(
+                    textAsrTimeoutText = editData.textAsrTimeoutText,
+                    intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
+                    recordingTimeoutText = editData.recordingTimeoutText,
+                    onEvent = onEvent
+                )
 
-        Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
-            when (option) {
-                DialogManagementOption.Local ->
-                    DialogManagementSettingsLocal(
-                        textAsrTimeoutText = editData.textAsrTimeoutText,
-                        intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
-                        recordingTimeoutText = editData.recordingTimeoutText,
-                        onEvent = onEvent
-                    )
+            DialogManagementOption.Rhasspy2HermesMQTT ->
+                DialogManagementSettingsMqtt(
+                    textAsrTimeoutText = editData.textAsrTimeoutText,
+                    intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
+                    recordingTimeoutText = editData.recordingTimeoutText,
+                    onEvent = onEvent
+                )
 
-                DialogManagementOption.RemoteMQTT ->
-                    DialogManagementSettingsMqtt(
-                        textAsrTimeoutText = editData.textAsrTimeoutText,
-                        intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
-                        recordingTimeoutText = editData.recordingTimeoutText,
-                        onEvent = onEvent
-                    )
-
-                else -> Unit
-            }
-
+            else -> Unit
         }
 
     }
@@ -130,23 +123,25 @@ private fun DialogManagementSettingsLocal(
     recordingTimeoutText: String,
     onEvent: (DialogManagementConfigurationUiEvent) -> Unit
 ) {
+    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
-    DialogManagementSettings(
-        textAsrTimeoutText = textAsrTimeoutText,
-        intentRecognitionTimeoutText = intentRecognitionTimeoutText,
-        recordingTimeoutText = recordingTimeoutText,
-        onEvent = onEvent
-    )
+        DialogManagementSettings(
+            textAsrTimeoutText = textAsrTimeoutText,
+            intentRecognitionTimeoutText = intentRecognitionTimeoutText,
+            recordingTimeoutText = recordingTimeoutText,
+            onEvent = onEvent
+        )
 
-    //opens page for device settings
-    ListElement(
-        modifier = Modifier
-            .testTag(TestTag.PorcupineLanguage)
-            .clickable { onEvent(Navigate(DeviceSettings)) },
-        text = { Text(MR.strings.device.stable) },
-        secondaryText = { Text(MR.strings.deviceSettingsLocalDialogInformation.stable) }
-    )
+        //opens page for device settings
+        ListElement(
+            modifier = Modifier
+                .testTag(TestTag.PorcupineLanguage)
+                .clickable { onEvent(Navigate(DeviceSettings)) },
+            text = { Text(MR.strings.device.stable) },
+            secondaryText = { Text(MR.strings.deviceSettingsLocalDialogInformation.stable) }
+        )
 
+    }
 }
 
 @Composable
@@ -156,23 +151,25 @@ private fun DialogManagementSettingsMqtt(
     recordingTimeoutText: String,
     onEvent: (DialogManagementConfigurationUiEvent) -> Unit
 ) {
+    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
-    DialogManagementSettings(
-        textAsrTimeoutText = textAsrTimeoutText,
-        intentRecognitionTimeoutText = intentRecognitionTimeoutText,
-        recordingTimeoutText = recordingTimeoutText,
-        onEvent = onEvent
-    )
+        DialogManagementSettings(
+            textAsrTimeoutText = textAsrTimeoutText,
+            intentRecognitionTimeoutText = intentRecognitionTimeoutText,
+            recordingTimeoutText = recordingTimeoutText,
+            onEvent = onEvent
+        )
 
-    //opens page for device settings
-    ListElement(
-        modifier = Modifier
-            .testTag(TestTag.PorcupineLanguage)
-            .clickable { onEvent(Navigate(DeviceSettings)) },
-        text = { Text(MR.strings.device.stable) },
-        secondaryText = { Text(MR.strings.deviceSettingsMqttDialogInformation.stable) }
-    )
+        //opens page for device settings
+        ListElement(
+            modifier = Modifier
+                .testTag(TestTag.PorcupineLanguage)
+                .clickable { onEvent(Navigate(DeviceSettings)) },
+            text = { Text(MR.strings.device.stable) },
+            secondaryText = { Text(MR.strings.deviceSettingsMqttDialogInformation.stable) }
+        )
 
+    }
 }
 
 /**

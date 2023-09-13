@@ -206,14 +206,14 @@ internal class SessionStateActions(
         return when (action) {
             is WakeWordDetected        -> {
                 val wakeWordOption = ConfigurationSetting.wakeWordOption.value
-                return wakeWordOption == WakeWordOption.MQTT || wakeWordOption == WakeWordOption.Udp
+                return wakeWordOption == WakeWordOption.Rhasspy2HermesMQTT || wakeWordOption == WakeWordOption.Udp
             }
 
             is AsrError,
-            is AsrTextCaptured         -> ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteMQTT
+            is AsrTextCaptured         -> ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.Rhasspy2HermesMQTT
 
             is IntentRecognitionError,
-            is IntentRecognitionResult -> ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.RemoteMQTT
+            is IntentRecognitionResult -> ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.Rhasspy2HermesMQTT
 
             is PlayAudio,
             is StopAudioPlaying        -> true

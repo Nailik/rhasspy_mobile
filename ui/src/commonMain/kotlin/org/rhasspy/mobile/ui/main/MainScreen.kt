@@ -19,20 +19,18 @@ import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalSnackBarHostState
-import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.LocalSnackBarHostState
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.theme.AppTheme
-import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.CloseChangelog
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.CrashlyticsDialogResult
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
 
 @Composable
-fun MainScreen(viewModelFactory: ViewModelFactory) {
+fun MainScreen(viewModel: MainScreenViewModel) {
 
     Box(modifier = Modifier.fillMaxSize()) {
         AppTheme {
@@ -43,7 +41,6 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
                 CompositionLocalProvider(
                     LocalSnackBarHostState provides snackBarHostState,
-                    LocalViewModelFactory provides viewModelFactory
                 ) {
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
@@ -53,31 +50,8 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
                         Box(modifier = Modifier.padding(paddingValues)) {
 
-                            val viewModel: MainScreenViewModel = LocalViewModelFactory.current.getViewModel()
+                            MainScreenContent(viewModel)
 
-                            Screen(screenViewModel = viewModel) {
-                                val viewState by viewModel.viewState.collectAsState()
-
-                                if (viewState.isShowCrashlyticsDialog) {
-                                    CrashlyticsDialog(
-                                        onResult = {
-                                            viewModel.onEvent(
-                                                CrashlyticsDialogResult(it)
-                                            )
-                                        }
-                                    )
-                                }
-
-                                if (viewState.isChangelogDialogVisible) {
-                                    ChangelogDialog(
-                                        changelog = viewState.changelog,
-                                        onDismissRequest = { viewModel.onEvent(CloseChangelog) }
-                                    )
-                                }
-
-                                val screen by viewModel.screen.collectAsState()
-                                NavigationContent(screen)
-                            }
                         }
 
                     }
@@ -99,6 +73,33 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
         }
     }
 
+}
+
+@Composable
+private fun MainScreenContent(viewModel: MainScreenViewModel) {
+    ScreenContent(screenViewModel = viewModel) {
+        val viewState by viewModel.viewState.collectAsState()
+
+        if (viewState.isShowCrashlyticsDialog) {
+            CrashlyticsDialog(
+                onResult = {
+                    viewModel.onEvent(
+                        CrashlyticsDialogResult(it)
+                    )
+                }
+            )
+        }
+
+        if (viewState.isChangelogDialogVisible) {
+            ChangelogDialog(
+                changelog = viewState.changelog,
+                onDismissRequest = { viewModel.onEvent(CloseChangelog) }
+            )
+        }
+
+        val screen by viewModel.screen.collectAsState()
+        NavigationContent(screen = screen)
+    }
 }
 
 

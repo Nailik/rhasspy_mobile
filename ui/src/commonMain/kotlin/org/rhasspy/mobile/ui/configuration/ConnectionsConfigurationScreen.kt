@@ -13,13 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalViewModelFactory
-import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.*
+import org.rhasspy.mobile.ui.content.item.EventStateIconTinted
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationUiEvent
@@ -28,19 +29,18 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigu
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewState.*
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.ConnectionsConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConnectionScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConnectionScreenNavigationDestination.*
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.ConfigurationScreen
+import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 /**
- * configuration screens with list items that open bottom sheet
+ * configuration screen for connection (rhasspy2Hermes, rhasspy3Wyoming, HomeAssistant, Mqtt, local Webserver)
  */
 @Composable
-fun ConnectionsConfigurationScreen() {
+fun ConnectionsConfigurationScreen(viewModel: ConnectionsConfigurationViewModel) {
 
-    val viewModel: ConnectionsConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
-
-    Screen(screenViewModel = viewModel) {
+    ScreenContent(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         ConnectionsConfigurationScreenContent(
@@ -51,7 +51,6 @@ fun ConnectionsConfigurationScreen() {
 
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ConnectionsConfigurationScreenContent(
@@ -59,104 +58,144 @@ private fun ConnectionsConfigurationScreenContent(
     viewState: ConnectionsConfigurationViewState
 ) {
 
-    Scaffold(
-        modifier = Modifier
-            .testTag(ConfigurationScreen)
-            .fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = { Text(MR.strings.configuration.stable) },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { onEvent(BackClick) },
-                        modifier = Modifier.testTag(TestTag.AppBarBackButton)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = MR.strings.back.stable,
-                        )
-                    }
-                }
-            )
-        },
-    ) { paddingValues ->
-
-        Column(
+    Surface(tonalElevation = 3.dp) {
+        Scaffold(
             modifier = Modifier
-                .testTag(TestTag.List)
-                .padding(paddingValues)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-        ) {
+                .testTag(ConnectionsConfigurationScreen)
+                .fillMaxSize(),
+            topBar = {
+                TopAppBar(
+                    title = { Text(MR.strings.connections.stable) },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { onEvent(BackClick) },
+                            modifier = Modifier.testTag(TestTag.AppBarBackButton)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = MR.strings.back.stable,
+                            )
+                        }
+                    }
+                )
+            },
+        ) { paddingValues ->
 
-            Http(
-                viewState = viewState.http,
-                onEvent = onEvent
-            )
-            CustomDivider()
+            Column(
+                modifier = Modifier
+                    .testTag(TestTag.List)
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
+
+                Rhasspy2Hermes(
+                    viewState = viewState.rhassyp2Hermes,
+                    onEvent = onEvent
+                )
+
+                CustomDivider()
+
+                Rhasspy3Wyoming(
+                    viewState = viewState.rhassyp3Wyoming,
+                    onEvent = onEvent
+                )
+
+                CustomDivider()
+
+                HomeAssistant(
+                    viewState = viewState.homeAssistant,
+                    onEvent = onEvent
+                )
+
+                CustomDivider()
+
+                Mqtt(
+                    viewState = viewState.mqtt,
+                    onEvent = onEvent
+                )
+
+                CustomDivider()
 
 
-            Mqtt(
-                viewState = viewState.mqtt,
-                onEvent = onEvent
-            )
-            CustomDivider()
+                Webserver(
+                    viewState = viewState.webserver,
+                    onEvent = onEvent
+                )
 
+                CustomDivider()
 
-            Webserver(
-                viewState = viewState.webserver,
-                onEvent = onEvent
-            )
-            CustomDivider()
-
+            }
         }
     }
 
 }
 
-/**
- * List element for http configuration
- * shows if ssl verification is enabled
- */
 @Composable
-private fun Http(
+private fun Rhasspy2Hermes(
     viewState: HttpViewState,
     onEvent: (ConnectionsConfigurationUiEvent) -> Unit
 ) {
 
     ConnectionListItem(
-        text = MR.strings.remoteHermesHTTP.stable,
-        secondaryText = "${translate(MR.strings.sslValidation.stable)} ${translate(viewState.isHttpSSLVerificationEnabled.not().toText())}",
-        destination = RemoteHermesHttpConnectionScreen,
+        text = MR.strings.rhasspy2_hermes_server.stable,
+        secondaryText = viewState.host,
+        serviceViewState = viewState.serviceViewState,
+        destination = Rhasspy2HermesConnectionScreen,
         onEvent = onEvent
     )
 
 }
 
-/**
- * List element for mqtt configuration
- * shows connection state of mqtt
- */
+@Composable
+private fun Rhasspy3Wyoming(
+    viewState: HttpViewState,
+    onEvent: (ConnectionsConfigurationUiEvent) -> Unit
+) {
+
+    ConnectionListItem(
+        text = MR.strings.rhasspy3_wyoming_server.stable,
+        secondaryText = viewState.host,
+        serviceViewState = viewState.serviceViewState,
+        destination = Rhasspy3WyomingConnectionScreen,
+        onEvent = onEvent
+    )
+
+}
+
+@Composable
+private fun HomeAssistant(
+    viewState: HttpViewState,
+    onEvent: (ConnectionsConfigurationUiEvent) -> Unit
+) {
+
+    ConnectionListItem(
+        text = MR.strings.home_assistant_server.stable,
+        secondaryText = viewState.host,
+        serviceViewState = viewState.serviceViewState,
+        destination = HomeAssistantConnectionScreen,
+        onEvent = onEvent
+    )
+
+}
+
 @Composable
 private fun Mqtt(
     viewState: MqttViewState,
     onEvent: (ConnectionsConfigurationUiEvent) -> Unit
 ) {
 
+
     ConnectionListItem(
         text = MR.strings.mqtt.stable,
         secondaryText = if (viewState.isMQTTConnected) MR.strings.connected.stable else MR.strings.notConnected.stable,
+        serviceViewState = viewState.serviceViewState,
         destination = MqttConnectionScreen,
         onEvent = onEvent
     )
 
 }
 
-
-/**
- * List element for text to speech configuration
- * shows if web server is enabled
- */
 @Composable
 private fun Webserver(
     viewState: WebServerViewState,
@@ -164,40 +203,20 @@ private fun Webserver(
 ) {
 
     ConnectionListItem(
-        text = MR.strings.webserver.stable,
+        text = MR.strings.local_webserver.stable,
         secondaryText = viewState.isHttpServerEnabled.toText(),
+        serviceViewState = viewState.serviceViewState,
         destination = WebServerConnectionScreen,
         onEvent = onEvent
     )
 
 }
 
-/**
- * list item
- */
-@Composable
-private fun ConnectionListItem(
-    text: StableStringResource,
-    secondaryText: String,
-    destination: ConnectionScreenNavigationDestination,
-    onEvent: (ConnectionsConfigurationUiEvent) -> Unit
-) {
-    ListElement(
-        modifier = Modifier
-            .clickable { onEvent(Navigate(destination)) }
-            .testTag(destination),
-        text = { Text(text) },
-        secondaryText = { Text(text = secondaryText) },
-    )
-}
-
-/**
- * list item
- */
 @Composable
 private fun ConnectionListItem(
     text: StableStringResource,
     secondaryText: StableStringResource,
+    serviceViewState: ServiceViewState? = null,
     destination: ConnectionScreenNavigationDestination,
     onEvent: (ConnectionsConfigurationUiEvent) -> Unit
 ) {
@@ -206,6 +225,37 @@ private fun ConnectionListItem(
             .clickable { onEvent(Navigate(destination)) }
             .testTag(destination),
         text = { Text(text) },
-        secondaryText = { Text(resource = secondaryText) },
+        secondaryText = { Text(secondaryText) },
+        trailing = serviceViewState?.let {
+            {
+                val serviceStateValue by serviceViewState.serviceState.collectAsState()
+                EventStateIconTinted(serviceStateValue)
+            }
+        }
     )
+
+}
+
+@Composable
+private fun ConnectionListItem(
+    text: StableStringResource,
+    secondaryText: String,
+    serviceViewState: ServiceViewState? = null,
+    destination: ConnectionScreenNavigationDestination,
+    onEvent: (ConnectionsConfigurationUiEvent) -> Unit
+) {
+    ListElement(
+        modifier = Modifier
+            .clickable { onEvent(Navigate(destination)) }
+            .testTag(destination),
+        text = { Text(text) },
+        secondaryText = { Text("${translate(MR.strings.host.stable)}: $secondaryText") },
+        trailing = serviceViewState?.let {
+            {
+                val serviceStateValue by serviceViewState.serviceState.collectAsState()
+                EventStateIconTinted(serviceStateValue)
+            }
+        }
+    )
+
 }

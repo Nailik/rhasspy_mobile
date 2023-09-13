@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -23,12 +22,12 @@ import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.*
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewState.WebServerConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Action.OpenWebServerSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Action.SelectSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewState.WebServerConnectionConfigurationData
 
 /**
  * Content to configure text to speech
@@ -37,16 +36,14 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
  * select ssl certificate
  */
 @Composable
-fun WebServerConnectionScreen() {
-
-    val viewModel: WebServerConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+fun WebServerConnectionScreen(viewModel: WebServerConnectionConfigurationViewModel) {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier,
         screenViewModel = viewModel,
-        title = MR.strings.webserver.stable,
+        title = MR.strings.local_webserver.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent
     ) {
@@ -64,8 +61,8 @@ fun WebServerConnectionScreen() {
 
 @Composable
 private fun WebServerConnectionEditContent(
-    editData: WebServerConfigurationData,
-    onEvent: (WebServerConfigurationUiEvent) -> Unit
+    editData: WebServerConnectionConfigurationData,
+    onEvent: (WebServerConnectionConfigurationUiEvent) -> Unit
 ) {
 
     LazyColumn(
@@ -78,7 +75,7 @@ private fun WebServerConnectionEditContent(
             SwitchListItem(
                 text = MR.strings.enableHTTPApi.stable,
                 modifier = Modifier.testTag(TestTag.ServerSwitch),
-                isChecked = editData.isHttpServerEnabled,
+                isChecked = editData.isEnabled,
                 onCheckedChange = { onEvent(SetHttpServerEnabled(it)) }
             )
         }
@@ -88,7 +85,7 @@ private fun WebServerConnectionEditContent(
             AnimatedVisibility(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
-                visible = editData.isHttpServerEnabled
+                visible = editData.isEnabled
             ) {
 
                 Column {
@@ -97,18 +94,18 @@ private fun WebServerConnectionEditContent(
                     TextFieldListItem(
                         label = MR.strings.port.stable,
                         modifier = Modifier.testTag(TestTag.Port),
-                        value = editData.httpServerPortText,
+                        value = editData.portText,
                         isLastItem = true,
                         onValueChange = { onEvent(UpdateHttpServerPort(it)) },
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                     )
 
                     WebserverSSL(
-                        isHttpServerSSLEnabled = editData.isHttpServerSSLEnabled,
-                        httpServerSSLKeyStoreFileName = editData.httpServerSSLKeyStoreFileName,
-                        httpServerSSLKeyStorePassword = editData.httpServerSSLKeyStorePassword,
-                        httpServerSSLKeyAlias = editData.httpServerSSLKeyAlias,
-                        httpServerSSLKeyPassword = editData.httpServerSSLKeyPassword,
+                        isHttpServerSSLEnabled = editData.isSSLEnabled,
+                        httpServerSSLKeyStoreFileName = editData.keyStoreFile,
+                        httpServerSSLKeyStorePassword = editData.keyStorePassword,
+                        httpServerSSLKeyAlias = editData.keyAlias,
+                        httpServerSSLKeyPassword = editData.keyPassword,
                         onEvent = onEvent
                     )
 
@@ -134,7 +131,7 @@ private fun WebserverSSL(
     httpServerSSLKeyStorePassword: String,
     httpServerSSLKeyAlias: String,
     httpServerSSLKeyPassword: String,
-    onEvent: (WebServerConfigurationUiEvent) -> Unit
+    onEvent: (WebServerConnectionConfigurationUiEvent) -> Unit
 ) {
 
 

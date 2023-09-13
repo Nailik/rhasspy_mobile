@@ -20,7 +20,8 @@ internal class IntentRecognitionServiceParamsCreator {
 
     private fun getParams(): IntentRecognitionServiceParams {
         return IntentRecognitionServiceParams(
-            intentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value
+            intentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
+            httpConnectionId = null
         )
     }
 }

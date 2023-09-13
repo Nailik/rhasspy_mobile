@@ -5,6 +5,9 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.resources.MR
 import kotlin.coroutines.resume
 import kotlin.math.roundToInt
 
@@ -114,32 +117,6 @@ fun <T> Array<out T>.toImmutableList(): ImmutableList<T> {
     }
 }
 
-fun Int?.toIntOrZero(): Int = this ?: 0
-fun Long?.toLongOrZero(): Long = this ?: 0
-fun Int?.toStringOrEmpty(): String = this?.toString() ?: ""
-fun Long?.toStringOrEmpty(): String = this?.toString() ?: ""
-fun String?.toLongOrNullOrConstant(): Long? =
-    this?.replace(" ", "")?.let {
-        if (it.length > 10) this.substring(0..9).toLong() else it.trim().trimTrailingZeros()
-            ?.toLongOrNull()
-    }
-
-fun String?.toIntOrNullOrConstant(): Int? =
-    this?.replace(" ", "")?.let {
-        if (it.length > 9) this.substring(0..9).toInt() else it.trimTrailingZeros()
-            ?.toIntOrNull()
-    }
-
-private fun String?.trimTrailingZeros(): String? {
-    if (this == null) return null
-    val result = this.replaceFirst(Regex("^0*"), "")
-    return if (result.isEmpty() && this.isNotEmpty()) {
-        return "0"
-    } else {
-        result
-    }
-}
-
 fun <E> ImmutableList<E>.updateList(block: MutableList<E>.() -> Unit): ImmutableList<E> {
     return this.toMutableList().apply(block).toImmutableList()
 }
@@ -182,4 +159,8 @@ fun <T> CancellableContinuation<T>.resumeSave(value: T, onCancellation: ((cause:
     if (!this.isCompleted) {
         this.resume(value, onCancellation)
     }
+}
+
+fun Boolean.toText(): StableStringResource {
+    return if (this) MR.strings.enabled.stable else MR.strings.disabled.stable
 }

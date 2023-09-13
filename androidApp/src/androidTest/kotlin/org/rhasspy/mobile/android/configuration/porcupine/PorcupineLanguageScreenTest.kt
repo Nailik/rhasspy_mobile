@@ -23,7 +23,7 @@ class PorcupineLanguageScreenTest : FlakyTest() {
 
     @Composable
     override fun ComposableContent() {
-        PorcupineLanguageScreen()
+        PorcupineLanguageScreen(viewModel)
     }
 
     /**

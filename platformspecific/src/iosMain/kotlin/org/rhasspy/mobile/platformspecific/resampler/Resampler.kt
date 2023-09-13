@@ -13,12 +13,12 @@ actual class Resampler actual constructor(
     outputSampleRateType: AudioFormatSampleRateType,
 ) {
     actual fun resample(inputData: ByteArray): ByteArray {
-        //TODO("Not yet implemented")
+        //TODO #408
         return inputData
     }
 
     actual fun dispose() {
-        //TODO("Not yet implemented")
+        //TODO #408
     }
 
 }

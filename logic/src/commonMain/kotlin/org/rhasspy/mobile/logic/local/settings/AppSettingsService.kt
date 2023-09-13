@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.logic.local.settings
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.middleware.Source
@@ -26,7 +26,7 @@ interface IAppSettingsService : IService {
  */
 internal class AppSettingsService : IAppSettingsService {
 
-    override val logger = LogType.AppSettingsService.logger()
+    private val logger = Logger.withTag("AppSettingsService")
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
     override val serviceState = _serviceState.readOnly

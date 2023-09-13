@@ -20,7 +20,6 @@ import org.rhasspy.mobile.resources.assistant_color_four
 import org.rhasspy.mobile.resources.assistant_color_one
 import org.rhasspy.mobile.resources.assistant_color_three
 import org.rhasspy.mobile.resources.assistant_color_two
-import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.combinedTestTag
 import org.rhasspy.mobile.ui.testTag
@@ -28,21 +27,19 @@ import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewMode
 import kotlin.math.abs
 
 @Composable
-fun IndicationOverlayContent() {
+fun IndicationOverlayContent(viewModel: IndicationOverlayViewModel) {
     Box(
         modifier = Modifier
             .combinedTestTag(TestTag.Indication, TestTag.Overlay)
             .height(96.dp),
         contentAlignment = Alignment.Center
     ) {
-        IndicationContent()
+        IndicationContent(viewModel = viewModel)
     }
 }
 
 @Composable
-fun IndicationContent() {
-
-    val viewModel: IndicationOverlayViewModel = LocalViewModelFactory.current.getViewModel()
+fun IndicationContent(viewModel: IndicationOverlayViewModel) {
 
     val viewState by viewModel.viewState.collectAsState()
     Indication(

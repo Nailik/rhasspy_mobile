@@ -17,22 +17,27 @@ sealed class ServiceState {
 
     data object Success : ServiceState()
 
-    class Exception(val exception: kotlin.Exception? = null) : ServiceState()
+    sealed class ErrorState : ServiceState() {
 
-    class Error(val information: StableStringResource) : ServiceState()
+        class Exception(val exception: kotlin.Exception? = null) : ErrorState()
+
+        class Error(val information: StableStringResource) : ErrorState()
+
+    }
 
     data object Disabled : ServiceState()
 
-    fun isOpenServiceStateDialogEnabled(): Boolean = (this is Exception || this is Error)
-
     fun getText(): TextWrapper {
         return when (this) {
-            Disabled     -> TextWrapperStableStringResource(MR.strings.disabled.stable)
-            is Error     -> TextWrapperStableStringResource(this.information)
-            is Exception -> this.exception?.message?.let { TextWrapperString(it) } ?: TextWrapperStableStringResource(MR.strings.error.stable)
-            Loading      -> TextWrapperStableStringResource(MR.strings.loading.stable)
-            Pending      -> TextWrapperStableStringResource(MR.strings.pending.stable)
-            Success      -> TextWrapperStableStringResource(MR.strings.success.stable)
+            Disabled      -> TextWrapperStableStringResource(MR.strings.disabled.stable)
+            is ErrorState -> when (this) {
+                is ErrorState.Error     -> TextWrapperStableStringResource(this.information)
+                is ErrorState.Exception -> this.exception?.message?.let { TextWrapperString(it) } ?: TextWrapperStableStringResource(MR.strings.error.stable)
+            }
+
+            Loading       -> TextWrapperStableStringResource(MR.strings.loading.stable)
+            Pending       -> TextWrapperStableStringResource(MR.strings.pending.stable)
+            Success       -> TextWrapperStableStringResource(MR.strings.success.stable)
         }
     }
 

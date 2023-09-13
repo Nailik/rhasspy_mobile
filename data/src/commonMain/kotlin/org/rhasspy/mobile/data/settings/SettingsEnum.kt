@@ -1,6 +1,13 @@
 package org.rhasspy.mobile.data.settings
 
 enum class SettingsEnum {
+    Version,
+    Rhasspy2Connection,
+    Rhasspy3Connection,
+    HomeAssistantConnection,
+    MqttConnection,
+    LocalWebserverConnection,
+
     //App Settings
     CrashlyticsDialog,
     ChangelogDialog,
@@ -15,10 +22,6 @@ enum class SettingsEnum {
     AutomaticSilenceDetectionMinimumTime,
 
     BackgroundEnabled,
-    SSLVerificationDisabled,
-    HttpClientServerEndpointHost,
-    HttpClientServerEndpointPort,
-    HttpClientTimeout,
 
     MicrophoneOverlaySize,
     MicrophoneOverlayWhileApp,
@@ -62,25 +65,6 @@ enum class SettingsEnum {
     //Configuration Settings
     SiteId,
 
-    HttpServerEnabled,
-    HttpServerPort,
-    HttpServerSSLEnabled,
-    HttpServerSSLKeyStoreFile,
-    HttpServerSSLKeyStorePassword,
-    HttpServerSSLKeyAlias,
-    HttpServerSSLKeyPassword,
-
-    MQTTEnabled,
-    MQTTHost,
-    MQTTPort,
-    MQTTUserName,
-    MQTTSSLEnabled,
-    MQTTPassword,
-    MQTTConnectionTimeout,
-    MQTTKeepAliveInterval,
-    MQTTRetryInterval,
-    MQTTKeyStoreFile,
-
     WakeWordUDPOutputHost,
     WakeWordUDPOutputPort,
 
@@ -106,22 +90,16 @@ enum class SettingsEnum {
     SpeechToTextAudioOutputChannel,
     SpeechToTextAudioOutputEncoding,
     SpeechToTextAudioOutputSampleRate,
-    CustomSpeechToTextEndpoint,
-    SpeechToTextHttpEndpoint,
+
     SpeechToTextMqttSilenceDetection,
 
     IntentRecognitionOption,
-    CustomIntentRecognitionHttpEndpoint,
-    IntentRecognitionHttpEndpoint,
 
     TextToSpeechOption,
-    CustomTextToSpeechOptionHttpEndpoint,
-    TextToSpeechHttpEndpoint,
 
     AudioPlayingOption,
     AudioOutputOption,
-    CustomAudioPlayingHttpEndpoint,
-    AudioPlayingHttpEndpoint,
+
     AudioPlayingMqttSiteId,
 
     DialogManagementOption,
@@ -130,9 +108,6 @@ enum class SettingsEnum {
     DialogManagementLocalRecordingTimeout,
 
     IntentHandlingOption,
-    IntentHandlingEndpoint,
-    IntentHandlingHassUrl,
-    IntentHandlingHassAccessToken,
     IsIntentHandlingHassEvent;
 
 }

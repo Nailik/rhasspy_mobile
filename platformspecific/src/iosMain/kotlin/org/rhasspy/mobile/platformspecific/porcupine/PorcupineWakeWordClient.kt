@@ -17,16 +17,16 @@ actual class PorcupineWakeWordClient actual constructor(
      * start wake word detected
      */
     actual fun start(): Exception? {
-        //TODO("Not yet implemented")
+        //TODO #516
         return null
     }
 
     actual fun audioFrame(data: ByteArray) {
-        //TODO("Not yet implemented")
+        //TODO #516
     }
 
     actual fun close() {
-        //TODO("Not yet implemented")
+        //TODO #516
     }
 
 

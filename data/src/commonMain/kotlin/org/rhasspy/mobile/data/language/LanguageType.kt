@@ -10,7 +10,7 @@ enum class LanguageType(override val text: StableStringResource, val code: Strin
     English(MR.strings.en.stable, "en"),
     German(MR.strings.de.stable, "de");
 
-    override fun findValue(value: String): LanguageType {
-        return valueOf(value)
-    }
+    override val internalEntries get() = entries
+
+
 }

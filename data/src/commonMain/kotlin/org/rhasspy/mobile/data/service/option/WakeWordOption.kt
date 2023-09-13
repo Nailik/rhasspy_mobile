@@ -5,12 +5,12 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 
 enum class WakeWordOption(override val text: StableStringResource) : IOption<WakeWordOption> {
+
     Porcupine(MR.strings.localPorcupine.stable),
-    MQTT(MR.strings.mqtt.stable),
+    Rhasspy2HermesMQTT(MR.strings.rhasspy2hermes_mqtt.stable),
     Udp(MR.strings.udpAudioOutput.stable),
     Disabled(MR.strings.disabled.stable);
 
-    override fun findValue(value: String): WakeWordOption {
-        return valueOf(value)
-    }
+    override val internalEntries get() = entries
+
 }

@@ -1,4 +1,4 @@
-@file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE")
+@file:Suppress("UnstableApiUsage")
 
 plugins {
     kotlin("multiplatform")
@@ -19,6 +19,9 @@ kotlin {
                 implementation(Touchlab.kermit)
                 implementation(Koin.core)
                 implementation(Square.okio)
+                implementation(CashApp.Sqldelight.coroutines)
+                implementation(Russhwolf.multiplatformSettingsNoArg)
+                implementation(Russhwolf.multiplatformSettingsSerialization)
             }
         }
         val commonTest by getting
@@ -26,8 +29,6 @@ kotlin {
             dependencies {
                 //only for migration
                 implementation(CashApp.Sqldelight.android)
-                implementation("com.russhwolf:multiplatform-settings-no-arg:_")
-                implementation("com.russhwolf:multiplatform-settings-serialization:_")
             }
         }
         val androidUnitTest by getting

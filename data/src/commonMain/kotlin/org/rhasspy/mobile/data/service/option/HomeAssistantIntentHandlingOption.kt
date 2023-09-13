@@ -4,12 +4,11 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 
-enum class HomeAssistantIntentHandlingOption(override val text: StableStringResource) :
-    IOption<HomeAssistantIntentHandlingOption> {
+enum class HomeAssistantIntentHandlingOption(override val text: StableStringResource) : IOption<HomeAssistantIntentHandlingOption> {
+
     Event(MR.strings.hassEvent.stable),
     Intent(MR.strings.intentHandling.stable);
 
-    override fun findValue(value: String): HomeAssistantIntentHandlingOption {
-        return HomeAssistantIntentHandlingOption.valueOf(value)
-    }
+    override val internalEntries get() = entries
+
 }

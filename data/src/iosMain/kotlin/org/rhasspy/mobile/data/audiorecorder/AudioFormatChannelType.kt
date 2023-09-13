@@ -10,12 +10,10 @@ actual enum class AudioFormatChannelType(
     actual val value: Int,
     actual val count: Int
 ) : IOption<AudioFormatChannelType> {
-    //TODO("Not yet implemented")
+    //TODO #509
     Default(MR.strings.defaultText.stable, 1, 1);
 
-    override fun findValue(value: String): AudioFormatChannelType {
-        return AudioFormatChannelType.valueOf(value)
-    }
+    override val internalEntries get() = entries
 
     actual companion object {
         actual val default: AudioFormatChannelType get() = Default

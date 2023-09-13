@@ -9,12 +9,10 @@ actual enum class AudioFormatSampleRateType(
     override val text: StableStringResource,
     actual val value: Int
 ) : IOption<AudioFormatSampleRateType> {
-    //TODO("Not yet implemented")
+    //TODO #509
     Default(MR.strings.defaultText.stable, 1);
 
-    override fun findValue(value: String): AudioFormatSampleRateType {
-        return AudioFormatSampleRateType.valueOf(value)
-    }
+    override val internalEntries get() = entries
 
     actual companion object {
         actual val default: AudioFormatSampleRateType get() = Default

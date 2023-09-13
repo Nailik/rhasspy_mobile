@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.StateFlow
 actual object DeviceVolume {
 
     actual val volumeFlowSound: StateFlow<Int?>
-        get() = MutableStateFlow(null) //TODO("Not yet implemented")
+        get() = MutableStateFlow(null) //TODO #514
 
     actual val volumeFlowNotification: StateFlow<Int?>
-        get() = MutableStateFlow(null) //TODO("Not yet implemented")
+        get() = MutableStateFlow(null) //TODO #514
 
 }

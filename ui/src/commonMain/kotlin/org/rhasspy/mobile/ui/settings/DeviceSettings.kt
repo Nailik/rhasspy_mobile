@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.list.SliderListItem
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
@@ -30,8 +29,8 @@ import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsViewMo
  */
 
 @Composable
-fun DeviceSettingsContent() {
-    val viewModel: DeviceSettingsViewModel = LocalViewModelFactory.current.getViewModel()
+fun DeviceSettingsContent(viewModel: DeviceSettingsViewModel) {
+
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(

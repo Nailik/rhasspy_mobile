@@ -6,7 +6,6 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.IOption
 import org.rhasspy.mobile.resources.MR
 
-
 enum class LogLevel(override val text: StableStringResource, val severity: Severity) : IOption<LogLevel> {
 
     Verbose(MR.strings.verbose.stable, Severity.Verbose),
@@ -16,7 +15,6 @@ enum class LogLevel(override val text: StableStringResource, val severity: Sever
     Error(MR.strings.error.stable, Severity.Error),
     Assert(MR.strings.assert_level.stable, Severity.Assert);
 
-    override fun findValue(value: String): LogLevel {
-        return valueOf(value)
-    }
+    override val internalEntries get() = entries
+
 }

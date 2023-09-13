@@ -8,10 +8,9 @@ import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.testutils.AppTest
-import org.rhasspy.mobile.testutils.getRandomString
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewState.IntentRecognitionConfigurationData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -41,17 +40,9 @@ class IntentRecognitionConfigurationViewModelTest : AppTest() {
             }
         )
 
-        initialIntentHandlingConfigurationData = IntentRecognitionConfigurationData(
-            intentRecognitionOption = IntentRecognitionOption.Disabled,
-            isUseCustomIntentRecognitionHttpEndpoint = false,
-            intentRecognitionHttpEndpoint = ""
-        )
+        initialIntentHandlingConfigurationData = IntentRecognitionConfigurationData(intentRecognitionOption = IntentRecognitionOption.Disabled)
 
-        intentHandlingConfigurationData = IntentRecognitionConfigurationData(
-            intentRecognitionOption = IntentRecognitionOption.RemoteMQTT,
-            isUseCustomIntentRecognitionHttpEndpoint = true,
-            intentRecognitionHttpEndpoint = getRandomString(5)
-        )
+        intentHandlingConfigurationData = IntentRecognitionConfigurationData(intentRecognitionOption = IntentRecognitionOption.Rhasspy2HermesMQTT)
 
         intentRecognitionConfigurationViewModel = get()
     }
@@ -59,40 +50,17 @@ class IntentRecognitionConfigurationViewModelTest : AppTest() {
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(
-            initialIntentHandlingConfigurationData,
-            intentRecognitionConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialIntentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
 
         with(intentHandlingConfigurationData) {
-            intentRecognitionConfigurationViewModel.onEvent(
-                ChangeIntentRecognitionHttpEndpoint(
-                    intentRecognitionHttpEndpoint
-                )
-            )
-            intentRecognitionConfigurationViewModel.onEvent(
-                SelectIntentRecognitionOption(
-                    intentRecognitionOption
-                )
-            )
-            intentRecognitionConfigurationViewModel.onEvent(
-                SetUseCustomHttpEndpoint(
-                    isUseCustomIntentRecognitionHttpEndpoint
-                )
-            )
+            intentRecognitionConfigurationViewModel.onEvent(SelectIntentRecognitionOption(intentRecognitionOption))
         }
 
-        assertEquals(
-            intentHandlingConfigurationData,
-            intentRecognitionConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(intentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
 
         intentRecognitionConfigurationViewModel.onEvent(Save)
 
-        assertEquals(
-            intentHandlingConfigurationData,
-            intentRecognitionConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(intentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
         assertEquals(intentHandlingConfigurationData, IntentRecognitionConfigurationData())
     }
 
@@ -104,34 +72,14 @@ class IntentRecognitionConfigurationViewModelTest : AppTest() {
         )
 
         with(intentHandlingConfigurationData) {
-            intentRecognitionConfigurationViewModel.onEvent(
-                ChangeIntentRecognitionHttpEndpoint(
-                    intentRecognitionHttpEndpoint
-                )
-            )
-            intentRecognitionConfigurationViewModel.onEvent(
-                SelectIntentRecognitionOption(
-                    intentRecognitionOption
-                )
-            )
-            intentRecognitionConfigurationViewModel.onEvent(
-                SetUseCustomHttpEndpoint(
-                    isUseCustomIntentRecognitionHttpEndpoint
-                )
-            )
+            intentRecognitionConfigurationViewModel.onEvent(SelectIntentRecognitionOption(intentRecognitionOption))
         }
 
-        assertEquals(
-            intentHandlingConfigurationData,
-            intentRecognitionConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(intentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
 
         intentRecognitionConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(
-            initialIntentHandlingConfigurationData,
-            intentRecognitionConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialIntentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
         assertEquals(initialIntentHandlingConfigurationData, IntentRecognitionConfigurationData())
     }
 }

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.PlayStopRecording
+import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action
@@ -15,6 +16,7 @@ interface IHomeScreeViewModel : IScreenViewModel
 @Stable
 class HomeScreenViewModel(
     private val serviceMiddleware: IServiceMiddleware,
+    val indicationOverlayViewModel: IndicationOverlayViewModel,
     viewStateCreator: HomeScreenViewStateCreator
 ) : IHomeScreeViewModel, ScreenViewModel() {
 

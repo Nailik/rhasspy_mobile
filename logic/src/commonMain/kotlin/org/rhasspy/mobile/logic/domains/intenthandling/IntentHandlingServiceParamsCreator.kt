@@ -19,7 +19,8 @@ internal class IntentHandlingServiceParamsCreator {
 
     private fun getParams(): IntentHandlingServiceParams {
         return IntentHandlingServiceParams(
-            intentHandlingOption = ConfigurationSetting.intentHandlingOption.value
+            intentHandlingOption = ConfigurationSetting.intentHandlingOption.value,
+            httpConnectionId = null
         )
     }
 }

@@ -5,10 +5,9 @@ import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.testutils.AppTest
-import org.rhasspy.mobile.testutils.getRandomString
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SelectTextToSpeechOption
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewState.TextToSpeechConfigurationData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -31,14 +30,10 @@ class TextToSpeechConfigurationViewModelTest : AppTest() {
 
         initialTextToSpeechConfigurationData = TextToSpeechConfigurationData(
             textToSpeechOption = TextToSpeechOption.Disabled,
-            isUseCustomTextToSpeechHttpEndpoint = false,
-            textToSpeechHttpEndpoint = ""
         )
 
         textToSpeechConfigurationData = TextToSpeechConfigurationData(
-            textToSpeechOption = TextToSpeechOption.RemoteHTTP,
-            isUseCustomTextToSpeechHttpEndpoint = true,
-            textToSpeechHttpEndpoint = getRandomString(5)
+            textToSpeechOption = TextToSpeechOption.Rhasspy2HermesHttp,
         )
 
         textToSpeechConfigurationViewModel = get()
@@ -46,71 +41,33 @@ class TextToSpeechConfigurationViewModelTest : AppTest() {
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(
-            initialTextToSpeechConfigurationData,
-            textToSpeechConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialTextToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)
 
         with(textToSpeechConfigurationData) {
             textToSpeechConfigurationViewModel.onEvent(SelectTextToSpeechOption(textToSpeechOption))
-            textToSpeechConfigurationViewModel.onEvent(
-                SetUseCustomHttpEndpoint(
-                    isUseCustomTextToSpeechHttpEndpoint
-                )
-            )
-            textToSpeechConfigurationViewModel.onEvent(
-                UpdateTextToSpeechHttpEndpoint(
-                    textToSpeechHttpEndpoint
-                )
-            )
         }
 
-        assertEquals(
-            textToSpeechConfigurationData,
-            textToSpeechConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(textToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)
 
         textToSpeechConfigurationViewModel.onEvent(Save)
 
-        assertEquals(
-            textToSpeechConfigurationData,
-            textToSpeechConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(textToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)
         assertEquals(textToSpeechConfigurationData, TextToSpeechConfigurationData())
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
-        assertEquals(
-            initialTextToSpeechConfigurationData,
-            textToSpeechConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialTextToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)
 
         with(textToSpeechConfigurationData) {
             textToSpeechConfigurationViewModel.onEvent(SelectTextToSpeechOption(textToSpeechOption))
-            textToSpeechConfigurationViewModel.onEvent(
-                SetUseCustomHttpEndpoint(
-                    isUseCustomTextToSpeechHttpEndpoint
-                )
-            )
-            textToSpeechConfigurationViewModel.onEvent(
-                UpdateTextToSpeechHttpEndpoint(
-                    textToSpeechHttpEndpoint
-                )
-            )
         }
 
-        assertEquals(
-            textToSpeechConfigurationData,
-            textToSpeechConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(textToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)
 
         textToSpeechConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(
-            initialTextToSpeechConfigurationData,
-            textToSpeechConfigurationViewModel.viewState.value.editData
-        )
+        assertEquals(initialTextToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)
         assertEquals(initialTextToSpeechConfigurationData, TextToSpeechConfigurationData())
     }
 }

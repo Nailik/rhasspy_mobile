@@ -13,7 +13,8 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.AudioOutputFormatUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.AudioRecorderFormatUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SetUseSpeechToTextMqttSilenceDetection
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SpeechToTextConfigurationScreenDestination.AudioOutputFormatScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SpeechToTextConfigurationScreenDestination.AudioRecorderFormatScreen
@@ -22,7 +23,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SpeechToTex
 class SpeechToTextConfigurationViewModel(
     service: ISpeechToTextService
 ) : ConfigurationViewModel(
-    service = service
+    serviceState = service.serviceState
 ) {
 
     private val _viewState = MutableStateFlow(
@@ -57,9 +58,7 @@ class SpeechToTextConfigurationViewModel(
             it.copy(editData = with(it.editData) {
                 when (change) {
                     is SelectSpeechToTextOption               -> copy(speechToTextOption = change.option)
-                    is SetUseCustomHttpEndpoint               -> copy(isUseCustomSpeechToTextHttpEndpoint = change.enabled)
                     is SetUseSpeechToTextMqttSilenceDetection -> copy(isUseSpeechToTextMqttSilenceDetection = change.enabled)
-                    is UpdateSpeechToTextHttpEndpoint         -> copy(speechToTextHttpEndpoint = change.endpoint)
                 }
             })
         }
@@ -113,9 +112,7 @@ class SpeechToTextConfigurationViewModel(
     override fun onSave() {
         with(_viewState.value.editData) {
             ConfigurationSetting.speechToTextOption.value = speechToTextOption
-            ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value = isUseCustomSpeechToTextHttpEndpoint
             ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value = isUseSpeechToTextMqttSilenceDetection
-            ConfigurationSetting.speechToTextHttpEndpoint.value = speechToTextHttpEndpoint
 
             with(speechToTextAudioRecorderData) {
                 ConfigurationSetting.speechToTextAudioRecorderChannel.value = audioRecorderChannelType

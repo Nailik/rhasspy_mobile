@@ -1,4 +1,4 @@
-@file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE")
+@file:Suppress("UnstableApiUsage")
 
 plugins {
     id("org.kodein.mock.mockmp")
@@ -21,6 +21,8 @@ kotlin {
                 implementation(Koin.test)
                 implementation(KotlinX.Coroutines.test)
                 implementation("org.kodein.mock:mockmp-test-helper:_")
+                implementation(Russhwolf.multiplatformSettingsTest)
+                implementation(Russhwolf.multiplatformSettingsNoArg)
             }
         }
         val commonTest by getting

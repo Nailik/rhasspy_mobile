@@ -11,17 +11,22 @@ import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntenti
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import java.io.File
 
-actual fun Path.Companion.commonInternalPath(
+actual fun Path.Companion.commonInternalFilePath(
     nativeApplication: NativeApplication,
     fileName: String
 ): Path = "${nativeApplication.filesDir?.let { "$it/" } ?: ""}$fileName".toPath()
+
+actual fun Path.Companion.commonInternalPath(
+    nativeApplication: NativeApplication,
+    fileName: String
+): Path = "${nativeApplication.filesDir.parent?.let { "$it/" } ?: ""}$fileName".toPath()
 
 actual fun Path.Companion.commonDatabasePath(
     nativeApplication: NativeApplication,
     fileName: String
 ): Path = nativeApplication.getDatabasePath(fileName).toOkioPath()
 
-actual fun Path?.commonExists(): Boolean = this?.let { !FileSystem.SYSTEM.exists(this) } ?: false
+actual fun Path?.commonExists(): Boolean = this?.let { FileSystem.SYSTEM.exists(this) } ?: false
 
 actual fun Path.commonDelete() {
     FileSystem.SYSTEM.delete(this)

@@ -1,9 +1,11 @@
 package org.rhasspy.mobile.viewmodel.configuration.connections
 
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.logic.connections.httpclient.IHttpClientService
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttService
-import org.rhasspy.mobile.logic.connections.webserver.IWebServerService
+import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
+import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
+import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -11,19 +13,20 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigu
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 class ConnectionsScreenViewStateCreator(
-    private val httpClientService: IHttpClientService,
-    private val webServerService: IWebServerService,
-    private val mqttService: IMqttService,
+    private val rhasspy2HermesConnection: IRhasspy2HermesConnection,
+    private val rhasspy3WyomingConnection: IRhasspy3WyomingConnection,
+    private val homeAssistantConnection: IHomeAssistantConnection,
+    private val webServerService: IWebServerConnection,
+    private val mqttService: IMqttConnection,
 ) {
 
     operator fun invoke(): StateFlow<ConnectionsConfigurationViewState> {
         return combineStateFlow(
-            httpClientService.serviceState,
-            webServerService.serviceState,
-            mqttService.serviceState,
+            ConfigurationSetting.rhasspy2Connection.data,
+            ConfigurationSetting.rhasspy3Connection.data,
+            ConfigurationSetting.homeAssistantConnection.data,
+            ConfigurationSetting.localWebserverConnection.data,
             mqttService.isConnected,
-            ConfigurationSetting.isHttpClientSSLVerificationDisabled.data,
-            ConfigurationSetting.isHttpServerEnabled.data,
         ).mapReadonlyState {
             getViewState()
         }
@@ -31,17 +34,25 @@ class ConnectionsScreenViewStateCreator(
 
     private fun getViewState(): ConnectionsConfigurationViewState {
         return ConnectionsConfigurationViewState(
-            http = HttpViewState(
-                isHttpSSLVerificationEnabled = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value,
-                serviceState = ServiceViewState(httpClientService.serviceState)
+            rhassyp2Hermes = HttpViewState(
+                host = ConfigurationSetting.rhasspy2Connection.value.host,
+                serviceViewState = ServiceViewState(rhasspy2HermesConnection.connectionState)
+            ),
+            rhassyp3Wyoming = HttpViewState(
+                host = ConfigurationSetting.rhasspy3Connection.value.host,
+                serviceViewState = ServiceViewState(rhasspy3WyomingConnection.connectionState)
+            ),
+            homeAssistant = HttpViewState(
+                host = ConfigurationSetting.homeAssistantConnection.value.host,
+                serviceViewState = ServiceViewState(homeAssistantConnection.connectionState)
             ),
             webserver = WebServerViewState(
-                isHttpServerEnabled = ConfigurationSetting.isHttpServerEnabled.value,
-                serviceState = ServiceViewState(webServerService.serviceState)
+                isHttpServerEnabled = ConfigurationSetting.localWebserverConnection.value.isEnabled,
+                serviceViewState = ServiceViewState(webServerService.connectionState)
             ),
             mqtt = MqttViewState(
                 isMQTTConnected = mqttService.isConnected.value,
-                serviceState = ServiceViewState(mqttService.serviceState)
+                serviceViewState = ServiceViewState(mqttService.connectionState)
             ),
         )
     }

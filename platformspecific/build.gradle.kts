@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
+@file:Suppress("UnstableApiUsage")
 
 plugins {
     kotlin("multiplatform")
@@ -109,13 +109,6 @@ android {
 
 sqldelight {
     databases {
-        create("SettingsDatabase") {
-            dialect("app.cash.sqldelight:sqlite-3-30-dialect:_")
-            packageName.set("org.rhasspy.mobile.settings")
-            schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
-            srcDirs("src/commonMain/sqldelight/org/rhasspy/mobile/settings")
-            verifyMigrations.set(true)
-        }
         create("LogDatabase") {
             dialect("app.cash.sqldelight:sqlite-3-30-dialect:_")
             packageName.set("org.rhasspy.mobile.logging")
