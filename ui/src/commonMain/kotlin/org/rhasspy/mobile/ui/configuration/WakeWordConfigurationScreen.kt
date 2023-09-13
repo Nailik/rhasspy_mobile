@@ -31,7 +31,8 @@ import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.RequestMicrophonePermission
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
@@ -39,7 +40,8 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordUdpConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.EditPorcupineWakeWordScreen
@@ -99,7 +101,6 @@ private fun WakeWordConfigurationOptionContent(
             WakeWordOption.Porcupine ->
                 PorcupineConfiguration(
                     editData = viewState.editData.wakeWordPorcupineConfigurationData,
-                    wakeWordAudioRecorderData = viewState.editData.wakeWordAudioRecorderData,
                     isMicrophonePermissionRequestVisible = viewState.isMicrophonePermissionRequestVisible,
                     onEvent = onEvent
                 )
@@ -107,8 +108,6 @@ private fun WakeWordConfigurationOptionContent(
             WakeWordOption.Udp       ->
                 UdpSettings(
                     editData = viewState.editData.wakeWordUdpConfigurationData,
-                    wakeWordAudioRecorderData = viewState.editData.wakeWordAudioRecorderData,
-                    wakeWordAudioOutputData = viewState.editData.wakeWordAudioOutputData,
                     isMicrophonePermissionRequestVisible = viewState.isMicrophonePermissionRequestVisible,
                     onEvent = onEvent
                 )
@@ -131,7 +130,6 @@ private fun WakeWordConfigurationOptionContent(
 @Composable
 private fun PorcupineConfiguration(
     editData: WakeWordPorcupineConfigurationData,
-    wakeWordAudioRecorderData: WakeWordAudioRecorderConfigurationData,
     isMicrophonePermissionRequestVisible: Boolean,
     onEvent: (WakeWordConfigurationUiEvent) -> Unit
 ) {
@@ -186,19 +184,6 @@ private fun PorcupineConfiguration(
             secondaryText = { Text("${editData.keywordCount} ${translate(MR.strings.active.stable)}") }
         )
 
-
-        //button to open audio recorder format
-        ListElement(
-            modifier = Modifier.clickable { onEvent(OpenAudioRecorderFormat) },
-            text = { Text(MR.strings.audioRecorderFormat.stable) },
-            secondaryText = @Composable {
-                val text = "${translate(wakeWordAudioRecorderData.audioRecorderChannelType.text)} | " +
-                        "${translate(wakeWordAudioRecorderData.audioRecorderEncodingType.text)} | " +
-                        translate(wakeWordAudioRecorderData.audioRecorderSampleRateType.text)
-                Text(text = text)
-            }
-        )
-
         //button to enabled microphone
         AnimatedVisibility(
             enter = expandVertically(),
@@ -221,8 +206,6 @@ private fun PorcupineConfiguration(
 @Composable
 private fun UdpSettings(
     editData: WakeWordUdpConfigurationData,
-    wakeWordAudioRecorderData: WakeWordAudioRecorderConfigurationData,
-    wakeWordAudioOutputData: WakeWordAudioOutputConfigurationData,
     isMicrophonePermissionRequestVisible: Boolean,
     onEvent: (WakeWordConfigurationUiEvent) -> Unit
 ) {
@@ -245,30 +228,6 @@ private fun UdpSettings(
             value = editData.outputPortText,
             onValueChange = { onEvent(UpdateUdpOutputPort(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-        )
-
-        //button to open audio recorder format
-        ListElement(
-            modifier = Modifier.clickable { onEvent(OpenAudioRecorderFormat) },
-            text = { Text(MR.strings.audioRecorderFormat.stable) },
-            secondaryText = @Composable {
-                val text = "${translate(wakeWordAudioRecorderData.audioRecorderChannelType.text)} | " +
-                        "${translate(wakeWordAudioRecorderData.audioRecorderEncodingType.text)} | " +
-                        translate(wakeWordAudioRecorderData.audioRecorderSampleRateType.text)
-                Text(text = text)
-            }
-        )
-
-        //button to open audio output format
-        ListElement(
-            modifier = Modifier.clickable { onEvent(OpenAudioOutputFormat) },
-            text = { Text(MR.strings.audioOutputFormat.stable) },
-            secondaryText = @Composable {
-                val text = "${translate(wakeWordAudioOutputData.audioOutputChannelType.text)} | " +
-                        "${translate(wakeWordAudioOutputData.audioOutputEncodingType.text)} | " +
-                        translate(wakeWordAudioOutputData.audioOutputSampleRateType.text)
-                Text(text = text)
-            }
         )
 
         //button to enabled microphone

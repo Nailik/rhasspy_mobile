@@ -181,18 +181,13 @@ private fun WebserverSSL(
                 visible = isKeyStoreFileTextVisible
             ) {
 
-                val keyStoreFileText by remember {
-                    derivedStateOf {
-                        httpServerSSLKeyStoreFileName ?: ""
-                    }
-                }
-
                 InformationListElement(
                     text = translate(
                         resource = MR.strings.currentlySelectedCertificate.stable,
-                        keyStoreFileText
+                        arg = httpServerSSLKeyStoreFileName ?: ""
                     )
                 )
+
             }
 
             //text field to change key store password

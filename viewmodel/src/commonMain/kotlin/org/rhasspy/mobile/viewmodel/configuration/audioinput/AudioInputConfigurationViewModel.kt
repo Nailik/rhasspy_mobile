@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.viewmodel.configuration.audioinput
 
 import androidx.compose.runtime.Stable
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.AudioInputDomainScreenDestination.AudioInputFormatScreen
@@ -8,11 +10,9 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.AudioInputD
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
-class AudioInputConfigurationViewModel(
-    val viewStateCreator: AudioInputConfigurationViewStateCreator
-) : ScreenViewModel() {
+class AudioInputConfigurationViewModel : ScreenViewModel() {
 
-    val viewState = viewStateCreator()
+    val viewState = ConfigurationSetting.audioInputDomainData.data.mapReadonlyState { AudioInputConfigurationViewState(it) }
 
     fun onEvent(event: AudioInputConfigurationUiEvent) {
         when (event) {

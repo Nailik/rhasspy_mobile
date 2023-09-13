@@ -13,7 +13,10 @@ import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewModel
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewStateCreator
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsScreenViewStateCreator
@@ -76,7 +79,6 @@ import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlay
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsViewModel
 
-
 fun viewModelModule() = module {
     includes(
         logicModule(),
@@ -119,8 +121,14 @@ fun viewModelModule() = module {
     singleOf(::ConnectionsScreenViewStateCreator)
     singleOf(::ConnectionsConfigurationViewModel)
 
-    singleOf(::AudioInputConfigurationViewStateCreator)
     singleOf(::AudioInputConfigurationViewModel)
+
+
+    singleOf(::AudioInputFormatConfigurationDataMapper)
+    singleOf(::AudioInputFormatConfigurationViewModel)
+
+    singleOf(::AudioOutputFormatConfigurationDataMapper)
+    singleOf(::AudioOutputFormatConfigurationViewModel)
 
     singleOf(::AudioPlayingConfigurationViewModel)
     singleOf(::DialogManagementConfigurationViewModel)

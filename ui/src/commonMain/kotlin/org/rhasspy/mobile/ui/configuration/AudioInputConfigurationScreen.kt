@@ -10,7 +10,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -23,17 +22,12 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.ListElement
-import org.rhasspy.mobile.ui.content.list.TitleListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData.SpeechToTextAudioOutputConfigurationData
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData.SpeechToTextAudioRecorderConfigurationData
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordAudioOutputConfigurationData
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordAudioRecorderConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.AudioInputConfigurationScreen
 
 @Composable
 fun AudioInputConfigurationScreen(viewModel: AudioInputConfigurationViewModel) {
@@ -56,80 +50,46 @@ private fun AudioInputConfigurationScreenContent(
     viewState: AudioInputConfigurationViewState
 ) {
 
-    Scaffold(
-        modifier = Modifier
-            .testTag(NavigationDestination.MainScreenNavigationDestination.ConfigurationScreen)
-            .fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = { Text(MR.strings.audio_input.stable) },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { onEvent(BackClick) },
-                        modifier = Modifier.testTag(TestTag.AppBarBackButton)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = MR.strings.back.stable,
-                        )
-                    }
-                }
-            )
-        },
-    ) { paddingValues ->
-
-        Column(
+    Surface(tonalElevation = 3.dp) {
+        Scaffold(
             modifier = Modifier
-                .testTag(TestTag.List)
-                .padding(paddingValues)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-        ) {
-            AudioInputWakeWord(
-                onEvent = onEvent,
-                wakeWordAudioRecorderData = viewState.wakeWordAudioRecorderData,
-                wakeWordAudioOutputData = viewState.wakeWordAudioOutputData
-            )
+                .testTag(AudioInputConfigurationScreen)
+                .fillMaxSize(),
+            topBar = {
+                TopAppBar(
+                    title = { Text(MR.strings.audio_input.stable) },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { onEvent(BackClick) },
+                            modifier = Modifier.testTag(TestTag.AppBarBackButton)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = MR.strings.back.stable,
+                            )
+                        }
+                    }
+                )
+            },
+        ) { paddingValues ->
 
-            AudioInputSpeechToText(
-                onEvent = onEvent,
-                speechToTextAudioRecorderData = viewState.speechToTextAudioRecorderData,
-                speechToTextAudioOutputData = viewState.speechToTextAudioOutputData
-            )
-        }
-    }
-}
+            Column(
+                modifier = Modifier
+                    .testTag(TestTag.List)
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
 
-@Composable
-private fun AudioInputWakeWord(
-    onEvent: (AudioInputConfigurationUiEvent) -> Unit,
-    wakeWordAudioRecorderData: WakeWordAudioRecorderConfigurationData,
-    wakeWordAudioOutputData: WakeWordAudioOutputConfigurationData,
-) {
-
-    Card(
-        modifier = Modifier.padding(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ) {
-
-        TitleListElement {
-            Text(resource = MR.strings.wakeWord.stable)
-        }
-
-        CompositionLocalProvider(
-            LocalAbsoluteTonalElevation provides 1.dp
-        ) {
-
-            Column {
 
                 //button to open audio recorder format
                 ListElement(
-                    modifier = Modifier.clickable { onEvent(OpenWakeWordRecorderFormatScreen) },
+                    modifier = Modifier.clickable { onEvent(OpenInputFormatConfigurationScreen) },
                     text = { Text(MR.strings.audioRecorderFormat.stable) },
                     secondaryText = @Composable {
-                        val text = "${translate(wakeWordAudioRecorderData.audioRecorderChannelType.text)} | " +
-                                "${translate(wakeWordAudioRecorderData.audioRecorderEncodingType.text)} | " +
-                                translate(wakeWordAudioRecorderData.audioRecorderSampleRateType.text)
+                        val text = "${translate(viewState.data.audioInputChannel.text)} | " +
+                                "${translate(viewState.data.audioInputEncoding.text)} | " +
+                                translate(viewState.data.audioInputSampleRate.text)
                         Text(text = text)
                     }
                 )
@@ -138,76 +98,18 @@ private fun AudioInputWakeWord(
 
                 //button to open audio output format
                 ListElement(
-                    modifier = Modifier.clickable { onEvent(OpenWakeWordOutputFormatScreen) },
+                    modifier = Modifier.clickable { onEvent(OpenOutputFormatConfigurationScreen) },
                     text = { Text(MR.strings.audioOutputFormat.stable) },
                     secondaryText = @Composable {
-                        val text = "${translate(wakeWordAudioOutputData.audioOutputChannelType.text)} | " +
-                                "${translate(wakeWordAudioOutputData.audioOutputEncodingType.text)} | " +
-                                translate(wakeWordAudioOutputData.audioOutputSampleRateType.text)
-                        Text(text = text)
-                    }
-                )
-
-            }
-
-        }
-
-
-    }
-
-}
-
-@Composable
-private fun AudioInputSpeechToText(
-    onEvent: (AudioInputConfigurationUiEvent) -> Unit,
-    speechToTextAudioRecorderData: SpeechToTextAudioRecorderConfigurationData,
-    speechToTextAudioOutputData: SpeechToTextAudioOutputConfigurationData,
-) {
-
-    Card(
-        modifier = Modifier.padding(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ) {
-
-        TitleListElement {
-            Text(resource = MR.strings.speechToText.stable)
-        }
-
-        CompositionLocalProvider(
-            LocalAbsoluteTonalElevation provides 1.dp
-        ) {
-
-            Column {
-
-                //button to open audio recorder format
-                ListElement(
-                    modifier = Modifier.clickable { onEvent(OpenTextToSpeechRecorderFormatScreen) },
-                    text = { Text(resource = MR.strings.audioRecorderFormat.stable) },
-                    secondaryText = @Composable {
-                        val text = "${translate(speechToTextAudioRecorderData.audioRecorderChannelType.text)} | " +
-                                "${translate(speechToTextAudioRecorderData.audioRecorderEncodingType.text)} | " +
-                                translate(speechToTextAudioRecorderData.audioRecorderSampleRateType.text)
-                        Text(text = text)
-                    }
-                )
-
-                HorizontalDivider()
-
-                //button to open audio output format
-                ListElement(
-                    modifier = Modifier.clickable { onEvent(OpenTextToSpeechOutputFormatScreen) },
-                    text = { Text(MR.strings.audioOutputFormat.stable) },
-                    secondaryText = @Composable {
-                        val text = "${translate(speechToTextAudioOutputData.audioOutputChannelType.text)} | " +
-                                "${translate(speechToTextAudioOutputData.audioOutputEncodingType.text)} | " +
-                                translate(speechToTextAudioOutputData.audioOutputSampleRateType.text)
+                        val text = "${translate(viewState.data.audioOutputChannel.text)} | " +
+                                "${translate(viewState.data.audioOutputEncoding.text)} | " +
+                                translate(viewState.data.audioOutputSampleRate.text)
                         Text(text = text)
                     }
                 )
 
             }
         }
-
     }
 
 }

@@ -1,6 +1,10 @@
 package org.rhasspy.mobile.ui.configuration.audioinput
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
@@ -20,6 +24,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.Au
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationViewState.AudioInputFormatConfigurationData
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.AudioInputDomainScreenDestination.AudioInputFormatScreen
 
 /**
  * Content to configure speech to text
@@ -32,7 +37,7 @@ fun AudioInputFormatConfigurationScreen(viewModel: AudioInputFormatConfiguration
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
     ConfigurationScreenItemContent(
-        modifier = Modifier,
+        modifier = Modifier.testTag(AudioInputFormatScreen),
         screenViewModel = viewModel,
         title = MR.strings.speechToText.stable, //TODO
         viewState = configurationEditViewState,
@@ -56,55 +61,64 @@ private fun AudioInputFormatEditContent(
     onEvent: (AudioInputFormatConfigurationUiEvent) -> Unit
 ) {
 
-    Card(
-        modifier = Modifier.padding(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
-        ListElement {
-            Text(resource = MR.strings.channel.stable)
+
+        Card(
+            modifier = Modifier.padding(8.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+            ListElement {
+                Text(resource = MR.strings.channel.stable)
+            }
+
+            RadioButtonsEnumSelectionList(
+                modifier = Modifier.testTag(TestTag.AudioInputChannelType),
+                selected = editData.audioInputChannel,
+                onSelect = { onEvent(SelectInputFormatChannelType(it)) },
+                combinedTestTag = TestTag.AudioInputChannelType,
+                values = editData.audioFormatChannelTypes
+            )
         }
 
-        RadioButtonsEnumSelectionList(
-            modifier = Modifier.testTag(TestTag.AudioInputChannelType),
-            selected = editData.audioInputChannel,
-            onSelect = { onEvent(SelectInputFormatChannelType(it)) },
-            combinedTestTag = TestTag.AudioInputChannelType,
-            values = editData.audioFormatChannelTypes
-        )
-    }
+        Card(
+            modifier = Modifier.padding(8.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+            ListElement {
+                Text(resource = MR.strings.encoding.stable)
+            }
 
-    Card(
-        modifier = Modifier.padding(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ) {
-        ListElement {
-            Text(resource = MR.strings.encoding.stable)
+            RadioButtonsEnumSelectionList(
+                modifier = Modifier.testTag(TestTag.AudioInputEncodingType),
+                selected = editData.audioInputEncoding,
+                enabled = true, //TODO
+                onSelect = { onEvent(SelectInputFormatEncodingType(it)) },
+                combinedTestTag = TestTag.AudioInputEncodingType,
+                values = editData.audioFormatEncodingTypes
+            )
         }
 
-        RadioButtonsEnumSelectionList(
-            modifier = Modifier.testTag(TestTag.AudioInputEncodingType),
-            selected = editData.audioInputEncoding,
-            enabled = true, //TODO
-            onSelect = { onEvent(SelectInputFormatEncodingType(it)) },
-            combinedTestTag = TestTag.AudioInputEncodingType,
-            values = editData.audioFormatEncodingTypes
-        )
-    }
+        Card(
+            modifier = Modifier.padding(8.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+            ListElement {
+                Text(resource = MR.strings.sampleRate.stable)
+            }
 
-    Card(
-        modifier = Modifier.padding(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ) {
-        ListElement {
-            Text(resource = MR.strings.sampleRate.stable)
+            RadioButtonsEnumSelectionList(
+                modifier = Modifier.testTag(TestTag.AudioInputSampleRateType),
+                selected = editData.audioInputSampleRate,
+                onSelect = { onEvent(SelectInputFormatSampleRateType(it)) },
+                combinedTestTag = TestTag.AudioInputSampleRateType,
+                values = editData.audioFormatSampleRateTypes
+            )
         }
 
-        RadioButtonsEnumSelectionList(
-            modifier = Modifier.testTag(TestTag.AudioInputSampleRateType),
-            selected = editData.audioInputSampleRate,
-            onSelect = { onEvent(SelectInputFormatSampleRateType(it)) },
-            combinedTestTag = TestTag.AudioInputSampleRateType,
-            values = editData.audioFormatSampleRateTypes
-        )
     }
+
 }

@@ -5,5 +5,5 @@ import org.rhasspy.mobile.data.domain.AudioInputDomainData
 
 @Stable
 data class AudioInputConfigurationViewState internal constructor(
-    val audioInputDomainData: AudioInputDomainData,
+    val data: AudioInputDomainData,
 )

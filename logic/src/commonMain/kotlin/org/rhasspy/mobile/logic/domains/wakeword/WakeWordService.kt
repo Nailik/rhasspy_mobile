@@ -186,13 +186,13 @@ internal class WakeWordService(
     private fun startRecording() {
         if (_serviceState.value == Success) {
             audioRecorder.startRecording(
-                audioRecorderSourceType = params.audioRecorderSourceType,
-                audioRecorderChannelType = params.audioRecorderChannelType,
-                audioRecorderEncodingType = params.audioRecorderEncodingType,
-                audioRecorderSampleRateType = params.audioRecorderSampleRateType,
-                audioRecorderOutputChannelType = params.audioOutputChannelType,
-                audioRecorderOutputEncodingType = params.audioOutputEncodingType,
-                audioRecorderOutputSampleRateType = params.audioOutputSampleRateType,
+                audioRecorderSourceType = params.audioInputDomainData.audioInputSource,
+                audioRecorderChannelType = params.audioInputDomainData.audioInputChannel,
+                audioRecorderEncodingType = params.audioInputDomainData.audioInputEncoding,
+                audioRecorderSampleRateType = params.audioInputDomainData.audioInputSampleRate,
+                audioRecorderOutputChannelType = params.audioInputDomainData.audioOutputChannel,
+                audioRecorderOutputEncodingType = params.audioInputDomainData.audioOutputEncoding,
+                audioRecorderOutputSampleRateType = params.audioInputDomainData.audioOutputSampleRate,
                 isAutoPauseOnMediaPlayback = params.isAutoPauseOnMediaPlayback
             )
 
@@ -283,9 +283,9 @@ internal class WakeWordService(
             WakeWordOption.Rhasspy2HermesMQTT -> Unit //nothing will wait for mqtt message
             WakeWordOption.Udp       -> udpConnection?.streamAudio(
                 data = data.appendWavHeader(
-                    audioRecorderChannelType = params.audioOutputChannelType,
-                    audioRecorderEncodingType = params.audioOutputEncodingType,
-                    audioRecorderSampleRateType = params.audioOutputSampleRateType,
+                    audioRecorderChannelType = params.audioInputDomainData.audioOutputChannel,
+                    audioRecorderEncodingType = params.audioInputDomainData.audioOutputEncoding,
+                    audioRecorderSampleRateType = params.audioInputDomainData.audioOutputSampleRate,
                 )
             )
 

@@ -13,5 +13,5 @@ data class AudioInputDomainData(
     val audioOutputChannel: AudioFormatChannelType,
     val audioOutputEncoding: AudioFormatEncodingType,
     val audioOutputSampleRate: AudioFormatSampleRateType,
-    val isUseAutomaticGainControl: Boolean
+    val isUseAutomaticGainControl: Boolean //TODO
 )

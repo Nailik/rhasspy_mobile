@@ -14,13 +14,7 @@ internal class SpeechToTextServiceParamsCreator {
             AppSetting.isPauseRecordingOnMedia.data,
             ConfigurationSetting.speechToTextOption.data,
             ConfigurationSetting.dialogManagementOption.data,
-            ConfigurationSetting.speechToTextAudioRecorderSourceType.data,
-            ConfigurationSetting.speechToTextAudioRecorderChannel.data,
-            ConfigurationSetting.speechToTextAudioRecorderEncoding.data,
-            ConfigurationSetting.speechToTextAudioRecorderSampleRate.data,
-            ConfigurationSetting.speechToTextAudioOutputChannel.data,
-            ConfigurationSetting.speechToTextAudioOutputEncoding.data,
-            ConfigurationSetting.speechToTextAudioOutputSampleRate.data,
+            ConfigurationSetting.audioInputDomainData.data,
         ).mapReadonlyState {
             getParams()
         }
@@ -32,13 +26,7 @@ internal class SpeechToTextServiceParamsCreator {
             isAutoPauseOnMediaPlayback = AppSetting.isPauseRecordingOnMedia.value,
             speechToTextOption = ConfigurationSetting.speechToTextOption.value,
             dialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
-            audioRecorderSourceType = ConfigurationSetting.speechToTextAudioRecorderSourceType.value,
-            audioRecorderChannelType = ConfigurationSetting.speechToTextAudioRecorderChannel.value,
-            audioRecorderEncodingType = ConfigurationSetting.speechToTextAudioRecorderEncoding.value,
-            audioRecorderSampleRateType = ConfigurationSetting.speechToTextAudioRecorderSampleRate.value,
-            audioOutputChannelType = ConfigurationSetting.speechToTextAudioOutputChannel.value,
-            audioOutputEncodingType = ConfigurationSetting.speechToTextAudioOutputEncoding.value,
-            audioOutputSampleRateType = ConfigurationSetting.speechToTextAudioOutputSampleRate.value,
+            audioInputDomainData = ConfigurationSetting.audioInputDomainData.value,
             httpConnectionId = null
         )
     }

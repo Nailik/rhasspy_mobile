@@ -158,13 +158,13 @@ class VoiceActivityDetectionConfigurationViewModel(
         AppSetting.isHotWordEnabled.value = false
         //start this recording
         audioRecorder.startRecording(
-            audioRecorderSourceType = ConfigurationSetting.speechToTextAudioRecorderSourceType.value,
-            audioRecorderChannelType = ConfigurationSetting.speechToTextAudioRecorderChannel.value,
-            audioRecorderEncodingType = ConfigurationSetting.speechToTextAudioRecorderEncoding.value,
-            audioRecorderSampleRateType = ConfigurationSetting.speechToTextAudioRecorderSampleRate.value,
-            audioRecorderOutputChannelType = ConfigurationSetting.speechToTextAudioOutputChannel.value,
-            audioRecorderOutputEncodingType = ConfigurationSetting.speechToTextAudioOutputEncoding.value,
-            audioRecorderOutputSampleRateType = ConfigurationSetting.speechToTextAudioOutputSampleRate.value,
+            audioRecorderSourceType = ConfigurationSetting.audioInputDomainData.value.audioInputSource,
+            audioRecorderChannelType = ConfigurationSetting.audioInputDomainData.value.audioInputChannel,
+            audioRecorderEncodingType = ConfigurationSetting.audioInputDomainData.value.audioInputEncoding,
+            audioRecorderSampleRateType = ConfigurationSetting.audioInputDomainData.value.audioInputSampleRate,
+            audioRecorderOutputChannelType = ConfigurationSetting.audioInputDomainData.value.audioOutputChannel,
+            audioRecorderOutputEncodingType = ConfigurationSetting.audioInputDomainData.value.audioOutputEncoding,
+            audioRecorderOutputSampleRateType = ConfigurationSetting.audioInputDomainData.value.audioOutputSampleRate,
             isAutoPauseOnMediaPlayback = AppSetting.isPauseRecordingOnMedia.value,
         )
     }
