@@ -34,11 +34,11 @@ class ConnectionsScreenViewStateCreator(
 
     private fun getViewState(): ConnectionsConfigurationViewState {
         return ConnectionsConfigurationViewState(
-            rhassyp2Hermes = HttpViewState(
+            rhasspy2Hermes = HttpViewState(
                 host = ConfigurationSetting.rhasspy2Connection.value.host,
                 serviceViewState = ServiceViewState(rhasspy2HermesConnection.connectionState)
             ),
-            rhassyp3Wyoming = HttpViewState(
+            rhasspy3Wyoming = HttpViewState(
                 host = ConfigurationSetting.rhasspy3Connection.value.host,
                 serviceViewState = ServiceViewState(rhasspy3WyomingConnection.connectionState)
             ),

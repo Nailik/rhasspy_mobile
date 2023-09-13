@@ -4,8 +4,8 @@ import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 data class ConnectionsConfigurationViewState internal constructor(
-    val rhassyp2Hermes: HttpViewState,
-    val rhassyp3Wyoming: HttpViewState,
+    val rhasspy2Hermes: HttpViewState,
+    val rhasspy3Wyoming: HttpViewState,
     val homeAssistant: HttpViewState,
     val webserver: WebServerViewState,
     val mqtt: MqttViewState,

@@ -90,14 +90,14 @@ private fun ConnectionsConfigurationScreenContent(
             ) {
 
                 Rhasspy2Hermes(
-                    viewState = viewState.rhassyp2Hermes,
+                    viewState = viewState.rhasspy2Hermes,
                     onEvent = onEvent
                 )
 
                 CustomDivider()
 
                 Rhasspy3Wyoming(
-                    viewState = viewState.rhassyp3Wyoming,
+                    viewState = viewState.rhasspy3Wyoming,
                     onEvent = onEvent
                 )
 

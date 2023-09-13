@@ -8,6 +8,7 @@ import org.rhasspy.mobile.data.audiorecorder.AudioSourceType
 import org.rhasspy.mobile.data.connection.HttpConnectionData
 import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
 import org.rhasspy.mobile.data.connection.MqttConnectionData
+import org.rhasspy.mobile.data.domain.AudioInputDomainData
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.*
@@ -85,11 +86,6 @@ object ConfigurationSetting {
 
     val wakeWordOption = ISetting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled, WakeWordOption.serializer())
 
-    val wakeWordAudioRecorderSourceType = ISetting(SettingsEnum.WakeWordAudioRecorderSourceType, AudioSourceType.default, AudioSourceType.serializer())
-    val wakeWordAudioRecorderChannel = ISetting(SettingsEnum.WakeWordAudioRecorderChannel, AudioFormatChannelType.default, AudioFormatChannelType.serializer())
-    val wakeWordAudioRecorderEncoding = ISetting(SettingsEnum.WakeWordAudioRecorderEncoding, AudioFormatEncodingType.default, AudioFormatEncodingType.serializer())
-    val wakeWordAudioRecorderSampleRate = ISetting(SettingsEnum.WakeWordAudioRecorderSampleRate, AudioFormatSampleRateType.default, AudioFormatSampleRateType.serializer())
-
     val wakeWordAudioOutputChannel = ISetting(SettingsEnum.WakeWordAudioOutputChannel, AudioFormatChannelType.default, AudioFormatChannelType.serializer())
     val wakeWordAudioOutputEncoding = ISetting(SettingsEnum.WakeWordAudioOutputEncoding, AudioFormatEncodingType.default, AudioFormatEncodingType.serializer())
     val wakeWordAudioOutputSampleRate = ISetting(SettingsEnum.WakeWordAudioOutputSampleRate, AudioFormatSampleRateType.default, AudioFormatSampleRateType.serializer())
@@ -126,13 +122,20 @@ object ConfigurationSetting {
     val speechToTextOption = ISetting(SettingsEnum.SpeechToTextOption, SpeechToTextOption.Disabled, SpeechToTextOption.serializer())
 
     val speechToTextAudioRecorderSourceType = ISetting(SettingsEnum.SpeechToTextRecorderSourceType, AudioSourceType.default, AudioSourceType.serializer())
-    val speechToTextAudioRecorderChannel = ISetting(SettingsEnum.SpeechToTextAudioRecorderChannel, AudioFormatChannelType.default, AudioFormatChannelType.serializer())
-    val speechToTextAudioRecorderEncoding = ISetting(SettingsEnum.SpeechToTextAudioRecorderEncoding, AudioFormatEncodingType.default, AudioFormatEncodingType.serializer())
-    val speechToTextAudioRecorderSampleRate = ISetting(SettingsEnum.SpeechToTextAudioRecorderSampleRate, AudioFormatSampleRateType.default, AudioFormatSampleRateType.serializer())
-
-    val speechToTextAudioOutputChannel = ISetting(SettingsEnum.SpeechToTextAudioOutputChannel, AudioFormatChannelType.default, AudioFormatChannelType.serializer())
-    val speechToTextAudioOutputEncoding = ISetting(SettingsEnum.SpeechToTextAudioOutputEncoding, AudioFormatEncodingType.default, AudioFormatEncodingType.serializer())
-    val speechToTextAudioOutputSampleRate = ISetting(SettingsEnum.SpeechToTextAudioOutputSampleRate, AudioFormatSampleRateType.default, AudioFormatSampleRateType.serializer())
+    val audioInputDomainData = ISetting(
+        SettingsEnum.AudioInputDomain,
+        initial = AudioInputDomainData(
+            audioInputSource = AudioSourceType.default,
+            audioInputChannel = AudioFormatChannelType.default,
+            audioInputEncoding = AudioFormatEncodingType.default,
+            audioInputSampleRate = AudioFormatSampleRateType.default,
+            audioOutputChannel = AudioFormatChannelType.default,
+            audioOutputEncoding = AudioFormatEncodingType.default,
+            audioOutputSampleRate = AudioFormatSampleRateType.default,
+            isUseAutomaticGainControl = false
+        ),
+        serializer = AudioInputDomainData.serializer()
+    )
 
     val isUseSpeechToTextMqttSilenceDetection = ISetting(SettingsEnum.SpeechToTextMqttSilenceDetection, true)
 

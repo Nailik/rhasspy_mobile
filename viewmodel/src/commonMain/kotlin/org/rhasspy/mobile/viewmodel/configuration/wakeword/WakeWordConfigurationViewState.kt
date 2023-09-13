@@ -4,10 +4,6 @@ import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
-import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
-import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
-import org.rhasspy.mobile.data.audiorecorder.AudioSourceType
 import org.rhasspy.mobile.data.data.toStringOrEmpty
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
@@ -21,8 +17,6 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfi
 @Stable
 data class WakeWordConfigurationViewState internal constructor(
     override val editData: WakeWordConfigurationData,
-    val isRecorderEncodingChangeEnabled: Boolean,
-    val isOutputEncodingChangeEnabled: Boolean,
     val porcupineWakeWordScreen: Int,
     val isMicrophonePermissionRequestVisible: Boolean
 ) : IConfigurationViewState {
@@ -38,35 +32,9 @@ data class WakeWordConfigurationViewState internal constructor(
         val wakeWordOption: WakeWordOption = ConfigurationSetting.wakeWordOption.value,
         val wakeWordPorcupineConfigurationData: WakeWordPorcupineConfigurationData = WakeWordPorcupineConfigurationData(),
         val wakeWordUdpConfigurationData: WakeWordUdpConfigurationData = WakeWordUdpConfigurationData(),
-        val wakeWordAudioRecorderData: WakeWordAudioRecorderConfigurationData = WakeWordAudioRecorderConfigurationData(),
-        val wakeWordAudioOutputData: WakeWordAudioOutputConfigurationData = WakeWordAudioOutputConfigurationData(),
     ) : IConfigurationData {
 
         val wakeWordOptions: ImmutableList<WakeWordOption> = WakeWordOption.entries.toTypedArray().toImmutableList()
-
-        @Stable
-        data class WakeWordAudioRecorderConfigurationData(
-            val audioRecorderSourceType: AudioSourceType = ConfigurationSetting.wakeWordAudioRecorderSourceType.value,
-            val audioRecorderChannelType: AudioFormatChannelType = ConfigurationSetting.wakeWordAudioRecorderChannel.value,
-            val audioRecorderEncodingType: AudioFormatEncodingType = ConfigurationSetting.wakeWordAudioRecorderEncoding.value,
-            val audioRecorderSampleRateType: AudioFormatSampleRateType = ConfigurationSetting.wakeWordAudioRecorderSampleRate.value,
-        ) {
-            val audioRecorderSourceTypes: ImmutableList<AudioSourceType> = AudioSourceType.supportedValues().toImmutableList()
-            val audioRecorderChannelTypes: ImmutableList<AudioFormatChannelType> = AudioFormatChannelType.entries.toTypedArray().toImmutableList()
-            val audioRecorderEncodingTypes: ImmutableList<AudioFormatEncodingType> = AudioFormatEncodingType.supportedValues().toImmutableList()
-            val audioRecorderSampleRateTypes: ImmutableList<AudioFormatSampleRateType> = AudioFormatSampleRateType.entries.toTypedArray().toImmutableList()
-        }
-
-        @Stable
-        data class WakeWordAudioOutputConfigurationData(
-            val audioOutputChannelType: AudioFormatChannelType = ConfigurationSetting.wakeWordAudioOutputChannel.value,
-            val audioOutputEncodingType: AudioFormatEncodingType = ConfigurationSetting.wakeWordAudioOutputEncoding.value,
-            val audioOutputSampleRateType: AudioFormatSampleRateType = ConfigurationSetting.wakeWordAudioOutputSampleRate.value,
-        ) {
-            val audioOutputChannelTypes: ImmutableList<AudioFormatChannelType> = AudioFormatChannelType.entries.toTypedArray().toImmutableList()
-            val audioOutputEncodingTypes: ImmutableList<AudioFormatEncodingType> = AudioFormatEncodingType.supportedValues().toImmutableList()
-            val audioOutputSampleRateTypes: ImmutableList<AudioFormatSampleRateType> = AudioFormatSampleRateType.entries.toTypedArray().toImmutableList()
-        }
 
         @Stable
         data class WakeWordPorcupineConfigurationData internal constructor(

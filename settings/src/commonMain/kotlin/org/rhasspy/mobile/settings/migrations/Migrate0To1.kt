@@ -11,7 +11,7 @@ import org.rhasspy.mobile.data.connection.MqttConnectionData
 import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.data.settings.SettingsEnum
 
-internal class Migrate0To1 : IMigration(0, 1) {
+internal object Migrate0To1 : IMigration(0, 1) {
 
     override fun preMigrate() {
         if (settings[SettingsEnum.AudioPlayingOption.name, ""] == "RemoteHTTP") {

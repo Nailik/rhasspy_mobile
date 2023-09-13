@@ -3,10 +3,8 @@ package org.rhasspy.mobile.viewmodel.configuration.audioinput
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.SpeechToTextConfigurationScreen
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SpeechToTextConfigurationScreenDestination
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.AudioInputDomainScreenDestination.AudioInputFormatScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.AudioInputDomainScreenDestination.AudioOutputFormatScreen
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
@@ -24,11 +22,9 @@ class AudioInputConfigurationViewModel(
 
     fun onAction(action: Action) {
         when (action) {
-            BackClick                            -> navigator.onBackPressed()
-            OpenWakeWordRecorderFormatScreen     -> navigator.navigate(WakeWordConfigurationScreenDestination.AudioRecorderFormatScreen)
-            OpenWakeWordOutputFormatScreen       -> navigator.navigate(WakeWordConfigurationScreenDestination.AudioOutputFormatScreen)
-            OpenTextToSpeechRecorderFormatScreen -> navigator.navigate(SpeechToTextConfigurationScreenDestination.AudioRecorderFormatScreen)
-            OpenTextToSpeechOutputFormatScreen   -> navigator.navigate(SpeechToTextConfigurationScreenDestination.AudioOutputFormatScreen)
+            BackClick                           -> navigator.onBackPressed()
+            OpenInputFormatConfigurationScreen  -> navigator.navigate(AudioInputFormatScreen)
+            OpenOutputFormatConfigurationScreen -> navigator.navigate(AudioOutputFormatScreen)
         }
     }
 

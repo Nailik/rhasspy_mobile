@@ -6,13 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.ui.configuration.*
+import org.rhasspy.mobile.ui.configuration.audioinput.AudioInputFormatConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.audioinput.AudioOutputFormatConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.connection.*
 import org.rhasspy.mobile.ui.configuration.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.ui.configuration.porcupine.PorcupineLanguageScreen
-import org.rhasspy.mobile.ui.configuration.speechtotext.SpeechToTextAudioOutputFormatScreen
-import org.rhasspy.mobile.ui.configuration.speechtotext.SpeechToTextAudioRecorderFormatScreen
-import org.rhasspy.mobile.ui.configuration.wakeword.WakeWordAudioOutputFormatScreen
-import org.rhasspy.mobile.ui.configuration.wakeword.WakeWordAudioRecorderFormatScreen
 import org.rhasspy.mobile.ui.settings.*
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.*
@@ -23,13 +21,13 @@ fun NavigationContent(
 ) {
     Crossfade(targetState = screen) {
         when (it) {
-            is ConfigurationScreenNavigationDestination   -> ConfigurationNavigationContent(it)
-            is ConnectionScreenNavigationDestination      -> ConnectionScreenNavigationContent(it)
-            is MainScreenNavigationDestination            -> MainNavigationContent(it)
-            is SettingsScreenDestination                  -> SettingsNavigationContent(it)
-            is WakeWordConfigurationScreenDestination     -> WakeWordNavigationContent(it)
-            is IndicationSettingsScreenDestination        -> IndicationNavigationContent(it)
-            is SpeechToTextConfigurationScreenDestination -> SpeechToTextConfigurationNavigationContent(it)
+            is ConfigurationScreenNavigationDestination -> ConfigurationNavigationContent(it)
+            is ConnectionScreenNavigationDestination    -> ConnectionScreenNavigationContent(it)
+            is MainScreenNavigationDestination          -> MainNavigationContent(it)
+            is SettingsScreenDestination                -> SettingsNavigationContent(it)
+            is WakeWordConfigurationScreenDestination   -> WakeWordNavigationContent(it)
+            is IndicationSettingsScreenDestination      -> IndicationNavigationContent(it)
+            is AudioInputDomainScreenDestination        -> AudioInputDomainNavigationContent(it)
         }
     }
 }
@@ -109,18 +107,16 @@ private fun WakeWordNavigationContent(
     when (screen) {
         is WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen -> PorcupineLanguageScreen(screen.viewModel)
         is WakeWordConfigurationScreenDestination.EditPorcupineWakeWordScreen -> PorcupineKeywordScreen(screen.viewModel)
-        is WakeWordConfigurationScreenDestination.AudioRecorderFormatScreen   -> WakeWordAudioRecorderFormatScreen(screen.viewModel)
-        is WakeWordConfigurationScreenDestination.AudioOutputFormatScreen     -> WakeWordAudioOutputFormatScreen(screen.viewModel)
     }
 }
 
 @Composable
-private fun SpeechToTextConfigurationNavigationContent(
-    screen: SpeechToTextConfigurationScreenDestination
+private fun AudioInputDomainNavigationContent(
+    screen: AudioInputDomainScreenDestination
 ) {
     when (screen) {
-        is SpeechToTextConfigurationScreenDestination.AudioRecorderFormatScreen -> SpeechToTextAudioRecorderFormatScreen(screen.viewModel)
-        is SpeechToTextConfigurationScreenDestination.AudioOutputFormatScreen   -> SpeechToTextAudioOutputFormatScreen(screen.viewModel)
+        is AudioInputDomainScreenDestination.AudioInputFormatScreen  -> AudioInputFormatConfigurationScreen(screen.viewModel)
+        is AudioInputDomainScreenDestination.AudioOutputFormatScreen -> AudioOutputFormatConfigurationScreen(screen.viewModel)
     }
 }
 

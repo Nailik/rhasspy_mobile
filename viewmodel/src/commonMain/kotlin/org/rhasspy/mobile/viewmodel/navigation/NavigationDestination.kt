@@ -6,6 +6,8 @@ import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewModel
@@ -191,27 +193,6 @@ sealed class NavigationDestination : KoinComponent {
             override val viewModel get() = get<WakeWordConfigurationViewModel> { parametersOf(this) }
         }
 
-        data object AudioRecorderFormatScreen : WakeWordConfigurationScreenDestination() {
-            override val viewModel get() = get<WakeWordConfigurationViewModel> { parametersOf(this) }
-        }
-
-        data object AudioOutputFormatScreen : WakeWordConfigurationScreenDestination() {
-            override val viewModel get() = get<WakeWordConfigurationViewModel> { parametersOf(this) }
-        }
-
-    }
-
-    @Stable
-    sealed class SpeechToTextConfigurationScreenDestination : NavigationDestination() {
-
-        data object AudioRecorderFormatScreen : SpeechToTextConfigurationScreenDestination() {
-            override val viewModel get() = get<SpeechToTextConfigurationViewModel> { parametersOf(this) }
-        }
-
-        data object AudioOutputFormatScreen : SpeechToTextConfigurationScreenDestination() {
-            override val viewModel get() = get<SpeechToTextConfigurationViewModel> { parametersOf(this) }
-        }
-
     }
 
     @Stable
@@ -229,6 +210,18 @@ sealed class NavigationDestination : KoinComponent {
             override val viewModel get() = get<ErrorIndicationSoundSettingsViewModel> { parametersOf(this) }
         }
 
+    }
+
+    @Stable
+    sealed class AudioInputDomainScreenDestination : NavigationDestination() {
+
+        data object AudioInputFormatScreen : AudioInputDomainScreenDestination() {
+            override val viewModel get() = get<AudioInputFormatConfigurationViewModel> { parametersOf(this) }
+        }
+
+        data object AudioOutputFormatScreen : AudioInputDomainScreenDestination() {
+            override val viewModel get() = get<AudioOutputFormatConfigurationViewModel> { parametersOf(this) }
+        }
     }
 
     abstract val viewModel: IScreenViewModel

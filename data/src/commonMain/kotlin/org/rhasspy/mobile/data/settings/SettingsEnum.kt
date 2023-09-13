@@ -70,14 +70,6 @@ enum class SettingsEnum {
 
     WakeWordOption,
 
-    WakeWordAudioRecorderSourceType,
-    WakeWordAudioRecorderChannel,
-    WakeWordAudioRecorderEncoding,
-    WakeWordAudioRecorderSampleRate,
-
-    WakeWordAudioOutputChannel,
-    WakeWordAudioOutputEncoding,
-    WakeWordAudioOutputSampleRate,
 
     WakeWordPorcupineAccessToken,
     WakeWordPorcupineKeywordDefaultSelectedOptions,
@@ -85,13 +77,8 @@ enum class SettingsEnum {
     WakeWordPorcupineLanguage,
 
     SpeechToTextOption,
-    SpeechToTextRecorderSourceType,
-    SpeechToTextAudioRecorderChannel,
-    SpeechToTextAudioRecorderEncoding,
-    SpeechToTextAudioRecorderSampleRate,
-    SpeechToTextAudioOutputChannel,
-    SpeechToTextAudioOutputEncoding,
-    SpeechToTextAudioOutputSampleRate,
+
+    AudioInputDomain,
 
     SpeechToTextMqttSilenceDetection,
 

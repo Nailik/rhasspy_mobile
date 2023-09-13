@@ -30,7 +30,7 @@ object SettingsInitializer : KoinComponent {
             val currentVersionName = settings[SettingsEnum.Version.name, -1]
             logger.d { "initializeVersionIfMissing currentVersionName $currentVersionName" }
             if (currentVersionName == -1) {
-                settings[SettingsEnum.Version.name] = Migrate0To1().migrateIfNecessary(0)
+                settings[SettingsEnum.Version.name] = Migrate0To1.migrateIfNecessary(0)
             }
         }
     }
