@@ -1,13 +1,11 @@
 package org.rhasspy.mobile.platformspecific.settings
 
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.database.IDriverFactory
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 
 internal actual class SettingsUtils actual constructor(
     externalResultRequest: IExternalResultRequest,
     nativeApplication: NativeApplication,
-    databaseDriverFactory: IDriverFactory,
 ) : ISettingsUtils {
 
     /**

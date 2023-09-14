@@ -10,7 +10,6 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.database.IDriverFactory
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectUtils
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
@@ -27,7 +26,6 @@ import java.util.zip.ZipOutputStream
 internal actual class SettingsUtils actual constructor(
     private val externalResultRequest: IExternalResultRequest,
     private val nativeApplication: NativeApplication,
-    private val databaseDriverFactory: IDriverFactory,
 ) : ISettingsUtils {
 
     private val logger = Logger.withTag("SettingsUtils")
