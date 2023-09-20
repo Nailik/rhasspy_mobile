@@ -5,7 +5,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.*
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent
@@ -21,6 +20,7 @@ import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
+import org.rhasspy.mobile.logic.pipeline.PipelineEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.AsrDomainEvent.*
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.AudioDomainEvent.*
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.HandleDomainEvent.HandledEvent
@@ -31,7 +31,6 @@ import org.rhasspy.mobile.logic.pipeline.PipelineEvent.TtsDomainEvent.Synthesize
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.TtsDomainEvent.TtsErrorEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.VadDomainEvent.*
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.WakeDomainEvent.DetectionEvent
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.WakeDomainEvent.NotDetectedEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineState.*
 import org.rhasspy.mobile.logic.pipeline.PipelineState.SessionState.*
 import org.rhasspy.mobile.logic.pipeline.SessionData
@@ -65,196 +64,181 @@ class PipelineManagerLocal(
     private val params get() = ConfigurationSetting.pipelineData.value
 
     override fun initialize() {
-        goToState(IdleState)
+        goToState(DetectState)
     }
 
-    fun onTranscriptErrorEvent(event: TranscriptErrorEvent) {
-        if (currentState !is AsrState) return
-
-        indication.onError()
-        goToState(IdleState)
+    override fun onEvent(event: PipelineEvent) {
+        with(currentState) {
+            when (this) {
+                is DetectState     -> onDetectStateEvent(this, event)
+                is TranscribeState -> onTranscribeStateEvent(this, event)
+                is HandleState     -> onHandleStateEvent(this, event)
+                is RecognizeState  -> onRecognizeStateEvent(this, event)
+                is SpeakState      -> onSpeakStateEvent(this, event)
+                is PlayState       -> onPlayStateEvent(this, event)
+            }
+        }
     }
 
-    fun onTranscriptEvent(event: TranscriptEvent) {
-        val state = currentState
-        if (state !is AsrState) return
-
-        onRecognizeEvent(
-            RecognizeEvent(
-                text = event.text,
-                sessionId = state.sessionData.sessionId,
-            )
-        )
-    }
-
-    fun onTranscriptTimeoutEvent(event: TranscriptTimeoutEvent) {
-        if (currentState !is AsrState) return
-
-        indication.onError()
-        goToState(IdleState)
-    }
-
-    fun onAudioChunkEvent(event: AudioChunkEvent) {
-        when (currentState) {
-            is IdleState -> {
+    private fun onDetectStateEvent(state: DetectState, event: PipelineEvent) {
+        when (event) {
+            is AudioChunkEvent -> {
                 wakeDomain.onAudioChunk(event)
             }
 
-            is AsrState  -> {
+            is SynthesizeEvent -> {
+                ttsDomain.onSynthesize(event)
+            }
+
+            is DetectionEvent  -> {
+                goToState(
+                    TranscribeState(
+                        sessionData = SessionData(
+                            sessionId = uuid4().toString(),
+                            sendAudioCaptured = false,
+                            wakeWord = event.name,
+                            recognizedText = null
+                        ),
+                        timeoutJob = getAsrTimeoutJob()
+                    )
+                )
+            }
+
+            else               -> Unit
+        }
+    }
+
+    private fun onTranscribeStateEvent(state: TranscribeState, event: PipelineEvent) {
+        when (event) {
+            is TranscriptErrorEvent   -> {
+                indication.onError()
+                goToState(DetectState)
+            }
+
+            is TranscriptEvent        -> {
+                onEvent(
+                    RecognizeEvent(
+                        text = event.text,
+                        sessionId = state.sessionData.sessionId,
+                    )
+                )
+            }
+
+            is TranscriptTimeoutEvent -> {
+                indication.onError()
+                goToState(DetectState)
+            }
+
+            is AudioChunkEvent        -> {
                 vadDomain.onAudioChunk(event)
                 asrDomain.onAudioChunk(event)
             }
 
-            SndState     -> {
-                sndDomain.onAudioChunk(event)
-            }
-
-            else         -> Unit
-        }
-    }
-
-    fun onAudioStartEvent(event: AudioStartEvent) {
-        when (currentState) {
-            is TtsState -> {
-                sndDomain.onAudioStart(event)
-                goToState(SndState)
-            }
-
-            is AsrState -> {
+            is AudioStartEvent        -> {
                 asrDomain.onAudioStart(event)
             }
 
-            else        -> Unit
-        }
-    }
-
-    fun onAudioStopEvent(event: AudioStopEvent) {
-        when (currentState) {
-            is SndState -> {
-                sndDomain.onAudioStop(event)
-            }
-
-            is AsrState -> {
+            is AudioStopEvent         -> {
                 asrDomain.onAudioStop(event)
             }
 
-            else        -> Unit
+            is RecognizeEvent         -> {
+                intentDomain.onRecognize(event)
+
+                goToState(
+                    RecognizeState(
+                        sessionData = state.sessionData,
+                        timeoutJob = getIntentTimeoutJob(),
+                    )
+                )
+            }
+
+            is NotRecognizedEvent     -> {
+                indication.onError()
+                goToState(DetectState)
+            }
+
+            is VoiceStartedEvent      -> {
+                micDomain.startRecording()
+            }
+
+            is VoiceStoppedEvent      -> {
+                micDomain.stopRecording()
+            }
+
+            else                      -> Unit
         }
     }
 
-    fun onHandledEvent(event: HandledEvent) {
-        if (currentState !is IntentState) return
+    private fun onHandleStateEvent(state: HandleState, event: PipelineEvent) {
+        when (event) {
+            is HandledEvent    -> {
+                goToState(DetectState)
+            }
 
-        goToState(IdleState)
+            is NotHandledEvent -> {
+                indication.onError()
+                goToState(DetectState)
+            }
+
+            else               -> Unit
+        }
     }
 
-    fun onNotHandledEvent(event: NotHandledEvent) {
-        if (currentState !is IntentState) return
+    private fun onRecognizeStateEvent(state: RecognizeState, event: PipelineEvent) {
+        when (event) {
+            is IntentEvent        -> {
+                handleDomain.onIntentEvent(event)
+                goToState(
+                    HandleState(
+                        sessionData = state.sessionData,
+                        timeoutJob = getIntentTimeoutJob()
+                    )
+                )
+            }
 
-        indication.onError()
-        goToState(IdleState)
+            is IntentTimeoutEvent -> {
+                indication.onError()
+                goToState(DetectState)
+            }
+
+            else                  -> Unit
+        }
     }
 
-    fun onIntentEvent(event: IntentEvent) {
-        val state = currentState
-        if (state !is IntentState) return
+    private fun onSpeakStateEvent(state: SpeakState, event: PipelineEvent) {
+        when (event) {
+            is AudioStartEvent -> {
+                sndDomain.onAudioStart(event)
+                goToState(SpeakState)
+            }
 
-        handleDomain.onIntentEvent(event)
-        goToState(
-            HandleState(
-                sessionData = state.sessionData,
-                timeoutJob = getIntentTimeoutJob()
-            )
-        )
+            is TtsErrorEvent   -> {
+                goToState(DetectState)
+            }
+
+            else               -> Unit
+        }
     }
 
-    fun onIntentTimeoutEvent(event: IntentTimeoutEvent) {
-        indication.onError()
-        goToState(IdleState)
+    private fun onPlayStateEvent(state: PlayState, event: PipelineEvent) {
+        when (event) {
+            is AudioChunkEvent -> {
+                sndDomain.onAudioChunk(event)
+            }
+
+            is AudioStopEvent  -> {
+                sndDomain.onAudioStop(event)
+            }
+
+            is PlayedEvent     -> {
+                goToState(DetectState)
+            }
+
+            else               -> Unit
+        }
     }
 
-    fun onNotRecognizedEvent(event: NotRecognizedEvent) {
-        val state = currentState
-        if (state !is AsrState) return
-
-        indication.onError()
-        goToState(IdleState)
-    }
-
-    fun onRecognizeEvent(event: RecognizeEvent) {
-        val state = currentState
-        if (state !is AsrState) return
-
-        intentDomain.onRecognize(event)
-
-        goToState(
-            IntentState(
-                sessionData = state.sessionData,
-                timeoutJob = getIntentTimeoutJob(),
-            )
-        )
-    }
-
-    fun onPlayedEvent(event: PlayedEvent) {
-        if (currentState !is SndState) return
-        goToState(IdleState)
-    }
-
-    fun onSynthesizeEvent(event: SynthesizeEvent) {
-        if (currentState !is IdleState) return
-        ttsDomain.onSynthesize(event)
-        goToState(TtsState)
-    }
-
-    fun onTtsErrorEvent(event: TtsErrorEvent) {
-        if (currentState !is TtsState) return
-        indication.onError()
-        goToState(IdleState)
-    }
-
-    fun onVadTimeoutEvent(event: VadTimeoutEvent) {
-        indication.onError()
-        goToState(IdleState)
-    }
-
-    fun onVoiceStartedEvent(event: VoiceStartedEvent) {
-        val state = currentState
-        if (state !is AsrState) return
-
-        asrDomain.onAudioStop(
-            AudioStopEvent(
-                sessionId = state.sessionData.sessionId,
-                timeStamp = Clock.System.now()
-            )
-        )
-    }
-
-    fun onVoiceStoppedEvent(event: VoiceStoppedEvent) {
-
-    }
-
-    fun onDetectionEvent(event: DetectionEvent) {
-        if (currentState !is IdleState) return
-
-        goToState(
-            AsrState(
-                sessionData = SessionData(
-                    sessionId = uuid4().toString(),
-                    sendAudioCaptured = false,
-                    wakeWord = event.name,
-                    recognizedText = null
-                ),
-                timeoutJob = getAsrTimeoutJob()
-            )
-        )
-    }
-
-    fun onNotDetectedEvent(event: NotDetectedEvent) {
-        if (currentState !is IdleState) return
-
-        indication.onError()
-        goToState(IdleState)
-    }
 
     override fun onEvent(event: MqttConnectionEvent) {
         when (event) {

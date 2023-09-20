@@ -11,17 +11,19 @@ import kotlinx.coroutines.Job
 
 sealed interface PipelineState {
 
+    data object DetectState : PipelineState
+
     sealed interface SessionState : PipelineState {
 
         val sessionData: SessionData
         val timeoutJob: Job
 
-        data class AsrState(
+        data class TranscribeState(
             override val sessionData: SessionData,
             override val timeoutJob: Job,
         ) : SessionState
 
-        data class IntentState(
+        data class RecognizeState(
             override val sessionData: SessionData,
             override val timeoutJob: Job,
         ) : SessionState
@@ -33,9 +35,8 @@ sealed interface PipelineState {
 
     }
 
-    data object IdleState : PipelineState
+    data object SpeakState : PipelineState
 
-    data object SndState : PipelineState
-    data object TtsState : PipelineState
+    data object PlayState : PipelineState
 
 }

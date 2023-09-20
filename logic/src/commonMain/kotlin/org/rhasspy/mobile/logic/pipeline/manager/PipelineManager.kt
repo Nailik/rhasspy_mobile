@@ -30,7 +30,7 @@ abstract class PipelineManager(
     abstract fun onEvent(event: WebServerConnectionEvent)
 
 
-    protected var currentState: PipelineState = IdleState
+    protected var currentState: PipelineState = DetectState
         private set
 
     protected fun goToState(state: PipelineState) {
@@ -52,19 +52,19 @@ abstract class PipelineManager(
 
     private fun startState(state: PipelineState) {
         when (state) {
-            IdleState      -> {
+            DetectState -> {
                 indication.onIdle()
                 //TODO only if wake word enabled
                 micDomain.startRecording()
             }
 
-            is AsrState    -> {
+            is TranscribeState -> {
                 indication.onRecording()
                 audioFocus.request(AudioFocusRequestReason.Dialog)
                 micDomain.startRecording()
             }
 
-            is IntentState -> {
+            is RecognizeState -> {
 
             }
 
@@ -76,7 +76,7 @@ abstract class PipelineManager(
 
             }
 
-            is SndState    -> {
+            is SpeakState -> {
 
             }
 
@@ -85,19 +85,19 @@ abstract class PipelineManager(
 
     private fun endState(state: PipelineState) {
         when (state) {
-            IdleState      -> {
+            DetectState -> {
 
                 micDomain.stopRecording()
             }
 
-            is AsrState    -> {
+            is TranscribeState -> {
                 state.timeoutJob.cancel()
                 audioFocus.abandon(AudioFocusRequestReason.Dialog)
                 micDomain.stopRecording()
             }
 
 
-            is IntentState -> {
+            is RecognizeState -> {
                 state.timeoutJob.cancel()
             }
 
@@ -109,7 +109,7 @@ abstract class PipelineManager(
 
             }
 
-            SndState       -> {
+            SpeakState -> {
 
             }
         }

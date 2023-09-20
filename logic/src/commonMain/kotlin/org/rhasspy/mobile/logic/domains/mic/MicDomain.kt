@@ -13,6 +13,7 @@ import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.ServiceState.ErrorState.Error
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.pipeline.IPipeline
+import org.rhasspy.mobile.logic.pipeline.PipelineEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.AudioDomainEvent.AudioChunkEvent
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.combineStateFlow
@@ -75,6 +76,7 @@ internal class MicDomain(
         if (!isMicrophonePermissionGranted) return
 
         shouldRecord = true
+
         with(params) {
             audioRecorder.startRecording(
                 audioRecorderChannelType = audioInputChannel,
@@ -88,7 +90,16 @@ internal class MicDomain(
             )
         }
 
-        pipeline.onEvent(getAudioChunk(data))
+        with(params) {
+            pipeline.onEvent(
+                PipelineEvent.AudioDomainEvent.AudioStartEvent(
+                    timeStamp = Clock.System.now(),
+                    sampleRate = audioOutputSampleRate,
+                    encoding = audioOutputEncoding,
+                    channel = audioOutputChannel,
+                )
+            )
+        }
     }
 
     private fun getAudioChunk(data: ByteArray): AudioChunkEvent {
@@ -107,6 +118,5 @@ internal class MicDomain(
         shouldRecord = false
         audioRecorder.stopRecording()
     }
-
 
 }

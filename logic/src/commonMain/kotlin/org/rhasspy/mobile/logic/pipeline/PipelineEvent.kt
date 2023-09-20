@@ -10,7 +10,6 @@ sealed interface PipelineEvent {
     sealed interface AudioDomainEvent : PipelineEvent {
 
         data class AudioStartEvent(
-            val sessionId: String,
             val timeStamp: Instant,
             val sampleRate: AudioFormatSampleRateType,
             val encoding: AudioFormatEncodingType,
@@ -18,7 +17,6 @@ sealed interface PipelineEvent {
         ) : AudioDomainEvent
 
         class AudioChunkEvent(
-            val sessionId: String,
             val timeStamp: Instant,
             val sampleRate: AudioFormatSampleRateType,
             val encoding: AudioFormatEncodingType,
@@ -27,7 +25,6 @@ sealed interface PipelineEvent {
         ) : AudioDomainEvent
 
         data class AudioStopEvent(
-            val sessionId: String,
             val timeStamp: Instant,
         ) : AudioDomainEvent
 
@@ -54,8 +51,6 @@ sealed interface PipelineEvent {
             val timeStamp: Instant,
         ) : VadDomainEvent
 
-        data object VadTimeoutEvent : VadDomainEvent
-
     }
 
     sealed interface AsrDomainEvent : PipelineEvent {
@@ -74,7 +69,6 @@ sealed interface PipelineEvent {
 
         data class RecognizeEvent(
             val text: String,
-            val sessionId: String
         ) : IntentDomainEvent
 
         data class IntentEvent(
@@ -108,7 +102,6 @@ sealed interface PipelineEvent {
             val text: String,
             val volume: Float?,
             val siteId: String,
-            val sessionId: String
         ) : TtsDomainEvent
 
         data object TtsErrorEvent : TtsDomainEvent
