@@ -16,10 +16,7 @@ enum class SettingsEnum {
     ThemeOption,
     DialogAutoScroll,
 
-    VoiceActivityDetectionOption,
-    AutomaticSilenceDetectionAudioLevel,
-    AutomaticSilenceDetectionTime,
-    AutomaticSilenceDetectionMinimumTime,
+    VoiceActivityDetectionDomain,
 
     BackgroundEnabled,
 
@@ -55,7 +52,6 @@ enum class SettingsEnum {
     AudioFocusOnSound,
     AudioFocusOnRecord,
     AudioFocusOnDialog,
-    AudioRecorderPauseRecordingOnMedia,
 
     ShowLog,
     LogAudioFrames,
@@ -65,38 +61,14 @@ enum class SettingsEnum {
     //Configuration Settings
     SiteId,
 
-    WakeWordUDPOutputHost,
-    WakeWordUDPOutputPort,
+    WakeDomain,
+    MicDomain,
+    AsrDomain,
+    HandleDomain,
+    IntentDomain,
+    TtsDomain,
+    SndDomain,
 
-    WakeWordOption,
-
-
-    WakeWordPorcupineAccessToken,
-    WakeWordPorcupineKeywordDefaultSelectedOptions,
-    WakeWordPorcupineKeywordCustomOptions,
-    WakeWordPorcupineLanguage,
-
-    SpeechToTextOption,
-
-    AudioInputDomain,
-
-    SpeechToTextMqttSilenceDetection,
-
-    IntentRecognitionOption,
-
-    TextToSpeechOption,
-
-    AudioPlayingOption,
-    AudioOutputOption,
-
-    AudioPlayingMqttSiteId,
-
-    DialogManagementOption,
-    DialogManagementLocalAsrTimeout,
-    DialogManagementLocalIntentRecognitionTimeout,
-    DialogManagementLocalRecordingTimeout,
-
-    IntentHandlingOption,
-    IsIntentHandlingHassEvent;
+    Pipeline
 
 }

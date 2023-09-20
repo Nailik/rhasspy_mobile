@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.platformspecific.porcupine
 
-import kotlinx.collections.immutable.ImmutableList
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
@@ -13,8 +15,8 @@ import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
  */
 expect class PorcupineWakeWordClient(
     wakeWordPorcupineAccessToken: String,
-    wakeWordPorcupineKeywordDefaultOptions: ImmutableList<PorcupineDefaultKeyword>,
-    wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
+    wakeWordPorcupineKeywordDefaultOptions: List<PorcupineDefaultKeyword>,
+    wakeWordPorcupineKeywordCustomOptions: List<PorcupineCustomKeyword>,
     wakeWordPorcupineLanguage: PorcupineLanguageOption,
     onKeywordDetected: (hotWord: String) -> Unit,
 ) {
@@ -22,9 +24,14 @@ expect class PorcupineWakeWordClient(
     /**
      * start wake word detected
      */
-    fun start(): Exception?
+    fun initialize(): Exception?
 
-    fun audioFrame(data: ByteArray)
+    fun audioFrame(
+        sampleRate: AudioFormatSampleRateType,
+        encoding: AudioFormatEncodingType,
+        channel: AudioFormatChannelType,
+        data: ByteArray,
+    )
 
     fun close()
 

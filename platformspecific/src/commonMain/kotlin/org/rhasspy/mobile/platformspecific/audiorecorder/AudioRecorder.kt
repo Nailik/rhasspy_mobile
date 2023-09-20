@@ -22,6 +22,7 @@ interface IAudioRecorder {
         audioRecorderOutputChannelType: AudioFormatChannelType,
         audioRecorderOutputEncodingType: AudioFormatEncodingType,
         audioRecorderOutputSampleRateType: AudioFormatSampleRateType,
+        isUseAutomaticGainControl: Boolean,
         isAutoPauseOnMediaPlayback: Boolean,
     )
 
@@ -58,6 +59,7 @@ internal expect class AudioRecorder() : IAudioRecorder {
         audioRecorderOutputChannelType: AudioFormatChannelType,
         audioRecorderOutputEncodingType: AudioFormatEncodingType,
         audioRecorderOutputSampleRateType: AudioFormatSampleRateType,
+        isUseAutomaticGainControl: Boolean,
         isAutoPauseOnMediaPlayback: Boolean,
     )
 

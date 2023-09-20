@@ -12,8 +12,9 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 @Stable
 class AudioInputConfigurationViewModel : ScreenViewModel() {
 
-    val viewState = ConfigurationSetting.audioInputDomainData.data.mapReadonlyState { AudioInputConfigurationViewState(it) }
+    val viewState = ConfigurationSetting.micDomainData.data.mapReadonlyState { AudioInputConfigurationViewState(it) }
 
+    //TODO use audomatic gain control
     fun onEvent(event: AudioInputConfigurationUiEvent) {
         when (event) {
             is Action -> onAction(event)

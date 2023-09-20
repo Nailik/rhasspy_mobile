@@ -1,15 +1,13 @@
 package org.rhasspy.mobile.settings
 
-import kotlinx.serialization.builtins.ListSerializer
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
-import org.rhasspy.mobile.data.audiorecorder.AudioSourceType
 import org.rhasspy.mobile.data.connection.HttpConnectionData
 import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
 import org.rhasspy.mobile.data.connection.MqttConnectionData
-import org.rhasspy.mobile.data.domain.AudioInputDomainData
-import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
+import org.rhasspy.mobile.data.domain.*
+import org.rhasspy.mobile.data.pipeline.PipelineData
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.data.settings.SettingsEnum
@@ -84,47 +82,9 @@ object ConfigurationSetting {
         serializer = LocalWebserverConnectionData.serializer()
     )
 
-    val wakeWordOption = ISetting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled, WakeWordOption.serializer())
-
-    val wakeWordAudioOutputChannel = ISetting(SettingsEnum.WakeWordAudioOutputChannel, AudioFormatChannelType.default, AudioFormatChannelType.serializer())
-    val wakeWordAudioOutputEncoding = ISetting(SettingsEnum.WakeWordAudioOutputEncoding, AudioFormatEncodingType.default, AudioFormatEncodingType.serializer())
-    val wakeWordAudioOutputSampleRate = ISetting(SettingsEnum.WakeWordAudioOutputSampleRate, AudioFormatSampleRateType.default, AudioFormatSampleRateType.serializer())
-
-    val wakeWordPorcupineAccessToken = ISetting(SettingsEnum.WakeWordPorcupineAccessToken, "")
-    val wakeWordPorcupineKeywordDefaultOptions = ISetting(
-        key = SettingsEnum.WakeWordPorcupineKeywordDefaultSelectedOptions,
-        initial = PorcupineKeywordOption.entries.map { PorcupineDefaultKeyword(it, false, 0.5) },
-        serializer = ListSerializer(PorcupineDefaultKeyword.serializer())
-    )
-    val wakeWordPorcupineKeywordCustomOptions = ISetting(
-        key = SettingsEnum.WakeWordPorcupineKeywordCustomOptions,
-        initial = emptyList(),
-        serializer = ListSerializer(PorcupineCustomKeyword.serializer())
-    )
-    val wakeWordPorcupineLanguage = ISetting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOption.EN, PorcupineLanguageOption.serializer())
-    val wakeWordUdpOutputHost = ISetting(SettingsEnum.WakeWordUDPOutputHost, "")
-    val wakeWordUdpOutputPort = ISetting(SettingsEnum.WakeWordUDPOutputPort, 20000)
-
-    val dialogManagementOption = ISetting(SettingsEnum.DialogManagementOption, DialogManagementOption.Local, DialogManagementOption.serializer())
-    val textAsrTimeout = ISetting(SettingsEnum.DialogManagementLocalAsrTimeout, 10000L)
-    val intentRecognitionTimeout = ISetting(SettingsEnum.DialogManagementLocalIntentRecognitionTimeout, 10000L)
-    val recordingTimeout = ISetting(SettingsEnum.DialogManagementLocalRecordingTimeout, 10000L)
-
-    val intentRecognitionOption = ISetting(SettingsEnum.IntentRecognitionOption, IntentRecognitionOption.Disabled, IntentRecognitionOption.serializer())
-
-    val textToSpeechOption = ISetting(SettingsEnum.TextToSpeechOption, TextToSpeechOption.Disabled, TextToSpeechOption.serializer())
-
-    val audioPlayingOption = ISetting(SettingsEnum.AudioPlayingOption, AudioPlayingOption.Local, AudioPlayingOption.serializer())
-    val audioOutputOption = ISetting(SettingsEnum.AudioOutputOption, AudioOutputOption.Sound, AudioOutputOption.serializer())
-
-    val audioPlayingMqttSiteId = ISetting(SettingsEnum.AudioPlayingMqttSiteId, "")
-
-    val speechToTextOption = ISetting(SettingsEnum.SpeechToTextOption, SpeechToTextOption.Disabled, SpeechToTextOption.serializer())
-
-    val speechToTextAudioRecorderSourceType = ISetting(SettingsEnum.SpeechToTextRecorderSourceType, AudioSourceType.default, AudioSourceType.serializer())
-    val audioInputDomainData = ISetting(
-        SettingsEnum.AudioInputDomain,
-        initial = AudioInputDomainData(
+    val micDomainData = ISetting(
+        key = SettingsEnum.MicDomain,
+        initial = MicDomainData(
             audioInputSource = AudioSourceType.default,
             audioInputChannel = AudioFormatChannelType.default,
             audioInputEncoding = AudioFormatEncodingType.default,
@@ -132,20 +92,90 @@ object ConfigurationSetting {
             audioOutputChannel = AudioFormatChannelType.default,
             audioOutputEncoding = AudioFormatEncodingType.default,
             audioOutputSampleRate = AudioFormatSampleRateType.default,
-            isUseAutomaticGainControl = false
+            isUseAutomaticGainControl = false, //TODO display to user if not available on device AutomaticGainControl.isAvailable()
+            isPauseRecordingOnMediaPlayback = true,
         ),
-        serializer = AudioInputDomainData.serializer()
+        serializer = MicDomainData.serializer()
     )
 
-    val isUseSpeechToTextMqttSilenceDetection = ISetting(SettingsEnum.SpeechToTextMqttSilenceDetection, true)
+    val vadDomainData = ISetting(
+        key = SettingsEnum.VoiceActivityDetectionDomain,
+        initial = VadDomainData(
+            voiceActivityDetectionOption = VoiceActivityDetectionOption.Disabled,
+            automaticSilenceDetectionAudioLevel = 40f,
+            automaticSilenceDetectionTime = 2000L,
+            automaticSilenceDetectionMinimumTime = 2000L,
+        ),
+        serializer = VadDomainData.serializer()
+    )
 
-    val intentHandlingOption = ISetting(SettingsEnum.IntentHandlingOption, IntentHandlingOption.Disabled, IntentHandlingOption.serializer())
+    val wakeDomainData = ISetting(
+        key = SettingsEnum.WakeDomain,
+        initial = WakeDomainData(
+            wakeWordOption = WakeWordOption.Disabled,
+            wakeWordPorcupineAccessToken = "",
+            wakeWordPorcupineKeywordDefaultOptions = PorcupineKeywordOption.entries.map { PorcupineDefaultKeyword(it, false, 0.5) },
+            wakeWordPorcupineKeywordCustomOptions = emptyList(),
+            wakeWordPorcupineLanguage = PorcupineLanguageOption.EN,
+            wakeWordUdpOutputHost = "",
+            wakeWordUdpOutputPort = 20000
+        ),
+        serializer = WakeDomainData.serializer()
+    )
 
-    val intentHandlingHomeAssistantOption = ISetting(SettingsEnum.IsIntentHandlingHassEvent, HomeAssistantIntentHandlingOption.Intent, HomeAssistantIntentHandlingOption.serializer())
+    val asrDomainData = ISetting(
+        key = SettingsEnum.AsrDomain,
+        initial = AsrDomainData(
+            option = SpeechToTextOption.Disabled,
+            isUseSpeechToTextMqttSilenceDetection = true
+        ),
+        serializer = AsrDomainData.serializer()
+    )
 
-    val voiceActivityDetectionOption = ISetting(SettingsEnum.VoiceActivityDetectionOption, VoiceActivityDetectionOption.Disabled, VoiceActivityDetectionOption.serializer())
-    val automaticSilenceDetectionAudioLevel = ISetting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
-    val automaticSilenceDetectionTime = ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionTime, 2000L)
-    val automaticSilenceDetectionMinimumTime = ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000L)
+    val handleDomainData = ISetting(
+        key = SettingsEnum.HandleDomain,
+        initial = HandleDomainData(
+            option = IntentHandlingOption.Disabled,
+            homeAssistantIntentHandlingOption = HomeAssistantIntentHandlingOption.Intent
+        ),
+        serializer = HandleDomainData.serializer()
+    )
+
+    val intentDomainData = ISetting(
+        key = SettingsEnum.IntentDomain,
+        initial = IntentDomainData(
+            option = IntentRecognitionOption.Disabled,
+        ),
+        serializer = IntentDomainData.serializer()
+    )
+
+    val sndDomainData = ISetting(
+        key = SettingsEnum.SndDomain,
+        initial = SndDomainData(
+            option = AudioPlayingOption.Local,
+            localOutputOption = AudioOutputOption.Sound,
+            mqttSiteId = "",
+        ),
+        serializer = SndDomainData.serializer()
+    )
+
+    val ttsDomainData = ISetting(
+        key = SettingsEnum.TtsDomain,
+        initial = TtsDomainData(
+            option = TextToSpeechOption.Disabled,
+        ),
+        serializer = TtsDomainData.serializer()
+    )
+
+    val pipelineData = ISetting(
+        key = SettingsEnum.Pipeline,
+        initial = PipelineData(
+            option = DialogManagementOption.Local,
+            asrDomainTimeout = 10000L,
+            intentDomainTimeout = 10000L,
+            vadDomainTimeout = 10000L
+        ),
+        serializer = PipelineData.serializer()
+    )
 
 }

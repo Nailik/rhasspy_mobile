@@ -82,7 +82,6 @@ object AppSetting : KoinComponent {
     val isAudioFocusOnSound = ISetting(SettingsEnum.AudioFocusOnSound, false)
     val isAudioFocusOnRecord = ISetting(SettingsEnum.AudioFocusOnRecord, false)
     val isAudioFocusOnDialog = ISetting(SettingsEnum.AudioFocusOnDialog, false)
-    val isPauseRecordingOnMedia = ISetting(SettingsEnum.AudioRecorderPauseRecordingOnMedia, true)
 
     val isDialogAutoscroll = ISetting(SettingsEnum.DialogAutoScroll, true)
 }

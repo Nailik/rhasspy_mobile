@@ -13,7 +13,7 @@ import org.rhasspy.mobile.android.utils.hasCombinedTestTag
 import org.rhasspy.mobile.android.utils.requestOverlayPermissions
 import org.rhasspy.mobile.android.utils.waitUntilExists
 import org.rhasspy.mobile.data.indication.IndicationState
-import org.rhasspy.mobile.logic.local.indication.IIndicationService
+import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.main.MainScreen
@@ -38,14 +38,14 @@ class IndicationOverlayTest : FlakyTest() {
         AppSetting.isWakeWordLightIndicationEnabled.value = true
 
         composeTestRule.waitForIdle()
-        get<IIndicationService>().onThinking()
+        get<IIndication>().onThinking()
         composeTestRule.waitUntil(
-            condition = { get<IIndicationService>().indicationState.value != IndicationState.Idle },
+            condition = { get<IIndication>().indicationState.value != IndicationState.Idle },
             timeoutMillis = 5000
         )
         composeTestRule.waitForIdle()
         composeTestRule.waitUntil(
-            condition = { get<IIndicationService>().indicationState.value != IndicationState.Idle },
+            condition = { get<IIndication>().indicationState.value != IndicationState.Idle },
             timeoutMillis = 5000
         )
         composeTestRule.waitUntilExists(hasCombinedTestTag(TestTag.Indication, TestTag.Overlay))

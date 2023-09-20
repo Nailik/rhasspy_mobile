@@ -15,8 +15,8 @@ import java.nio.ByteOrder
 
 class PorcupineClient(
     val wakeWordPorcupineAccessToken: String,
-    val wakeWordPorcupineKeywordDefaultOptions: ImmutableList<PorcupineDefaultKeyword>,
-    val wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
+    val wakeWordPorcupineKeywordDefaultOptions: List<PorcupineDefaultKeyword>,
+    val wakeWordPorcupineKeywordCustomOptions: List<PorcupineCustomKeyword>,
     val wakeWordPorcupineLanguage: PorcupineLanguageOption,
     val onKeywordDetected: (keywordIndex: Int) -> Unit,
 ) : KoinComponent {

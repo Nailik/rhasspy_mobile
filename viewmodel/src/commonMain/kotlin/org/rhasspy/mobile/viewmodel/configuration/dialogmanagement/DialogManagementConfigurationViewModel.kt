@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
 import org.rhasspy.mobile.data.data.toLongOrZero
-import org.rhasspy.mobile.logic.domains.dialog.IDialogManagerService
+import org.rhasspy.mobile.logic.dialog.IDialogManagerService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel

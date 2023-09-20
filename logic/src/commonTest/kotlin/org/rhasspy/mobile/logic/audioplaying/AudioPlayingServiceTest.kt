@@ -2,7 +2,7 @@ package org.rhasspy.mobile.logic.audioplaying
 
 import org.kodein.mock.Mock
 import org.koin.dsl.module
-import org.rhasspy.mobile.logic.domains.audioplaying.IAudioPlayingService
+import org.rhasspy.mobile.logic.domains.audioplaying.ISndDomain
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.nVerify
 import kotlin.test.BeforeTest
@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
 class AudioPlayingServiceTest : AppTest() {
 
     @Mock
-    lateinit var audioPlayingService: IAudioPlayingService
+    lateinit var audioPlayingService: ISndDomain
 
     override fun setUpMocks() = injectMocks(mocker)
 

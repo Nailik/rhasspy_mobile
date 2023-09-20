@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.viewmodel.microphone
 
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.logic.domains.speechtotext.ISpeechToTextService
-import org.rhasspy.mobile.logic.domains.wakeword.IWakeWordService
+import org.rhasspy.mobile.logic.domains.asr.IAsrDomain
+import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
@@ -10,9 +10,9 @@ import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 
 class MicrophoneFabViewStateCreator(
     private val serviceMiddleware: IServiceMiddleware,
-    private val wakeWordService: IWakeWordService,
+    private val wakeWordService: IWakeDomain,
     private val microphonePermission: IMicrophonePermission,
-    private val speechToTextService: ISpeechToTextService
+    private val speechToTextService: IAsrDomain
 ) {
 
     operator fun invoke(): StateFlow<MicrophoneFabViewState> {

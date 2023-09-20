@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.logic.domains.intenthandling.IIntentHandlingService
+import org.rhasspy.mobile.logic.domains.handle.IHandleDomain
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
@@ -18,7 +18,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
 
 @Stable
 class IntentHandlingConfigurationViewModel(
-    service: IIntentHandlingService
+    service: IHandleDomain
 ) : ConfigurationViewModel(
     serviceState = service.serviceState
 ) {

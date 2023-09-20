@@ -16,7 +16,7 @@ actual class PorcupineWakeWordClient actual constructor(
     /**
      * start wake word detected
      */
-    actual fun start(): Exception? {
+    actual fun initialize(): Exception? {
         //TODO #516
         return null
     }

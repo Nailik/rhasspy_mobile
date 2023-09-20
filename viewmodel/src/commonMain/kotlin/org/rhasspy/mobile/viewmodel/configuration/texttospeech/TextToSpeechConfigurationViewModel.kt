@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.logic.domains.texttospeech.ITextToSpeechService
+import org.rhasspy.mobile.logic.domains.tts.ITtsDomain
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
@@ -17,7 +17,7 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 
 @Stable
 class TextToSpeechConfigurationViewModel(
-    service: ITextToSpeechService
+    service: ITtsDomain
 ) : ConfigurationViewModel(
     serviceState = service.serviceState
 ) {

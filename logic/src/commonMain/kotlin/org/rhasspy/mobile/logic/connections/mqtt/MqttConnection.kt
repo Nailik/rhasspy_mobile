@@ -12,16 +12,19 @@ import okio.Path
 import okio.Path.Companion.toPath
 import okio.buffer
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.connections.IConnection
-import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.SayText
-import org.rhasspy.mobile.logic.middleware.Source.Mqtt
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.*
+import org.rhasspy.mobile.logic.local.settings.IAppSettingsUtil
+import org.rhasspy.mobile.logic.middleware.Source
+import org.rhasspy.mobile.logic.pipeline.IPipeline
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.extensions.commonSource
 import org.rhasspy.mobile.platformspecific.mqtt.*
@@ -39,22 +42,31 @@ interface IMqttConnection : IConnection {
     fun sessionEnded(sessionId: String)
     fun intentNotRecognized(sessionId: String)
     fun asrAudioFrame(byteArray: ByteArray, onResult: (result: ServiceState) -> Unit)
-    fun asrAudioSessionFrame(sessionId: String, byteArray: ByteArray, onResult: (result: ServiceState) -> Unit)
+    fun asrAudioSessionFrame(
+        sessionId: String,
+        sampleRate: AudioFormatSampleRateType,
+        encoding: AudioFormatEncodingType,
+        channel: AudioFormatChannelType,
+        data: ByteArray,
+        onResult: (result: ServiceState) -> Unit
+    )
     fun hotWordDetected(keyword: String)
     fun wakeWordError(description: String)
-    fun startListening(sessionId: String, onResult: (result: ServiceState) -> Unit)
+    fun startListening(sessionId: String, isUseSilenceDetection: Boolean, onResult: (result: ServiceState) -> Unit)
     fun stopListening(sessionId: String, onResult: (result: ServiceState) -> Unit)
     fun asrTextCaptured(sessionId: String, text: String?)
     fun asrError(sessionId: String)
     fun audioCaptured(sessionId: String, audioFilePath: Path)
     fun recognizeIntent(sessionId: String, text: String, onResult: (result: ServiceState) -> Unit)
     fun say(sessionId: String, text: String, siteId: String, onResult: (result: ServiceState) -> Unit)
-    fun playAudioRemote(audioSource: AudioSource, onResult: (result: ServiceState) -> Unit)
+    fun playAudioRemote(audioSource: AudioSource, siteId: String, onResult: (result: ServiceState) -> Unit)
     fun playFinished()
 
 }
 
 internal class MqttConnection(
+    private val pipeline: IPipeline,
+    private val appSettingsUtil: IAppSettingsUtil,
     paramsCreator: MqttConnectionParamsCreator
 ) : IMqttConnection {
 
@@ -63,7 +75,6 @@ internal class MqttConnection(
     override val connectionState = MutableStateFlow<ServiceState>(ServiceState.Pending)
 
     private val nativeApplication by inject<NativeApplication>()
-    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private var scope = CoroutineScope(Dispatchers.IO)
 
@@ -371,7 +382,7 @@ internal class MqttConnection(
      * hermes/dialogueManager/sessionQueued
      */
     private fun startSession(jsonObject: JsonObject) =
-        serviceMiddleware.action(StartSession(jsonObject.getSource()))
+        pipeline.onEvent(StartSession(jsonObject.getSessionId()))
 
 
     /**
@@ -382,7 +393,7 @@ internal class MqttConnection(
      * sessionId: string - current session ID (required)
      */
     private fun endSession(jsonObject: JsonObject) =
-        serviceMiddleware.action(EndSession(jsonObject.getSource()))
+        pipeline.onEvent(EndSession(jsonObject.getSessionId()))
 
     /**
      * hermes/dialogueManager/sessionStarted (JSON)
@@ -396,7 +407,7 @@ internal class MqttConnection(
      * used to save the sessionId and check for it when recording etc
      */
     private fun sessionStarted(jsonObject: JsonObject) =
-        serviceMiddleware.action(SessionStarted(jsonObject.getSource()))
+        pipeline.onEvent(SessionStarted(jsonObject.getSessionId()))
 
     /**
      * hermes/dialogueManager/sessionStarted (JSON)
@@ -427,7 +438,7 @@ internal class MqttConnection(
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
     private fun sessionEnded(jsonObject: JsonObject) =
-        serviceMiddleware.action(SessionEnded(jsonObject.getSource()))
+        pipeline.onEvent(SessionEnded(jsonObject.getSessionId()))
 
     /**
      * hermes/dialogueManager/sessionEnded (JSON)
@@ -484,12 +495,25 @@ internal class MqttConnection(
      * siteId: string - Hermes site ID (part of topic)
      * sessionId: string - session ID (part of topic)
      */
-    override fun asrAudioSessionFrame(sessionId: String, byteArray: ByteArray, onResult: (result: ServiceState) -> Unit) {
+    override fun asrAudioSessionFrame(
+        sessionId: String,
+        sampleRate: AudioFormatSampleRateType,
+        encoding: AudioFormatEncodingType,
+        channel: AudioFormatChannelType,
+        data: ByteArray,
+        onResult: (result: ServiceState) -> Unit
+    ) {
+        val dataToSend = data.appendWavHeader(
+            sampleRate = sampleRate,
+            encoding = encoding,
+            channel = channel
+        )
+
         publishMessage(
             MqttTopicsPublish.AsrAudioSessionFrame.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
                 .set(MqttTopicPlaceholder.SessionId, sessionId),
-            MqttMessage(byteArray),
+            MqttMessage(dataToSend),
             onResult
         )
     }
@@ -500,8 +524,8 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      * reason: string = "" - Reason for toggle on
      */
-    private fun hotWordToggleOn() =
-        serviceMiddleware.action(HotWordToggle(true, Mqtt(null)))
+    private fun hotWordToggleOn() = appSettingsUtil.hotWordToggle(true, Source.Mqtt)
+    // serviceMiddleware.action(HotWordToggle(true, Mqtt(null)))
 
     /**
      * hermes/hotword/toggleOff (JSON)
@@ -509,8 +533,7 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      * reason: string = "" - Reason for toggle off
      */
-    private fun hotWordToggleOff() =
-        serviceMiddleware.action(HotWordToggle(false, Mqtt(null)))
+    private fun hotWordToggleOff() = appSettingsUtil.hotWordToggle(false, Source.Mqtt)
 
 
     /**
@@ -524,9 +547,7 @@ internal class MqttConnection(
     private fun hotWordDetectedCalled(topic: String): Boolean =
         topic.split("/").let {
             if (it.size > 2) {
-                scope.launch {
-                    serviceMiddleware.action(WakeWordDetected(Mqtt(null), it[2]))
-                }
+                pipeline.onEvent(HotWordDetected(it[2]))
                 true
             } else {
                 false
@@ -578,12 +599,7 @@ internal class MqttConnection(
      * wakewordId: string? = null - id of wake word that triggered session (Rhasspy only)
      */
     private fun startListening(jsonObject: JsonObject) =
-        serviceMiddleware.action(
-            StartListening(
-                jsonObject.getSource(),
-                jsonObject[MqttParams.SendAudioCaptured.value]?.jsonPrimitive?.booleanOrNull == true
-            )
-        )
+        pipeline.onEvent(StartListening(jsonObject[MqttParams.SendAudioCaptured.value]?.jsonPrimitive?.booleanOrNull == true))
 
     /**
      * hermes/asr/startListening (JSON)
@@ -593,13 +609,13 @@ internal class MqttConnection(
      *
      * stopOnSilence: bool = true - detect silence and automatically end voice command (Rhasspy only)
      */
-    override fun startListening(sessionId: String, onResult: (result: ServiceState) -> Unit) {
+    override fun startListening(sessionId: String, isUseSilenceDetection: Boolean, onResult: (result: ServiceState) -> Unit) {
         publishMessage(
             MqttTopicsPublish.AsrStartListening,
             createMqttMessage {
                 put(MqttParams.SiteId, params.siteId)
                 put(MqttParams.SessionId, sessionId)
-                put(MqttParams.StopOnSilence, params.isUseSpeechToTextMqttSilenceDetection)
+                put(MqttParams.StopOnSilence, isUseSilenceDetection)
                 put(MqttParams.SendAudioCaptured, false)
             },
             onResult
@@ -615,7 +631,7 @@ internal class MqttConnection(
      * sessionId: string = "" - current session ID
      */
     private fun stopListening(jsonObject: JsonObject) =
-        serviceMiddleware.action(StopListening(jsonObject.getSource()))
+        pipeline.onEvent(StopListening(jsonObject.getSessionId()))
 
     /**
      * hermes/asr/stopListening (JSON)
@@ -643,10 +659,10 @@ internal class MqttConnection(
      * sessionId: string? = null - current session ID
      */
     private fun asrTextCaptured(jsonObject: JsonObject) =
-        serviceMiddleware.action(
+        pipeline.onEvent(
             AsrTextCaptured(
-                jsonObject.getSource(),
-                jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content
+                sessionId = jsonObject.getSessionId(),
+                text = jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content
             )
         )
 
@@ -677,7 +693,7 @@ internal class MqttConnection(
      * sessionId: string? = null - current session ID
      */
     private fun asrError(jsonObject: JsonObject) =
-        serviceMiddleware.action(AsrError(Mqtt(jsonObject.getSessionId())))
+        pipeline.onEvent(AsrError(jsonObject.getSessionId()))
 
 
     /**
@@ -751,11 +767,10 @@ internal class MqttConnection(
      * Response to hermes/nlu/query
      */
     private fun intentRecognitionResult(jsonObject: JsonObject) =
-        serviceMiddleware.action(
+        pipeline.onEvent(
             IntentRecognitionResult(
-                source = jsonObject.getSource(),
-                intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content
-                    ?: "",
+                sessionId = jsonObject.getSessionId(),
+                intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content,
                 intent = jsonObject.toString()
             )
         )
@@ -767,21 +782,21 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      */
     private fun intentNotRecognized(jsonObject: JsonObject) =
-        serviceMiddleware.action(IntentRecognitionError(jsonObject.getSource()))
+        pipeline.onEvent(IntentNotRecognized(jsonObject.getSessionId()))
 
     /**
      * hermes/handle/toggleOn
      * Enable intent handling
      */
     private fun intentHandlingToggleOn() =
-        serviceMiddleware.action(IntentHandlingToggle(true, Mqtt(null)))
+        appSettingsUtil.intentHandlingToggle(false, Source.Mqtt)
 
     /**
      * hermes/handle/toggleOff
      * Disable intent handling
      */
     private fun intentHandlingToggleOff() =
-        serviceMiddleware.action(IntentHandlingToggle(false, Mqtt(null)))
+        appSettingsUtil.intentHandlingToggle(false, Source.Mqtt)
 
     /**
      * hermes/tts/say (JSON)
@@ -827,12 +842,12 @@ internal class MqttConnection(
      */
     private fun say(jsonObject: JsonObject) =
         jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content?.let {
-            serviceMiddleware.action(
-                SayText(
+            pipeline.onEvent(
+                Say(
+                    sessionId = jsonObject.getSessionId(),
                     text = it,
                     volume = jsonObject[MqttParams.Volume.value]?.jsonPrimitive?.floatOrNull,
-                    siteId = jsonObject.getSiteId() ?: "default",
-                    sessionId = jsonObject.getSessionId()
+                    siteId = jsonObject.getSiteId() ?: "default"
                 )
             )
         }
@@ -848,9 +863,8 @@ internal class MqttConnection(
      * Response(s)
      * hermes/audioServer/<siteId>/playFinished (JSON)
      */
-    private fun playBytes(byteArray: ByteArray) {
-        serviceMiddleware.action(PlayAudio(Mqtt(null), byteArray))
-    }
+    private fun playBytes(byteArray: ByteArray) =
+        pipeline.onEvent(PlayBytes(byteArray))
 
     /**
      * hermes/audioServer/<siteId>/playFinished
@@ -860,7 +874,7 @@ internal class MqttConnection(
      * id: string = "" - requestId from request message
      */
     private fun playFinishedCall() =
-        serviceMiddleware.action(PlayFinished(Mqtt(null)))
+        pipeline.onEvent(PlayFinished)
 
     /**
      * hermes/audioServer/<siteId>/playBytes/<requestId> (JSON)
@@ -873,10 +887,10 @@ internal class MqttConnection(
      * hermes/audioServer/<siteId>/playFinished (JSON)
      *
      */
-    override fun playAudioRemote(audioSource: AudioSource, onResult: (result: ServiceState) -> Unit) {
+    override fun playAudioRemote(audioSource: AudioSource, siteId: String, onResult: (result: ServiceState) -> Unit) {
         publishMessage(
             MqttTopicsPublish.AudioOutputPlayBytes.topic
-                .set(MqttTopicPlaceholder.SiteId, params.audioPlayingMqttSiteId)
+                .set(MqttTopicPlaceholder.SiteId, siteId)
                 .set(MqttTopicPlaceholder.RequestId, uuid4().toString()),
             MqttMessage(
                 @Suppress("DEPRECATION")
@@ -896,7 +910,7 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      */
     private fun audioOutputToggleOn() =
-        serviceMiddleware.action(AudioOutputToggle(true, Mqtt(null)))
+        appSettingsUtil.audioOutputToggle(false, Source.Mqtt)
 
     /**
      * hermes/audioServer/toggleOff (JSON)
@@ -904,7 +918,7 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      */
     private fun audioOutputToggleOff() =
-        serviceMiddleware.action(AudioOutputToggle(false, Mqtt(null)))
+        appSettingsUtil.audioOutputToggle(false, Source.Mqtt)
 
     /**
      * hermes/audioServer/<siteId>/playFinished
@@ -928,12 +942,9 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      */
     private fun setVolume(jsonObject: JsonObject) =
-        jsonObject[MqttParams.Volume.value]?.jsonPrimitive?.floatOrNull?.let {
-            serviceMiddleware.action(AudioVolumeChange(it, Mqtt(null)))
+        jsonObject[MqttParams.Volume.value]?.jsonPrimitive?.floatOrNull?.let { volume ->
+            appSettingsUtil.setAudioVolume(volume, Source.Mqtt)
         }
-
-
-    private fun JsonObject.getSource() = Mqtt(jsonObject.getSessionId())
 
     /**
      * check if site id is this id

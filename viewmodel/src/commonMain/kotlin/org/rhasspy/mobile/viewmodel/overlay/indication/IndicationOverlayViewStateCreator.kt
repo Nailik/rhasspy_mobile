@@ -1,12 +1,12 @@
 package org.rhasspy.mobile.viewmodel.overlay.indication
 
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.logic.local.indication.IIndicationService
+import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 
 class IndicationOverlayViewStateCreator(
-    private val indicationService: IIndicationService
+    private val indicationService: IIndication
 ) {
 
     operator fun invoke(): StateFlow<IndicationOverlayViewState> {

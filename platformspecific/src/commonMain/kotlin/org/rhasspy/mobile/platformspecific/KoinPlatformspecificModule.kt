@@ -58,7 +58,7 @@ val platformSpecificModule = module {
             externalResultRequest = get()
         )
     }
-    factory<IAudioRecorder> {
+    single<IAudioRecorder> {
         AudioRecorder()
     }
     single<IOpenLinkUtils> {
@@ -80,8 +80,7 @@ val platformSpecificModule = module {
     single<ISettingsUtils> {
         SettingsUtils(
             externalResultRequest = get(),
-            nativeApplication = get(),
-            databaseDriverFactory = get()
+            nativeApplication = get()
         )
     }
 }

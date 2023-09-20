@@ -16,10 +16,10 @@ import org.koin.core.context.startKoin
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
-import org.rhasspy.mobile.logic.domains.audioplaying.IAudioPlayingService
-import org.rhasspy.mobile.logic.domains.dialog.IDialogManagerService
-import org.rhasspy.mobile.logic.domains.intenthandling.IIntentHandlingService
-import org.rhasspy.mobile.logic.domains.intentrecognition.IIntentRecognitionService
+import org.rhasspy.mobile.logic.dialog.IDialogManagerService
+import org.rhasspy.mobile.logic.domains.audioplaying.ISndDomain
+import org.rhasspy.mobile.logic.domains.handle.IHandleDomain
+import org.rhasspy.mobile.logic.domains.intent.IIntentDomain
 import org.rhasspy.mobile.logic.logger.IDatabaseLogger
 import org.rhasspy.mobile.logic.logicModule
 import org.rhasspy.mobile.overlay.IIndicationOverlay
@@ -109,9 +109,9 @@ class Application : NativeApplication(), KoinComponent {
         get<IWebServerConnection>()
         get<IMqttConnection>()
         get<IDialogManagerService>()
-        get<IIntentRecognitionService>()
-        get<IIntentHandlingService>()
-        get<IAudioPlayingService>()
+        get<IIntentDomain>()
+        get<IHandleDomain>()
+        get<ISndDomain>()
         //start overlay
         checkOverlayPermission()
         get<IIndicationOverlay>().start()

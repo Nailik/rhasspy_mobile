@@ -13,7 +13,7 @@ import org.rhasspy.mobile.data.data.toIntOrZero
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.logic.domains.wakeword.IWakeWordService
+import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
 import org.rhasspy.mobile.platformspecific.*
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
@@ -37,7 +37,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordCon
 @Stable
 class WakeWordConfigurationViewModel(
     microphonePermission: IMicrophonePermission,
-    service: IWakeWordService
+    service: IWakeDomain
 ) : ConfigurationViewModel(
     serviceState = service.serviceState
 ) {

@@ -7,7 +7,7 @@ import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
-import org.rhasspy.mobile.logic.domains.speechtotext.ISpeechToTextService
+import org.rhasspy.mobile.logic.domains.asr.IAsrDomain
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SilenceDetected
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
@@ -52,7 +52,7 @@ class SpeechToTextServiceTest : AppTest() {
 
         every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
-        val speechToTextService = get<ISpeechToTextService>()
+        val speechToTextService = get<IAsrDomain>()
 
         //setup minimum time for recording
         ConfigurationSetting.automaticSilenceDetectionMinimumTime.value = 500 //ms
@@ -87,7 +87,7 @@ class SpeechToTextServiceTest : AppTest() {
             ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.Rhasspy2HermesHttp
             every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
-            val speechToTextService = get<ISpeechToTextService>()
+            val speechToTextService = get<IAsrDomain>()
 
             //setup silence detection time
             ConfigurationSetting.automaticSilenceDetectionTime.value = 200 //ms
@@ -123,7 +123,7 @@ class SpeechToTextServiceTest : AppTest() {
 
         every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
-        val speechToTextService = get<ISpeechToTextService>()
+        val speechToTextService = get<IAsrDomain>()
 
         //setup silence detection time
         ConfigurationSetting.automaticSilenceDetectionTime.value = 200 //ms
@@ -161,7 +161,7 @@ class SpeechToTextServiceTest : AppTest() {
 
             every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
-            val speechToTextService = get<ISpeechToTextService>()
+            val speechToTextService = get<IAsrDomain>()
 
             //setup silence detection time
             ConfigurationSetting.automaticSilenceDetectionTime.value = 200 //ms
@@ -204,7 +204,7 @@ class SpeechToTextServiceTest : AppTest() {
 
             every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
-            val speechToTextService = get<ISpeechToTextService>()
+            val speechToTextService = get<IAsrDomain>()
 
             //setup silence detection time to 0
             ConfigurationSetting.automaticSilenceDetectionTime.value = 0 //ms
@@ -234,7 +234,7 @@ class SpeechToTextServiceTest : AppTest() {
         ConfigurationSetting.speechToTextOption.value = SpeechToTextOption.Rhasspy2HermesHttp
         every { serviceMiddleware.action(isInstanceOf<SilenceDetected>()) } returns Unit
 
-        val speechToTextService = get<ISpeechToTextService>()
+        val speechToTextService = get<IAsrDomain>()
 
         //setup silence detection time
         ConfigurationSetting.automaticSilenceDetectionTime.value = 200 //ms

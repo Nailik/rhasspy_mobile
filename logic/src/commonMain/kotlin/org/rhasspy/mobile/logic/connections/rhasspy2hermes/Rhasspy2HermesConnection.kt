@@ -7,8 +7,8 @@ import io.ktor.http.contentType
 import okio.Path
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.logic.connections.IConnection
-import org.rhasspy.mobile.logic.connections.IHttpConnection
-import org.rhasspy.mobile.logic.domains.speechtotext.StreamContent
+import org.rhasspy.mobile.logic.connections.http.IHttpConnection
+import org.rhasspy.mobile.logic.connections.http.StreamContent
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.*
 import org.rhasspy.mobile.platformspecific.extensions.commonData

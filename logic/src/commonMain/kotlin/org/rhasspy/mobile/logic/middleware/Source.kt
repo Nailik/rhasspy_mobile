@@ -1,11 +1,8 @@
 package org.rhasspy.mobile.logic.middleware
 
-sealed class Source {
-    object Local : Source()
-    object HttpApi : Source()
-    class Mqtt(val sessionId: String?) : Source()
+sealed interface Source {
+    data object Local : Source
+    data object HttpApi : Source
+    data object Mqtt : Source
 
-    override fun toString(): String {
-        return this::class.simpleName ?: super.toString()
-    }
 }

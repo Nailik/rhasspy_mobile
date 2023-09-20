@@ -9,13 +9,13 @@ import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
-import org.rhasspy.mobile.logic.domains.audioplaying.IAudioPlayingService
-import org.rhasspy.mobile.logic.domains.dialog.IDialogManagerService
-import org.rhasspy.mobile.logic.domains.intenthandling.IIntentHandlingService
-import org.rhasspy.mobile.logic.domains.intentrecognition.IIntentRecognitionService
-import org.rhasspy.mobile.logic.domains.speechtotext.ISpeechToTextService
-import org.rhasspy.mobile.logic.domains.texttospeech.ITextToSpeechService
-import org.rhasspy.mobile.logic.domains.wakeword.IWakeWordService
+import org.rhasspy.mobile.logic.domains.audioplaying.ISndDomain
+import org.rhasspy.mobile.logic.dialog.IDialogManagerService
+import org.rhasspy.mobile.logic.domains.handle.IHandleDomain
+import org.rhasspy.mobile.logic.domains.intent.IIntentDomain
+import org.rhasspy.mobile.logic.domains.asr.IAsrDomain
+import org.rhasspy.mobile.logic.domains.tts.ITtsDomain
+import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -27,13 +27,13 @@ class ConfigurationScreenViewStateCreator(
     homeAssistantConnection: IHomeAssistantConnection,
     mqttConnection: IMqttConnection,
     webServerConnection: IWebServerConnection,
-    private val wakeWordService: IWakeWordService,
-    private val speechToTextService: ISpeechToTextService,
-    private val intentRecognitionService: IIntentRecognitionService,
-    private val textToSpeechService: ITextToSpeechService,
-    private val audioPlayingService: IAudioPlayingService,
+    private val wakeWordService: IWakeDomain,
+    private val speechToTextService: IAsrDomain,
+    private val intentRecognitionService: IIntentDomain,
+    private val textToSpeechService: ITtsDomain,
+    private val audioPlayingService: ISndDomain,
     private val dialogManagerService: IDialogManagerService,
-    private val intentHandlingService: IIntentHandlingService,
+    private val intentHandlingService: IHandleDomain,
 ) {
     private val hasConnectionError = combineStateFlow(
         rhasspy2HermesConnection.connectionState,

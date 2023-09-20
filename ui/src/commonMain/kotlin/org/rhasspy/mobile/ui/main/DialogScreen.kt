@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.logic.domains.dialog.SessionData
+import org.rhasspy.mobile.logic.dialog.SessionData
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.resources.color_http
 import org.rhasspy.mobile.resources.color_local

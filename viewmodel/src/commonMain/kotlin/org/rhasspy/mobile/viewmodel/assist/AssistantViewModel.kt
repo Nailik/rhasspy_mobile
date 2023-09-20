@@ -5,7 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.logic.local.indication.IIndicationService
+import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartListening
 import org.rhasspy.mobile.logic.middleware.Source
@@ -14,7 +14,7 @@ import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewMode
 
 class AssistantViewModel(
     private val serviceMiddleware: IServiceMiddleware,
-    private val indicationService: IIndicationService,
+    private val indicationService: IIndication,
     val indicationViewModel: IndicationOverlayViewModel
 ) : ViewModel() {
 

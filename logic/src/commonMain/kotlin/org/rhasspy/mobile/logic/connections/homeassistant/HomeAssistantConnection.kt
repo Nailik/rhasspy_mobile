@@ -7,17 +7,22 @@ import io.ktor.http.contentType
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.rhasspy.mobile.data.connection.HttpClientResult
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.ErrorState
+import org.rhasspy.mobile.data.connection.HttpClientResult.HttpClientError.UnknownError
+import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Event
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Intent
 import org.rhasspy.mobile.logic.connections.IConnection
-import org.rhasspy.mobile.logic.connections.IHttpConnection
+import org.rhasspy.mobile.logic.connections.http.IHttpConnection
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface IHomeAssistantConnection : IConnection {
 
-    fun sendIntent(intentName: String, intent: String, onResult: (result: ServiceState) -> Unit)
+    fun sendIntent(
+        option: HomeAssistantIntentHandlingOption,
+        intentName: String,
+        intent: String,
+        onResult: (result: HttpClientResult<String>) -> Unit
+    )
 
 }
 
@@ -34,7 +39,12 @@ internal class HomeAssistantConnection : IHomeAssistantConnection, IHttpConnecti
     /**
      * simplified conversion from intent to hass event or hass intent
      */
-    override fun sendIntent(intentName: String, intent: String, onResult: (result: ServiceState) -> Unit) {
+    override fun sendIntent(
+        option: HomeAssistantIntentHandlingOption,
+        intentName: String,
+        intent: String,
+        onResult: (result: HttpClientResult<String>) -> Unit
+    ) {
         logger.d { "sendIntent name: $intentName json: $intent" }
         try {
             val slots = mutableMapOf<String, JsonElement?>()
@@ -66,18 +76,18 @@ internal class HomeAssistantConnection : IHomeAssistantConnection, IHttpConnecti
 
             val intentRes = Json.encodeToString(slots)
 
-            when (ConfigurationSetting.intentHandlingHomeAssistantOption.value) {
+            when (option) {
                 Event  -> homeAssistantEvent(intentRes, intentName) {
-                    onResult(it.toServiceState())
+                    onResult(it)
                 }
 
                 Intent -> homeAssistantIntent("{\"name\" : \"$intentName\", \"data\": $intent }") {
-                    onResult(it.toServiceState())
+                    onResult(it)
                 }
             }
         } catch (exception: Exception) {
             logger.e(exception) { "sendIntent error" }
-            onResult(ErrorState.Exception(exception))
+            onResult(UnknownError(exception))
         }
     }
 

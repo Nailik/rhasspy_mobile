@@ -1,12 +1,12 @@
 package org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat
 
-import org.rhasspy.mobile.data.domain.AudioInputDomainData
+import org.rhasspy.mobile.data.domain.MicDomainData
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationViewState.AudioOutputFormatConfigurationData
 
 class AudioOutputFormatConfigurationDataMapper {
 
-    operator fun invoke(data: AudioInputDomainData): AudioOutputFormatConfigurationData {
+    operator fun invoke(data: MicDomainData): AudioOutputFormatConfigurationData {
         return AudioOutputFormatConfigurationData(
             audioOutputChannel = data.audioInputChannel,
             audioOutputEncoding = data.audioInputEncoding,
@@ -14,8 +14,8 @@ class AudioOutputFormatConfigurationDataMapper {
         )
     }
 
-    operator fun invoke(data: AudioOutputFormatConfigurationData): AudioInputDomainData {
-        return ConfigurationSetting.audioInputDomainData.value.copy(
+    operator fun invoke(data: AudioOutputFormatConfigurationData): MicDomainData {
+        return ConfigurationSetting.micDomainData.value.copy(
             audioOutputChannel = data.audioOutputChannel,
             audioOutputEncoding = data.audioOutputEncoding,
             audioOutputSampleRate = data.audioOutputSampleRate,

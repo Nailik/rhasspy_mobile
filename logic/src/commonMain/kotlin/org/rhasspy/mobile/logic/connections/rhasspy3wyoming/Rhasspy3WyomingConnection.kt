@@ -2,7 +2,7 @@ package org.rhasspy.mobile.logic.connections.rhasspy3wyoming
 
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.logic.connections.IConnection
-import org.rhasspy.mobile.logic.connections.IHttpConnection
+import org.rhasspy.mobile.logic.connections.http.IHttpConnection
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface IRhasspy3WyomingConnection : IConnection

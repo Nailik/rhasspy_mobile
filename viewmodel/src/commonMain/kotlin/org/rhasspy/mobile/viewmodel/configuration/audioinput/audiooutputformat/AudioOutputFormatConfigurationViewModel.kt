@@ -19,7 +19,7 @@ class AudioOutputFormatConfigurationViewModel(
     serviceState = MutableStateFlow(ServiceState.Success) //TODO
 ) {
 
-    private val initialData get() = mapper(ConfigurationSetting.audioInputDomainData.value)
+    private val initialData get() = mapper(ConfigurationSetting.micDomainData.value)
     private val _viewState = MutableStateFlow(AudioOutputFormatConfigurationViewState(initialData))
     val viewState = _viewState.readOnly
 
@@ -64,7 +64,7 @@ class AudioOutputFormatConfigurationViewModel(
     }
 
     override fun onSave() {
-        ConfigurationSetting.audioInputDomainData.value = mapper(_viewState.value.editData)
+        ConfigurationSetting.micDomainData.value = mapper(_viewState.value.editData)
         _viewState.update { it.copy(editData = initialData) }
     }
 

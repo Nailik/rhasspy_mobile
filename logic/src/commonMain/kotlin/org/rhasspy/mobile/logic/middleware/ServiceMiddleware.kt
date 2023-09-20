@@ -7,13 +7,13 @@ import kotlinx.coroutines.flow.first
 import okio.Path
 import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
-import org.rhasspy.mobile.logic.domains.dialog.DialogManagerState.IdleState
-import org.rhasspy.mobile.logic.domains.dialog.DialogManagerState.SessionState.RecordingIntentState
-import org.rhasspy.mobile.logic.domains.dialog.IDialogManagerService
-import org.rhasspy.mobile.logic.domains.speechtotext.ISpeechToTextService
-import org.rhasspy.mobile.logic.domains.texttospeech.ITextToSpeechService
-import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioService
-import org.rhasspy.mobile.logic.local.settings.IAppSettingsService
+import org.rhasspy.mobile.logic.dialog.DialogManagerState.IdleState
+import org.rhasspy.mobile.logic.dialog.DialogManagerState.SessionState.RecordingIntentState
+import org.rhasspy.mobile.logic.dialog.IDialogManagerService
+import org.rhasspy.mobile.logic.domains.asr.IAsrDomain
+import org.rhasspy.mobile.logic.domains.snd.ISndDomain
+import org.rhasspy.mobile.logic.domains.tts.ITtsDomain
+import org.rhasspy.mobile.logic.local.settings.IAppSettingsUtil
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
@@ -35,15 +35,17 @@ interface IServiceMiddleware {
 
 }
 
+//TODO use middleware to handle incoming calls from Webserver, MqttConnection and User
+
 /**
  * handles ALL INCOMING events
  */
 internal class ServiceMiddleware(
     private val dialogManagerService: IDialogManagerService,
-    private val speechToTextService: ISpeechToTextService,
-    private val textToSpeechService: ITextToSpeechService,
-    private val appSettingsService: IAppSettingsService,
-    private val localAudioService: ILocalAudioService,
+    private val speechToTextService: IAsrDomain,
+    private val textToSpeechService: ITtsDomain,
+    private val appSettingsService: IAppSettingsUtil,
+    private val sndDomain: ISndDomain,
     private val mqttService: IMqttConnection
 ) : IServiceMiddleware {
 
@@ -107,7 +109,7 @@ internal class ServiceMiddleware(
             if (dialogManagerService.currentDialogState.value is IdleState) {
                 _isPlayingRecording.value = true
                 //suspend coroutine
-                localAudioService.playAudio(AudioSource.File(speechToTextService.speechToTextAudioFile)) {
+                sndDomain.playAudio(AudioSource.File(speechToTextService.speechToTextAudioFile)) {
                     //resumes when play finished
                     if (_isPlayingRecording.value) {
                         action(PlayStopRecording)

@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption.Local
-import org.rhasspy.mobile.logic.domains.voiceactivitydetection.IVoiceActivityDetectionService
+import org.rhasspy.mobile.logic.domains.vad.IVadDomain
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
@@ -29,7 +29,7 @@ import kotlin.math.pow
 class VoiceActivityDetectionConfigurationViewModel(
     private val nativeApplication: NativeApplication,
     audioRecorderViewStateCreator: AudioRecorderViewStateCreator,
-    service: IVoiceActivityDetectionService,
+    service: IVadDomain,
     private val audioRecorder: IAudioRecorder,
 ) : ConfigurationViewModel(
     serviceState = service.serviceState
@@ -158,13 +158,13 @@ class VoiceActivityDetectionConfigurationViewModel(
         AppSetting.isHotWordEnabled.value = false
         //start this recording
         audioRecorder.startRecording(
-            audioRecorderSourceType = ConfigurationSetting.audioInputDomainData.value.audioInputSource,
-            audioRecorderChannelType = ConfigurationSetting.audioInputDomainData.value.audioInputChannel,
-            audioRecorderEncodingType = ConfigurationSetting.audioInputDomainData.value.audioInputEncoding,
-            audioRecorderSampleRateType = ConfigurationSetting.audioInputDomainData.value.audioInputSampleRate,
-            audioRecorderOutputChannelType = ConfigurationSetting.audioInputDomainData.value.audioOutputChannel,
-            audioRecorderOutputEncodingType = ConfigurationSetting.audioInputDomainData.value.audioOutputEncoding,
-            audioRecorderOutputSampleRateType = ConfigurationSetting.audioInputDomainData.value.audioOutputSampleRate,
+            audioRecorderSourceType = ConfigurationSetting.micDomainData.value.audioInputSource,
+            audioRecorderChannelType = ConfigurationSetting.micDomainData.value.audioInputChannel,
+            audioRecorderEncodingType = ConfigurationSetting.micDomainData.value.audioInputEncoding,
+            audioRecorderSampleRateType = ConfigurationSetting.micDomainData.value.audioInputSampleRate,
+            audioRecorderOutputChannelType = ConfigurationSetting.micDomainData.value.audioOutputChannel,
+            audioRecorderOutputEncodingType = ConfigurationSetting.micDomainData.value.audioOutputEncoding,
+            audioRecorderOutputSampleRateType = ConfigurationSetting.micDomainData.value.audioOutputSampleRate,
             isAutoPauseOnMediaPlayback = AppSetting.isPauseRecordingOnMedia.value,
         )
     }

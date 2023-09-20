@@ -11,14 +11,10 @@ internal class MqttConnectionParamsCreator {
         return combineState(
             ConfigurationSetting.siteId.data,
             ConfigurationSetting.mqttConnection.data,
-            ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.data,
-            ConfigurationSetting.audioPlayingMqttSiteId.data
-        ) { siteId, mqttConnectionParams, isUseSpeechToTextMqttSilenceDetection, audioPlayingMqttSiteId ->
+        ) { siteId, mqttConnectionParams ->
             MqttConnectionParams(
                 siteId = siteId,
                 mqttConnectionData = mqttConnectionParams,
-                isUseSpeechToTextMqttSilenceDetection = isUseSpeechToTextMqttSilenceDetection,
-                audioPlayingMqttSiteId = audioPlayingMqttSiteId
             )
         }
 

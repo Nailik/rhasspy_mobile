@@ -39,8 +39,6 @@ sealed class ServiceMiddlewareAction {
             }
         }
 
-        class SilenceDetected(source: Source) : DialogServiceMiddlewareAction(source)
-
         class StartSession(source: Source) : DialogServiceMiddlewareAction(source)
 
         class EndSession(source: Source) : DialogServiceMiddlewareAction(source)

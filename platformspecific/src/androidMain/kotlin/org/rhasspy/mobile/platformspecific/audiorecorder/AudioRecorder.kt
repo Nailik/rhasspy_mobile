@@ -10,6 +10,7 @@ import android.media.AudioRecord
 import android.media.AudioRecord.RECORDSTATE_RECORDING
 import android.media.AudioRecord.STATE_UNINITIALIZED
 import android.media.MediaRecorder
+import android.media.audiofx.AutomaticGainControl
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.getSystemService
@@ -31,6 +32,7 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.resampler.Resampler
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+
 
 internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
     private val logger = Logger.withTag("AudioRecorder")
@@ -95,6 +97,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
         audioRecorderOutputChannelType: AudioFormatChannelType,
         audioRecorderOutputEncodingType: AudioFormatEncodingType,
         audioRecorderOutputSampleRateType: AudioFormatSampleRateType,
+        isUseAutomaticGainControl: Boolean,
         isAutoPauseOnMediaPlayback: Boolean,
     ) {
         shouldRecord = true
@@ -139,10 +142,20 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
                         .build()
                 )
                 .setBufferSizeInBytes(tempBufferSize)
-                .build()
+                .build().apply {
 
-            _isRecording.value = true
-            recorder?.startRecording()
+                    if (AutomaticGainControl.isAvailable()) {
+                        AutomaticGainControl
+                            .create(audioSessionId)
+                            .setEnabled(isUseAutomaticGainControl)
+                    }
+
+                    _isRecording.value = true
+                    this.startRecording()
+
+                }
+
+
             read(tempBufferSize)
 
             if (isAutoPauseOnMediaPlayback) {

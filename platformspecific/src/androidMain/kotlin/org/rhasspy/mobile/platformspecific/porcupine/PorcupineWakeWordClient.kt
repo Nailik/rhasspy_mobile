@@ -2,9 +2,11 @@ package org.rhasspy.mobile.platformspecific.porcupine
 
 import ai.picovoice.porcupine.PorcupineException
 import co.touchlab.kermit.Logger
-import kotlinx.collections.immutable.ImmutableList
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
@@ -18,8 +20,8 @@ import java.io.File
  */
 actual class PorcupineWakeWordClient actual constructor(
     private val wakeWordPorcupineAccessToken: String,
-    private val wakeWordPorcupineKeywordDefaultOptions: ImmutableList<PorcupineDefaultKeyword>,
-    private val wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
+    private val wakeWordPorcupineKeywordDefaultOptions: List<PorcupineDefaultKeyword>,
+    private val wakeWordPorcupineKeywordCustomOptions: List<PorcupineCustomKeyword>,
     private val wakeWordPorcupineLanguage: PorcupineLanguageOption,
     private val onKeywordDetected: (hotWord: String) -> Unit,
 ) : KoinComponent {
@@ -32,38 +34,11 @@ actual class PorcupineWakeWordClient actual constructor(
     private val context = get<NativeApplication>()
 
     /**
-     * start wake word detected
-     *
-     * start listening to wake words
-     * requires internet to activate porcupine the very first time
-     *
-     * checks for audio permission
-     * tries to start porcupine
-     */
-    actual fun start(): Exception? {
-        if (porcupineClient == null) {
-            return initialize()
-        }
-
-        return null
-    }
-
-    actual fun audioFrame(data: ByteArray) {
-        porcupineClient?.audioFrame(data)
-    }
-
-    /**
-     * deletes the porcupine manager
-     */
-    actual fun close() {
-        porcupineClient?.close()
-        porcupineClient = null
-    }
-
-    /**
      * create porcupine client
+     *
+     * requires internet to activate porcupine the very first time
      */
-    private fun initialize(): Exception? {
+    actual fun initialize(): Exception? {
         return try {
             File(context.filesDir, "sounds").mkdirs()
 
@@ -83,6 +58,22 @@ actual class PorcupineWakeWordClient actual constructor(
         }
     }
 
+    actual fun audioFrame(
+        sampleRate: AudioFormatSampleRateType,
+        encoding: AudioFormatEncodingType,
+        channelType: AudioFormatChannelType,
+        data: ByteArray,
+    ) { //TODO convert audio if necessary
+        porcupineClient?.audioFrame(data)
+    }
+
+    /**
+     * deletes the porcupine manager
+     */
+    actual fun close() {
+        porcupineClient?.close()
+        porcupineClient = null
+    }
 
     /**
      * invoked when a WakeWord is detected, informs listening service

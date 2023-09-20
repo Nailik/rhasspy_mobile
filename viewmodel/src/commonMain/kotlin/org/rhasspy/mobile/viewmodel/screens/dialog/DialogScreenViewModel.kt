@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.viewmodel.screens.dialog
 
 import androidx.compose.runtime.Stable
-import org.rhasspy.mobile.logic.domains.dialog.IDialogManagerService
+import org.rhasspy.mobile.logic.dialog.IDialogManagerService
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change

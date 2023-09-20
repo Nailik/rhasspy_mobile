@@ -33,15 +33,15 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.ErrorState
 import org.rhasspy.mobile.logic.connections.IConnection
+import org.rhasspy.mobile.logic.connections.http.StreamContent
+import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionErrorType.WakeOptionInvalid
+import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.*
 import org.rhasspy.mobile.logic.connections.webserver.WebServerResult.*
-import org.rhasspy.mobile.logic.domains.speechtotext.StreamContent
-import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.HotWordToggle
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
-import org.rhasspy.mobile.logic.middleware.Source.HttpApi
+import org.rhasspy.mobile.logic.local.file.IFileStorage
+import org.rhasspy.mobile.logic.local.settings.IAppSettingsUtil
+import org.rhasspy.mobile.logic.middleware.Source
+import org.rhasspy.mobile.logic.pipeline.IPipeline
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonExists
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
@@ -63,14 +63,18 @@ interface IWebServerConnection : IConnection
  * - parameter Invalid: BadRequest
  * - else: determined by Ktor
  */
-internal class WebServerConnection : IWebServerConnection {
+internal class WebServerConnection(
+    private val pipeline: IPipeline,
+    private val appSettingsUtil: IAppSettingsUtil,
+    private val fileStorage: IFileStorage,
+    private val mqttConnection: IMqttConnection
+) : IWebServerConnection {
 
     private val logger = Logger.withTag("WebServerConnection")
 
     override val connectionState = MutableStateFlow<ServiceState>(ServiceState.Pending)
 
     private val nativeApplication by inject<NativeApplication>()
-    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private var params = ConfigurationSetting.localWebserverConnection.value
 
@@ -255,7 +259,7 @@ internal class WebServerConnection : IWebServerConnection {
      * ?entity=<entity>&value=<value> - set custom entities/values in recognized intent
      */
     private fun listenForCommand(): WebServerResult {
-        serviceMiddleware.action(WakeWordDetected(HttpApi, "remote"))
+        pipeline.onEvent(WebServerListenForCommand)
         return Ok
     }
 
@@ -275,7 +279,7 @@ internal class WebServerConnection : IWebServerConnection {
         }
 
         return action?.let {
-            serviceMiddleware.action(HotWordToggle(it, HttpApi))
+            pipeline.onEvent(WebServerListenForWake(it))
             Accepted(value)
         } ?: Error(WakeOptionInvalid)
     }
@@ -286,7 +290,7 @@ internal class WebServerConnection : IWebServerConnection {
      * POST to play last recorded voice command
      */
     private fun playRecordingPost(): WebServerResult {
-        serviceMiddleware.action(PlayStopRecording)
+        pipeline.onEvent(WebServerPlayRecording)
         return Ok
     }
 
@@ -296,7 +300,7 @@ internal class WebServerConnection : IWebServerConnection {
      * GET to download WAV data from last recorded voice command
      */
     private suspend fun playRecordingGet(call: ApplicationCall): WebServerResult? {
-        call.respond(StreamContent(serviceMiddleware.getRecordedFile()))
+        call.respond(StreamContent(fileStorage.speechToTextAudioFile))
         return null
     }
 
@@ -312,7 +316,8 @@ internal class WebServerConnection : IWebServerConnection {
             Error(WebServerConnectionErrorType.AudioContentTypeWarning)
         } else Ok
         //play even without content type
-        serviceMiddleware.action(PlayAudio(HttpApi, call.receive()))
+        pipeline.onEvent(WebServerPlayWav(call.receive()))
+
         return result
     }
 
@@ -325,12 +330,12 @@ internal class WebServerConnection : IWebServerConnection {
     private suspend fun setVolume(call: ApplicationCall): WebServerResult {
         //double and float or double not working but string??
         val result = call.receive<String>()
-        return result.toFloatOrNull()?.let {
-            if (it in 0f..1f) {
-                serviceMiddleware.action(AudioVolumeChange(it, HttpApi))
-                Accepted(it.toString())
+        return result.toFloatOrNull()?.let { volume ->
+            if (volume in 0f..1f) {
+                appSettingsUtil.setAudioVolume(volume, Source.Mqtt)
+                Accepted(volume.toString())
             } else {
-                logger.w { "setVolume VolumeValueOutOfRange $it" }
+                logger.w { "setVolume VolumeValueOutOfRange $volume" }
                 Error(WebServerConnectionErrorType.VolumeValueOutOfRange)
             }
         } ?: run {
@@ -345,7 +350,7 @@ internal class WebServerConnection : IWebServerConnection {
      * actually starts a session
      */
     private fun startRecording(): WebServerResult {
-        serviceMiddleware.action(StartListening(HttpApi, false))
+        pipeline.onEvent(WebServerStartRecording)
         return Ok
     }
 
@@ -361,7 +366,7 @@ internal class WebServerConnection : IWebServerConnection {
      * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
      */
     private fun stopRecording(): WebServerResult {
-        serviceMiddleware.action(StopListening(HttpApi))
+        pipeline.onEvent(WebServerStopRecording)
         return Ok
     }
 
@@ -374,14 +379,7 @@ internal class WebServerConnection : IWebServerConnection {
      * just like using say in the ui start screen but remote
      */
     private suspend fun say(call: ApplicationCall): WebServerResult {
-        serviceMiddleware.action(
-            SayText(
-                text = call.receive(),
-                volume = null,
-                siteId = ConfigurationSetting.siteId.value,
-                sessionId = null
-            )
-        )
+        pipeline.onEvent(WebServerSay(call.receive()))
         return Ok
     }
 
@@ -393,7 +391,7 @@ internal class WebServerConnection : IWebServerConnection {
      */
     private suspend fun mqtt(call: ApplicationCall): WebServerResult {
         val topic = call.request.path().substringAfter("/mqtt")
-        serviceMiddleware.action(Mqtt(topic, call.receive()))
+        mqttConnection.onMessageReceived(topic, call.receive())
         return Ok
     }
 
