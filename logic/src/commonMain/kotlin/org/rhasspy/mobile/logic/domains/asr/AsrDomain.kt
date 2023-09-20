@@ -34,11 +34,11 @@ interface IAsrDomain : IService {
 
     override val serviceState: StateFlow<ServiceState>
 
-    fun onAudioStart(audioStart: AudioStartEvent)
+    fun onAudioStart(audioStart: AudioStartEvent, sessionId: String)
 
-    fun onAudioChunk(chunk: AudioChunkEvent)
+    fun onAudioChunk(chunk: AudioChunkEvent, sessionId: String)
 
-    fun onAudioStop(audioStop: AudioStopEvent)
+    fun onAudioStop(audioStop: AudioStopEvent, sessionId: String)
 
 }
 
@@ -89,7 +89,7 @@ internal class AsrDomain(
     /**
      * starts when first audio chunk is received after stop event
      */
-    override fun onAudioStart(audioStart: AudioStartEvent) {
+    override fun onAudioStart(audioStart: AudioStartEvent, sessionId: String) {
         sampleRate = audioStart.sampleRate
         encoding = audioStart.encoding
         channel = audioStart.channel
@@ -102,7 +102,7 @@ internal class AsrDomain(
             SpeechToTextOption.Rhasspy2HermesHttp -> Success
             SpeechToTextOption.Rhasspy2HermesMQTT -> {
                 mqttConnection.startListening(
-                    sessionId = audioStart.sessionId,
+                    sessionId = sessionId,
                     isUseSilenceDetection = params.isUseSpeechToTextMqttSilenceDetection,
                     onResult = { serviceState.value = it }
                 )
@@ -113,7 +113,7 @@ internal class AsrDomain(
         }
     }
 
-    override fun onAudioChunk(chunk: AudioChunkEvent) {
+    override fun onAudioChunk(chunk: AudioChunkEvent, sessionId: String) {
         if (AppSetting.isLogAudioFramesEnabled.value) {
             logger.d { "audioFrame dataSize: ${chunk.data.size}" }
         }
@@ -123,7 +123,7 @@ internal class AsrDomain(
                 SpeechToTextOption.Rhasspy2HermesHttp -> Success
                 SpeechToTextOption.Rhasspy2HermesMQTT -> {
                     mqttConnection.asrAudioSessionFrame(
-                        sessionId = chunk.sessionId,
+                        sessionId = sessionId,
                         sampleRate = sampleRate,
                         encoding = encoding,
                         channel = channel,
@@ -159,7 +159,7 @@ internal class AsrDomain(
      *
      * fromMqtt is used to check if silence was detected by remote mqtt device
      */
-    override fun onAudioStop(audioStop: AudioStopEvent) {
+    override fun onAudioStop(audioStop: AudioStopEvent, sessionId: String) {
         //add wav header to file
         val header = getWavHeader(
             sampleRate = sampleRate,
@@ -189,7 +189,7 @@ internal class AsrDomain(
 
             SpeechToTextOption.Rhasspy2HermesMQTT -> {
                 mqttConnection.stopListening(
-                    sessionId = audioStop.sessionId,
+                    sessionId = sessionId,
                     onResult = { serviceState.value = it }
                 )
                 Loading

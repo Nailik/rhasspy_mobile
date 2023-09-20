@@ -20,7 +20,7 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface ITtsDomain : IService {
 
-    fun onSynthesize(synthesizeEvent: SynthesizeEvent)
+    fun onSynthesize(synthesizeEvent: SynthesizeEvent, sessionId: String)
 
 }
 
@@ -70,7 +70,7 @@ internal class TtsDomain(
      * hermes/tts/sayFinished (JSON)
      * is called when playing audio is finished
      */
-    override fun onSynthesize(synthesizeEvent: SynthesizeEvent) {
+    override fun onSynthesize(synthesizeEvent: SynthesizeEvent, sessionId: String) {
         logger.d { "textToSpeech sessionId: $synthesizeEvent" }
         serviceState.value = when (params.option) {
             TextToSpeechOption.Rhasspy2HermesHttp -> {
@@ -79,7 +79,11 @@ internal class TtsDomain(
 
                     val event = when (result) {
                         is HttpClientResult.HttpClientError -> TtsErrorEvent
-                        is HttpClientResult.Success         -> TtsResultEvent(result.data)
+                        is HttpClientResult.Success         -> {
+                            TtsErrorEvent
+                            //TODO audio start event (read header from wav data) and then audio event and then audio end event
+                            //TtsResultEvent(result.data)
+                        }
                     }
                     pipeline.onEvent(event)
                 }
@@ -87,7 +91,7 @@ internal class TtsDomain(
             }
 
             TextToSpeechOption.Rhasspy2HermesMQTT -> {
-                if (synthesizeEvent.sessionId == mqttSessionId) return
+                if (sessionId == mqttSessionId) return
                 mqttConnection.say(mqttSessionId, synthesizeEvent.text, synthesizeEvent.siteId) {
                     serviceState.value = it
                 }

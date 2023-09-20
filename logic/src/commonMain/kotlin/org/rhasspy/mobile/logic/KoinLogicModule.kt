@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.logic
 
-import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.connections.homeassistant.HomeAssistantConnection
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
@@ -12,17 +11,8 @@ import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConn
 import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.Rhasspy3WyomingConnection
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnection
-import org.rhasspy.mobile.logic.dialog.DialogManagerService
-import org.rhasspy.mobile.logic.dialog.DialogManagerServiceParamsCreator
-import org.rhasspy.mobile.logic.dialog.IDialogManagerService
-import org.rhasspy.mobile.logic.dialog.dialogmanager.disabled.DialogManagerDisabled
-import org.rhasspy.mobile.logic.dialog.dialogmanager.local.*
-import org.rhasspy.mobile.logic.dialog.dialogmanager.mqtt.DialogManagerMqtt
-import org.rhasspy.mobile.logic.dialog.states.IStateTransition
-import org.rhasspy.mobile.logic.dialog.states.StateTransition
 import org.rhasspy.mobile.logic.domains.asr.AsrDomain
 import org.rhasspy.mobile.logic.domains.asr.IAsrDomain
-import org.rhasspy.mobile.logic.domains.dialog.dialogmanager.local.*
 import org.rhasspy.mobile.logic.domains.handle.HandleDomain
 import org.rhasspy.mobile.logic.domains.handle.IHandleDomain
 import org.rhasspy.mobile.logic.domains.intent.IIntentDomain
@@ -55,7 +45,9 @@ import org.rhasspy.mobile.logic.pipeline.Pipeline
 
 fun logicModule() = module {
     single<IPipeline> {
-        Pipeline()
+        Pipeline(
+            dispatcherProvider = get()
+        )
     }
 
     single<IMicDomain> {
@@ -69,12 +61,6 @@ fun logicModule() = module {
 
     single<IServiceMiddleware> {
         ServiceMiddleware(
-            dialogManagerService = get(),
-            speechToTextService = get(),
-            textToSpeechService = get(),
-            appSettingsService = get(),
-            sndDomain = get(),
-            mqttService = get(),
         )
     }
 
@@ -90,61 +76,6 @@ fun logicModule() = module {
         )
     }
 
-    factory { DialogManagerServiceParamsCreator() }
-    single<IDialogManagerService> {
-        DialogManagerService(
-            dispatcherProvider = get(),
-            mqttService = get()
-        )
-    }
-
-    single<IStateTransition> {
-        StateTransition(
-            paramsCreator = get(),
-            dispatcherProvider = get(),
-            dialogManagerService = get(),
-            audioFocusService = get(),
-            wakeWordService = get(),
-            intentRecognitionService = get(),
-            speechToTextService = get(),
-            indicationService = get(),
-            mqttService = get(),
-        )
-    }
-
-    single<ISessionStateActions> {
-        SessionStateActions(
-            dialogManagerService = get(),
-            indicationService = get(),
-            stateTransition = get(),
-            speechToTextService = get(),
-            intentHandlingService = get(),
-
-            )
-    }
-
-    single<IIdleStateActions> {
-        IdleStateActions(
-            dialogManagerService = get(),
-            stateTransition = get(),
-            wakeWordService = get(),
-            indicationService = get(),
-            audioPlayingService = get(),
-        )
-    }
-
-    single<IPlayingAudioStateActions> {
-        PlayingAudioStateActions(
-            dialogManagerService = get(),
-            audioPlayingService = get(),
-            stateTransition = get(),
-        )
-    }
-
-    singleOf(::DialogManagerLocal)
-    singleOf(::DialogManagerMqtt)
-    singleOf(::DialogManagerDisabled)
-
     single<IHomeAssistantConnection> { HomeAssistantConnection() }
 
     single<IRhasspy2HermesConnection> { Rhasspy2HermesConnection() }
@@ -154,33 +85,68 @@ fun logicModule() = module {
         Indication()
     }
 
-    single<IHandleDomain> { HandleDomain(paramsCreator = get()) }
+    single<IHandleDomain> {
+        HandleDomain(
+        pipeline= get(),
+        homeAssistantConnection = get(),
+        httpClientConnection = get(),
+        )
+    }
 
-    single<IIntentDomain> { IntentDomain(paramsCreator = get()) }
+    single<IIntentDomain> {
+        IntentDomain(
+            pipeline = get(),
+            mqttClientConnection = get(),
+            httpClientConnection = get(),
+            ) }
 
-    single<ILocalAudioPlayer> { LocalAudioPlayer(paramsCreator = get()) }
+    single<ILocalAudioPlayer> {
+        LocalAudioPlayer(
+            nativeApplication = get(),
+            audioFocusService = get(),
+            ) }
 
     single<IAppSettingsUtil> { AppSettingsUtil() }
 
-    single<IMqttConnection> { MqttConnection(paramsCreator = get()) }
+    single<IMqttConnection> {
+        MqttConnection(
+        pipeline = get(),
+        appSettingsUtil = get(),
+        paramsCreator = get()
+        )
+    }
 
     single<IAsrDomain> {
         AsrDomain(
-            paramsCreator = get(),
-            audioRecorder = get()
+            pipeline = get(),
+            fileStorage = get(),
+            mqttConnection = get(),
+            rhasspy2HermesConnection = get(),
         )
     }
 
-    single<ITtsDomain> { TtsDomain(paramsCreator = get()) }
+    single<ITtsDomain> {
+        TtsDomain(
+            pipeline = get(),
+            mqttConnection = get(),
+            rhasspy2HermesConnection = get(),
+        )
+    }
 
     single<IWakeDomain> {
         WakeDomain(
-            paramsCreator = get(),
-            audioRecorder = get(),
+            pipeline = get(),
         )
     }
 
-    single<IWebServerConnection> { WebServerConnection() }
+    single<IWebServerConnection> {
+        WebServerConnection(
+        pipeline = get(),
+            appSettingsUtil = get(),
+        fileStorage = get(),
+        mqttConnection = get(),
+        )
+    }
 
     factory { params -> UdpConnection(params[0], params[1]) }
 
@@ -188,14 +154,13 @@ fun logicModule() = module {
         DatabaseLogger(
             nativeApplication = get(),
             externalResultRequest = get(),
-            driverFactory = get()
+            driverFactory = get(),
         )
     }
 
-    single<IVadDomain> { params ->
+    single<IVadDomain> {
         VadDomain(
-            paramsCreator = get(),
-            audioRecorder = params[0]
+            pipeline = get(),
         )
     }
 }

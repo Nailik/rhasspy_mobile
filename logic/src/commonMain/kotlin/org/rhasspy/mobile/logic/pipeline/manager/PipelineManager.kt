@@ -16,7 +16,6 @@ import org.rhasspy.mobile.logic.pipeline.PipelineState.SessionState.*
 
 abstract class PipelineManager(
     private val indication: IIndication,
-    private val localAudioPlayer: ILocalAudioPlayer,
     private val audioFocus: IAudioFocus,
     private val micDomain: IMicDomain
 ) {
@@ -72,11 +71,11 @@ abstract class PipelineManager(
 
             }
 
-            is TtsState    -> {
+            is SpeakState -> {
 
             }
 
-            is SpeakState -> {
+            is PlayState    -> {
 
             }
 
@@ -105,11 +104,11 @@ abstract class PipelineManager(
                 state.timeoutJob.cancel()
             }
 
-            TtsState       -> {
+            SpeakState -> {
 
             }
 
-            SpeakState -> {
+            is PlayState    -> {
 
             }
         }

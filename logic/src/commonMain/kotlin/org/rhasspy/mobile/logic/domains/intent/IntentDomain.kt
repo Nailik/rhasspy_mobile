@@ -24,7 +24,7 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface IIntentDomain : IService {
 
-    fun onRecognize(recognizeEvent: RecognizeEvent)
+    fun onRecognize(recognizeEvent: RecognizeEvent, sessionId: String)
 
 }
 
@@ -80,7 +80,7 @@ internal class IntentDomain(
      * - calls default site to recognize intent
      * - later eventually intentRecognized or intentNotRecognized will be called with received data
      */
-    override fun onRecognize(recognizeEvent: RecognizeEvent) {
+    override fun onRecognize(recognizeEvent: RecognizeEvent, sessionId: String) {
         logger.d { "recognizeIntent sessionId: $recognizeEvent" }
         serviceState.value = when (params.option) {
             IntentRecognitionOption.Rhasspy2HermesHttp -> {
@@ -103,7 +103,7 @@ internal class IntentDomain(
 
             IntentRecognitionOption.Rhasspy2HermesMQTT -> {
                 mqttClientConnection.recognizeIntent(
-                    sessionId = recognizeEvent.sessionId,
+                    sessionId = sessionId,
                     text = recognizeEvent.text,
                     onResult = { serviceState.value = it }
                 )

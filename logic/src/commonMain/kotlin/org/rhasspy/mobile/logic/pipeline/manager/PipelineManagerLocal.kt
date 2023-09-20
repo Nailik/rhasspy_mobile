@@ -51,11 +51,9 @@ class PipelineManagerLocal(
     private val ttsDomain: ITtsDomain,
     private val vadDomain: IVadDomain,
     private val indication: IIndication,
-    private val localAudioPlayer: ILocalAudioPlayer,
     private val audioFocus: IAudioFocus,
 ) : PipelineManager(
     indication = indication,
-    localAudioPlayer = localAudioPlayer,
     audioFocus = audioFocus,
     micDomain = micDomain,
 ) {
@@ -85,10 +83,6 @@ class PipelineManagerLocal(
         when (event) {
             is AudioChunkEvent -> {
                 wakeDomain.onAudioChunk(event)
-            }
-
-            is SynthesizeEvent -> {
-                ttsDomain.onSynthesize(event)
             }
 
             is DetectionEvent  -> {
@@ -127,19 +121,19 @@ class PipelineManagerLocal(
 
             is AudioChunkEvent        -> {
                 vadDomain.onAudioChunk(event)
-                asrDomain.onAudioChunk(event)
+                asrDomain.onAudioChunk(event, state.sessionData.sessionId)
             }
 
             is AudioStartEvent        -> {
-                asrDomain.onAudioStart(event)
+                asrDomain.onAudioStart(event, state.sessionData.sessionId)
             }
 
             is AudioStopEvent         -> {
-                asrDomain.onAudioStop(event)
+                asrDomain.onAudioStop(event, state.sessionData.sessionId)
             }
 
             is RecognizeEvent         -> {
-                intentDomain.onRecognize(event)
+                intentDomain.onRecognize(event, state.sessionData.sessionId)
 
                 goToState(
                     RecognizeState(
@@ -211,6 +205,11 @@ class PipelineManagerLocal(
 
             is TtsErrorEvent   -> {
                 goToState(DetectState)
+            }
+
+            is SynthesizeEvent -> {
+                //TODO
+                ttsDomain.onSynthesize(event, "state.se")
             }
 
             else               -> Unit
