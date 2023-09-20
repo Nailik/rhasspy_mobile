@@ -28,99 +28,23 @@ interface IServiceMiddleware {
     val isUserActionEnabled: StateFlow<Boolean>
     val isPlayingRecording: StateFlow<Boolean>
     val isPlayingRecordingEnabled: StateFlow<Boolean>
-
-    fun action(serviceMiddlewareAction: ServiceMiddlewareAction)
     fun userSessionClick()
-    fun getRecordedFile(): Path
 
 }
-
-//TODO use middleware to handle incoming calls from Webserver, MqttConnection and User
-
 /**
  * handles ALL INCOMING events
  */
-internal class ServiceMiddleware(
-    private val dialogManagerService: IDialogManagerService,
-    private val speechToTextService: IAsrDomain,
-    private val textToSpeechService: ITtsDomain,
-    private val appSettingsService: IAppSettingsUtil,
-    private val sndDomain: ISndDomain,
-    private val mqttService: IMqttConnection
-) : IServiceMiddleware {
+internal class ServiceMiddleware: IServiceMiddleware {
+    override val isUserActionEnabled: StateFlow<Boolean>
+        get() = MutableStateFlow(true)
+    override val isPlayingRecording: StateFlow<Boolean>
+        get() = MutableStateFlow(false)
+    override val isPlayingRecordingEnabled: StateFlow<Boolean>
+        get() = MutableStateFlow(false)
 
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
-    private var currentJob: Job? = null
-    private var awaitMqttConnected: Job? = null
-
-    private val _isPlayingRecording = MutableStateFlow(false)
-    override val isPlayingRecording = _isPlayingRecording.readOnly
-    override val isPlayingRecordingEnabled = combineState(
-        _isPlayingRecording,
-        dialogManagerService.currentDialogState
-    ) { playing, state ->
-        playing || (state is IdleState)
-    }
-
-    override val isUserActionEnabled = combineState(
-        _isPlayingRecording,
-        dialogManagerService.currentDialogState
-    ) { playingRecording, dialogState ->
-        !playingRecording && (dialogState is IdleState || dialogState is RecordingIntentState)
-    }
-
-    override fun action(serviceMiddlewareAction: ServiceMiddlewareAction) {
-        val previousJob = currentJob
-        currentJob = coroutineScope.launch {
-            previousJob?.join()
-
-            when (serviceMiddlewareAction) {
-                is PlayStopRecording                  -> playStopRecordingAction()
-                is WakeWordError                      -> mqttService.wakeWordError(serviceMiddlewareAction.description)
-                is AppSettingsServiceMiddlewareAction -> appSettingsAction(serviceMiddlewareAction)
-                is SayText                            ->
-                    textToSpeechService.textToSpeech(
-                        text = serviceMiddlewareAction.text,
-                        volume = serviceMiddlewareAction.volume,
-                        siteId = serviceMiddlewareAction.siteId,
-                        sessionId = serviceMiddlewareAction.sessionId
-                    )
-
-                is DialogServiceMiddlewareAction      -> dialogManagerService.onAction(serviceMiddlewareAction)
-                is Mqtt                               -> mqttService.onMessageReceived(serviceMiddlewareAction.topic, serviceMiddlewareAction.payload)
-            }
-        }
-    }
-
-    private fun appSettingsAction(action: AppSettingsServiceMiddlewareAction) {
-        when (action) {
-            is AudioOutputToggle    -> appSettingsService.audioOutputToggle(action.enabled, action.source)
-            is AudioVolumeChange    -> appSettingsService.setAudioVolume(action.volume, action.source)
-            is HotWordToggle        -> appSettingsService.hotWordToggle(action.enabled, action.source)
-            is IntentHandlingToggle -> appSettingsService.intentHandlingToggle(action.enabled, action.source)
-        }
-    }
-
-    private fun playStopRecordingAction() {
-        if (_isPlayingRecording.value) {
-            _isPlayingRecording.value = false
-            action(PlayFinished(Local))
-        } else {
-            if (dialogManagerService.currentDialogState.value is IdleState) {
-                _isPlayingRecording.value = true
-                //suspend coroutine
-                sndDomain.playAudio(AudioSource.File(speechToTextService.speechToTextAudioFile)) {
-                    //resumes when play finished
-                    if (_isPlayingRecording.value) {
-                        action(PlayStopRecording)
-                    }
-                }
-
-            }
-        }
-    }
 
     override fun userSessionClick() {
+        /*
         when (dialogManagerService.currentDialogState.value) {
             is IdleState            -> {
                 if (isAnyServiceUsingMqtt() && !mqttService.isHasStarted.value) {
@@ -138,17 +62,7 @@ internal class ServiceMiddleware(
 
             is RecordingIntentState -> action(StopListening(Local))
             else                    -> Unit
-        }
-    }
-
-    override fun getRecordedFile(): Path = speechToTextService.speechToTextAudioFile
-
-    private fun isAnyServiceUsingMqtt(): Boolean {
-        return ConfigurationSetting.audioPlayingOption.value == AudioPlayingOption.Rhasspy2HermesMQTT ||
-                ConfigurationSetting.dialogManagementOption.value == DialogManagementOption.Rhasspy2HermesMQTT ||
-                ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.Rhasspy2HermesMQTT ||
-                ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.Rhasspy2HermesMQTT ||
-                ConfigurationSetting.textToSpeechOption.value == TextToSpeechOption.Rhasspy2HermesMQTT
+        }*/
     }
 
 }

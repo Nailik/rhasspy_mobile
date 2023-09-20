@@ -7,7 +7,6 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Sound
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
@@ -17,11 +16,8 @@ import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnec
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
 import org.rhasspy.mobile.logic.pipeline.IPipeline
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.AudioDomainEvent.*
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.SndDomainEvent.PlayEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.SndDomainEvent.PlayedEvent
-import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface ISndDomain : IService {
@@ -92,7 +88,7 @@ internal class SndDomain(
      * MQTT:
      * - calls default site to play audio
      */
-    override fun playAudio(play: PlayEvent) {
+   /* override fun playAudio(play: PlayEvent) {
         logger.d { "playAudio" }
         serviceState.value = when (params.option) {
             AudioPlayingOption.Local -> {
@@ -137,6 +133,19 @@ internal class SndDomain(
                 Disabled
             }
         }
+    }*/
+
+    override fun onAudioStart(audioStart: AudioStartEvent) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onAudioChunk(chunk: AudioChunkEvent) {
+        // TODO("Not yet implemented")
+    }
+
+    override fun onAudioStop(stop: AudioStopEvent) {
+        // TODO("Not yet implemented")
+        pipeline.onEvent(PlayedEvent)
     }
 
     /**

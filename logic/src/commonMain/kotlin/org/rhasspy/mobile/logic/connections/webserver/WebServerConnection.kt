@@ -279,7 +279,7 @@ internal class WebServerConnection(
         }
 
         return action?.let {
-            pipeline.onEvent(WebServerListenForWake(it))
+            appSettingsUtil.hotWordToggle(it, Source.HttpApi)
             Accepted(value)
         } ?: Error(WakeOptionInvalid)
     }

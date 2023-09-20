@@ -4,8 +4,6 @@ sealed interface WebServerConnectionEvent {
 
     data object WebServerListenForCommand : WebServerConnectionEvent
 
-    data class WebServerListenForWake(val enabled: Boolean) : WebServerConnectionEvent
-
     data object WebServerPlayRecording : WebServerConnectionEvent
 
     class WebServerPlayWav(val data: ByteArray) : WebServerConnectionEvent

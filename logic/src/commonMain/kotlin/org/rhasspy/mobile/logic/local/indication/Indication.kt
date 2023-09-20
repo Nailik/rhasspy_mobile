@@ -65,7 +65,7 @@ internal class Indication : IIndication {
             _isShowVisualIndication.value = true
         }
         if (AppSetting.isSoundIndicationEnabled.value) {
-            localAudioService.playWakeSoundWithoutParameter()
+            localAudioService.playWakeSound()
         }
     }
 

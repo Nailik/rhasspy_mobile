@@ -61,8 +61,6 @@ internal class VadDomain(
         }
     }
 
-    //TODO initially VoiceStartedEvent?? -> needs to be done by VAD
-
     override fun onAudioChunk(chunk: AudioChunkEvent) {
         when (params.voiceActivityDetectionOption) {
             Local    -> {

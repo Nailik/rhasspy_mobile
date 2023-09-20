@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.*
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent
@@ -116,12 +117,7 @@ class PipelineManagerLocal(
             }
 
             is TranscriptEvent        -> {
-                onEvent(
-                    RecognizeEvent(
-                        text = event.text,
-                        sessionId = state.sessionData.sessionId,
-                    )
-                )
+                onEvent(RecognizeEvent(text = event.text,))
             }
 
             is TranscriptTimeoutEvent -> {
@@ -261,8 +257,14 @@ class PipelineManagerLocal(
 
     override fun onEvent(event: WebServerConnectionEvent) {
         when (event) {
-            is WebServerListenForCommand -> TODO()
-            is WebServerListenForWake    -> TODO()
+            is WebServerListenForCommand -> {
+                if(currentState !is DetectState) return
+                onEvent(
+                    DetectionEvent(
+                    name = "WebServerListenForCommand",
+                    timeStamp = Clock.System.now())
+                )
+            }
             is WebServerPlayRecording    -> TODO()
             is WebServerPlayWav          -> TODO()
             is WebServerSay              -> TODO()

@@ -16,6 +16,7 @@ class SilenceDetection(
 
     //returns true when silence was detected
     fun onAudioChunk(chunk: AudioChunkEvent): Boolean {
+        return true /*
         val automaticSilenceDetectionTime = automaticSilenceDetectionTime ?: 0
         val automaticSilenceDetectionMinimumTime = automaticSilenceDetectionMinimumTime ?: 0
 
@@ -26,13 +27,26 @@ class SilenceDetection(
 
         //minimum recording time not reached
         if (timeSinceStart < automaticSilenceDetectionMinimumTime.milliseconds) return false
+/*
+        var max: Short = 0
+        for (i in 0..chunk.data.size step 2) {
+            if (i < chunk.data.size) {
+                val bb = ByteBuffer.wrap(chunk.data.copyOfRange(i, i + 2).nat)
+                bb.order(ByteOrder.nativeOrder())
+                val short = bb.short
+
+                if (short > max) {
+                    max = short
+                }
+            }
+        }
 
         //volume above threshold
         if (volume > automaticSilenceDetectionAudioLevel) {
             //reset silence time (was above threshold)
             silenceStartTime = null
             return
-        }
+        }*/
 
         //volume below threshold
 
@@ -42,13 +56,13 @@ class SilenceDetection(
             val timeSinceSilenceDetected = currentTime.minus(silenceStart)
             //check if silence was detected for x milliseconds
             if (timeSinceSilenceDetected >= automaticSilenceDetectionTime.milliseconds) {
-                onSilenceDetected()
+            //    onSilenceDetected()
             }
         } ?: run {
             //first time silence was detected
             silenceStartTime = Clock.System.now()
         }
-
+*/
     }
 
 }
