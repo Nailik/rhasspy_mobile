@@ -167,7 +167,6 @@ internal object Migration1To2 : IMigration(1, 2) {
             option = dialogManagementOption.value,
             asrDomainTimeout = textAsrTimeout.value,
             intentDomainTimeout = intentRecognitionTimeout.value,
-            vadDomainTimeout = recordingTimeout.value,
         )
 
 
