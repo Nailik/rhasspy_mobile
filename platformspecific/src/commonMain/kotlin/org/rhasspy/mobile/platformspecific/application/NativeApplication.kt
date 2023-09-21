@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.module.Module
 
-expect abstract class NativeApplication() {
+expect abstract class NativeApplication() : AppApplication {
 
     companion object {
         val koinApplicationModule: Module

@@ -1,5 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
@@ -56,7 +58,7 @@ kotlin {
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
                 implementation(Firebase.analyticsKtx)
                 implementation(Firebase.crashlyticsKtx)
-                implementation(project.dependencies.platform(Firebase.bom))
+                implementation( project.dependencies.platform(Firebase.bom))
                 implementation(Nailik.androidResampler)
                 implementation(Journeyapps.zXingAndroid)
                 implementation(AndroidX.browser)
@@ -78,21 +80,16 @@ kotlin {
                 implementation(Square.okio)
                 implementation(Cashapp.Sqldelight.ios)
             }
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
         }
         val iosX64Test by getting
         val iosArm64Test by getting
         val iosSimulatorArm64Test by getting
-        val iosTest by creating {
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            iosSimulatorArm64Test.dependsOn(this)
-        }
+        val iosTest by creating
     }
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.freeCompilerArgs += "-Xexpect-actual-classes"
 }
 
 android {

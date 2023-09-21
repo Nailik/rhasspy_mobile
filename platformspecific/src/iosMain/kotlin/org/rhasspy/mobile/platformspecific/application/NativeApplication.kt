@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.dsl.module
 
-actual abstract class NativeApplication {
+actual abstract class NativeApplication : AppApplication() {
 
     init {
         onInit()
@@ -42,6 +42,5 @@ actual abstract class NativeApplication {
     }
 
     actual abstract fun onCreated()
-
 
 }
