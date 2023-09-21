@@ -9,13 +9,11 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SetUseSpeechToTextMqttSilenceDetection
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData
 
 @Stable
 class SpeechToTextConfigurationViewModel(
@@ -26,7 +24,7 @@ class SpeechToTextConfigurationViewModel(
 ) {
 
     private val initialData get() = mapper(ConfigurationSetting.asrDomainData.value)
-    private val _viewState = MutableStateFlow(SpeechToTextConfigurationViewState(editData = initialData,))
+    private val _viewState = MutableStateFlow(SpeechToTextConfigurationViewState(editData = initialData))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(

@@ -11,11 +11,11 @@ class PipelineManagerMqtt(
     private val indication: IIndication,
     private val audioFocus: IAudioFocus,
     private val micDomain: IMicDomain,
-    ) : PipelineManager(
+) : PipelineManager(
     indication = indication,
     audioFocus = audioFocus,
     micDomain = micDomain,
-    ) {
+) {
 
     override fun initialize() {
         //TODO("Not yet implemented")

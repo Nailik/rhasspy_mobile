@@ -14,7 +14,6 @@ import org.rhasspy.mobile.testutils.nVerify
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.LocalSilenceDetectionUiEvent.Action.ToggleAudioLevelTest
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.LocalSilenceDetectionUiEvent.Change.UpdateSilenceDetectionAudioLevelLogarithm
-import org.rhasspy.mobile.viewmodel.settings.injectMocks
 import kotlin.math.pow
 import kotlin.test.BeforeTest
 import kotlin.test.Test

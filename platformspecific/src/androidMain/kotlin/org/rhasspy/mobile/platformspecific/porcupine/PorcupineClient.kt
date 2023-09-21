@@ -2,7 +2,6 @@ package org.rhasspy.mobile.platformspecific.porcupine
 
 import ai.picovoice.porcupine.Porcupine
 import co.touchlab.kermit.Logger
-import kotlinx.collections.immutable.ImmutableList
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword

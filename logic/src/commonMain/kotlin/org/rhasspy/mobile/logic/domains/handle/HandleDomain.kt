@@ -79,7 +79,7 @@ internal class HandleDomain(
     override fun onIntentEvent(event: IntentEvent) {
         logger.d { "intentHandling intentName: $event" }
         serviceState.value = when (params.option) {
-            IntentHandlingOption.HomeAssistant -> {
+            IntentHandlingOption.HomeAssistant      -> {
                 homeAssistantConnection.sendIntent(
                     option = params.homeAssistantIntentHandlingOption,
                     intentName = event.name ?: "",
@@ -121,8 +121,8 @@ internal class HandleDomain(
                 Loading
             }
 
-            IntentHandlingOption.WithRecognition -> Success
-            IntentHandlingOption.Disabled -> {
+            IntentHandlingOption.WithRecognition    -> Success
+            IntentHandlingOption.Disabled           -> {
                 pipeline.onEvent(NotHandledEvent("Disabled"))
                 Disabled
             }

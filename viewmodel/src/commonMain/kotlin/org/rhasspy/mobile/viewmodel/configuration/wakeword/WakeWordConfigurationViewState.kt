@@ -2,7 +2,6 @@ package org.rhasspy.mobile.viewmodel.configuration.wakeword
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.data.toStringOrEmpty
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
@@ -10,7 +9,6 @@ import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
-import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 

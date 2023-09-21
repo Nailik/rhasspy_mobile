@@ -88,52 +88,52 @@ internal class SndDomain(
      * MQTT:
      * - calls default site to play audio
      */
-   /* override fun playAudio(play: PlayEvent) {
-        logger.d { "playAudio" }
-        serviceState.value = when (params.option) {
-            AudioPlayingOption.Local -> {
-                audioFocusService.request(Sound)
-                localAudioService.playAudio(
-                    audioSource = AudioSource.Data(play.data),
-                    audioOutputOption = params.localOutputOption,
-                    onFinished = {
-                        serviceState.value = it
-                        audioFocusService.abandon(Sound)
-                        pipeline.onEvent(PlayedEvent)
-                    }
-                )
-                Loading
-            }
+    /* override fun playAudio(play: PlayEvent) {
+         logger.d { "playAudio" }
+         serviceState.value = when (params.option) {
+             AudioPlayingOption.Local -> {
+                 audioFocusService.request(Sound)
+                 localAudioService.playAudio(
+                     audioSource = AudioSource.Data(play.data),
+                     audioOutputOption = params.localOutputOption,
+                     onFinished = {
+                         serviceState.value = it
+                         audioFocusService.abandon(Sound)
+                         pipeline.onEvent(PlayedEvent)
+                     }
+                 )
+                 Loading
+             }
 
-            AudioPlayingOption.Rhasspy2HermesHttp -> {
-                httpClientConnection.playWav(
-                    audioSource = AudioSource.Data(play.data),
-                    onResult = {
-                        serviceState.value = it.toServiceState()
-                        pipeline.onEvent(PlayedEvent)
-                    }
-                )
-                Loading
-            }
+             AudioPlayingOption.Rhasspy2HermesHttp -> {
+                 httpClientConnection.playWav(
+                     audioSource = AudioSource.Data(play.data),
+                     onResult = {
+                         serviceState.value = it.toServiceState()
+                         pipeline.onEvent(PlayedEvent)
+                     }
+                 )
+                 Loading
+             }
 
-            AudioPlayingOption.Rhasspy2HermesMQTT -> {
-                mqttClientService.playAudioRemote(
-                    audioSource = AudioSource.Data(play.data),
-                    siteId = params.mqttSiteId,
-                    onResult = {
-                        serviceState.value = it
-                        pipeline.onEvent(PlayedEvent)
-                    }
-                )
-                Loading
-            }
+             AudioPlayingOption.Rhasspy2HermesMQTT -> {
+                 mqttClientService.playAudioRemote(
+                     audioSource = AudioSource.Data(play.data),
+                     siteId = params.mqttSiteId,
+                     onResult = {
+                         serviceState.value = it
+                         pipeline.onEvent(PlayedEvent)
+                     }
+                 )
+                 Loading
+             }
 
-            AudioPlayingOption.Disabled -> {
-                pipeline.onEvent(PlayedEvent)
-                Disabled
-            }
-        }
-    }*/
+             AudioPlayingOption.Disabled -> {
+                 pipeline.onEvent(PlayedEvent)
+                 Disabled
+             }
+         }
+     }*/
 
     override fun onAudioStart(audioStart: AudioStartEvent) {
         //TODO("Not yet implemented")

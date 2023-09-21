@@ -5,14 +5,14 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 
 class SpeechToTextConfigurationDataMapper {
 
-    operator fun invoke(data: AsrDomainData) : SpeechToTextConfigurationData {
+    operator fun invoke(data: AsrDomainData): SpeechToTextConfigurationData {
         return SpeechToTextConfigurationData(
             speechToTextOption = data.option,
             isUseSpeechToTextMqttSilenceDetection = data.isUseSpeechToTextMqttSilenceDetection,
         )
     }
 
-    operator fun invoke(data: SpeechToTextConfigurationData) : AsrDomainData {
+    operator fun invoke(data: SpeechToTextConfigurationData): AsrDomainData {
         return AsrDomainData(
             option = data.speechToTextOption,
             isUseSpeechToTextMqttSilenceDetection = data.isUseSpeechToTextMqttSilenceDetection,

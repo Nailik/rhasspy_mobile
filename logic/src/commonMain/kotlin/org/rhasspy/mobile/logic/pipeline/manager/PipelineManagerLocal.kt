@@ -20,7 +20,6 @@ import org.rhasspy.mobile.logic.domains.vad.IVadDomain
 import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.indication.IIndication
-import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.AsrDomainEvent.*
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.AudioDomainEvent.*
@@ -30,7 +29,8 @@ import org.rhasspy.mobile.logic.pipeline.PipelineEvent.IntentDomainEvent.*
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.SndDomainEvent.PlayedEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.TtsDomainEvent.SynthesizeEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.TtsDomainEvent.TtsErrorEvent
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.VadDomainEvent.*
+import org.rhasspy.mobile.logic.pipeline.PipelineEvent.VadDomainEvent.VoiceStartedEvent
+import org.rhasspy.mobile.logic.pipeline.PipelineEvent.VadDomainEvent.VoiceStoppedEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.WakeDomainEvent.DetectionEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineState.*
 import org.rhasspy.mobile.logic.pipeline.PipelineState.SessionState.*
@@ -111,7 +111,7 @@ class PipelineManagerLocal(
             }
 
             is TranscriptEvent        -> {
-                onEvent(RecognizeEvent(text = event.text,))
+                onEvent(RecognizeEvent(text = event.text))
             }
 
             is TranscriptTimeoutEvent -> {
@@ -245,7 +245,7 @@ class PipelineManagerLocal(
             is IntentRecognitionResult -> IntentEvent(name = event.intentName, entities = event.intent)
             is PlayBytes               -> Unit// AudioChunkEvent
             is PlayFinished            -> PlayedEvent
-            is Say                     -> SynthesizeEvent(event.text,event.volume,event.siteId)
+            is Say                     -> SynthesizeEvent(event.text, event.volume, event.siteId)
             is SessionEnded            -> Unit
             is SessionStarted          -> Unit
             is StartListening          -> Unit//DetectionEvent -> VoiceStartedEvent
@@ -257,13 +257,15 @@ class PipelineManagerLocal(
     override fun onEvent(event: WebServerConnectionEvent) {
         when (event) {
             is WebServerListenForCommand -> {
-                if(currentState !is DetectState) return
+                if (currentState !is DetectState) return
                 onEvent(
                     DetectionEvent(
-                    name = "WebServerListenForCommand",
-                    timeStamp = Clock.System.now())
+                        name = "WebServerListenForCommand",
+                        timeStamp = Clock.System.now()
+                    )
                 )
             }
+
             is WebServerPlayWav          -> Unit//AudioChunkEvent
             is WebServerSay              -> Unit//SynthesizeEvent
             is WebServerStartRecording   -> Unit//DetectionEvent -> VoiceStartedEvent

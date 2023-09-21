@@ -12,7 +12,7 @@ class DialogScreenViewModel(
     private val pipeline: IPipeline
 ) : ScreenViewModel() {
 
-  //  val viewState = viewStateCreator()
+    //  val viewState = viewStateCreator()
 
     fun onEvent(event: DialogScreenUiEvent) {
         when (event) {
@@ -23,8 +23,8 @@ class DialogScreenViewModel(
     private fun onChange(change: Change) {
         when (change) {
             ToggleListAutoScroll -> AppSetting.isDialogAutoscroll.value = !AppSetting.isDialogAutoscroll.value
-            ManualListScroll    -> AppSetting.isDialogAutoscroll.value = false
-            ClearHistory -> Unit //TODO dialogManagerService.clearHistory()
+            ManualListScroll     -> AppSetting.isDialogAutoscroll.value = false
+            ClearHistory         -> Unit //TODO dialogManagerService.clearHistory()
         }
     }
 

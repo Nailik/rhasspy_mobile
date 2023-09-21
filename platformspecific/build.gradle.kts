@@ -58,7 +58,7 @@ kotlin {
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
                 implementation(Firebase.analyticsKtx)
                 implementation(Firebase.crashlyticsKtx)
-                implementation( project.dependencies.platform(Firebase.bom))
+                implementation(project.dependencies.platform(Firebase.bom))
                 implementation(Nailik.androidResampler)
                 implementation(Journeyapps.zXingAndroid)
                 implementation(AndroidX.browser)

@@ -98,9 +98,9 @@ fun logicModule() = module {
 
     single<IHandleDomain> {
         HandleDomain(
-        pipeline= get(),
-        homeAssistantConnection = get(),
-        httpClientConnection = get(),
+            pipeline = get(),
+            homeAssistantConnection = get(),
+            httpClientConnection = get(),
         )
     }
 
@@ -109,22 +109,24 @@ fun logicModule() = module {
             pipeline = get(),
             mqttClientConnection = get(),
             httpClientConnection = get(),
-            ) }
+        )
+    }
 
     single<ILocalAudioPlayer> {
         LocalAudioPlayer(
             nativeApplication = get(),
             audioFocusService = get(),
-            ) }
+        )
+    }
 
     single<IAppSettingsUtil> { AppSettingsUtil() }
 
     singleOf(::MqttConnectionParamsCreator)
     single<IMqttConnection> {
         MqttConnection(
-        pipeline = get(),
-        appSettingsUtil = get(),
-        paramsCreator = get()
+            pipeline = get(),
+            appSettingsUtil = get(),
+            paramsCreator = get()
         )
     }
 

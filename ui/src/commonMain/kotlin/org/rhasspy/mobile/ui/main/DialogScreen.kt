@@ -49,29 +49,29 @@ import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewModel
 fun DialogScreen(viewModel: DialogScreenViewModel) {
 
     ScreenContent(screenViewModel = viewModel) {
-       /* val viewState by viewModel.viewState.collectAsState()
+        /* val viewState by viewModel.viewState.collectAsState()
 
-        Scaffold(
-            modifier = Modifier
-                .testTag(DialogScreen)
-                .fillMaxSize(),
-            topBar = {
-                AppBar(
-                    isLogAutoscroll = viewState.isDialogAutoscroll,
-                    onEvent = viewModel::onEvent
-                )
-            },
-        ) { paddingValues ->
+         Scaffold(
+             modifier = Modifier
+                 .testTag(DialogScreen)
+                 .fillMaxSize(),
+             topBar = {
+                 AppBar(
+                     isLogAutoscroll = viewState.isDialogAutoscroll,
+                     onEvent = viewModel::onEvent
+                 )
+             },
+         ) { paddingValues ->
 
-            Surface(Modifier.padding(paddingValues)) {
-                DialogScreenContent(
-                    isLogAutoscroll = viewState.isDialogAutoscroll,
-                    history = viewState.history,
-                    onEvent = viewModel::onEvent
-                )
-            }
+             Surface(Modifier.padding(paddingValues)) {
+                 DialogScreenContent(
+                     isLogAutoscroll = viewState.isDialogAutoscroll,
+                     history = viewState.history,
+                     onEvent = viewModel::onEvent
+                 )
+             }
 
-        }*/
+         }*/
     }
 }
 

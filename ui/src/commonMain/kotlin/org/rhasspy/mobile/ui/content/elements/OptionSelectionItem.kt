@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.PersistentList
 import org.rhasspy.mobile.data.service.option.IOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.combinedTestTag

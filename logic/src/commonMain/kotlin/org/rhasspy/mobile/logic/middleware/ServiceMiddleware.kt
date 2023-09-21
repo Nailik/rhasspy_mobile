@@ -14,10 +14,11 @@ interface IServiceMiddleware {
     }
 
 }
+
 /**
  * handles ALL INCOMING events
  */
-internal class ServiceMiddleware: IServiceMiddleware {
+internal class ServiceMiddleware : IServiceMiddleware {
     override val isUserActionEnabled: StateFlow<Boolean>
         get() = MutableStateFlow(true)
     override val isPlayingRecording: StateFlow<Boolean>

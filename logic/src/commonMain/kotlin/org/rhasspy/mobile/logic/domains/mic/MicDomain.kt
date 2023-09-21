@@ -9,8 +9,9 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.ServiceState.ErrorState.Error
+import org.rhasspy.mobile.data.service.ServiceState.Pending
+import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.pipeline.IPipeline
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent

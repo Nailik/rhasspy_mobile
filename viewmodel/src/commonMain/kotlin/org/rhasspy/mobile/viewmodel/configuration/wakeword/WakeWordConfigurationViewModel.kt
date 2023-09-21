@@ -9,7 +9,6 @@ import okio.Path
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.data.toIntOrNullOrConstant
-import org.rhasspy.mobile.data.data.toIntOrZero
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.service.option.WakeWordOption
@@ -30,7 +29,6 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
 
@@ -83,10 +81,10 @@ class WakeWordConfigurationViewModel(
 
     fun onEvent(event: WakeWordConfigurationUiEvent) {
         when (event) {
-            is Change                     -> onChange(event)
-            is Action                     -> onAction(event)
-            is PorcupineUiEvent           -> onPorcupineAction(event)
-            is UdpUiEvent                 -> onUdpAction(event)
+            is Change           -> onChange(event)
+            is Action           -> onAction(event)
+            is PorcupineUiEvent -> onPorcupineAction(event)
+            is UdpUiEvent       -> onUdpAction(event)
         }
     }
 

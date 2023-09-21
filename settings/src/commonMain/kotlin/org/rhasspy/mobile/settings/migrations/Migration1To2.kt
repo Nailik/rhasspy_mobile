@@ -9,7 +9,6 @@ import org.rhasspy.mobile.data.pipeline.PipelineData
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.*
-import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.ISetting
 

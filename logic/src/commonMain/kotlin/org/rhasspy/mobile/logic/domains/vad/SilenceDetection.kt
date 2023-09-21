@@ -3,7 +3,6 @@ package org.rhasspy.mobile.logic.domains.vad
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.AudioDomainEvent.AudioChunkEvent
-import kotlin.time.Duration.Companion.milliseconds
 
 class SilenceDetection(
     private val automaticSilenceDetectionTime: Long?,

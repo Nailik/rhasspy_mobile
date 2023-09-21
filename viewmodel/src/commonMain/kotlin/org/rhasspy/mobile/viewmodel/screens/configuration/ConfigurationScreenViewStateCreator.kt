@@ -9,9 +9,9 @@ import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
+import org.rhasspy.mobile.logic.domains.asr.IAsrDomain
 import org.rhasspy.mobile.logic.domains.handle.IHandleDomain
 import org.rhasspy.mobile.logic.domains.intent.IIntentDomain
-import org.rhasspy.mobile.logic.domains.asr.IAsrDomain
 import org.rhasspy.mobile.logic.domains.snd.ISndDomain
 import org.rhasspy.mobile.logic.domains.tts.ITtsDomain
 import org.rhasspy.mobile.logic.domains.wake.IWakeDomain

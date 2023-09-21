@@ -8,7 +8,6 @@ import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent
 import org.rhasspy.mobile.logic.domains.mic.IMicDomain
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.indication.IIndication
-import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineState
 import org.rhasspy.mobile.logic.pipeline.PipelineState.*
@@ -51,7 +50,7 @@ abstract class PipelineManager(
 
     private fun startState(state: PipelineState) {
         when (state) {
-            DetectState -> {
+            DetectState        -> {
                 indication.onIdle()
                 //TODO only if wake word enabled
                 micDomain.startRecording()
@@ -63,19 +62,19 @@ abstract class PipelineManager(
                 micDomain.startRecording()
             }
 
-            is RecognizeState -> {
+            is RecognizeState  -> {
 
             }
 
-            is HandleState -> {
+            is HandleState     -> {
 
             }
 
-            is SpeakState -> {
+            is SpeakState      -> {
 
             }
 
-            is PlayState    -> {
+            is PlayState       -> {
 
             }
 
@@ -84,7 +83,7 @@ abstract class PipelineManager(
 
     private fun endState(state: PipelineState) {
         when (state) {
-            DetectState -> {
+            DetectState        -> {
 
                 micDomain.stopRecording()
             }
@@ -96,19 +95,19 @@ abstract class PipelineManager(
             }
 
 
-            is RecognizeState -> {
+            is RecognizeState  -> {
                 state.timeoutJob.cancel()
             }
 
-            is HandleState -> {
+            is HandleState     -> {
                 state.timeoutJob.cancel()
             }
 
-            SpeakState -> {
+            SpeakState         -> {
 
             }
 
-            is PlayState    -> {
+            is PlayState       -> {
 
             }
         }

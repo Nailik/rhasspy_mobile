@@ -50,6 +50,7 @@ interface IMqttConnection : IConnection {
         data: ByteArray,
         onResult: (result: ServiceState) -> Unit
     )
+
     fun hotWordDetected(keyword: String)
     fun wakeWordError(description: String)
     fun startListening(sessionId: String, isUseSilenceDetection: Boolean, onResult: (result: ServiceState) -> Unit)
