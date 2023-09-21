@@ -17,6 +17,7 @@ import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.*
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.Change.SelectVoiceActivityDetectionOption
@@ -28,6 +29,7 @@ import kotlin.math.pow
 @Stable
 class VoiceActivityDetectionConfigurationViewModel(
     private val nativeApplication: NativeApplication,
+    private val mapper: VoiceActivityDetectionConfigurationDataMapper,
     audioRecorderViewStateCreator: AudioRecorderViewStateCreator,
     service: IVadDomain,
     private val audioRecorder: IAudioRecorder,
@@ -47,16 +49,17 @@ class VoiceActivityDetectionConfigurationViewModel(
         }
     }
 
-    private val _viewState = MutableStateFlow(VoiceActivityDetectionViewState(VoiceActivityDetectionConfigurationData()))
-
+    private val initialData get() = mapper(ConfigurationSetting.vadDomainData.value)
+    private val _viewState = MutableStateFlow(VoiceActivityDetectionViewState(initialData))
     val viewState = _viewState.readOnly
+
     val audioRecorderViewState = audioRecorderViewStateCreator(viewState)
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = ::VoiceActivityDetectionConfigurationData,
+            init = ::initialData,
             viewState = viewState,
             configurationViewState = configurationViewState
         )
@@ -131,24 +134,13 @@ class VoiceActivityDetectionConfigurationViewModel(
 
     override fun onDiscard() {
         stopRecording()
-        _viewState.update { it.copy(editData = VoiceActivityDetectionConfigurationData()) }
+        _viewState.update { it.copy(editData = initialData) }
     }
 
     override fun onSave() {
         stopRecording()
-
-        with(_viewState.value.editData) {
-
-            ConfigurationSetting.voiceActivityDetectionOption.value = voiceActivityDetectionOption
-
-            with(localSilenceDetectionSetting) {
-                ConfigurationSetting.automaticSilenceDetectionTime.value = silenceDetectionTime
-                ConfigurationSetting.automaticSilenceDetectionMinimumTime.value = silenceDetectionMinimumTime
-                ConfigurationSetting.automaticSilenceDetectionAudioLevel.value = silenceDetectionAudioLevel
-            }
-
-        }
-
+        ConfigurationSetting.vadDomainData.value = mapper(_viewState.value.editData)
+        _viewState.update { it.copy(editData = initialData) }
     }
 
     private fun startRecording() {
@@ -157,6 +149,7 @@ class VoiceActivityDetectionConfigurationViewModel(
         //disable so recording is stopped
         AppSetting.isHotWordEnabled.value = false
         //start this recording
+        //TODO use mic domain instead?
         audioRecorder.startRecording(
             audioRecorderSourceType = ConfigurationSetting.micDomainData.value.audioInputSource,
             audioRecorderChannelType = ConfigurationSetting.micDomainData.value.audioInputChannel,
@@ -165,7 +158,8 @@ class VoiceActivityDetectionConfigurationViewModel(
             audioRecorderOutputChannelType = ConfigurationSetting.micDomainData.value.audioOutputChannel,
             audioRecorderOutputEncodingType = ConfigurationSetting.micDomainData.value.audioOutputEncoding,
             audioRecorderOutputSampleRateType = ConfigurationSetting.micDomainData.value.audioOutputSampleRate,
-            isAutoPauseOnMediaPlayback = AppSetting.isPauseRecordingOnMedia.value,
+            isUseAutomaticGainControl = ConfigurationSetting.micDomainData.value.isUseAutomaticGainControl,
+            isAutoPauseOnMediaPlayback = ConfigurationSetting.micDomainData.value.isPauseRecordingOnMediaPlayback,
         )
     }
 

@@ -9,6 +9,7 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change
@@ -18,23 +19,21 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 
 @Stable
 class SpeechToTextConfigurationViewModel(
+    private val mapper: SpeechToTextConfigurationDataMapper,
     service: IAsrDomain
 ) : ConfigurationViewModel(
     serviceState = service.serviceState
 ) {
 
-    private val _viewState = MutableStateFlow(
-        SpeechToTextConfigurationViewState(
-            editData = SpeechToTextConfigurationData(),
-        )
-    )
+    private val initialData get() = mapper(ConfigurationSetting.asrDomainData.value)
+    private val _viewState = MutableStateFlow(SpeechToTextConfigurationViewState(editData = initialData,))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = ::SpeechToTextConfigurationData,
+            init = ::initialData,
             viewState = viewState,
             configurationViewState = configurationViewState
         )
@@ -42,8 +41,8 @@ class SpeechToTextConfigurationViewModel(
 
     fun onEvent(event: SpeechToTextConfigurationUiEvent) {
         when (event) {
-            is Change                     -> onChange(event)
-            is Action                     -> onAction(event)
+            is Change -> onChange(event)
+            is Action -> onAction(event)
         }
     }
 
@@ -60,19 +59,17 @@ class SpeechToTextConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick               -> navigator.onBackPressed()
+            BackClick -> navigator.onBackPressed()
         }
     }
 
     override fun onDiscard() {
-        _viewState.update { it.copy(editData = SpeechToTextConfigurationData()) }
+        _viewState.update { it.copy(editData = initialData) }
     }
 
     override fun onSave() {
-        with(_viewState.value.editData) {
-            ConfigurationSetting.speechToTextOption.value = speechToTextOption
-            ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value = isUseSpeechToTextMqttSilenceDetection
-        }
+        ConfigurationSetting.asrDomainData.value = mapper(_viewState.value.editData)
+        _viewState.update { it.copy(editData = initialData) }
     }
 
     override fun onBackPressed(): Boolean {

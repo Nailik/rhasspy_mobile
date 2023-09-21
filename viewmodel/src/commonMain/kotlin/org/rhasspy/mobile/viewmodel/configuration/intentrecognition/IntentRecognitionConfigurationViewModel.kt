@@ -9,6 +9,7 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change
@@ -17,19 +18,21 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 
 @Stable
 class IntentRecognitionConfigurationViewModel(
-    service: IIntentDomain
+    private val mapper: IntentRecognitionConfigurationDataMapper,
+    service: IIntentDomain,
 ) : ConfigurationViewModel(
-    serviceState = service.serviceState
+    serviceState = service.serviceState,
 ) {
 
-    private val _viewState = MutableStateFlow(IntentRecognitionConfigurationViewState(IntentRecognitionConfigurationData()))
+    private val initialData get() = mapper(ConfigurationSetting.intentDomainData.value)
+    private val _viewState = MutableStateFlow(IntentRecognitionConfigurationViewState(initialData))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = ::IntentRecognitionConfigurationData,
+            init = ::initialData,
             viewState = viewState,
             configurationViewState = configurationViewState
         )
@@ -59,13 +62,12 @@ class IntentRecognitionConfigurationViewModel(
     }
 
     override fun onDiscard() {
-        _viewState.update { it.copy(editData = IntentRecognitionConfigurationData()) }
+        _viewState.update { it.copy(editData = initialData) }
     }
 
     override fun onSave() {
-        with(_viewState.value.editData) {
-            ConfigurationSetting.intentRecognitionOption.value = intentRecognitionOption
-        }
+        ConfigurationSetting.intentDomainData.value = mapper(_viewState.value.editData)
+        _viewState.update { it.copy(editData = initialData) }
     }
 
 }

@@ -21,7 +21,7 @@ class HomeAssistantConnectionConfigurationViewModel(
     private val mapper: HomeAssistantConnectionConfigurationDataMapper,
     homeAssistantConnection: IHomeAssistantConnection
 ) : ConfigurationViewModel(
-    serviceState = homeAssistantConnection.connectionState
+    serviceState = homeAssistantConnection.connectionState,
 ) {
 
     private val initialData get() = mapper(ConfigurationSetting.homeAssistantConnection.value)

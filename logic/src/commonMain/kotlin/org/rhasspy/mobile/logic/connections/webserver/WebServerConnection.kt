@@ -40,6 +40,7 @@ import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.*
 import org.rhasspy.mobile.logic.connections.webserver.WebServerResult.*
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.settings.IAppSettingsUtil
+import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.pipeline.IPipeline
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
@@ -67,7 +68,8 @@ internal class WebServerConnection(
     private val pipeline: IPipeline,
     private val appSettingsUtil: IAppSettingsUtil,
     private val fileStorage: IFileStorage,
-    private val mqttConnection: IMqttConnection
+    private val mqttConnection: IMqttConnection,
+    private val serviceMiddleware: IServiceMiddleware
 ) : IWebServerConnection {
 
     private val logger = Logger.withTag("WebServerConnection")
@@ -290,7 +292,7 @@ internal class WebServerConnection(
      * POST to play last recorded voice command
      */
     private fun playRecordingPost(): WebServerResult {
-        pipeline.onEvent(WebServerPlayRecording)
+        serviceMiddleware.playRecording()
         return Ok
     }
 

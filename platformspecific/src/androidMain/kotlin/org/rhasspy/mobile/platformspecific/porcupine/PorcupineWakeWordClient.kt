@@ -61,7 +61,7 @@ actual class PorcupineWakeWordClient actual constructor(
     actual fun audioFrame(
         sampleRate: AudioFormatSampleRateType,
         encoding: AudioFormatEncodingType,
-        channelType: AudioFormatChannelType,
+        channel: AudioFormatChannelType,
         data: ByteArray,
     ) { //TODO convert audio if necessary
         porcupineClient?.audioFrame(data)

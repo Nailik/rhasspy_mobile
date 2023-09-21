@@ -58,7 +58,7 @@ class WakeWordConfigurationViewModel(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = ::WakeWordConfigurationData,
+            init = ::WakeWordConfigurationDataMapper,
             viewState = viewState,
             configurationViewState = configurationViewState
         )

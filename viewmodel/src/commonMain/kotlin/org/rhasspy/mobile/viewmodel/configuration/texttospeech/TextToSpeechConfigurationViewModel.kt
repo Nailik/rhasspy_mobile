@@ -9,6 +9,7 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change
@@ -17,19 +18,21 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 
 @Stable
 class TextToSpeechConfigurationViewModel(
+    private val mapper: TextToSpeechConfigurationDataMapper,
     service: ITtsDomain
 ) : ConfigurationViewModel(
     serviceState = service.serviceState
 ) {
 
-    private val _viewState = MutableStateFlow(TextToSpeechConfigurationViewState(TextToSpeechConfigurationData()))
+    private val initialData get() = mapper(ConfigurationSetting.ttsDomainData.value)
+    private val _viewState = MutableStateFlow(TextToSpeechConfigurationViewState(initialData))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = ::TextToSpeechConfigurationData,
+            init = ::initialData,
             viewState = viewState,
             configurationViewState = configurationViewState
         )
@@ -59,13 +62,12 @@ class TextToSpeechConfigurationViewModel(
     }
 
     override fun onDiscard() {
-        _viewState.update { it.copy(editData = TextToSpeechConfigurationData()) }
+        _viewState.update { it.copy(editData = initialData) }
     }
 
     override fun onSave() {
-        with(_viewState.value.editData) {
-            ConfigurationSetting.textToSpeechOption.value = textToSpeechOption
-        }
+        ConfigurationSetting.ttsDomainData.value = mapper(_viewState.value.editData)
+        _viewState.update { it.copy(editData = initialData) }
     }
 
 }

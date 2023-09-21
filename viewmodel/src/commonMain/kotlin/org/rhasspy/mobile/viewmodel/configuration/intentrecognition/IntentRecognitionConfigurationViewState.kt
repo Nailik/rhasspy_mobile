@@ -15,7 +15,7 @@ data class IntentRecognitionConfigurationViewState internal constructor(
 
     @Stable
     data class IntentRecognitionConfigurationData internal constructor(
-        val intentRecognitionOption: IntentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
+        val intentRecognitionOption: IntentRecognitionOption,
     ) : IConfigurationData {
 
         val intentRecognitionOptionList: ImmutableList<IntentRecognitionOption> = IntentRecognitionOption.entries.toImmutableList()

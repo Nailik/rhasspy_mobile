@@ -11,22 +11,22 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfi
 
 @Stable
 data class VoiceActivityDetectionViewState internal constructor(
-    override val editData: VoiceActivityDetectionConfigurationData
+    override val editData: VoiceActivityDetectionConfigurationData,
 ) : IConfigurationViewState {
 
     @Stable
     data class VoiceActivityDetectionConfigurationData internal constructor(
-        val voiceActivityDetectionOption: VoiceActivityDetectionOption = ConfigurationSetting.voiceActivityDetectionOption.value,
-        val localSilenceDetectionSetting: LocalSilenceDetectionConfigurationData = LocalSilenceDetectionConfigurationData(),
+        val voiceActivityDetectionOption: VoiceActivityDetectionOption,
+        val localSilenceDetectionSetting: LocalSilenceDetectionConfigurationData,
     ) : IConfigurationData {
 
         val voiceActivityDetectionOptions: ImmutableList<VoiceActivityDetectionOption> = VoiceActivityDetectionOption.entries.toTypedArray().toImmutableList()
 
         @Stable
         data class LocalSilenceDetectionConfigurationData internal constructor(
-            val silenceDetectionTime: Long? = ConfigurationSetting.automaticSilenceDetectionTime.value,
-            val silenceDetectionMinimumTime: Long? = ConfigurationSetting.automaticSilenceDetectionMinimumTime.value,
-            val silenceDetectionAudioLevel: Float = ConfigurationSetting.automaticSilenceDetectionAudioLevel.value,
+            val silenceDetectionTime: Long?,
+            val silenceDetectionMinimumTime: Long?,
+            val silenceDetectionAudioLevel: Float,
         ) {
 
             val silenceDetectionTimeText: String = silenceDetectionTime.toStringOrEmpty()

@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic
 
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.connections.homeassistant.HomeAssistantConnection
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
@@ -42,8 +43,15 @@ import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.pipeline.IPipeline
 import org.rhasspy.mobile.logic.pipeline.Pipeline
+import org.rhasspy.mobile.logic.pipeline.manager.PipelineManagerDisabled
+import org.rhasspy.mobile.logic.pipeline.manager.PipelineManagerLocal
+import org.rhasspy.mobile.logic.pipeline.manager.PipelineManagerMqtt
 
 fun logicModule() = module {
+    singleOf(::PipelineManagerLocal)
+    singleOf(::PipelineManagerDisabled)
+    singleOf(::PipelineManagerMqtt)
+
     single<IPipeline> {
         Pipeline(
             dispatcherProvider = get()
@@ -141,10 +149,11 @@ fun logicModule() = module {
 
     single<IWebServerConnection> {
         WebServerConnection(
-        pipeline = get(),
+            pipeline = get(),
             appSettingsUtil = get(),
-        fileStorage = get(),
-        mqttConnection = get(),
+            fileStorage = get(),
+            mqttConnection = get(),
+            serviceMiddleware = get(),
         )
     }
 

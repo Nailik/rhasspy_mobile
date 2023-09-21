@@ -25,9 +25,9 @@ object ConfigurationSetting {
             host = "",
             timeout = 30000L,
             bearerToken = "",
-            isSSLVerificationDisabled = false
+            isSSLVerificationDisabled = false,
         ),
-        serializer = HttpConnectionData.serializer()
+        serializer = HttpConnectionData.serializer(),
     )
 
     val rhasspy3Connection = ISetting(
@@ -36,9 +36,9 @@ object ConfigurationSetting {
             host = "",
             timeout = 30000L,
             bearerToken = "",
-            isSSLVerificationDisabled = false
+            isSSLVerificationDisabled = false,
         ),
-        serializer = HttpConnectionData.serializer()
+        serializer = HttpConnectionData.serializer(),
     )
 
     val homeAssistantConnection = ISetting(
@@ -47,9 +47,9 @@ object ConfigurationSetting {
             host = "",
             timeout = 30000L,
             bearerToken = "",
-            isSSLVerificationDisabled = false
+            isSSLVerificationDisabled = false,
         ),
-        serializer = HttpConnectionData.serializer()
+        serializer = HttpConnectionData.serializer(),
     )
 
     val mqttConnection = ISetting(
@@ -63,9 +63,9 @@ object ConfigurationSetting {
             connectionTimeout = 5,
             keepAliveInterval = 30,
             retryInterval = 10L,
-            keystoreFile = null
+            keystoreFile = null,
         ),
-        serializer = MqttConnectionData.serializer()
+        serializer = MqttConnectionData.serializer(),
     )
 
     val localWebserverConnection = ISetting(
@@ -79,7 +79,7 @@ object ConfigurationSetting {
             keyAlias = "",
             keyPassword = "",
         ),
-        serializer = LocalWebserverConnectionData.serializer()
+        serializer = LocalWebserverConnectionData.serializer(),
     )
 
     val micDomainData = ISetting(
@@ -95,18 +95,18 @@ object ConfigurationSetting {
             isUseAutomaticGainControl = false, //TODO display to user if not available on device AutomaticGainControl.isAvailable()
             isPauseRecordingOnMediaPlayback = true,
         ),
-        serializer = MicDomainData.serializer()
+        serializer = MicDomainData.serializer(),
     )
 
     val vadDomainData = ISetting(
         key = SettingsEnum.VoiceActivityDetectionDomain,
         initial = VadDomainData(
-            voiceActivityDetectionOption = VoiceActivityDetectionOption.Disabled,
+            option = VoiceActivityDetectionOption.Disabled,
             automaticSilenceDetectionAudioLevel = 40f,
             automaticSilenceDetectionTime = 2000L,
             automaticSilenceDetectionMinimumTime = 2000L,
         ),
-        serializer = VadDomainData.serializer()
+        serializer = VadDomainData.serializer(),
     )
 
     val wakeDomainData = ISetting(
@@ -127,18 +127,18 @@ object ConfigurationSetting {
         key = SettingsEnum.AsrDomain,
         initial = AsrDomainData(
             option = SpeechToTextOption.Disabled,
-            isUseSpeechToTextMqttSilenceDetection = true
+            isUseSpeechToTextMqttSilenceDetection = true,
         ),
-        serializer = AsrDomainData.serializer()
+        serializer = AsrDomainData.serializer(),
     )
 
     val handleDomainData = ISetting(
         key = SettingsEnum.HandleDomain,
         initial = HandleDomainData(
             option = IntentHandlingOption.Disabled,
-            homeAssistantIntentHandlingOption = HomeAssistantIntentHandlingOption.Intent
+            homeAssistantIntentHandlingOption = HomeAssistantIntentHandlingOption.Intent,
         ),
-        serializer = HandleDomainData.serializer()
+        serializer = HandleDomainData.serializer(),
     )
 
     val intentDomainData = ISetting(
@@ -146,7 +146,7 @@ object ConfigurationSetting {
         initial = IntentDomainData(
             option = IntentRecognitionOption.Disabled,
         ),
-        serializer = IntentDomainData.serializer()
+        serializer = IntentDomainData.serializer(),
     )
 
     val sndDomainData = ISetting(
@@ -156,7 +156,7 @@ object ConfigurationSetting {
             localOutputOption = AudioOutputOption.Sound,
             mqttSiteId = "",
         ),
-        serializer = SndDomainData.serializer()
+        serializer = SndDomainData.serializer(),
     )
 
     val ttsDomainData = ISetting(
@@ -164,7 +164,7 @@ object ConfigurationSetting {
         initial = TtsDomainData(
             option = TextToSpeechOption.Disabled,
         ),
-        serializer = TtsDomainData.serializer()
+        serializer = TtsDomainData.serializer(),
     )
 
     val pipelineData = ISetting(
@@ -173,9 +173,8 @@ object ConfigurationSetting {
             option = DialogManagementOption.Local,
             asrDomainTimeout = 10000L,
             intentDomainTimeout = 10000L,
-            vadDomainTimeout = 10000L
         ),
-        serializer = PipelineData.serializer()
+        serializer = PipelineData.serializer(),
     )
 
 }

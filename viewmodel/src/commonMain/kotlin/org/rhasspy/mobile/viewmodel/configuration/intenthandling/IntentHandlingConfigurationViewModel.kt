@@ -9,6 +9,7 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change
@@ -18,19 +19,21 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
 
 @Stable
 class IntentHandlingConfigurationViewModel(
-    service: IHandleDomain
+    private val mapper: IntentHandlingConfigurationDataMapper,
+    service: IHandleDomain,
 ) : ConfigurationViewModel(
-    serviceState = service.serviceState
+    serviceState = service.serviceState,
 ) {
 
-    private val _viewState = MutableStateFlow(IntentHandlingConfigurationViewState(IntentHandlingConfigurationData()))
+    private val initialData get() = mapper(ConfigurationSetting.handleDomainData.value)
+    private val _viewState = MutableStateFlow(IntentHandlingConfigurationViewState(initialData))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = ::IntentHandlingConfigurationData,
+            init = ::initialData,
             viewState = viewState,
             configurationViewState = configurationViewState
         )
@@ -61,14 +64,12 @@ class IntentHandlingConfigurationViewModel(
     }
 
     override fun onDiscard() {
-        _viewState.update { it.copy(editData = IntentHandlingConfigurationData()) }
+        _viewState.update { it.copy(editData = initialData) }
     }
 
     override fun onSave() {
-        with(_viewState.value.editData) {
-            ConfigurationSetting.intentHandlingOption.value = intentHandlingOption
-            ConfigurationSetting.intentHandlingHomeAssistantOption.value = intentHandlingHomeAssistantOption
-        }
+        ConfigurationSetting.handleDomainData.value = mapper(_viewState.value.editData)
+        _viewState.update { it.copy(editData = initialData) }
     }
 
 }

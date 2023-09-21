@@ -55,14 +55,14 @@ internal class VadDomain(
     }
 
     private fun updateState() {
-        serviceState.value = when (params.voiceActivityDetectionOption) {
+        serviceState.value = when (params.option) {
             Local    -> ServiceState.Success
             Disabled -> ServiceState.Disabled
         }
     }
 
     override fun onAudioChunk(chunk: AudioChunkEvent) {
-        when (params.voiceActivityDetectionOption) {
+        when (params.option) {
             Local    -> {
                 val currentlySpeaking = localSilenceDetection.onAudioChunk(chunk)
                 if (currentlySpeaking != isSpeechDetected) {

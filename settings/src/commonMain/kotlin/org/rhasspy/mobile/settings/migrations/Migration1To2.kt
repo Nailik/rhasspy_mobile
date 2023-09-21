@@ -123,7 +123,7 @@ internal object Migration1To2 : IMigration(1, 2) {
         )
 
         ConfigurationSetting.vadDomainData.value = VadDomainData(
-            voiceActivityDetectionOption = voiceActivityDetectionOption.value,
+            option = voiceActivityDetectionOption.value,
             automaticSilenceDetectionAudioLevel = automaticSilenceDetectionAudioLevel.value,
             automaticSilenceDetectionTime = automaticSilenceDetectionTime.value,
             automaticSilenceDetectionMinimumTime = automaticSilenceDetectionMinimumTime.value,

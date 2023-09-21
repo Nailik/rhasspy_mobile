@@ -15,8 +15,8 @@ data class SpeechToTextConfigurationViewState internal constructor(
 
     @Stable
     data class SpeechToTextConfigurationData internal constructor(
-        val speechToTextOption: SpeechToTextOption = ConfigurationSetting.speechToTextOption.value,
-        val isUseSpeechToTextMqttSilenceDetection: Boolean = ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value,
+        val speechToTextOption: SpeechToTextOption,
+        val isUseSpeechToTextMqttSilenceDetection: Boolean,
     ) : IConfigurationData {
 
         val speechToTextOptions: ImmutableList<SpeechToTextOption> = SpeechToTextOption.entries.toImmutableList()

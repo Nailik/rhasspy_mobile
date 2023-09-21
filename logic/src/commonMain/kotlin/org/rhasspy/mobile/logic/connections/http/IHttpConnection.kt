@@ -19,6 +19,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.connection.HttpClientErrorType
 import org.rhasspy.mobile.data.connection.HttpClientResult
+import org.rhasspy.mobile.data.connection.HttpClientResult.HttpClientError.KnownError
+import org.rhasspy.mobile.data.connection.HttpClientResult.HttpClientError.UnknownError
 import org.rhasspy.mobile.data.connection.HttpConnectionData
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.ErrorState
@@ -123,7 +125,7 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
                 }
             } ?: run {
                 logger.a { "post client not initialized" }
-                HttpClientResult.Error(Exception())
+                UnknownError(Exception())
             }
 
             connectionState.value = result.toServiceState()
@@ -155,7 +157,7 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
             null
         }
 
-        return if (type == null) HttpClientResult.Error(exception) else HttpClientResult.KnownError(type)
+        return if (type == null) UnknownError(exception) else KnownError(type)
     }
 
 

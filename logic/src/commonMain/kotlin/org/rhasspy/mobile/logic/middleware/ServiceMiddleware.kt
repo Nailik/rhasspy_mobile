@@ -9,6 +9,9 @@ interface IServiceMiddleware {
     val isPlayingRecording: StateFlow<Boolean>
     val isPlayingRecordingEnabled: StateFlow<Boolean>
     fun userSessionClick()
+    fun playRecording() {
+        TODO("Not yet implemented")
+    }
 
 }
 /**

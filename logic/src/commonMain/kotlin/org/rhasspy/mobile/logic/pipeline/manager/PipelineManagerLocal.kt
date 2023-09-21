@@ -237,20 +237,20 @@ class PipelineManagerLocal(
 
     override fun onEvent(event: MqttConnectionEvent) {
         when (event) {
-            is AsrError                -> TODO()
-            is AsrTextCaptured         -> TODO()
-            is EndSession              -> TODO()
-            is HotWordDetected         -> TODO()
-            is IntentNotRecognized     -> TODO()
-            is IntentRecognitionResult -> TODO()
-            is PlayBytes               -> TODO()
-            is PlayFinished            -> TODO()
-            is Say                     -> TODO()
-            is SessionEnded            -> TODO()
-            is SessionStarted          -> TODO()
-            is StartListening          -> TODO()
-            is StartSession            -> TODO()
-            is StopListening           -> TODO()
+            is AsrError                -> TranscriptErrorEvent
+            is AsrTextCaptured         -> TranscriptEvent(event.text ?: "")
+            is EndSession              -> Unit
+            is HotWordDetected         -> DetectionEvent(event.hotWord, Clock.System.now())
+            is IntentNotRecognized     -> NotRecognizedEvent("")
+            is IntentRecognitionResult -> IntentEvent(name = event.intentName, entities = event.intent)
+            is PlayBytes               -> Unit// AudioChunkEvent
+            is PlayFinished            -> PlayedEvent
+            is Say                     -> SynthesizeEvent(event.text,event.volume,event.siteId)
+            is SessionEnded            -> Unit
+            is SessionStarted          -> Unit
+            is StartListening          -> Unit//DetectionEvent -> VoiceStartedEvent
+            is StartSession            -> Unit//DetectionEvent
+            is StopListening           -> Unit//VoiceStoppedEvent
         }
     }
 
@@ -264,11 +264,10 @@ class PipelineManagerLocal(
                     timeStamp = Clock.System.now())
                 )
             }
-            is WebServerPlayRecording    -> TODO()
-            is WebServerPlayWav          -> TODO()
-            is WebServerSay              -> TODO()
-            is WebServerStartRecording   -> TODO()
-            is WebServerStopRecording    -> TODO()
+            is WebServerPlayWav          -> Unit//AudioChunkEvent
+            is WebServerSay              -> Unit//SynthesizeEvent
+            is WebServerStartRecording   -> Unit//DetectionEvent -> VoiceStartedEvent
+            is WebServerStopRecording    -> Unit//VoiceStoppedEvent
         }
     }
 
