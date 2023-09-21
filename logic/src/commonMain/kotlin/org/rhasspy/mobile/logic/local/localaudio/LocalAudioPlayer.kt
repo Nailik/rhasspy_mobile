@@ -21,6 +21,7 @@ interface ILocalAudioPlayer {
     val isPlayingState: StateFlow<Boolean>
 
     fun playAudio(audioSource: AudioSource, audioOutputOption: AudioOutputOption, onFinished: (result: ServiceState) -> Unit)
+    fun playWakeSoundNow()
     fun playWakeSound(onFinished: (() -> Unit)? = null)
     fun playRecordedSound()
     fun playErrorSound()
@@ -54,6 +55,8 @@ internal class LocalAudioPlayer(
             onFinished(ServiceState.Success)
         }
     }
+
+    override fun playWakeSoundNow() = playWakeSound(null)
 
     override fun playWakeSound(onFinished: (() -> Unit)?) {
         logger.d { "playWakeSound" }

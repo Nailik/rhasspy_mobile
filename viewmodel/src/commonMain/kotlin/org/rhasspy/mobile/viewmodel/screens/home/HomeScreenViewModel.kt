@@ -3,7 +3,6 @@ package org.rhasspy.mobile.viewmodel.screens.home
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.PlayStopRecording
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
@@ -30,7 +29,7 @@ class HomeScreenViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            TogglePlayRecording -> serviceMiddleware.action(PlayStopRecording)
+            TogglePlayRecording -> Unit //TODO serviceMiddleware.action(PlayStopRecording)
             MicrophoneFabClick  -> requireMicrophonePermission(serviceMiddleware::userSessionClick)
         }
     }

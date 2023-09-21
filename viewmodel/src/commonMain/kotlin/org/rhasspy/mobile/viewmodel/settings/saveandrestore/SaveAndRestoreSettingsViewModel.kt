@@ -34,6 +34,7 @@ class SaveAndRestoreSettingsViewModel(
         }
     }
 
+    //TODO how to do remove??
     private val toRemove: List<String>
         get() = listOfNotNull(
             ConfigurationSetting.rhasspy2Connection.value.host,
@@ -49,9 +50,6 @@ class SaveAndRestoreSettingsViewModel(
             ConfigurationSetting.localWebserverConnection.value.keyStorePassword,
             ConfigurationSetting.localWebserverConnection.value.keyAlias,
             ConfigurationSetting.localWebserverConnection.value.keyPassword,
-            ConfigurationSetting.wakeWordPorcupineAccessToken.value,
-            ConfigurationSetting.wakeWordUdpOutputHost.value,
-            ConfigurationSetting.wakeWordUdpOutputPort.value.toString()
         )
 
     private fun onAction(action: Action) {

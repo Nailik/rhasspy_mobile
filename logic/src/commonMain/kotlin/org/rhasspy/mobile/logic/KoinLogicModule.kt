@@ -6,6 +6,7 @@ import org.rhasspy.mobile.logic.connections.homeassistant.HomeAssistantConnectio
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnection
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionParamsCreator
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.Rhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
@@ -31,6 +32,8 @@ import org.rhasspy.mobile.logic.domains.wake.UdpConnection
 import org.rhasspy.mobile.logic.domains.wake.WakeDomain
 import org.rhasspy.mobile.logic.local.audiofocus.AudioFocus
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
+import org.rhasspy.mobile.logic.local.file.FilesStorage
+import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.local.indication.Indication
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
@@ -116,6 +119,7 @@ fun logicModule() = module {
 
     single<IAppSettingsUtil> { AppSettingsUtil() }
 
+    singleOf(::MqttConnectionParamsCreator)
     single<IMqttConnection> {
         MqttConnection(
         pipeline = get(),
@@ -170,6 +174,12 @@ fun logicModule() = module {
     single<IVadDomain> {
         VadDomain(
             pipeline = get(),
+        )
+    }
+
+    single<IFileStorage> {
+        FilesStorage(
+            nativeApplication = get()
         )
     }
 }

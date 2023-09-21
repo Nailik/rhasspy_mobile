@@ -7,8 +7,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartListening
-import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.viewmodel.assist.AssistantUiEvent.Activate
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 
@@ -36,7 +34,7 @@ class AssistantViewModel(
 
     fun onEvent(event: AssistantUiEvent) {
         when (event) {
-            is Activate -> serviceMiddleware.action(StartListening(Source.Local, false))
+            is Activate -> Unit//TODO serviceMiddleware.action(StartListening(Source.Local, false))
         }
     }
 

@@ -19,6 +19,6 @@ class WakeIndicationSoundSettingsViewModel(
     soundFolderType = Wake
 ) {
 
-    override val playSound = ILocalAudioPlayer::playWakeSoundWithoutParameter
+    override val playSound = ILocalAudioPlayer::playWakeSoundNow
 
 }

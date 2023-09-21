@@ -9,13 +9,13 @@ import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
-import org.rhasspy.mobile.logic.domains.audioplaying.ISndDomain
-import org.rhasspy.mobile.logic.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.domains.handle.IHandleDomain
 import org.rhasspy.mobile.logic.domains.intent.IIntentDomain
 import org.rhasspy.mobile.logic.domains.asr.IAsrDomain
+import org.rhasspy.mobile.logic.domains.snd.ISndDomain
 import org.rhasspy.mobile.logic.domains.tts.ITtsDomain
 import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
+import org.rhasspy.mobile.logic.pipeline.IPipeline
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -32,7 +32,7 @@ class ConfigurationScreenViewStateCreator(
     private val intentRecognitionService: IIntentDomain,
     private val textToSpeechService: ITtsDomain,
     private val audioPlayingService: ISndDomain,
-    private val dialogManagerService: IDialogManagerService,
+    private val dialogManagerService: IPipeline,
     private val intentHandlingService: IHandleDomain,
 ) {
     private val hasConnectionError = combineStateFlow(
@@ -56,7 +56,6 @@ class ConfigurationScreenViewStateCreator(
         intentRecognitionService.serviceState,
         textToSpeechService.serviceState,
         audioPlayingService.serviceState,
-        dialogManagerService.serviceState,
         intentHandlingService.serviceState
     ).mapReadonlyState { arr ->
         arr.any { it is ServiceState.ErrorState }
@@ -68,13 +67,13 @@ class ConfigurationScreenViewStateCreator(
         combineStateFlow(
             hasConnectionError,
             ConfigurationSetting.siteId.data,
-            ConfigurationSetting.dialogManagementOption.data,
-            ConfigurationSetting.wakeWordOption.data,
-            ConfigurationSetting.speechToTextOption.data,
-            ConfigurationSetting.intentRecognitionOption.data,
-            ConfigurationSetting.textToSpeechOption.data,
-            ConfigurationSetting.audioPlayingOption.data,
-            ConfigurationSetting.intentHandlingOption.data,
+            ConfigurationSetting.pipelineData.data,
+            ConfigurationSetting.wakeDomainData.data,
+            ConfigurationSetting.asrDomainData.data,
+            ConfigurationSetting.intentDomainData.data,
+            ConfigurationSetting.ttsDomainData.data,
+            ConfigurationSetting.sndDomainData.data,
+            ConfigurationSetting.handleDomainData.data,
         ).mapReadonlyState {
             viewState.value = getViewState()
         }
@@ -91,18 +90,18 @@ class ConfigurationScreenViewStateCreator(
                 hasError = hasConnectionError.value
             ),
             dialogPipeline = DialogPipelineViewState(
-                dialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
-                serviceState = ServiceViewState(dialogManagerService.serviceState)
+                dialogManagementOption = ConfigurationSetting.pipelineData.value.option,
+                serviceState = ServiceViewState(MutableStateFlow(ServiceState.Success)) //TODO remove
             ),
             audioInput = AudioInputViewState(
                 serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO #466
             ),
             wakeWord = WakeWordViewState(
-                wakeWordValueOption = ConfigurationSetting.wakeWordOption.value,
+                wakeWordValueOption = ConfigurationSetting.wakeDomainData.value.wakeWordOption,
                 serviceState = ServiceViewState(wakeWordService.serviceState)
             ),
             speechToText = SpeechToTextViewState(
-                speechToTextOption = ConfigurationSetting.speechToTextOption.value,
+                speechToTextOption = ConfigurationSetting.asrDomainData.value.option,
                 serviceState = ServiceViewState(speechToTextService.serviceState)
             ),
             voiceActivityDetection = VoiceActivityDetectionViewState(
@@ -110,19 +109,19 @@ class ConfigurationScreenViewStateCreator(
                 serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO #469
             ),
             intentRecognition = IntentRecognitionViewState(
-                intentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
+                intentRecognitionOption = ConfigurationSetting.intentDomainData.value.option,
                 serviceState = ServiceViewState(intentRecognitionService.serviceState)
             ),
             intentHandling = IntentHandlingViewState(
-                intentHandlingOption = ConfigurationSetting.intentHandlingOption.value,
+                intentHandlingOption = ConfigurationSetting.handleDomainData.value.option,
                 serviceState = ServiceViewState(intentHandlingService.serviceState)
             ),
             textToSpeech = TextToSpeechViewState(
-                textToSpeechOption = ConfigurationSetting.textToSpeechOption.value,
+                textToSpeechOption = ConfigurationSetting.ttsDomainData.value.option,
                 serviceState = ServiceViewState(textToSpeechService.serviceState)
             ),
             audioPlaying = AudioPlayingViewState(
-                audioPlayingOption = ConfigurationSetting.audioPlayingOption.value,
+                audioPlayingOption = ConfigurationSetting.sndDomainData.value.option,
                 serviceState = ServiceViewState(audioPlayingService.serviceState)
             ),
             hasError = hasError

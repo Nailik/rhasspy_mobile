@@ -97,7 +97,6 @@ private fun DialogManagementOptionContent(
                 DialogManagementSettingsLocal(
                     textAsrTimeoutText = editData.textAsrTimeoutText,
                     intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
-                    recordingTimeoutText = editData.recordingTimeoutText,
                     onEvent = onEvent
                 )
 
@@ -105,7 +104,6 @@ private fun DialogManagementOptionContent(
                 DialogManagementSettingsMqtt(
                     textAsrTimeoutText = editData.textAsrTimeoutText,
                     intentRecognitionTimeoutText = editData.intentRecognitionTimeoutText,
-                    recordingTimeoutText = editData.recordingTimeoutText,
                     onEvent = onEvent
                 )
 
@@ -120,7 +118,6 @@ private fun DialogManagementOptionContent(
 private fun DialogManagementSettingsLocal(
     textAsrTimeoutText: String,
     intentRecognitionTimeoutText: String,
-    recordingTimeoutText: String,
     onEvent: (DialogManagementConfigurationUiEvent) -> Unit
 ) {
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
@@ -128,7 +125,6 @@ private fun DialogManagementSettingsLocal(
         DialogManagementSettings(
             textAsrTimeoutText = textAsrTimeoutText,
             intentRecognitionTimeoutText = intentRecognitionTimeoutText,
-            recordingTimeoutText = recordingTimeoutText,
             onEvent = onEvent
         )
 
@@ -148,7 +144,6 @@ private fun DialogManagementSettingsLocal(
 private fun DialogManagementSettingsMqtt(
     textAsrTimeoutText: String,
     intentRecognitionTimeoutText: String,
-    recordingTimeoutText: String,
     onEvent: (DialogManagementConfigurationUiEvent) -> Unit
 ) {
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
@@ -156,7 +151,6 @@ private fun DialogManagementSettingsMqtt(
         DialogManagementSettings(
             textAsrTimeoutText = textAsrTimeoutText,
             intentRecognitionTimeoutText = intentRecognitionTimeoutText,
-            recordingTimeoutText = recordingTimeoutText,
             onEvent = onEvent
         )
 
@@ -180,7 +174,6 @@ private fun DialogManagementSettingsMqtt(
 private fun DialogManagementSettings(
     textAsrTimeoutText: String,
     intentRecognitionTimeoutText: String,
-    recordingTimeoutText: String,
     onEvent: (DialogManagementConfigurationUiEvent) -> Unit
 ) {
 
@@ -202,15 +195,6 @@ private fun DialogManagementSettings(
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         label = MR.strings.intentRecognitionTimeoutText.stable,
         isLastItem = false
-    )
-
-    //recording timeout
-    TextFieldListItem(
-        modifier = Modifier.testTag(TestTag.RecordingTimeout),
-        value = recordingTimeoutText,
-        onValueChange = { onEvent(ChangeRecordingTimeout(it)) },
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-        label = MR.strings.recordingTimeoutText.stable
     )
 
 }

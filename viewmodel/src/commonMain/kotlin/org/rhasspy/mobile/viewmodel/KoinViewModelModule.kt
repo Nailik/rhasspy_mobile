@@ -17,6 +17,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.Au
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsScreenViewStateCreator
@@ -30,13 +31,20 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rh
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.AudioRecorderViewStateCreator
+import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
@@ -51,7 +59,6 @@ import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
@@ -100,7 +107,6 @@ fun viewModelModule() = module {
     factoryOf(::MainScreenViewStateCreator)
     singleOf(::MainScreenViewModel)
 
-    factoryOf(::DialogScreenViewStateCreator)
     singleOf(::DialogScreenViewModel)
 
     factoryOf(::MicrophoneFabViewStateCreator)
@@ -130,9 +136,16 @@ fun viewModelModule() = module {
     singleOf(::AudioOutputFormatConfigurationDataMapper)
     singleOf(::AudioOutputFormatConfigurationViewModel)
 
+    singleOf(::AudioPlayingConfigurationDataMapper)
     singleOf(::AudioPlayingConfigurationViewModel)
+
+    singleOf(::DialogManagementConfigurationDataMapper)
     singleOf(::DialogManagementConfigurationViewModel)
+
+    singleOf(::IntentHandlingConfigurationDataMapper)
     singleOf(::IntentHandlingConfigurationViewModel)
+
+    singleOf(::IntentRecognitionConfigurationDataMapper)
     singleOf(::IntentRecognitionConfigurationViewModel)
 
     singleOf(::Rhasspy2HermesConnectionConfigurationDataMapper)
@@ -150,10 +163,16 @@ fun viewModelModule() = module {
     singleOf(::WebServerConnectionConfigurationDataMapper)
     singleOf(::WebServerConnectionConfigurationViewModel)
 
+    singleOf(::SpeechToTextConfigurationDataMapper)
     singleOf(::SpeechToTextConfigurationViewModel)
+
+    singleOf(::TextToSpeechConfigurationDataMapper)
     singleOf(::TextToSpeechConfigurationViewModel)
+
+    singleOf(::WakeWordConfigurationDataMapper)
     singleOf(::WakeWordConfigurationViewModel)
 
+    singleOf(::VoiceActivityDetectionConfigurationDataMapper)
     factory { params ->
         AudioRecorderViewStateCreator(
             audioRecorder = params[0]
@@ -165,6 +184,7 @@ fun viewModelModule() = module {
             nativeApplication = get(),
             audioRecorderViewStateCreator = get { parametersOf(audioRecorder) },
             service = get { parametersOf(audioRecorder) },
+            mapper = get(),
             audioRecorder = audioRecorder
         )
     }

@@ -18,9 +18,9 @@ class MicrophoneFabViewStateCreator(
     operator fun invoke(): StateFlow<MicrophoneFabViewState> {
 
         return combineStateFlow(
-            speechToTextService.isRecording,
+            //TODO speechToTextService.isRecording,
             serviceMiddleware.isUserActionEnabled,
-            wakeWordService.isRecording,
+            //TODO wakeWordService.isRecording,
             microphonePermission.granted,
         ).mapReadonlyState {
             getViewState()
@@ -32,8 +32,8 @@ class MicrophoneFabViewStateCreator(
         return MicrophoneFabViewState(
             isMicrophonePermissionAllowed = microphonePermission.granted.value,
             isUserActionEnabled = serviceMiddleware.isUserActionEnabled.value,
-            isShowBorder = wakeWordService.isRecording.value,
-            isRecording = speechToTextService.isRecording.value
+            isShowBorder = false,//TODO wakeWordService.isRecording.value,
+            isRecording = false,//TODO  speechToTextService.isRecording.value
         )
     }
 

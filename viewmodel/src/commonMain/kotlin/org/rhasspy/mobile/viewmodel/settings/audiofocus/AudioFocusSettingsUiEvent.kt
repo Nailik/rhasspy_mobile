@@ -15,7 +15,6 @@ sealed interface AudioFocusSettingsUiEvent {
         data class SetAudioFocusOnSound(val enabled: Boolean) : Change
         data class SetAudioFocusOnRecord(val enabled: Boolean) : Change
         data class SetAudioFocusOnDialog(val enabled: Boolean) : Change
-        data class SetStopRecording(val enabled: Boolean) : Change
 
     }
 

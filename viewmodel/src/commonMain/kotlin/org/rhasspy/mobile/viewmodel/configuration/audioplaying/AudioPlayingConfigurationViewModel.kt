@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.logic.domains.audioplaying.ISndDomain
+import org.rhasspy.mobile.logic.domains.snd.ISndDomain
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
@@ -13,7 +13,6 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewState.AudioPlayingConfigurationData
 
 /**
  * ViewModel for Audio Playing Configuration
@@ -25,19 +24,21 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
  */
 @Stable
 class AudioPlayingConfigurationViewModel(
-    service: ISndDomain
+    private val mapper: AudioPlayingConfigurationDataMapper,
+    service: ISndDomain,
 ) : ConfigurationViewModel(
-    serviceState = service.serviceState
+    serviceState = service.serviceState,
 ) {
 
-    private val _viewState = MutableStateFlow(AudioPlayingConfigurationViewState(AudioPlayingConfigurationData()))
+    private val initialData get() = mapper(ConfigurationSetting.sndDomainData.value)
+    private val _viewState = MutableStateFlow(AudioPlayingConfigurationViewState(initialData))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = ::AudioPlayingConfigurationData,
+            init = ::initialData,
             viewState = viewState,
             configurationViewState = configurationViewState
         )
@@ -69,15 +70,12 @@ class AudioPlayingConfigurationViewModel(
     }
 
     override fun onDiscard() {
-        _viewState.update { it.copy(editData = AudioPlayingConfigurationData()) }
+        _viewState.update { it.copy(editData = initialData) }
     }
 
     override fun onSave() {
-        with(_viewState.value.editData) {
-            ConfigurationSetting.audioPlayingOption.value = audioPlayingOption
-            ConfigurationSetting.audioOutputOption.value = audioOutputOption
-            ConfigurationSetting.audioPlayingMqttSiteId.value = audioPlayingMqttSiteId
-        }
+        ConfigurationSetting.sndDomainData.value = mapper(_viewState.value.editData)
+        _viewState.update { it.copy(editData = initialData) }
     }
 
 }

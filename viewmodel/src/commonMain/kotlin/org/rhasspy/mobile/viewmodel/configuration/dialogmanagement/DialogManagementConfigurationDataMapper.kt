@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.dialogmanagement
 
+import org.rhasspy.mobile.data.data.toLongOrZero
 import org.rhasspy.mobile.data.pipeline.PipelineData
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewState.DialogManagementConfigurationData
 
@@ -16,8 +17,8 @@ class DialogManagementConfigurationDataMapper {
     operator fun invoke(data: DialogManagementConfigurationData): PipelineData {
         return PipelineData(
             option = data.dialogManagementOption,
-            asrDomainTimeout = data.textAsrTimeout,
-            intentDomainTimeout = data.intentRecognitionTimeout,
+            asrDomainTimeout = data.textAsrTimeout.toLongOrZero(),
+            intentDomainTimeout = data.intentRecognitionTimeout.toLongOrZero(),
         )
     }
 

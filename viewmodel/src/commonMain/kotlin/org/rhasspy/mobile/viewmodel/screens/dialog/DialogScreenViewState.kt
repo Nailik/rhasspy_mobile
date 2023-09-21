@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.datetime.Instant
 import org.rhasspy.mobile.data.resource.StableStringResource
-import org.rhasspy.mobile.logic.dialog.SessionData
+import org.rhasspy.mobile.logic.pipeline.SessionData
 
 data class DialogScreenViewState(
     val isDialogAutoscroll: Boolean,

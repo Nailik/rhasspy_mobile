@@ -46,7 +46,7 @@ internal class Pipeline(
         }
     }
 
-    override val pipelineHistory = pipelineManager.pipelineHistory
+    override val pipelineHistory get() = pipelineManager.pipelineHistory
 
     override fun onEvent(event: PipelineEvent) = pipelineManager.onEvent(event)
     override fun onEvent(event: MqttConnectionEvent) = pipelineManager.onEvent(event)

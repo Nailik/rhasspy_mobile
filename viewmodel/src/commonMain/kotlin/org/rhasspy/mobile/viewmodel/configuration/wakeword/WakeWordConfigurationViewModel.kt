@@ -36,6 +36,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordCon
 
 @Stable
 class WakeWordConfigurationViewModel(
+    private val mapper: WakeWordConfigurationDataMapper,
     microphonePermission: IMicrophonePermission,
     service: IWakeDomain
 ) : ConfigurationViewModel(
@@ -44,7 +45,7 @@ class WakeWordConfigurationViewModel(
 
     private val dispatcher by inject<IDispatcherProvider>()
 
-    private val initialData = WakeWordConfigurationData()
+    private val initialData get() = mapper(ConfigurationSetting.wakeDomainData.value)
     private val _viewState = MutableStateFlow(
         WakeWordConfigurationViewState(
             editData = initialData,
@@ -58,7 +59,7 @@ class WakeWordConfigurationViewModel(
         configurationViewState: MutableStateFlow<ConfigurationViewState>
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
-            init = ::WakeWordConfigurationDataMapper,
+            init = ::initialData,
             viewState = viewState,
             configurationViewState = configurationViewState
         )
@@ -185,30 +186,13 @@ class WakeWordConfigurationViewModel(
 
 
     override fun onSave() {
-        with(_viewState.value.editData) {
-
-            ConfigurationSetting.wakeWordOption.value = wakeWordOption
-
-            with(wakeWordPorcupineConfigurationData) {
-                ConfigurationSetting.wakeWordPorcupineAccessToken.value = accessToken
-                ConfigurationSetting.wakeWordPorcupineLanguage.value = porcupineLanguage
-                ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value = defaultOptions
-                ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value = customOptions.updateList { removeAll(deletedCustomOptions) }
-            }
-
-            with(wakeWordUdpConfigurationData) {
-                ConfigurationSetting.wakeWordUdpOutputHost.value = outputHost
-                ConfigurationSetting.wakeWordUdpOutputPort.value = outputPort.toIntOrZero()
-            }
-
-        }
-
+        ConfigurationSetting.wakeDomainData.value = mapper(_viewState.value.editData)
         filesToDelete.forEach {
             Path.commonInternalFilePath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
         }
         filesToDelete.clear()
         newFiles.clear()
-        _viewState.update { it.copy(editData = WakeWordConfigurationData()) }
+        _viewState.update { it.copy(editData = initialData) }
     }
 
     override fun onDiscard() {
@@ -217,7 +201,7 @@ class WakeWordConfigurationViewModel(
         }
         newFiles.clear()
         filesToDelete.clear()
-        _viewState.update { it.copy(editData = WakeWordConfigurationData()) }
+        _viewState.update { it.copy(editData = initialData) }
     }
 
     override fun onBackPressed(): Boolean {

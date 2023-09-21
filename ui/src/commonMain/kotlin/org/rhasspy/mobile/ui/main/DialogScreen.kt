@@ -11,7 +11,10 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LowPriority
 import androidx.compose.material.icons.filled.PlaylistRemove
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,7 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.logic.dialog.SessionData
+import org.rhasspy.mobile.logic.pipeline.SessionData
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.resources.color_http
 import org.rhasspy.mobile.resources.color_local
@@ -32,10 +35,8 @@ import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
-import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.utils.ListType.DialogScreenList
 import org.rhasspy.mobile.ui.utils.rememberForeverLazyListState
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.DialogScreen
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogActionViewState
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogActionViewState.SourceViewState.SourceType.*
@@ -48,7 +49,7 @@ import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewModel
 fun DialogScreen(viewModel: DialogScreenViewModel) {
 
     ScreenContent(screenViewModel = viewModel) {
-        val viewState by viewModel.viewState.collectAsState()
+       /* val viewState by viewModel.viewState.collectAsState()
 
         Scaffold(
             modifier = Modifier
@@ -70,7 +71,7 @@ fun DialogScreen(viewModel: DialogScreenViewModel) {
                 )
             }
 
-        }
+        }*/
     }
 }
 

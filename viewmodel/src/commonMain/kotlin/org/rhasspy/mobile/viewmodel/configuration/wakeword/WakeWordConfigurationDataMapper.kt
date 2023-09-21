@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.configuration.wakeword
 
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import org.rhasspy.mobile.data.data.toIntOrZero
 import org.rhasspy.mobile.data.domain.WakeDomainData
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
@@ -34,7 +35,7 @@ class WakeWordConfigurationDataMapper {
             wakeWordPorcupineKeywordDefaultOptions = data.wakeWordPorcupineConfigurationData.defaultOptions,
             wakeWordPorcupineKeywordCustomOptions = data.wakeWordPorcupineConfigurationData.customOptions,
             wakeWordUdpOutputHost = data.wakeWordUdpConfigurationData.outputHost,
-            wakeWordUdpOutputPort = data.wakeWordUdpConfigurationData.outputPort,
+            wakeWordUdpOutputPort = data.wakeWordUdpConfigurationData.outputPort.toIntOrZero(),
         )
     }
 

@@ -86,7 +86,7 @@ fun <E : IOption> RadioButtonsEnumSelection(
     selected: E,
     onSelect: (item: E) -> Unit,
     enabled: Boolean = true,
-    values: PersistentList<E>,
+    values: ImmutableList<E>,
     secondaryContentVisible: Boolean,
     content: (@Composable () -> Unit)? = null
 ) {

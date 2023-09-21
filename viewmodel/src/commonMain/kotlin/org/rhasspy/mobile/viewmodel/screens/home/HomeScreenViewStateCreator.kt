@@ -18,7 +18,7 @@ class HomeScreenViewStateCreator(
     operator fun invoke(): StateFlow<HomeScreenViewState> {
 
         return combineStateFlow(
-            ConfigurationSetting.wakeWordOption.data,
+            ConfigurationSetting.wakeDomainData.data,
             serviceMiddleware.isPlayingRecording,
             serviceMiddleware.isPlayingRecordingEnabled,
             microphoneFabViewStateFlow
@@ -29,7 +29,7 @@ class HomeScreenViewStateCreator(
 
     private fun getViewState(): HomeScreenViewState {
         return HomeScreenViewState(
-            isMicrophonePermissionRequired = ConfigurationSetting.wakeWordOption.value in listOf(WakeWordOption.Porcupine, WakeWordOption.Udp),
+            isMicrophonePermissionRequired = ConfigurationSetting.wakeDomainData.value.wakeWordOption in listOf(WakeWordOption.Porcupine, WakeWordOption.Udp),
             isPlayingRecording = serviceMiddleware.isPlayingRecording.value,
             isPlayingRecordingEnabled = serviceMiddleware.isPlayingRecordingEnabled.value,
             microphoneFabViewState = microphoneFabViewStateFlow.value,

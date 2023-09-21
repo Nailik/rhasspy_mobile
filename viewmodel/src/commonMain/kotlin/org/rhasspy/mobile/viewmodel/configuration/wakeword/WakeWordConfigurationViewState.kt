@@ -65,7 +65,7 @@ data class WakeWordConfigurationViewState internal constructor(
         @Stable
         data class WakeWordUdpConfigurationData internal constructor(
             val outputHost: String,
-            val outputPort: Int,
+            val outputPort: Int?,
         ) {
 
             val outputPortText: String = outputPort.toStringOrEmpty()

@@ -1,5 +1,5 @@
 package org.rhasspy.mobile.viewmodel.screens.dialog
-
+/*
 import dev.icerock.moko.resources.format
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.StateFlow
@@ -130,4 +130,4 @@ class DialogScreenViewStateCreator(
         }
     }
 
-}
+}*/
