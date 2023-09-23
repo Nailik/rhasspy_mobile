@@ -83,13 +83,13 @@ internal class AsrDomain(
         //await result
         return when (params.option) {
             SpeechToTextOption.Rhasspy2HermesHttp ->
-                awaitRhasspy2HermesMQTTTranscript(
-                    sessionId = sessionId,
+                awaitRhasspy2HermesHttpTranscript(
                     audioStream = audioStream,
                     awaitVoiceStopped = awaitVoiceStopped
                 )
             SpeechToTextOption.Rhasspy2HermesMQTT ->
-                awaitRhasspy2HermesHttpTranscript(
+                awaitRhasspy2HermesMQTTTranscript(
+                    sessionId = sessionId,
                     audioStream = audioStream,
                     awaitVoiceStopped = awaitVoiceStopped
                 )
@@ -121,7 +121,7 @@ internal class AsrDomain(
 
         return when (result) {
             is HttpClientResult.HttpClientError -> TranscriptError
-            is HttpClientResult.Success         -> Transcript(intent = result.data)
+            is HttpClientResult.Success         -> Transcript(text = result.data)
         }
     }
 
@@ -163,8 +163,8 @@ internal class AsrDomain(
             .filterIsInstance<AsrResult>()
             .map {
                 when (it) {
-                    is AsrError -> TranscriptError
                     is AsrTextCaptured -> Transcript(it.text ?: return@map TranscriptError)
+                    is AsrError -> TranscriptError
                 }
             }
             .first()

@@ -17,10 +17,10 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 interface IRhasspy2HermesConnection : IConnection {
 
     suspend fun speechToText(audioFilePath: Path): HttpClientResult<String>
-    fun recognizeIntent(text: String, onResult: (result: HttpClientResult<String>) -> Unit)
-    fun textToSpeech(text: String, volume: Float?, siteId: String?, onResult: (result: HttpClientResult<ByteArray>) -> Unit)
-    fun playWav(audioSource: AudioSource, onResult: (result: HttpClientResult<String>) -> Unit)
-    fun intentHandling(intent: String, onResult: (result: HttpClientResult<String>) -> Unit)
+    suspend fun recognizeIntent(text: String): HttpClientResult<String>
+    suspend fun textToSpeech(text: String, volume: Float?, siteId: String?): HttpClientResult<ByteArray> //TODO save to file
+    suspend fun playWav(audioSource: AudioSource): HttpClientResult<String>
+    suspend fun intentHandling(intent: String): HttpClientResult<String>
 
 }
 
@@ -59,15 +59,14 @@ internal class Rhasspy2HermesConnection : IRhasspy2HermesConnection, IHttpConnec
      *
      * returns null if the intent is not found
      */
-    override fun recognizeIntent(text: String, onResult: (result: HttpClientResult<String>) -> Unit) {
+    override suspend fun recognizeIntent(text: String): HttpClientResult<String> {
         logger.d { "recognizeIntent text: $text" }
 
-        post(
+        return post(
             url = "/api/text-to-intent",
             block = {
                 setBody(text)
-            },
-            onResult = onResult
+            }
         )
     }
 
@@ -80,15 +79,14 @@ internal class Rhasspy2HermesConnection : IRhasspy2HermesConnection, IHttpConnec
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    override fun textToSpeech(text: String, volume: Float?, siteId: String?, onResult: (result: HttpClientResult<ByteArray>) -> Unit) {
+    override suspend fun textToSpeech(text: String, volume: Float?, siteId: String?): HttpClientResult<ByteArray> {
         logger.d { "textToSpeech text: $text" }
 
-        post(
+       return post(
             url = "/api/text-to-speech/${volume?.let { "?volume=$it" } ?: ""}${siteId?.let { "?siteId=$it" } ?: ""}",
             block = {
                 setBody(text)
-            },
-            onResult = onResult
+            }
         )
     }
 
@@ -98,10 +96,9 @@ internal class Rhasspy2HermesConnection : IRhasspy2HermesConnection, IHttpConnec
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    @Suppress("IMPLICIT_CAST_TO_ANY")
-    override fun playWav(audioSource: AudioSource, onResult: (result: HttpClientResult<String>) -> Unit) {
+    override suspend fun playWav(audioSource: AudioSource): HttpClientResult<String> {
         logger.d { "playWav size: $audioSource" }
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION", "IMPLICIT_CAST_TO_ANY")
         val body = when (audioSource) {
             is Data -> audioSource.data
             is File -> StreamContent(audioSource.path)
@@ -115,7 +112,6 @@ internal class Rhasspy2HermesConnection : IRhasspy2HermesConnection, IHttpConnec
                 }
                 setBody(body)
             },
-            onResult = onResult
         )
     }
 
@@ -135,18 +131,17 @@ internal class Rhasspy2HermesConnection : IRhasspy2HermesConnection, IHttpConnec
      *
      * Implemented by rhasspy-remote-http-hermes
      */
-    override fun intentHandling(intent: String, onResult: (result: HttpClientResult<String>) -> Unit) {
+    override suspend fun intentHandling(intent: String): HttpClientResult<String> {
         httpConnectionParams.apply {
             logger.d { "intentHandling intent: $intent" }
-            post(
-                url = host,
+            return post(
+                url = host, //TODO host??
                 block = {
                     buildHeaders {
                         authorization(bearerToken)
                     }
                     setBody(intent)
                 },
-                onResult = onResult
             )
         }
     }

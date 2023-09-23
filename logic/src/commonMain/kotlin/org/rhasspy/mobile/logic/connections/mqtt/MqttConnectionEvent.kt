@@ -15,8 +15,12 @@ sealed interface MqttConnectionEvent {
         data class AsrError(val sessionId: String?) : AsrResult
     }
 
-    data class IntentRecognitionResult(val sessionId: String?, val intentName: String?, val intent: String) : MqttConnectionEvent
-    data class IntentNotRecognized(val sessionId: String?) : MqttConnectionEvent
+    sealed interface IntentResult: MqttConnectionEvent {
+
+        data class IntentRecognitionResult(val sessionId: String?, val intentName: String?, val intent: String) : IntentResult
+        data class IntentNotRecognized(val sessionId: String?) : IntentResult
+
+    }
     data class Say(val sessionId: String?, val text: String, val volume: Float?, val siteId: String) : MqttConnectionEvent
     class PlayBytes(val byteArray: ByteArray) : MqttConnectionEvent
     data object PlayFinished : MqttConnectionEvent
