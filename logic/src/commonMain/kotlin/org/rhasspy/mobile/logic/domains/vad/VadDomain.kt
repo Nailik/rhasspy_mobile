@@ -1,38 +1,33 @@
 package org.rhasspy.mobile.logic.domains.vad
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.mapLatest
+import org.rhasspy.mobile.data.domain.VadDomainData
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.Pending
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption.Disabled
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption.Local
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.pipeline.IPipeline
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.AudioDomainEvent.AudioChunkEvent
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.VadDomainEvent.VoiceStartedEvent
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.VadDomainEvent.VoiceStoppedEvent
-import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
+import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceStart
+import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceStopped
 
 interface IVadDomain : IService {
 
-    fun onAudioChunk(chunk: AudioChunkEvent)
+    suspend fun awaitVoiceStart(audioStream: Flow<MicAudioChunk>): VoiceStart
+
+    suspend fun awaitVoiceStopped(audioStream: Flow<MicAudioChunk>): VoiceStopped
 
 }
 
 internal class VadDomain(
-    private val pipeline: IPipeline
+    private val params: VadDomainData
 ) : IVadDomain {
 
-    override val serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
-    private val params get() = ConfigurationSetting.vadDomainData.value
-
-    private val scope = CoroutineScope(Dispatchers.IO)
-
-    private var isSpeechDetected = false
+    override val serviceState = MutableStateFlow<ServiceState>(Pending)
 
     private var localSilenceDetection = SilenceDetection(
         automaticSilenceDetectionTime = params.automaticSilenceDetectionTime,
@@ -41,44 +36,29 @@ internal class VadDomain(
     )
 
     init {
-        scope.launch {
-            ConfigurationSetting.vadDomainData.data.collectLatest {
-                updateState()
-
-                localSilenceDetection = SilenceDetection(
-                    automaticSilenceDetectionTime = params.automaticSilenceDetectionTime,
-                    automaticSilenceDetectionMinimumTime = params.automaticSilenceDetectionMinimumTime,
-                    automaticSilenceDetectionAudioLevel = params.automaticSilenceDetectionAudioLevel,
-                )
-            }
-        }
-    }
-
-    private fun updateState() {
         serviceState.value = when (params.option) {
             Local    -> ServiceState.Success
             Disabled -> ServiceState.Disabled
         }
     }
 
-    override fun onAudioChunk(chunk: AudioChunkEvent) {
-        when (params.option) {
-            Local    -> {
-                val currentlySpeaking = localSilenceDetection.onAudioChunk(chunk)
-                if (currentlySpeaking != isSpeechDetected) {
-                    isSpeechDetected = currentlySpeaking
-
-                    pipeline.onEvent(
-                        when (currentlySpeaking) {
-                            true  -> VoiceStartedEvent(Clock.System.now())
-                            false -> VoiceStoppedEvent(Clock.System.now())
-                        }
-                    )
-                }
-            }
-
-            Disabled -> Unit
+    override suspend fun awaitVoiceStart(audioStream: Flow<MicAudioChunk>): VoiceStart {
+        return when (params.option) {
+            Local    -> VoiceStart
+            Disabled -> VoiceStart
         }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override suspend fun awaitVoiceStopped(audioStream: Flow<MicAudioChunk>): VoiceStopped {
+        audioStream.mapLatest { chunk ->
+            localSilenceDetection.onAudioChunk(chunk)
+        }.first { it }
+        return VoiceStopped
+    }
+
+    override fun stop() {
+
     }
 
 }

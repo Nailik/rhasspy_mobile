@@ -1,46 +1,44 @@
 package org.rhasspy.mobile.logic.domains.asr
 
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import okio.FileHandle
-import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
-import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
-import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.connection.HttpClientResult
+import org.rhasspy.mobile.data.domain.AsrDomainData
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrError
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrTextCaptured
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
-import org.rhasspy.mobile.logic.local.file.IFileStorage
-import org.rhasspy.mobile.logic.pipeline.IPipeline
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.AsrDomainEvent.TranscriptErrorEvent
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.AsrDomainEvent.TranscriptEvent
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.AudioDomainEvent.*
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeader
-import org.rhasspy.mobile.platformspecific.extensions.commonDelete
-import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
-import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
+import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceStart
+import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceStopped
+import org.rhasspy.mobile.logic.pipeline.TranscriptResult
+import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
+import org.rhasspy.mobile.logic.pipeline.TranscriptResult.TranscriptError
 
+/**
+ * AsrDomain checks tries to detect text within a Flow of MicAudioChunk Events
+ */
 interface IAsrDomain : IService {
 
-    override val serviceState: StateFlow<ServiceState>
-
-    fun onAudioStart(audioStart: AudioStartEvent, sessionId: String)
-
-    fun onAudioChunk(chunk: AudioChunkEvent, sessionId: String)
-
-    fun onAudioStop(audioStop: AudioStopEvent, sessionId: String)
+    /**
+     * collect audioStream as soon as VoiceStart until VoiceStopped if present
+     */
+    suspend fun awaitTranscript(
+        sessionId: String,
+        audioStream: Flow<MicAudioChunk>,
+        awaitVoiceStart: suspend () -> VoiceStart,
+        awaitVoiceStopped: suspend () -> VoiceStopped,
+    ): TranscriptResult
 
 }
+
+
 
 //TODO incoming events from mqtt?
 //TODO stop from mqtt -> necessary do not call  mqttClientService.stopListening
@@ -50,35 +48,19 @@ interface IAsrDomain : IService {
  * when data is null the service was most probably mqtt and will return result in a call function
  */
 internal class AsrDomain(
-    private val pipeline: IPipeline,
-    private val fileStorage: IFileStorage,
+    private val params: AsrDomainData,
+    private val asrFileWriter: AsrFileWriter,
     private val mqttConnection: IMqttConnection,
     private val rhasspy2HermesConnection: IRhasspy2HermesConnection,
 ) : IAsrDomain {
 
     private val logger = Logger.withTag("SpeechToTextService")
 
-    override val serviceState = MutableStateFlow<ServiceState>(Pending)
-    private val params get() = ConfigurationSetting.asrDomainData.value
+    override val serviceState = MutableStateFlow<ServiceState>(Loading)
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    private var fileHandle: FileHandle? = null
-
-    private var sampleRate = AudioFormatSampleRateType.default
-    private var encoding = AudioFormatEncodingType.default
-    private var channel = AudioFormatChannelType.default
-
     init {
-        scope.launch {
-            ConfigurationSetting.asrDomainData.data.collectLatest {
-                closeFile()
-                initialize()
-            }
-        }
-    }
-
-    private fun initialize() {
         serviceState.value = when (params.option) {
             SpeechToTextOption.Rhasspy2HermesHttp -> Success
             SpeechToTextOption.Rhasspy2HermesMQTT -> Success
@@ -86,42 +68,79 @@ internal class AsrDomain(
         }
     }
 
-    /**
-     * starts when first audio chunk is received after stop event
-     */
-    override fun onAudioStart(audioStart: AudioStartEvent, sessionId: String) {
-        sampleRate = audioStart.sampleRate
-        encoding = audioStart.encoding
-        channel = audioStart.channel
+    override suspend fun awaitTranscript(
+        sessionId: String,
+        audioStream: Flow<MicAudioChunk>,
+        awaitVoiceStart: suspend () -> VoiceStart,
+        awaitVoiceStopped: suspend () -> VoiceStopped,
+    ): TranscriptResult {
+        //wait for voice to start
+        awaitVoiceStart()
 
-        closeFile()
-        fileStorage.speechToTextAudioFile.commonDelete()
-        fileHandle = fileStorage.speechToTextAudioFile.commonReadWrite()
+        //open the file asr audio file to write into
+        asrFileWriter.openFile()
 
-        serviceState.value = when (params.option) {
-            SpeechToTextOption.Rhasspy2HermesHttp -> Success
-            SpeechToTextOption.Rhasspy2HermesMQTT -> {
-                mqttConnection.startListening(
+        //await result
+        return when (params.option) {
+            SpeechToTextOption.Rhasspy2HermesHttp ->
+                awaitRhasspy2HermesMQTTTranscript(
                     sessionId = sessionId,
-                    isUseSilenceDetection = params.isUseSpeechToTextMqttSilenceDetection,
-                    onResult = { serviceState.value = it }
+                    audioStream = audioStream,
+                    awaitVoiceStopped = awaitVoiceStopped
                 )
-                Loading
-            }
-
-            SpeechToTextOption.Disabled           -> Disabled
+            SpeechToTextOption.Rhasspy2HermesMQTT ->
+                awaitRhasspy2HermesHttpTranscript(
+                    audioStream = audioStream,
+                    awaitVoiceStopped = awaitVoiceStopped
+                )
+            SpeechToTextOption.Disabled           -> TranscriptError
+        }.also {
+            //close asr audio file
+            asrFileWriter.closeFile()
         }
     }
 
-    override fun onAudioChunk(chunk: AudioChunkEvent, sessionId: String) {
-        if (AppSetting.isLogAudioFramesEnabled.value) {
-            logger.d { "audioFrame dataSize: ${chunk.data.size}" }
+    private suspend fun awaitRhasspy2HermesHttpTranscript(
+        audioStream: Flow<MicAudioChunk>,
+        awaitVoiceStopped: suspend () -> VoiceStopped,
+    ): TranscriptResult {
+
+        val saveDataJob = scope.launch {
+            audioStream.collectLatest { chunk ->
+                asrFileWriter.writeToFile(chunk)
+            }
         }
 
-        with(chunk) {
-            serviceState.value = when (params.option) {
-                SpeechToTextOption.Rhasspy2HermesHttp -> Success
-                SpeechToTextOption.Rhasspy2HermesMQTT -> {
+        //TODO timeout
+        awaitVoiceStopped()
+
+        saveDataJob.cancel()
+
+        val result = rhasspy2HermesConnection.speechToText(asrFileWriter.filePath)
+        serviceState.value = result.toServiceState()
+
+        return when (result) {
+            is HttpClientResult.HttpClientError -> TranscriptError
+            is HttpClientResult.Success         -> Transcript(intent = result.data)
+        }
+    }
+
+    private suspend fun awaitRhasspy2HermesMQTTTranscript(
+        sessionId: String,
+        audioStream: Flow<MicAudioChunk>,
+        awaitVoiceStopped: suspend () -> VoiceStopped,
+    ): TranscriptResult {
+
+        mqttConnection.startListening(
+            sessionId = sessionId,
+            isUseSilenceDetection = params.isUseSpeechToTextMqttSilenceDetection,
+            onResult = { serviceState.value = it }
+        )
+
+        val sendDataJob = scope.launch {
+            audioStream.collectLatest { chunk ->
+                with(chunk) {
+                    asrFileWriter.writeToFile(chunk)
                     mqttConnection.asrAudioSessionFrame(
                         sessionId = sessionId,
                         sampleRate = sampleRate,
@@ -130,81 +149,35 @@ internal class AsrDomain(
                         data = data,
                         onResult = { serviceState.value = it }
                     )
-                    Loading
                 }
-
-                SpeechToTextOption.Disabled           -> Disabled
             }
-
-            //write async after data was send
-            fileHandle?.write(
-                fileOffset = fileHandle?.size() ?: 0,
-                array = data,
-                arrayOffset = 0,
-                byteCount = data.size
-            )
         }
+
+        val awaitVoiceStoppedJob = scope.launch {
+            awaitVoiceStopped()
+            //TODO timeout
+            sendDataJob.cancel()
+        }
+
+        return mqttConnection.incomingMessages
+            .filterIsInstance<AsrResult>()
+            .map {
+                when (it) {
+                    is AsrError -> TranscriptError
+                    is AsrTextCaptured -> Transcript(it.text ?: return@map TranscriptError)
+                }
+            }
+            .first()
+            //TODO timeout
+            .also {
+                sendDataJob.cancel()
+                awaitVoiceStoppedJob.cancel()
+            }
     }
 
-
-    /**
-     * Speech to Text (Wav Data)
-     * used to translate last spoken
-     *
-     * HTTP:
-     * - calls service to translate speech to text, then handles the intent if dialogue manager is set to local
-     *
-     * RemoteMQTT
-     * - audio was already send to mqtt while recording in audioFrame
-     *
-     * fromMqtt is used to check if silence was detected by remote mqtt device
-     */
-    override fun onAudioStop(audioStop: AudioStopEvent, sessionId: String) {
-        //add wav header to file
-        val header = getWavHeader(
-            sampleRate = sampleRate,
-            encoding = encoding,
-            channel = channel,
-            audioSize = fileHandle?.size() ?: 0
-        )
-
-        fileHandle?.write(0, header, 0, header.size)
-        fileHandle?.flush()
-        fileHandle?.close()
-        fileHandle = null
-
-        //evaluate result
-        serviceState.value = when (params.option) {
-            SpeechToTextOption.Rhasspy2HermesHttp -> {
-                rhasspy2HermesConnection.speechToText(fileStorage.speechToTextAudioFile) { result ->
-                    result.toServiceState()
-                    val event = when (result) {
-                        is HttpClientResult.HttpClientError -> TranscriptErrorEvent
-                        is HttpClientResult.Success         -> TranscriptEvent(result.data)
-                    }
-                    pipeline.onEvent(event)
-                }
-                Loading
-            }
-
-            SpeechToTextOption.Rhasspy2HermesMQTT -> {
-                mqttConnection.stopListening(
-                    sessionId = sessionId,
-                    onResult = { serviceState.value = it }
-                )
-                Loading
-            }
-
-            SpeechToTextOption.Disabled           -> Disabled
-        }
-    }
-
-    private fun closeFile() {
-        fileHandle?.apply {
-            flush()
-            close()
-        }
-        fileHandle = null
+    override fun stop() {
+        asrFileWriter.closeFile()
+        scope.cancel()
     }
 
 }

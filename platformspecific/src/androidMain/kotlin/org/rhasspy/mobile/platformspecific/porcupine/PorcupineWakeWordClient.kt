@@ -23,7 +23,6 @@ actual class PorcupineWakeWordClient actual constructor(
     private val wakeWordPorcupineKeywordDefaultOptions: List<PorcupineDefaultKeyword>,
     private val wakeWordPorcupineKeywordCustomOptions: List<PorcupineCustomKeyword>,
     private val wakeWordPorcupineLanguage: PorcupineLanguageOption,
-    private val onKeywordDetected: (hotWord: String) -> Unit,
 ) : KoinComponent {
 
     private val logger = Logger.withTag("PorcupineWakeWordClient")
@@ -47,7 +46,6 @@ actual class PorcupineWakeWordClient actual constructor(
                 wakeWordPorcupineKeywordDefaultOptions = wakeWordPorcupineKeywordDefaultOptions,
                 wakeWordPorcupineKeywordCustomOptions = wakeWordPorcupineKeywordCustomOptions,
                 wakeWordPorcupineLanguage = wakeWordPorcupineLanguage,
-                onKeywordDetected = ::onKeywordDetected,
             )
 
             null//no error
@@ -63,22 +61,11 @@ actual class PorcupineWakeWordClient actual constructor(
         encoding: AudioFormatEncodingType,
         channel: AudioFormatChannelType,
         data: ByteArray,
-    ) { //TODO convert audio if necessary
-        porcupineClient?.audioFrame(data)
-    }
+    ): String? { //TODO convert audio if necessary
+        val keywordIndex = porcupineClient?.audioFrame(data)
 
-    /**
-     * deletes the porcupine manager
-     */
-    actual fun close() {
-        porcupineClient?.close()
-        porcupineClient = null
-    }
+        if (keywordIndex == null || keywordIndex < 0) return null
 
-    /**
-     * invoked when a WakeWord is detected, informs listening service
-     */
-    private fun onKeywordDetected(keywordIndex: Int) {
         logger.d { "invoke - keyword detected" }
 
         val allKeywords = wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled }.map {
@@ -89,12 +76,19 @@ actual class PorcupineWakeWordClient actual constructor(
             }.toMutableList())
         }
 
-        if (keywordIndex in 0..allKeywords.size) {
-            onKeywordDetected(allKeywords[keywordIndex])
-        } else if (keywordIndex > 0) {
-            onKeywordDetected("UnknownIndex $keywordIndex")
+        return if (keywordIndex in 0..allKeywords.size) {
+            allKeywords[keywordIndex]
+        } else {
+            "UnknownKeyword"
         }
     }
 
+    /**
+     * deletes the porcupine manager
+     */
+    actual fun close() {
+        porcupineClient?.close()
+        porcupineClient = null
+    }
 
 }

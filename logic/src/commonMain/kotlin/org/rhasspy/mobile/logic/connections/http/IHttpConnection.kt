@@ -94,44 +94,41 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
      * post data to endpoint
      * handles even in event logger
      */
-    protected inline fun <reified T> post(
+    protected suspend inline fun <reified T> post(
         url: String,
         crossinline block: HttpRequestBuilder.() -> Unit,
-        crossinline onResult: (result: HttpClientResult<T>) -> Unit
-    ) {
-        coroutineScope.launch {
-            val result = httpClient?.let { client ->
-                try {
-                    val request = client.post("${httpConnectionParams.host}$url") {
-                        block()
-                        buildHeaders {
-                            authorization(httpConnectionParams.bearerToken)
-                        }
+    ): HttpClientResult<T> {
+        val result = httpClient?.let { client ->
+            try {
+                val request = client.post("${httpConnectionParams.host}$url") {
+                    block()
+                    buildHeaders {
+                        authorization(httpConnectionParams.bearerToken)
                     }
-                    val result = request.body<T>()
-                    if (result is ByteArray) {
-                        logger.d { "post result size: ${result.size}" }
-                    } else {
-                        logger.d { "post result data: $result" }
-                    }
-
-                    HttpClientResult.Success(result)
-
-                } catch (exception: Exception) {
-
-                    logger.e(exception) { "post result error" }
-                    mapError(exception)
-
                 }
-            } ?: run {
-                logger.a { "post client not initialized" }
-                UnknownError(Exception())
+                val result = request.body<T>()
+                if (result is ByteArray) {
+                    logger.d { "post result size: ${result.size}" }
+                } else {
+                    logger.d { "post result data: $result" }
+                }
+
+                HttpClientResult.Success(result)
+
+            } catch (exception: Exception) {
+
+                logger.e(exception) { "post result error" }
+                mapError(exception)
+
             }
-
-            connectionState.value = result.toServiceState()
-
-            onResult(result)
+        } ?: run {
+            logger.a { "post client not initialized" }
+            UnknownError(Exception())
         }
+
+        connectionState.value = result.toServiceState()
+
+        return result
     }
 
     /**

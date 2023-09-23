@@ -17,7 +17,6 @@ class PorcupineClient(
     val wakeWordPorcupineKeywordDefaultOptions: List<PorcupineDefaultKeyword>,
     val wakeWordPorcupineKeywordCustomOptions: List<PorcupineCustomKeyword>,
     val wakeWordPorcupineLanguage: PorcupineLanguageOption,
-    val onKeywordDetected: (keywordIndex: Int) -> Unit,
 ) : KoinComponent {
     private val logger = Logger.withTag("PorcupineClient")
 
@@ -33,7 +32,7 @@ class PorcupineClient(
 
     private var oldData = ShortArray(0)
 
-    fun audioFrame(data: ByteArray) {
+    fun audioFrame(data: ByteArray) : Int {
         try {
             var currentRecording = oldData + byteArrayToShortArray(data)
 
@@ -46,7 +45,7 @@ class PorcupineClient(
 
                 val keywordIndex = porcupine.process(chunk)
                 if (keywordIndex != -1) {
-                    onKeywordDetected(keywordIndex)
+                    return keywordIndex
                 }
             }
 
@@ -56,6 +55,8 @@ class PorcupineClient(
             //restart
             logger.d("audioRecorder collection", e)
         }
+
+        return -1
     }
 
     fun close() {

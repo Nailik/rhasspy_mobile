@@ -2,6 +2,7 @@ package org.rhasspy.mobile.logic.domains.vad
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.AudioDomainEvent.AudioChunkEvent
 
 class SilenceDetection(
@@ -14,7 +15,7 @@ class SilenceDetection(
     private var recordingTillSilenceStartTime = Clock.System.now()
 
     //returns true when silence was detected
-    fun onAudioChunk(chunk: AudioChunkEvent): Boolean {
+    fun onAudioChunk(chunk: MicAudioChunk): Boolean {
         return true /*
         val automaticSilenceDetectionTime = automaticSilenceDetectionTime ?: 0
         val automaticSilenceDetectionMinimumTime = automaticSilenceDetectionMinimumTime ?: 0

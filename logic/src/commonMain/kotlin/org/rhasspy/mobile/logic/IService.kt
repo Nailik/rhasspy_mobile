@@ -8,4 +8,6 @@ interface IService : KoinComponent {
 
     val serviceState: StateFlow<ServiceState>
 
+    fun stop()
+
 }

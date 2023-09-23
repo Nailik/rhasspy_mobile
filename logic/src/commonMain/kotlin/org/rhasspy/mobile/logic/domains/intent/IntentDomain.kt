@@ -18,6 +18,9 @@ import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
+import org.rhasspy.mobile.logic.domains.asr.IntentResult
+import org.rhasspy.mobile.logic.domains.asr.PipelineResult
+import org.rhasspy.mobile.logic.domains.asr.TranscriptResult
 import org.rhasspy.mobile.logic.pipeline.IPipeline
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.IntentDomainEvent.*
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -25,6 +28,8 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 interface IIntentDomain : IService {
 
     fun onRecognize(recognizeEvent: RecognizeEvent, sessionId: String)
+
+    fun awaitIntent(transcript: TranscriptResult.Transcript): IntentResult
 
 }
 

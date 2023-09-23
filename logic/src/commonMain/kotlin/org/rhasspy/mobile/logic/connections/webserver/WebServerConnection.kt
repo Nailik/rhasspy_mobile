@@ -22,6 +22,7 @@ import io.ktor.server.routing.routing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -35,6 +36,7 @@ import org.rhasspy.mobile.data.service.ServiceState.ErrorState
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.http.StreamContent
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionErrorType.WakeOptionInvalid
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.*
 import org.rhasspy.mobile.logic.connections.webserver.WebServerResult.*
@@ -53,7 +55,11 @@ import org.rhasspy.mobile.platformspecific.ktor.installConnector
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-interface IWebServerConnection : IConnection
+interface IWebServerConnection : IConnection {
+
+    val incomingMessages: Flow<WebServerConnectionEvent>
+
+}
 
 /**
  * Web server service holds all routes for WebServerPath values

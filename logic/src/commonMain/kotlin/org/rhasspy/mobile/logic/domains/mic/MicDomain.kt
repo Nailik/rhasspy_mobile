@@ -1,82 +1,80 @@
 package org.rhasspy.mobile.logic.domains.mic
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import kotlinx.datetime.Clock
+import org.rhasspy.mobile.data.domain.MicDomainData
+import org.rhasspy.mobile.data.domain.VadDomainData
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.ErrorState.Error
 import org.rhasspy.mobile.data.service.ServiceState.Pending
 import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.logic.IService
-import org.rhasspy.mobile.logic.pipeline.IPipeline
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.AudioDomainEvent.AudioChunkEvent
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
+/**
+ * records audio as soon as audioStream has subscribers
+ * Collection may stop for a brief moment when micDomainData is changed
+ */
 interface IMicDomain : IService {
 
-    fun startRecording()
-
-    fun stopRecording()
+    val audioStream: Flow<MicAudioChunk>
 
 }
 
 internal class MicDomain(
-    private val pipeline: IPipeline,
     val audioRecorder: IAudioRecorder,
-    val microphonePermission: IMicrophonePermission
+    val microphonePermission: IMicrophonePermission,
+    val params: MicDomainData, //TODO microphone permision??
 ) : IMicDomain {
 
+    override val audioStream = MutableSharedFlow<MicAudioChunk>()
+
     override val serviceState = MutableStateFlow<ServiceState>(Pending)
-    private val params get() = ConfigurationSetting.micDomainData.value
+
     private val isMicrophonePermissionGranted get() = microphonePermission.granted.value
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    private var shouldRecord: Boolean = false
-
     init {
-        scope.launch {
-            combineStateFlow(
-                ConfigurationSetting.micDomainData.data,
-                microphonePermission.granted,
-            ).collectLatest {
-                stopRecording()
-                if (shouldRecord) {
-                    stopRecording()
-                }
-
-                initialize()
-            }
-        }
-
-        scope.launch {
-            audioRecorder.output.collect { data ->
-                pipeline.onEvent(getAudioChunk(data))
-            }
-        }
-    }
-
-    private fun initialize() {
         serviceState.value = when (isMicrophonePermissionGranted) {
             true  -> Success
             false -> Error(MR.strings.microphonePermissionMissing.stable)
         }
+
+        scope.launch {
+            audioStream.subscriptionCount
+                .map { count -> count == 0 }
+                .distinctUntilChanged()
+                .onEach { isActive ->
+                    if (isActive) startRecording() else stopRecording()
+                }
+        }
+
+        scope.launch {
+            audioRecorder.output.onEach { data ->
+                with(params) {
+                    audioStream.tryEmit(
+                        MicAudioChunk(
+                            timeStamp = Clock.System.now(),
+                            sampleRate = audioOutputSampleRate,
+                            encoding = audioOutputEncoding,
+                            channel = audioOutputChannel,
+                            data = data,
+                        )
+                    )
+                }
+            }
+        }
     }
 
-    override fun startRecording() {
+    private fun startRecording() {
         if (!isMicrophonePermissionGranted) return
-
-        shouldRecord = true
 
         with(params) {
             audioRecorder.startRecording(
@@ -90,34 +88,14 @@ internal class MicDomain(
                 isAutoPauseOnMediaPlayback = isPauseRecordingOnMediaPlayback,
             )
         }
-
-        with(params) {
-            pipeline.onEvent(
-                PipelineEvent.AudioDomainEvent.AudioStartEvent(
-                    timeStamp = Clock.System.now(),
-                    sampleRate = audioOutputSampleRate,
-                    encoding = audioOutputEncoding,
-                    channel = audioOutputChannel,
-                )
-            )
-        }
     }
 
-    private fun getAudioChunk(data: ByteArray): AudioChunkEvent {
-        with(params) {
-            return AudioChunkEvent(
-                timeStamp = Clock.System.now(),
-                sampleRate = audioOutputSampleRate,
-                encoding = audioOutputEncoding,
-                channel = audioOutputChannel,
-                data = data,
-            )
-        }
-    }
-
-    override fun stopRecording() {
-        shouldRecord = false
+    private fun stopRecording() {
         audioRecorder.stopRecording()
+    }
+
+    override fun stop() {
+        scope.cancel()
     }
 
 }

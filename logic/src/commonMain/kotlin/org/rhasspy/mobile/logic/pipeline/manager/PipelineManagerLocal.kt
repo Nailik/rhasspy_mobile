@@ -58,12 +58,43 @@ class PipelineManagerLocal(
     micDomain = micDomain,
 ) {
 
+    //TODo one domain after another always waiting for result?
+
     private var coroutineScope = CoroutineScope(dispatcherProvider.IO)
 
     private val params get() = ConfigurationSetting.pipelineData.value
 
     override fun initialize() {
         goToState(DetectState)
+    }
+
+    private fun pipeline() {
+        //audio chunks
+        wakeDomain.send(micDomain.getAudioChunk()) //detected - not detected
+        //if detected
+        vadDomain.send(micDomain.getAudioChunk()) //warte auf voice started
+
+            //if voice started
+            asrDomain.send(micDomain.getAudioChunkFlow()) //warte auf transcript - transcript error
+
+            //if voice stopped
+            micDomain.stopRecording()
+
+            //asrDomain result ??
+
+            //ELSE if voice stopped
+            asrDomain.send(micDomain.getAudioStop())
+
+
+        val result = asrDomain.getResult() //transcript - transcript error
+
+        //if transcript
+        intentDomain.send(result)
+
+        //ELSE if transcript error
+        RESET()
+
+
     }
 
     override fun onEvent(event: PipelineEvent) {

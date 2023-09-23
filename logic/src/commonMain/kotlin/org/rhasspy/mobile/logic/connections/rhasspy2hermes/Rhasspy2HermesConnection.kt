@@ -16,7 +16,7 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface IRhasspy2HermesConnection : IConnection {
 
-    fun speechToText(audioFilePath: Path, onResult: (result: HttpClientResult<String>) -> Unit)
+    suspend fun speechToText(audioFilePath: Path): HttpClientResult<String>
     fun recognizeIntent(text: String, onResult: (result: HttpClientResult<String>) -> Unit)
     fun textToSpeech(text: String, volume: Float?, siteId: String?, onResult: (result: HttpClientResult<ByteArray>) -> Unit)
     fun playWav(audioSource: AudioSource, onResult: (result: HttpClientResult<String>) -> Unit)
@@ -39,18 +39,15 @@ internal class Rhasspy2HermesConnection : IRhasspy2HermesConnection, IHttpConnec
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    override fun speechToText(audioFilePath: Path, onResult: (result: HttpClientResult<String>) -> Unit) {
-        httpConnectionParams.apply {
-            logger.d { "speechToText: audioFilePath.name" }
+    override suspend fun speechToText(audioFilePath: Path) : HttpClientResult<String> {
+        logger.d { "speechToText: audioFilePath.name" }
 
-            post(
-                url = "/api/speech-to-text",
-                block = {
-                    setBody(StreamContent(audioFilePath))
-                },
-                onResult = onResult
-            )
-        }
+        return post(
+            url = "/api/speech-to-text",
+            block = {
+                setBody(StreamContent(audioFilePath))
+            }
+        )
     }
 
     /**

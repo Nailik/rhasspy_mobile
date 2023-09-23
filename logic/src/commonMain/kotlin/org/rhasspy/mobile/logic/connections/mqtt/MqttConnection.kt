@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
 import io.ktor.utils.io.core.toByteArray
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.encodeToString
@@ -36,12 +37,20 @@ interface IMqttConnection : IConnection {
     val isConnected: StateFlow<Boolean>
     val isHasStarted: StateFlow<Boolean>
 
+    val incomingMessages: Flow<MqttConnectionEvent>
+
     fun onMessageReceived(topic: String, payload: ByteArray)
 
     fun sessionStarted(sessionId: String)
     fun sessionEnded(sessionId: String)
     fun intentNotRecognized(sessionId: String)
-    fun asrAudioFrame(byteArray: ByteArray, onResult: (result: ServiceState) -> Unit)
+    fun asrAudioFrame(
+        data: ByteArray,
+        sampleRate: AudioFormatSampleRateType,
+        encoding: AudioFormatEncodingType,
+        channel: AudioFormatChannelType,
+        onResult: (result: ServiceState) -> Unit
+    )
     fun asrAudioSessionFrame(
         sessionId: String,
         sampleRate: AudioFormatSampleRateType,
@@ -481,11 +490,23 @@ internal class MqttConnection(
      * wav_bytes: bytes - WAV data to play (message payload)
      * siteId: string - Hermes site ID (part of topic)
      */
-    override fun asrAudioFrame(byteArray: ByteArray, onResult: (result: ServiceState) -> Unit) {
+    override fun asrAudioFrame(
+        data: ByteArray,
+        sampleRate: AudioFormatSampleRateType,
+        encoding: AudioFormatEncodingType,
+        channel: AudioFormatChannelType,
+        onResult: (result: ServiceState) -> Unit
+    ) {
+        val dataToSend = data.appendWavHeader(
+            sampleRate = sampleRate,
+            encoding = encoding,
+            channel = channel
+        )
+
         publishMessage(
             MqttTopicsPublish.AsrAudioFrame.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId),
-            MqttMessage(byteArray),
+            MqttMessage(dataToSend),
             onResult
         )
     }

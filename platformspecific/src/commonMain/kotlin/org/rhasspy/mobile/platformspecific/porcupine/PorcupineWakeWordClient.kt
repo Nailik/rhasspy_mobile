@@ -18,7 +18,6 @@ expect class PorcupineWakeWordClient(
     wakeWordPorcupineKeywordDefaultOptions: List<PorcupineDefaultKeyword>,
     wakeWordPorcupineKeywordCustomOptions: List<PorcupineCustomKeyword>,
     wakeWordPorcupineLanguage: PorcupineLanguageOption,
-    onKeywordDetected: (hotWord: String) -> Unit,
 ) {
 
     /**
@@ -31,7 +30,7 @@ expect class PorcupineWakeWordClient(
         encoding: AudioFormatEncodingType,
         channel: AudioFormatChannelType,
         data: ByteArray,
-    )
+    ): String?
 
     fun close()
 

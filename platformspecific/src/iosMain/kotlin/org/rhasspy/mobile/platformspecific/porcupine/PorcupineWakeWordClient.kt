@@ -1,16 +1,17 @@
 package org.rhasspy.mobile.platformspecific.porcupine
 
-import kotlinx.collections.immutable.ImmutableList
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 
 actual class PorcupineWakeWordClient actual constructor(
-    wakeWordPorcupineAccessToken: String,
-    wakeWordPorcupineKeywordDefaultOptions: ImmutableList<PorcupineDefaultKeyword>,
-    wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
-    wakeWordPorcupineLanguage: PorcupineLanguageOption,
-    onKeywordDetected: (hotWord: String) -> Unit,
+    private val wakeWordPorcupineAccessToken: String,
+    private val wakeWordPorcupineKeywordDefaultOptions: List<PorcupineDefaultKeyword>,
+    private val wakeWordPorcupineKeywordCustomOptions: List<PorcupineCustomKeyword>,
+    private val wakeWordPorcupineLanguage: PorcupineLanguageOption,
 ) {
 
     /**
@@ -21,8 +22,14 @@ actual class PorcupineWakeWordClient actual constructor(
         return null
     }
 
-    actual fun audioFrame(data: ByteArray) {
+    actual fun audioFrame(
+        sampleRate: AudioFormatSampleRateType,
+        encoding: AudioFormatEncodingType,
+        channel: AudioFormatChannelType,
+        data: ByteArray,
+    ): String? {
         //TODO #516
+        return null
     }
 
     actual fun close() {
