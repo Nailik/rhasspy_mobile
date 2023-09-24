@@ -161,6 +161,7 @@ internal class AsrDomain(
 
         return mqttConnection.incomingMessages
             .filterIsInstance<AsrResult>()
+            .filter { it.sessionId == sessionId }
             .map {
                 when (it) {
                     is AsrTextCaptured -> Transcript(it.text ?: return@map TranscriptError)

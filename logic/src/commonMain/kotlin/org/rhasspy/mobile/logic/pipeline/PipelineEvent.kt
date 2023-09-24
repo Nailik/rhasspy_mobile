@@ -73,7 +73,7 @@ sealed interface PipelineEvent {
 
         data class IntentEvent(
             val name: String?,
-            val entities: String,
+            val data: String,
         ) : IntentDomainEvent
 
         data class NotRecognizedEvent(

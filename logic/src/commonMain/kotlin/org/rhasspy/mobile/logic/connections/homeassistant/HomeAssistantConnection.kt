@@ -7,22 +7,21 @@ import io.ktor.http.contentType
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.rhasspy.mobile.data.connection.HttpClientResult
-import org.rhasspy.mobile.data.connection.HttpClientResult.HttpClientError.UnknownError
-import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
-import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Event
-import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Intent
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.http.IHttpConnection
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface IHomeAssistantConnection : IConnection {
 
-    fun sendIntent(
-        option: HomeAssistantIntentHandlingOption,
-        intentName: String,
+    suspend fun awaitIntent(
+        intentName: String?,
         intent: String,
-        onResult: (result: HttpClientResult<String>) -> Unit
-    )
+    ): HttpClientResult<String?>
+
+    suspend fun awaitEvent(
+        intentName: String?,
+        intent: String,
+    ): HttpClientResult<String>
 
 }
 
@@ -36,17 +35,57 @@ internal class HomeAssistantConnection : IHomeAssistantConnection, IHttpConnecti
 
     override val logger = Logger.withTag("HomeAssistantConnection")
 
-    /**
-     * simplified conversion from intent to hass event or hass intent
-     */
-    override fun sendIntent(
-        option: HomeAssistantIntentHandlingOption,
-        intentName: String,
-        intent: String,
-        onResult: (result: HttpClientResult<String>) -> Unit
-    ) {
-        logger.d { "sendIntent name: $intentName json: $intent" }
-        try {
+    override suspend fun awaitIntent(intentName: String?, intent: String): HttpClientResult<String?> {
+        val data = jsonFromIntent(intent)
+        logger.d { "homeAssistantIntent intent: $data intentName: $intentName" }
+
+        val result = post<String?>(
+            url = "/api/intent/handle",
+            block = {
+                buildHeaders {
+                    contentType(jsonContentType)
+                }
+                setBody("{\"name\" : \"$intentName\", \"data\": $data }")
+            },
+        )
+
+        return when (result) {
+            is HttpClientResult.HttpClientError -> return result
+            is HttpClientResult.Success         -> HttpClientResult.Success(readSpeechTextFromIntentResponse(result.data))
+        }
+
+    }
+
+    override suspend fun awaitEvent(intentName: String?, intent: String): HttpClientResult<String> {
+        val data = jsonFromIntent(intent)
+        logger.d { "homeAssistantEvent intent: $data intentName: $intentName" }
+
+        return post(
+            url = "/api/events/rhasspy_$intentName",
+            block = {
+                buildHeaders {
+                    contentType(jsonContentType)
+                }
+                setBody(data)
+            },
+        )
+    }
+
+    private fun readSpeechTextFromIntentResponse(intent: String?): String? {
+        if(intent == null) return null
+        //reads text from intent api https://developers.home-assistant.io/docs/intent_firing
+        return try {
+            //example: "{"speech": {"plain": {"speech": "Turned Lounge Lamp on", "extra_data": null}}, "card": {}}"
+            val json = Json.decodeFromString<JsonObject>(intent)
+            return json["speech"]?.jsonObject?.get("plain")?.jsonObject?.getValue("speech")?.jsonPrimitive?.contentOrNull
+        } catch (exception: Exception) {
+            logger.e(exception) { "sendIntent error" }
+            null
+        }
+    }
+
+    private fun jsonFromIntent(intent: String): String? {
+        return try {
             val slots = mutableMapOf<String, JsonElement?>()
 
             val json = Json.decodeFromString<JsonObject>(intent)
@@ -74,57 +113,11 @@ internal class HomeAssistantConnection : IHomeAssistantConnection, IHttpConnecti
             slots["_raw_text"] = json["raw_text"]?.jsonPrimitive
             slots["_site_id"] = JsonPrimitive(ConfigurationSetting.siteId.value)
 
-            val intentRes = Json.encodeToString(slots)
-
-            when (option) {
-                Event  -> homeAssistantEvent(intentRes, intentName) {
-                    onResult(it)
-                }
-
-                Intent -> homeAssistantIntent("{\"name\" : \"$intentName\", \"data\": $intent }") {
-                    onResult(it)
-                }
-            }
+            Json.encodeToString(slots)
         } catch (exception: Exception) {
             logger.e(exception) { "sendIntent error" }
-            onResult(UnknownError(exception))
+            null
         }
-    }
-
-
-    /**
-     * send intent as Event to Home Assistant
-     */
-    private fun homeAssistantEvent(json: String, intentName: String, onResult: (result: HttpClientResult<String>) -> Unit) {
-        logger.d { "homeAssistantEvent json: $json intentName: $intentName" }
-        post(
-            url = "/api/events/rhasspy_$intentName",
-            block = {
-                buildHeaders {
-                    contentType(jsonContentType)
-                }
-                setBody(json)
-            },
-            onResult = onResult
-        )
-    }
-
-
-    /**
-     * send intent as Intent to Home Assistant
-     */
-    private fun homeAssistantIntent(intentJson: String, onResult: (result: HttpClientResult<String>) -> Unit) {
-        logger.d { "homeAssistantIntent json: $intentJson" }
-        post(
-            url = "/api/intent/handle",
-            block = {
-                buildHeaders {
-                    contentType(jsonContentType)
-                }
-                setBody(intentJson)
-            },
-            onResult = onResult
-        )
     }
 
 }

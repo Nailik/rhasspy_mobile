@@ -21,6 +21,7 @@ import org.rhasspy.mobile.logic.pipeline.PipelineState.*
 import org.rhasspy.mobile.logic.pipeline.PipelineState.SessionState.*
 import org.rhasspy.mobile.logic.pipeline.WakeResult
 
+//TODO read https://github.com/rhasspy/rhasspy/wiki/Intent-Handling-with-HA-and-Intents
 interface Pipeline {
 
     val stateFlow: StateFlow<sdf>

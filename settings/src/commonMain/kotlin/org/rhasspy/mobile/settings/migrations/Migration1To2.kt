@@ -1,5 +1,7 @@
 package org.rhasspy.mobile.settings.migrations
 
+import com.russhwolf.settings.get
+import com.russhwolf.settings.set
 import kotlinx.serialization.builtins.ListSerializer
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
@@ -52,6 +54,12 @@ internal object Migration1To2 : IMigration(1, 2) {
         DialogManagementLocalAsrTimeout,
         DialogManagementLocalIntentRecognitionTimeout,
         DialogManagementLocalRecordingTimeout
+    }
+
+    override fun preMigrate() {
+        if (settings[DeprecatedSettingsEnum.IntentHandlingOption.name, ""] == "WithRecognition") {
+            settings[DeprecatedSettingsEnum.IntentHandlingOption.name] = IntentHandlingOption.Disabled.name
+        }
     }
 
     private val speechToTextAudioRecorderChannel = ISetting(DeprecatedSettingsEnum.SpeechToTextAudioRecorderChannel, AudioFormatChannelType.default)
@@ -150,6 +158,7 @@ internal object Migration1To2 : IMigration(1, 2) {
 
         ConfigurationSetting.intentDomainData.value = IntentDomainData(
             option = intentRecognitionOption.value,
+            isRhasspy2HermesHttpHandleWithRecognition = true,
         )
 
         ConfigurationSetting.sndDomainData.value = SndDomainData(

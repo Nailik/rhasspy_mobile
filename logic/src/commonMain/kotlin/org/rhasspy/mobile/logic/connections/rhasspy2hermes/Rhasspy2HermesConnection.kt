@@ -20,7 +20,6 @@ interface IRhasspy2HermesConnection : IConnection {
     suspend fun recognizeIntent(text: String): HttpClientResult<String>
     suspend fun textToSpeech(text: String, volume: Float?, siteId: String?): HttpClientResult<ByteArray> //TODO save to file
     suspend fun playWav(audioSource: AudioSource): HttpClientResult<String>
-    suspend fun intentHandling(intent: String): HttpClientResult<String>
 
 }
 
@@ -114,37 +113,5 @@ internal class Rhasspy2HermesConnection : IRhasspy2HermesConnection, IHttpConnec
             },
         )
     }
-
-    /**
-     * Rhasspy can POST the intent JSON to a remote URL.
-     *
-     * Add to your profile:
-     *
-     * "handle": {
-     *  "system": "remote",
-     *  "remote": {
-     *      "url": "http://<address>:<port>/path/to/endpoint"
-     *   }
-     * }
-     * When an intent is recognized, Rhasspy will POST to handle.remote.url with the intent JSON.
-     * Your server should return JSON back, optionally with additional information (see below).
-     *
-     * Implemented by rhasspy-remote-http-hermes
-     */
-    override suspend fun intentHandling(intent: String): HttpClientResult<String> {
-        httpConnectionParams.apply {
-            logger.d { "intentHandling intent: $intent" }
-            return post(
-                url = host, //TODO host??
-                block = {
-                    buildHeaders {
-                        authorization(bearerToken)
-                    }
-                    setBody(intent)
-                },
-            )
-        }
-    }
-
 
 }

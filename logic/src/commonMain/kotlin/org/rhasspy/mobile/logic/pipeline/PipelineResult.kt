@@ -13,3 +13,8 @@ sealed interface IntentResult {
     data class Intent(val intentName: String?, val intent: String) : IntentResult
     data object NotRecognized : IntentResult, PipelineResult
 }
+
+sealed interface HandleResult: IntentResult {
+    data class Handle(val text: String?) : HandleResult
+    data object NotHandled : HandleResult, PipelineResult
+}

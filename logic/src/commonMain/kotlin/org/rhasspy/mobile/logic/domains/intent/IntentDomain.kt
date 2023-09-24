@@ -5,10 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
@@ -20,9 +17,14 @@ import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentNotRecognized
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentRecognitionResult
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
+import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
+import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent
+import org.rhasspy.mobile.logic.pipeline.HandleResult
+import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
 import org.rhasspy.mobile.logic.pipeline.IntentResult
 import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
 import org.rhasspy.mobile.logic.pipeline.IntentResult.NotRecognized
@@ -43,6 +45,7 @@ interface IIntentDomain : IService {
 internal class IntentDomain(
     private val params: IntentDomainData,
     private val mqttConnection: IMqttConnection,
+    private val webServerConnection: IWebServerConnection,
     private val rhasspy2HermesConnection: IRhasspy2HermesConnection,
 ) : IIntentDomain {
 
@@ -64,6 +67,7 @@ internal class IntentDomain(
         return when (params.option) {
             IntentRecognitionOption.Rhasspy2HermesHttp ->
                 awaitRhasspy2HermesHttpIntent(
+                    sessionId = sessionId,
                     transcript = transcript,
                 )
 
@@ -77,15 +81,33 @@ internal class IntentDomain(
         }
     }
 
-    private suspend fun awaitRhasspy2HermesHttpIntent(transcript: Transcript): IntentResult {
+    private suspend fun awaitRhasspy2HermesHttpIntent(sessionId: String, transcript: Transcript): IntentResult {
         val result = rhasspy2HermesConnection.recognizeIntent(transcript.text)
         serviceState.value = result.toServiceState()
 
+        //isRhasspy2HermesHttpHandleWithRecognition
         return when (result) {
             is HttpClientResult.HttpClientError -> NotRecognized
             is HttpClientResult.Success         -> {
                 val intentName = readIntentNameFromJson(result.data)
-                Intent(intentName = intentName, intent = result.data)
+
+                if (!params.isRhasspy2HermesHttpHandleWithRecognition) return Intent(intentName = intentName, intent = result.data)
+
+                //TODO timeout
+                //await for EndSession or Say
+                return merge(
+                    mqttConnection.incomingMessages
+                        .filterIsInstance<MqttConnectionEvent.EndSession>()
+                        .filter { it.sessionId == sessionId }
+                        .map {
+                            Handle(it.text)
+                        },
+                    webServerConnection.incomingMessages
+                        .filterIsInstance<WebServerConnectionEvent.WebServerSay>()
+                        .map {
+                            Handle(it.text)
+                        },
+                ).first()
             }
         }
     }
@@ -99,6 +121,7 @@ internal class IntentDomain(
 
         return mqttConnection.incomingMessages
             .filterIsInstance<MqttIntentResult>()
+            .filter { it.sessionId == sessionId }
             .map {
                 when (it) {
                     is IntentRecognitionResult        -> Intent(it.intentName, it.intent)

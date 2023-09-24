@@ -9,8 +9,6 @@ import org.rhasspy.mobile.resources.MR
 enum class IntentHandlingOption(override val text: StableStringResource) : IOption {
 
     HomeAssistant(MR.strings.homeAssistant.stable),
-    Rhasspy2HermesHttp(MR.strings.rhasspy2hermes_http.stable),
-    WithRecognition(MR.strings.withRecognition.stable),
     Disabled(MR.strings.disabled.stable);
 
 }

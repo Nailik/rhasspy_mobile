@@ -273,7 +273,7 @@ class PipelineManagerLocal(
             is EndSession              -> Unit
             is HotWordDetected         -> DetectionEvent(event.hotWord, Clock.System.now())
             is IntentNotRecognized     -> NotRecognizedEvent("")
-            is IntentRecognitionResult -> IntentEvent(name = event.intentName, entities = event.intent)
+            is IntentRecognitionResult -> IntentEvent(name = event.intentName, data = event.intent)
             is PlayBytes               -> Unit// AudioChunkEvent
             is PlayFinished            -> PlayedEvent
             is Say                     -> SynthesizeEvent(event.text, event.volume, event.siteId)

@@ -403,7 +403,7 @@ internal class MqttConnection(
      * sessionId: string - current session ID (required)
      */
     private fun endSession(jsonObject: JsonObject) =
-        pipeline.onEvent(EndSession(jsonObject.getSessionId()))
+        pipeline.onEvent(EndSession(jsonObject.getSessionId(), jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content))
 
     /**
      * hermes/dialogueManager/sessionStarted (JSON)
