@@ -82,7 +82,7 @@ fun logicModule() = module {
             pipeline = get(),
             audioFocusService = get(),
             localAudioService = get(),
-            mqttClientService = get(),
+            mqttConnection = get(),
             httpClientConnection = get(),
         )
     }

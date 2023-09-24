@@ -20,7 +20,7 @@ interface ILocalAudioPlayer {
 
     val isPlayingState: StateFlow<Boolean>
 
-    fun playAudio(audioSource: AudioSource, audioOutputOption: AudioOutputOption, onFinished: (result: ServiceState) -> Unit)
+    suspend fun playAudio(audioSource: AudioSource, audioOutputOption: AudioOutputOption)
     fun playWakeSoundNow()
     fun playWakeSound(onFinished: (() -> Unit)? = null)
     fun playRecordedSound()

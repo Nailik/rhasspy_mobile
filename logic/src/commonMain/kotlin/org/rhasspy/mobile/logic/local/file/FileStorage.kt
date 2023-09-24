@@ -8,6 +8,8 @@ interface IFileStorage {
 
     val speechToTextAudioFile: Path
 
+    val playAudioFile: Path
+
 }
 
 internal class FilesStorage(nativeApplication: NativeApplication) : IFileStorage {

@@ -12,30 +12,27 @@ object AudioRecorderUtils {
      * to create wav header and add it in front of the given data
      */
     fun ByteArray.appendWavHeader(
-        sampleRate: AudioFormatSampleRateType,
-        encoding: AudioFormatEncodingType,
-        channel: AudioFormatChannelType,
+        sampleRate: Int,
+        bitRate: Int,
+        channel: Int,
     ): ByteArray {
         return getWavHeader(
             sampleRate = sampleRate,
-            encoding = encoding,
+            bitRate = bitRate,
             channel = channel,
             audioSize = this.size.toLong()
         ) + this
     }
 
     fun getWavHeader(
-        sampleRate: AudioFormatSampleRateType,
-        encoding: AudioFormatEncodingType,
-        channel: AudioFormatChannelType,
+        sampleRate: Int,
+        bitRate: Int,
+        channel: Int,
         audioSize: Long
     ): ByteArray {
         //info https://docs.fileformat.com/audio/wav/
-        val channelValue = channel.count
-        val sampleRateValue = sampleRate.value
-        val bitRateValue = encoding.bitRate
-        val byteRate = (sampleRateValue * channelValue * bitRateValue) / 8
-        val bitPerSampleChannels = (bitRateValue * channelValue) / 8
+        val byteRate = (sampleRate * channel * bitRate) / 8
+        val bitPerSampleChannels = (bitRate * channel) / 8
 
         val totalLength = audioSize + 36
         val header = arrayOf(
@@ -61,20 +58,20 @@ object AudioRecorderUtils {
             0,
             1, // Type of format (1 is PCM) - 2 byte integer
             0,
-            channelValue.toByte(),
+            channel.toByte(),
             0,
-            (sampleRateValue and 0xff).toByte(),
-            ((sampleRateValue shr 8) and 0xff).toByte(),
-            ((sampleRateValue shr 16) and 0xff).toByte(),
-            ((sampleRateValue shr 24) and 0xff).toByte(),
+            (sampleRate and 0xff).toByte(),
+            ((sampleRate shr 8) and 0xff).toByte(),
+            ((sampleRate shr 16) and 0xff).toByte(),
+            ((sampleRate shr 24) and 0xff).toByte(),
             (byteRate and 0xff).toByte(),
             ((byteRate shr 8) and 0xff).toByte(),
             ((byteRate shr 16) and 0xff).toByte(),
             ((byteRate shr 24) and 0xff).toByte(),
             (bitPerSampleChannels and 0xff).toByte(),
             ((bitPerSampleChannels shr 8) and 0xff).toByte(),
-            (bitRateValue and 0xff).toByte(),
-            ((bitRateValue shr 8) and 0xff).toByte(),
+            (bitRate and 0xff).toByte(),
+            ((bitRate shr 8) and 0xff).toByte(),
             'd'.code.toByte(),
             'a'.code.toByte(),
             't'.code.toByte(),

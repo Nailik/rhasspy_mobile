@@ -1,11 +1,9 @@
 package org.rhasspy.mobile.logic.domains.snd
 
 import co.touchlab.kermit.Logger
+import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason
+import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Sound
 import org.rhasspy.mobile.data.domain.SndDomainData
 import org.rhasspy.mobile.data.service.ServiceState
@@ -13,23 +11,23 @@ import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayFinished
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
+import org.rhasspy.mobile.logic.domains.AudioFileWriter
+import org.rhasspy.mobile.logic.domains.snd.SndAudio.*
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
+import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
-import org.rhasspy.mobile.logic.pipeline.IPipeline
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.AudioDomainEvent.*
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.SndDomainEvent.PlayedEvent
 import org.rhasspy.mobile.logic.pipeline.SndResult
 import org.rhasspy.mobile.logic.pipeline.SndResult.Played
-import org.rhasspy.mobile.logic.pipeline.TtsResult
 import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
-import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface ISndDomain : IService {
 
     //plays until play stop
-    suspend fun onPlayAudio(audio: Audio, volume: Float?, siteId: String): SndResult
+    suspend fun onPlayAudio(audio: Audio): SndResult
 
 }
 
@@ -40,9 +38,10 @@ interface ISndDomain : IService {
  */
 internal class SndDomain(
     private val params: SndDomainData,
+    private val fileStorage: IFileStorage,
     private val audioFocusService: IAudioFocus,
     private val localAudioService: ILocalAudioPlayer,
-    private val mqttClientService: IMqttConnection,
+    private val mqttConnection: IMqttConnection,
     private val httpClientConnection: IRhasspy2HermesConnection,
 ) : ISndDomain {
 
@@ -61,34 +60,23 @@ internal class SndDomain(
         }
     }
 
-    override suspend fun onPlayAudio(audio: Audio, volume: Float?, siteId: String):SndResult {
+    override suspend fun onPlayAudio(audio: Audio):SndResult {
         return when (params.option) {
-            AudioPlayingOption.Local              -> onLocalPlayAudio(audio, volume)
-            AudioPlayingOption.Rhasspy2HermesHttp -> onRhasspy2HermesHttpPlayAudio(audio, volume, siteId)
-            AudioPlayingOption.Rhasspy2HermesMQTT -> onRhasspy2HermesMQTTPlayAudio(audio, volume, siteId)
+            AudioPlayingOption.Local              -> onLocalPlayAudio(audio)
+            AudioPlayingOption.Rhasspy2HermesHttp -> onRhasspy2HermesHttpPlayAudio(audio)
+            AudioPlayingOption.Rhasspy2HermesMQTT -> onRhasspy2HermesMQTTPlayAudio(audio)
             AudioPlayingOption.Disabled           -> return Played
         }
     }
 
-    private suspend fun onLocalPlayAudio(audio: Audio, volume: Float?):SndResult {
-        //await audio start
-        val collectJob = scope.launch {
-            //To file
-        }
-
-        //await audio stop
-        collectJob.cancel()
+    private suspend fun onLocalPlayAudio(audio: Audio):SndResult {
+        val data = collectAudioToFile(audio)
 
         //play
         audioFocusService.request(Sound)
-        //TODO sammeln, spielen on stop -> suspend -> finished by tts domain
         localAudioService.playAudio(
-            audioSource = AudioSource.Data(audio.data),
+            audioSource = data,
             audioOutputOption = params.localOutputOption,
-            onFinished = {
-                serviceState.value = it
-                pipeline.onEvent(PlayedEvent)
-            }
         )
 
         audioFocusService.abandon(Sound)
@@ -96,49 +84,75 @@ internal class SndDomain(
         return Played
     }
 
-    private suspend fun onRhasspy2HermesHttpPlayAudio(audio: Audio, volume: Float?, siteId: String):SndResult {
-        //await audio start
-        val collectJob = scope.launch {
-            //To file
-        }
 
-        //await audio stop
-        collectJob.cancel()
+
+    private suspend fun onRhasspy2HermesHttpPlayAudio(audio: Audio):SndResult {
+        val data = collectAudioToFile(audio)
 
         //play
         httpClientConnection.playWav(
-            audioSource = AudioSource.Data(play.data),
-            onResult = {
-                serviceState.value = it.toServiceState()
-                pipeline.onEvent(PlayedEvent)
-            }
+            audioSource = data,
         )
 
         return Played
     }
 
-    private suspend fun onRhasspy2HermesMQTTPlayAudio(audio: Audio, volume: Float?, siteId: String):SndResult {
+    private suspend fun onRhasspy2HermesMQTTPlayAudio(audio: Audio):SndResult {
+        val data = collectAudioToFile(audio)
+
+        val mqttRequestId = uuid4().toString()
+
+        //play
+        mqttConnection.playAudioRemote(
+            audioSource = data,
+            siteId = params.mqttSiteId,
+            id = mqttRequestId,
+        )
+
+        //await played TODO timeout
+        return mqttConnection.incomingMessages
+            .filterIsInstance<PlayFinished>()
+            .filter { it.id == mqttRequestId }
+            .map {
+                Played
+            }
+            .first()
+    }
+
+    private suspend fun collectAudioToFile(audio: Audio): AudioSource {
         //await audio start
+        val fileWriter = audio.data
+            .filterIsInstance<AudioStartEvent>()
+            .map {
+                AudioFileWriter(
+                    path = fileStorage.playAudioFile,
+                    channel = it.channel,
+                    sampleRate = it.sampleRate,
+                    bitRate = it.bitRate,
+                ).apply {
+                    openFile()
+                }
+            }
+            .first()
+
         val collectJob = scope.launch {
             //To file
+            audio.data
+                .filterIsInstance<AudioChunkEvent>()
+                .collect {
+                    fileWriter.writeToFile(it.data)
+                }
         }
 
         //await audio stop
-        collectJob.cancel()
+        audio.data
+            .filterIsInstance<AudioStopEvent>()
+            .first()
 
-        //play
-        mqttClientService.playAudioRemote(
-            audioSource = AudioSource.Data(play.data),
-            siteId = params.mqttSiteId,
-            onResult = {
-                serviceState.value = it
-                pipeline.onEvent(PlayedEvent)
-            }
-        )
+        collectJob.cancelAndJoin()
+        fileWriter.closeFile()
 
-        //await played
-
-        return Played
+        return  AudioSource.File(fileWriter.path)
     }
 
     override fun stop() {

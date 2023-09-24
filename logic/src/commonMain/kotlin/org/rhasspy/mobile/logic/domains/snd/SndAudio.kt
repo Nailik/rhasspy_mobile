@@ -8,12 +8,13 @@ import org.rhasspy.mobile.logic.pipeline.PipelineEvent
 
 sealed interface SndAudio {
 
-    data object AudioStartEvent : SndAudio
-
-    class AudioChunkEvent(
+    data class AudioStartEvent(
         val sampleRate: Int,
         val bitRate: Int,
         val channel: Int,
+    ) : SndAudio
+
+    class AudioChunkEvent(
         val data: ByteArray,
     ) : SndAudio
 

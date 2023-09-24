@@ -74,7 +74,7 @@ interface IMqttConnection : IConnection {
     fun audioCaptured(sessionId: String, audioFilePath: Path)
     suspend fun recognizeIntent(sessionId: String, text: String): MqttResult
     suspend fun say(sessionId: String, text: String, volume: Float?, siteId: String, id: String): MqttResult
-    suspend fun playAudioRemote(audioSource: AudioSource, siteId: String): MqttResult
+    suspend fun playAudioRemote(audioSource: AudioSource, siteId: String, id: String): MqttResult
     fun playFinished()
 
 }
@@ -931,11 +931,11 @@ internal class MqttConnection(
      * hermes/audioServer/<siteId>/playFinished (JSON)
      *
      */
-    override suspend fun playAudioRemote(audioSource: AudioSource, siteId: String): ServiceState {
+    override suspend fun playAudioRemote(audioSource: AudioSource, siteId: String, id: String): ServiceState {
         return publishMessage(
             MqttTopicsPublish.AudioOutputPlayBytes.topic
                 .set(MqttTopicPlaceholder.SiteId, siteId)
-                .set(MqttTopicPlaceholder.RequestId, uuid4().toString()),
+                .set(MqttTopicPlaceholder.RequestId, id),
             MqttMessage(
                 @Suppress("DEPRECATION")
                 when (audioSource) {
