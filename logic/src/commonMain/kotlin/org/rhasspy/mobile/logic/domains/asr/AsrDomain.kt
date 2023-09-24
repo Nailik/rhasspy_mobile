@@ -32,8 +32,8 @@ interface IAsrDomain : IService {
     suspend fun awaitTranscript(
         sessionId: String,
         audioStream: Flow<MicAudioChunk>,
-        awaitVoiceStart: suspend () -> VoiceStart,
-        awaitVoiceStopped: suspend () -> VoiceStopped,
+        awaitVoiceStart: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStart,
+        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStopped,
     ): TranscriptResult
 
 }
@@ -49,7 +49,6 @@ interface IAsrDomain : IService {
  */
 internal class AsrDomain(
     private val params: AsrDomainData,
-    private val asrFileWriter: AsrFileWriter,
     private val mqttConnection: IMqttConnection,
     private val rhasspy2HermesConnection: IRhasspy2HermesConnection,
 ) : IAsrDomain {
@@ -71,12 +70,13 @@ internal class AsrDomain(
     override suspend fun awaitTranscript(
         sessionId: String,
         audioStream: Flow<MicAudioChunk>,
-        awaitVoiceStart: suspend () -> VoiceStart,
-        awaitVoiceStopped: suspend () -> VoiceStopped,
+        awaitVoiceStart: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStart,
+        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStopped,
     ): TranscriptResult {
         //wait for voice to start
-        awaitVoiceStart()
+        awaitVoiceStart(audioStream)
 
+        val asrFileWriter: AsrFileWriter,
         //open the file asr audio file to write into
         asrFileWriter.openFile()
 
@@ -102,7 +102,7 @@ internal class AsrDomain(
 
     private suspend fun awaitRhasspy2HermesHttpTranscript(
         audioStream: Flow<MicAudioChunk>,
-        awaitVoiceStopped: suspend () -> VoiceStopped,
+        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStopped,
     ): TranscriptResult {
 
         val saveDataJob = scope.launch {
@@ -112,7 +112,7 @@ internal class AsrDomain(
         }
 
         //TODO timeout
-        awaitVoiceStopped()
+        awaitVoiceStopped(audioStream)
 
         saveDataJob.cancel()
 
@@ -128,7 +128,7 @@ internal class AsrDomain(
     private suspend fun awaitRhasspy2HermesMQTTTranscript(
         sessionId: String,
         audioStream: Flow<MicAudioChunk>,
-        awaitVoiceStopped: suspend () -> VoiceStopped,
+        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStopped,
     ): TranscriptResult {
 
         mqttConnection.startListening(
@@ -154,7 +154,7 @@ internal class AsrDomain(
         }
 
         val awaitVoiceStoppedJob = scope.launch {
-            awaitVoiceStopped()
+            awaitVoiceStopped(audioStream)
             //TODO timeout
             sendDataJob.cancel()
         }

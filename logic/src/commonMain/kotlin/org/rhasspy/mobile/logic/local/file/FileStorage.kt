@@ -15,5 +15,6 @@ interface IFileStorage {
 internal class FilesStorage(nativeApplication: NativeApplication) : IFileStorage {
 
     override val speechToTextAudioFile: Path = Path.commonInternalFilePath(nativeApplication, "SpeechToTextAudio.wav")
+    override val playAudioFile: Path = Path.commonInternalFilePath(nativeApplication, "PlayAudio.wav")
 
 }

@@ -15,6 +15,8 @@ import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 interface ILocalAudioPlayer {
 
@@ -39,7 +41,7 @@ internal class LocalAudioPlayer(
     private val audioPlayer = AudioPlayer()
     override val isPlayingState = audioPlayer.isPlayingState
 
-    override fun playAudio(audioSource: AudioSource, audioOutputOption: AudioOutputOption, onFinished: (result: ServiceState) -> Unit) {
+    override suspend fun playAudio(audioSource: AudioSource, audioOutputOption: AudioOutputOption) = suspendCoroutine { continuation ->
         if (AppSetting.isAudioOutputEnabled.value) {
             logger.d { "playAudio $audioSource" }
             playAudio(
@@ -48,11 +50,13 @@ internal class LocalAudioPlayer(
                 audioOutputOption = audioOutputOption,
                 onFinished = {
                     logger.d { "onFinished" }
-                    onFinished(ServiceState.Success)
+                    continuation.resume(Unit)
+                    //TODO onFinished(ServiceState.Success)
                 },
             )
         } else {
-            onFinished(ServiceState.Success)
+            continuation.resume(Unit)
+            //TODO onFinished(ServiceState.Success)
         }
     }
 

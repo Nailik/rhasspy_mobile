@@ -12,7 +12,7 @@ sealed interface TranscriptResult {
 
 sealed interface IntentResult {
     data class Intent(val intentName: String?, val intent: String) : IntentResult
-    data object NotRecognized : IntentResult, PipelineResult
+    data object NotRecognized :PipelineResult, IntentResult
 }
 
 sealed interface HandleResult: IntentResult {

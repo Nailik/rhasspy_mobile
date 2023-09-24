@@ -11,7 +11,6 @@ import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
-import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayFinished
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.domains.AudioFileWriter
@@ -27,7 +26,7 @@ import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 interface ISndDomain : IService {
 
     //plays until play stop
-    suspend fun onPlayAudio(audio: Audio): SndResult
+    suspend fun awaitPlayAudio(audio: Audio): SndResult
 
 }
 
@@ -60,7 +59,7 @@ internal class SndDomain(
         }
     }
 
-    override suspend fun onPlayAudio(audio: Audio):SndResult {
+    override suspend fun awaitPlayAudio(audio: Audio):SndResult {
         return when (params.option) {
             AudioPlayingOption.Local              -> onLocalPlayAudio(audio)
             AudioPlayingOption.Rhasspy2HermesHttp -> onRhasspy2HermesHttpPlayAudio(audio)

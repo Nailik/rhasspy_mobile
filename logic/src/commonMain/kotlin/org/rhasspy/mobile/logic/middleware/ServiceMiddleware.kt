@@ -26,7 +26,7 @@ internal class ServiceMiddleware : IServiceMiddleware {
     override val isPlayingRecordingEnabled: StateFlow<Boolean>
         get() = MutableStateFlow(false)
 
-
+//TODO listen and wait for wake
     override fun userSessionClick() {
         /*
         when (dialogManagerService.currentDialogState.value) {

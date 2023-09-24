@@ -25,13 +25,14 @@ import org.rhasspy.mobile.logic.pipeline.HandleResult
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
 import org.rhasspy.mobile.logic.pipeline.HandleResult.NotHandled
 import org.rhasspy.mobile.logic.pipeline.IntentResult
+import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.HandleDomainEvent.HandledEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.HandleDomainEvent.NotHandledEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.IntentDomainEvent.IntentEvent
 
 interface IHandleDomain : IService {
 
-    suspend fun awaitIntentHandle(sessionId: String, event: IntentEvent) : HandleResult
+    suspend fun awaitIntentHandle(sessionId: String, intent: Intent) : HandleResult
 
 }
 
@@ -44,7 +45,6 @@ internal class HandleDomain(
     private val params: HandleDomainData,
     private val mqttConnection: IMqttConnection,
     private val homeAssistantConnection: IHomeAssistantConnection,
-    private val httpClientConnection: IRhasspy2HermesConnection,
     private val webServerConnection: IWebServerConnection,
 ) : IHandleDomain {
 
@@ -59,29 +59,29 @@ internal class HandleDomain(
         }
     }
 
-    override suspend fun awaitIntentHandle(sessionId: String, event: IntentEvent) : HandleResult {
+    override suspend fun awaitIntentHandle(sessionId: String, intent: Intent) : HandleResult {
         return when (params.option) {
-            IntentHandlingOption.HomeAssistant      -> awaitHomeAssistantHandle(sessionId, event)
+            IntentHandlingOption.HomeAssistant      -> awaitHomeAssistantHandle(sessionId, intent)
             IntentHandlingOption.Disabled           -> NotHandled
         }
     }
 
-    private suspend fun awaitHomeAssistantHandle(sessionId: String, event: IntentEvent) : HandleResult {
+    private suspend fun awaitHomeAssistantHandle(sessionId: String, intent: Intent) : HandleResult {
         return when (params.homeAssistantIntentHandlingOption) {
-            HomeAssistantIntentHandlingOption.Event  -> awaitHomeAssistantEventHandle(sessionId, event)
-            HomeAssistantIntentHandlingOption.Intent -> awaitHomeAssistantIntentHandle(event)
+            HomeAssistantIntentHandlingOption.Event  -> awaitHomeAssistantEventHandle(sessionId, intent)
+            HomeAssistantIntentHandlingOption.Intent -> awaitHomeAssistantIntentHandle(intent)
         }
     }
 
-    private suspend fun awaitHomeAssistantIntentHandle(event: IntentEvent) : HandleResult{
-        return when (val result = homeAssistantConnection.awaitIntent(event.name, event.data)) {
+    private suspend fun awaitHomeAssistantIntentHandle(intent: Intent) : HandleResult{
+        return when (val result = homeAssistantConnection.awaitIntent(intent.intentName, intent.intent)) {
             is HttpClientResult.HttpClientError -> NotHandled
             is HttpClientResult.Success         -> Handle(result.data ?: return NotHandled)
         }
     }
 
-    private suspend fun awaitHomeAssistantEventHandle(sessionId: String, event: IntentEvent) : HandleResult {
-        homeAssistantConnection.awaitEvent(event.name, event.data)
+    private suspend fun awaitHomeAssistantEventHandle(sessionId: String, intent: Intent) : HandleResult {
+        homeAssistantConnection.awaitEvent(intent.intentName, intent.intent)
 
         //TODO timeout
         //await for EndSession or Say
