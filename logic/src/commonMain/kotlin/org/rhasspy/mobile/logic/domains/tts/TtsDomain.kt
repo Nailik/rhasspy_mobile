@@ -2,10 +2,6 @@ package org.rhasspy.mobile.logic.domains.tts
 
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.TtsDomainData
@@ -15,21 +11,25 @@ import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayBytes
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayFinished
 import org.rhasspy.mobile.logic.connections.mqtt.MqttResult.Error
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
-import org.rhasspy.mobile.logic.domains.snd.SndAudio
-import org.rhasspy.mobile.logic.domains.snd.SndAudio.AudioStartEvent
-import org.rhasspy.mobile.logic.domains.snd.SndAudio.AudioStopEvent
+import org.rhasspy.mobile.logic.domains.snd.SndAudio.*
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
+import org.rhasspy.mobile.logic.pipeline.SndResult.Played
 import org.rhasspy.mobile.logic.pipeline.TtsResult
+import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
 import org.rhasspy.mobile.logic.pipeline.TtsResult.NotSynthesized
-import org.rhasspy.mobile.logic.pipeline.TtsResult.PlayFinished
 
 interface ITtsDomain : IService {
 
-    val audioStream: Flow<SndAudio>
-
-    suspend fun onSynthesize(sessionId: String, volume: Float?, siteId: String, handle: Handle): TtsResult
+    suspend fun onSynthesize(
+        sessionId: String,
+        volume: Float?,
+        siteId: String,
+        handle: Handle,
+        ): TtsResult
 
 }
 
@@ -47,12 +47,6 @@ internal class TtsDomain(
     private val logger = Logger.withTag("TextToSpeechService")
 
     override val serviceState = MutableStateFlow<ServiceState>(Pending)
-
-    private val scope = CoroutineScope(Dispatchers.IO)
-
-    private val mqttSessionId = "ITextToSpeechService"
-
-    override val audioStream = MutableSharedFlow<SndAudio>()
 
     init {
         serviceState.value = when (params.option) {
@@ -93,24 +87,26 @@ internal class TtsDomain(
         )) {
             is HttpClientResult.HttpClientError -> NotSynthesized
             is HttpClientResult.Success         -> {
+                //TODO could return single audio?
 
                 val sampleRate: Int = 0
                 val bitRate: Int = 0
                 val channel: Int = 0
 
-                audioStream.emit(AudioStartEvent)
-                //TODO necessary to remove wav header?
-                audioStream.emit(
-                    SndAudio.AudioChunkEvent(
-                        sampleRate = sampleRate,
-                        bitRate = bitRate,
-                        channel = channel,
-                        data = result.data,
-                    )
+                Audio(
+                    flow {
+                        emit(AudioStartEvent)
+                        emit(
+                            AudioChunkEvent(
+                                sampleRate = sampleRate,
+                                bitRate = bitRate,
+                                channel = channel,
+                                data = result.data,
+                            )
+                        )
+                        emit(AudioStopEvent)
+                    }
                 )
-                audioStream.emit(AudioStopEvent)
-
-                PlayFinished
             }
         }
     }
@@ -120,39 +116,41 @@ internal class TtsDomain(
 
         val requestId = uuid4().toString()
 
-        val result = mqttConnection.say(mqttSessionId, handle.text, volume, siteId, requestId)
+        val result = mqttConnection.say(sessionId, handle.text, volume, siteId, requestId)
         if (result is Error) return NotSynthesized
 
         //TODO timeout
-        //TODO await for play finished
         val mqttResult = mqttConnection.incomingMessages
             .filterIsInstance<PlayResult>()
             .filter { it.id == requestId }
             .first()
 
-        if(mqttResult is PlayResult.PlayBytes) {
-            val sampleRate: Int = 0
-            val bitRate: Int = 0
-            val channel: Int = 0
+        return when (mqttResult) {
+            is PlayBytes -> {
+                val sampleRate: Int = 0
+                val bitRate: Int = 0
+                val channel: Int = 0
 
-            audioStream.emit(AudioStartEvent)
-            //TODO necessary to remove wav header?
-            audioStream.emit(
-                SndAudio.AudioChunkEvent(
-                    sampleRate = sampleRate,
-                    bitRate = bitRate,
-                    channel = channel,
-                    data = mqttResult.byteArray,
+                Audio(
+                    flow {
+                        emit(AudioStartEvent)
+                        emit(
+                            AudioChunkEvent(
+                                sampleRate = sampleRate,
+                                bitRate = bitRate,
+                                channel = channel,
+                                data = mqttResult.byteArray,
+                            )
+                        )
+                        emit(AudioStopEvent)
+                    }
                 )
-            )
-            audioStream.emit(AudioStopEvent)
+            }
+
+            is PlayFinished -> Played
         }
-
-        return PlayFinished
     }
 
-    override fun stop() {
-        scope.cancel()
-    }
+    override fun stop() {}
 
 }

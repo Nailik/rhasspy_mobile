@@ -143,12 +143,12 @@ internal class WakeDomain(
         val sendDataJob = scope.launch {
             audioStream.collectLatest { chunk ->
                 with(chunk) {
+                    //TODO use result
                     mqttConnection.asrAudioFrame(
                         sampleRate = sampleRate,
                         encoding = encoding,
                         channel = channel,
                         data = data,
-                        onResult = {} //TODO
                     )
                 }
             }

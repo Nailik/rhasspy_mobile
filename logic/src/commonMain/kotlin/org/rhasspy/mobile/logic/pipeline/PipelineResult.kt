@@ -1,5 +1,8 @@
 package org.rhasspy.mobile.logic.pipeline
 
+import kotlinx.coroutines.flow.Flow
+import org.rhasspy.mobile.logic.domains.snd.SndAudio
+
 sealed interface PipelineResult
 
 sealed interface TranscriptResult {
@@ -18,6 +21,10 @@ sealed interface HandleResult: IntentResult {
 }
 
 sealed interface TtsResult {
-    data object PlayFinished : TtsResult, PipelineResult
+    data class Audio(val data: Flow<SndAudio>) : TtsResult
     data object NotSynthesized : TtsResult, PipelineResult
+}
+
+sealed interface SndResult {
+    data object Played : SndResult, PipelineResult, TtsResult
 }
