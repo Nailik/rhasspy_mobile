@@ -22,7 +22,7 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface ISndDomain : IService {
 
-    fun onAudioStart(audioStart: AudioStartEvent)
+    fun onAudio(audioStart: AudioStartEvent, val volume: Float?, val siteId: String)
 
     fun onAudioChunk(chunk: AudioChunkEvent)
 

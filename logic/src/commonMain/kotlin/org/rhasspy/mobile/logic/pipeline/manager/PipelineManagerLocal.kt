@@ -68,6 +68,7 @@ class PipelineManagerLocal(
         goToState(DetectState)
     }
 
+    //allow to skip thinks (directly say from mqtt/http, directly play wav, directly transcribe etc)
     private fun pipeline() {
         //audio chunks
         wakeDomain.send(micDomain.getAudioChunk()) //detected - not detected

@@ -1,27 +1,35 @@
 package org.rhasspy.mobile.logic.domains.tts
 
 import co.touchlab.kermit.Logger
+import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.connection.HttpClientResult
+import org.rhasspy.mobile.data.domain.TtsDomainData
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult
+import org.rhasspy.mobile.logic.connections.mqtt.MqttResult.Error
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
-import org.rhasspy.mobile.logic.pipeline.IPipeline
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.TtsDomainEvent.SynthesizeEvent
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.TtsDomainEvent.TtsErrorEvent
-import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.logic.domains.snd.SndAudio
+import org.rhasspy.mobile.logic.domains.snd.SndAudio.AudioStartEvent
+import org.rhasspy.mobile.logic.domains.snd.SndAudio.AudioStopEvent
+import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
+import org.rhasspy.mobile.logic.pipeline.TtsResult
+import org.rhasspy.mobile.logic.pipeline.TtsResult.NotSynthesized
+import org.rhasspy.mobile.logic.pipeline.TtsResult.PlayFinished
 
 interface ITtsDomain : IService {
 
-    fun onSynthesize(synthesizeEvent: SynthesizeEvent, sessionId: String)
+    val audioStream: Flow<SndAudio>
+
+    suspend fun onSynthesize(sessionId: String, volume: Float?, siteId: String, handle: Handle): TtsResult
 
 }
 
@@ -31,7 +39,7 @@ interface ITtsDomain : IService {
  * when data is null the service was most probably mqtt and will return result in a call function
  */
 internal class TtsDomain(
-    private val pipeline: IPipeline,
+    private val params: TtsDomainData,
     private val mqttConnection: IMqttConnection,
     private val rhasspy2HermesConnection: IRhasspy2HermesConnection
 ) : ITtsDomain {
@@ -39,21 +47,14 @@ internal class TtsDomain(
     private val logger = Logger.withTag("TextToSpeechService")
 
     override val serviceState = MutableStateFlow<ServiceState>(Pending)
-    private val params get() = ConfigurationSetting.ttsDomainData.value
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
     private val mqttSessionId = "ITextToSpeechService"
 
-    init {
-        scope.launch {
-            ConfigurationSetting.ttsDomainData.data.collectLatest {
-                initialize()
-            }
-        }
-    }
+    override val audioStream = MutableSharedFlow<SndAudio>()
 
-    private fun initialize() {
+    init {
         serviceState.value = when (params.option) {
             TextToSpeechOption.Rhasspy2HermesHttp -> Success
             TextToSpeechOption.Rhasspy2HermesMQTT -> Success
@@ -61,46 +62,97 @@ internal class TtsDomain(
         }
     }
 
-    //TODO do not call if local siteId is same as siteId inside Synthesize
-    /**
-     * hermes/tts/say
-     * Does NOT Generate spoken audio for a sentence using the configured text to speech system
-     * uses configured Text to speed system to generate audio and then plays it
-     *
-     * Response(s)
-     * hermes/tts/sayFinished (JSON)
-     * is called when playing audio is finished
-     */
-    override fun onSynthesize(synthesizeEvent: SynthesizeEvent, sessionId: String) {
-        logger.d { "textToSpeech sessionId: $synthesizeEvent" }
-        serviceState.value = when (params.option) {
-            TextToSpeechOption.Rhasspy2HermesHttp -> {
-                rhasspy2HermesConnection.textToSpeech(synthesizeEvent.text, synthesizeEvent.volume, synthesizeEvent.siteId) { result ->
-                    serviceState.value = result.toServiceState()
+    override suspend fun onSynthesize(sessionId: String, volume: Float?, siteId: String, handle: Handle): TtsResult {
+        return when (params.option) {
+            TextToSpeechOption.Rhasspy2HermesHttp ->
+                onRhasspy2HermesHttpSynthesize(
+                    volume = volume,
+                    siteId = siteId,
+                    handle = handle,
+                )
 
-                    val event = when (result) {
-                        is HttpClientResult.HttpClientError -> TtsErrorEvent
-                        is HttpClientResult.Success         -> {
-                            TtsErrorEvent
-                            //TODO audio start event (read header from wav data) and then audio event and then audio end event
-                            //TtsResultEvent(result.data)
-                        }
-                    }
-                    pipeline.onEvent(event)
-                }
-                Loading
-            }
+            TextToSpeechOption.Rhasspy2HermesMQTT ->
+                onRhasspy2HermesMQTTSynthesize(
+                    sessionId = sessionId,
+                    volume = volume,
+                    siteId = siteId,
+                    handle = handle,
+                )
 
-            TextToSpeechOption.Rhasspy2HermesMQTT -> {
-                if (sessionId == mqttSessionId) return
-                mqttConnection.say(mqttSessionId, synthesizeEvent.text, synthesizeEvent.siteId) {
-                    serviceState.value = it
-                }
-                Loading
-            }
-
-            TextToSpeechOption.Disabled           -> Disabled
+            TextToSpeechOption.Disabled           -> NotSynthesized
         }
+    }
+
+    private suspend fun onRhasspy2HermesHttpSynthesize(volume: Float?, siteId: String, handle: Handle): TtsResult {
+        if (handle.text == null) return NotSynthesized
+
+        return when (val result = rhasspy2HermesConnection.textToSpeech(
+            text = handle.text,
+            volume = volume,
+            siteId = siteId
+        )) {
+            is HttpClientResult.HttpClientError -> NotSynthesized
+            is HttpClientResult.Success         -> {
+
+                val sampleRate: Int = 0
+                val bitRate: Int = 0
+                val channel: Int = 0
+
+                audioStream.emit(AudioStartEvent)
+                //TODO necessary to remove wav header?
+                audioStream.emit(
+                    SndAudio.AudioChunkEvent(
+                        sampleRate = sampleRate,
+                        bitRate = bitRate,
+                        channel = channel,
+                        data = result.data,
+                    )
+                )
+                audioStream.emit(AudioStopEvent)
+
+                PlayFinished
+            }
+        }
+    }
+
+    private suspend fun onRhasspy2HermesMQTTSynthesize(sessionId: String, volume: Float?, siteId: String, handle: Handle): TtsResult {
+        if (handle.text == null) return NotSynthesized
+
+        val requestId = uuid4().toString()
+
+        val result = mqttConnection.say(mqttSessionId, handle.text, volume, siteId, requestId)
+        if (result is Error) return NotSynthesized
+
+        //TODO timeout
+        //TODO await for play finished
+        val mqttResult = mqttConnection.incomingMessages
+            .filterIsInstance<PlayResult>()
+            .filter { it.id == requestId }
+            .first()
+
+        if(mqttResult is PlayResult.PlayBytes) {
+            val sampleRate: Int = 0
+            val bitRate: Int = 0
+            val channel: Int = 0
+
+            audioStream.emit(AudioStartEvent)
+            //TODO necessary to remove wav header?
+            audioStream.emit(
+                SndAudio.AudioChunkEvent(
+                    sampleRate = sampleRate,
+                    bitRate = bitRate,
+                    channel = channel,
+                    data = mqttResult.byteArray,
+                )
+            )
+            audioStream.emit(AudioStopEvent)
+        }
+
+        return PlayFinished
+    }
+
+    override fun stop() {
+        scope.cancel()
     }
 
 }

@@ -10,23 +10,19 @@ sealed interface PipelineEvent {
     sealed interface AudioDomainEvent : PipelineEvent {
 
         data class AudioStartEvent(
-            val timeStamp: Instant,
-            val sampleRate: AudioFormatSampleRateType,
-            val encoding: AudioFormatEncodingType,
-            val channel: AudioFormatChannelType,
+            val sampleRate: Int,
+            val bitRate: Int,
+            val channel: Int,
         ) : AudioDomainEvent
 
         class AudioChunkEvent(
-            val timeStamp: Instant,
-            val sampleRate: AudioFormatSampleRateType,
-            val encoding: AudioFormatEncodingType,
-            val channel: AudioFormatChannelType,
+            val sampleRate: Int,
+            val bitRate: Int,
+            val channel: Int,
             val data: ByteArray,
         ) : AudioDomainEvent
 
-        data class AudioStopEvent(
-            val timeStamp: Instant,
-        ) : AudioDomainEvent
+        data object AudioStopEvent : AudioDomainEvent
 
     }
 

@@ -27,7 +27,13 @@ sealed interface MqttConnectionEvent {
 
     }
     data class Say(val sessionId: String?, val text: String, val volume: Float?, val siteId: String) : MqttConnectionEvent
-    class PlayBytes(val byteArray: ByteArray) : MqttConnectionEvent
-    data object PlayFinished : MqttConnectionEvent
+
+    sealed interface PlayResult: MqttConnectionEvent {
+        val id: String
+
+        class PlayBytes(override val id: String, val byteArray: ByteArray) : PlayResult
+        data class PlayFinished(override val id: String) : PlayResult
+
+    }
 
 }

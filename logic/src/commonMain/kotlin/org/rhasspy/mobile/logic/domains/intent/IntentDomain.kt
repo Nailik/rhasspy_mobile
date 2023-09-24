@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.logic.domains.intent
 
 import co.touchlab.kermit.Logger
+import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -18,11 +19,15 @@ import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.EndSession
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentNotRecognized
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentRecognitionResult
+import org.rhasspy.mobile.logic.connections.mqtt.MqttResult
+import org.rhasspy.mobile.logic.connections.mqtt.MqttResult.Error
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent
+import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.WebServerSay
 import org.rhasspy.mobile.logic.pipeline.HandleResult
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
 import org.rhasspy.mobile.logic.pipeline.IntentResult
@@ -97,13 +102,13 @@ internal class IntentDomain(
                 //await for EndSession or Say
                 return merge(
                     mqttConnection.incomingMessages
-                        .filterIsInstance<MqttConnectionEvent.EndSession>()
+                        .filterIsInstance<EndSession>()
                         .filter { it.sessionId == sessionId }
                         .map {
                             Handle(it.text)
                         },
                     webServerConnection.incomingMessages
-                        .filterIsInstance<WebServerConnectionEvent.WebServerSay>()
+                        .filterIsInstance<WebServerSay>()
                         .map {
                             Handle(it.text)
                         },
@@ -113,23 +118,23 @@ internal class IntentDomain(
     }
 
     private suspend fun awaitRhasspy2HermesMQTTIntent(sessionId: String, transcript: Transcript): IntentResult {
-        mqttConnection.recognizeIntent(
+        val result = mqttConnection.recognizeIntent(
             sessionId = sessionId,
             text = transcript.text,
-            onResult = { serviceState.value = it }
         )
+        if (result is Error) return NotRecognized
 
         return mqttConnection.incomingMessages
             .filterIsInstance<MqttIntentResult>()
             .filter { it.sessionId == sessionId }
             .map {
                 when (it) {
-                    is IntentRecognitionResult        -> Intent(it.intentName, it.intent)
-                    is IntentNotRecognized -> NotRecognized
+                    is IntentRecognitionResult -> Intent(it.intentName, it.intent)
+                    is IntentNotRecognized     -> NotRecognized
                 }
             }
             .first()
-            //TODO timeout
+        //TODO timeout
     }
 
     override fun stop() {
