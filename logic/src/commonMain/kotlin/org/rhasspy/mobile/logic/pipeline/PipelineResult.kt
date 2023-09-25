@@ -3,7 +3,9 @@ package org.rhasspy.mobile.logic.pipeline
 import kotlinx.coroutines.flow.Flow
 import org.rhasspy.mobile.logic.domains.snd.SndAudio
 
-sealed interface PipelineResult
+sealed interface PipelineResult {
+    data object End: PipelineResult
+}
 
 sealed interface TranscriptResult {
     data class Transcript(val text: String) : TranscriptResult

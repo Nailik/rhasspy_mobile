@@ -11,8 +11,8 @@ import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
 class AudioFileWriter(
     val path: Path,
     private val channel: Int,
-            private val sampleRate: Int,
-            private val bitRate: Int,
+    private val sampleRate: Int,
+    private val bitRate: Int,
 ) {
 
     private var fileHandle: FileHandle? = null

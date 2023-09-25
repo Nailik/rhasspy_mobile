@@ -17,6 +17,7 @@ import org.rhasspy.mobile.logic.domains.AudioFileWriter
 import org.rhasspy.mobile.logic.domains.snd.SndAudio.*
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
+import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
 import org.rhasspy.mobile.logic.pipeline.SndResult
 import org.rhasspy.mobile.logic.pipeline.SndResult.Played
@@ -42,6 +43,7 @@ internal class SndDomain(
     private val localAudioService: ILocalAudioPlayer,
     private val mqttConnection: IMqttConnection,
     private val httpClientConnection: IRhasspy2HermesConnection,
+    private val indication: IIndication,
 ) : ISndDomain {
 
     private val logger = Logger.withTag("AudioPlayingService")
@@ -59,7 +61,9 @@ internal class SndDomain(
         }
     }
 
-    override suspend fun awaitPlayAudio(audio: Audio):SndResult {
+    override suspend fun awaitPlayAudio(audio: Audio): SndResult {
+        indication.onPlayAudio()
+
         return when (params.option) {
             AudioPlayingOption.Local              -> onLocalPlayAudio(audio)
             AudioPlayingOption.Rhasspy2HermesHttp -> onRhasspy2HermesHttpPlayAudio(audio)

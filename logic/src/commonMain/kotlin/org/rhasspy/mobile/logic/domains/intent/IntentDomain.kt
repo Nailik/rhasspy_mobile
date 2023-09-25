@@ -28,6 +28,7 @@ import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnec
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.WebServerSay
+import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.pipeline.HandleResult
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
 import org.rhasspy.mobile.logic.pipeline.IntentResult
@@ -52,6 +53,7 @@ internal class IntentDomain(
     private val mqttConnection: IMqttConnection,
     private val webServerConnection: IWebServerConnection,
     private val rhasspy2HermesConnection: IRhasspy2HermesConnection,
+    private val indication: IIndication,
 ) : IIntentDomain {
 
     private val logger = Logger.withTag("IntentRecognitionService")
@@ -69,6 +71,8 @@ internal class IntentDomain(
     }
 
     override suspend fun awaitIntent(sessionId: String, transcript: Transcript): IntentResult {
+        indication.onThinking()
+
         return when (params.option) {
             IntentRecognitionOption.Rhasspy2HermesHttp ->
                 awaitRhasspy2HermesHttpIntent(

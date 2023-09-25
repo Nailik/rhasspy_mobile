@@ -30,6 +30,11 @@ interface Pipeline {
 
 }
 
+//TODO run pipeline end -> if succes indication idle if not indication error
+
+//TODO run pipelines after wakeword
+//TODO when no pipeline is running, say and playbytes endpoints (mqtt and webserver) are allowed
+//TODO after pipeline end indication is reset
 
 fun main(pipelineImpl: PipelineImpl,
          private val wakeDomain: IWakeDomain,

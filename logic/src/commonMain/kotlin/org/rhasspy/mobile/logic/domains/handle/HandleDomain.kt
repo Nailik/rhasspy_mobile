@@ -21,6 +21,7 @@ import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnection
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.WebServerSay
+import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.pipeline.HandleResult
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
 import org.rhasspy.mobile.logic.pipeline.HandleResult.NotHandled
@@ -46,6 +47,7 @@ internal class HandleDomain(
     private val mqttConnection: IMqttConnection,
     private val homeAssistantConnection: IHomeAssistantConnection,
     private val webServerConnection: IWebServerConnection,
+    private val indication: IIndication,
 ) : IHandleDomain {
 
     private val logger = Logger.withTag("IntentHandlingService")
@@ -60,6 +62,8 @@ internal class HandleDomain(
     }
 
     override suspend fun awaitIntentHandle(sessionId: String, intent: Intent) : HandleResult {
+        indication.onThinking()
+
         return when (params.option) {
             IntentHandlingOption.HomeAssistant      -> awaitHomeAssistantHandle(sessionId, intent)
             IntentHandlingOption.Disabled           -> NotHandled
@@ -73,7 +77,7 @@ internal class HandleDomain(
         }
     }
 
-    private suspend fun awaitHomeAssistantIntentHandle(intent: Intent) : HandleResult{
+    private suspend fun awaitHomeAssistantIntentHandle(intent: Intent) : HandleResult {
         return when (val result = homeAssistantConnection.awaitIntent(intent.intentName, intent.intent)) {
             is HttpClientResult.HttpClientError -> NotHandled
             is HttpClientResult.Success         -> Handle(result.data ?: return NotHandled)

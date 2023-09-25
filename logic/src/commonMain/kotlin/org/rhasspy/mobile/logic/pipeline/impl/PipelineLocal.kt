@@ -31,16 +31,10 @@ class PipelineLocal(
     private val sndDomain: ISndDomain,
     private val ttsDomain: ITtsDomain,
     private val vadDomain: IVadDomain,
-    private val indication: IIndication,
     private val audioFocus: IAudioFocus,
 ) : IPipeline {
 
-    override suspend fun runPipeline(): PipelineResult {
-        val sessionId = ""
-
-        indication.onRecording()
-        audioFocus.request(Record)
-
+    override suspend fun runPipeline(sessionId: String): PipelineResult {
         //transcript audio to text from voice start till voice stop
         val transcript = when (
             val result = asrDomain.awaitTranscript(
@@ -57,7 +51,6 @@ class PipelineLocal(
         }
 
         //find intent from text, eventually already handles
-        indication.onThinking()
         val intent = intentDomain.awaitIntent(
             sessionId = sessionId,
             transcript = transcript

@@ -4,6 +4,6 @@ import org.rhasspy.mobile.logic.pipeline.PipelineResult
 
 interface IPipeline {
 
-    suspend fun runPipeline(): PipelineResult
+    suspend fun runPipeline(sessionId: String): PipelineResult
 
 }

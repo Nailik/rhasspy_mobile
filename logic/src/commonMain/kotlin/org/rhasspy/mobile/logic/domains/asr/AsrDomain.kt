@@ -3,6 +3,8 @@ package org.rhasspy.mobile.logic.domains.asr
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason
+import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.AsrDomainData
 import org.rhasspy.mobile.data.service.ServiceState
@@ -14,9 +16,13 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrError
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrTextCaptured
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
+import org.rhasspy.mobile.logic.domains.AudioFileWriter
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
 import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceStart
 import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceStopped
+import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
+import org.rhasspy.mobile.logic.local.file.IFileStorage
+import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.TranscriptError
@@ -51,6 +57,9 @@ internal class AsrDomain(
     private val params: AsrDomainData,
     private val mqttConnection: IMqttConnection,
     private val rhasspy2HermesConnection: IRhasspy2HermesConnection,
+    private val indication: IIndication,
+    private val fileStorage: IFileStorage,
+    private val audioFocus: IAudioFocus,
 ) : IAsrDomain {
 
     private val logger = Logger.withTag("SpeechToTextService")
@@ -58,6 +67,8 @@ internal class AsrDomain(
     override val serviceState = MutableStateFlow<ServiceState>(Loading)
 
     private val scope = CoroutineScope(Dispatchers.IO)
+
+    private var audioFileWriter: AudioFileWriter? = null
 
     init {
         serviceState.value = when (params.option) {
@@ -73,10 +84,11 @@ internal class AsrDomain(
         awaitVoiceStart: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStart,
         awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStopped,
     ): TranscriptResult {
+        indication.onRecording()
+
         //wait for voice to start
         awaitVoiceStart(audioStream)
 
-        val asrFileWriter: AsrFileWriter,
         //open the file asr audio file to write into
         asrFileWriter.openFile()
 
@@ -95,6 +107,7 @@ internal class AsrDomain(
                 )
             SpeechToTextOption.Disabled           -> TranscriptError
         }.also {
+            audioFocus.abandon(Record)
             //close asr audio file
             asrFileWriter.closeFile()
         }
@@ -105,18 +118,32 @@ internal class AsrDomain(
         awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStopped,
     ): TranscriptResult {
 
+        var audioFileWriter: AudioFileWriter? = null
+
         val saveDataJob = scope.launch {
             audioStream.collectLatest { chunk ->
-                asrFileWriter.writeToFile(chunk)
+                if (audioFileWriter == null) {
+                    audioFileWriter = AudioFileWriter(
+                        path = fileStorage.speechToTextAudioFile,
+                        channel = chunk.channel.value,
+                        sampleRate = chunk.sampleRate.value,
+                        bitRate = chunk.encoding.bitRate,
+                    ).apply {
+                        openFile()
+                    }
+                }
+                audioFileWriter?.writeToFile(chunk.data)
             }
         }
+
+        audioFileWriter?.closeFile()
 
         //TODO timeout
         awaitVoiceStopped(audioStream)
 
         saveDataJob.cancel()
 
-        val result = rhasspy2HermesConnection.speechToText(asrFileWriter.filePath)
+        val result = rhasspy2HermesConnection.speechToText(fileStorage.speechToTextAudioFile)
         serviceState.value = result.toServiceState()
 
         return when (result) {
@@ -140,7 +167,6 @@ internal class AsrDomain(
         val sendDataJob = scope.launch {
             audioStream.collectLatest { chunk ->
                 with(chunk) {
-                    asrFileWriter.writeToFile(chunk)
                     mqttConnection.asrAudioSessionFrame(
                         sessionId = sessionId,
                         sampleRate = sampleRate,
@@ -149,6 +175,17 @@ internal class AsrDomain(
                         data = data,
                         onResult = { serviceState.value = it }
                     )
+                    if (audioFileWriter == null) {
+                        audioFileWriter = AudioFileWriter(
+                            path = fileStorage.speechToTextAudioFile,
+                            channel = chunk.channel.value,
+                            sampleRate = chunk.sampleRate.value,
+                            bitRate = chunk.encoding.bitRate,
+                        ).apply {
+                            openFile()
+                        }
+                    }
+                    audioFileWriter?.writeToFile(chunk.data)
                 }
             }
         }
@@ -177,7 +214,7 @@ internal class AsrDomain(
     }
 
     override fun stop() {
-        asrFileWriter.closeFile()
+        audioFileWriter?.closeFile()
         scope.cancel()
     }
 
