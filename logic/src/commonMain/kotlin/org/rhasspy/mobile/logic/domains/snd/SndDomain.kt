@@ -158,7 +158,7 @@ internal class SndDomain(
         return  AudioSource.File(fileWriter.path)
     }
 
-    override fun stop() {
+    override fun dispose() {
         scope.cancel()
     }
 

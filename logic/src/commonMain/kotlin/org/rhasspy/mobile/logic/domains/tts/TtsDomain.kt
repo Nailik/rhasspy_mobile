@@ -151,6 +151,6 @@ internal class TtsDomain(
         }
     }
 
-    override fun stop() {}
+    override fun dispose() {}
 
 }

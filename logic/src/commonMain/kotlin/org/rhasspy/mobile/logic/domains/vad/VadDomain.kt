@@ -57,7 +57,7 @@ internal class VadDomain(
         return VoiceStopped
     }
 
-    override fun stop() {
+    override fun dispose() {
 
     }
 

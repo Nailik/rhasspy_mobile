@@ -104,6 +104,6 @@ internal class HandleDomain(
         ).first()
     }
 
-    override fun stop() { }
+    override fun dispose() { }
 
 }

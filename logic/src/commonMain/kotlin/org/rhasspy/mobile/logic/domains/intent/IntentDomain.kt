@@ -141,7 +141,7 @@ internal class IntentDomain(
         //TODO timeout
     }
 
-    override fun stop() {
+    override fun dispose() {
         scope.cancel()
     }
 

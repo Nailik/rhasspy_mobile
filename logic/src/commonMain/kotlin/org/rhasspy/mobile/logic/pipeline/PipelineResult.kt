@@ -3,30 +3,44 @@ package org.rhasspy.mobile.logic.pipeline
 import kotlinx.coroutines.flow.Flow
 import org.rhasspy.mobile.logic.domains.snd.SndAudio
 
-sealed interface PipelineResult {
-    data object End: PipelineResult
+enum class Source {
+    Local,
+    Rhasspy2HermesHttp,
+    Rhasspy2HermesMqtt,
 }
 
-sealed interface TranscriptResult {
-    data class Transcript(val text: String) : TranscriptResult
-    data object TranscriptError : TranscriptResult, PipelineResult
+sealed interface Result {
+    val source: Source
 }
 
-sealed interface IntentResult {
-    data class Intent(val intentName: String?, val intent: String) : IntentResult
-    data object NotRecognized :PipelineResult, IntentResult
+sealed interface PipelineResult: Result {
+    data class End(override val source: Source): PipelineResult
 }
 
-sealed interface HandleResult: IntentResult {
-    data class Handle(val text: String?) : HandleResult
-    data object NotHandled : HandleResult, PipelineResult
+sealed interface TranscriptResult : Result {
+    data class Transcript(val text: String, override val source: Source) : TranscriptResult
+    data class TranscriptError(override val source: Source) : TranscriptResult, PipelineResult
+    data object TranscriptDisabled : TranscriptResult, PipelineResult {
+        override val source: Source = Source.Local
+    }
+    data class TranscriptTimeout(override val source: Source) : TranscriptResult, PipelineResult {
 }
 
-sealed interface TtsResult {
-    data class Audio(val data: Flow<SndAudio>) : TtsResult
-    data object NotSynthesized : TtsResult, PipelineResult
+sealed interface IntentResult : Result{
+    data class Intent(val intentName: String?, val intent: String,override val source: Source) : IntentResult
+    data class NotRecognized(override val source: Source) :PipelineResult, IntentResult
 }
 
-sealed interface SndResult {
-    data object Played : SndResult, PipelineResult, TtsResult
+sealed interface HandleResult: IntentResult, Result {
+    data class Handle(val text: String?,override val source: Source) : HandleResult
+    data class NotHandled(override val source: Source) : HandleResult, PipelineResult
+}
+
+sealed interface TtsResult:Result {
+    data class Audio(val data: Flow<SndAudio>,override val source: Source) : TtsResult
+    data class NotSynthesized(override val source: Source) : TtsResult, PipelineResult
+}
+
+sealed interface SndResult: Result {
+    data class Played(override val source: Source) : SndResult, PipelineResult, TtsResult
 }

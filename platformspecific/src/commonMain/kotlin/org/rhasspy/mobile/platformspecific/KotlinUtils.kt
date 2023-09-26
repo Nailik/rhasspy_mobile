@@ -10,6 +10,23 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import kotlin.coroutines.resume
 import kotlin.math.roundToInt
+import kotlin.time.Duration
+
+@OptIn(FlowPreview::class)
+public fun <T> Flow<T>.timeoutWithDefault(
+    timeout: Duration,
+    default: T,
+): Flow<T> =
+    timeout(timeout).catch { exception ->
+        if (exception is TimeoutCancellationException) {
+            // Catch the TimeoutCancellationException emitted above.
+            // Emit desired item on timeout.
+            emit(default)
+        } else {
+            // Throw other exceptions.
+            throw exception
+        }
+    }
 
 fun <T1, T2, R> combineState(
     flow1: StateFlow<T1>,

@@ -94,7 +94,7 @@ internal class MicDomain(
         audioRecorder.stopRecording()
     }
 
-    override fun stop() {
+    override fun dispose() {
         scope.cancel()
     }
 
