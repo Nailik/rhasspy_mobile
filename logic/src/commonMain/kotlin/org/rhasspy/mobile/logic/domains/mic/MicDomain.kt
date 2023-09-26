@@ -7,9 +7,8 @@ import org.rhasspy.mobile.data.domain.MicDomainData
 import org.rhasspy.mobile.data.domain.VadDomainData
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.ServiceState.ErrorState.Error
-import org.rhasspy.mobile.data.service.ServiceState.Pending
-import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.combineStateFlow
@@ -19,7 +18,6 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 
 /**
  * records audio as soon as audioStream has subscribers
- * Collection may stop for a brief moment when micDomainData is changed
  */
 interface IMicDomain : IService {
 
@@ -27,24 +25,26 @@ interface IMicDomain : IService {
 
 }
 
+/**
+ * records audio as soon as audioStream has subscribers
+ */
 internal class MicDomain(
     val audioRecorder: IAudioRecorder,
     val microphonePermission: IMicrophonePermission,
-    val params: MicDomainData, //TODO microphone permision??
+    val params: MicDomainData,
 ) : IMicDomain {
 
-    override val audioStream = MutableSharedFlow<MicAudioChunk>()
+    override var hasError: ErrorState? = null
 
-    override val serviceState = MutableStateFlow<ServiceState>(Pending)
+    override val audioStream = MutableSharedFlow<MicAudioChunk>()
 
     private val isMicrophonePermissionGranted get() = microphonePermission.granted.value
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
     init {
-        serviceState.value = when (isMicrophonePermissionGranted) {
-            true  -> Success
-            false -> Error(MR.strings.microphonePermissionMissing.stable)
+        if(isMicrophonePermissionGranted) {
+            hasError = Error(MR.strings.microphonePermissionMissing.stable)
         }
 
         scope.launch {
