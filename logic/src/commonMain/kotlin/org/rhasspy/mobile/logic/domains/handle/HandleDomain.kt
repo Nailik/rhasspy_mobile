@@ -1,38 +1,33 @@
 package org.rhasspy.mobile.logic.domains.handle
 
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.HandleDomainData
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
-import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.EndSession
-import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.Say
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
-import org.rhasspy.mobile.logic.connections.webserver.WebServerConnection
-import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.WebServerSay
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.pipeline.HandleResult
-import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
-import org.rhasspy.mobile.logic.pipeline.HandleResult.NotHandled
-import org.rhasspy.mobile.logic.pipeline.IntentResult
+import org.rhasspy.mobile.logic.pipeline.HandleResult.*
 import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.HandleDomainEvent.HandledEvent
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.HandleDomainEvent.NotHandledEvent
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.IntentDomainEvent.IntentEvent
+import org.rhasspy.mobile.logic.pipeline.Source.*
+import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 
+/**
+ * HandleDomain handles an intent using the defined option
+ */
 interface IHandleDomain : IService {
 
+    /**
+     * sends Intent and waits for an HandleResult result, normally text that is to be spoken
+     */
     suspend fun awaitIntentHandle(sessionId: String, intent: Intent) : HandleResult
 
 }
@@ -52,24 +47,22 @@ internal class HandleDomain(
 
     private val logger = Logger.withTag("IntentHandlingService")
 
-    override val serviceState = MutableStateFlow<ServiceState>(Pending)
-
-    init {
-        serviceState.value = when (params.option) {
-            IntentHandlingOption.HomeAssistant      -> Success
-            IntentHandlingOption.Disabled           -> Disabled
-        }
-    }
-
+    /**
+     * sends Intent and waits for an HandleResult result, normally text that is to be spoken
+     */
     override suspend fun awaitIntentHandle(sessionId: String, intent: Intent) : HandleResult {
+        logger.d { "awaitIntentHandle for sessionId $sessionId and intent $intent" }
         indication.onThinking()
 
         return when (params.option) {
             IntentHandlingOption.HomeAssistant      -> awaitHomeAssistantHandle(sessionId, intent)
-            IntentHandlingOption.Disabled           -> NotHandled
+            IntentHandlingOption.Disabled           -> HandleDisabled
         }
     }
 
+    /**
+     * awaits for HomeAssistant to handle the intent
+     */
     private suspend fun awaitHomeAssistantHandle(sessionId: String, intent: Intent) : HandleResult {
         return when (params.homeAssistantIntentHandlingOption) {
             HomeAssistantIntentHandlingOption.Event  -> awaitHomeAssistantEventHandle(sessionId, intent)
@@ -77,30 +70,64 @@ internal class HandleDomain(
         }
     }
 
+    /**
+     * awaits for HomeAssistant to handle the intent on intent endpoint and reads text to be spoken from result
+     */
     private suspend fun awaitHomeAssistantIntentHandle(intent: Intent) : HandleResult {
+        logger.d { "awaitHomeAssistantIntentHandle for intent $intent" }
         return when (val result = homeAssistantConnection.awaitIntent(intent.intentName, intent.intent)) {
-            is HttpClientResult.HttpClientError -> NotHandled
-            is HttpClientResult.Success         -> Handle(result.data ?: return NotHandled)
+            is HttpClientResult.HttpClientError -> NotHandled(HomeAssistant)
+            is HttpClientResult.Success         ->
+                Handle(
+                    text = result.data ?: return NotHandled(source = HomeAssistant),
+                    volume = null,
+                    source = HomeAssistant
+                )
         }
     }
 
+    /**
+     * awaits for HomeAssistant to handle the intent on event endpoint, awaits end session or say from mqtt or say from webserver
+     */
     private suspend fun awaitHomeAssistantEventHandle(sessionId: String, intent: Intent) : HandleResult {
+        logger.d { "awaitHomeAssistantEventHandle for sessionId $sessionId and intent $intent" }
         homeAssistantConnection.awaitEvent(intent.intentName, intent.intent)
 
-        //TODO timeout
         //await for EndSession or Say
         return merge(
             mqttConnection.incomingMessages
                 .filterIsInstance<EndSession>()
                 .filter { it.sessionId == sessionId }
                 .map {
-                    Handle(it.text)
+                    Handle(
+                        text = it.text,
+                        volume = null,
+                        source = Rhasspy2HermesMqtt,
+                    )
+                },
+            mqttConnection.incomingMessages
+                .filterIsInstance<Say>()
+                .filter { it.sessionId == sessionId }
+                .filter { it.sessionId == "TODO" }
+                .map {
+                    Handle(
+                        text = it.text,
+                        volume = it.volume,
+                        source = Rhasspy2HermesMqtt,
+                    )
                 },
             webServerConnection.incomingMessages
                 .filterIsInstance<WebServerSay>()
                 .map {
-                    Handle(it.text)
+                    Handle(
+                        text = it.text,
+                        volume = null,
+                        source = WebServer,
+                    )
                 },
+        ).timeoutWithDefault(
+            timeout = params.homeAssistantEventTimeout,
+            default = NotHandled(HomeAssistant),
         ).first()
     }
 

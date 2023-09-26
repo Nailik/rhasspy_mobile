@@ -7,6 +7,8 @@ enum class Source {
     Local,
     Rhasspy2HermesHttp,
     Rhasspy2HermesMqtt,
+    HomeAssistant,
+    WebServer,
 }
 
 sealed interface Result {
@@ -20,10 +22,10 @@ sealed interface PipelineResult: Result {
 sealed interface TranscriptResult : Result {
     data class Transcript(val text: String, override val source: Source) : TranscriptResult
     data class TranscriptError(override val source: Source) : TranscriptResult, PipelineResult
+    data class TranscriptTimeout(override val source: Source) : TranscriptResult, PipelineResult
     data object TranscriptDisabled : TranscriptResult, PipelineResult {
         override val source: Source = Source.Local
     }
-    data class TranscriptTimeout(override val source: Source) : TranscriptResult, PipelineResult {
 }
 
 sealed interface IntentResult : Result{
@@ -32,8 +34,11 @@ sealed interface IntentResult : Result{
 }
 
 sealed interface HandleResult: IntentResult, Result {
-    data class Handle(val text: String?,override val source: Source) : HandleResult
+    data class Handle(val text: String?, val volume: Float?, override val source: Source) : HandleResult
     data class NotHandled(override val source: Source) : HandleResult, PipelineResult
+    data object HandleDisabled : HandleResult, PipelineResult {
+        override val source: Source = Source.Local
+    }
 }
 
 sealed interface TtsResult:Result {

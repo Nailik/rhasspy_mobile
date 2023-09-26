@@ -32,7 +32,7 @@ import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 import kotlin.time.Duration.Companion.seconds
 
 /**
- * AsrDomain checks tries to detect text within a Flow of MicAudioChunk Events using the defined option
+ * AsrDomain tries to detect text within a Flow of MicAudioChunk Events using the defined option
  */
 interface IAsrDomain : IService {
 
@@ -49,7 +49,7 @@ interface IAsrDomain : IService {
 }
 
 /**
- * AsrDomain checks tries to detect text within a Flow of MicAudioChunk Events using the defined option
+ * AsrDomain tries to detect text within a Flow of MicAudioChunk Events using the defined option
  */
 internal class AsrDomain(
     private val params: AsrDomainData,
@@ -147,6 +147,7 @@ internal class AsrDomain(
         audioStream: Flow<MicAudioChunk>,
         awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStopped,
     ): TranscriptResult {
+        logger.d { "awaitRhasspy2HermesMQTTTranscript for session $sessionId" }
 
         when (
             mqttConnection.startListening(
@@ -192,6 +193,7 @@ internal class AsrDomain(
                         text = it.text ?: return@map TranscriptError(Rhasspy2HermesMqtt),
                         source = Rhasspy2HermesMqtt
                     )
+
                     is AsrError        -> TranscriptError(Rhasspy2HermesMqtt)
                 }
             }
@@ -211,6 +213,7 @@ internal class AsrDomain(
      * closes file and cancels scope to stop all jobs
      */
     override fun dispose() {
+        logger.d { "dispose" }
         audioFileWriter?.closeFile()
         scope.cancel()
     }
@@ -218,7 +221,8 @@ internal class AsrDomain(
     /**
      * creates a file writer if null or returns current
      */
-    private fun getFileWriter(chunk: MicAudioChunk) : AudioFileWriter{
+    private fun getFileWriter(chunk: MicAudioChunk): AudioFileWriter {
+        logger.d { "getFileWriter $chunk" }
         return audioFileWriter ?: AudioFileWriter(
             path = fileStorage.speechToTextAudioFile,
             channel = chunk.channel.value,
