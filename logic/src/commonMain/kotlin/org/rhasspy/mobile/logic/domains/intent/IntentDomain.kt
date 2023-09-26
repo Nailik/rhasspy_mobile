@@ -1,11 +1,6 @@
 package org.rhasspy.mobile.logic.domains.intent
 
 import co.touchlab.kermit.Logger
-import com.benasher44.uuid.uuid4
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -13,8 +8,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.IntentDomainData
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
@@ -22,31 +15,36 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.EndSession
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentNotRecognized
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentRecognitionResult
-import org.rhasspy.mobile.logic.connections.mqtt.MqttResult
 import org.rhasspy.mobile.logic.connections.mqtt.MqttResult.Error
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
-import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.WebServerSay
 import org.rhasspy.mobile.logic.local.indication.IIndication
-import org.rhasspy.mobile.logic.pipeline.HandleResult
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
+import org.rhasspy.mobile.logic.pipeline.HandleResult.NotHandled
 import org.rhasspy.mobile.logic.pipeline.IntentResult
-import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
-import org.rhasspy.mobile.logic.pipeline.IntentResult.NotRecognized
+import org.rhasspy.mobile.logic.pipeline.IntentResult.*
+import org.rhasspy.mobile.logic.pipeline.Source
+import org.rhasspy.mobile.logic.pipeline.Source.*
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
+import org.rhasspy.mobile.platformspecific.timeoutWithDefault
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult as MqttIntentResult
 
+/**
+ * IntentDomain recognizes an intent from a transcript
+ */
 interface IIntentDomain : IService {
 
+    /**
+     * sends Text and waits for an IntentResult result
+     */
     suspend fun awaitIntent(sessionId: String, transcript: Transcript): IntentResult
 
 }
 
 /**
- * calls actions and returns result
- *
- * when data is null the service was most probably mqtt and will return result in a call function
+ * IntentDomain recognizes an intent from a transcript
  */
 internal class IntentDomain(
     private val params: IntentDomainData,
@@ -58,19 +56,11 @@ internal class IntentDomain(
 
     private val logger = Logger.withTag("IntentRecognitionService")
 
-    override val serviceState = MutableStateFlow<ServiceState>(Pending)
-
-    private val scope = CoroutineScope(Dispatchers.IO)
-
-    init {
-        serviceState.value = when (params.option) {
-            IntentRecognitionOption.Rhasspy2HermesHttp -> Success
-            IntentRecognitionOption.Rhasspy2HermesMQTT -> Success
-            IntentRecognitionOption.Disabled           -> Disabled
-        }
-    }
-
+    /**
+     * sends Text and waits for an IntentResult result
+     */
     override suspend fun awaitIntent(sessionId: String, transcript: Transcript): IntentResult {
+        logger.d { "awaitIntent for sessionId $sessionId and transcript $transcript" }
         indication.onThinking()
 
         return when (params.option) {
@@ -86,67 +76,109 @@ internal class IntentDomain(
                     transcript = transcript,
                 )
 
-            IntentRecognitionOption.Disabled           -> NotRecognized
+            IntentRecognitionOption.Disabled           ->
+                IntentDisabled
         }
     }
 
+    /**
+     * sends Text to Rhasspy2HermesHttp
+     * if NOT isRhasspy2HermesHttpHandleWithRecognition it returns the intent result
+     * else it awaits end session or say from mqtt or say from webserver
+     */
     private suspend fun awaitRhasspy2HermesHttpIntent(sessionId: String, transcript: Transcript): IntentResult {
-        val result = rhasspy2HermesConnection.recognizeIntent(transcript.text)
-        serviceState.value = result.toServiceState()
+        logger.d { "awaitIntent for sessionId $sessionId and transcript $transcript" }
 
-        //isRhasspy2HermesHttpHandleWithRecognition
-        return when (result) {
-            is HttpClientResult.HttpClientError -> NotRecognized
+        return when (val result = rhasspy2HermesConnection.recognizeIntent(transcript.text)) {
+            is HttpClientResult.HttpClientError -> NotRecognized(Rhasspy2HermesHttp)
             is HttpClientResult.Success         -> {
                 val intentName = readIntentNameFromJson(result.data)
 
-                if (!params.isRhasspy2HermesHttpHandleWithRecognition) return Intent(intentName = intentName, intent = result.data)
+                if (!params.isRhasspy2HermesHttpHandleWithRecognition) {
+                    return Intent(
+                        intentName = intentName,
+                        intent = result.data,
+                        source = Rhasspy2HermesHttp
+                    )
+                }
 
-                //TODO timeout
                 //await for EndSession or Say
                 return merge(
                     mqttConnection.incomingMessages
                         .filterIsInstance<EndSession>()
                         .filter { it.sessionId == sessionId }
                         .map {
-                            Handle(it.text)
+                            Handle(
+                                text = it.text,
+                                volume = null,
+                                source = Source.Rhasspy2HermesMqtt,
+                            )
+                        },
+                    mqttConnection.incomingMessages
+                        .filterIsInstance<MqttConnectionEvent.Say>()
+                        .filter { it.sessionId == sessionId }
+                        .filter { it.siteId == ConfigurationSetting.siteId.value }
+                        .map {
+                            Handle(
+                                text = it.text,
+                                volume = it.volume,
+                                source = Source.Rhasspy2HermesMqtt,
+                            )
                         },
                     webServerConnection.incomingMessages
                         .filterIsInstance<WebServerSay>()
                         .map {
-                            Handle(it.text)
+                            Handle(
+                                text = it.text,
+                                volume = null,
+                                source = Source.WebServer,
+                            )
                         },
+                ).timeoutWithDefault(
+                    timeout = params.rhasspy2HermesHttpHandleTimeout,
+                    default = NotHandled(Source.HomeAssistant),
                 ).first()
             }
         }
     }
 
+    /**
+     * sends Text to Rhasspy2HermesMqtt
+     * awaits for MqttIntentResult or timeout
+     */
     private suspend fun awaitRhasspy2HermesMQTTIntent(sessionId: String, transcript: Transcript): IntentResult {
+        logger.d { "awaitIntent for sessionId $sessionId and transcript $transcript" }
         val result = mqttConnection.recognizeIntent(
             sessionId = sessionId,
             text = transcript.text,
         )
-        if (result is Error) return NotRecognized
+        if (result is Error) return NotRecognized(Rhasspy2HermesMqtt)
 
         return mqttConnection.incomingMessages
             .filterIsInstance<MqttIntentResult>()
             .filter { it.sessionId == sessionId }
             .map {
                 when (it) {
-                    is IntentRecognitionResult -> Intent(it.intentName, it.intent)
-                    is IntentNotRecognized     -> NotRecognized
+                    is IntentRecognitionResult ->
+                        Intent(
+                            intentName = it.intentName,
+                            intent = it.intent,
+                            source = Rhasspy2HermesMqtt,
+                        )
+
+                    is IntentNotRecognized     ->
+                        NotRecognized(source = Rhasspy2HermesMqtt)
                 }
-            }
-            .first()
-        //TODO timeout
+            }.timeoutWithDefault(
+                timeout = params.rhasspy2HermesMqttHandleTimeout,
+                default = NotHandled(Local),
+            ).first()
     }
 
-    override fun dispose() {
-        scope.cancel()
-    }
+    override fun dispose() { }
 
     /**
-     * read the intent name from json
+     * read the intent name from inten json
      */
     private fun readIntentNameFromJson(intent: String): String? {
         return try {

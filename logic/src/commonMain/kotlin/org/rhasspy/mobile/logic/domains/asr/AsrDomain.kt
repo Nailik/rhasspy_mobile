@@ -3,12 +3,9 @@ package org.rhasspy.mobile.logic.domains.asr
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.AsrDomainData
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
@@ -25,11 +22,11 @@ import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.pipeline.Source
+import org.rhasspy.mobile.logic.pipeline.Source.Local
 import org.rhasspy.mobile.logic.pipeline.Source.Rhasspy2HermesMqtt
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.*
 import org.rhasspy.mobile.platformspecific.timeoutWithDefault
-import kotlin.time.Duration.Companion.seconds
 
 /**
  * AsrDomain tries to detect text within a Flow of MicAudioChunk Events using the defined option
@@ -199,7 +196,7 @@ internal class AsrDomain(
             }
             .timeoutWithDefault(
                 timeout = params.mqttTimeout,
-                default = TranscriptTimeout(Rhasspy2HermesMqtt),
+                default = TranscriptTimeout(Local),
             )
             .first()
             .also {

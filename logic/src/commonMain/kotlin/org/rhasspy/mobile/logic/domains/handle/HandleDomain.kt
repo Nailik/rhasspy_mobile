@@ -19,6 +19,7 @@ import org.rhasspy.mobile.logic.pipeline.HandleResult.*
 import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
 import org.rhasspy.mobile.logic.pipeline.Source.*
 import org.rhasspy.mobile.platformspecific.timeoutWithDefault
+import org.rhasspy.mobile.settings.ConfigurationSetting
 
 /**
  * HandleDomain handles an intent using the defined option
@@ -108,7 +109,7 @@ internal class HandleDomain(
             mqttConnection.incomingMessages
                 .filterIsInstance<Say>()
                 .filter { it.sessionId == sessionId }
-                .filter { it.sessionId == "TODO" }
+                .filter { it.siteId == ConfigurationSetting.siteId.value }
                 .map {
                     Handle(
                         text = it.text,
@@ -127,7 +128,7 @@ internal class HandleDomain(
                 },
         ).timeoutWithDefault(
             timeout = params.homeAssistantEventTimeout,
-            default = NotHandled(HomeAssistant),
+            default = NotHandled(Local),
         ).first()
     }
 

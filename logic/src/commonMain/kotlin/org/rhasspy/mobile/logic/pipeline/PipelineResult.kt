@@ -31,6 +31,9 @@ sealed interface TranscriptResult : Result {
 sealed interface IntentResult : Result{
     data class Intent(val intentName: String?, val intent: String,override val source: Source) : IntentResult
     data class NotRecognized(override val source: Source) :PipelineResult, IntentResult
+    data object IntentDisabled : IntentResult, PipelineResult {
+        override val source: Source = Source.Local
+    }
 }
 
 sealed interface HandleResult: IntentResult, Result {
