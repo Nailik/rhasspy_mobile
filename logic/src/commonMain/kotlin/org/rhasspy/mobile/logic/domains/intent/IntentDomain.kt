@@ -8,6 +8,8 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.IntentDomainData
+import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.ErrorState
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
@@ -55,6 +57,8 @@ internal class IntentDomain(
 ) : IIntentDomain {
 
     private val logger = Logger.withTag("IntentRecognitionService")
+
+    override val hasError: ErrorState? = null
 
     /**
      * sends Text and waits for an IntentResult result
@@ -111,7 +115,7 @@ internal class IntentDomain(
                             Handle(
                                 text = it.text,
                                 volume = null,
-                                source = Source.Rhasspy2HermesMqtt,
+                                source = Rhasspy2HermesMqtt,
                             )
                         },
                     mqttConnection.incomingMessages
@@ -122,7 +126,7 @@ internal class IntentDomain(
                             Handle(
                                 text = it.text,
                                 volume = it.volume,
-                                source = Source.Rhasspy2HermesMqtt,
+                                source = Rhasspy2HermesMqtt,
                             )
                         },
                     webServerConnection.incomingMessages
@@ -131,12 +135,12 @@ internal class IntentDomain(
                             Handle(
                                 text = it.text,
                                 volume = null,
-                                source = Source.WebServer,
+                                source = WebServer,
                             )
                         },
                 ).timeoutWithDefault(
                     timeout = params.rhasspy2HermesHttpHandleTimeout,
-                    default = NotHandled(Source.HomeAssistant),
+                    default = NotHandled(Local),
                 ).first()
             }
         }

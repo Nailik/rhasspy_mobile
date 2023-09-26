@@ -51,4 +51,9 @@ sealed interface TtsResult:Result {
 
 sealed interface SndResult: Result {
     data class Played(override val source: Source) : SndResult, PipelineResult, TtsResult
+    data class NotPlayed(override val source: Source) : SndResult, PipelineResult
+
+    data object PlayDisabled : SndResult, PipelineResult {
+        override val source: Source = Source.Local
+    }
 }

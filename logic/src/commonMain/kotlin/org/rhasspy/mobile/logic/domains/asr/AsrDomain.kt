@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.AsrDomainData
+import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
@@ -58,6 +59,8 @@ internal class AsrDomain(
 ) : IAsrDomain {
 
     private val logger = Logger.withTag("SpeechToTextService")
+
+    override val hasError: ServiceState.ErrorState? = null
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
