@@ -48,8 +48,6 @@ interface IAsrDomain : IService {
 
 }
 
-//TODO incoming events from mqtt?
-//TODO stop from mqtt -> necessary do not call  mqttClientService.stopListening
 /**
  * AsrDomain checks tries to detect text within a Flow of MicAudioChunk Events using the defined option
  */
@@ -140,7 +138,7 @@ internal class AsrDomain(
      * collects audioStream into file until VoiceStopped and sends it to mqtt asrAudioSessionFrame
      * result is ignored because it may not be a problem when various frames are dropped
      *
-     * sends data until VoiceStopped or AsrResult is returned by mqtt
+     * sends data until VoiceStopped and then sends stopListening or AsrResult is returned by mqtt
      *
      * in case of stopping by VoiceStopped, AsrResult is awaited with timeout
      */
@@ -179,6 +177,10 @@ internal class AsrDomain(
         val awaitVoiceStoppedJob = scope.launch {
             awaitVoiceStopped(audioStream)
             sendDataJob.cancelAndJoin()
+
+            mqttConnection.stopListening(
+                sessionId = sessionId,
+            )
         }
 
         return mqttConnection.incomingMessages
