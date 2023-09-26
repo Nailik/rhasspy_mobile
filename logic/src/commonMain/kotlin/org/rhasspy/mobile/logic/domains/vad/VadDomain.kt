@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.domains.vad
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -7,6 +8,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapLatest
 import org.rhasspy.mobile.data.domain.VadDomainData
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.ErrorState
 import org.rhasspy.mobile.data.service.ServiceState.Pending
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption.Disabled
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption.Local
@@ -27,20 +29,15 @@ internal class VadDomain(
     private val params: VadDomainData
 ) : IVadDomain {
 
-    override val serviceState = MutableStateFlow<ServiceState>(Pending)
+    private val logger = Logger.withTag("VadDomain")
+
+    override val hasError: ErrorState? = null
 
     private var localSilenceDetection = SilenceDetection(
         automaticSilenceDetectionTime = params.automaticSilenceDetectionTime,
         automaticSilenceDetectionMinimumTime = params.automaticSilenceDetectionMinimumTime,
         automaticSilenceDetectionAudioLevel = params.automaticSilenceDetectionAudioLevel,
     )
-
-    init {
-        serviceState.value = when (params.option) {
-            Local    -> ServiceState.Success
-            Disabled -> ServiceState.Disabled
-        }
-    }
 
     override suspend fun awaitVoiceStart(audioStream: Flow<MicAudioChunk>): VoiceStart {
         return when (params.option) {

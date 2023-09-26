@@ -41,9 +41,7 @@ interface ISndDomain : IService {
 }
 
 /**
- * calls actions and returns result
- *
- * when data is null the service was most probably mqtt and will return result in a call function
+ * records audio as soon as audioStream has subscribers
  */
 internal class SndDomain(
     private val params: SndDomainData,

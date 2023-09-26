@@ -1,9 +1,5 @@
 package org.rhasspy.mobile.platformspecific.audiorecorder
 
-import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
-import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
-import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
-
 object AudioRecorderUtils {
 
     /**
@@ -22,6 +18,27 @@ object AudioRecorderUtils {
             channel = channel,
             audioSize = this.size.toLong()
         ) + this
+    }
+
+
+    fun ByteArray.getWavHeaderSampleRate()  : Int{
+        return byteArrayToIntLittleEndian(byteArrayOf(this[24], this[25], this[26], this[27]))
+    }
+
+    fun ByteArray.getWavHeaderBitRate() : Int{
+        return byteArrayToIntLittleEndian(byteArrayOf(this[34], this[35]))
+    }
+
+    fun ByteArray.getWavHeaderChannel(): Int {
+        return this[22].toInt()
+    }
+
+    private fun byteArrayToIntLittleEndian(byteArray: ByteArray): Int {
+        var result = 0
+        for (i in byteArray.indices) {
+            result = result or (byteArray[i].toInt() and 0xFF shl (i * 8))
+        }
+        return result
     }
 
     fun getWavHeader(

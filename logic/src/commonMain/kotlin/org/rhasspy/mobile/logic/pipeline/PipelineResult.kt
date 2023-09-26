@@ -47,12 +47,14 @@ sealed interface HandleResult: IntentResult, Result {
 sealed interface TtsResult:Result {
     data class Audio(val data: Flow<SndAudio>,override val source: Source) : TtsResult
     data class NotSynthesized(override val source: Source) : TtsResult, PipelineResult
+    data object TtsDisabled : TtsResult, PipelineResult {
+        override val source: Source = Source.Local
+    }
 }
 
 sealed interface SndResult: Result {
     data class Played(override val source: Source) : SndResult, PipelineResult, TtsResult
     data class NotPlayed(override val source: Source) : SndResult, PipelineResult
-
     data object PlayDisabled : SndResult, PipelineResult {
         override val source: Source = Source.Local
     }
