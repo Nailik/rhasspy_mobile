@@ -19,6 +19,11 @@ class SilenceDetection(
     private var silenceStartTime: Instant? = null
     private var recordingStartTime: Instant? = null
 
+    fun start() {
+        silenceStartTime = null
+        recordingStartTime = null
+    }
+
     //returns true when silence was detected
     fun onAudioChunk(chunk: MicAudioChunk): Boolean {
         //set recording start time

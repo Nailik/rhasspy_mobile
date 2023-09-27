@@ -17,8 +17,8 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttResult
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.domains.AudioFileWriter
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
-import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceStart
-import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceStopped
+import org.rhasspy.mobile.logic.domains.vad.VadEvent
+import org.rhasspy.mobile.logic.domains.vad.VadEvent.*
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
@@ -41,7 +41,7 @@ interface IAsrDomain : IService {
         sessionId: String,
         audioStream: Flow<MicAudioChunk>,
         awaitVoiceStart: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStart,
-        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStopped,
+        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
     ): TranscriptResult
 
 }
@@ -73,7 +73,7 @@ internal class AsrDomain(
         sessionId: String,
         audioStream: Flow<MicAudioChunk>,
         awaitVoiceStart: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStart,
-        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStopped,
+        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
     ): TranscriptResult {
         logger.d { "awaitTranscript for session $sessionId" }
 
@@ -110,7 +110,7 @@ internal class AsrDomain(
      */
     private suspend fun awaitRhasspy2HermesHttpTranscript(
         audioStream: Flow<MicAudioChunk>,
-        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStopped,
+        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
     ): TranscriptResult {
         logger.d { "awaitRhasspy2HermesHttpTranscript" }
 
@@ -145,7 +145,7 @@ internal class AsrDomain(
     private suspend fun awaitRhasspy2HermesMQTTTranscript(
         sessionId: String,
         audioStream: Flow<MicAudioChunk>,
-        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStopped,
+        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
     ): TranscriptResult {
         logger.d { "awaitRhasspy2HermesMQTTTranscript for session $sessionId" }
 

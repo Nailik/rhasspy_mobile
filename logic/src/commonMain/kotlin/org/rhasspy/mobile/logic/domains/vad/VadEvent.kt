@@ -4,6 +4,9 @@ sealed interface VadEvent {
 
     data object VoiceStart : VadEvent
 
-    data object VoiceStopped : VadEvent
+    sealed interface VoiceEnd : VadEvent {
+        data object VoiceStopped : VoiceEnd
+        data object VoiceTimeout : VoiceEnd
+    }
 
 }
