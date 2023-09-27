@@ -64,6 +64,7 @@ class PipelineManager(
 
 
     //TODO observe configuration -> Reset pipeline (close all domains) (no more save)
+    //TODO reload wake domain on changes all other domains on the fly? -> reload button and on page leave
 
     private fun awaitPipelineStart() {
 
@@ -119,10 +120,10 @@ class PipelineManager(
                         )
                     }
             ).first()
+
             //run pipeline with sessionId
             runPipeline(startEvent)
         }
-
 
     }
 
