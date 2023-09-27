@@ -13,7 +13,7 @@ sealed interface MqttConnectionEvent {
     data class SessionStarted(override val sessionId: String?) : SessionEvent, MqttConnectionEvent
     data class SessionEnded(override val sessionId: String?) : SessionEvent, MqttConnectionEvent
     data class HotWordDetected(val hotWord: String) : MqttConnectionEvent
-    data class StartListening(val sendAudioCaptured: Boolean) : MqttConnectionEvent
+    data class StartListening(override val sessionId: String?, val sendAudioCaptured: Boolean) : SessionEvent, MqttConnectionEvent
     data class StopListening(override val sessionId: String?) : SessionEvent, MqttConnectionEvent
 
     sealed interface AsrResult : SessionEvent, MqttConnectionEvent {

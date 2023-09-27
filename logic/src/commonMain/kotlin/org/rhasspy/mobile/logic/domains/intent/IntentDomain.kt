@@ -17,6 +17,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.EndSession
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentNotRecognized
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentRecognitionResult
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.Say
 import org.rhasspy.mobile.logic.connections.mqtt.MqttResult.Error
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
@@ -119,7 +120,7 @@ internal class IntentDomain(
                             )
                         },
                     mqttConnection.incomingMessages
-                        .filterIsInstance<MqttConnectionEvent.Say>()
+                        .filterIsInstance<Say>()
                         .filter { it.sessionId == sessionId }
                         .filter { it.siteId == ConfigurationSetting.siteId.value }
                         .map {

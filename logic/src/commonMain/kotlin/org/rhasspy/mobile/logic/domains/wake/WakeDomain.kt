@@ -10,6 +10,7 @@ import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.HotWordDetected
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
 import org.rhasspy.mobile.logic.domains.wake.WakeEvent.Detection
@@ -24,7 +25,9 @@ interface IWakeDomain : IService {
     /**
      * collect audioStream until a WakeResult is Detected or NotDetected
      */
-    suspend fun awaitDetection(audioStream: Flow<MicAudioChunk>): WakeEvent
+    val wakeEvents: Flow<WakeEvent>
+
+    fun awaitDetection(audioStream: Flow<MicAudioChunk>)
 
 }
 
@@ -38,7 +41,7 @@ internal class WakeDomain(
 
     private val logger = Logger.withTag("WakeWordService")
 
-    override val serviceState = MutableStateFlow<ServiceState>(Loading)
+    override val wakeEvents = MutableSharedFlow<WakeEvent>()
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
@@ -55,7 +58,8 @@ internal class WakeDomain(
     )
 
     init {
-        serviceState.value = when (params.wakeWordOption) {
+        //TODO has error
+        when (params.wakeWordOption) {
             WakeWordOption.Porcupine          -> initializePorcupine()
             WakeWordOption.Rhasspy2HermesMQTT -> Success
             WakeWordOption.Udp                -> initializeUdp()
@@ -66,12 +70,15 @@ internal class WakeDomain(
     /**
      * collectLatest of audioStream until a WakeResult is Detected or NotDetected
      */
-    override suspend fun awaitDetection(audioStream: Flow<MicAudioChunk>): WakeEvent {
-        return when (params.wakeWordOption) {
-            WakeWordOption.Porcupine          -> awaitPorcupineWakeDetection(audioStream)
-            WakeWordOption.Rhasspy2HermesMQTT -> awaitRhasspy2hermesMqttWakeDetection(audioStream)
-            WakeWordOption.Udp                -> awaitUdpWakeDetection(audioStream)
-            WakeWordOption.Disabled           -> NotDetected
+    override fun awaitDetection(audioStream: Flow<MicAudioChunk>) {
+        scope.launch {
+            val detection = when (params.wakeWordOption) {
+                WakeWordOption.Porcupine          -> awaitPorcupineWakeDetection(audioStream)
+                WakeWordOption.Rhasspy2HermesMQTT -> awaitRhasspy2hermesMqttWakeDetection(audioStream)
+                WakeWordOption.Udp                -> awaitUdpWakeDetection(audioStream)
+                WakeWordOption.Disabled           -> NotDetected
+            }
+            wakeEvents.emit(detection)
         }
     }
 

@@ -25,6 +25,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.A
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrTextCaptured
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentNotRecognized
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentRecognitionResult
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayBytes
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayFinished
 import org.rhasspy.mobile.logic.local.settings.IAppSettingsUtil
 import org.rhasspy.mobile.logic.middleware.Source
@@ -302,7 +303,7 @@ internal class MqttConnection(
             } else {
                 when (mqttTopic) {
                     MqttTopicsSubscription.PlayBytes    -> playBytes(payload)
-                    MqttTopicsSubscription.PlayFinished -> playFinishedCall()
+                    MqttTopicsSubscription.PlayFinished -> playFinishedCall(payload)
                     else                                -> {
                         logger.d { "isNotThisSiteId mqttTopic notFound $topic" }
                     }
@@ -347,7 +348,7 @@ internal class MqttConnection(
      *
      * boolean if message was published
      */
-    private suspend fun publishMessage(topic: String, message: MqttMessage) : ServiceState {
+    private suspend fun publishMessage(topic: String, message: MqttMessage): ServiceState {
         return try {
             if (params.mqttConnectionData.isSSLEnabled) {
                 message.msgId = id
@@ -511,15 +512,15 @@ internal class MqttConnection(
         channel: AudioFormatChannelType,
     ): ServiceState {
         val dataToSend = data.appendWavHeader(
-            sampleRate = sampleRate,
-            encoding = encoding,
-            channel = channel
+            sampleRate = sampleRate.value,
+            bitRate = encoding.bitRate,
+            channel = channel.value,
         )
 
-       return publishMessage(
-           topic = MqttTopicsPublish.AsrAudioFrame.topic
+        return publishMessage(
+            topic = MqttTopicsPublish.AsrAudioFrame.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId),
-           message =  MqttMessage(dataToSend),
+            message = MqttMessage(dataToSend),
         )
     }
 
@@ -537,9 +538,9 @@ internal class MqttConnection(
         data: ByteArray,
     ): ServiceState {
         val dataToSend = data.appendWavHeader(
-            sampleRate = sampleRate,
-            encoding = encoding,
-            channel = channel
+            sampleRate = sampleRate.value,
+            bitRate = encoding.bitRate,
+            channel = channel.value,
         )
 
         return publishMessage(
@@ -633,9 +634,15 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      * sendAudioCaptured: bool = false - send audioCaptured after stop listening (Rhasspy only)
      * wakewordId: string? = null - id of wake word that triggered session (Rhasspy only)
+     * sessionId: string? = null - current session ID
      */
     private fun startListening(jsonObject: JsonObject) =
-        incomingMessages.tryEmit(StartListening(jsonObject[MqttParams.SendAudioCaptured.value]?.jsonPrimitive?.booleanOrNull == true))
+        incomingMessages.tryEmit(
+            StartListening(
+                sessionId = jsonObject.getSessionId(),
+                sendAudioCaptured = jsonObject[MqttParams.SendAudioCaptured.value]?.jsonPrimitive?.booleanOrNull == true
+            )
+        )
 
     /**
      * hermes/asr/startListening (JSON)
@@ -783,7 +790,7 @@ internal class MqttConnection(
      * hermes/intent/<intentName>
      * hermes/nlu/intentNotRecognized
      */
-    override suspend fun recognizeIntent(sessionId: String, text: String) : ServiceState{
+    override suspend fun recognizeIntent(sessionId: String, text: String): ServiceState {
         return publishMessage(
             MqttTopicsPublish.Query,
             createMqttMessage {
@@ -903,8 +910,8 @@ internal class MqttConnection(
      * Response(s)
      * hermes/audioServer/<siteId>/playFinished (JSON)
      */
-    private fun playBytes(byteArray: ByteArray) =
-        incomingMessages.tryEmit(PlayBytes(byteArray))
+    private fun playBytes(byteArray: ByteArray, requestId: String) =
+        incomingMessages.tryEmit(PlayBytes(requestId, byteArray))
 
     /**
      * hermes/audioServer/<siteId>/playFinished
@@ -914,11 +921,7 @@ internal class MqttConnection(
      * id: string = "" - requestId from request message
      */
     private fun playFinishedCall(jsonObject: JsonObject) =
-        incomingMessages.tryEmit(
-            PlayFinished(
-            id = jsonObject.getId() ?: ""
-        )
-        )
+        incomingMessages.tryEmit(PlayFinished(id = jsonObject.getId() ?: ""))
 
     /**
      * hermes/audioServer/<siteId>/playBytes/<requestId> (JSON)
@@ -931,7 +934,7 @@ internal class MqttConnection(
      * hermes/audioServer/<siteId>/playFinished (JSON)
      *
      */
-    override suspend fun playAudioRemote(audioSource: AudioSource, siteId: String, id: String): ServiceState {
+    override suspend fun playAudioRemote(audioSource: AudioSource, siteId: String, id: String): MqttResult {
         return publishMessage(
             MqttTopicsPublish.AudioOutputPlayBytes.topic
                 .set(MqttTopicPlaceholder.SiteId, siteId)
@@ -1005,6 +1008,9 @@ internal class MqttConnection(
 
     private fun JsonObject.getId(): String? =
         this[MqttParams.Id.value]?.jsonPrimitive?.content
+
+    private fun JsonObject.getRequestId(): String? =
+        this[MqttParams.RequestId.value]?.jsonPrimitive?.content
 
     private fun JsonObjectBuilder.put(key: MqttParams, element: Boolean): JsonElement? =
         put(key.value, element)

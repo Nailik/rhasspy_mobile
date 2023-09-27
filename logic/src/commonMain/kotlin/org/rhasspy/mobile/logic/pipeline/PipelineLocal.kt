@@ -1,5 +1,6 @@
-package org.rhasspy.mobile.logic.pipeline.impl
+package org.rhasspy.mobile.logic.pipeline
 
+import com.benasher44.uuid.uuid4
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
 import org.rhasspy.mobile.logic.domains.asr.IAsrDomain
 import org.rhasspy.mobile.logic.domains.handle.IHandleDomain
@@ -9,17 +10,11 @@ import org.rhasspy.mobile.logic.domains.snd.ISndDomain
 import org.rhasspy.mobile.logic.domains.tts.ITtsDomain
 import org.rhasspy.mobile.logic.domains.vad.IVadDomain
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
-import org.rhasspy.mobile.logic.local.indication.IIndication
-import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
-import org.rhasspy.mobile.logic.pipeline.HandleResult.NotHandled
-import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
-import org.rhasspy.mobile.logic.pipeline.IntentResult.NotRecognized
-import org.rhasspy.mobile.logic.pipeline.PipelineResult
-import org.rhasspy.mobile.logic.pipeline.SndResult.Played
-import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
-import org.rhasspy.mobile.logic.pipeline.TranscriptResult.TranscriptError
-import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
-import org.rhasspy.mobile.logic.pipeline.TtsResult.NotSynthesized
+import org.rhasspy.mobile.logic.pipeline.HandleResult.*
+import org.rhasspy.mobile.logic.pipeline.IntentResult.*
+import org.rhasspy.mobile.logic.pipeline.SndResult.*
+import org.rhasspy.mobile.logic.pipeline.TranscriptResult.*
+import org.rhasspy.mobile.logic.pipeline.TtsResult.*
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
@@ -34,7 +29,11 @@ class PipelineLocal(
     private val audioFocus: IAudioFocus,
 ) : IPipeline {
 
-    override suspend fun runPipeline(sessionId: String): PipelineResult {
+    override suspend fun runPipeline(startEvent: StartEvent): PipelineResult {
+
+        //use session id from event or create own one
+        val sessionId = startEvent.sessionId ?: uuid4().toString()
+
         //transcript audio to text from voice start till voice stop
         val transcript = when (
             val result = asrDomain.awaitTranscript(
@@ -46,8 +45,10 @@ class PipelineLocal(
                 audioFocus.abandon(Record)
             }
         ) {
-            is Transcript      -> result
-            is TranscriptError -> return result
+            is Transcript         -> result
+            is TranscriptError    -> return result
+            is TranscriptDisabled -> return result
+            is TranscriptTimeout  -> return result
         }
 
         //find intent from text, eventually already handles
@@ -58,21 +59,24 @@ class PipelineLocal(
 
         //handle intent
         val handle = when (intent) {
-            is Handle        -> intent
-            is NotHandled    -> return intent
-            is Intent        -> {
+            is Handle         -> intent
+            is NotHandled     -> return intent
+            is Intent         -> {
                 when (
                     val result = handleDomain.awaitIntentHandle(
                         sessionId = sessionId,
                         intent = intent
                     )
                 ) {
-                    is Handle     -> result
-                    is NotHandled -> return result
+                    is Handle         -> result
+                    is NotHandled     -> return result
+                    is HandleDisabled -> return result
                 }
             }
 
-            is NotRecognized -> return intent
+            is NotRecognized  -> return intent
+            is HandleDisabled -> return intent
+            is IntentDisabled -> return intent
         }
 
         //translate handle text to speech
@@ -85,12 +89,14 @@ class PipelineLocal(
             is Audio          -> result
             is NotSynthesized -> return result
             is Played         -> return result
+            is TtsDisabled    -> return result
         }
 
-        indication.onPlayAudio()
         //play audio
-        when (val result = sndDomain.awaitPlayAudio(tts)) {
-            is Played -> return result
+        return when (val result = sndDomain.awaitPlayAudio(tts)) {
+            is Played       -> result
+            is NotPlayed    -> result
+            is PlayDisabled -> result
         }
     }
 

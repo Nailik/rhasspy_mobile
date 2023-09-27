@@ -2,6 +2,7 @@ package org.rhasspy.mobile.platformspecific.mqtt
 
 enum class MqttParams(val value: String) {
     Id("id"),
+    RequestId("id"),
     SessionId("sessionId"),
     SiteId("siteId"),
     ModelId("modelId"),

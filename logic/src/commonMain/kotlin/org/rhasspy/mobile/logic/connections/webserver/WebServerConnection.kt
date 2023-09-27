@@ -298,7 +298,7 @@ internal class WebServerConnection(
      * POST to play last recorded voice command
      */
     private fun playRecordingPost(): WebServerResult {
-        serviceMiddleware.playRecording()
+        serviceMiddleware.playRecording() //TODO to output on output
         return Ok
     }
 
