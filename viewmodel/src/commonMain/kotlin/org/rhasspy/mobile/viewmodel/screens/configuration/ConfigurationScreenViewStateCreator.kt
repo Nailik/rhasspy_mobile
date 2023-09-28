@@ -51,12 +51,6 @@ class ConfigurationScreenViewStateCreator(
         homeAssistantConnection.connectionState,
         mqttConnection.connectionState,
         webServerConnection.connectionState,
-        wakeWordService.serviceState,
-        speechToTextService.serviceState,
-        intentRecognitionService.serviceState,
-        textToSpeechService.serviceState,
-        audioPlayingService.serviceState,
-        intentHandlingService.serviceState
     ).mapReadonlyState { arr ->
         arr.any { it is ServiceState.ErrorState }
     }
@@ -91,10 +85,9 @@ class ConfigurationScreenViewStateCreator(
             ),
             dialogPipeline = DialogPipelineViewState(
                 dialogManagementOption = ConfigurationSetting.pipelineData.value.option,
-                serviceState = ServiceViewState(MutableStateFlow(ServiceState.Success)) //TODO remove
             ),
             audioInput = AudioInputViewState(
-                serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO #466
+                serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO #466 mic
             ),
             wakeWord = WakeWordViewState(
                 wakeWordValueOption = ConfigurationSetting.wakeDomainData.value.wakeWordOption,
@@ -102,27 +95,21 @@ class ConfigurationScreenViewStateCreator(
             ),
             speechToText = SpeechToTextViewState(
                 speechToTextOption = ConfigurationSetting.asrDomainData.value.option,
-                serviceState = ServiceViewState(speechToTextService.serviceState)
             ),
             voiceActivityDetection = VoiceActivityDetectionViewState(
                 voiceActivityDetectionOption = VoiceActivityDetectionOption.Disabled,
-                serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO #469
             ),
             intentRecognition = IntentRecognitionViewState(
                 intentRecognitionOption = ConfigurationSetting.intentDomainData.value.option,
-                serviceState = ServiceViewState(intentRecognitionService.serviceState)
             ),
             intentHandling = IntentHandlingViewState(
                 intentHandlingOption = ConfigurationSetting.handleDomainData.value.option,
-                serviceState = ServiceViewState(intentHandlingService.serviceState)
             ),
             textToSpeech = TextToSpeechViewState(
                 textToSpeechOption = ConfigurationSetting.ttsDomainData.value.option,
-                serviceState = ServiceViewState(textToSpeechService.serviceState)
             ),
             audioPlaying = AudioPlayingViewState(
                 audioPlayingOption = ConfigurationSetting.sndDomainData.value.option,
-                serviceState = ServiceViewState(audioPlayingService.serviceState)
             ),
             hasError = hasError
         )

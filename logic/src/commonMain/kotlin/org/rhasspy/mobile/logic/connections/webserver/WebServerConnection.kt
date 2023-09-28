@@ -23,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -71,7 +72,6 @@ interface IWebServerConnection : IConnection {
  * - else: determined by Ktor
  */
 internal class WebServerConnection(
-    private val pipeline: IPipeline,
     private val appSettingsUtil: IAppSettingsUtil,
     private val fileStorage: IFileStorage,
     private val mqttConnection: IMqttConnection,
@@ -79,6 +79,7 @@ internal class WebServerConnection(
 ) : IWebServerConnection {
 
     private val logger = Logger.withTag("WebServerConnection")
+    override val incomingMessages = MutableSharedFlow<WebServerConnectionEvent>()
 
     override val connectionState = MutableStateFlow<ServiceState>(ServiceState.Pending)
 
@@ -267,7 +268,7 @@ internal class WebServerConnection(
      * ?entity=<entity>&value=<value> - set custom entities/values in recognized intent
      */
     private fun listenForCommand(): WebServerResult {
-        pipeline.onEvent(WebServerListenForCommand)
+        incomingMessages.tryEmit(WebServerListenForCommand)
         return Ok
     }
 
@@ -324,7 +325,7 @@ internal class WebServerConnection(
             Error(WebServerConnectionErrorType.AudioContentTypeWarning)
         } else Ok
         //play even without content type
-        pipeline.onEvent(WebServerPlayWav(call.receive()))
+        incomingMessages.tryEmit(WebServerPlayWav(call.receive()))
 
         return result
     }
@@ -358,7 +359,7 @@ internal class WebServerConnection(
      * actually starts a session
      */
     private fun startRecording(): WebServerResult {
-        pipeline.onEvent(WebServerStartRecording)
+        incomingMessages.tryEmit(WebServerStartRecording)
         return Ok
     }
 
@@ -374,7 +375,7 @@ internal class WebServerConnection(
      * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
      */
     private fun stopRecording(): WebServerResult {
-        pipeline.onEvent(WebServerStopRecording)
+        incomingMessages.tryEmit(WebServerStopRecording)
         return Ok
     }
 
@@ -387,7 +388,7 @@ internal class WebServerConnection(
      * just like using say in the ui start screen but remote
      */
     private suspend fun say(call: ApplicationCall): WebServerResult {
-        pipeline.onEvent(WebServerSay(call.receive()))
+        incomingMessages.tryEmit(WebServerSay(call.receive()))
         return Ok
     }
 

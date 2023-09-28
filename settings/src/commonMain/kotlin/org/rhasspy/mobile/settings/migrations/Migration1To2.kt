@@ -13,6 +13,8 @@ import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.ISetting
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 internal object Migration1To2 : IMigration(1, 2) {
 
@@ -131,9 +133,10 @@ internal object Migration1To2 : IMigration(1, 2) {
 
         ConfigurationSetting.vadDomainData.value = VadDomainData(
             option = voiceActivityDetectionOption.value,
+            timeout = 20.seconds,
             automaticSilenceDetectionAudioLevel = automaticSilenceDetectionAudioLevel.value,
-            automaticSilenceDetectionTime = automaticSilenceDetectionTime.value,
-            automaticSilenceDetectionMinimumTime = automaticSilenceDetectionMinimumTime.value,
+            automaticSilenceDetectionTime = automaticSilenceDetectionTime.value?.milliseconds ?: 2.seconds,
+            automaticSilenceDetectionMinimumTime = automaticSilenceDetectionMinimumTime.value?.milliseconds ?: 2.seconds,
         )
 
         ConfigurationSetting.wakeDomainData.value = WakeDomainData(
@@ -149,26 +152,33 @@ internal object Migration1To2 : IMigration(1, 2) {
         ConfigurationSetting.asrDomainData.value = AsrDomainData(
             option = speechToTextOption.value,
             isUseSpeechToTextMqttSilenceDetection = isUseSpeechToTextMqttSilenceDetection.value,
+            mqttTimeout = 20.seconds,
         )
 
         ConfigurationSetting.handleDomainData.value = HandleDomainData(
             option = intentHandlingOption.value,
             homeAssistantIntentHandlingOption = intentHandlingHomeAssistantOption.value,
+            homeAssistantEventTimeout = 20.seconds,
         )
 
         ConfigurationSetting.intentDomainData.value = IntentDomainData(
             option = intentRecognitionOption.value,
             isRhasspy2HermesHttpHandleWithRecognition = true,
+            rhasspy2HermesHttpHandleTimeout = 20.seconds,
+            rhasspy2HermesMqttHandleTimeout = 20.seconds,
         )
 
         ConfigurationSetting.sndDomainData.value = SndDomainData(
             option = audioPlayingOption.value,
             localOutputOption = audioOutputOption.value,
             mqttSiteId = audioPlayingMqttSiteId.value,
+            audioTimeout = 20.seconds,
+            rhasspy2HermesMqttTimeout = 20.seconds,
         )
 
         ConfigurationSetting.ttsDomainData.value = TtsDomainData(
             option = textToSpeechOption.value,
+            rhasspy2HermesMqttTimeout = 20.seconds,
         )
 
         ConfigurationSetting.pipelineData.value = PipelineData(

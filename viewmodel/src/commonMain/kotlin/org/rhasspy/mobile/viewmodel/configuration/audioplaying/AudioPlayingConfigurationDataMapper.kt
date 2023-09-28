@@ -9,7 +9,9 @@ class AudioPlayingConfigurationDataMapper {
         return AudioPlayingConfigurationData(
             audioPlayingOption = data.option,
             audioOutputOption = data.localOutputOption,
-            audioPlayingMqttSiteId = data.mqttSiteId
+            audioPlayingMqttSiteId = data.mqttSiteId,
+            audioTimeout = data.audioTimeout,
+            rhasspy2HermesMqttTimeout = data.rhasspy2HermesMqttTimeout,
         )
     }
 
@@ -17,7 +19,9 @@ class AudioPlayingConfigurationDataMapper {
         return SndDomainData(
             option = data.audioPlayingOption,
             localOutputOption = data.audioOutputOption,
-            mqttSiteId = data.audioPlayingMqttSiteId
+            mqttSiteId = data.audioPlayingMqttSiteId,
+            audioTimeout = data.audioTimeout,
+            rhasspy2HermesMqttTimeout = data.rhasspy2HermesMqttTimeout,
         )
     }
 

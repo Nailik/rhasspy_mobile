@@ -45,7 +45,7 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
 
     protected var httpConnectionParams = settings.value
 
-    protected var coroutineScope = CoroutineScope(Dispatchers.IO)
+    private var coroutineScope = CoroutineScope(Dispatchers.IO)
 
     protected var httpClient: HttpClient? = null
 

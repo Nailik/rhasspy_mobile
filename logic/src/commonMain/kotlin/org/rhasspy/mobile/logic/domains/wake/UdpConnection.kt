@@ -70,9 +70,9 @@ internal class UdpConnection(
         data: ByteArray,
     ): Exception? {
         val dataToSend = data.appendWavHeader(
-            sampleRate = sampleRate,
-            encoding = encoding,
-            channel = channel
+            sampleRate = sampleRate.value,
+            bitRate = encoding.bitRate,
+            channel = channel.value,
         )
 
         if (AppSetting.isLogAudioFramesEnabled.value) {

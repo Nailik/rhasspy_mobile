@@ -7,6 +7,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.indication.IndicationState
 import org.rhasspy.mobile.data.indication.IndicationState.*
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.ErrorState
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
 import org.rhasspy.mobile.platformspecific.indication.NativeIndication
@@ -39,8 +40,7 @@ internal class Indication : IIndication {
     private val _indicationState = MutableStateFlow(Idle)
     override val indicationState = _indicationState.readOnly
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
-    override val serviceState = _serviceState.readOnly
+    override val hasError: ErrorState? = null
 
     /**
      * idle shows no indication and stops screen wakeup
@@ -121,5 +121,7 @@ internal class Indication : IIndication {
             localAudioService.playErrorSound()
         }
     }
+
+    override fun dispose() {}
 
 }

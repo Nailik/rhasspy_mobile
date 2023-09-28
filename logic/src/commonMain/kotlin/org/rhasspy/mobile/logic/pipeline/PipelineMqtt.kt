@@ -38,8 +38,12 @@ class PipelineMqtt(
 
     override suspend fun runPipeline(startEvent: StartEvent): PipelineResult {
 
+        if (startEvent.sessionId != null) return runPipeline(startEvent.sessionId)
+
+        mqttConnection.hotWordDetected(startEvent.wakeWord ?: "Unknown")
+
         //use session id from event or wait for session to start
-        val sessionId = startEvent.sessionId ?: mqttConnection.incomingMessages
+        val sessionId = mqttConnection.incomingMessages
             .filterIsInstance<SessionStarted>()
             .mapNotNull { it.sessionId }
             .first()

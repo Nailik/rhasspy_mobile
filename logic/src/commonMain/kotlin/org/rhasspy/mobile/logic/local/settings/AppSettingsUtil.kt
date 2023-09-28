@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.ErrorState
 import org.rhasspy.mobile.logic.IService
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.middleware.Source.*
@@ -11,8 +12,6 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 
 interface IAppSettingsUtil : IService {
-
-    override val serviceState: StateFlow<ServiceState>
 
     fun hotWordToggle(value: Boolean, source: Source)
     fun intentHandlingToggle(value: Boolean, source: Source)
@@ -28,8 +27,7 @@ internal class AppSettingsUtil : IAppSettingsUtil {
 
     private val logger = Logger.withTag("AppSettingsService")
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
-    override val serviceState = _serviceState.readOnly
+    override val hasError: ErrorState? = null
 
     override fun hotWordToggle(value: Boolean, source: Source) {
 
@@ -78,5 +76,7 @@ internal class AppSettingsUtil : IAppSettingsUtil {
         logger.d { "setAudioVolume volume: $volume" }
         AppSetting.volume.value = volume
     }
+
+    override fun dispose() {}
 
 }

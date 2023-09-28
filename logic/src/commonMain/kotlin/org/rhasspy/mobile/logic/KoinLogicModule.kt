@@ -11,6 +11,8 @@ import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnec
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.Rhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
 import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.Rhasspy3WyomingConnection
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
+import org.rhasspy.mobile.logic.connections.user.UserConnection
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnection
 import org.rhasspy.mobile.logic.domains.asr.AsrDomain
@@ -44,72 +46,128 @@ import org.rhasspy.mobile.logic.logger.DatabaseLogger
 import org.rhasspy.mobile.logic.logger.IDatabaseLogger
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.logic.pipeline.IPipeline
-import org.rhasspy.mobile.logic.pipeline.Pipeline
-import org.rhasspy.mobile.logic.pipeline.manager.PipelineManagerDisabled
-import org.rhasspy.mobile.logic.pipeline.manager.PipelineManagerLocal
-import org.rhasspy.mobile.logic.pipeline.manager.PipelineManagerMqtt
+import org.rhasspy.mobile.logic.pipeline.IPipelineManager
+import org.rhasspy.mobile.logic.pipeline.PipelineLocal
+import org.rhasspy.mobile.logic.pipeline.PipelineManager
+import org.rhasspy.mobile.logic.pipeline.PipelineMqtt
+import org.rhasspy.mobile.settings.ConfigurationSetting
 
 fun logicModule() = module {
-    singleOf(::PipelineManagerLocal)
-    singleOf(::PipelineManagerDisabled)
-    singleOf(::PipelineManagerMqtt)
-
-    single<IPipeline> {
-        Pipeline(
-            dispatcherProvider = get()
+    factory {
+        PipelineLocal(
+            asrDomain = get(),
+            handleDomain = get(),
+            intentDomain = get(),
+            micDomain = get(),
+            sndDomain = get(),
+            ttsDomain = get(),
+            vadDomain = get(),
+            audioFocus = get(),
+        )
+    }
+    factory {
+        PipelineMqtt(
+            mqttConnection = get(),
+            intentDomain = get(),
+            handleDomain = get(),
+            ttsDomain = get(),
+            asrDomain = get(),
+            micDomain = get(),
+            vadDomain = get(),
+            audioFocus = get(),
         )
     }
 
-    single<IMicDomain> {
+    single<IPipelineManager> {
+        PipelineManager(
+            mqttConnection = get(),
+            webServerConnection = get(),
+            userConnection = get(),
+            indication = get(),
+        )
+    }
+
+    factory<IMicDomain> {
         MicDomain(
-            pipeline = get(),
+            params = ConfigurationSetting.micDomainData.value,
             audioRecorder = get(),
             microphonePermission = get(),
         )
     }
-
-
-    single<IServiceMiddleware> {
-        ServiceMiddleware(
-        )
-    }
-
-    single<IAudioFocus> { AudioFocus() }
-
     single<ISndDomain> {
         SndDomain(
-            pipeline = get(),
+            params = ConfigurationSetting.sndDomainData.value,
+            fileStorage = get(),
             audioFocusService = get(),
             localAudioService = get(),
             mqttConnection = get(),
             httpClientConnection = get(),
+            indication = get(),
         )
-    }
-
-    single<IHomeAssistantConnection> { HomeAssistantConnection() }
-
-    single<IRhasspy2HermesConnection> { Rhasspy2HermesConnection() }
-    single<IRhasspy3WyomingConnection> { Rhasspy3WyomingConnection() }
-
-    single<IIndication> {
-        Indication()
     }
 
     single<IHandleDomain> {
         HandleDomain(
-            pipeline = get(),
+            params = ConfigurationSetting.handleDomainData.value,
+            mqttConnection = get(),
             homeAssistantConnection = get(),
-            httpClientConnection = get(),
+            webServerConnection = get(),
+            indication = get(),
         )
     }
 
     single<IIntentDomain> {
         IntentDomain(
-            pipeline = get(),
-            mqttClientConnection = get(),
-            httpClientConnection = get(),
+            params = ConfigurationSetting.intentDomainData.value,
+            mqttConnection = get(),
+            webServerConnection = get(),
+            rhasspy2HermesConnection = get(),
+            indication = get(),
         )
+    }
+    single<IAsrDomain> {
+        AsrDomain(
+            params = ConfigurationSetting.asrDomainData.value,
+            mqttConnection = get(),
+            rhasspy2HermesConnection = get(),
+            indication = get(),
+            fileStorage = get(),
+            audioFocus = get(),
+            userConnection = get(),
+        )
+    }
+
+    single<ITtsDomain> {
+        TtsDomain(
+            params = ConfigurationSetting.ttsDomainData.value,
+            mqttConnection = get(),
+            rhasspy2HermesConnection = get(),
+        )
+    }
+
+    single<IWakeDomain> {
+        WakeDomain(
+            params = ConfigurationSetting.wakeDomainData.value,
+            mqttConnection = get(),
+        )
+    }
+
+    single<IVadDomain> {
+        VadDomain(
+            params = ConfigurationSetting.vadDomainData.value,
+        )
+    }
+
+
+    single<IServiceMiddleware> {
+        ServiceMiddleware()
+    }
+
+    single<IAudioFocus> { AudioFocus() }
+
+
+    single<IIndication> {
+        Indication()
     }
 
     single<ILocalAudioPlayer> {
@@ -121,41 +179,19 @@ fun logicModule() = module {
 
     single<IAppSettingsUtil> { AppSettingsUtil() }
 
+    single<IUserConnection> { UserConnection() }
+    single<IHomeAssistantConnection> { HomeAssistantConnection() }
+    single<IRhasspy2HermesConnection> { Rhasspy2HermesConnection() }
+    single<IRhasspy3WyomingConnection> { Rhasspy3WyomingConnection() }
     singleOf(::MqttConnectionParamsCreator)
     single<IMqttConnection> {
         MqttConnection(
-            pipeline = get(),
             appSettingsUtil = get(),
-            paramsCreator = get()
+            paramsCreator = get(),
         )
     }
-
-    single<IAsrDomain> {
-        AsrDomain(
-            pipeline = get(),
-            fileStorage = get(),
-            mqttConnection = get(),
-            rhasspy2HermesConnection = get(),
-        )
-    }
-
-    single<ITtsDomain> {
-        TtsDomain(
-            pipeline = get(),
-            mqttConnection = get(),
-            rhasspy2HermesConnection = get(),
-        )
-    }
-
-    single<IWakeDomain> {
-        WakeDomain(
-            pipeline = get(),
-        )
-    }
-
     single<IWebServerConnection> {
         WebServerConnection(
-            pipeline = get(),
             appSettingsUtil = get(),
             fileStorage = get(),
             mqttConnection = get(),
@@ -173,15 +209,10 @@ fun logicModule() = module {
         )
     }
 
-    single<IVadDomain> {
-        VadDomain(
-            pipeline = get(),
-        )
-    }
-
     single<IFileStorage> {
         FilesStorage(
             nativeApplication = get()
         )
     }
+
 }

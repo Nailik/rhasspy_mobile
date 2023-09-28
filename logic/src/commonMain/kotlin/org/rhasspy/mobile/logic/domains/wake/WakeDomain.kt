@@ -41,6 +41,8 @@ internal class WakeDomain(
 
     private val logger = Logger.withTag("WakeWordService")
 
+    override var hasError: ErrorState? = null
+
     override val wakeEvents = MutableSharedFlow<WakeEvent>()
 
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -58,12 +60,11 @@ internal class WakeDomain(
     )
 
     init {
-        //TODO has error
-        when (params.wakeWordOption) {
+        hasError = when (params.wakeWordOption) {
             WakeWordOption.Porcupine          -> initializePorcupine()
-            WakeWordOption.Rhasspy2HermesMQTT -> Success
+            WakeWordOption.Rhasspy2HermesMQTT -> null
             WakeWordOption.Udp                -> initializeUdp()
-            WakeWordOption.Disabled           -> Disabled
+            WakeWordOption.Disabled           -> null
         }
     }
 
@@ -85,7 +86,7 @@ internal class WakeDomain(
     /**
      * setup porcupine with params, close old if already exists
      */
-    private fun initializePorcupine(): ServiceState {
+    private fun initializePorcupine(): ErrorState? {
         logger.d { "initializePorcupine" }
         porcupineWakeWordClient.close()
         porcupineWakeWordClient = PorcupineWakeWordClient(
@@ -97,14 +98,14 @@ internal class WakeDomain(
 
         return when (val result = porcupineWakeWordClient.initialize()) {
             is Exception -> ErrorState.Exception(result)
-            else         -> Success
+            else         -> null
         }
     }
 
     /**
      * setup udp connection with params, close old if already exists
      */
-    private fun initializeUdp(): ServiceState {
+    private fun initializeUdp(): ErrorState? {
         logger.d { "initializeUdp" }
         udpConnection.close()
         udpConnection = UdpConnection(
@@ -114,7 +115,7 @@ internal class WakeDomain(
 
         return when (val result = udpConnection.connect()) {
             is Exception -> ErrorState.Exception(result)
-            else         -> Success
+            else         -> null
         }
     }
 
@@ -150,7 +151,6 @@ internal class WakeDomain(
         val sendDataJob = scope.launch {
             audioStream.collectLatest { chunk ->
                 with(chunk) {
-                    //TODO use result
                     mqttConnection.asrAudioFrame(
                         sampleRate = sampleRate,
                         encoding = encoding,

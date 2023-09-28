@@ -7,6 +7,7 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
+import kotlin.time.Duration
 
 @Stable
 data class AudioPlayingConfigurationViewState internal constructor(
@@ -17,7 +18,9 @@ data class AudioPlayingConfigurationViewState internal constructor(
     data class AudioPlayingConfigurationData internal constructor(
         val audioPlayingOption: AudioPlayingOption,
         val audioOutputOption: AudioOutputOption,
-        val audioPlayingMqttSiteId: String
+        val audioPlayingMqttSiteId: String,
+        val audioTimeout: Duration,
+        val rhasspy2HermesMqttTimeout: Duration,
     ) : IConfigurationData {
 
         val audioPlayingOptionList: ImmutableList<AudioPlayingOption> = AudioPlayingOption.entries.toImmutableList()

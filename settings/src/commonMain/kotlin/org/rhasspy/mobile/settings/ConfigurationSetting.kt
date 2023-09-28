@@ -11,6 +11,8 @@ import org.rhasspy.mobile.data.pipeline.PipelineData
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.data.settings.SettingsEnum
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * used by di needs to be called after change to have an effect
@@ -102,9 +104,10 @@ object ConfigurationSetting {
         key = SettingsEnum.VoiceActivityDetectionDomain,
         initial = VadDomainData(
             option = VoiceActivityDetectionOption.Disabled,
+            timeout = 20.seconds,
             automaticSilenceDetectionAudioLevel = 40f,
-            automaticSilenceDetectionTime = 2000L,
-            automaticSilenceDetectionMinimumTime = 2000L,
+            automaticSilenceDetectionTime = 2.seconds,
+            automaticSilenceDetectionMinimumTime = 2.seconds,
         ),
         serializer = VadDomainData.serializer(),
     )
@@ -128,6 +131,7 @@ object ConfigurationSetting {
         initial = AsrDomainData(
             option = SpeechToTextOption.Disabled,
             isUseSpeechToTextMqttSilenceDetection = true,
+            mqttTimeout = 20.seconds,
         ),
         serializer = AsrDomainData.serializer(),
     )
@@ -137,6 +141,7 @@ object ConfigurationSetting {
         initial = HandleDomainData(
             option = IntentHandlingOption.Disabled,
             homeAssistantIntentHandlingOption = HomeAssistantIntentHandlingOption.Intent,
+            homeAssistantEventTimeout = 20.seconds,
         ),
         serializer = HandleDomainData.serializer(),
     )
@@ -145,6 +150,9 @@ object ConfigurationSetting {
         key = SettingsEnum.IntentDomain,
         initial = IntentDomainData(
             option = IntentRecognitionOption.Disabled,
+            isRhasspy2HermesHttpHandleWithRecognition = false,
+            rhasspy2HermesHttpHandleTimeout = 20.seconds,
+            rhasspy2HermesMqttHandleTimeout = 20.seconds,
         ),
         serializer = IntentDomainData.serializer(),
     )
@@ -155,6 +163,8 @@ object ConfigurationSetting {
             option = AudioPlayingOption.Local,
             localOutputOption = AudioOutputOption.Sound,
             mqttSiteId = "",
+            audioTimeout = 20.seconds,
+            rhasspy2HermesMqttTimeout = 20.seconds,
         ),
         serializer = SndDomainData.serializer(),
     )
@@ -163,6 +173,7 @@ object ConfigurationSetting {
         key = SettingsEnum.TtsDomain,
         initial = TtsDomainData(
             option = TextToSpeechOption.Disabled,
+            rhasspy2HermesMqttTimeout = 20.seconds,
         ),
         serializer = TtsDomainData.serializer(),
     )

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.merge
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.pipeline.PipelineData
+import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.HotWordDetected
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.SessionStarted
@@ -153,6 +154,14 @@ class PipelineManager(
                 }
             }
             awaitPipelineStart()
+        }
+    }
+
+    private fun getPipeline(): IPipeline {
+        when(params.option) {
+            DialogManagementOption.Local              -> TODO()
+            DialogManagementOption.Rhasspy2HermesMQTT -> TODO()
+            DialogManagementOption.Disabled           -> TODO()
         }
     }
 

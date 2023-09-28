@@ -134,7 +134,7 @@ tasks.register("updatePorcupineFiles") {
         val baseDest = "$projectDir/src/commonMain/resources/MR/files/porcupine"
 
         var src = "$baseUrl/lib/common"
-        val contentsFile = File(buildDir, "directory_contents.json")
+        val contentsFile = layout.buildDirectory.file("directory_contents.json").get().asFile
         download.run {
             src(src)
             dest(contentsFile)
