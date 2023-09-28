@@ -21,14 +21,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.*
+import org.rhasspy.mobile.data.service.ConnectionState
+import org.rhasspy.mobile.data.service.ConnectionState.*
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.content.elements.Icon
 
 @Composable
-fun EventStateIcon(serviceState: ServiceState) {
-    val rotation = if (serviceState == Loading) {
+fun EventStateIcon(connectionState: ConnectionState) {
+    val rotation = if (connectionState == Loading) {
         val infiniteTransition = rememberInfiniteTransition()
         val animateRotation by infiniteTransition.animateFloat(
             initialValue = 0f,
@@ -44,14 +44,14 @@ fun EventStateIcon(serviceState: ServiceState) {
 
     Icon(
         modifier = Modifier.rotate(rotation),
-        imageVector = when (serviceState) {
+        imageVector = when (connectionState) {
             is Pending    -> Icons.Outlined.Pending
             is Loading    -> Icons.Outlined.RotateRight
             is Success    -> Icons.Outlined.Done
             is ErrorState -> Icons.Filled.Error
             is Disabled   -> Icons.Outlined.Circle
         },
-        contentDescription = when (serviceState) {
+        contentDescription = when (connectionState) {
             is Pending    -> MR.strings.pending.stable
             is Loading    -> MR.strings.loading.stable
             is Success    -> MR.strings.success.stable
@@ -62,8 +62,8 @@ fun EventStateIcon(serviceState: ServiceState) {
 }
 
 @Composable
-fun EventStateIconTinted(serviceState: ServiceState) {
-    val rotation = if (serviceState == Loading) {
+fun EventStateIconTinted(connectionState: ConnectionState) {
+    val rotation = if (connectionState == Loading) {
         val infiniteTransition = rememberInfiniteTransition()
         val animateRotation by infiniteTransition.animateFloat(
             initialValue = 0f,
@@ -79,21 +79,21 @@ fun EventStateIconTinted(serviceState: ServiceState) {
 
     Icon(
         modifier = Modifier.rotate(rotation),
-        imageVector = when (serviceState) {
+        imageVector = when (connectionState) {
             is Pending    -> Icons.Outlined.Pending
             is Loading    -> Icons.Outlined.RotateRight
             is Success    -> Icons.Outlined.Done
             is ErrorState -> Icons.Filled.Error
             is Disabled   -> Icons.Outlined.Circle
         },
-        contentDescription = when (serviceState) {
+        contentDescription = when (connectionState) {
             is Pending    -> MR.strings.pending.stable
             is Loading    -> MR.strings.loading.stable
             is Success    -> MR.strings.success.stable
             is ErrorState -> MR.strings.error.stable
             is Disabled   -> MR.strings.disabled.stable
         },
-        tint = when (serviceState) {
+        tint = when (connectionState) {
             is Pending    -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
             is Loading    -> MaterialTheme.colorScheme.secondary
             is Success    -> MaterialTheme.colorScheme.primary
@@ -105,10 +105,10 @@ fun EventStateIconTinted(serviceState: ServiceState) {
 
 @Composable
 fun EventStateContent(
-    serviceState: ServiceState,
+    connectionState: ConnectionState,
     content: @Composable () -> Unit
 ) {
-    val contentColor = when (serviceState) {
+    val contentColor = when (connectionState) {
         is Pending    -> MaterialTheme.colorScheme.onSurfaceVariant
         is Loading    -> MaterialTheme.colorScheme.onSecondaryContainer
         is Success    -> MaterialTheme.colorScheme.onPrimaryContainer
@@ -124,7 +124,7 @@ fun EventStateContent(
 
 @Composable
 fun EventStateCard(
-    serviceState: ServiceState,
+    connectionState: ConnectionState,
     enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
@@ -133,7 +133,7 @@ fun EventStateCard(
         modifier = Modifier.clip(RoundedCornerShape(12.dp))
             .let { onClick?.let { it1 -> it.clickable(enabled = enabled, onClick = it1) } ?: it },
         colors = CardDefaults.outlinedCardColors(
-            containerColor = when (serviceState) {
+            containerColor = when (connectionState) {
                 is Pending    -> MaterialTheme.colorScheme.surfaceVariant
                 is Loading    -> MaterialTheme.colorScheme.secondaryContainer
                 is Success    -> MaterialTheme.colorScheme.primaryContainer
@@ -143,7 +143,7 @@ fun EventStateCard(
         ),
         content = {
             EventStateContent(
-                serviceState = serviceState,
+                connectionState = connectionState,
                 content = content
             )
         }

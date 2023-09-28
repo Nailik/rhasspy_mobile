@@ -9,15 +9,15 @@ import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperString
 import org.rhasspy.mobile.resources.MR
 
 @Stable
-sealed class ServiceState {
+sealed class ConnectionState {
 
-    data object Pending : ServiceState()
+    data object Pending : ConnectionState()
 
-    data object Loading : ServiceState()
+    data object Loading : ConnectionState()
 
-    data object Success : ServiceState()
+    data object Success : ConnectionState()
 
-    sealed class ErrorState : ServiceState() {
+    sealed class ErrorState : ConnectionState() {
 
         class Exception(val exception: kotlin.Exception? = null) : ErrorState()
 
@@ -25,7 +25,7 @@ sealed class ServiceState {
 
     }
 
-    data object Disabled : ServiceState()
+    data object Disabled : ConnectionState()
 
     fun getText(): TextWrapper {
         return when (this) {

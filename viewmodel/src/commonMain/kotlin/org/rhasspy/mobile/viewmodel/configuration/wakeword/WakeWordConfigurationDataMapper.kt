@@ -18,7 +18,6 @@ class WakeWordConfigurationDataMapper {
                 porcupineLanguage = data.wakeWordPorcupineLanguage,
                 defaultOptions = data.wakeWordPorcupineKeywordDefaultOptions.toImmutableList(),
                 customOptions = data.wakeWordPorcupineKeywordCustomOptions.toImmutableList(),
-                deletedCustomOptions = persistentListOf()
             ),
             wakeWordUdpConfigurationData = WakeWordUdpConfigurationData(
                 outputHost = data.wakeWordUdpOutputHost,

@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.logic.connections.mqtt
 
 import co.touchlab.kermit.Logger
-import com.benasher44.uuid.uuid4
 import io.ktor.utils.io.core.toByteArray
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +17,7 @@ import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
-import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.*
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrError
@@ -29,7 +28,6 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayFinished
 import org.rhasspy.mobile.logic.local.settings.IAppSettingsUtil
 import org.rhasspy.mobile.logic.middleware.Source
-import org.rhasspy.mobile.logic.pipeline.IPipeline
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
@@ -87,7 +85,7 @@ internal class MqttConnection(
 
     private val logger = Logger.withTag("MqttConnection")
 
-    override val connectionState = MutableStateFlow<ServiceState>(ServiceState.Pending)
+    override val connectionState = MutableStateFlow<ConnectionState>(ConnectionState.Pending)
 
     override val incomingMessages = MutableSharedFlow<MqttConnectionEvent>()
 
@@ -129,7 +127,7 @@ internal class MqttConnection(
     private fun start() {
         if (params.mqttConnectionData.isEnabled) {
             logger.d { "initialize" }
-            connectionState.value = ServiceState.Loading
+            connectionState.value = ConnectionState.Loading
 
             try {
                 client = buildClient()
@@ -142,16 +140,16 @@ internal class MqttConnection(
                     } catch (exception: Exception) {
                         //start error
                         logger.e(exception) { "client connect error" }
-                        connectionState.value = ServiceState.ErrorState.Exception(exception)
+                        connectionState.value = ConnectionState.ErrorState.Exception(exception)
                     }
                 }
             } catch (exception: Exception) {
                 //start error
                 logger.e(exception) { "client initialization error" }
-                connectionState.value = ServiceState.ErrorState.Exception(exception)
+                connectionState.value = ConnectionState.ErrorState.Exception(exception)
             }
         } else {
-            connectionState.value = ServiceState.Disabled
+            connectionState.value = ConnectionState.Disabled
         }
     }
 
@@ -165,7 +163,7 @@ internal class MqttConnection(
         retryJob = null
         client?.disconnect()
         client = null
-        connectionState.value = ServiceState.Disabled
+        connectionState.value = ConnectionState.Disabled
         _isHasStarted.value = false
         _isConnected.value = false
     }
@@ -201,10 +199,10 @@ internal class MqttConnection(
                     )
                 )?.also { error ->
                     logger.e { "connectClient error $error" }
-                    connectionState.value = MqttConnectionStateType.fromMqttStatus(error.statusCode).serviceState
+                    connectionState.value = MqttConnectionStateType.fromMqttStatus(error.statusCode).connectionState
                 }
             } else {
-                connectionState.value = ServiceState.Success
+                connectionState.value = ConnectionState.Success
             }
             //update value, may be used from reconnect
             _isConnected.value = it.isConnected.value == true
@@ -319,7 +317,7 @@ internal class MqttConnection(
     /**
      * Subscribes to topics that are necessary
      */
-    private suspend fun subscribeTopics(): ServiceState {
+    private suspend fun subscribeTopics(): ConnectionState {
         logger.d { "subscribeTopics" }
         var hasError = false
 
@@ -337,9 +335,9 @@ internal class MqttConnection(
         }
 
         return if (hasError) {
-            MqttConnectionStateType.TopicSubscriptionFailed.serviceState
+            MqttConnectionStateType.TopicSubscriptionFailed.connectionState
         } else {
-            ServiceState.Success
+            ConnectionState.Success
         }
     }
 
@@ -357,25 +355,25 @@ internal class MqttConnection(
                 client?.let { mqttClient ->
                     mqttClient.publish(topic, message)?.let {
                         logger.e { "mqtt publish error $it" }
-                        MqttConnectionStateType.fromMqttStatus(it.statusCode).serviceState
+                        MqttConnectionStateType.fromMqttStatus(it.statusCode).connectionState
                     } ?: run {
                         logger.v { "$topic mqtt message published" }
-                        ServiceState.Success
+                        ConnectionState.Success
                     }
                 } ?: run {
                     logger.a { "mqttClient not initialized" }
-                    ServiceState.ErrorState.Exception()
+                    ConnectionState.ErrorState.Exception()
                 }
 
             } else {
-                ServiceState.Success
+                ConnectionState.Success
             }
         } catch (exception: Exception) {
-            ServiceState.ErrorState.Exception(exception)
+            ConnectionState.ErrorState.Exception(exception)
         }.let {
             connectionState.value = it
 
-            if(it ==  ServiceState.Success )MqttResult.Success else MqttResult.Error
+            if(it ==  ConnectionState.Success )MqttResult.Success else MqttResult.Error
         }
     }
 

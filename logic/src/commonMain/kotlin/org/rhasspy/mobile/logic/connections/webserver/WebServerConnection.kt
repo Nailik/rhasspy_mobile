@@ -32,12 +32,11 @@ import org.koin.core.component.inject
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.ErrorState
+import org.rhasspy.mobile.data.service.ConnectionState
+import org.rhasspy.mobile.data.service.ConnectionState.ErrorState
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.http.StreamContent
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
-import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionErrorType.WakeOptionInvalid
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.*
 import org.rhasspy.mobile.logic.connections.webserver.WebServerResult.*
@@ -45,7 +44,6 @@ import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.settings.IAppSettingsUtil
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.Source
-import org.rhasspy.mobile.logic.pipeline.IPipeline
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonExists
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
@@ -81,7 +79,7 @@ internal class WebServerConnection(
     private val logger = Logger.withTag("WebServerConnection")
     override val incomingMessages = MutableSharedFlow<WebServerConnectionEvent>()
 
-    override val connectionState = MutableStateFlow<ServiceState>(ServiceState.Pending)
+    override val connectionState = MutableStateFlow<ConnectionState>(ConnectionState.Pending)
 
     private val nativeApplication by inject<NativeApplication>()
 
@@ -114,7 +112,7 @@ internal class WebServerConnection(
     private fun start() {
         if (params.isEnabled) {
             logger.d { "initialization" }
-            connectionState.value = ServiceState.Loading
+            connectionState.value = ConnectionState.Loading
 
             if (params.isSSLEnabled && !params.keyStoreFile?.let { Path.commonInternalFilePath(nativeApplication, it) }.commonExists()) {
                 connectionState.value = ErrorState.Error(MR.strings.certificate_missing.stable)
@@ -137,14 +135,14 @@ internal class WebServerConnection(
                     },
                 )
                 server?.start()
-                connectionState.value = ServiceState.Success
+                connectionState.value = ConnectionState.Success
             } catch (exception: Exception) {
                 //start error
                 logger.a(exception) { "initialization error" }
                 connectionState.value = ErrorState.Exception(exception)
             }
         } else {
-            connectionState.value = ServiceState.Disabled
+            connectionState.value = ConnectionState.Disabled
         }
     }
 
@@ -251,7 +249,7 @@ internal class WebServerConnection(
                 Ok          -> call.respond(HttpStatusCode.OK)
                 else        -> Unit
             }
-            ServiceState.Success
+            ConnectionState.Success
 
         } catch (exception: Exception) {
             logger.e(exception) { "evaluateCall error" }

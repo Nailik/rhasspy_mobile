@@ -2,9 +2,9 @@ package org.rhasspy.mobile.data.connection
 
 import org.rhasspy.mobile.data.connection.HttpClientResult.HttpClientError.KnownError
 import org.rhasspy.mobile.data.connection.HttpClientResult.HttpClientError.UnknownError
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.ErrorState
-import org.rhasspy.mobile.data.service.ServiceState.Success
+import org.rhasspy.mobile.data.service.ConnectionState
+import org.rhasspy.mobile.data.service.ConnectionState.ErrorState
+import org.rhasspy.mobile.data.service.ConnectionState.Success
 
 sealed class HttpClientResult<T> {
 
@@ -19,7 +19,7 @@ sealed class HttpClientResult<T> {
     }
 
 
-    fun toServiceState(): ServiceState {
+    fun toServiceState(): ConnectionState {
         return when (this) {
             is UnknownError -> ErrorState.Exception(this.exception)
             is Success      -> Success

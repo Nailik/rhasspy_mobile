@@ -22,9 +22,9 @@ import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.connection.HttpClientResult.HttpClientError.KnownError
 import org.rhasspy.mobile.data.connection.HttpClientResult.HttpClientError.UnknownError
 import org.rhasspy.mobile.data.connection.HttpConnectionData
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.ErrorState
-import org.rhasspy.mobile.data.service.ServiceState.Pending
+import org.rhasspy.mobile.data.service.ConnectionState
+import org.rhasspy.mobile.data.service.ConnectionState.ErrorState
+import org.rhasspy.mobile.data.service.ConnectionState.Pending
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.ktor.configureEngine
@@ -34,7 +34,7 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
 
     protected abstract val logger: Logger
 
-    override val connectionState = MutableStateFlow<ServiceState>(Pending)
+    override val connectionState = MutableStateFlow<ConnectionState>(Pending)
 
     protected val nativeApplication by inject<NativeApplication>()
 

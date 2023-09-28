@@ -228,7 +228,7 @@ private fun ConnectionListItem(
         secondaryText = { Text(secondaryText) },
         trailing = serviceViewState?.let {
             {
-                val serviceStateValue by serviceViewState.serviceState.collectAsState()
+                val serviceStateValue by serviceViewState.connectionState.collectAsState()
                 EventStateIconTinted(serviceStateValue)
             }
         }
@@ -252,7 +252,7 @@ private fun ConnectionListItem(
         secondaryText = { Text("${translate(MR.strings.host.stable)}: $secondaryText") },
         trailing = serviceViewState?.let {
             {
-                val serviceStateValue by serviceViewState.serviceState.collectAsState()
+                val serviceStateValue by serviceViewState.connectionState.collectAsState()
                 EventStateIconTinted(serviceStateValue)
             }
         }

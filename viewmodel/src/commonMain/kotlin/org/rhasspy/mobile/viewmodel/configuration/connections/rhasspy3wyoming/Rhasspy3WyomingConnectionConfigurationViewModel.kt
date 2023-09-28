@@ -21,7 +21,7 @@ class Rhasspy3WyomingConnectionConfigurationViewModel(
     private val mapper: Rhasspy3WyomingConnectionConfigurationDataMapper,
     rhasspy3WyomingConnection: IRhasspy3WyomingConnection
 ) : ConfigurationViewModel(
-    serviceState = rhasspy3WyomingConnection.connectionState
+    connectionState = rhasspy3WyomingConnection.connectionState
 ) {
 
     private val initialData get() = mapper(ConfigurationSetting.rhasspy3Connection.value)

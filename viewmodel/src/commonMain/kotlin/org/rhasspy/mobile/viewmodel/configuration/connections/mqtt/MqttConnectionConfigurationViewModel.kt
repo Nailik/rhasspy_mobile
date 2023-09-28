@@ -25,7 +25,7 @@ class MqttConnectionConfigurationViewModel(
     private val mapper: MqttConnectionConfigurationDataMapper,
     mqttConnection: IMqttConnection
 ) : ConfigurationViewModel(
-    serviceState = mqttConnection.connectionState
+    connectionState = mqttConnection.connectionState
 ) {
 
     private val initialData get() = mapper(ConfigurationSetting.mqttConnection.value)

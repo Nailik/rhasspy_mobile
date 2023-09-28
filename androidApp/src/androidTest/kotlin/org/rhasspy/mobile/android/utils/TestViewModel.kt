@@ -2,7 +2,7 @@ package org.rhasspy.mobile.android.utils
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
@@ -10,8 +10,8 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 class TestDomain : IDomain {
-    override val serviceState: StateFlow<ServiceState>
-        get() = MutableStateFlow(ServiceState.Disabled)
+    val connectionState: StateFlow<ConnectionState>
+        get() = MutableStateFlow(ConnectionState.Disabled)
 }
 
 data class TestConfigurationViewState(
@@ -24,11 +24,11 @@ data class TestConfigurationViewState(
 }
 
 class TestViewModel : ConfigurationViewModel(
-    serviceState = TestDomain().serviceState
+    connectionState = TestDomain().connectionState
 ) {
 
     private val _stateFlow = MutableStateFlow(
-        ConfigurationViewState(serviceViewState = ServiceViewState(serviceState = TestDomain().serviceState))
+        ConfigurationViewState(serviceViewState = ServiceViewState(connectionState = TestDomain().connectionState))
     )
 
     var onSave = false

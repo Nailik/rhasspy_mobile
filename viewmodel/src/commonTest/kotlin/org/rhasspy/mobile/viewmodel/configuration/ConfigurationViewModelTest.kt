@@ -7,7 +7,7 @@ import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
-import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.testutils.AppTest
@@ -30,7 +30,7 @@ class ConfigurationViewModelTest : AppTest() {
     private var onSave: Boolean = false
 
     private val testService = object : IDomain {
-        override val serviceState = MutableStateFlow(ServiceState.Success)
+        val connectionState = MutableStateFlow(ConnectionState.Success)
     }
 
     private lateinit var configurationViewState: MutableStateFlow<ConfigurationViewState>
@@ -44,7 +44,7 @@ class ConfigurationViewModelTest : AppTest() {
             }
         )
 
-        configurationViewModel = object : ConfigurationViewModel(testService.serviceState) {
+        configurationViewModel = object : ConfigurationViewModel(testService.connectionState) {
             override fun initViewStateCreator(configurationViewState: MutableStateFlow<ConfigurationViewState>): StateFlow<ConfigurationViewState> {
                 this@ConfigurationViewModelTest.configurationViewState = configurationViewState
                 return configurationViewState

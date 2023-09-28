@@ -4,7 +4,6 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.StateFlow
 import okio.Path
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Notification
-import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.sounds.SoundOption
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus

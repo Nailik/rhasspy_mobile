@@ -9,8 +9,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.*
+import org.rhasspy.mobile.data.service.ConnectionState
+import org.rhasspy.mobile.data.service.ConnectionState.*
 import org.rhasspy.mobile.data.viewstate.TextWrapper
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
@@ -53,9 +53,9 @@ fun ServiceStateHeader(
         modifier = modifier
             .fillMaxWidth(),
     ) {
-        val serviceState by serviceViewState.serviceState.collectAsState()
+        val serviceState by serviceViewState.connectionState.collectAsState()
         EventStateCard(
-            serviceState = serviceState,
+            connectionState = serviceState,
             enabled = enabled,
             onClick = onClick
         ) {
@@ -76,10 +76,10 @@ fun ServiceStateHeader(
  * text of service state
  */
 @Composable
-private fun ServiceStateText(serviceState: ServiceState) {
+private fun ServiceStateText(connectionState: ConnectionState) {
 
     Text(
-        resource = when (serviceState) {
+        resource = when (connectionState) {
             is Pending    -> MR.strings.pending.stable
             is Loading    -> MR.strings.loading.stable
             is Success    -> MR.strings.success.stable

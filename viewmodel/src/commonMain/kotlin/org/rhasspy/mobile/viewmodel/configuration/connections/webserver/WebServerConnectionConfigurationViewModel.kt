@@ -27,7 +27,7 @@ class WebServerConnectionConfigurationViewModel(
     private val nativeApplication: NativeApplication,
     webServerConnection: IWebServerConnection
 ) : ConfigurationViewModel(
-    serviceState = webServerConnection.connectionState
+    connectionState = webServerConnection.connectionState
 ) {
 
     private val initialData get() = mapper(ConfigurationSetting.localWebserverConnection.value)

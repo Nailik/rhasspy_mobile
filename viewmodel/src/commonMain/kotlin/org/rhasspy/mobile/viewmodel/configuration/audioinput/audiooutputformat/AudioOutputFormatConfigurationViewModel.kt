@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
@@ -16,7 +16,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.A
 class AudioOutputFormatConfigurationViewModel(
     private val mapper: AudioOutputFormatConfigurationDataMapper,
 ) : ConfigurationViewModel(
-    serviceState = MutableStateFlow(ServiceState.Success) //TODO
+    connectionState = MutableStateFlow(ConnectionState.Success) //TODO
 ) {
 
     private val initialData get() = mapper(ConfigurationSetting.micDomainData.value)

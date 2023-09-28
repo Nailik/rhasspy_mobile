@@ -3,11 +3,11 @@ package org.rhasspy.mobile.viewmodel.configuration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.platformspecific.combineState
 
 class IConfigurationViewStateCreator(
-    private val serviceState: StateFlow<ServiceState>
+    private val connectionState: StateFlow<ConnectionState>
 ) {
 
     operator fun <T> invoke(
@@ -19,7 +19,7 @@ class IConfigurationViewStateCreator(
         return combineState(
             viewState,
             configurationViewState,
-            serviceState
+            connectionState
         ) { viewStateValue, configurationViewStateValue, serviceState ->
 
             val isHasUnsavedChanges = viewStateValue.editData != init()
@@ -28,7 +28,7 @@ class IConfigurationViewStateCreator(
 
             configurationViewStateValue.copy(
                 hasUnsavedChanges = isHasUnsavedChanges,
-                isOpenServiceStateDialogEnabled = serviceState is ServiceState.ErrorState,
+                isOpenServiceStateDialogEnabled = serviceState is ConnectionState.ErrorState,
             )
 
         }

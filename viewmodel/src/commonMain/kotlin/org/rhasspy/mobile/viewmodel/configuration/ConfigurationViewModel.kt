@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.ServiceStateDialogState
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.UnsavedChangesDialogState
@@ -20,13 +20,13 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
 abstract class ConfigurationViewModel(
-    private val serviceState: StateFlow<ServiceState>
+    private val connectionState: StateFlow<ConnectionState>
 ) : ScreenViewModel() {
 
-    protected val viewStateCreator by inject<IConfigurationViewStateCreator> { parametersOf(serviceState) }
+    protected val viewStateCreator by inject<IConfigurationViewStateCreator> { parametersOf(connectionState) }
     private val dispatcher by inject<IDispatcherProvider>()
 
-    private val _configurationViewState = MutableStateFlow(ConfigurationViewState(serviceViewState = ServiceViewState(serviceState)))
+    private val _configurationViewState = MutableStateFlow(ConfigurationViewState(serviceViewState = ServiceViewState(connectionState)))
     val configurationViewState by lazy { initViewStateCreator(_configurationViewState) }
     abstract fun initViewStateCreator(configurationViewState: MutableStateFlow<ConfigurationViewState>): StateFlow<ConfigurationViewState>
 
@@ -46,7 +46,7 @@ abstract class ConfigurationViewModel(
             Discard                -> discard(false)
             Save                   -> save(false)
             OpenServiceStateDialog -> {
-                _configurationViewState.update { it.copy(dialogState = ServiceStateDialogState(serviceState.value.getText())) }
+                _configurationViewState.update { it.copy(dialogState = ServiceStateDialogState(connectionState.value.getText())) }
             }
 
             BackClick              -> navigator.onBackPressed()

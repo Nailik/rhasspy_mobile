@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.data.service.ServiceState.ErrorState
+import org.rhasspy.mobile.data.service.ConnectionState.ErrorState
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.ScreenContent
@@ -419,7 +419,7 @@ private fun ConfigurationListItem(
         secondaryText = { Text(secondaryText) },
         trailing = serviceViewState?.let {
             {
-                val serviceStateValue by serviceViewState.serviceState.collectAsState()
+                val serviceStateValue by serviceViewState.connectionState.collectAsState()
                 EventStateIconTinted(serviceStateValue)
             }
         }

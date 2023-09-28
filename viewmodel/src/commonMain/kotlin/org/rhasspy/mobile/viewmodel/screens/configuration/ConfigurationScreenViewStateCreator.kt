@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.viewmodel.screens.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.Disabled
+import org.rhasspy.mobile.data.service.ConnectionState
+import org.rhasspy.mobile.data.service.ConnectionState.Disabled
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
@@ -27,13 +27,7 @@ class ConfigurationScreenViewStateCreator(
     homeAssistantConnection: IHomeAssistantConnection,
     mqttConnection: IMqttConnection,
     webServerConnection: IWebServerConnection,
-    private val wakeWordService: IWakeDomain,
-    private val speechToTextService: IAsrDomain,
-    private val intentRecognitionService: IIntentDomain,
-    private val textToSpeechService: ITtsDomain,
-    private val audioPlayingService: ISndDomain,
-    private val dialogManagerService: IPipeline,
-    private val intentHandlingService: IHandleDomain,
+    private val wakeDomain: IWakeDomain,
 ) {
     private val hasConnectionError = combineStateFlow(
         rhasspy2HermesConnection.connectionState,
@@ -42,7 +36,7 @@ class ConfigurationScreenViewStateCreator(
         mqttConnection.connectionState,
         webServerConnection.connectionState,
     ).mapReadonlyState { arr ->
-        arr.any { it is ServiceState.ErrorState }
+        arr.any { it is ConnectionState.ErrorState }
     }
 
     private val hasError = combineStateFlow(
@@ -52,14 +46,14 @@ class ConfigurationScreenViewStateCreator(
         mqttConnection.connectionState,
         webServerConnection.connectionState,
     ).mapReadonlyState { arr ->
-        arr.any { it is ServiceState.ErrorState }
+        arr.any { it is ConnectionState.ErrorState }
     }
 
     private val viewState = MutableStateFlow(getViewState())
 
     init {
         combineStateFlow(
-            hasConnectionError,
+            wakeDomain.hasError,
             ConfigurationSetting.siteId.data,
             ConfigurationSetting.pipelineData.data,
             ConfigurationSetting.wakeDomainData.data,
@@ -81,7 +75,7 @@ class ConfigurationScreenViewStateCreator(
                 text = ConfigurationSetting.siteId.data
             ),
             connectionsViewState = ConnectionsViewState(
-                hasError = hasConnectionError.value
+                hasError = hasConnectionError
             ),
             dialogPipeline = DialogPipelineViewState(
                 dialogManagementOption = ConfigurationSetting.pipelineData.value.option,
@@ -91,7 +85,7 @@ class ConfigurationScreenViewStateCreator(
             ),
             wakeWord = WakeWordViewState(
                 wakeWordValueOption = ConfigurationSetting.wakeDomainData.value.wakeWordOption,
-                serviceState = ServiceViewState(wakeWordService.hasError)
+                error = wakeDomain.hasError.value
             ),
             speechToText = SpeechToTextViewState(
                 speechToTextOption = ConfigurationSetting.asrDomainData.value.option,

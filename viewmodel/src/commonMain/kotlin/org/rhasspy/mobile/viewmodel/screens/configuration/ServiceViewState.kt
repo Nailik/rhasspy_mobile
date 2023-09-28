@@ -2,9 +2,9 @@ package org.rhasspy.mobile.viewmodel.screens.configuration
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ConnectionState
 
 @Stable
 data class ServiceViewState(
-    val serviceState: StateFlow<ServiceState>
+    val connectionState: StateFlow<ConnectionState>
 )

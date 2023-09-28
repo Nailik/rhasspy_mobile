@@ -21,7 +21,7 @@ class Rhasspy2HermesConnectionConfigurationViewModel(
     private val mapper: Rhasspy2HermesConnectionConfigurationDataMapper,
     rhasspy2HermesConnection: IRhasspy2HermesConnection
 ) : ConfigurationViewModel(
-    serviceState = rhasspy2HermesConnection.connectionState
+    connectionState = rhasspy2HermesConnection.connectionState
 ) {
 
     private val initialData get() = mapper(ConfigurationSetting.rhasspy2Connection.value)

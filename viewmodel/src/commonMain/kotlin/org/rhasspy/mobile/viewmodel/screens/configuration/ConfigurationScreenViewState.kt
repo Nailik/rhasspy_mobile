@@ -2,9 +2,10 @@ package org.rhasspy.mobile.viewmodel.screens.configuration
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.ErrorState
+import org.rhasspy.mobile.data.service.ConnectionState
+import org.rhasspy.mobile.data.service.ConnectionState.ErrorState
 import org.rhasspy.mobile.data.service.option.*
+import org.rhasspy.mobile.data.viewstate.TextWrapper
 
 @Stable
 data class ConfigurationScreenViewState internal constructor(
@@ -29,7 +30,7 @@ data class ConfigurationScreenViewState internal constructor(
 
     @Stable
     data class ConnectionsViewState internal constructor(
-        val hasError: StateFlow<ErrorState?>,
+        val hasError: StateFlow<Boolean?>,
     )
 
     @Stable
@@ -45,7 +46,7 @@ data class ConfigurationScreenViewState internal constructor(
     @Stable
     data class WakeWordViewState internal constructor(
         val wakeWordValueOption: WakeWordOption,
-        val serviceState: ServiceViewState
+        val error: TextWrapper?,
     )
 
     @Stable
