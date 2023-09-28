@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
+import org.rhasspy.mobile.data.data.toLongOrZero
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption.Local
 import org.rhasspy.mobile.logic.domains.vad.IVadDomain
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
@@ -22,18 +23,18 @@ import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceAc
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.Change.SelectVoiceActivityDetectionOption
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.LocalSilenceDetectionUiEvent.Action.ToggleAudioLevelTest
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.LocalSilenceDetectionUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import kotlin.math.pow
+import kotlin.time.Duration.Companion.milliseconds
 
 @Stable
 class VoiceActivityDetectionConfigurationViewModel(
     private val nativeApplication: NativeApplication,
     private val mapper: VoiceActivityDetectionConfigurationDataMapper,
     audioRecorderViewStateCreator: AudioRecorderViewStateCreator,
-    service: IVadDomain,
     private val audioRecorder: IAudioRecorder,
-) : ConfigurationViewModel(
-    serviceState = service.serviceState
-) {
+) : ScreenViewModel() {
+
     private val dispatcher by inject<IDispatcherProvider>()
     private var wakeWordSetting = AppSetting.isHotWordEnabled.value
 
@@ -47,21 +48,10 @@ class VoiceActivityDetectionConfigurationViewModel(
         }
     }
 
-    private val initialData get() = mapper(ConfigurationSetting.vadDomainData.value)
-    private val _viewState = MutableStateFlow(VoiceActivityDetectionViewState(initialData))
+    private val _viewState = MutableStateFlow(VoiceActivityDetectionViewState( mapper(ConfigurationSetting.vadDomainData.value)))
     val viewState = _viewState.readOnly
 
     val audioRecorderViewState = audioRecorderViewStateCreator(viewState)
-
-    override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
-    ): StateFlow<ConfigurationViewState> {
-        return viewStateCreator(
-            init = ::initialData,
-            viewState = viewState,
-            configurationViewState = configurationViewState
-        )
-    }
 
     fun onEvent(event: VoiceActivityDetectionUiEvent) {
         when (event) {
@@ -122,23 +112,13 @@ class VoiceActivityDetectionConfigurationViewModel(
                             } else 0f
                         )
 
-                        is UpdateSilenceDetectionMinimumTime         -> copy(silenceDetectionMinimumTime = change.time.toLongOrNullOrConstant())
-                        is UpdateSilenceDetectionTime                -> copy(silenceDetectionTime = change.time.toLongOrNullOrConstant())
+                        is UpdateSilenceDetectionMinimumTime         -> copy(silenceDetectionMinimumTime = change.time.toLongOrZero().milliseconds)
+                        is UpdateSilenceDetectionTime                -> copy(silenceDetectionTime = change.time.toLongOrZero().milliseconds)
                     }
                 })
             })
         }
-    }
-
-    override fun onDiscard() {
-        stopRecording()
-        _viewState.update { it.copy(editData = initialData) }
-    }
-
-    override fun onSave() {
-        stopRecording()
         ConfigurationSetting.vadDomainData.value = mapper(_viewState.value.editData)
-        _viewState.update { it.copy(editData = initialData) }
     }
 
     private fun startRecording() {

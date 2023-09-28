@@ -6,6 +6,7 @@ import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
+import kotlin.time.Duration
 
 @Stable
 data class SpeechToTextConfigurationViewState internal constructor(
@@ -16,6 +17,7 @@ data class SpeechToTextConfigurationViewState internal constructor(
     data class SpeechToTextConfigurationData internal constructor(
         val speechToTextOption: SpeechToTextOption,
         val isUseSpeechToTextMqttSilenceDetection: Boolean,
+        val mqttTimeout: Duration,
     ) : IConfigurationData {
 
         val speechToTextOptions: ImmutableList<SpeechToTextOption> = SpeechToTextOption.entries.toImmutableList()

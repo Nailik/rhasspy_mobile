@@ -51,7 +51,6 @@ sealed interface WakeWordConfigurationUiEvent {
                 val value: Boolean
             ) : Change
 
-            data class UndoCustomKeywordDeleted(val item: PorcupineCustomKeyword) : Change
             data class AddPorcupineKeywordCustom(val path: Path) : Change
             data class DeletePorcupineKeywordCustom(val item: PorcupineCustomKeyword) : Change
 

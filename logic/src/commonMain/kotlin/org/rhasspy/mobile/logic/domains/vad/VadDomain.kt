@@ -5,12 +5,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.domain.VadDomainData
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.ErrorState
-import org.rhasspy.mobile.data.service.ServiceState.Pending
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption.Disabled
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption.Local
-import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
 import org.rhasspy.mobile.logic.domains.vad.VadEvent.*
 import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd.*
@@ -19,7 +16,7 @@ import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 /**
  * Vad Domain detects speech in an audio stream
  */
-interface IVadDomain : IService {
+interface IVadDomain : IDomain {
 
     suspend fun awaitVoiceStart(audioStream: Flow<MicAudioChunk>): VoiceStart
 
@@ -35,8 +32,6 @@ internal class VadDomain(
 ) : IVadDomain {
 
     private val logger = Logger.withTag("VadDomain")
-
-    override val hasError: ErrorState? = null
 
     private val localSilenceDetection = SilenceDetection(
         automaticSilenceDetectionTime = params.automaticSilenceDetectionTime,

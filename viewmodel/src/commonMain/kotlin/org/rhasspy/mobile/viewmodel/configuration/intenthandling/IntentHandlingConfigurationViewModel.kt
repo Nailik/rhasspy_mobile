@@ -14,28 +14,15 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingHomeAssistantOption
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
 class IntentHandlingConfigurationViewModel(
     private val mapper: IntentHandlingConfigurationDataMapper,
-    service: IHandleDomain,
-) : ConfigurationViewModel(
-    serviceState = service.serviceState,
-) {
+) : ScreenViewModel() {
 
-    private val initialData get() = mapper(ConfigurationSetting.handleDomainData.value)
-    private val _viewState = MutableStateFlow(IntentHandlingConfigurationViewState(initialData))
+    private val _viewState = MutableStateFlow(IntentHandlingConfigurationViewState(mapper(ConfigurationSetting.handleDomainData.value)))
     val viewState = _viewState.readOnly
-
-    override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
-    ): StateFlow<ConfigurationViewState> {
-        return viewStateCreator(
-            init = ::initialData,
-            viewState = viewState,
-            configurationViewState = configurationViewState
-        )
-    }
 
     fun onEvent(event: IntentHandlingConfigurationUiEvent) {
         when (event) {
@@ -53,21 +40,13 @@ class IntentHandlingConfigurationViewModel(
                 }
             })
         }
+        ConfigurationSetting.handleDomainData.value = mapper(_viewState.value.editData)
     }
 
     private fun onAction(action: Action) {
         when (action) {
             BackClick -> navigator.onBackPressed()
         }
-    }
-
-    override fun onDiscard() {
-        _viewState.update { it.copy(editData = initialData) }
-    }
-
-    override fun onSave() {
-        ConfigurationSetting.handleDomainData.value = mapper(_viewState.value.editData)
-        _viewState.update { it.copy(editData = initialData) }
     }
 
 }

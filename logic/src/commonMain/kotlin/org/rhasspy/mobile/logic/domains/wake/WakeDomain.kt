@@ -5,12 +5,11 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.datetime.Clock
 import org.rhasspy.mobile.data.domain.WakeDomainData
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.data.viewstate.TextWrapper
+import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperString
+import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
-import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.HotWordDetected
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
 import org.rhasspy.mobile.logic.domains.wake.WakeEvent.Detection
@@ -20,12 +19,14 @@ import org.rhasspy.mobile.platformspecific.porcupine.PorcupineWakeWordClient
 /**
  * WakeDomain checks for WakeWord within a Flow of MicAudioChunk Events
  */
-interface IWakeDomain : IService {
+interface IWakeDomain : IDomain {
 
     /**
      * collect audioStream until a WakeResult is Detected or NotDetected
      */
     val wakeEvents: Flow<WakeEvent>
+
+    val hasError: StateFlow<TextWrapper?>
 
     fun awaitDetection(audioStream: Flow<MicAudioChunk>)
 
@@ -41,7 +42,7 @@ internal class WakeDomain(
 
     private val logger = Logger.withTag("WakeWordService")
 
-    override var hasError: ErrorState? = null
+    override val hasError = MutableStateFlow<TextWrapper?>(null)
 
     override val wakeEvents = MutableSharedFlow<WakeEvent>()
 
@@ -60,7 +61,7 @@ internal class WakeDomain(
     )
 
     init {
-        hasError = when (params.wakeWordOption) {
+        hasError.value = when (params.wakeWordOption) {
             WakeWordOption.Porcupine          -> initializePorcupine()
             WakeWordOption.Rhasspy2HermesMQTT -> null
             WakeWordOption.Udp                -> initializeUdp()
@@ -86,7 +87,7 @@ internal class WakeDomain(
     /**
      * setup porcupine with params, close old if already exists
      */
-    private fun initializePorcupine(): ErrorState? {
+    private fun initializePorcupine(): TextWrapper? {
         logger.d { "initializePorcupine" }
         porcupineWakeWordClient.close()
         porcupineWakeWordClient = PorcupineWakeWordClient(
@@ -96,16 +97,13 @@ internal class WakeDomain(
             wakeWordPorcupineLanguage = params.wakeWordPorcupineLanguage,
         )
 
-        return when (val result = porcupineWakeWordClient.initialize()) {
-            is Exception -> ErrorState.Exception(result)
-            else         -> null
-        }
+        return TextWrapperString(porcupineWakeWordClient.initialize()?.message ?: return null)
     }
 
     /**
      * setup udp connection with params, close old if already exists
      */
-    private fun initializeUdp(): ErrorState? {
+    private fun initializeUdp(): TextWrapper? {
         logger.d { "initializeUdp" }
         udpConnection.close()
         udpConnection = UdpConnection(
@@ -113,10 +111,7 @@ internal class WakeDomain(
             params.wakeWordUdpOutputPort
         )
 
-        return when (val result = udpConnection.connect()) {
-            is Exception -> ErrorState.Exception(result)
-            else         -> null
-        }
+        return TextWrapperString(udpConnection.connect()?.message ?: return null)
     }
 
     /**

@@ -1,17 +1,12 @@
 package org.rhasspy.mobile.logic.local.settings
 
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.ErrorState
-import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.middleware.Source.*
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 
-interface IAppSettingsUtil : IService {
+interface IAppSettingsUtil : IDomain {
 
     fun hotWordToggle(value: Boolean, source: Source)
     fun intentHandlingToggle(value: Boolean, source: Source)
@@ -26,8 +21,6 @@ interface IAppSettingsUtil : IService {
 internal class AppSettingsUtil : IAppSettingsUtil {
 
     private val logger = Logger.withTag("AppSettingsService")
-
-    override val hasError: ErrorState? = null
 
     override fun hotWordToggle(value: Boolean, source: Source) {
 

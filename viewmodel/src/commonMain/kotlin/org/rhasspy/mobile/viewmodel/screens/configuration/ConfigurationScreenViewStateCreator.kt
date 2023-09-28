@@ -91,7 +91,7 @@ class ConfigurationScreenViewStateCreator(
             ),
             wakeWord = WakeWordViewState(
                 wakeWordValueOption = ConfigurationSetting.wakeDomainData.value.wakeWordOption,
-                serviceState = ServiceViewState(wakeWordService.serviceState)
+                serviceState = ServiceViewState(wakeWordService.hasError)
             ),
             speechToText = SpeechToTextViewState(
                 speechToTextOption = ConfigurationSetting.asrDomainData.value.option,

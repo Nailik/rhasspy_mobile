@@ -2,18 +2,17 @@ package org.rhasspy.mobile.viewmodel.configuration.dialogmanagement
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
-import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.navigation.INavigator
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 /**
  * ViewModel for Dialog Management Configuration
@@ -24,23 +23,10 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
 @Stable
 class DialogManagementConfigurationViewModel(
     private val mapper: DialogManagementConfigurationDataMapper,
-) : ConfigurationViewModel(
-    serviceState = MutableStateFlow(Success),
-) {
+) : ScreenViewModel() {
 
-    private val initialData get() = mapper(ConfigurationSetting.pipelineData.value)
-    private val _viewState = MutableStateFlow(DialogManagementConfigurationViewState(initialData))
+    private val _viewState = MutableStateFlow(DialogManagementConfigurationViewState(mapper(ConfigurationSetting.pipelineData.value)))
     val viewState = _viewState.readOnly
-
-    override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
-    ): StateFlow<ConfigurationViewState> {
-        return viewStateCreator(
-            init = ::initialData,
-            viewState = viewState,
-            configurationViewState = configurationViewState
-        )
-    }
 
     fun onEvent(event: DialogManagementConfigurationUiEvent) {
         when (event) {
@@ -59,22 +45,14 @@ class DialogManagementConfigurationViewModel(
                 }
             })
         }
+        ConfigurationSetting.pipelineData.value = mapper(_viewState.value.editData)
     }
 
     private fun onAction(action: Action) {
         when (action) {
             BackClick          -> navigator.onBackPressed()
-            is Action.Navigate -> navigator.navigate(action.destination)
+            is Navigate        -> navigator.navigate(action.destination)
         }
-    }
-
-    override fun onDiscard() {
-        _viewState.update { it.copy(editData = initialData) }
-    }
-
-    override fun onSave() {
-        ConfigurationSetting.pipelineData.value = mapper(_viewState.value.editData)
-        _viewState.update { it.copy(editData = initialData) }
     }
 
 }

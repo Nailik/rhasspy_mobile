@@ -4,24 +4,22 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.datetime.Clock
 import org.rhasspy.mobile.data.domain.MicDomainData
-import org.rhasspy.mobile.data.domain.VadDomainData
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.*
-import org.rhasspy.mobile.data.service.ServiceState.ErrorState.Error
-import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.data.viewstate.TextWrapper
+import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperStableStringResource
+import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
-import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.settings.ConfigurationSetting
 
 /**
  * records audio as soon as audioStream has subscribers
  */
-interface IMicDomain : IService {
+interface IMicDomain : IDomain {
 
     val audioStream: Flow<MicAudioChunk>
+
+    val hasError: StateFlow<TextWrapper?>
 
 }
 
@@ -34,7 +32,7 @@ internal class MicDomain(
     val params: MicDomainData,
 ) : IMicDomain {
 
-    override var hasError: ErrorState? = null
+    override var hasError = MutableStateFlow<TextWrapper?>(null)
 
     override val audioStream = MutableSharedFlow<MicAudioChunk>()
 
@@ -43,8 +41,14 @@ internal class MicDomain(
     private val scope = CoroutineScope(Dispatchers.IO)
 
     init {
-        if(isMicrophonePermissionGranted) {
-            hasError = Error(MR.strings.microphonePermissionMissing.stable)
+        scope.launch {
+            microphonePermission.granted.collectLatest {
+                hasError.value = if (!it) {
+                    TextWrapperStableStringResource(MR.strings.microphonePermissionMissing.stable)
+                } else {
+                    null
+                }
+            }
         }
 
         scope.launch {

@@ -8,12 +8,9 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.IntentDomainData
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.ErrorState
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
-import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
-import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.EndSession
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentNotRecognized
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentRecognitionResult
@@ -27,7 +24,6 @@ import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
 import org.rhasspy.mobile.logic.pipeline.HandleResult.NotHandled
 import org.rhasspy.mobile.logic.pipeline.IntentResult
 import org.rhasspy.mobile.logic.pipeline.IntentResult.*
-import org.rhasspy.mobile.logic.pipeline.Source
 import org.rhasspy.mobile.logic.pipeline.Source.*
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
 import org.rhasspy.mobile.platformspecific.timeoutWithDefault
@@ -37,7 +33,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResul
 /**
  * IntentDomain recognizes an intent from a transcript
  */
-interface IIntentDomain : IService {
+interface IIntentDomain : IDomain {
 
     /**
      * sends Text and waits for an IntentResult result
@@ -58,8 +54,6 @@ internal class IntentDomain(
 ) : IIntentDomain {
 
     private val logger = Logger.withTag("IntentRecognitionService")
-
-    override val hasError: ErrorState? = null
 
     /**
      * sends Text and waits for an IntentResult result

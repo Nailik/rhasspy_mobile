@@ -183,7 +183,6 @@ fun viewModelModule() = module {
         VoiceActivityDetectionConfigurationViewModel(
             nativeApplication = get(),
             audioRecorderViewStateCreator = get { parametersOf(audioRecorder) },
-            service = get { parametersOf(audioRecorder) },
             mapper = get(),
             audioRecorder = audioRecorder
         )

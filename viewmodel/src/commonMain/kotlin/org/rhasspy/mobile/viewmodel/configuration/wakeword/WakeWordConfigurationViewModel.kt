@@ -2,7 +2,6 @@ package org.rhasspy.mobile.viewmodel.configuration.wakeword
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okio.Path
@@ -12,15 +11,12 @@ import org.rhasspy.mobile.data.data.toIntOrNullOrConstant
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
 import org.rhasspy.mobile.platformspecific.*
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.BackClick
@@ -29,18 +25,15 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
 class WakeWordConfigurationViewModel(
     private val mapper: WakeWordConfigurationDataMapper,
     microphonePermission: IMicrophonePermission,
-    service: IWakeDomain
-) : ConfigurationViewModel(
-    serviceState = service.serviceState
-) {
-
+) : ScreenViewModel() {
+    //TODO reload button or on exit (via pipeline manager? - UserConnection)
     private val dispatcher by inject<IDispatcherProvider>()
 
     private val initialData get() = mapper(ConfigurationSetting.wakeDomainData.value)
@@ -52,16 +45,6 @@ class WakeWordConfigurationViewModel(
         )
     )
     val viewState = _viewState.readOnly
-
-    override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
-    ): StateFlow<ConfigurationViewState> {
-        return viewStateCreator(
-            init = ::initialData,
-            viewState = viewState,
-            configurationViewState = configurationViewState
-        )
-    }
 
     init {
         viewModelScope.launch(dispatcher.IO) {
@@ -94,6 +77,7 @@ class WakeWordConfigurationViewModel(
                 is SelectWakeWordOption -> it.copy(editData = with(it.editData) { copy(wakeWordOption = change.option) })
             }
         }
+        ConfigurationSetting.wakeDomainData.value = mapper(_viewState.value.editData)
     }
 
     private fun onAction(action: Action) {
@@ -119,11 +103,13 @@ class WakeWordConfigurationViewModel(
                         is UpdateWakeWordPorcupineAccessToken               -> copy(accessToken = change.value)
                         is ClickPorcupineKeywordCustom                      -> copy(customOptions = customOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
                         is ClickPorcupineKeywordDefault                     -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
-                        is DeletePorcupineKeywordCustom                     -> copy(deletedCustomOptions = deletedCustomOptions.updateList { add(change.item) })
+                        is DeletePorcupineKeywordCustom                     -> {
+                            Path.commonInternalFilePath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
+                            copy(customOptions = customOptions.updateList { remove(change.item) })
+                        }
                         is SelectWakeWordPorcupineLanguage                  -> copy(porcupineLanguage = change.option)
                         is SetPorcupineKeywordCustom                        -> copy(customOptions = customOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
                         is SetPorcupineKeywordDefault                       -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
-                        is UndoCustomKeywordDeleted                         -> copy(deletedCustomOptions = deletedCustomOptions.updateList { remove(change.item) })
                         is UpdateWakeWordPorcupineKeywordCustomSensitivity  -> copy(customOptions = customOptions.updateListItem(change.item) { copy(sensitivity = change.value) })
                         is UpdateWakeWordPorcupineKeywordDefaultSensitivity -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(sensitivity = change.value) })
                         is AddPorcupineKeywordCustom                        -> copy(customOptions = customOptions.updateList {
@@ -139,6 +125,7 @@ class WakeWordConfigurationViewModel(
                 })
             })
         }
+        ConfigurationSetting.wakeDomainData.value = mapper(_viewState.value.editData)
     }
 
     private fun onPorcupineAction(action: PorcupineUiEvent.Action) {
@@ -152,13 +139,8 @@ class WakeWordConfigurationViewModel(
         }
     }
 
-    //for custom wake word
-    private val newFiles = mutableListOf<Path>()
-    private val filesToDelete = mutableListOf<Path>()
-
     private fun addCustomPorcupineKeyword() {
         selectFile(FolderType.PorcupineFolder) { path ->
-            newFiles.add(path)
             onPorcupineChange(AddPorcupineKeywordCustom(path))
         }
     }
@@ -180,34 +162,7 @@ class WakeWordConfigurationViewModel(
                 })
             })
         }
-    }
-
-
-    override fun onSave() {
         ConfigurationSetting.wakeDomainData.value = mapper(_viewState.value.editData)
-        filesToDelete.forEach {
-            Path.commonInternalFilePath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
-        }
-        filesToDelete.clear()
-        newFiles.clear()
-        _viewState.update { it.copy(editData = initialData) }
-    }
-
-    override fun onDiscard() {
-        newFiles.forEach {
-            Path.commonInternalFilePath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
-        }
-        newFiles.clear()
-        filesToDelete.clear()
-        _viewState.update { it.copy(editData = initialData) }
-    }
-
-    override fun onBackPressed(): Boolean {
-        return when (navigator.topScreen.value) {
-            //do navigate sub screens back even if there are changes
-            is WakeWordConfigurationScreenDestination -> false
-            else                                      -> super.onBackPressed()
-        }
     }
 
 }

@@ -20,12 +20,6 @@ data class WakeWordConfigurationViewState internal constructor(
 ) : IConfigurationViewState {
 
     @Stable
-    data class PorcupineCustomKeywordViewState internal constructor(
-        val keyword: PorcupineCustomKeyword,
-        val deleted: Boolean = false,
-    )
-
-    @Stable
     data class WakeWordConfigurationData internal constructor(
         val wakeWordOption: WakeWordOption,
         val wakeWordPorcupineConfigurationData: WakeWordPorcupineConfigurationData,
@@ -40,23 +34,14 @@ data class WakeWordConfigurationViewState internal constructor(
             val porcupineLanguage: PorcupineLanguageOption,
             val defaultOptions: ImmutableList<PorcupineDefaultKeyword>,
             val customOptions: ImmutableList<PorcupineCustomKeyword>,
-            val deletedCustomOptions: ImmutableList<PorcupineCustomKeyword>,
         ) {
 
             val languageOptions: ImmutableList<PorcupineLanguageOption> = PorcupineLanguageOption.entries.toTypedArray().toImmutableList()
 
-            val customOptionsUi: ImmutableList<PorcupineCustomKeywordViewState> =
-                customOptions.map {
-                    PorcupineCustomKeywordViewState(
-                        keyword = it,
-                        deleted = deletedCustomOptions.contains(it)
-                    )
-                }.toImmutableList()
-
             val defaultOptionsUi: ImmutableList<PorcupineDefaultKeyword>
                 get() = defaultOptions.filter { it.option.language == porcupineLanguage }.toImmutableList()
 
-            val keywordCount: Int get() = defaultOptionsUi.count { it.isEnabled } + customOptionsUi.count { it.keyword.isEnabled }
+            val keywordCount: Int get() = defaultOptionsUi.count { it.isEnabled } + customOptions.count { it.isEnabled }
 
         }
 

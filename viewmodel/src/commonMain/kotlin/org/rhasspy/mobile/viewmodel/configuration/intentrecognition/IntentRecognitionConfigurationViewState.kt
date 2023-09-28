@@ -6,6 +6,7 @@ import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
+import kotlin.time.Duration
 
 @Stable
 data class IntentRecognitionConfigurationViewState internal constructor(
@@ -15,6 +16,9 @@ data class IntentRecognitionConfigurationViewState internal constructor(
     @Stable
     data class IntentRecognitionConfigurationData internal constructor(
         val intentRecognitionOption: IntentRecognitionOption,
+        val isRhasspy2HermesHttpHandleWithRecognition: Boolean,
+        val rhasspy2HermesHttpHandleTimeout: Duration,
+        val rhasspy2HermesMqttHandleTimeout: Duration,
     ) : IConfigurationData {
 
         val intentRecognitionOptionList: ImmutableList<IntentRecognitionOption> = IntentRecognitionOption.entries.toImmutableList()

@@ -8,7 +8,7 @@ import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.nVerify
@@ -29,7 +29,7 @@ class ConfigurationViewModelTest : AppTest() {
     private var onDiscard: Boolean = false
     private var onSave: Boolean = false
 
-    private val testService = object : IService {
+    private val testService = object : IDomain {
         override val serviceState = MutableStateFlow(ServiceState.Success)
     }
 

@@ -14,28 +14,15 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SetUseSpeechToTextMqttSilenceDetection
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
 class SpeechToTextConfigurationViewModel(
     private val mapper: SpeechToTextConfigurationDataMapper,
-    service: IAsrDomain
-) : ConfigurationViewModel(
-    serviceState = service.serviceState
-) {
+) : ScreenViewModel() {
 
-    private val initialData get() = mapper(ConfigurationSetting.asrDomainData.value)
-    private val _viewState = MutableStateFlow(SpeechToTextConfigurationViewState(editData = initialData))
+    private val _viewState = MutableStateFlow(SpeechToTextConfigurationViewState( mapper(ConfigurationSetting.asrDomainData.value)))
     val viewState = _viewState.readOnly
-
-    override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
-    ): StateFlow<ConfigurationViewState> {
-        return viewStateCreator(
-            init = ::initialData,
-            viewState = viewState,
-            configurationViewState = configurationViewState
-        )
-    }
 
     fun onEvent(event: SpeechToTextConfigurationUiEvent) {
         when (event) {
@@ -53,28 +40,12 @@ class SpeechToTextConfigurationViewModel(
                 }
             })
         }
+        ConfigurationSetting.asrDomainData.value = mapper(_viewState.value.editData)
     }
 
     private fun onAction(action: Action) {
         when (action) {
             BackClick -> navigator.onBackPressed()
-        }
-    }
-
-    override fun onDiscard() {
-        _viewState.update { it.copy(editData = initialData) }
-    }
-
-    override fun onSave() {
-        ConfigurationSetting.asrDomainData.value = mapper(_viewState.value.editData)
-        _viewState.update { it.copy(editData = initialData) }
-    }
-
-    override fun onBackPressed(): Boolean {
-        return when (navigator.topScreen.value) {
-            //do navigate sub screens back even if there are changes
-            is NavigationDestination.SpeechToTextConfigurationScreenDestination -> false
-            else                                                                -> super.onBackPressed()
         }
     }
 

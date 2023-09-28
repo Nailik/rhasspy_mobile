@@ -6,10 +6,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Sound
 import org.rhasspy.mobile.data.domain.SndDomainData
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
-import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayFinished
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
@@ -19,10 +17,8 @@ import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
-import org.rhasspy.mobile.logic.pipeline.HandleResult
 import org.rhasspy.mobile.logic.pipeline.SndResult
 import org.rhasspy.mobile.logic.pipeline.SndResult.*
-import org.rhasspy.mobile.logic.pipeline.Source
 import org.rhasspy.mobile.logic.pipeline.Source.*
 import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
@@ -31,7 +27,7 @@ import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 /**
  * records audio as soon as audioStream has subscribers
  */
-interface ISndDomain : IService {
+interface ISndDomain : IDomain {
 
     /**
      * play audio stream from Audio and return SndResult after finished
@@ -54,8 +50,6 @@ internal class SndDomain(
 ) : ISndDomain {
 
     private val logger = Logger.withTag("AudioPlayingService")
-
-    override val hasError: ErrorState? = null
 
     private val scope = CoroutineScope(Dispatchers.IO)
 

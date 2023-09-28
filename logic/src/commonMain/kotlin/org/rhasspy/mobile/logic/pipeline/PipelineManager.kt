@@ -155,6 +155,7 @@ class PipelineManager(
             }
             awaitPipelineStart()
         }
+        //TODO dispose all domains?
     }
 
     private fun getPipeline(): IPipeline {

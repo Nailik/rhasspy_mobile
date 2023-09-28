@@ -4,10 +4,9 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.HandleDomainData
-import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
-import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.EndSession
@@ -25,7 +24,7 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 /**
  * HandleDomain handles an intent using the defined option
  */
-interface IHandleDomain : IService {
+interface IHandleDomain : IDomain {
 
     /**
      * sends Intent and waits for an HandleResult result, normally text that is to be spoken
@@ -48,8 +47,6 @@ internal class HandleDomain(
 ) : IHandleDomain {
 
     private val logger = Logger.withTag("IntentHandlingService")
-
-    override val hasError: ServiceState.ErrorState? = null
 
     /**
      * sends Intent and waits for an HandleResult result, normally text that is to be spoken

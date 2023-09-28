@@ -8,7 +8,7 @@ import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.AsrDomainData
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
-import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrError
@@ -18,7 +18,6 @@ import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnec
 import org.rhasspy.mobile.logic.connections.user.UserConnection
 import org.rhasspy.mobile.logic.domains.AudioFileWriter
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
-import org.rhasspy.mobile.logic.domains.vad.VadEvent
 import org.rhasspy.mobile.logic.domains.vad.VadEvent.*
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
@@ -33,7 +32,7 @@ import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 /**
  * AsrDomain tries to detect text within a Flow of MicAudioChunk Events using the defined option
  */
-interface IAsrDomain : IService {
+interface IAsrDomain : IDomain {
 
     /**
      * awaits VoiceStart, afterwards audioStream is send to Asr until VoiceStopped or a TranscriptResult is found
@@ -61,8 +60,6 @@ internal class AsrDomain(
 ) : IAsrDomain {
 
     private val logger = Logger.withTag("SpeechToTextService")
-
-    override val hasError: ServiceState.ErrorState? = null
 
     private val scope = CoroutineScope(Dispatchers.IO)
 

@@ -9,6 +9,7 @@ class SpeechToTextConfigurationDataMapper {
         return SpeechToTextConfigurationData(
             speechToTextOption = data.option,
             isUseSpeechToTextMqttSilenceDetection = data.isUseSpeechToTextMqttSilenceDetection,
+            mqttTimeout = data.mqttTimeout,
         )
     }
 
@@ -16,6 +17,7 @@ class SpeechToTextConfigurationDataMapper {
         return AsrDomainData(
             option = data.speechToTextOption,
             isUseSpeechToTextMqttSilenceDetection = data.isUseSpeechToTextMqttSilenceDetection,
+            mqttTimeout = data.mqttTimeout,
         )
     }
 

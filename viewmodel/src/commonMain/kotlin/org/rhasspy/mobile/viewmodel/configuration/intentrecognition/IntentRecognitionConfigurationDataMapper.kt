@@ -7,13 +7,19 @@ class IntentRecognitionConfigurationDataMapper {
 
     operator fun invoke(data: IntentDomainData): IntentRecognitionConfigurationData {
         return IntentRecognitionConfigurationData(
-            intentRecognitionOption = data.option
+            intentRecognitionOption = data.option,
+            isRhasspy2HermesHttpHandleWithRecognition = data.isRhasspy2HermesHttpHandleWithRecognition,
+            rhasspy2HermesHttpHandleTimeout = data.rhasspy2HermesHttpHandleTimeout,
+            rhasspy2HermesMqttHandleTimeout = data.rhasspy2HermesMqttHandleTimeout,
         )
     }
 
     operator fun invoke(data: IntentRecognitionConfigurationData): IntentDomainData {
         return IntentDomainData(
-            option = data.intentRecognitionOption
+            option = data.intentRecognitionOption,
+            isRhasspy2HermesHttpHandleWithRecognition = data.isRhasspy2HermesHttpHandleWithRecognition,
+            rhasspy2HermesHttpHandleTimeout = data.rhasspy2HermesHttpHandleTimeout,
+            rhasspy2HermesMqttHandleTimeout = data.rhasspy2HermesMqttHandleTimeout,
         )
     }
 

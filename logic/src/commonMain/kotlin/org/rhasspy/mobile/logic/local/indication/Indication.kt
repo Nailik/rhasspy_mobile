@@ -6,15 +6,13 @@ import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.indication.IndicationState
 import org.rhasspy.mobile.data.indication.IndicationState.*
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.ErrorState
-import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
 import org.rhasspy.mobile.platformspecific.indication.NativeIndication
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 
-interface IIndication : IService {
+interface IIndication : IDomain {
 
     val isShowVisualIndication: StateFlow<Boolean>
     val indicationState: StateFlow<IndicationState>
@@ -39,8 +37,6 @@ internal class Indication : IIndication {
     override val isShowVisualIndication = _isShowVisualIndication.readOnly
     private val _indicationState = MutableStateFlow(Idle)
     override val indicationState = _indicationState.readOnly
-
-    override val hasError: ErrorState? = null
 
     /**
      * idle shows no indication and stops screen wakeup

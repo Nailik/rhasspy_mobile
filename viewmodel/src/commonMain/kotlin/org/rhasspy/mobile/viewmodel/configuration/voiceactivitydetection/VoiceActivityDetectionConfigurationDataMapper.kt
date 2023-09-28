@@ -9,6 +9,7 @@ class VoiceActivityDetectionConfigurationDataMapper {
     operator fun invoke(data: VadDomainData): VoiceActivityDetectionConfigurationData {
         return VoiceActivityDetectionConfigurationData(
             voiceActivityDetectionOption = data.option,
+            timeout = data.timeout,
             localSilenceDetectionSetting = LocalSilenceDetectionConfigurationData(
                 silenceDetectionTime = data.automaticSilenceDetectionTime,
                 silenceDetectionMinimumTime = data.automaticSilenceDetectionMinimumTime,
@@ -20,6 +21,7 @@ class VoiceActivityDetectionConfigurationDataMapper {
     operator fun invoke(data: VoiceActivityDetectionConfigurationData): VadDomainData {
         return VadDomainData(
             option = data.voiceActivityDetectionOption,
+            timeout = data.timeout,
             automaticSilenceDetectionTime = data.localSilenceDetectionSetting.silenceDetectionTime,
             automaticSilenceDetectionMinimumTime = data.localSilenceDetectionSetting.silenceDetectionMinimumTime,
             automaticSilenceDetectionAudioLevel = data.localSilenceDetectionSetting.silenceDetectionAudioLevel,

@@ -5,9 +5,8 @@ import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.TtsDomainData
-import org.rhasspy.mobile.data.service.ServiceState.ErrorState
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
-import org.rhasspy.mobile.logic.IService
+import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayBytes
@@ -28,7 +27,7 @@ import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 /**
  * sends text from Handle and converts it into audio chunks that are returned via TtsResult
  */
-interface ITtsDomain : IService {
+interface ITtsDomain : IDomain {
 
     suspend fun onSynthesize(
         sessionId: String,
@@ -49,8 +48,6 @@ internal class TtsDomain(
 ) : ITtsDomain {
 
     private val logger = Logger.withTag("TextToSpeechService")
-
-    override val hasError: ErrorState? = null
 
     /**
      * sends text and returned audio stream via TtsResult
