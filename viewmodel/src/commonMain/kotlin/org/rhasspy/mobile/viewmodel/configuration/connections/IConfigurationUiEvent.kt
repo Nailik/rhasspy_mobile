@@ -1,6 +1,6 @@
-package org.rhasspy.mobile.viewmodel.configuration
+package org.rhasspy.mobile.viewmodel.configuration.connections
 
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState.DialogState
 
 sealed interface IConfigurationUiEvent {
 

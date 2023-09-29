@@ -11,7 +11,7 @@ import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.assist.AssistantViewModel
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewModel
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewStateCreator
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewStateCreator
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationViewModel

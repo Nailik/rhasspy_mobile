@@ -13,7 +13,7 @@ import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.ui.configuration.audioinput.SpeechToTextConfigurationScreen
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import kotlin.test.assertEquals

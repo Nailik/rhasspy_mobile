@@ -4,9 +4,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.logic.IDomain
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 class TestDomain : IDomain {

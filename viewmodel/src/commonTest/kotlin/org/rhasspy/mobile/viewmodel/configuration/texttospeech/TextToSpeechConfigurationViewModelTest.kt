@@ -5,8 +5,8 @@ import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.testutils.AppTest
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Discard
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SelectTextToSpeechOption
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewState.TextToSpeechConfigurationData
 import kotlin.test.BeforeTest

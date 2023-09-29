@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration
+package org.rhasspy.mobile.viewmodel.configuration.connections
 
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.data.viewstate.TextWrapper

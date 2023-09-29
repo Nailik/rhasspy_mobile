@@ -28,13 +28,13 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.GetColorScheme
 import org.rhasspy.mobile.ui.theme.SetSystemColor
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.ServiceStateDialogState
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.UnsavedChangesDialogState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState.DialogState
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState.DialogState.ServiceStateDialogState
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState.DialogState.UnsavedChangesDialogState
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.DialogAction.*
 import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 
 /**

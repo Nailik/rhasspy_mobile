@@ -9,8 +9,8 @@ import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState.IConfigurationData
 
 @Stable
 data class WakeWordConfigurationViewState internal constructor(

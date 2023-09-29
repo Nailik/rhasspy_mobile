@@ -80,6 +80,9 @@ internal class WebServerConnection(
     override val incomingMessages = MutableSharedFlow<WebServerConnectionEvent>()
 
     override val connectionState = MutableStateFlow<ConnectionState>(ConnectionState.Pending)
+    override suspend fun testConnection(): Boolean {
+        return false
+    }
 
     private val nativeApplication by inject<NativeApplication>()
 

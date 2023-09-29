@@ -12,7 +12,7 @@ import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.connections.Rhasspy3WyomingConnectionScreen
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Change.SetRhasspy3WyomingSSLVerificationDisabled
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationViewModel
 import kotlin.test.assertEquals

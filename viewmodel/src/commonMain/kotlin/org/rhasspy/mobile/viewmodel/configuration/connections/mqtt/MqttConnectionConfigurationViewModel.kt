@@ -13,8 +13,8 @@ import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Change

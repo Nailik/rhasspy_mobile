@@ -7,8 +7,8 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.getRandomString
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Discard
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewModel

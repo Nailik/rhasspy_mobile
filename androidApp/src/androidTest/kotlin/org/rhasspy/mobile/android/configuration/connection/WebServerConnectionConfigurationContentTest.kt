@@ -12,7 +12,7 @@ import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.connections.WebServerConnectionScreen
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Change.SetHttpServerEnabled
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Change.SetHttpServerSSLEnabled
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewModel

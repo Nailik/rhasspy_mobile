@@ -5,6 +5,7 @@ import com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
 import com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
 import groovy.json.JsonSlurper
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URLDecoder
 import java.net.URLEncoder
 
@@ -72,6 +73,10 @@ kotlin {
         val iosSimulatorArm64Test by getting
         val iosTest by creating
     }
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.freeCompilerArgs += "-Xexpect-actual-classes"
 }
 
 multiplatformResources {
@@ -180,14 +185,14 @@ tasks.register("updatePorcupineFiles") {
                     "${downloadUrl.substringBeforeLast("/")}/${URLEncoder.encode(URLDecoder.decode(downloadUrl.substringAfterLast("/"), "UTF-8"), "UTF-8").replace("+", "%20")}"
                 }
 
-                //download each file separate so a fail will not skip all
-                // download files
+                //download files
                 download.run {
                     src(urls)
                     dest("$baseDest/keyword_files$language")
                     overwrite(true)
                     onlyIfModified(true)
                     eachFile {
+                        //correctly encode non standard letters
                         name = name.replace(Regex("[^A-Za-z0-9._]"), "")
                     }
                 }

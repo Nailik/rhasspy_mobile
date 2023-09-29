@@ -2,7 +2,7 @@ package org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant
 
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.data.data.toStringOrEmpty
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState
 
 @Stable
 data class HomeAssistantConnectionConfigurationViewState internal constructor(

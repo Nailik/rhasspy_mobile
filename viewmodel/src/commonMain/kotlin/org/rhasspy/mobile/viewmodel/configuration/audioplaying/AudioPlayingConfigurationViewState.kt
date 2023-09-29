@@ -5,8 +5,8 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState.IConfigurationData
 import kotlin.time.Duration
 
 @Stable

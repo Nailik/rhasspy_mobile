@@ -5,8 +5,8 @@ import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.data.toStringOrEmpty
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState.IConfigurationData
 
 @Stable
 data class DialogManagementConfigurationViewState internal constructor(

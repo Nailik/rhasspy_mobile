@@ -86,6 +86,9 @@ internal class MqttConnection(
     private val logger = Logger.withTag("MqttConnection")
 
     override val connectionState = MutableStateFlow<ConnectionState>(ConnectionState.Pending)
+    override suspend fun testConnection(): Boolean {
+        return true
+    }
 
     override val incomingMessages = MutableSharedFlow<MqttConnectionEvent>()
 

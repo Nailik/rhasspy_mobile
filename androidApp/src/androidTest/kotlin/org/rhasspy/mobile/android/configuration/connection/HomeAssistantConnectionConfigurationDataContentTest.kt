@@ -12,7 +12,7 @@ import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.connections.HomeAssistantConnectionScreen
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Change.SetHomeAssistantSSLVerificationDisabled
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewModel
 import kotlin.test.assertEquals

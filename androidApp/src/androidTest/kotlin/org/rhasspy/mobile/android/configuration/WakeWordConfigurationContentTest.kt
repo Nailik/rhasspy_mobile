@@ -17,7 +17,7 @@ import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.main.MainScreen
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel

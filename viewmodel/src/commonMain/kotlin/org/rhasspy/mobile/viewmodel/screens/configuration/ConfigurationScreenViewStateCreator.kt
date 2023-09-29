@@ -9,6 +9,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
+import org.rhasspy.mobile.logic.domains.mic.IMicDomain
 import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
@@ -22,6 +23,7 @@ class ConfigurationScreenViewStateCreator(
     mqttConnection: IMqttConnection,
     webServerConnection: IWebServerConnection,
     private val wakeDomain: IWakeDomain,
+    private val micDomain: IMicDomain,
 ) {
     private val hasConnectionError = combineStateFlow(
         rhasspy2HermesConnection.connectionState,
@@ -38,6 +40,7 @@ class ConfigurationScreenViewStateCreator(
     init {
         combineStateFlow(
             hasConnectionError,
+            micDomain.hasError,
             wakeDomain.hasError,
             ConfigurationSetting.siteId.data,
             ConfigurationSetting.pipelineData.data,
@@ -57,20 +60,20 @@ class ConfigurationScreenViewStateCreator(
     private fun getViewState(): ConfigurationScreenViewState {
         return ConfigurationScreenViewState(
             siteId = SiteIdViewState(
-                text = ConfigurationSetting.siteId.data
+                text = ConfigurationSetting.siteId.data,
             ),
             connectionsItemViewState = ConnectionsItemViewState(
-                hasError = hasConnectionError.value
+                hasError = hasConnectionError.value,
             ),
             pipelineItemViewState = PipelineItemViewState(
                 dialogManagementOption = ConfigurationSetting.pipelineData.value.option,
             ),
             micDomainItemViewState = MicDomainItemViewState(
-                serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO #466 mic
+                error = micDomain.hasError.value,
             ),
             wakeDomainItemViewState = WakeDomainItemViewState(
                 wakeWordValueOption = ConfigurationSetting.wakeDomainData.value.wakeWordOption,
-                error = wakeDomain.hasError.value
+                error = wakeDomain.hasError.value,
             ),
             asrDomainItemViewState = AsrDomainItemViewState(
                 speechToTextOption = ConfigurationSetting.asrDomainData.value.option,

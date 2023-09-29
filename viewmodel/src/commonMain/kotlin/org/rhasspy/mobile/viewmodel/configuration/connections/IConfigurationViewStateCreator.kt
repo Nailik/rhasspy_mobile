@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration
+package org.rhasspy.mobile.viewmodel.configuration.connections
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

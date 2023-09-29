@@ -28,7 +28,7 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.domains.wake.porcupine.PorcupineKeywordCustomScreen
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import java.io.File
 import kotlin.test.assertTrue

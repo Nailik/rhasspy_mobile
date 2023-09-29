@@ -8,8 +8,8 @@ import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Action.BackClick

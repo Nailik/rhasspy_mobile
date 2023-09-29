@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.viewmodel.screens.dialog
 
 import androidx.compose.runtime.Stable
-import org.rhasspy.mobile.logic.pipeline.IPipeline
+import org.rhasspy.mobile.logic.pipeline.IPipelineManager
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change
@@ -9,7 +9,7 @@ import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change.*
 
 @Stable
 class DialogScreenViewModel(
-    private val pipeline: IPipeline
+    private val pipelineManager: IPipelineManager
 ) : ScreenViewModel() {
 
     //  val viewState = viewStateCreator()

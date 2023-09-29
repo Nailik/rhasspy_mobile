@@ -12,7 +12,7 @@ import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.ui.configuration.domains.wake.porcupine.PorcupineLanguageScreen
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeWordPorcupineLanguage
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertEquals

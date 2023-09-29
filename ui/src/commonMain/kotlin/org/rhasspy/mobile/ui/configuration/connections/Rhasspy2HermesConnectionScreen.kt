@@ -23,13 +23,16 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
+import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Action.CheckConnectionClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationViewState.Rhasspy2HermesConnectionConfigurationData
@@ -124,6 +127,12 @@ private fun HttpConnectionDetailContent(
             onCheckedChange = { onEvent(SetRhasspy2HermesSSLVerificationDisabled(it)) },
         )
 
+
+        FilledTonalButtonListItem(
+            text = MR.strings.testConnection.stable,
+            modifier = Modifier,
+            onClick = { onEvent(CheckConnectionClick) }
+        )
     }
 
 }

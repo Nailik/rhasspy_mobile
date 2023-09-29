@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration
+package org.rhasspy.mobile.viewmodel.configuration.connections
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,12 +9,12 @@ import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.ServiceStateDialogState
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.UnsavedChangesDialogState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState.DialogState.ServiceStateDialogState
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState.DialogState.UnsavedChangesDialogState
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.DialogAction
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.DialogAction.*
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 

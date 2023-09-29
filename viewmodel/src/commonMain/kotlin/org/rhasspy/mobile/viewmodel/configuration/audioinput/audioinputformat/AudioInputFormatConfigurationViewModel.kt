@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationUiEvent.Click

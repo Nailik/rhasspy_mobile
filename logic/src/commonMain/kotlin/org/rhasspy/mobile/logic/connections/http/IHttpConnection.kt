@@ -6,11 +6,10 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.websocket.WebSockets
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.header
-import io.ktor.client.request.post
+import io.ktor.client.request.*
 import io.ktor.client.utils.buildHeaders
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMessageBuilder
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,7 +41,6 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
     protected val jsonContentType = ContentType("application", "json")
     protected fun HttpMessageBuilder.authorization(bearerToken: String?) = bearerToken?.let { this.header("Authorization", "Bearer $bearerToken") } ?: this
 
-
     protected var httpConnectionParams = settings.value
 
     private var coroutineScope = CoroutineScope(Dispatchers.IO)
@@ -62,6 +60,21 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
             engine {
                 configureEngine(params.isSSLVerificationDisabled)
             }
+        }
+    }
+
+    override suspend fun testConnection() : Boolean {
+        return try {
+            httpClient?.request(httpConnectionParams.host) {
+                headers {
+                    append(HttpHeaders.Accept, "*/*")
+                    //authorization(httpConnectionParams.bearerToken)
+                }
+            }
+            true
+        }catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
     }
 

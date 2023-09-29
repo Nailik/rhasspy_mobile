@@ -37,7 +37,7 @@ data class ConfigurationScreenViewState internal constructor(
 
     @Stable
     data class MicDomainItemViewState internal constructor(
-        val serviceState: ServiceViewState
+        val error: TextWrapper?,
     )
 
     @Stable

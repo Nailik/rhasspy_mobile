@@ -1,15 +1,18 @@
 package org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes
 
 import androidx.compose.runtime.Stable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Action.BackClick
@@ -19,7 +22,7 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rha
 @Stable
 class Rhasspy2HermesConnectionConfigurationViewModel(
     private val mapper: Rhasspy2HermesConnectionConfigurationDataMapper,
-    rhasspy2HermesConnection: IRhasspy2HermesConnection
+    private val rhasspy2HermesConnection: IRhasspy2HermesConnection
 ) : ConfigurationViewModel(
     connectionState = rhasspy2HermesConnection.connectionState
 ) {
@@ -60,8 +63,14 @@ class Rhasspy2HermesConnectionConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick              -> navigator.onBackPressed()
-            AccessTokenQRCodeClick -> scanQRCode { onChange(UpdateRhasspy2HermesAccessToken(it)) }
+            BackClick                   -> navigator.onBackPressed()
+            AccessTokenQRCodeClick      -> scanQRCode { onChange(UpdateRhasspy2HermesAccessToken(it)) }
+            Action.CheckConnectionClick -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val result = rhasspy2HermesConnection.testConnection()
+                    println(result)
+                }
+            }
         }
     }
 
