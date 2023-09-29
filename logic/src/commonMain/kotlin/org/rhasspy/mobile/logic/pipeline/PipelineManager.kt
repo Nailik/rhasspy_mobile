@@ -13,7 +13,6 @@ import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.HotWordDetected
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.SessionStarted
 import org.rhasspy.mobile.logic.connections.user.IUserConnection
-import org.rhasspy.mobile.logic.connections.user.UserConnection
 import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent.StartStopRhasspy
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.StartSession
@@ -33,7 +32,6 @@ import org.rhasspy.mobile.logic.pipeline.TtsResult.TtsDisabled
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 interface IPipelineManager {
-
 
 
 }
@@ -160,10 +158,10 @@ class PipelineManager(
     }
 
     private fun getPipeline(): IPipeline {
-        when(params.option) {
-            DialogManagementOption.Local              -> TODO()
+        when (params.option) {
+            DialogManagementOption.Local -> TODO()
             DialogManagementOption.Rhasspy2HermesMQTT -> TODO()
-            DialogManagementOption.Disabled           -> TODO()
+            DialogManagementOption.Disabled -> TODO()
         }
     }
 

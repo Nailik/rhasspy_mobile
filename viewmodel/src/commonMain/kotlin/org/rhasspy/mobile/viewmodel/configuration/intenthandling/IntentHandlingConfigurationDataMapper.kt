@@ -17,7 +17,7 @@ class IntentHandlingConfigurationDataMapper {
         return HandleDomainData(
             option = data.intentHandlingOption,
             homeAssistantIntentHandlingOption = data.intentHandlingHomeAssistantOption,
-                    homeAssistantEventTimeout = data.homeAssistantEventTimeout,
+            homeAssistantEventTimeout = data.homeAssistantEventTimeout,
         )
     }
 

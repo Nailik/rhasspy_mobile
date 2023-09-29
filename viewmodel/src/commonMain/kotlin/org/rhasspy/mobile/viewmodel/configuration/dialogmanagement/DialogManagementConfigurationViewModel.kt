@@ -11,7 +11,6 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.navigation.INavigator
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 /**
@@ -50,8 +49,8 @@ class DialogManagementConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick          -> navigator.onBackPressed()
-            is Navigate        -> navigator.navigate(action.destination)
+            BackClick   -> navigator.onBackPressed()
+            is Navigate -> navigator.navigate(action.destination)
         }
     }
 

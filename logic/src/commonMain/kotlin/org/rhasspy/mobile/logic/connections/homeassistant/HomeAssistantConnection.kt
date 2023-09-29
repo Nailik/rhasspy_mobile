@@ -72,7 +72,7 @@ internal class HomeAssistantConnection : IHomeAssistantConnection, IHttpConnecti
     }
 
     private fun readSpeechTextFromIntentResponse(intent: String?): String? {
-        if(intent == null) return null
+        if (intent == null) return null
         //reads text from intent api https://developers.home-assistant.io/docs/intent_firing
         return try {
             //example: "{"speech": {"plain": {"speech": "Turned Lounge Lamp on", "extra_data": null}}, "card": {}}"

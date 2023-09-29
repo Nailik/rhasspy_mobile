@@ -38,7 +38,7 @@ internal class Rhasspy2HermesConnection : IRhasspy2HermesConnection, IHttpConnec
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    override suspend fun speechToText(audioFilePath: Path) : HttpClientResult<String> {
+    override suspend fun speechToText(audioFilePath: Path): HttpClientResult<String> {
         logger.d { "speechToText: audioFilePath.name" }
 
         return post(
@@ -81,7 +81,7 @@ internal class Rhasspy2HermesConnection : IRhasspy2HermesConnection, IHttpConnec
     override suspend fun textToSpeech(text: String, volume: Float?, siteId: String?): HttpClientResult<ByteArray> {
         logger.d { "textToSpeech text: $text" }
 
-       return post(
+        return post(
             url = "/api/text-to-speech/${volume?.let { "?volume=$it" } ?: ""}${siteId?.let { "?siteId=$it" } ?: ""}",
             block = {
                 setBody(text)

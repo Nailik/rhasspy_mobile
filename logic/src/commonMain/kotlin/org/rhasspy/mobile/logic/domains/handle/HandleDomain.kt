@@ -29,7 +29,7 @@ interface IHandleDomain : IDomain {
     /**
      * sends Intent and waits for an HandleResult result, normally text that is to be spoken
      */
-    suspend fun awaitIntentHandle(sessionId: String, intent: Intent) : HandleResult
+    suspend fun awaitIntentHandle(sessionId: String, intent: Intent): HandleResult
 
 }
 
@@ -51,22 +51,22 @@ internal class HandleDomain(
     /**
      * sends Intent and waits for an HandleResult result, normally text that is to be spoken
      */
-    override suspend fun awaitIntentHandle(sessionId: String, intent: Intent) : HandleResult {
+    override suspend fun awaitIntentHandle(sessionId: String, intent: Intent): HandleResult {
         logger.d { "awaitIntentHandle for sessionId $sessionId and intent $intent" }
         indication.onThinking()
 
         return when (params.option) {
-            IntentHandlingOption.HomeAssistant      -> awaitHomeAssistantHandle(sessionId, intent)
-            IntentHandlingOption.Disabled           -> HandleDisabled
+            IntentHandlingOption.HomeAssistant -> awaitHomeAssistantHandle(sessionId, intent)
+            IntentHandlingOption.Disabled      -> HandleDisabled
         }
     }
 
     /**
      * awaits for HomeAssistant to handle the intent
      */
-    private suspend fun awaitHomeAssistantHandle(sessionId: String, intent: Intent) : HandleResult {
+    private suspend fun awaitHomeAssistantHandle(sessionId: String, intent: Intent): HandleResult {
         return when (params.homeAssistantIntentHandlingOption) {
-            HomeAssistantIntentHandlingOption.Event  -> awaitHomeAssistantEventHandle(sessionId, intent)
+            HomeAssistantIntentHandlingOption.Event -> awaitHomeAssistantEventHandle(sessionId, intent)
             HomeAssistantIntentHandlingOption.Intent -> awaitHomeAssistantIntentHandle(intent)
         }
     }
@@ -74,7 +74,7 @@ internal class HandleDomain(
     /**
      * awaits for HomeAssistant to handle the intent on intent endpoint and reads text to be spoken from result
      */
-    private suspend fun awaitHomeAssistantIntentHandle(intent: Intent) : HandleResult {
+    private suspend fun awaitHomeAssistantIntentHandle(intent: Intent): HandleResult {
         logger.d { "awaitHomeAssistantIntentHandle for intent $intent" }
         return when (val result = homeAssistantConnection.awaitIntent(intent.intentName, intent.intent)) {
             is HttpClientResult.HttpClientError -> NotHandled(HomeAssistant)
@@ -90,7 +90,7 @@ internal class HandleDomain(
     /**
      * awaits for HomeAssistant to handle the intent on event endpoint, awaits end session or say from mqtt or say from webserver
      */
-    private suspend fun awaitHomeAssistantEventHandle(sessionId: String, intent: Intent) : HandleResult {
+    private suspend fun awaitHomeAssistantEventHandle(sessionId: String, intent: Intent): HandleResult {
         logger.d { "awaitHomeAssistantEventHandle for sessionId $sessionId and intent $intent" }
         homeAssistantConnection.awaitEvent(intent.intentName, intent.intent)
 
@@ -132,6 +132,6 @@ internal class HandleDomain(
         ).first()
     }
 
-    override fun dispose() { }
+    override fun dispose() {}
 
 }

@@ -32,7 +32,7 @@ class PorcupineClient(
 
     private var oldData = ShortArray(0)
 
-    fun audioFrame(data: ByteArray) : Int {
+    fun audioFrame(data: ByteArray): Int {
         try {
             var currentRecording = oldData + byteArrayToShortArray(data)
 

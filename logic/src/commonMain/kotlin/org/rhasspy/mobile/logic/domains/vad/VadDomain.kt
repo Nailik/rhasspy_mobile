@@ -9,8 +9,10 @@ import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption.Disab
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption.Local
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
-import org.rhasspy.mobile.logic.domains.vad.VadEvent.*
-import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd.*
+import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd
+import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd.VoiceStopped
+import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd.VoiceTimeout
+import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceStart
 import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 
 /**
@@ -50,6 +52,7 @@ internal class VadDomain(
                 localSilenceDetection.start()
                 VoiceStart
             }
+
             Disabled -> VoiceStart
         }
     }

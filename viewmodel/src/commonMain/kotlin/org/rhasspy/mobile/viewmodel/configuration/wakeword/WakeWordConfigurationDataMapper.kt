@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.viewmodel.configuration.wakeword
 
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.data.toIntOrZero
 import org.rhasspy.mobile.data.domain.WakeDomainData

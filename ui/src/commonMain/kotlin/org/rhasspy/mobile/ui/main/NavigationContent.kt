@@ -6,15 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.ui.configuration.DialogManagementConfigurationScreen
-import org.rhasspy.mobile.ui.configuration.connections.ConnectionsConfigurationScreen
-import org.rhasspy.mobile.ui.configuration.domains.mic.AudioInputFormatConfigurationScreen
-import org.rhasspy.mobile.ui.configuration.domains.mic.AudioOutputFormatConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.connections.*
-import org.rhasspy.mobile.ui.configuration.domains.*
 import org.rhasspy.mobile.ui.configuration.domains.asr.SpeechToTextConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.handle.IntentHandlingConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.intent.IntentRecognitionConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.mic.AudioInputConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.domains.mic.AudioInputFormatConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.domains.mic.AudioOutputFormatConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.snd.AudioPlayingConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.tts.TextToSpeechConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.vad.VoiceActivityDetectionConfigurationScreen

@@ -107,6 +107,7 @@ class WakeWordConfigurationViewModel(
                             Path.commonInternalFilePath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
                             copy(customOptions = customOptions.updateList { remove(change.item) })
                         }
+
                         is SelectWakeWordPorcupineLanguage                  -> copy(porcupineLanguage = change.option)
                         is SetPorcupineKeywordCustom                        -> copy(customOptions = customOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
                         is SetPorcupineKeywordDefault                       -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = change.value) })

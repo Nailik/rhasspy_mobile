@@ -15,8 +15,8 @@ sealed interface Result {
     val source: Source
 }
 
-sealed interface PipelineResult: Result {
-    data class End(override val source: Source): PipelineResult
+sealed interface PipelineResult : Result {
+    data class End(override val source: Source) : PipelineResult
 }
 
 sealed interface TranscriptResult : Result {
@@ -28,15 +28,15 @@ sealed interface TranscriptResult : Result {
     }
 }
 
-sealed interface IntentResult : Result{
-    data class Intent(val intentName: String?, val intent: String,override val source: Source) : IntentResult
-    data class NotRecognized(override val source: Source) :PipelineResult, IntentResult
+sealed interface IntentResult : Result {
+    data class Intent(val intentName: String?, val intent: String, override val source: Source) : IntentResult
+    data class NotRecognized(override val source: Source) : PipelineResult, IntentResult
     data object IntentDisabled : IntentResult, PipelineResult {
         override val source: Source = Source.Local
     }
 }
 
-sealed interface HandleResult: IntentResult, Result {
+sealed interface HandleResult : IntentResult, Result {
     data class Handle(val text: String?, val volume: Float?, override val source: Source) : HandleResult
     data class NotHandled(override val source: Source) : HandleResult, PipelineResult
     data object HandleDisabled : HandleResult, PipelineResult {
@@ -44,15 +44,15 @@ sealed interface HandleResult: IntentResult, Result {
     }
 }
 
-sealed interface TtsResult:Result {
-    data class Audio(val data: Flow<SndAudio>,override val source: Source) : TtsResult
+sealed interface TtsResult : Result {
+    data class Audio(val data: Flow<SndAudio>, override val source: Source) : TtsResult
     data class NotSynthesized(override val source: Source) : TtsResult, PipelineResult
     data object TtsDisabled : TtsResult, PipelineResult {
         override val source: Source = Source.Local
     }
 }
 
-sealed interface SndResult: Result {
+sealed interface SndResult : Result {
     data class Played(override val source: Source) : SndResult, PipelineResult, TtsResult
     data class NotPlayed(override val source: Source) : SndResult, PipelineResult
     data object PlayDisabled : SndResult, PipelineResult {

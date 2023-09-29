@@ -138,7 +138,7 @@ internal class TtsDomain(
             .first()
     }
 
-    private fun mapMqttPlayResult(result: PlayResult) : TtsResult {
+    private fun mapMqttPlayResult(result: PlayResult): TtsResult {
         return when (result) {
             is PlayBytes    -> {
                 Audio(

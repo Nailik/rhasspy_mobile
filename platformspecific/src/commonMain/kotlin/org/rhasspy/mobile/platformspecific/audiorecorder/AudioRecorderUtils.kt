@@ -21,11 +21,11 @@ object AudioRecorderUtils {
     }
 
 
-    fun ByteArray.getWavHeaderSampleRate()  : Int{
+    fun ByteArray.getWavHeaderSampleRate(): Int {
         return byteArrayToIntLittleEndian(copyOfRange(24, 28))
     }
 
-    fun ByteArray.getWavHeaderBitRate() : Int{
+    fun ByteArray.getWavHeaderBitRate(): Int {
         return byteArrayToIntLittleEndian(copyOfRange(34, 36))
     }
 

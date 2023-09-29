@@ -3,7 +3,10 @@ package org.rhasspy.mobile.logic.domains.snd
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Sound
 import org.rhasspy.mobile.data.domain.SndDomainData
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
@@ -73,7 +76,7 @@ internal class SndDomain(
     /**
      * collect chunk stream into file and then plays audio
      */
-    private suspend fun onLocalPlayAudio(audio: Audio):SndResult {
+    private suspend fun onLocalPlayAudio(audio: Audio): SndResult {
         logger.d { "onLocalPlayAudio $audio" }
 
         val data = collectAudioToFile(audio)
@@ -93,7 +96,7 @@ internal class SndDomain(
     /**
      * collect chunk stream into file and then plays audio, doesn't await for end
      */
-    private suspend fun onRhasspy2HermesHttpPlayAudio(audio: Audio):SndResult {
+    private suspend fun onRhasspy2HermesHttpPlayAudio(audio: Audio): SndResult {
         logger.d { "onRhasspy2HermesHttpPlayAudio $audio" }
 
         val data = collectAudioToFile(audio)
@@ -108,7 +111,7 @@ internal class SndDomain(
     /**
      * collect chunk stream into file and then plays audio via mqtt, awaits for play finished
      */
-    private suspend fun onRhasspy2HermesMQTTPlayAudio(audio: Audio):SndResult {
+    private suspend fun onRhasspy2HermesMQTTPlayAudio(audio: Audio): SndResult {
         logger.d { "onRhasspy2HermesMQTTPlayAudio $audio" }
 
         val data = collectAudioToFile(audio)

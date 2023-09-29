@@ -305,6 +305,7 @@ internal class MqttConnection(
                         val jsonObject = Json.decodeFromString<JsonObject>(payload.decodeToString())
                         playFinishedCall(jsonObject.getId() ?: "")
                     }
+
                     else                                -> {
                         logger.d { "isNotThisSiteId mqttTopic notFound $topic" }
                     }
@@ -373,7 +374,7 @@ internal class MqttConnection(
         }.let {
             connectionState.value = it
 
-            if(it ==  ConnectionState.Success )MqttResult.Success else MqttResult.Error
+            if (it == ConnectionState.Success) MqttResult.Success else MqttResult.Error
         }
     }
 
@@ -597,15 +598,15 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      * modelId: string = "keyword" - Wake Word
      */
-    override suspend fun hotWordDetected(keyword: String): MqttResult=
+    override suspend fun hotWordDetected(keyword: String): MqttResult =
         publishMessage(
-                MqttTopicsPublish.HotWordDetected.topic
-                    .set(MqttTopicPlaceholder.WakeWord, keyword),
-                createMqttMessage {
-                    put(MqttParams.SiteId, params.siteId)
-                    put(MqttParams.ModelId, keyword)
-                }
-            )
+            MqttTopicsPublish.HotWordDetected.topic
+                .set(MqttTopicPlaceholder.WakeWord, keyword),
+            createMqttMessage {
+                put(MqttParams.SiteId, params.siteId)
+                put(MqttParams.ModelId, keyword)
+            }
+        )
 
     /**
      * hermes/error/hotword (JSON, Rhasspy only)

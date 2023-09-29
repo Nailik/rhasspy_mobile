@@ -2,8 +2,6 @@ package org.rhasspy.mobile.logic.domains
 
 import okio.FileHandle
 import okio.Path
-import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
-import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
@@ -32,7 +30,7 @@ class AudioFileWriter(
     }
 
     fun closeFile() {
-        if(fileHandle == null) return
+        if (fileHandle == null) return
 
         val header = AudioRecorderUtils.getWavHeader(
             sampleRate = sampleRate,

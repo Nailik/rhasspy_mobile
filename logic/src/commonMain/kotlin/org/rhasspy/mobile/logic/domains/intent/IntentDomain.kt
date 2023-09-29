@@ -174,7 +174,7 @@ internal class IntentDomain(
             ).first()
     }
 
-    override fun dispose() { }
+    override fun dispose() {}
 
     /**
      * read the intent name from inten json

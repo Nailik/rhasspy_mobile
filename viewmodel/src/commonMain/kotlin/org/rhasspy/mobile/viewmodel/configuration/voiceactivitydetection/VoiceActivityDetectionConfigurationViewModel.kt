@@ -2,22 +2,17 @@ package org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
 import org.rhasspy.mobile.data.data.toLongOrZero
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption.Local
-import org.rhasspy.mobile.logic.domains.vad.IVadDomain
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.*
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.Change.SelectVoiceActivityDetectionOption
@@ -48,7 +43,7 @@ class VoiceActivityDetectionConfigurationViewModel(
         }
     }
 
-    private val _viewState = MutableStateFlow(VoiceActivityDetectionViewState( mapper(ConfigurationSetting.vadDomainData.value)))
+    private val _viewState = MutableStateFlow(VoiceActivityDetectionViewState(mapper(ConfigurationSetting.vadDomainData.value)))
     val viewState = _viewState.readOnly
 
     val audioRecorderViewState = audioRecorderViewStateCreator(viewState)
