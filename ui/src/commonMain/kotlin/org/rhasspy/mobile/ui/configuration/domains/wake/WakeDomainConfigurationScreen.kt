@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration
+package org.rhasspy.mobile.ui.configuration.domains.wake
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -19,6 +19,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -27,12 +28,11 @@ import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
-import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
+import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.Navigate
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.RequestMicrophonePermission
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
@@ -42,7 +42,6 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordUdpConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.EditPorcupineWakeWordScreen
 
@@ -53,35 +52,33 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordCon
  */
 @Composable
 fun WakeWordConfigurationOverviewScreen(viewModel: WakeWordConfigurationViewModel) {
-
-    val configurationViewState by viewModel.configurationViewState.collectAsState()
-    val viewState by viewModel.viewState.collectAsState()
-
-    ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(WakeWordConfigurationScreen),
-        screenViewModel = viewModel,
-        title = MR.strings.wakeWord.stable,
-        viewState = configurationViewState,
-        onEvent = viewModel::onEvent
+    ScreenContent(
+        screenViewModel = viewModel
     ) {
-
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
+        SettingsScreenItemContent(
+            title = MR.strings.wakeWord.stable,
+            onBackClick = { viewModel.onEvent(BackClick) }
         ) {
 
-            item {
-                WakeWordConfigurationOptionContent(
-                    viewState = viewState,
-                    onEvent = viewModel::onEvent
-                )
+            val viewState by viewModel.viewState.collectAsState()
+
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+
+                item {
+                    WakeWordConfigurationOptionContent(
+                        viewState = viewState,
+                        onEvent = viewModel::onEvent
+                    )
+                }
+
             }
 
         }
-
     }
-
 }
 
 @Composable

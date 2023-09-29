@@ -9,13 +9,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
-import org.rhasspy.mobile.logic.domains.asr.IAsrDomain
-import org.rhasspy.mobile.logic.domains.handle.IHandleDomain
-import org.rhasspy.mobile.logic.domains.intent.IIntentDomain
-import org.rhasspy.mobile.logic.domains.snd.ISndDomain
-import org.rhasspy.mobile.logic.domains.tts.ITtsDomain
 import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
-import org.rhasspy.mobile.logic.pipeline.IPipeline
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -39,20 +33,11 @@ class ConfigurationScreenViewStateCreator(
         arr.any { it is ConnectionState.ErrorState }
     }
 
-    private val hasError = combineStateFlow(
-        rhasspy2HermesConnection.connectionState,
-        rhasspy3WyomingConnection.connectionState,
-        homeAssistantConnection.connectionState,
-        mqttConnection.connectionState,
-        webServerConnection.connectionState,
-    ).mapReadonlyState { arr ->
-        arr.any { it is ConnectionState.ErrorState }
-    }
-
     private val viewState = MutableStateFlow(getViewState())
 
     init {
         combineStateFlow(
+            hasConnectionError,
             wakeDomain.hasError,
             ConfigurationSetting.siteId.data,
             ConfigurationSetting.pipelineData.data,
@@ -74,38 +59,37 @@ class ConfigurationScreenViewStateCreator(
             siteId = SiteIdViewState(
                 text = ConfigurationSetting.siteId.data
             ),
-            connectionsViewState = ConnectionsViewState(
-                hasError = hasConnectionError
+            connectionsItemViewState = ConnectionsItemViewState(
+                hasError = hasConnectionError.value
             ),
-            dialogPipeline = DialogPipelineViewState(
+            pipelineItemViewState = PipelineItemViewState(
                 dialogManagementOption = ConfigurationSetting.pipelineData.value.option,
             ),
-            audioInput = AudioInputViewState(
+            micDomainItemViewState = MicDomainItemViewState(
                 serviceState = ServiceViewState(MutableStateFlow(Disabled)) //TODO #466 mic
             ),
-            wakeWord = WakeWordViewState(
+            wakeDomainItemViewState = WakeDomainItemViewState(
                 wakeWordValueOption = ConfigurationSetting.wakeDomainData.value.wakeWordOption,
                 error = wakeDomain.hasError.value
             ),
-            speechToText = SpeechToTextViewState(
+            asrDomainItemViewState = AsrDomainItemViewState(
                 speechToTextOption = ConfigurationSetting.asrDomainData.value.option,
             ),
-            voiceActivityDetection = VoiceActivityDetectionViewState(
+            vadDomainItemViewState = VadDomainItemViewState(
                 voiceActivityDetectionOption = VoiceActivityDetectionOption.Disabled,
             ),
-            intentRecognition = IntentRecognitionViewState(
+            intentDomainItemViewState = IntentDomainItemViewState(
                 intentRecognitionOption = ConfigurationSetting.intentDomainData.value.option,
             ),
-            intentHandling = IntentHandlingViewState(
+            handleDomainItemViewState = HandleDomainItemViewState(
                 intentHandlingOption = ConfigurationSetting.handleDomainData.value.option,
             ),
-            textToSpeech = TextToSpeechViewState(
+            ttsDomainItemViewState = TtsDomainItemViewState(
                 textToSpeechOption = ConfigurationSetting.ttsDomainData.value.option,
             ),
-            audioPlaying = AudioPlayingViewState(
+            sndDomainItemViewState = SndDomainItemViewState(
                 audioPlayingOption = ConfigurationSetting.sndDomainData.value.option,
             ),
-            hasError = hasError
         )
     }
 

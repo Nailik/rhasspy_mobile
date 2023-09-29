@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration
+package org.rhasspy.mobile.ui.configuration.domains.vad
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -30,6 +30,7 @@ import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
 import org.rhasspy.mobile.platformspecific.roundToDecimals
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -37,11 +38,12 @@ import org.rhasspy.mobile.ui.content.list.InformationListElement
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.SliderListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
-import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
+import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.AudioRecorderViewState
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.Change.SelectVoiceActivityDetectionOption
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.LocalSilenceDetectionUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.LocalSilenceDetectionUiEvent.Action.ToggleAudioLevelTest
@@ -52,25 +54,24 @@ import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceAc
 @Composable
 fun VoiceActivityDetectionConfigurationScreen(viewModel: VoiceActivityDetectionConfigurationViewModel) {
 
-    val configurationEditViewState by viewModel.configurationViewState.collectAsState()
-
-    ConfigurationScreenItemContent(
-        modifier = Modifier,
-        screenViewModel = viewModel,
-        title = MR.strings.voice_activity_detection.stable,
-        viewState = configurationEditViewState,
-        onEvent = viewModel::onEvent
+    ScreenContent(
+        screenViewModel = viewModel
     ) {
+        SettingsScreenItemContent(
+            title = MR.strings.textToSpeech.stable,
+            onBackClick = { viewModel.onEvent(BackClick) }
+        ) {
 
-        val viewState by viewModel.viewState.collectAsState()
-        val audioRecorderViewState by viewModel.audioRecorderViewState.collectAsState()
+            val viewState by viewModel.viewState.collectAsState()
+            val audioRecorderViewState by viewModel.audioRecorderViewState.collectAsState()
 
-        VoiceActivityDetectionEditContent(
-            viewState = viewState,
-            audioRecorderViewState = audioRecorderViewState,
-            onEvent = viewModel::onEvent
-        )
+            VoiceActivityDetectionEditContent(
+                viewState = viewState,
+                audioRecorderViewState = audioRecorderViewState,
+                onEvent = viewModel::onEvent
+            )
 
+        }
     }
 
 }

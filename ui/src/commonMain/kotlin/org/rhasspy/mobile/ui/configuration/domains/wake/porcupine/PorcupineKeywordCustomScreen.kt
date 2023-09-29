@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration.porcupine
+package org.rhasspy.mobile.ui.configuration.domains.wake.porcupine
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -30,7 +30,6 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.AddCustomPorcupineKeyword
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.DownloadCustomPorcupineKeyword
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineCustomKeywordViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
 
 /**
@@ -56,7 +55,7 @@ fun PorcupineKeywordCustomScreen(
                 InformationListElement(text = MR.strings.porcupineLanguageInformation.stable)
             }
 
-            items(editData.customOptionsUi) { option ->
+            items(editData.customOptions) { option ->
 
                 KeywordListItem(
                     option = option,
@@ -78,34 +77,25 @@ fun PorcupineKeywordCustomScreen(
  */
 @Composable
 private fun KeywordListItem(
-    option: PorcupineCustomKeywordViewState,
+    option: PorcupineCustomKeyword,
     onEvent: (PorcupineUiEvent) -> Unit
 ) {
-    if (option.deleted) {
-        //small item to be deleted
-        CustomKeywordDeletedListItem(
-            modifier = Modifier.testTag(option.keyword.fileName),
-            keyword = option.keyword,
-            onUndo = { onEvent(UndoCustomKeywordDeleted(option.keyword)) }
-        )
-    } else {
-        //normal item
-        CustomKeywordListItem(
-            modifier = Modifier.testTag(option.keyword.fileName),
-            keyword = option.keyword,
-            onClick = { onEvent(ClickPorcupineKeywordCustom(option.keyword)) },
-            onToggle = { onEvent(SetPorcupineKeywordCustom(option.keyword, it)) },
-            onDelete = { onEvent(DeletePorcupineKeywordCustom(option.keyword)) },
-            onUpdateSensitivity = {
-                onEvent(
-                    UpdateWakeWordPorcupineKeywordCustomSensitivity(
-                        item = option.keyword,
-                        value = it.toDouble()
-                    )
+    //normal item
+    CustomKeywordListItem(
+        modifier = Modifier.testTag(option.fileName),
+        keyword = option,
+        onClick = { onEvent(ClickPorcupineKeywordCustom(option)) },
+        onToggle = { onEvent(SetPorcupineKeywordCustom(option, it)) },
+        onDelete = { onEvent(DeletePorcupineKeywordCustom(option)) },
+        onUpdateSensitivity = {
+            onEvent(
+                UpdateWakeWordPorcupineKeywordCustomSensitivity(
+                    item = option,
+                    value = it.toDouble()
                 )
-            }
-        )
-    }
+            )
+        }
+    )
 }
 
 /**

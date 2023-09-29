@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration
+package org.rhasspy.mobile.ui.configuration.domains.asr
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,12 +12,14 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
-import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
+import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SetUseSpeechToTextMqttSilenceDetection
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
@@ -31,23 +33,22 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 @Composable
 fun SpeechToTextConfigurationScreen(viewModel: SpeechToTextConfigurationViewModel) {
 
-    val configurationEditViewState by viewModel.configurationViewState.collectAsState()
-
-    ConfigurationScreenItemContent(
-        modifier = Modifier,
-        screenViewModel = viewModel,
-        title = MR.strings.speechToText.stable,
-        viewState = configurationEditViewState,
-        onEvent = viewModel::onEvent
+    ScreenContent(
+        screenViewModel = viewModel
     ) {
+        SettingsScreenItemContent(
+            title = MR.strings.speechToText.stable,
+            onBackClick = { viewModel.onEvent(BackClick) }
+        ) {
 
-        val viewState by viewModel.viewState.collectAsState()
+            val viewState by viewModel.viewState.collectAsState()
 
-        SpeechToTextOptionEditContent(
-            editData = viewState.editData,
-            onEvent = viewModel::onEvent
-        )
+            SpeechToTextOptionEditContent(
+                editData = viewState.editData,
+                onEvent = viewModel::onEvent
+            )
 
+        }
     }
 
 }

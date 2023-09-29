@@ -12,7 +12,7 @@ import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
-import org.rhasspy.mobile.ui.configuration.IntentRecognitionConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.domains.intent.IntentRecognitionConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel

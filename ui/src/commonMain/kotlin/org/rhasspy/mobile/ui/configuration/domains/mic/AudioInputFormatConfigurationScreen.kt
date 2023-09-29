@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration.audioinput
+package org.rhasspy.mobile.ui.configuration.domains.mic
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

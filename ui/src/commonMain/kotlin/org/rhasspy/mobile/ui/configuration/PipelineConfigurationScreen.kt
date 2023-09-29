@@ -15,14 +15,16 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
-import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
+import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
@@ -35,23 +37,22 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScr
 @Composable
 fun DialogManagementConfigurationScreen(viewModel: DialogManagementConfigurationViewModel) {
 
-    val configurationEditViewState by viewModel.configurationViewState.collectAsState()
-
-    ConfigurationScreenItemContent(
-        modifier = Modifier,
-        screenViewModel = viewModel,
-        title = MR.strings.dialog_pipeline.stable,
-        viewState = configurationEditViewState,
-        onEvent = viewModel::onEvent
+    ScreenContent(
+        screenViewModel = viewModel
     ) {
+        SettingsScreenItemContent(
+            title = MR.strings.dialog_pipeline.stable,
+            onBackClick = { viewModel.onEvent(BackClick) }
+        ) {
 
-        val viewState by viewModel.viewState.collectAsState()
+            val viewState by viewModel.viewState.collectAsState()
 
-        DialogManagementEditContent(
-            editData = viewState.editData,
-            onEvent = viewModel::onEvent
-        )
+            DialogManagementEditContent(
+                editData = viewState.editData,
+                onEvent = viewModel::onEvent
+            )
 
+        }
     }
 
 }

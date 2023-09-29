@@ -11,7 +11,7 @@ import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.connection.Rhasspy2HermesConnectionScreen
+import org.rhasspy.mobile.ui.configuration.connections.Rhasspy2HermesConnectionScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Change.SetRhasspy2HermesSSLVerificationDisabled
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationViewModel

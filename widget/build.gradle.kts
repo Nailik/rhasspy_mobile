@@ -38,16 +38,6 @@ kotlin {
     }
 }
 
-configurations.all {
-    resolutionStrategy {
-        eachDependency {
-            if ((requested.group == "org.jetbrains.kotlin") && (!requested.name.startsWith("kotlin-gradle"))) {
-                useVersion("1.9.10")
-            }
-        }
-    }
-}
-
 android {
     namespace = "org.rhasspy.mobile.widget"
 

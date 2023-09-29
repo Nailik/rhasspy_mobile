@@ -1,8 +1,9 @@
-package org.rhasspy.mobile.ui.configuration.connection
+package org.rhasspy.mobile.ui.configuration.connections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -27,25 +28,25 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
-import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewState.HomeAssistantConnectionConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationViewState.Rhasspy3WyomingConnectionConfigurationData
 
 /**
  * content to configure http configuration
  * switch to disable ssl verification
  */
 @Composable
-fun HomeAssistantConnectionScreen(viewModel: HomeAssistantConnectionConfigurationViewModel) {
+fun Rhasspy3WyomingConnectionScreen(viewModel: Rhasspy3WyomingConnectionConfigurationViewModel) {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier,
         screenViewModel = viewModel,
-        title = MR.strings.home_assistant_server.stable,
+        title = MR.strings.rhasspy3_wyoming_server.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent
     ) {
@@ -63,8 +64,8 @@ fun HomeAssistantConnectionScreen(viewModel: HomeAssistantConnectionConfiguratio
 
 @Composable
 private fun HttpConnectionDetailContent(
-    editData: HomeAssistantConnectionConfigurationData,
-    onEvent: (HomeAssistantConnectionConfigurationUiEvent) -> Unit
+    editData: Rhasspy3WyomingConnectionConfigurationData,
+    onEvent: (Rhasspy3WyomingConnectionConfigurationUiEvent) -> Unit
 ) {
 
     Column(
@@ -78,7 +79,7 @@ private fun HttpConnectionDetailContent(
             label = MR.strings.baseHost.stable,
             modifier = Modifier.testTag(TestTag.Host),
             value = editData.host,
-            onValueChange = { onEvent(UpdateHomeAssistantClientServerEndpointHost(it)) },
+            onValueChange = { onEvent(UpdateRhasspy3WyomingServerEndpointHost(it)) },
             isLastItem = false
         )
 
@@ -87,7 +88,7 @@ private fun HttpConnectionDetailContent(
             label = MR.strings.requestTimeout.stable,
             modifier = Modifier.testTag(TestTag.Timeout),
             value = editData.timeoutText,
-            onValueChange = { onEvent(UpdateHomeAssistantClientTimeout(it)) },
+            onValueChange = { onEvent(UpdateRhasspy3WyomingTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
 
@@ -95,11 +96,12 @@ private fun HttpConnectionDetailContent(
         TextFieldListItemVisibility(
             modifier = Modifier.testTag(TestTag.AccessToken),
             value = editData.bearerToken,
-            onValueChange = { onEvent(UpdateHomeAssistantAccessToken(it)) },
+            onValueChange = { onEvent(UpdateRhasspy3WyomingAccessToken(it)) },
             label = MR.strings.accessToken.stable,
             action = {
                 IconButton(
                     modifier = Modifier
+                        .padding(start = 8.dp)
                         .size(48.dp)
                         .background(MaterialTheme.colorScheme.secondaryContainer, shape = CircleShape),
                     onClick = { onEvent(AccessTokenQRCodeClick) }
@@ -119,7 +121,7 @@ private fun HttpConnectionDetailContent(
             modifier = Modifier.testTag(TestTag.SSLSwitch),
             secondaryText = MR.strings.disableSSLValidationInformation.stable,
             isChecked = editData.isSSLVerificationDisabled,
-            onCheckedChange = { onEvent(SetHomeAssistantSSLVerificationDisabled(it)) },
+            onCheckedChange = { onEvent(SetRhasspy3WyomingSSLVerificationDisabled(it)) },
         )
 
     }

@@ -2,25 +2,22 @@ package org.rhasspy.mobile.viewmodel.screens.configuration
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.service.ConnectionState
-import org.rhasspy.mobile.data.service.ConnectionState.ErrorState
 import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.data.viewstate.TextWrapper
 
 @Stable
 data class ConfigurationScreenViewState internal constructor(
     val siteId: SiteIdViewState,
-    val connectionsViewState: ConnectionsViewState,
-    val dialogPipeline: DialogPipelineViewState,
-    val audioInput: AudioInputViewState,
-    val wakeWord: WakeWordViewState,
-    val speechToText: SpeechToTextViewState,
-    val voiceActivityDetection: VoiceActivityDetectionViewState,
-    val intentRecognition: IntentRecognitionViewState,
-    val intentHandling: IntentHandlingViewState,
-    val textToSpeech: TextToSpeechViewState,
-    val audioPlaying: AudioPlayingViewState,
-    val hasError: StateFlow<Boolean>,
+    val connectionsItemViewState: ConnectionsItemViewState,
+    val pipelineItemViewState: PipelineItemViewState,
+    val micDomainItemViewState: MicDomainItemViewState,
+    val wakeDomainItemViewState: WakeDomainItemViewState,
+    val vadDomainItemViewState: VadDomainItemViewState,
+    val asrDomainItemViewState: AsrDomainItemViewState,
+    val intentDomainItemViewState: IntentDomainItemViewState,
+    val handleDomainItemViewState: HandleDomainItemViewState,
+    val ttsDomainItemViewState: TtsDomainItemViewState,
+    val sndDomainItemViewState: SndDomainItemViewState,
 ) {
 
     @Stable
@@ -29,53 +26,53 @@ data class ConfigurationScreenViewState internal constructor(
     )
 
     @Stable
-    data class ConnectionsViewState internal constructor(
-        val hasError: StateFlow<Boolean?>,
+    data class ConnectionsItemViewState internal constructor(
+        val hasError: Boolean,
     )
 
     @Stable
-    data class DialogPipelineViewState internal constructor(
+    data class PipelineItemViewState internal constructor(
         val dialogManagementOption: DialogManagementOption,
     )
 
     @Stable
-    data class AudioInputViewState internal constructor(
+    data class MicDomainItemViewState internal constructor(
         val serviceState: ServiceViewState
     )
 
     @Stable
-    data class WakeWordViewState internal constructor(
+    data class WakeDomainItemViewState internal constructor(
         val wakeWordValueOption: WakeWordOption,
         val error: TextWrapper?,
     )
 
     @Stable
-    data class SpeechToTextViewState internal constructor(
+    data class AsrDomainItemViewState internal constructor(
         val speechToTextOption: SpeechToTextOption,
     )
 
     @Stable
-    data class VoiceActivityDetectionViewState internal constructor(
+    data class VadDomainItemViewState internal constructor(
         val voiceActivityDetectionOption: VoiceActivityDetectionOption,
     )
 
     @Stable
-    data class IntentRecognitionViewState internal constructor(
+    data class IntentDomainItemViewState internal constructor(
         val intentRecognitionOption: IntentRecognitionOption,
     )
 
     @Stable
-    data class IntentHandlingViewState internal constructor(
+    data class HandleDomainItemViewState internal constructor(
         val intentHandlingOption: IntentHandlingOption,
     )
 
     @Stable
-    data class TextToSpeechViewState internal constructor(
+    data class TtsDomainItemViewState internal constructor(
         val textToSpeechOption: TextToSpeechOption,
     )
 
     @Stable
-    data class AudioPlayingViewState internal constructor(
+    data class SndDomainItemViewState internal constructor(
         val audioPlayingOption: AudioPlayingOption,
     )
 }

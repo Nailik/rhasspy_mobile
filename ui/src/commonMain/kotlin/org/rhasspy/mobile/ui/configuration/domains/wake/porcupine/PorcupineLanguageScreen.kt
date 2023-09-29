@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration.porcupine
+package org.rhasspy.mobile.ui.configuration.domains.wake.porcupine
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration.connection
+package org.rhasspy.mobile.ui.configuration.connections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -28,25 +28,25 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
-import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationViewState.Rhasspy3WyomingConnectionConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationViewState.Rhasspy2HermesConnectionConfigurationData
 
 /**
  * content to configure http configuration
  * switch to disable ssl verification
  */
 @Composable
-fun Rhasspy3WyomingConnectionScreen(viewModel: Rhasspy3WyomingConnectionConfigurationViewModel) {
+fun Rhasspy2HermesConnectionScreen(viewModel: Rhasspy2HermesConnectionConfigurationViewModel) {
 
     val configurationEditViewState by viewModel.configurationViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier,
         screenViewModel = viewModel,
-        title = MR.strings.rhasspy3_wyoming_server.stable,
+        title = MR.strings.rhasspy2_hermes_server.stable,
         viewState = configurationEditViewState,
         onEvent = viewModel::onEvent
     ) {
@@ -64,8 +64,8 @@ fun Rhasspy3WyomingConnectionScreen(viewModel: Rhasspy3WyomingConnectionConfigur
 
 @Composable
 private fun HttpConnectionDetailContent(
-    editData: Rhasspy3WyomingConnectionConfigurationData,
-    onEvent: (Rhasspy3WyomingConnectionConfigurationUiEvent) -> Unit
+    editData: Rhasspy2HermesConnectionConfigurationData,
+    onEvent: (Rhasspy2HermesConnectionConfigurationUiEvent) -> Unit
 ) {
 
     Column(
@@ -79,7 +79,7 @@ private fun HttpConnectionDetailContent(
             label = MR.strings.baseHost.stable,
             modifier = Modifier.testTag(TestTag.Host),
             value = editData.host,
-            onValueChange = { onEvent(UpdateRhasspy3WyomingServerEndpointHost(it)) },
+            onValueChange = { onEvent(UpdateRhasspy2HermesServerEndpointHost(it)) },
             isLastItem = false
         )
 
@@ -88,7 +88,7 @@ private fun HttpConnectionDetailContent(
             label = MR.strings.requestTimeout.stable,
             modifier = Modifier.testTag(TestTag.Timeout),
             value = editData.timeoutText,
-            onValueChange = { onEvent(UpdateRhasspy3WyomingTimeout(it)) },
+            onValueChange = { onEvent(UpdateRhasspy2HermesTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
 
@@ -96,7 +96,7 @@ private fun HttpConnectionDetailContent(
         TextFieldListItemVisibility(
             modifier = Modifier.testTag(TestTag.AccessToken),
             value = editData.bearerToken,
-            onValueChange = { onEvent(UpdateRhasspy3WyomingAccessToken(it)) },
+            onValueChange = { onEvent(UpdateRhasspy2HermesAccessToken(it)) },
             label = MR.strings.accessToken.stable,
             action = {
                 IconButton(
@@ -121,7 +121,7 @@ private fun HttpConnectionDetailContent(
             modifier = Modifier.testTag(TestTag.SSLSwitch),
             secondaryText = MR.strings.disableSSLValidationInformation.stable,
             isChecked = editData.isSSLVerificationDisabled,
-            onCheckedChange = { onEvent(SetRhasspy3WyomingSSLVerificationDisabled(it)) },
+            onCheckedChange = { onEvent(SetRhasspy2HermesSSLVerificationDisabled(it)) },
         )
 
     }

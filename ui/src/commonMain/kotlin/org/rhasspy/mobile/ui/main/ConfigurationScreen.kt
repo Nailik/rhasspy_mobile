@@ -12,7 +12,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ConnectionState.ErrorState
 import org.rhasspy.mobile.resources.MR
@@ -27,7 +26,6 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.utils.ListType.ConfigurationScreenList
 import org.rhasspy.mobile.ui.utils.rememberForeverScrollState
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.ConfigurationScreen
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent
@@ -37,7 +35,6 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiE
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
-import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 /**
  * configuration screens with list items that open bottom sheet
@@ -86,97 +83,48 @@ private fun ConfigurationScreenContent(
 
         Column(
             modifier = Modifier
+                .testTag(TestTag.List)
                 .padding(paddingValues)
                 .fillMaxSize()
+                .verticalScroll(scrollState)
         ) {
 
-            if (viewState.hasError.collectAsState().value) {
-                ServiceErrorInformation()
-            }
+            SiteId(viewState.siteId, onEvent)
+            CustomDivider()
 
-            Column(
-                modifier = Modifier
-                    .testTag(TestTag.List)
-                    .weight(1f)
-                    .verticalScroll(scrollState)
-            ) {
+            ConnectionsItem(viewState.connectionsItemViewState, onEvent)
+            CustomDivider()
 
-                SiteId(viewState.siteId, onEvent)
-                CustomDivider()
+            PipelineItem(viewState.pipelineItemViewState, onEvent)
+            CustomDivider()
 
-                Connections(viewState.connectionsViewState, onEvent)
-                CustomDivider()
+            MicDomainItem(viewState.micDomainItemViewState, onEvent)
+            CustomDivider()
 
-                DialogManagement(viewState.dialogPipeline, onEvent)
-                CustomDivider()
+            WakeDomainItem(viewState.wakeDomainItemViewState, onEvent)
+            CustomDivider()
 
-                AudioInput(viewState.audioInput, onEvent)
-                CustomDivider()
+            VadDomainItem(viewState.vadDomainItemViewState, onEvent)
+            CustomDivider()
 
-                WakeWord(viewState.wakeWord, onEvent)
-                CustomDivider()
+            AsrDomainItem(viewState.asrDomainItemViewState, onEvent)
+            CustomDivider()
 
-                SpeechToText(viewState.speechToText, onEvent)
-                CustomDivider()
+            IntentDomainItem(viewState.intentDomainItemViewState, onEvent)
+            CustomDivider()
 
-                VoiceActivityDetection(viewState.voiceActivityDetection, onEvent)
-                CustomDivider()
+            HandleDomainItem(viewState.handleDomainItemViewState, onEvent)
+            CustomDivider()
 
-                IntentRecognition(viewState.intentRecognition, onEvent)
-                CustomDivider()
+            TtsDomainItem(viewState.ttsDomainItemViewState, onEvent)
+            CustomDivider()
 
-                TextToSpeech(viewState.textToSpeech, onEvent)
-                CustomDivider()
+            SndDomainItem(viewState.sndDomainItemViewState, onEvent)
+            CustomDivider()
 
-                AudioPlaying(viewState.audioPlaying, onEvent)
-                CustomDivider()
-
-                IntentHandling(viewState.intentHandling, onEvent)
-                CustomDivider()
-
-            }
-        }
-
-    }
-}
-
-/**
- * error information for service
- */
-@Composable
-private fun ServiceErrorInformation() {
-
-    Surface {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp, bottom = 16.dp)
-                .padding(horizontal = 16.dp),
-            colors = CardDefaults.outlinedCardColors(
-                containerColor = MaterialTheme.colorScheme.errorContainer
-            ),
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Error,
-                    contentDescription = MR.strings.error.stable,
-                    tint = MaterialTheme.colorScheme.onErrorContainer
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    resource = MR.strings.error.stable,
-                    color = MaterialTheme.colorScheme.onErrorContainer
-                )
-            }
         }
     }
-
 }
-
 
 /**
  * site id element
@@ -196,13 +144,12 @@ private fun SiteId(
 
 }
 
-
 /**
  * Go to connections screen
  */
 @Composable
-private fun Connections(
-    connectionsViewState: ConnectionsViewState,
+private fun ConnectionsItem(
+    connectionsItemViewState: ConnectionsItemViewState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
@@ -212,7 +159,7 @@ private fun Connections(
             .testTag(ConnectionsConfigurationScreen),
         text = { Text(MR.strings.connections.stable) },
         secondaryText = { Text(MR.strings.connections_information.stable) },
-        trailing = if (connectionsViewState.hasError) {
+        trailing = if (connectionsItemViewState.hasError) {
             { EventStateIconTinted(ErrorState.Exception()) }
         } else null
     )
@@ -224,17 +171,17 @@ private fun Connections(
  * shows which option is active
  */
 @Composable
-private fun DialogManagement(
-    viewState: DialogPipelineViewState,
+private fun PipelineItem(
+    viewState: PipelineItemViewState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
-    ConfigurationListItem(
-        text = MR.strings.dialog_pipeline.stable,
-        secondaryText = viewState.dialogManagementOption.text,
-        serviceViewState = viewState.serviceState,
-        destination = DialogManagementConfigurationScreen,
-        onEvent = onEvent
+    ListElement(
+        modifier = Modifier
+            .clickable { onEvent(Navigate(DialogManagementConfigurationScreen)) }
+            .testTag(DialogManagementConfigurationScreen),
+        text = { Text(MR.strings.dialog_pipeline.stable) },
+        secondaryText = { Text(viewState.dialogManagementOption.text) },
     )
 
 }
@@ -244,17 +191,18 @@ private fun DialogManagement(
  * shows which option is active
  */
 @Composable
-private fun AudioInput(
-    viewState: AudioInputViewState,
+private fun MicDomainItem(
+    viewState: MicDomainItemViewState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
-    ConfigurationListItem(
-        text = MR.strings.audio_input.stable,
-        secondaryText = MR.strings.audio_input_information.stable,
-        serviceViewState = viewState.serviceState,
-        destination = AudioInputConfigurationScreen,
-        onEvent = onEvent
+    //TODO some information in secondary
+    ListElement(
+        modifier = Modifier
+            .clickable { onEvent(Navigate(AudioInputConfigurationScreen)) }
+            .testTag(AudioInputConfigurationScreen),
+        text = { Text(MR.strings.audio_input.stable) },
+        secondaryText = { Text(MR.strings.audio_input_information.stable) },
     )
 
 }
@@ -264,17 +212,17 @@ private fun AudioInput(
  * shows which option is selected
  */
 @Composable
-private fun WakeWord(
-    viewState: WakeWordViewState,
+private fun WakeDomainItem(
+    viewState: WakeDomainItemViewState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
-    ConfigurationListItem(
-        text = MR.strings.wakeWord.stable,
-        secondaryText = viewState.wakeWordValueOption.text,
-        serviceViewState = viewState.serviceState,
-        destination = WakeWordConfigurationScreen,
-        onEvent = onEvent
+    ListElement(
+        modifier = Modifier
+            .clickable { onEvent(Navigate(WakeWordConfigurationScreen)) }
+            .testTag(WakeWordConfigurationScreen),
+        text = { Text(MR.strings.wakeWord.stable) },
+        secondaryText = { Text(viewState.wakeWordValueOption.text) },
     )
 
 }
@@ -284,17 +232,17 @@ private fun WakeWord(
  * shows which option is selected
  */
 @Composable
-private fun SpeechToText(
-    viewState: SpeechToTextViewState,
+private fun AsrDomainItem(
+    viewState: AsrDomainItemViewState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
-    ConfigurationListItem(
-        text = MR.strings.speechToText.stable,
-        secondaryText = viewState.speechToTextOption.text,
-        serviceViewState = viewState.serviceState,
-        destination = SpeechToTextConfigurationScreen,
-        onEvent = onEvent
+    ListElement(
+        modifier = Modifier
+            .clickable { onEvent(Navigate(SpeechToTextConfigurationScreen)) }
+            .testTag(SpeechToTextConfigurationScreen),
+        text = { Text(MR.strings.speechToText.stable) },
+        secondaryText = { Text(viewState.speechToTextOption.text) },
     )
 
 }
@@ -304,17 +252,17 @@ private fun SpeechToText(
  * shows which option is selected
  */
 @Composable
-private fun VoiceActivityDetection(
-    viewState: VoiceActivityDetectionViewState,
+private fun VadDomainItem(
+    viewState: VadDomainItemViewState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
-    ConfigurationListItem(
-        text = MR.strings.voice_activity_detection.stable,
-        secondaryText = viewState.voiceActivityDetectionOption.text,
-        serviceViewState = viewState.serviceState,
-        destination = VoiceActivityDetectionConfigurationScreen,
-        onEvent = onEvent
+    ListElement(
+        modifier = Modifier
+            .clickable { onEvent(Navigate(VoiceActivityDetectionConfigurationScreen)) }
+            .testTag(VoiceActivityDetectionConfigurationScreen),
+        text = { Text(MR.strings.voice_activity_detection.stable) },
+        secondaryText = { Text(viewState.voiceActivityDetectionOption.text) },
     )
 
 }
@@ -325,17 +273,17 @@ private fun VoiceActivityDetection(
  * shows which option is selected
  */
 @Composable
-private fun IntentRecognition(
-    viewState: IntentRecognitionViewState,
+private fun IntentDomainItem(
+    viewState: IntentDomainItemViewState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
-    ConfigurationListItem(
-        text = MR.strings.intentRecognition.stable,
-        secondaryText = viewState.intentRecognitionOption.text,
-        serviceViewState = viewState.serviceState,
-        destination = IntentRecognitionConfigurationScreen,
-        onEvent = onEvent
+    ListElement(
+        modifier = Modifier
+            .clickable { onEvent(Navigate(IntentRecognitionConfigurationScreen)) }
+            .testTag(IntentRecognitionConfigurationScreen),
+        text = { Text(MR.strings.intentRecognition.stable) },
+        secondaryText = { Text(viewState.intentRecognitionOption.text) },
     )
 
 }
@@ -345,17 +293,17 @@ private fun IntentRecognition(
  * shows which option is selected
  */
 @Composable
-private fun TextToSpeech(
-    viewState: TextToSpeechViewState,
+private fun TtsDomainItem(
+    viewState: TtsDomainItemViewState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
-    ConfigurationListItem(
-        text = MR.strings.textToSpeech.stable,
-        secondaryText = viewState.textToSpeechOption.text,
-        serviceViewState = viewState.serviceState,
-        destination = TextToSpeechConfigurationScreen,
-        onEvent = onEvent
+    ListElement(
+        modifier = Modifier
+            .clickable { onEvent(Navigate(TextToSpeechConfigurationScreen)) }
+            .testTag(TextToSpeechConfigurationScreen),
+        text = { Text(MR.strings.textToSpeech.stable) },
+        secondaryText = { Text(viewState.textToSpeechOption.text) },
     )
 
 }
@@ -365,17 +313,17 @@ private fun TextToSpeech(
  * shows which option is selected
  */
 @Composable
-private fun AudioPlaying(
-    viewState: AudioPlayingViewState,
+private fun SndDomainItem(
+    viewState: SndDomainItemViewState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
-    ConfigurationListItem(
-        text = MR.strings.audioPlaying.stable,
-        secondaryText = viewState.audioPlayingOption.text,
-        serviceViewState = viewState.serviceState,
-        destination = AudioPlayingConfigurationScreen,
-        onEvent = onEvent
+    ListElement(
+        modifier = Modifier
+            .clickable { onEvent(Navigate(AudioPlayingConfigurationScreen)) }
+            .testTag(AudioPlayingConfigurationScreen),
+        text = { Text(MR.strings.audioPlaying.stable) },
+        secondaryText = { Text(viewState.audioPlayingOption.text) },
     )
 
 }
@@ -385,44 +333,17 @@ private fun AudioPlaying(
  * shows which option is selected
  */
 @Composable
-private fun IntentHandling(
-    viewState: IntentHandlingViewState,
+private fun HandleDomainItem(
+    viewState: HandleDomainItemViewState,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
-    ConfigurationListItem(
-        text = MR.strings.intentHandling.stable,
-        secondaryText = viewState.intentHandlingOption.text,
-        serviceViewState = viewState.serviceState,
-        destination = IntentHandlingConfigurationScreen,
-        onEvent = onEvent
-    )
-
-}
-
-/**
- * list item
- */
-@Composable
-private fun ConfigurationListItem(
-    text: StableStringResource,
-    secondaryText: StableStringResource,
-    serviceViewState: ServiceViewState? = null,
-    destination: ConfigurationScreenNavigationDestination,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
-) {
     ListElement(
         modifier = Modifier
-            .clickable { onEvent(Navigate(destination)) }
-            .testTag(destination),
-        text = { Text(text) },
-        secondaryText = { Text(secondaryText) },
-        trailing = serviceViewState?.let {
-            {
-                val serviceStateValue by serviceViewState.connectionState.collectAsState()
-                EventStateIconTinted(serviceStateValue)
-            }
-        }
+            .clickable { onEvent(Navigate(IntentHandlingConfigurationScreen)) }
+            .testTag(IntentHandlingConfigurationScreen),
+        text = { Text(MR.strings.intentHandling.stable) },
+        secondaryText = { Text(viewState.intentHandlingOption.text) },
     )
 
 }

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration
+package org.rhasspy.mobile.ui.configuration.domains.handle
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,12 +15,14 @@ import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.list.RadioButtonListItem
-import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
+import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingHomeAssistantOption
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
@@ -35,25 +37,24 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
 @Composable
 fun IntentHandlingConfigurationScreen(viewModel: IntentHandlingConfigurationViewModel) {
 
-    val configurationEditViewState by viewModel.configurationViewState.collectAsState()
-
-    ConfigurationScreenItemContent(
-        modifier = Modifier,
-        screenViewModel = viewModel,
-        title = MR.strings.intentHandling.stable,
-        viewState = configurationEditViewState,
-        onEvent = viewModel::onEvent
+    ScreenContent(
+        screenViewModel = viewModel
     ) {
+        SettingsScreenItemContent(
+            title = MR.strings.intentHandling.stable,
+            onBackClick = { viewModel.onEvent(BackClick) }
+        ) {
 
-        val viewState by viewModel.viewState.collectAsState()
+            val viewState by viewModel.viewState.collectAsState()
 
-        IntentHandlingEditContent(
-            editData = viewState.editData,
-            onEvent = viewModel::onEvent
-        )
+            IntentHandlingEditContent(
+                editData = viewState.editData,
+                onEvent = viewModel::onEvent
+            )
+
+        }
 
     }
-
 }
 
 @Composable
@@ -96,8 +97,6 @@ private fun IntentHandlingOptionContent(
                 intentHandlingHomeAssistantOption = editData.intentHandlingHomeAssistantOption,
                 onEvent = onEvent
             )
-
-            IntentHandlingOption.Rhasspy2HermesHttp -> Unit
 
             else -> Unit
         }

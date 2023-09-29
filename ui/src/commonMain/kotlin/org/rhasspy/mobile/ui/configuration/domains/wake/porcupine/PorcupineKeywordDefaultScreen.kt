@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration.porcupine
+package org.rhasspy.mobile.ui.configuration.domains.wake.porcupine
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxHeight

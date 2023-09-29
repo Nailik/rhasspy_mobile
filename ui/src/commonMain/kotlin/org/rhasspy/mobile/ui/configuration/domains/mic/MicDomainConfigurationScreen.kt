@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration
+package org.rhasspy.mobile.ui.configuration.domains.mic
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

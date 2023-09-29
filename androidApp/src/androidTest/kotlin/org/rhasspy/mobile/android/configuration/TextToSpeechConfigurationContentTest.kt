@@ -12,7 +12,7 @@ import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
-import org.rhasspy.mobile.ui.configuration.TextToSpeechConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.domains.TextToSpeechConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SelectTextToSpeechOption
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
