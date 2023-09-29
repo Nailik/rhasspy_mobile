@@ -1,5 +1,8 @@
 @file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
@@ -36,6 +39,10 @@ kotlin {
         val iosSimulatorArm64Test by getting
         val iosTest by creating
     }
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.freeCompilerArgs += "-Xexpect-actual-classes"
 }
 
 android {

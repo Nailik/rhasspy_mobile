@@ -92,7 +92,7 @@ private fun ConfigurationScreenContent(
                 .verticalScroll(scrollState)
         ) {
 
-         //   SiteId(viewState.siteId, onEvent)
+            SiteId(viewState.siteId, onEvent)
             CustomDivider()
 
             ConnectionsItem(viewState.connectionsItemViewState, onEvent)

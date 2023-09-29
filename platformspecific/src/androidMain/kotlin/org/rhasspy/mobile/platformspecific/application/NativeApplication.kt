@@ -27,9 +27,8 @@ import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import kotlin.system.exitProcess
 
-
 @OptIn(ExperimentalMultiplatform::class)
-//@AllowDifferentMembersInActual
+@AllowDifferentMembersInActual
 actual abstract class NativeApplication : AppApplication(), KoinComponent {
     private val logger = Logger.withTag("AndroidApplication")
 

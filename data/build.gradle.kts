@@ -1,4 +1,5 @@
-@file:Suppress("UNUSED_VARIABLE")
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 
 plugins {
     kotlin("multiplatform")
@@ -37,6 +38,10 @@ kotlin {
         val iosSimulatorArm64Test by getting
         val iosTest by creating
     }
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.freeCompilerArgs += "-Xexpect-actual-classes"
 }
 
 android {
