@@ -14,6 +14,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.A
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrTextCaptured
 import org.rhasspy.mobile.logic.connections.mqtt.MqttResult
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.logic.connections.user.UserConnection
 import org.rhasspy.mobile.logic.domains.AudioFileWriter
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
@@ -55,7 +56,7 @@ internal class AsrDomain(
     private val indication: IIndication,
     private val fileStorage: IFileStorage,
     private val audioFocus: IAudioFocus,
-    private val userConnection: UserConnection,
+    private val userConnection: IUserConnection,
 ) : IAsrDomain {
 
     private val logger = Logger.withTag("SpeechToTextService")

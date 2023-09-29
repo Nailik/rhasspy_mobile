@@ -12,6 +12,7 @@ import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.HotWordDetected
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.SessionStarted
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.logic.connections.user.UserConnection
 import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent.StartStopRhasspy
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
@@ -40,7 +41,7 @@ interface IPipelineManager {
 class PipelineManager(
     private val mqttConnection: IMqttConnection,
     private val webServerConnection: IWebServerConnection,
-    private val userConnection: UserConnection,
+    private val userConnection: IUserConnection,
     private val indication: IIndication,
 ) : IPipelineManager, KoinComponent {
 
