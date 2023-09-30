@@ -1,14 +1,18 @@
 package org.rhasspy.mobile.viewmodel.configuration.connections.mqtt
 
 import androidx.compose.runtime.Stable
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.data.toStringOrEmpty
+import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState.IConfigurationData
 
 @Stable
 data class MqttConnectionConfigurationViewState internal constructor(
-    override val editData: MqttConnectionConfigurationData
-) : IConfigurationViewState {
+    val editData: MqttConnectionConfigurationData,
+    val isCheckConnectionEnabled: Boolean,
+    val connectionState: StateFlow<ConnectionState>,
+) {
 
     @Stable
     data class MqttConnectionConfigurationData internal constructor(

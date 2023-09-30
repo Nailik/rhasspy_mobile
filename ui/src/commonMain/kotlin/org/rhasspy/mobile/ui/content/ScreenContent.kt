@@ -2,21 +2,31 @@ package org.rhasspy.mobile.ui.content
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.Dp
+import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Dialog
+import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.SnackBar
+import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Confirm
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Dismiss
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar.Action
@@ -33,6 +43,62 @@ val LocalSnackBarHostState = compositionLocalOf<SnackbarHostState> {
 ////val LocalViewModelFactory = compositionLocalOf<ViewModelFactory> {
 //    error("No LocalViewModelFactory provided")
 //}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScreenContent(
+    modifier: Modifier = Modifier,
+    title: StableStringResource,
+    viewModel: IScreenViewModel,
+    icon: ImageVector? = Icons.Filled.ArrowBack,
+    tonalElevation: Dp,
+    bottomBar: @Composable () -> Unit = {},
+    content: @Composable () -> Unit
+) {
+
+    ScreenContent(
+        modifier = modifier,
+        screenViewModel = viewModel
+    ) {
+
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            resource = title,
+                            modifier = Modifier.testTag(TestTag.AppBarTitle),
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { viewModel.onEvent(BackClick) },
+                            modifier = Modifier.testTag(TestTag.AppBarBackButton),
+                        ) {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = MR.strings.back.stable,
+                            )
+                        }
+                    }
+                )
+            },
+            bottomBar = bottomBar,
+        ) { paddingValues ->
+
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                tonalElevation = tonalElevation,
+                content = content,
+            )
+
+        }
+    }
+
+}
 
 @Composable
 fun ScreenContent(

@@ -27,6 +27,7 @@ fun SettingsScreenItemContent(
     modifier: Modifier = Modifier,
     title: StableStringResource,
     onBackClick: () -> Unit,
+    bottomBar: @Composable () -> Unit = {},
     expandedContent: @Composable () -> Unit
 ) {
 
@@ -38,6 +39,7 @@ fun SettingsScreenItemContent(
                 onBackClick = onBackClick
             )
         },
+        bottomBar = bottomBar
     ) { paddingValues ->
         Surface(tonalElevation = 1.dp) {
             Column(

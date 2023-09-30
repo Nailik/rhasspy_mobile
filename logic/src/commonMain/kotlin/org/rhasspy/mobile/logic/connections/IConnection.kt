@@ -8,6 +8,6 @@ interface IConnection : KoinComponent {
 
     val connectionState: StateFlow<ConnectionState>
 
-    suspend fun testConnection() : Boolean
+    suspend fun testConnection()
 
 }

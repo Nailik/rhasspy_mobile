@@ -2,7 +2,6 @@ package org.rhasspy.mobile.viewmodel.screens.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.data.service.ConnectionState
-import org.rhasspy.mobile.data.service.ConnectionState.Disabled
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection

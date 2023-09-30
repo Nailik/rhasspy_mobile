@@ -22,8 +22,7 @@ import org.rhasspy.mobile.data.connection.HttpClientResult.HttpClientError.Known
 import org.rhasspy.mobile.data.connection.HttpClientResult.HttpClientError.UnknownError
 import org.rhasspy.mobile.data.connection.HttpConnectionData
 import org.rhasspy.mobile.data.service.ConnectionState
-import org.rhasspy.mobile.data.service.ConnectionState.ErrorState
-import org.rhasspy.mobile.data.service.ConnectionState.Pending
+import org.rhasspy.mobile.data.service.ConnectionState.*
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.ktor.configureEngine
@@ -33,7 +32,7 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
 
     protected abstract val logger: Logger
 
-    override val connectionState = MutableStateFlow<ConnectionState>(Pending)
+    override val connectionState = MutableStateFlow<ConnectionState>(Unknown)
 
     protected val nativeApplication by inject<NativeApplication>()
 
@@ -63,18 +62,17 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
         }
     }
 
-    override suspend fun testConnection() : Boolean {
-        return try {
+    override suspend fun testConnection() {
+        connectionState.value = try {
             httpClient?.request(httpConnectionParams.host) {
                 headers {
                     append(HttpHeaders.Accept, "*/*")
-                    //authorization(httpConnectionParams.bearerToken)
+                    authorization(httpConnectionParams.bearerToken)
                 }
             }
-            true
-        }catch (e: Exception) {
-            e.printStackTrace()
-            false
+            Success
+        }catch (exception: Exception) {
+            ErrorState.Exception(exception = exception)
         }
     }
 
@@ -84,14 +82,13 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
         }
     }
 
-    private fun collectParams(params: HttpConnectionData) {
-        connectionState.value = Pending
+    private suspend fun collectParams(params: HttpConnectionData) {
         httpConnectionParams = params
         httpClient?.cancel()
 
         try {
             httpClient = buildClient(params)
-            connectionState.value = Pending
+            testConnection()
         } catch (exception: Exception) {
             logger.e(exception) { "error on building client" }
             connectionState.value = ErrorState.Exception(exception = exception)

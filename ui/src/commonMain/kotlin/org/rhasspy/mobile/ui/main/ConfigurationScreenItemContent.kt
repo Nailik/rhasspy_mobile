@@ -20,8 +20,8 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.ScreenContent
-import org.rhasspy.mobile.ui.content.ServiceStateDialog
-import org.rhasspy.mobile.ui.content.ServiceStateHeader
+import org.rhasspy.mobile.ui.content.ConnectionStateDialog
+import org.rhasspy.mobile.ui.content.ConnectionStateHeader
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -87,22 +87,21 @@ fun ConfigurationScreenItemContent(
                         .padding(paddingValues)
                         .fillMaxSize()
                 ) {
-
+/*
                     viewState.serviceViewState?.also { serviceViewState ->
 
-                        ServiceStateHeader(
+                        ConnectionStateHeader(
                             modifier = Modifier
                                 .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
                                 .padding(horizontal = 16.dp)
                                 .padding(bottom = 16.dp),
-                            serviceViewState = serviceViewState,
-                            enabled = viewState.isOpenServiceStateDialogEnabled,
+                            connectionStateFlow = serviceViewState,
                             onClick = { onEvent(OpenServiceStateDialog) }
                         )
 
                     }
 
-                    content()
+                    content()*/
                 }
             }
         }
@@ -121,7 +120,7 @@ private fun Dialogs(
 ) {
     when (dialogState) {
         is ServiceStateDialogState -> {
-            ServiceStateDialog(
+            ConnectionStateDialog(
                 dialogText = dialogState.dialogText,
                 onConfirm = { onEvent(Confirm(dialogState)) },
                 onDismiss = { onEvent(Dismiss(dialogState)) }

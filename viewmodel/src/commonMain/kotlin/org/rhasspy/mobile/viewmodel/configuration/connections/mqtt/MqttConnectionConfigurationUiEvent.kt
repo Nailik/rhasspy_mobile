@@ -23,6 +23,7 @@ sealed interface MqttConnectionConfigurationUiEvent {
         data object OpenMqttSSLWiki : Action
         data object SelectSSLCertificate : Action
         data object BackClick : Action
+        data object CheckConnectionClick : Action
 
     }
 

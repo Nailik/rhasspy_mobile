@@ -9,6 +9,7 @@ sealed interface ScreenViewModelUiEvent {
 
         data object RequestMicrophonePermission : Action
         data object RequestOverlayPermission : Action
+        data object BackClick : Action
 
     }
 

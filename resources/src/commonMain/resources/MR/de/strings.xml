@@ -363,6 +363,7 @@
     <string name="msg_persistence_failed">message persistence failed</string>
     <string name="subscribe_failed">subscription failed</string>
     <string name="topic_subscription_failed">topic subscription failed</string>
+    <string name="unknown_error">Unbekannter Fehler</string>
     <!-- audioRecorder -->
     <string name="source_type_default">Default</string>
     <string name="source_type_mic">Mic</string>

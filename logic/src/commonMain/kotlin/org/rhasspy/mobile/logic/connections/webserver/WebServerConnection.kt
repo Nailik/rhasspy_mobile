@@ -79,9 +79,9 @@ internal class WebServerConnection(
     private val logger = Logger.withTag("WebServerConnection")
     override val incomingMessages = MutableSharedFlow<WebServerConnectionEvent>()
 
-    override val connectionState = MutableStateFlow<ConnectionState>(ConnectionState.Pending)
-    override suspend fun testConnection(): Boolean {
-        return false
+    override val connectionState = MutableStateFlow<ConnectionState>(ConnectionState.Unknown)
+    override suspend fun testConnection() {
+
     }
 
     private val nativeApplication by inject<NativeApplication>()
@@ -115,7 +115,6 @@ internal class WebServerConnection(
     private fun start() {
         if (params.isEnabled) {
             logger.d { "initialization" }
-            connectionState.value = ConnectionState.Loading
 
             if (params.isSSLEnabled && !params.keyStoreFile?.let { Path.commonInternalFilePath(nativeApplication, it) }.commonExists()) {
                 connectionState.value = ErrorState.Error(MR.strings.certificate_missing.stable)
@@ -145,7 +144,7 @@ internal class WebServerConnection(
                 connectionState.value = ErrorState.Exception(exception)
             }
         } else {
-            connectionState.value = ConnectionState.Disabled
+            connectionState.value = ConnectionState.Unknown
         }
     }
 

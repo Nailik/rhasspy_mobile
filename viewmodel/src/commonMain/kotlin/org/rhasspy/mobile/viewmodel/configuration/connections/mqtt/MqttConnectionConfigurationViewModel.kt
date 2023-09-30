@@ -1,9 +1,11 @@
 package org.rhasspy.mobile.viewmodel.configuration.connections.mqtt
 
 import androidx.compose.runtime.Stable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import okio.Path.Companion.toPath
 import org.rhasspy.mobile.data.data.toIntOrNullOrConstant
 import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
@@ -13,34 +15,26 @@ import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
 class MqttConnectionConfigurationViewModel(
     private val mapper: MqttConnectionConfigurationDataMapper,
-    mqttConnection: IMqttConnection
-) : ConfigurationViewModel(
-    connectionState = mqttConnection.connectionState
-) {
+    mqttConnection: IMqttConnection,
+) : ScreenViewModel() {
 
-    private val initialData get() = mapper(ConfigurationSetting.mqttConnection.value)
-    private val _viewState = MutableStateFlow(MqttConnectionConfigurationViewState(initialData))
-    val viewState = _viewState.readOnly
-
-    override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
-    ): StateFlow<ConfigurationViewState> {
-        return viewStateCreator(
-            init = ::initialData,
-            viewState = viewState,
-            configurationViewState = configurationViewState
+    private val _viewState = MutableStateFlow(
+        MqttConnectionConfigurationViewState(
+            editData = mapper(ConfigurationSetting.mqttConnection.value),
+            isCheckConnectionEnabled = true,
+            connectionState = mqttConnection.connectionState
         )
-    }
+    )
+    val viewState = _viewState.readOnly
 
     fun onEvent(action: MqttConnectionConfigurationUiEvent) {
         when (action) {
@@ -72,22 +66,20 @@ class MqttConnectionConfigurationViewModel(
             OpenMqttSSLWiki      -> openLink(LinkType.WikiMQTTSSL)
             SelectSSLCertificate -> selectFile(FolderType.CertificateFolder.Mqtt) { path -> onChange(UpdateMqttKeyStoreFile(path)) }
             BackClick            -> navigator.onBackPressed()
+            CheckConnectionClick -> onSave()
         }
     }
 
-    override fun onDiscard() {
-        if (ConfigurationSetting.mqttConnection.value.keystoreFile != _viewState.value.editData.keystoreFile) {
-            _viewState.value.editData.keystoreFile?.toPath()?.commonDelete()
-        }
-        _viewState.update { it.copy(editData = initialData) }
+    override fun onDismissed() {
+        onSave()
+        super.onDismissed()
     }
 
-    override fun onSave() {
+    private fun onSave() {
         if (ConfigurationSetting.mqttConnection.value.keystoreFile != _viewState.value.editData.keystoreFile) {
             ConfigurationSetting.mqttConnection.value.keystoreFile?.toPath()?.commonDelete()
         }
         ConfigurationSetting.mqttConnection.value = mapper(_viewState.value.editData)
-        _viewState.update { it.copy(editData = initialData) }
     }
 
 }

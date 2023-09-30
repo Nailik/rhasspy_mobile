@@ -17,7 +17,9 @@ import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ConnectionState
+import org.rhasspy.mobile.data.service.ConnectionState.Unknown
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.*
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrError
@@ -35,6 +37,7 @@ import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.extensions.commonSource
 import org.rhasspy.mobile.platformspecific.mqtt.*
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.resources.MR
 import kotlin.random.Random
 
 interface IMqttConnection : IConnection {
@@ -85,9 +88,9 @@ internal class MqttConnection(
 
     private val logger = Logger.withTag("MqttConnection")
 
-    override val connectionState = MutableStateFlow<ConnectionState>(ConnectionState.Pending)
-    override suspend fun testConnection(): Boolean {
-        return true
+    override val connectionState = MutableStateFlow<ConnectionState>(Unknown)
+    override suspend fun testConnection() {
+
     }
 
     override val incomingMessages = MutableSharedFlow<MqttConnectionEvent>()
@@ -130,7 +133,6 @@ internal class MqttConnection(
     private fun start() {
         if (params.mqttConnectionData.isEnabled) {
             logger.d { "initialize" }
-            connectionState.value = ConnectionState.Loading
 
             try {
                 client = buildClient()
@@ -152,7 +154,7 @@ internal class MqttConnection(
                 connectionState.value = ConnectionState.ErrorState.Exception(exception)
             }
         } else {
-            connectionState.value = ConnectionState.Disabled
+            connectionState.value = Unknown
         }
     }
 
@@ -166,7 +168,6 @@ internal class MqttConnection(
         retryJob = null
         client?.disconnect()
         client = null
-        connectionState.value = ConnectionState.Disabled
         _isHasStarted.value = false
         _isConnected.value = false
     }
@@ -366,7 +367,7 @@ internal class MqttConnection(
                     }
                 } ?: run {
                     logger.a { "mqttClient not initialized" }
-                    ConnectionState.ErrorState.Exception()
+                    ConnectionState.ErrorState.Error(MR.strings.notInitialized.stable)
                 }
 
             } else {

@@ -13,7 +13,6 @@ sealed interface Rhasspy2HermesConnectionConfigurationUiEvent {
 
     sealed interface Action : Rhasspy2HermesConnectionConfigurationUiEvent {
 
-        data object BackClick : Action
         data object AccessTokenQRCodeClick : Action
         data object CheckConnectionClick : Action
 

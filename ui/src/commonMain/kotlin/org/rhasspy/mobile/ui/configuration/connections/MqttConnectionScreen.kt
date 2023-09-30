@@ -6,25 +6,32 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Link
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ConnectionStateHeaderItem
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.*
-import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Action.OpenMqttSSLWiki
-import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Action.SelectSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewState.MqttConnectionConfigurationData
@@ -41,22 +48,63 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectio
 @Composable
 fun MqttConnectionScreen(viewModel: MqttConnectionConfigurationViewModel) {
 
-    val configurationEditViewState by viewModel.configurationViewState.collectAsState()
-
-    ConfigurationScreenItemContent(
-        modifier = Modifier,
-        screenViewModel = viewModel,
-        title = MR.strings.mqtt.stable,
-        viewState = configurationEditViewState,
-        onEvent = viewModel::onEvent
+    ScreenContent(
+        screenViewModel = viewModel
     ) {
 
         val viewState by viewModel.viewState.collectAsState()
 
-        MqttConnectionEditContent(
-            editData = viewState.editData,
-            onEvent = viewModel::onEvent
-        )
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                AppBar(
+                    title = MR.strings.intentHandling.stable,
+                    onEvent = viewModel::onEvent
+                )
+            },
+            bottomBar = {
+                BottomAppBar(
+                    actions = {
+                        FilledTonalButtonListItem(
+                            text = MR.strings.testConnection.stable,
+                            enabled = viewState.isCheckConnectionEnabled,
+                            modifier = Modifier,
+                            onClick = { viewModel.onEvent(CheckConnectionClick) }
+                        )
+                    }
+                )
+            },
+        ) { paddingValues ->
+
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                tonalElevation = 1.dp
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+
+                    ConnectionStateHeaderItem(
+                        connectionStateFlow = viewState.connectionState,
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState())
+                    ) {
+
+                        MqttConnectionEditContent(
+                            editData = viewState.editData,
+                            onEvent = viewModel::onEvent
+                        )
+
+                    }
+                }
+            }
+        }
 
     }
 
@@ -68,54 +116,44 @@ private fun MqttConnectionEditContent(
     onEvent: (MqttConnectionConfigurationUiEvent) -> Unit
 ) {
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
+    //toggle to turn mqtt enabled on or off
+    SwitchListItem(
+        text = MR.strings.externalMQTT.stable,
+        modifier = Modifier.testTag(TestTag.MqttSwitch),
+        isChecked = editData.isEnabled,
+        onCheckedChange = { onEvent(SetMqttEnabled(it)) }
+    )
+
+
+    //visibility of mqtt settings
+    AnimatedVisibility(
+        enter = expandVertically(),
+        exit = shrinkVertically(),
+        visible = editData.isEnabled
     ) {
 
-        item {
-            //toggle to turn mqtt enabled on or off
-            SwitchListItem(
-                text = MR.strings.externalMQTT.stable,
-                modifier = Modifier.testTag(TestTag.MqttSwitch),
-                isChecked = editData.isEnabled,
-                onCheckedChange = { onEvent(SetMqttEnabled(it)) }
+        Column {
+
+            MqttConnectionSettings(
+                mqttHost = editData.host,
+                mqttUserName = editData.userName,
+                mqttPassword = editData.password,
+                onEvent = onEvent
             )
-        }
 
-        item {
-            //visibility of mqtt settings
-            AnimatedVisibility(
-                enter = expandVertically(),
-                exit = shrinkVertically(),
-                visible = editData.isEnabled
-            ) {
+            MqttSSL(
+                isMqttSSLEnabled = editData.isSSLEnabled,
+                mqttKeyStoreFileName = editData.keystoreFile,
+                onEvent = onEvent
+            )
 
-                Column {
+            MqttConnectionTiming(
+                mqttConnectionTimeoutText = editData.connectionTimeoutText,
+                mqttKeepAliveIntervalText = editData.keepAliveIntervalText,
+                mqttRetryIntervalText = editData.retryIntervalText,
+                onEvent = onEvent
+            )
 
-                    MqttConnectionSettings(
-                        mqttHost = editData.host,
-                        mqttUserName = editData.userName,
-                        mqttPassword = editData.password,
-                        onEvent = onEvent
-                    )
-
-                    MqttSSL(
-                        isMqttSSLEnabled = editData.isSSLEnabled,
-                        mqttKeyStoreFileName = editData.keystoreFile,
-                        onEvent = onEvent
-                    )
-
-                    MqttConnectionTiming(
-                        mqttConnectionTimeoutText = editData.connectionTimeoutText,
-                        mqttKeepAliveIntervalText = editData.keepAliveIntervalText,
-                        mqttRetryIntervalText = editData.retryIntervalText,
-                        onEvent = onEvent
-                    )
-
-                }
-
-            }
         }
 
     }
@@ -268,6 +306,35 @@ private fun MqttConnectionTiming(
         value = mqttRetryIntervalText,
         onValueChange = { onEvent(UpdateMqttRetryInterval(it)) },
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+    )
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AppBar(
+    title: StableStringResource,
+    onEvent: (MqttConnectionConfigurationUiEvent) -> Unit,
+) {
+
+    TopAppBar(
+        title = {
+            Text(
+                resource = title,
+                modifier = Modifier.testTag(TestTag.AppBarTitle)
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = { onEvent(BackClick) },
+                modifier = Modifier.testTag(TestTag.AppBarBackButton)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = MR.strings.back.stable,
+                )
+            }
+        }
     )
 
 }

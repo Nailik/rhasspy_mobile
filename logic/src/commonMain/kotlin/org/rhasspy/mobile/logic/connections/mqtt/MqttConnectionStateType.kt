@@ -17,7 +17,7 @@ enum class MqttConnectionStateType(val connectionState: ConnectionState) {
     MSG_DELIVERY_FAILED(ConnectionState.ErrorState.Error(MR.strings.msg_delivery_failed.stable)),
     MSG_PERSISTENCE_FAILED(ConnectionState.ErrorState.Error(MR.strings.msg_persistence_failed.stable)),
     SUBSCRIBE_FAILED(ConnectionState.ErrorState.Error(MR.strings.subscribe_failed.stable)),
-    UNKNOWN(ConnectionState.ErrorState.Exception()),
+    UNKNOWN(ConnectionState.ErrorState.Error(MR.strings.unknown_error.stable)),
     TopicSubscriptionFailed(ConnectionState.ErrorState.Error(MR.strings.topic_subscription_failed.stable));
 
     companion object {
