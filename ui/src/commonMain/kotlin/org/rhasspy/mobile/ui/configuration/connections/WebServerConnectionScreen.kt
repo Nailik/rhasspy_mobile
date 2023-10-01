@@ -5,22 +5,26 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ConnectionStateHeaderItem
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.*
-import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Action.OpenWebServerSSLWiki
@@ -38,78 +42,79 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServe
 @Composable
 fun WebServerConnectionScreen(viewModel: WebServerConnectionConfigurationViewModel) {
 
-    val configurationEditViewState by viewModel.configurationViewState.collectAsState()
-
-    ConfigurationScreenItemContent(
-        modifier = Modifier,
-        screenViewModel = viewModel,
+    ScreenContent(
         title = MR.strings.local_webserver.stable,
-        viewState = configurationEditViewState,
-        onEvent = viewModel::onEvent
+        viewModel = viewModel,
+        tonalElevation = 1.dp,
     ) {
 
-        val viewState by viewModel.viewState.collectAsState()
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
 
-        WebServerConnectionEditContent(
-            editData = viewState.editData,
-            onEvent = viewModel::onEvent
-        )
+            val viewState by viewModel.viewState.collectAsState()
 
+            ConnectionStateHeaderItem(
+                connectionStateFlow = viewState.connectionState,
+            )
+
+            WebServerConnectionEditContent(
+                editData = viewState.editData,
+                onEvent = viewModel::onEvent
+            )
+
+        }
     }
 
 }
 
 @Composable
-private fun WebServerConnectionEditContent(
+private fun ColumnScope.WebServerConnectionEditContent(
     editData: WebServerConnectionConfigurationData,
     onEvent: (WebServerConnectionConfigurationUiEvent) -> Unit
 ) {
 
-    LazyColumn(
+    Column(
         modifier = Modifier
-            .fillMaxSize()
+            .weight(1f)
+            .verticalScroll(rememberScrollState())
     ) {
 
-        item {
-            //switch to enable http server
-            SwitchListItem(
-                text = MR.strings.enableHTTPApi.stable,
-                modifier = Modifier.testTag(TestTag.ServerSwitch),
-                isChecked = editData.isEnabled,
-                onCheckedChange = { onEvent(SetHttpServerEnabled(it)) }
-            )
-        }
+        //switch to enable http server
+        SwitchListItem(
+            text = MR.strings.enableHTTPApi.stable,
+            modifier = Modifier.testTag(TestTag.ServerSwitch),
+            isChecked = editData.isEnabled,
+            onCheckedChange = { onEvent(SetHttpServerEnabled(it)) }
+        )
 
-        item {
-            //visibility of server settings
-            AnimatedVisibility(
-                enter = expandVertically(),
-                exit = shrinkVertically(),
-                visible = editData.isEnabled
-            ) {
+        //visibility of server settings
+        AnimatedVisibility(
+            enter = expandVertically(),
+            exit = shrinkVertically(),
+            visible = editData.isEnabled
+        ) {
 
-                Column {
+            Column {
 
-                    //port of server
-                    TextFieldListItem(
-                        label = MR.strings.port.stable,
-                        modifier = Modifier.testTag(TestTag.Port),
-                        value = editData.portText,
-                        isLastItem = true,
-                        onValueChange = { onEvent(UpdateHttpServerPort(it)) },
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-                    )
+                //port of server
+                TextFieldListItem(
+                    label = MR.strings.port.stable,
+                    modifier = Modifier.testTag(TestTag.Port),
+                    value = editData.portText,
+                    isLastItem = true,
+                    onValueChange = { onEvent(UpdateHttpServerPort(it)) },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                )
 
-                    WebserverSSL(
-                        isHttpServerSSLEnabled = editData.isSSLEnabled,
-                        httpServerSSLKeyStoreFileName = editData.keyStoreFile,
-                        httpServerSSLKeyStorePassword = editData.keyStorePassword,
-                        httpServerSSLKeyAlias = editData.keyAlias,
-                        httpServerSSLKeyPassword = editData.keyPassword,
-                        onEvent = onEvent
-                    )
-
-                }
+                WebserverSSL(
+                    isHttpServerSSLEnabled = editData.isSSLEnabled,
+                    httpServerSSLKeyStoreFileName = editData.keyStoreFile,
+                    httpServerSSLKeyStorePassword = editData.keyStorePassword,
+                    httpServerSSLKeyAlias = editData.keyAlias,
+                    httpServerSSLKeyPassword = editData.keyPassword,
+                    onEvent = onEvent
+                )
 
             }
 

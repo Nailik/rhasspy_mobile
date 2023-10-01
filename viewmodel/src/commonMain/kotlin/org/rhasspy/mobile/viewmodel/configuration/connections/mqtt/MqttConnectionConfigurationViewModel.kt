@@ -30,8 +30,7 @@ class MqttConnectionConfigurationViewModel(
     private val _viewState = MutableStateFlow(
         MqttConnectionConfigurationViewState(
             editData = mapper(ConfigurationSetting.mqttConnection.value),
-            isCheckConnectionEnabled = true,
-            connectionState = mqttConnection.connectionState
+            connectionState = mqttConnection.connectionState,
         )
     )
     val viewState = _viewState.readOnly
@@ -59,27 +58,16 @@ class MqttConnectionConfigurationViewModel(
                 }
             })
         }
-    }
-
-    private fun onAction(action: Action) {
-        when (action) {
-            OpenMqttSSLWiki      -> openLink(LinkType.WikiMQTTSSL)
-            SelectSSLCertificate -> selectFile(FolderType.CertificateFolder.Mqtt) { path -> onChange(UpdateMqttKeyStoreFile(path)) }
-            BackClick            -> navigator.onBackPressed()
-            CheckConnectionClick -> onSave()
-        }
-    }
-
-    override fun onDismissed() {
-        onSave()
-        super.onDismissed()
-    }
-
-    private fun onSave() {
         if (ConfigurationSetting.mqttConnection.value.keystoreFile != _viewState.value.editData.keystoreFile) {
             ConfigurationSetting.mqttConnection.value.keystoreFile?.toPath()?.commonDelete()
         }
         ConfigurationSetting.mqttConnection.value = mapper(_viewState.value.editData)
     }
 
+    private fun onAction(action: Action) {
+        when (action) {
+            OpenMqttSSLWiki      -> openLink(LinkType.WikiMQTTSSL)
+            SelectSSLCertificate -> selectFile(FolderType.CertificateFolder.Mqtt) { path -> onChange(UpdateMqttKeyStoreFile(path)) }
+        }
+    }
 }

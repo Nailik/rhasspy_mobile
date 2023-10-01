@@ -10,7 +10,6 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationView
 @Stable
 data class MqttConnectionConfigurationViewState internal constructor(
     val editData: MqttConnectionConfigurationData,
-    val isCheckConnectionEnabled: Boolean,
     val connectionState: StateFlow<ConnectionState>,
 ) {
 

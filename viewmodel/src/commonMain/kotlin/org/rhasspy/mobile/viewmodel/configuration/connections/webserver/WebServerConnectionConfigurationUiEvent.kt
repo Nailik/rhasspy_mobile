@@ -20,7 +20,6 @@ sealed interface WebServerConnectionConfigurationUiEvent {
 
         data object OpenWebServerSSLWiki : Action
         data object SelectSSLCertificate : Action
-        data object BackClick : Action
 
     }
 

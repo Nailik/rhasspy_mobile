@@ -1,14 +1,17 @@
 package org.rhasspy.mobile.viewmodel.configuration.connections.webserver
 
 import androidx.compose.runtime.Stable
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.data.toStringOrEmpty
+import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState.IConfigurationData
 
 @Stable
 data class WebServerConnectionConfigurationViewState internal constructor(
-    override val editData: WebServerConnectionConfigurationData
-) : IConfigurationViewState {
+    val editData: WebServerConnectionConfigurationData,
+    val connectionState: StateFlow<ConnectionState>,
+) {
 
     @Stable
     data class WebServerConnectionConfigurationData internal constructor(

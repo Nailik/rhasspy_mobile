@@ -2,41 +2,30 @@ package org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
 import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
-import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
 class Rhasspy3WyomingConnectionConfigurationViewModel(
     private val mapper: Rhasspy3WyomingConnectionConfigurationDataMapper,
     rhasspy3WyomingConnection: IRhasspy3WyomingConnection
-) : ConfigurationViewModel(
-    connectionState = rhasspy3WyomingConnection.connectionState
-) {
+) : ScreenViewModel() {
 
-    private val initialData get() = mapper(ConfigurationSetting.rhasspy3Connection.value)
-    private val _viewState = MutableStateFlow(Rhasspy3WyomingConnectionConfigurationViewState(initialData))
-    val viewState = _viewState.readOnly
-
-    override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
-    ): StateFlow<ConfigurationViewState> {
-        return viewStateCreator(
-            init = ::initialData,
-            viewState = viewState,
-            configurationViewState = configurationViewState
+    private val _viewState = MutableStateFlow(
+        Rhasspy3WyomingConnectionConfigurationViewState(
+            editData = mapper(ConfigurationSetting.rhasspy3Connection.value),
+            connectionState = rhasspy3WyomingConnection.connectionState
         )
-    }
+    )
+    val viewState = _viewState.readOnly
 
     fun onEvent(event: Rhasspy3WyomingConnectionConfigurationUiEvent) {
         when (event) {
@@ -56,22 +45,13 @@ class Rhasspy3WyomingConnectionConfigurationViewModel(
                 }
             })
         }
+        ConfigurationSetting.rhasspy3Connection.value = mapper(_viewState.value.editData)
     }
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick              -> navigator.onBackPressed()
             AccessTokenQRCodeClick -> scanQRCode { onChange(UpdateRhasspy3WyomingAccessToken(it)) }
         }
-    }
-
-    override fun onDiscard() {
-        _viewState.update { it.copy(editData = initialData) }
-    }
-
-    override fun onSave() {
-        ConfigurationSetting.rhasspy3Connection.value = mapper(_viewState.value.editData)
-        _viewState.update { it.copy(editData = initialData) }
     }
 
 }

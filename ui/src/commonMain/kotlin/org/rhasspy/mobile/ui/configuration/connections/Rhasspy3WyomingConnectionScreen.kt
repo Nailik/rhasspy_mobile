@@ -1,10 +1,7 @@
 package org.rhasspy.mobile.ui.configuration.connections
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,11 +19,12 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ConnectionStateHeaderItem
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
-import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
@@ -41,36 +39,41 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rh
 @Composable
 fun Rhasspy3WyomingConnectionScreen(viewModel: Rhasspy3WyomingConnectionConfigurationViewModel) {
 
-    val configurationEditViewState by viewModel.configurationViewState.collectAsState()
-
-    ConfigurationScreenItemContent(
-        modifier = Modifier,
-        screenViewModel = viewModel,
+    ScreenContent(
         title = MR.strings.rhasspy3_wyoming_server.stable,
-        viewState = configurationEditViewState,
-        onEvent = viewModel::onEvent
+        viewModel = viewModel,
+        tonalElevation = 1.dp,
     ) {
 
-        val viewState by viewModel.viewState.collectAsState()
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            val viewState by viewModel.viewState.collectAsState()
 
-        HttpConnectionDetailContent(
-            editData = viewState.editData,
-            onEvent = viewModel::onEvent
-        )
+            ConnectionStateHeaderItem(
+                connectionStateFlow = viewState.connectionState,
+            )
+
+            HttpConnectionDetailContent(
+                editData = viewState.editData,
+                onEvent = viewModel::onEvent
+            )
+
+        }
 
     }
 
 }
 
 @Composable
-private fun HttpConnectionDetailContent(
+private fun ColumnScope.HttpConnectionDetailContent(
     editData: Rhasspy3WyomingConnectionConfigurationData,
     onEvent: (Rhasspy3WyomingConnectionConfigurationUiEvent) -> Unit
 ) {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .weight(1f)
             .verticalScroll(rememberScrollState())
     ) {
 

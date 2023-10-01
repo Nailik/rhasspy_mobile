@@ -32,7 +32,7 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
 
     protected abstract val logger: Logger
 
-    override val connectionState = MutableStateFlow<ConnectionState>(Unknown)
+    override val connectionState = MutableStateFlow<ConnectionState>(Disabled)
 
     protected val nativeApplication by inject<NativeApplication>()
 

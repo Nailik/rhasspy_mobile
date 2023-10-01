@@ -59,7 +59,7 @@ fun ConnectionStateHeader(
     val connectionState by connectionStateFlow.collectAsState()
 
     AnimatedVisibility(
-        visible = connectionState !is Unknown
+        visible = connectionState !is Disabled
     ) {
         Box(
             modifier = modifier
@@ -91,7 +91,7 @@ fun ConnectionStateHeaderItem(
     val connectionState by connectionStateFlow.collectAsState()
 
     AnimatedVisibility(
-        visible = connectionState !is Unknown,
+        visible = connectionState !is Disabled,
         enter = fadeIn() + expandIn(
             expandFrom = Alignment.TopCenter,
             initialSize = { fullSize -> IntSize(fullSize.width, 0) },
@@ -104,7 +104,7 @@ fun ConnectionStateHeaderItem(
         val contentColor = when (connectionState) {
             is Success    -> MaterialTheme.colorScheme.onPrimaryContainer
             is ErrorState -> MaterialTheme.colorScheme.onErrorContainer
-            is Unknown    -> return@AnimatedVisibility
+            is Disabled   -> return@AnimatedVisibility
         }
 
         ListElement(
@@ -116,7 +116,7 @@ fun ConnectionStateHeaderItem(
                 containerColor = when (connectionState) {
                     is Success    -> MaterialTheme.colorScheme.primaryContainer
                     is ErrorState -> MaterialTheme.colorScheme.errorContainer
-                    is Unknown    -> return@AnimatedVisibility
+                    is Disabled   -> return@AnimatedVisibility
                 },
                 headlineColor = contentColor,
                 leadingIconColor = contentColor,
@@ -146,7 +146,7 @@ private fun ConnectionStateText(connectionState: ConnectionState) {
         resource = when (connectionState) {
             is Success    -> MR.strings.success.stable
             is ErrorState -> MR.strings.error.stable
-            Unknown       -> return
+            Disabled      -> return
         }
     )
 

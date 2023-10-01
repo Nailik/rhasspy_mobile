@@ -26,12 +26,12 @@ fun EventStateIcon(connectionState: ConnectionState) {
         imageVector = when (connectionState) {
             is Success    -> Icons.Outlined.Done
             is ErrorState -> Icons.Filled.Error
-            is Unknown   -> return
+            is Disabled   -> return
         },
         contentDescription = when (connectionState) {
             is Success    -> MR.strings.success.stable
             is ErrorState -> MR.strings.error.stable
-            is Unknown   -> return
+            is Disabled   -> return
         }
     )
 }
@@ -42,17 +42,17 @@ fun EventStateIconTinted(connectionState: ConnectionState) {
         imageVector = when (connectionState) {
             is Success    -> Icons.Outlined.Done
             is ErrorState -> Icons.Filled.Error
-            is Unknown    -> return
+            is Disabled   -> return
         },
         contentDescription = when (connectionState) {
             is Success    -> MR.strings.success.stable
             is ErrorState -> MR.strings.error.stable
-            is Unknown    -> return
+            is Disabled   -> return
         },
         tint = when (connectionState) {
             is Success    -> MaterialTheme.colorScheme.primary
             is ErrorState -> MaterialTheme.colorScheme.errorContainer
-            is Unknown    -> return
+            is Disabled   -> return
         }
     )
 }
@@ -65,7 +65,7 @@ fun EventStateContent(
     val contentColor = when (connectionState) {
         is Success    -> MaterialTheme.colorScheme.onPrimaryContainer
         is ErrorState -> MaterialTheme.colorScheme.onErrorContainer
-        is Unknown   -> return
+        is Disabled   -> return
     }
 
     CompositionLocalProvider(
@@ -88,7 +88,7 @@ fun EventStateCard(
             containerColor = when (connectionState) {
                 is Success    -> MaterialTheme.colorScheme.primaryContainer
                 is ErrorState -> MaterialTheme.colorScheme.errorContainer
-                is Unknown   -> return
+                is Disabled   -> return
             }
         ),
         content = {

@@ -34,6 +34,7 @@ import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.data.service.ConnectionState.ErrorState
+import org.rhasspy.mobile.data.service.ConnectionState.Disabled
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.http.StreamContent
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
@@ -79,7 +80,7 @@ internal class WebServerConnection(
     private val logger = Logger.withTag("WebServerConnection")
     override val incomingMessages = MutableSharedFlow<WebServerConnectionEvent>()
 
-    override val connectionState = MutableStateFlow<ConnectionState>(ConnectionState.Unknown)
+    override val connectionState = MutableStateFlow<ConnectionState>(Disabled)
     override suspend fun testConnection() {
 
     }
@@ -108,6 +109,9 @@ internal class WebServerConnection(
 
     private fun collectParams(params: LocalWebserverConnectionData) {
         this.params = params
+        if (!params.isEnabled) {
+            connectionState.value = Disabled
+        }
         stop()
         start()
     }
@@ -144,7 +148,7 @@ internal class WebServerConnection(
                 connectionState.value = ErrorState.Exception(exception)
             }
         } else {
-            connectionState.value = ConnectionState.Unknown
+            connectionState.value = Disabled
         }
     }
 

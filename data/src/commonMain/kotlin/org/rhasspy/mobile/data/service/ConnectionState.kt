@@ -9,7 +9,7 @@ import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperString
 @Stable
 sealed class ConnectionState {
 
-    data object Unknown : ConnectionState()
+    data object Disabled : ConnectionState()
 
     data object Success : ConnectionState()
 

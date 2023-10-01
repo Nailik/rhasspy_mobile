@@ -58,46 +58,51 @@ fun ScreenContent(
 
     ScreenContent(
         modifier = modifier,
-        screenViewModel = viewModel
+        screenViewModel = viewModel,
     ) {
 
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            resource = title,
-                            modifier = Modifier.testTag(TestTag.AppBarTitle),
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = { viewModel.onEvent(BackClick) },
-                            modifier = Modifier.testTag(TestTag.AppBarBackButton),
-                        ) {
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = MR.strings.back.stable,
+        Surface(
+            modifier = Modifier
+                .fillMaxSize(),
+            tonalElevation = tonalElevation,
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            Text(
+                                resource = title,
+                                modifier = Modifier.testTag(TestTag.AppBarTitle),
                             )
+                        },
+                        navigationIcon = {
+                            IconButton(
+                                onClick = { viewModel.onEvent(BackClick) },
+                                modifier = Modifier.testTag(TestTag.AppBarBackButton),
+                            ) {
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = MR.strings.back.stable,
+                                )
+                            }
                         }
-                    }
+                    )
+                },
+                bottomBar = bottomBar,
+            ) { paddingValues ->
+
+                Surface(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize(),
+                    content = content,
                 )
-            },
-            bottomBar = bottomBar,
-        ) { paddingValues ->
 
-            Surface(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                tonalElevation = tonalElevation,
-                content = content,
-            )
-
+            }
         }
-    }
 
+    }
 }
 
 @Composable

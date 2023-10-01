@@ -13,7 +13,6 @@ sealed interface HomeAssistantConnectionConfigurationUiEvent {
 
     sealed interface Action : HomeAssistantConnectionConfigurationUiEvent {
 
-        data object BackClick : Action
         data object AccessTokenQRCodeClick : Action
 
     }

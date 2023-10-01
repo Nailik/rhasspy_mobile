@@ -20,29 +20,22 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServe
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
 class WebServerConnectionConfigurationViewModel(
     private val mapper: WebServerConnectionConfigurationDataMapper,
     private val nativeApplication: NativeApplication,
     webServerConnection: IWebServerConnection
-) : ConfigurationViewModel(
-    connectionState = webServerConnection.connectionState
-) {
+) : ScreenViewModel() {
 
-    private val initialData get() = mapper(ConfigurationSetting.localWebserverConnection.value)
-    private val _viewState = MutableStateFlow(WebServerConnectionConfigurationViewState(initialData))
-    val viewState = _viewState.readOnly
-
-    override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
-    ): StateFlow<ConfigurationViewState> {
-        return viewStateCreator(
-            init = ::initialData,
-            viewState = viewState,
-            configurationViewState = configurationViewState
+    private val _viewState = MutableStateFlow(
+        WebServerConnectionConfigurationViewState(
+            editData = mapper(ConfigurationSetting.localWebserverConnection.value),
+            connectionState = webServerConnection.connectionState,
         )
-    }
+    )
+    val viewState = _viewState.readOnly
 
     fun onEvent(event: WebServerConnectionConfigurationUiEvent) {
         when (event) {
@@ -65,6 +58,13 @@ class WebServerConnectionConfigurationViewModel(
                 }
             })
         }
+        //delete old keystore file if changed
+        if (_viewState.value.editData.keyStoreFile != ConfigurationSetting.localWebserverConnection.value.keyStoreFile) {
+            ConfigurationSetting.localWebserverConnection.value.keyStoreFile?.also {
+                Path.commonInternalFilePath(nativeApplication, it).commonDelete()
+            }
+        }
+        ConfigurationSetting.localWebserverConnection.value = mapper(_viewState.value.editData)
     }
 
 
@@ -72,36 +72,7 @@ class WebServerConnectionConfigurationViewModel(
         when (action) {
             OpenWebServerSSLWiki -> openLink(LinkType.WikiWebServerSSL)
             SelectSSLCertificate -> selectFile(FolderType.CertificateFolder.WebServer) { path -> onEvent(SetHttpServerSSLKeyStoreFile(path)) }
-            BackClick            -> navigator.onBackPressed()
         }
-    }
-
-    /**
-     * undo all changes
-     */
-    override fun onDiscard() {
-        //delete new keystore file if changed
-        if (_viewState.value.editData.keyStoreFile != ConfigurationSetting.localWebserverConnection.value.keyStoreFile) {
-            _viewState.value.editData.keyStoreFile?.also {
-                Path.commonInternalFilePath(nativeApplication, it).commonDelete()
-            }
-        }
-        _viewState.update { it.copy(editData = initialData) }
-    }
-
-    /**
-     * save data configuration
-     */
-    override fun onSave() {
-        //delete old keystore file if changed
-        if (_viewState.value.editData.keyStoreFile != ConfigurationSetting.localWebserverConnection.value.keyStoreFile) {
-            ConfigurationSetting.localWebserverConnection.value.keyStoreFile?.also {
-                Path.commonInternalFilePath(nativeApplication, it).commonDelete()
-            }
-        }
-
-        ConfigurationSetting.localWebserverConnection.value = mapper(_viewState.value.editData)
-        _viewState.update { it.copy(editData = initialData) }
     }
 
 }

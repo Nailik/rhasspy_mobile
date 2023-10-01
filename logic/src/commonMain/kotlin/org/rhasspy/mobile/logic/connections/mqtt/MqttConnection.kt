@@ -19,7 +19,7 @@ import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ConnectionState
-import org.rhasspy.mobile.data.service.ConnectionState.Unknown
+import org.rhasspy.mobile.data.service.ConnectionState.Disabled
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.*
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrError
@@ -88,7 +88,7 @@ internal class MqttConnection(
 
     private val logger = Logger.withTag("MqttConnection")
 
-    override val connectionState = MutableStateFlow<ConnectionState>(Unknown)
+    override val connectionState = MutableStateFlow<ConnectionState>(Disabled)
     override suspend fun testConnection() {
 
     }
@@ -154,7 +154,7 @@ internal class MqttConnection(
                 connectionState.value = ConnectionState.ErrorState.Exception(exception)
             }
         } else {
-            connectionState.value = Unknown
+            connectionState.value = Disabled
         }
     }
 

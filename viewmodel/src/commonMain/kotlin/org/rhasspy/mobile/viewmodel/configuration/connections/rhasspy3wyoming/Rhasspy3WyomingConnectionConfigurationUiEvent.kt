@@ -13,7 +13,6 @@ sealed interface Rhasspy3WyomingConnectionConfigurationUiEvent {
 
     sealed interface Action : Rhasspy3WyomingConnectionConfigurationUiEvent {
 
-        data object BackClick : Action
         data object AccessTokenQRCodeClick : Action
 
     }

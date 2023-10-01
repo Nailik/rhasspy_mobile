@@ -5,6 +5,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -49,113 +50,83 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectio
 fun MqttConnectionScreen(viewModel: MqttConnectionConfigurationViewModel) {
 
     ScreenContent(
-        screenViewModel = viewModel
+        title = MR.strings.mqtt.stable,
+        viewModel = viewModel,
+        tonalElevation = 1.dp,
     ) {
 
-        val viewState by viewModel.viewState.collectAsState()
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            val viewState by viewModel.viewState.collectAsState()
 
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                AppBar(
-                    title = MR.strings.intentHandling.stable,
-                    onEvent = viewModel::onEvent
-                )
-            },
-            bottomBar = {
-                BottomAppBar(
-                    actions = {
-                        FilledTonalButtonListItem(
-                            text = MR.strings.testConnection.stable,
-                            enabled = viewState.isCheckConnectionEnabled,
-                            modifier = Modifier,
-                            onClick = { viewModel.onEvent(CheckConnectionClick) }
-                        )
-                    }
-                )
-            },
-        ) { paddingValues ->
+            ConnectionStateHeaderItem(
+                connectionStateFlow = viewState.connectionState,
+            )
 
-            Surface(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                tonalElevation = 1.dp
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
+            MqttConnectionEditContent(
+                editData = viewState.editData,
+                onEvent = viewModel::onEvent
+            )
 
-                    ConnectionStateHeaderItem(
-                        connectionStateFlow = viewState.connectionState,
-                    )
-
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .verticalScroll(rememberScrollState())
-                    ) {
-
-                        MqttConnectionEditContent(
-                            editData = viewState.editData,
-                            onEvent = viewModel::onEvent
-                        )
-
-                    }
-                }
-            }
         }
-
     }
 
 }
 
 @Composable
-private fun MqttConnectionEditContent(
+private fun ColumnScope.MqttConnectionEditContent(
     editData: MqttConnectionConfigurationData,
     onEvent: (MqttConnectionConfigurationUiEvent) -> Unit
 ) {
 
-    //toggle to turn mqtt enabled on or off
-    SwitchListItem(
-        text = MR.strings.externalMQTT.stable,
-        modifier = Modifier.testTag(TestTag.MqttSwitch),
-        isChecked = editData.isEnabled,
-        onCheckedChange = { onEvent(SetMqttEnabled(it)) }
-    )
-
-
-    //visibility of mqtt settings
-    AnimatedVisibility(
-        enter = expandVertically(),
-        exit = shrinkVertically(),
-        visible = editData.isEnabled
+    Column(
+        modifier = Modifier
+            .weight(1f)
+            .verticalScroll(rememberScrollState())
     ) {
 
-        Column {
+        //toggle to turn mqtt enabled on or off
+        SwitchListItem(
+            text = MR.strings.externalMQTT.stable,
+            modifier = Modifier.testTag(TestTag.MqttSwitch),
+            isChecked = editData.isEnabled,
+            onCheckedChange = { onEvent(SetMqttEnabled(it)) }
+        )
 
-            MqttConnectionSettings(
-                mqttHost = editData.host,
-                mqttUserName = editData.userName,
-                mqttPassword = editData.password,
-                onEvent = onEvent
-            )
 
-            MqttSSL(
-                isMqttSSLEnabled = editData.isSSLEnabled,
-                mqttKeyStoreFileName = editData.keystoreFile,
-                onEvent = onEvent
-            )
+        //visibility of mqtt settings
+        AnimatedVisibility(
+            enter = expandVertically(),
+            exit = shrinkVertically(),
+            visible = editData.isEnabled
+        ) {
 
-            MqttConnectionTiming(
-                mqttConnectionTimeoutText = editData.connectionTimeoutText,
-                mqttKeepAliveIntervalText = editData.keepAliveIntervalText,
-                mqttRetryIntervalText = editData.retryIntervalText,
-                onEvent = onEvent
-            )
+            Column {
+
+                MqttConnectionSettings(
+                    mqttHost = editData.host,
+                    mqttUserName = editData.userName,
+                    mqttPassword = editData.password,
+                    onEvent = onEvent
+                )
+
+                MqttSSL(
+                    isMqttSSLEnabled = editData.isSSLEnabled,
+                    mqttKeyStoreFileName = editData.keystoreFile,
+                    onEvent = onEvent
+                )
+
+                MqttConnectionTiming(
+                    mqttConnectionTimeoutText = editData.connectionTimeoutText,
+                    mqttKeepAliveIntervalText = editData.keepAliveIntervalText,
+                    mqttRetryIntervalText = editData.retryIntervalText,
+                    onEvent = onEvent
+                )
+
+            }
 
         }
-
     }
 
 }
@@ -176,7 +147,7 @@ private fun MqttConnectionSettings(
 
     //host
     TextFieldListItem(
-        label = MR.strings.host.stable,
+        label = MR.strings.host_mqtt.stable,
         modifier = Modifier.testTag(TestTag.Host),
         value = mqttHost,
         onValueChange = { onEvent(UpdateMqttHost(it)) },
@@ -306,35 +277,6 @@ private fun MqttConnectionTiming(
         value = mqttRetryIntervalText,
         onValueChange = { onEvent(UpdateMqttRetryInterval(it)) },
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-    )
-
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun AppBar(
-    title: StableStringResource,
-    onEvent: (MqttConnectionConfigurationUiEvent) -> Unit,
-) {
-
-    TopAppBar(
-        title = {
-            Text(
-                resource = title,
-                modifier = Modifier.testTag(TestTag.AppBarTitle)
-            )
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = { onEvent(BackClick) },
-                modifier = Modifier.testTag(TestTag.AppBarBackButton)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = MR.strings.back.stable,
-                )
-            }
-        }
     )
 
 }

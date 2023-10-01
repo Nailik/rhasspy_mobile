@@ -1,18 +1,14 @@
 package org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
-import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Action.CheckConnectionClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
@@ -20,13 +16,12 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 @Stable
 class Rhasspy2HermesConnectionConfigurationViewModel(
     private val mapper: Rhasspy2HermesConnectionConfigurationDataMapper,
-    private val rhasspy2HermesConnection: IRhasspy2HermesConnection
+    rhasspy2HermesConnection: IRhasspy2HermesConnection
 ) : ScreenViewModel() {
 
     private val _viewState = MutableStateFlow(
         Rhasspy2HermesConnectionConfigurationViewState(
             editData = mapper(ConfigurationSetting.rhasspy2Connection.value),
-            isCheckConnectionEnabled = true,
             connectionState = rhasspy2HermesConnection.connectionState
         )
     )
@@ -50,22 +45,13 @@ class Rhasspy2HermesConnectionConfigurationViewModel(
                 }
             })
         }
+        ConfigurationSetting.rhasspy2Connection.value = mapper(_viewState.value.editData)
     }
 
     private fun onAction(action: Action) {
         when (action) {
             AccessTokenQRCodeClick      -> scanQRCode { onChange(UpdateRhasspy2HermesAccessToken(it)) }
-            CheckConnectionClick        -> onSave()
         }
-    }
-
-    override fun onDismissed() {
-        onSave()
-        super.onDismissed()
-    }
-
-    private fun onSave() {
-        ConfigurationSetting.rhasspy2Connection.value = mapper(_viewState.value.editData)
     }
 
 }

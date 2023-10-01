@@ -10,7 +10,6 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationView
 @Stable
 data class Rhasspy2HermesConnectionConfigurationViewState internal constructor(
     val editData: Rhasspy2HermesConnectionConfigurationData,
-    val isCheckConnectionEnabled: Boolean,
     val connectionState: StateFlow<ConnectionState>,
 )  {
 

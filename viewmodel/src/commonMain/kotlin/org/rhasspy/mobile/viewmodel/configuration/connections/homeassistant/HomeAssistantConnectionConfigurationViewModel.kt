@@ -2,41 +2,30 @@ package org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
-import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
 class HomeAssistantConnectionConfigurationViewModel(
     private val mapper: HomeAssistantConnectionConfigurationDataMapper,
-    homeAssistantConnection: IHomeAssistantConnection
-) : ConfigurationViewModel(
-    connectionState = homeAssistantConnection.connectionState,
-) {
+    homeAssistantConnection: IHomeAssistantConnection,
+) : ScreenViewModel() {
 
-    private val initialData get() = mapper(ConfigurationSetting.homeAssistantConnection.value)
-    private val _viewState = MutableStateFlow(HomeAssistantConnectionConfigurationViewState(initialData))
-    val viewState = _viewState.readOnly
-
-    override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
-    ): StateFlow<ConfigurationViewState> {
-        return viewStateCreator(
-            init = ::initialData,
-            viewState = viewState,
-            configurationViewState = configurationViewState
+    private val _viewState = MutableStateFlow(
+        HomeAssistantConnectionConfigurationViewState(
+            editData = mapper(ConfigurationSetting.homeAssistantConnection.value),
+            connectionState = homeAssistantConnection.connectionState,
         )
-    }
+    )
+    val viewState = _viewState.readOnly
 
     fun onEvent(event: HomeAssistantConnectionConfigurationUiEvent) {
         when (event) {
@@ -56,22 +45,13 @@ class HomeAssistantConnectionConfigurationViewModel(
                 }
             })
         }
+        ConfigurationSetting.homeAssistantConnection.value = mapper(_viewState.value.editData)
     }
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick              -> navigator.onBackPressed()
             AccessTokenQRCodeClick -> scanQRCode { onChange(UpdateHomeAssistantAccessToken(it)) }
         }
-    }
-
-    override fun onDiscard() {
-        _viewState.update { it.copy(editData = initialData) }
-    }
-
-    override fun onSave() {
-        ConfigurationSetting.homeAssistantConnection.value = mapper(_viewState.value.editData)
-        _viewState.update { it.copy(editData = initialData) }
     }
 
 }
