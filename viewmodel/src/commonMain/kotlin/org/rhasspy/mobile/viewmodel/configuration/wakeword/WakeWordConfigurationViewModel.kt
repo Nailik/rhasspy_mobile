@@ -3,23 +3,21 @@ package org.rhasspy.mobile.viewmodel.configuration.wakeword
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.rhasspy.mobile.data.data.toIntOrNullOrConstant
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
-import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.platformspecific.*
+import org.rhasspy.mobile.logic.pipeline.IPipelineManager
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 import org.rhasspy.mobile.platformspecific.file.FolderType
-import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.platformspecific.updateList
+import org.rhasspy.mobile.platformspecific.updateListItem
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.Navigate
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.RequestMicrophonePermission
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.*
@@ -30,37 +28,19 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
 class WakeWordConfigurationViewModel(
+    pipelineManager: IPipelineManager,
     private val mapper: WakeWordConfigurationDataMapper,
-    microphonePermission: IMicrophonePermission,
 ) : ScreenViewModel() {
-    //TODO reload button or on exit (via pipeline manager? - UserConnection)
-    private val dispatcher by inject<IDispatcherProvider>()
 
-    private val initialData get() = mapper(ConfigurationSetting.wakeDomainData.value)
+    private val initialData = mapper(ConfigurationSetting.wakeDomainData.value)
     private val _viewState = MutableStateFlow(
         WakeWordConfigurationViewState(
             editData = initialData,
+            domainStateFlow = pipelineManager.wakeDomainStateFlow,
             porcupineWakeWordScreen = 0,
-            isMicrophonePermissionRequestVisible = !microphonePermission.granted.value && (initialData.wakeWordOption == WakeWordOption.Porcupine || initialData.wakeWordOption == WakeWordOption.Udp),
         )
     )
     val viewState = _viewState.readOnly
-
-    init {
-        viewModelScope.launch(dispatcher.IO) {
-            combineStateFlow(
-                microphonePermission.granted,
-                viewState
-            ).collect {
-                _viewState.update {
-                    it.copy(
-                        isMicrophonePermissionRequestVisible = !microphonePermission.granted.value
-                                && (it.editData.wakeWordOption == WakeWordOption.Porcupine || it.editData.wakeWordOption == WakeWordOption.Udp),
-                    )
-                }
-            }
-        }
-    }
 
     fun onEvent(event: WakeWordConfigurationUiEvent) {
         when (event) {
@@ -82,7 +62,6 @@ class WakeWordConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            RequestMicrophonePermission -> requireMicrophonePermission {}
             is Navigate                 -> navigator.navigate(action.destination)
         }
     }

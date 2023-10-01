@@ -87,6 +87,7 @@
     <string name="audioFramesLogging">Audio-Frames protokollieren</string>
     <string name="httpSSL">HTTP-SSL</string>
     <string name="porcupineAccessKey">Picovoice-Konsole</string>
+    <string name="porcupine_information">Funktioniert nur mit Mono | PCM 16 Bit Audio</string>
     <string name="openPicoVoiceConsole">Zugangsschlüssel erstellen</string>
     <string name="openPicoVoiceConsoleInfo">Klick zum Öffnen des Browsers und Erzeugen des Zugangstokens</string>
     <string name="expandListItem">Listenelement erweitern</string>

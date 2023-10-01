@@ -14,6 +14,7 @@ import org.rhasspy.mobile.ui.combinedTestTag
 import org.rhasspy.mobile.ui.content.SecondaryContent
 import org.rhasspy.mobile.ui.content.list.RadioButtonListItem
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel3
 
 @Composable
 fun <E : IOption> RadioButtonsEnumSelectionList(
@@ -52,7 +53,7 @@ fun <E : IOption> RadioButtonsEnumSelection(
 ) {
     Card(
         modifier = modifier.padding(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = TonalElevationLevel3)
     ) {
         Column {
             values.forEach { item ->
@@ -91,7 +92,7 @@ fun <E : IOption> RadioButtonsEnumSelection(
 ) {
     Card(
         modifier = modifier.padding(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = TonalElevationLevel3)
     ) {
         Column {
             values.forEach { item ->

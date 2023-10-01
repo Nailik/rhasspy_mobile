@@ -27,23 +27,33 @@ internal class UdpConnection(
     private var sendChannel: SendChannel<Datagram>? = null
     private var hasLoggedError = false
 
-    var isConnected: Boolean = false
-        private set
-
     /**
      * makes sure the address is up to date
      *
      * suspend is necessary else there is an network on main thread error at least on android
      */
-    fun connect(): Exception? {
+    suspend fun connect(): Exception? {
         logger.d { "initialization" }
         return try {
-            sendChannel = aSocket(SelectorManager(Dispatchers.IO)).udp().bind().outgoing
+            val channel = aSocket(SelectorManager(Dispatchers.IO)).udp().bind().outgoing
+            sendChannel = channel
 
-            socketAddress = InetSocketAddress(host, port)
+            val socket = InetSocketAddress(host, port)
+            socketAddress = socket
 
-            isConnected = true
-            null
+            return try {
+                channel.send(
+                    Datagram(
+                        packet = ByteReadPacket(ByteArray(1)),
+                        address = socket
+                    )
+                )
+                null
+            } catch (exception: Exception) {
+                logger.e(exception) { "initialization error" }
+                exception
+            }
+
         } catch (exception: Exception) {
             logger.e(exception) { "initialization error" }
             exception
@@ -51,7 +61,6 @@ internal class UdpConnection(
     }
 
     fun close() {
-        isConnected = false
         logger.d { "onClose" }
         try {
             sendChannel?.close()

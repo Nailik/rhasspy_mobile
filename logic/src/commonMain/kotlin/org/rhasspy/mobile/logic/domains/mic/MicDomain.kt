@@ -4,22 +4,22 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.datetime.Clock
 import org.rhasspy.mobile.data.domain.MicDomainData
-import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.data.viewstate.TextWrapper
-import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperStableStringResource
 import org.rhasspy.mobile.logic.IDomain
+import org.rhasspy.mobile.logic.domains.mic.MicDomainState.MicrophonePermissionMissing
+import org.rhasspy.mobile.logic.domains.mic.MicDomainState.NoError
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
-import org.rhasspy.mobile.resources.MR
 
 /**
  * records audio as soon as audioStream has subscribers
  */
 interface IMicDomain : IDomain {
 
+    fun initialize()
+
     val audioStream: Flow<MicAudioChunk>
 
-    val hasError: StateFlow<TextWrapper?>
+    val state: StateFlow<MicDomainState>
 
 }
 
@@ -32,7 +32,7 @@ internal class MicDomain(
     val params: MicDomainData,
 ) : IMicDomain {
 
-    override var hasError = MutableStateFlow<TextWrapper?>(null)
+    override var state = MutableStateFlow<MicDomainState>(MicDomainState.Loading)
 
     override val audioStream = MutableSharedFlow<MicAudioChunk>()
 
@@ -40,13 +40,13 @@ internal class MicDomain(
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    init {
+    override fun initialize() {
         scope.launch {
             microphonePermission.granted.collectLatest {
-                hasError.value = if (!it) {
-                    TextWrapperStableStringResource(MR.strings.microphonePermissionMissing.stable)
-                } else {
-                    null
+                if (!it) {
+                    state.value = MicrophonePermissionMissing
+                } else if (state.value == MicrophonePermissionMissing) {
+                    state.value = NoError
                 }
             }
         }
@@ -100,6 +100,7 @@ internal class MicDomain(
     }
 
     override fun dispose() {
+        stopRecording()
         scope.cancel()
     }
 

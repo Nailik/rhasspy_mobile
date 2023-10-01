@@ -3,7 +3,9 @@ package org.rhasspy.mobile.viewmodel.configuration.wakeword
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.data.toStringOrEmpty
+import org.rhasspy.mobile.data.domain.DomainState
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
@@ -13,8 +15,8 @@ import org.rhasspy.mobile.platformspecific.toImmutableList
 @Stable
 data class WakeWordConfigurationViewState internal constructor(
     val editData: WakeWordConfigurationData,
+    val domainStateFlow: StateFlow<DomainState>,
     val porcupineWakeWordScreen: Int,
-    val isMicrophonePermissionRequestVisible: Boolean,
 ) {
 
     @Stable

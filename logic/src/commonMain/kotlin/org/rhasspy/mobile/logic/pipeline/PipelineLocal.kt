@@ -29,7 +29,7 @@ class PipelineLocal(
     private val ttsDomain: ITtsDomain,
     private val vadDomain: IVadDomain,
     private val audioFocus: IAudioFocus,
-) : IPipeline {
+) : IPipelineLocal {
 
     override suspend fun runPipeline(startEvent: StartEvent): PipelineResult {
 
@@ -99,6 +99,14 @@ class PipelineLocal(
             is Played       -> result
             is NotPlayed    -> result
             is PlayDisabled -> result
+        }.also {
+            asrDomain.dispose()
+            handleDomain.dispose()
+            intentDomain.dispose()
+            micDomain.dispose()
+            sndDomain.dispose()
+            ttsDomain.dispose()
+            vadDomain.dispose()
         }
     }
 

@@ -16,6 +16,7 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel3
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.AppearanceSettingsScreen
 import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsUiEvent.Change.SelectLanguageOption
@@ -43,7 +44,7 @@ fun AppearanceSettingsScreenItemContent(viewModel: AppearanceSettingsViewModel) 
         ) {
             Card(
                 modifier = Modifier.padding(8.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = TonalElevationLevel3)
             ) {
 
                 ListElement {
@@ -60,7 +61,7 @@ fun AppearanceSettingsScreenItemContent(viewModel: AppearanceSettingsViewModel) 
 
             Card(
                 modifier = Modifier.padding(8.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = TonalElevationLevel3)
             ) {
 
                 ListElement {

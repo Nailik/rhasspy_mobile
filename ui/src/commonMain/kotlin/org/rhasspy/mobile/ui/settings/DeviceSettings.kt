@@ -15,6 +15,7 @@ import org.rhasspy.mobile.ui.content.list.SliderListItem
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel3
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.DeviceSettings
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.*
@@ -41,7 +42,7 @@ fun DeviceSettingsContent(viewModel: DeviceSettingsViewModel) {
 
         Card(
             modifier = Modifier.padding(8.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = TonalElevationLevel3)
         ) {
 
             //mqtt api

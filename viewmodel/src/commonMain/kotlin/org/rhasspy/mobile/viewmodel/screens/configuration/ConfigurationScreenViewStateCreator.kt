@@ -1,8 +1,5 @@
 package org.rhasspy.mobile.viewmodel.screens.configuration
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
@@ -11,8 +8,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
-import org.rhasspy.mobile.logic.domains.mic.IMicDomain
-import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
+import org.rhasspy.mobile.logic.pipeline.IPipelineManager
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -24,10 +20,8 @@ class ConfigurationScreenViewStateCreator(
     homeAssistantConnection: IHomeAssistantConnection,
     mqttConnection: IMqttConnection,
     webServerConnection: IWebServerConnection,
-    private val wakeDomain: IWakeDomain,
-    private val micDomain: IMicDomain,
+    private val pipelineManager: IPipelineManager,
 ) {
-    private val scope = CoroutineScope(Dispatchers.IO)
 
     private val hasConnectionError = combineStateFlow(
         rhasspy2HermesConnection.connectionState,
@@ -44,8 +38,8 @@ class ConfigurationScreenViewStateCreator(
     init {
         combineStateFlow(
             hasConnectionError,
-            micDomain.hasError,
-            wakeDomain.hasError,
+            pipelineManager.micDomainStateFlow,
+            pipelineManager.wakeDomainStateFlow,
             ConfigurationSetting.siteId.data,
             ConfigurationSetting.pipelineData.data,
             ConfigurationSetting.wakeDomainData.data,
@@ -73,11 +67,11 @@ class ConfigurationScreenViewStateCreator(
                 dialogManagementOption = ConfigurationSetting.pipelineData.value.option,
             ),
             micDomainItemViewState = MicDomainItemViewState(
-                error = micDomain.hasError.value,
+                errorStateFlow = pipelineManager.micDomainStateFlow.mapReadonlyState { it.asDomainState() },
             ),
             wakeDomainItemViewState = WakeDomainItemViewState(
                 wakeWordValueOption = ConfigurationSetting.wakeDomainData.value.wakeWordOption,
-                error = wakeDomain.hasError.value,
+                errorStateFlow = pipelineManager.wakeDomainStateFlow,
             ),
             asrDomainItemViewState = AsrDomainItemViewState(
                 speechToTextOption = ConfigurationSetting.asrDomainData.value.option,

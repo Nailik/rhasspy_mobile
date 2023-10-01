@@ -6,6 +6,7 @@ sealed interface MicDomainConfigurationUiEvent {
 
         data object OpenInputFormatConfigurationScreen : Action
         data object OpenOutputFormatConfigurationScreen : Action
+        data object RequestMicrophonePermission : Action
 
     }
 

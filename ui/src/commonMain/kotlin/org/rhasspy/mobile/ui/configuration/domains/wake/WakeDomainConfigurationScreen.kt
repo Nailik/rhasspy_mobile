@@ -1,8 +1,5 @@
 package org.rhasspy.mobile.ui.configuration.domains.wake
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -17,12 +14,13 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.DomainStateHeaderItem
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
-import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
+import org.rhasspy.mobile.ui.content.list.InformationListElement
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
@@ -31,7 +29,6 @@ import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.Navigate
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.RequestMicrophonePermission
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
@@ -60,12 +57,17 @@ fun WakeWordConfigurationOverviewScreen(viewModel: WakeWordConfigurationViewMode
         tonalElevation = TonalElevationLevel1,
     ) {
 
-        val viewState by viewModel.viewState.collectAsState()
+        Column {
+            val viewState by viewModel.viewState.collectAsState()
 
-        WakeWordConfigurationOptionContent(
-            viewState = viewState,
-            onEvent = viewModel::onEvent
-        )
+            DomainStateHeaderItem(domainStateFlow = viewState.domainStateFlow)
+
+            WakeWordConfigurationOptionContent(
+                viewState = viewState,
+                onEvent = viewModel::onEvent
+            )
+
+        }
 
     }
 
@@ -88,14 +90,12 @@ private fun WakeWordConfigurationOptionContent(
             WakeWordOption.Porcupine ->
                 PorcupineConfiguration(
                     editData = viewState.editData.wakeWordPorcupineConfigurationData,
-                    isMicrophonePermissionRequestVisible = viewState.isMicrophonePermissionRequestVisible,
                     onEvent = onEvent
                 )
 
             WakeWordOption.Udp       ->
                 UdpSettings(
                     editData = viewState.editData.wakeWordUdpConfigurationData,
-                    isMicrophonePermissionRequestVisible = viewState.isMicrophonePermissionRequestVisible,
                     onEvent = onEvent
                 )
 
@@ -117,7 +117,6 @@ private fun WakeWordConfigurationOptionContent(
 @Composable
 private fun PorcupineConfiguration(
     editData: WakeWordPorcupineConfigurationData,
-    isMicrophonePermissionRequestVisible: Boolean,
     onEvent: (WakeWordConfigurationUiEvent) -> Unit
 ) {
 
@@ -126,6 +125,10 @@ private fun PorcupineConfiguration(
             .testTag(TestTag.PorcupineWakeWordSettings)
             .padding(ContentPaddingLevel1)
     ) {
+
+        InformationListElement(
+            text = MR.strings.porcupine_information.stable,
+        )
 
         //porcupine access token
         TextFieldListItemVisibility(
@@ -171,18 +174,6 @@ private fun PorcupineConfiguration(
             secondaryText = { Text("${editData.keywordCount} ${translate(MR.strings.active.stable)}") }
         )
 
-        //button to enabled microphone
-        AnimatedVisibility(
-            enter = expandVertically(),
-            exit = shrinkVertically(),
-            visible = isMicrophonePermissionRequestVisible
-        ) {
-            FilledTonalButtonListItem(
-                text = MR.strings.allowMicrophonePermission.stable,
-                onClick = { onEvent(RequestMicrophonePermission) }
-            )
-        }
-
     }
 
 }
@@ -193,7 +184,6 @@ private fun PorcupineConfiguration(
 @Composable
 private fun UdpSettings(
     editData: WakeWordUdpConfigurationData,
-    isMicrophonePermissionRequestVisible: Boolean,
     onEvent: (WakeWordConfigurationUiEvent) -> Unit
 ) {
 
@@ -216,18 +206,6 @@ private fun UdpSettings(
             onValueChange = { onEvent(UpdateUdpOutputPort(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
-
-        //button to enabled microphone
-        AnimatedVisibility(
-            enter = expandVertically(),
-            exit = shrinkVertically(),
-            visible = isMicrophonePermissionRequestVisible
-        ) {
-            FilledTonalButtonListItem(
-                text = MR.strings.allowMicrophonePermission.stable,
-                onClick = { onEvent(RequestMicrophonePermission) }
-            )
-        }
 
     }
 

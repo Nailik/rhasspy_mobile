@@ -46,14 +46,11 @@ import org.rhasspy.mobile.logic.logger.DatabaseLogger
 import org.rhasspy.mobile.logic.logger.IDatabaseLogger
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.logic.pipeline.IPipelineManager
-import org.rhasspy.mobile.logic.pipeline.PipelineLocal
-import org.rhasspy.mobile.logic.pipeline.PipelineManager
-import org.rhasspy.mobile.logic.pipeline.PipelineMqtt
+import org.rhasspy.mobile.logic.pipeline.*
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 fun logicModule() = module {
-    factory {
+    factory<IPipelineLocal> {
         PipelineLocal(
             asrDomain = get(),
             handleDomain = get(),
@@ -65,7 +62,7 @@ fun logicModule() = module {
             audioFocus = get(),
         )
     }
-    factory {
+    factory<IPipelineMqtt> {
         PipelineMqtt(
             mqttConnection = get(),
             intentDomain = get(),
@@ -76,6 +73,9 @@ fun logicModule() = module {
             vadDomain = get(),
             audioFocus = get(),
         )
+    }
+    factory<IPipelineDisabled> {
+        PipelineDisabled()
     }
 
     single<IPipelineManager> {
@@ -94,7 +94,7 @@ fun logicModule() = module {
             microphonePermission = get(),
         )
     }
-    single<ISndDomain> {
+    factory<ISndDomain> {
         SndDomain(
             params = ConfigurationSetting.sndDomainData.value,
             fileStorage = get(),
@@ -106,7 +106,7 @@ fun logicModule() = module {
         )
     }
 
-    single<IHandleDomain> {
+    factory<IHandleDomain> {
         HandleDomain(
             params = ConfigurationSetting.handleDomainData.value,
             mqttConnection = get(),
@@ -116,7 +116,7 @@ fun logicModule() = module {
         )
     }
 
-    single<IIntentDomain> {
+    factory<IIntentDomain> {
         IntentDomain(
             params = ConfigurationSetting.intentDomainData.value,
             mqttConnection = get(),
@@ -125,7 +125,7 @@ fun logicModule() = module {
             indication = get(),
         )
     }
-    single<IAsrDomain> {
+    factory<IAsrDomain> {
         AsrDomain(
             params = ConfigurationSetting.asrDomainData.value,
             mqttConnection = get(),
@@ -137,7 +137,7 @@ fun logicModule() = module {
         )
     }
 
-    single<ITtsDomain> {
+    factory<ITtsDomain> {
         TtsDomain(
             params = ConfigurationSetting.ttsDomainData.value,
             mqttConnection = get(),
@@ -145,14 +145,14 @@ fun logicModule() = module {
         )
     }
 
-    single<IWakeDomain> {
+    factory<IWakeDomain> {
         WakeDomain(
             params = ConfigurationSetting.wakeDomainData.value,
             mqttConnection = get(),
         )
     }
 
-    single<IVadDomain> {
+    factory<IVadDomain> {
         VadDomain(
             params = ConfigurationSetting.vadDomainData.value,
         )

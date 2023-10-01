@@ -19,6 +19,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ConnectionState.ErrorState
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.DomainStateIcon
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.CustomDivider
 import org.rhasspy.mobile.ui.content.elements.Icon
@@ -199,13 +200,13 @@ private fun MicDomainItem(
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
-    //TODO some information in secondary
     ListElement(
         modifier = Modifier
             .clickable { onEvent(Navigate(AudioInputConfigurationScreen)) }
             .testTag(AudioInputConfigurationScreen),
         text = { Text(MR.strings.audio_input.stable) },
         secondaryText = { Text(MR.strings.audio_input_information.stable) },
+        trailing = { DomainStateIcon(viewState.errorStateFlow) },
     )
 
 }
@@ -226,6 +227,7 @@ private fun WakeDomainItem(
             .testTag(WakeWordConfigurationScreen),
         text = { Text(MR.strings.wakeWord.stable) },
         secondaryText = { Text(viewState.wakeWordValueOption.text) },
+        trailing = { DomainStateIcon(viewState.errorStateFlow) },
     )
 
 }

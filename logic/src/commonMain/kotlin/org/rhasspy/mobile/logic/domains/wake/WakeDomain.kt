@@ -4,9 +4,11 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.datetime.Clock
+import org.rhasspy.mobile.data.domain.DomainState
+import org.rhasspy.mobile.data.domain.DomainState.Error
+import org.rhasspy.mobile.data.domain.DomainState.NoError
 import org.rhasspy.mobile.data.domain.WakeDomainData
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.data.viewstate.TextWrapper
 import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperString
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
@@ -26,8 +28,9 @@ interface IWakeDomain : IDomain {
      */
     val wakeEvents: Flow<WakeEvent>
 
-    val hasError: StateFlow<TextWrapper?>
+    val state: StateFlow<DomainState>
 
+    suspend fun initialize()
     fun awaitDetection(audioStream: Flow<MicAudioChunk>)
 
 }
@@ -42,7 +45,7 @@ internal class WakeDomain(
 
     private val logger = Logger.withTag("WakeWordService")
 
-    override val hasError = MutableStateFlow<TextWrapper?>(null)
+    override val state = MutableStateFlow<DomainState>(DomainState.Loading)
 
     override val wakeEvents = MutableSharedFlow<WakeEvent>()
 
@@ -60,12 +63,12 @@ internal class WakeDomain(
         port = params.wakeWordUdpOutputPort
     )
 
-    init {
-        hasError.value = when (params.wakeWordOption) {
+    override suspend fun initialize() {
+        state.value = when (params.wakeWordOption) {
             WakeWordOption.Porcupine          -> initializePorcupine()
-            WakeWordOption.Rhasspy2HermesMQTT -> null
+            WakeWordOption.Rhasspy2HermesMQTT -> NoError
             WakeWordOption.Udp                -> initializeUdp()
-            WakeWordOption.Disabled           -> null
+            WakeWordOption.Disabled           -> NoError
         }
     }
 
@@ -87,8 +90,7 @@ internal class WakeDomain(
     /**
      * setup porcupine with params, close old if already exists
      */
-    private fun initializePorcupine(): TextWrapper? {
-        //TODO error when recorder has another encoding thatn pcm16Bit
+    private fun initializePorcupine(): DomainState {
         logger.d { "initializePorcupine" }
         porcupineWakeWordClient.close()
         porcupineWakeWordClient = PorcupineWakeWordClient(
@@ -98,13 +100,16 @@ internal class WakeDomain(
             wakeWordPorcupineLanguage = params.wakeWordPorcupineLanguage,
         )
 
-        return TextWrapperString(porcupineWakeWordClient.initialize()?.message ?: return null)
+        return when (val error = porcupineWakeWordClient.initialize()) {
+            is Exception -> Error(TextWrapperString(error.message ?: error.toString()))
+            else         -> NoError
+        }
     }
 
     /**
      * setup udp connection with params, close old if already exists
      */
-    private fun initializeUdp(): TextWrapper? {
+    private suspend fun initializeUdp(): DomainState {
         logger.d { "initializeUdp" }
         udpConnection.close()
         udpConnection = UdpConnection(
@@ -112,7 +117,10 @@ internal class WakeDomain(
             params.wakeWordUdpOutputPort
         )
 
-        return TextWrapperString(udpConnection.connect()?.message ?: return null)
+        return when (val error = udpConnection.connect()) {
+            is Exception -> Error(TextWrapperString(error.message ?: error.toString()))
+            else         -> NoError
+        }
     }
 
     /**
@@ -205,6 +213,8 @@ internal class WakeDomain(
 
 
     override fun dispose() {
+        porcupineWakeWordClient.close()
+        udpConnection.close()
         scope.cancel()
     }
 

@@ -26,6 +26,7 @@ import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.settings.sound.IndicationSoundScreen
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel3
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination.*
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.IndicationSettings
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent
@@ -86,7 +87,7 @@ fun IndicationSettingsOverviewScreen(viewModel: IndicationSettingsViewModel) {
 
             Card(
                 modifier = Modifier.padding(8.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = TonalElevationLevel3)
             ) {
 
                 //turn on display

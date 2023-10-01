@@ -15,8 +15,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.logic.domains.mic.MicDomainState
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.DomainStateHeaderItem
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
@@ -26,8 +28,7 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
 import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Action.OpenInputFormatConfigurationScreen
-import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Action.OpenOutputFormatConfigurationScreen
+import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationViewState
@@ -43,12 +44,27 @@ fun AudioInputConfigurationScreen(viewModel: MicDomainConfigurationViewModel) {
         tonalElevation = TonalElevationLevel1,
     ) {
 
-        val viewState by viewModel.viewState.collectAsState()
+        Column {
+            val viewState by viewModel.viewState.collectAsState()
+            val micDomainState by viewState.micDomainStateFlow.collectAsState()
 
-        AudioInputConfigurationScreenContent(
-            onEvent = viewModel::onEvent,
-            viewState = viewState
-        )
+            DomainStateHeaderItem(
+                modifier = Modifier.then(
+                    if (micDomainState is MicDomainState.MicrophonePermissionMissing) {
+                        Modifier.clickable {
+                            viewModel.onEvent(RequestMicrophonePermission)
+                        }
+                    } else Modifier
+                ),
+                domainStateFlow = viewState.domainStateFlow
+            )
+
+            AudioInputConfigurationScreenContent(
+                onEvent = viewModel::onEvent,
+                viewState = viewState
+            )
+
+        }
     }
 
 }

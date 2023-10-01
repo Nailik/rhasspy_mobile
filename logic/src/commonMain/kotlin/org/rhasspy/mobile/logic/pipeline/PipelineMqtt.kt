@@ -25,6 +25,8 @@ import org.rhasspy.mobile.logic.pipeline.TranscriptResult.TranscriptError
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
+interface IPipelineMqtt : IPipeline
+
 class PipelineMqtt(
     private val mqttConnection: IMqttConnection,
     private val intentDomain: IIntentDomain,
@@ -34,8 +36,9 @@ class PipelineMqtt(
     private val micDomain: IMicDomain,
     private val vadDomain: IVadDomain,
     private val audioFocus: IAudioFocus,
-) : IPipeline {
+) : IPipelineMqtt {
 
+    //TODO play bytes? (snd domain unused)
     override suspend fun runPipeline(startEvent: StartEvent): PipelineResult {
 
         if (startEvent.sessionId != null) return runPipeline(startEvent.sessionId)
@@ -48,7 +51,14 @@ class PipelineMqtt(
             .mapNotNull { it.sessionId }
             .first()
 
-        return runPipeline(sessionId)
+        return runPipeline(sessionId).also {
+            asrDomain.dispose()
+            handleDomain.dispose()
+            intentDomain.dispose()
+            micDomain.dispose()
+            ttsDomain.dispose()
+            vadDomain.dispose()
+        }
     }
 
 

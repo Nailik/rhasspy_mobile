@@ -2,8 +2,8 @@ package org.rhasspy.mobile.viewmodel.screens.configuration
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.data.domain.DomainState
 import org.rhasspy.mobile.data.service.option.*
-import org.rhasspy.mobile.data.viewstate.TextWrapper
 
 @Stable
 data class ConfigurationScreenViewState internal constructor(
@@ -37,13 +37,13 @@ data class ConfigurationScreenViewState internal constructor(
 
     @Stable
     data class MicDomainItemViewState internal constructor(
-        val error: TextWrapper?,
+        val errorStateFlow: StateFlow<DomainState>,
     )
 
     @Stable
     data class WakeDomainItemViewState internal constructor(
         val wakeWordValueOption: WakeWordOption,
-        val error: TextWrapper?,
+        val errorStateFlow: StateFlow<DomainState>,
     )
 
     @Stable
