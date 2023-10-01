@@ -13,10 +13,4 @@ sealed interface AudioOutputFormatConfigurationUiEvent {
         data class SelectOutputFormatSampleRateType(val value: AudioFormatSampleRateType) : Change
     }
 
-    sealed interface Click : AudioOutputFormatConfigurationUiEvent {
-
-        data object BackClick : Click
-
-    }
-
 }

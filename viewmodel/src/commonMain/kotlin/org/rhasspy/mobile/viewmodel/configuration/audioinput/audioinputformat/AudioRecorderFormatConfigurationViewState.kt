@@ -7,12 +7,11 @@ import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.platformspecific.toImmutableList
-import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState
 
 @Stable
-data class AudioInputFormatConfigurationViewState internal constructor(
-    override val editData: AudioInputFormatConfigurationData,
-) : IConfigurationViewState {
+data class AudioRecorderFormatConfigurationViewState internal constructor(
+    val editData: AudioInputFormatConfigurationData,
+) {
 
     @Stable
     data class AudioInputFormatConfigurationData internal constructor(

@@ -11,10 +11,10 @@ import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.assist.AssistantViewModel
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewModel
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewStateCreator
-import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewStateCreator
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioRecorderFormatConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioRecorderFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationDataMapper
@@ -120,18 +120,14 @@ fun viewModelModule() = module {
     factoryOf(::ConfigurationScreenViewStateCreator)
     singleOf(::ConfigurationScreenViewModel)
 
-    factory { params ->
-        IConfigurationViewStateCreator(params[0])
-    }
-
     singleOf(::ConnectionsScreenViewStateCreator)
     singleOf(::ConnectionsConfigurationViewModel)
 
+    singleOf(::AudioInputConfigurationDataMapper)
     singleOf(::AudioInputConfigurationViewModel)
 
-
-    singleOf(::AudioInputFormatConfigurationDataMapper)
-    singleOf(::AudioInputFormatConfigurationViewModel)
+    singleOf(::AudioRecorderFormatConfigurationDataMapper)
+    singleOf(::AudioRecorderFormatConfigurationViewModel)
 
     singleOf(::AudioOutputFormatConfigurationDataMapper)
     singleOf(::AudioOutputFormatConfigurationViewModel)

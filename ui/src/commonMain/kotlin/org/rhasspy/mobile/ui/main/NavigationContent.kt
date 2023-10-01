@@ -12,8 +12,8 @@ import org.rhasspy.mobile.ui.configuration.domains.asr.SpeechToTextConfiguration
 import org.rhasspy.mobile.ui.configuration.domains.handle.IntentHandlingConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.intent.IntentRecognitionConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.mic.AudioInputConfigurationScreen
-import org.rhasspy.mobile.ui.configuration.domains.mic.AudioInputFormatConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.mic.AudioOutputFormatConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.domains.mic.AudioRecorderFormatConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.snd.AudioPlayingConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.tts.TextToSpeechConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.vad.VoiceActivityDetectionConfigurationScreen
@@ -135,7 +135,7 @@ private fun AudioInputDomainNavigationContent(
 ) {
     Crossfade(targetState = screen) {
         when (screen) {
-            is AudioInputDomainScreenDestination.AudioInputFormatScreen  -> AudioInputFormatConfigurationScreen(screen.viewModel)
+            is AudioInputDomainScreenDestination.AudioInputFormatScreen -> AudioRecorderFormatConfigurationScreen(screen.viewModel)
             is AudioInputDomainScreenDestination.AudioOutputFormatScreen -> AudioOutputFormatConfigurationScreen(screen.viewModel)
         }
     }

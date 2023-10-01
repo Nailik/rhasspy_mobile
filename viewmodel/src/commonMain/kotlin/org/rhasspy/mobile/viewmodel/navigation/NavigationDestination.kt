@@ -6,7 +6,7 @@ import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioRecorderFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
@@ -216,7 +216,7 @@ sealed class NavigationDestination : KoinComponent {
     sealed class AudioInputDomainScreenDestination : NavigationDestination() {
 
         data object AudioInputFormatScreen : AudioInputDomainScreenDestination() {
-            override val viewModel get() = get<AudioInputFormatConfigurationViewModel> { parametersOf(this) }
+            override val viewModel get() = get<AudioRecorderFormatConfigurationViewModel> { parametersOf(this) }
         }
 
         data object AudioOutputFormatScreen : AudioInputDomainScreenDestination() {

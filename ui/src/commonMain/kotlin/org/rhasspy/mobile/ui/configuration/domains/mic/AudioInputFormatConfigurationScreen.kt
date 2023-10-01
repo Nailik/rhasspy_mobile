@@ -15,15 +15,16 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
-import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel2
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationViewState.AudioInputFormatConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioRecorderFormatConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioRecorderFormatConfigurationViewState.AudioInputFormatConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.AudioInputDomainScreenDestination.AudioInputFormatScreen
 
 /**
@@ -32,21 +33,18 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.AudioInputD
  * HTTP Endpoint
  */
 @Composable
-fun AudioInputFormatConfigurationScreen(viewModel: AudioInputFormatConfigurationViewModel) {
+fun AudioRecorderFormatConfigurationScreen(viewModel: AudioRecorderFormatConfigurationViewModel) {
 
-    val configurationEditViewState by viewModel.configurationViewState.collectAsState()
-
-    ConfigurationScreenItemContent(
+    ScreenContent(
         modifier = Modifier.testTag(AudioInputFormatScreen),
-        screenViewModel = viewModel,
-        title = MR.strings.speechToText.stable, //TODO
-        viewState = configurationEditViewState,
-        onEvent = viewModel::onEvent
+        title = MR.strings.audioRecorderFormat.stable,
+        viewModel = viewModel,
+        tonalElevation = TonalElevationLevel2,
     ) {
 
         val viewState by viewModel.viewState.collectAsState()
 
-        AudioInputFormatEditContent(
+        AudioRecorderFormatEditContent(
             editData = viewState.editData,
             onEvent = viewModel::onEvent
         )
@@ -56,7 +54,7 @@ fun AudioInputFormatConfigurationScreen(viewModel: AudioInputFormatConfiguration
 }
 
 @Composable
-private fun AudioInputFormatEditContent(
+private fun AudioRecorderFormatEditContent(
     editData: AudioInputFormatConfigurationData,
     onEvent: (AudioInputFormatConfigurationUiEvent) -> Unit
 ) {

@@ -11,6 +11,7 @@ import org.rhasspy.mobile.data.pipeline.PipelineData
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.data.settings.SettingsEnum
+import org.rhasspy.mobile.platformspecific.features.FeatureAvailability
 import kotlin.time.Duration.Companion.seconds
 
 /**
@@ -93,8 +94,8 @@ object ConfigurationSetting {
             audioOutputChannel = AudioFormatChannelType.default,
             audioOutputEncoding = AudioFormatEncodingType.default,
             audioOutputSampleRate = AudioFormatSampleRateType.default,
-            isUseAutomaticGainControl = false, //TODO display to user if not available on device AutomaticGainControl.isAvailable()
-            isPauseRecordingOnMediaPlayback = true,
+            isUseAutomaticGainControl = FeatureAvailability.isUseAutomaticGainControlEnabled,
+            isPauseRecordingOnMediaPlayback = FeatureAvailability.isPauseRecordingOnPlaybackFeatureEnabled,
         ),
         serializer = MicDomainData.serializer(),
     )

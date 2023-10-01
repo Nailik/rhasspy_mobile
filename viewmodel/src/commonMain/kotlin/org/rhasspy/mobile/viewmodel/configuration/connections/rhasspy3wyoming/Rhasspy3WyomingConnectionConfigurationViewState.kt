@@ -4,8 +4,6 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.data.toStringOrEmpty
 import org.rhasspy.mobile.data.service.ConnectionState
-import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState.IConfigurationData
 
 @Stable
 data class Rhasspy3WyomingConnectionConfigurationViewState internal constructor(
@@ -19,7 +17,7 @@ data class Rhasspy3WyomingConnectionConfigurationViewState internal constructor(
         val timeout: Long?,
         val bearerToken: String,
         val isSSLVerificationDisabled: Boolean,
-    ) : IConfigurationData {
+    ) {
 
         val timeoutText: String = timeout.toStringOrEmpty()
 

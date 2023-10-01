@@ -15,11 +15,12 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
-import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel2
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationViewModel
@@ -34,14 +35,11 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.AudioInputD
 @Composable
 fun AudioOutputFormatConfigurationScreen(viewModel: AudioOutputFormatConfigurationViewModel) {
 
-    val configurationEditViewState by viewModel.configurationViewState.collectAsState()
-
-    ConfigurationScreenItemContent(
+    ScreenContent(
         modifier = Modifier.testTag(AudioOutputFormatScreen),
-        screenViewModel = viewModel,
-        title = MR.strings.speechToText.stable, //TODO
-        viewState = configurationEditViewState,
-        onEvent = viewModel::onEvent
+        title = MR.strings.audioOutput.stable,
+        viewModel = viewModel,
+        tonalElevation = TonalElevationLevel2,
     ) {
 
         val viewState by viewModel.viewState.collectAsState()

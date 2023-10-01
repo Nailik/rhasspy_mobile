@@ -4,8 +4,6 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.data.toStringOrEmpty
 import org.rhasspy.mobile.data.service.ConnectionState
-import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationViewState.IConfigurationData
 
 @Stable
 data class WebServerConnectionConfigurationViewState internal constructor(
@@ -22,7 +20,7 @@ data class WebServerConnectionConfigurationViewState internal constructor(
         val keyStorePassword: String,
         val keyAlias: String,
         val keyPassword: String,
-    ) : IConfigurationData {
+    ) {
 
         val portText: String = port.toStringOrEmpty()
 

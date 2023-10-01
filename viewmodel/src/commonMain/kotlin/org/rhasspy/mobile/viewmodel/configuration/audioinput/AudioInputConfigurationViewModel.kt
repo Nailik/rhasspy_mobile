@@ -1,7 +1,8 @@
 package org.rhasspy.mobile.viewmodel.configuration.audioinput
 
 import androidx.compose.runtime.Stable
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.rhasspy.mobile.platformspecific.features.FeatureAvailability
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationUiEvent.Action.*
@@ -10,11 +11,17 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.AudioInputD
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
-class AudioInputConfigurationViewModel : ScreenViewModel() {
+class AudioInputConfigurationViewModel(
+    mapper: AudioInputConfigurationDataMapper,
+) : ScreenViewModel() {
 
-    val viewState = ConfigurationSetting.micDomainData.data.mapReadonlyState { AudioInputConfigurationViewState(it) }
+    val viewState = MutableStateFlow(
+        AudioInputConfigurationViewState(
+            editData = mapper(ConfigurationSetting.micDomainData.value),
+            isUseAutomaticGainControlVisible = FeatureAvailability.isUseAutomaticGainControlEnabled
+        )
+    )
 
-    //TODO use audomatic gain control
     fun onEvent(event: AudioInputConfigurationUiEvent) {
         when (event) {
             is Action -> onAction(event)

@@ -1,42 +1,27 @@
 package org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.connections.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationUiEvent.Click
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationUiEvent.Click.BackClick
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 class AudioOutputFormatConfigurationViewModel(
     private val mapper: AudioOutputFormatConfigurationDataMapper,
-) : ConfigurationViewModel(
-    connectionState = MutableStateFlow(ConnectionState.Success) //TODO
-) {
+) : ScreenViewModel() {
 
-    private val initialData get() = mapper(ConfigurationSetting.micDomainData.value)
-    private val _viewState = MutableStateFlow(AudioOutputFormatConfigurationViewState(initialData))
-    val viewState = _viewState.readOnly
-
-    override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
-    ): StateFlow<ConfigurationViewState> {
-        return viewStateCreator(
-            init = ::initialData,
-            viewState = viewState,
-            configurationViewState = configurationViewState
+    private val _viewState = MutableStateFlow(
+        AudioOutputFormatConfigurationViewState(
+            editData = mapper(ConfigurationSetting.micDomainData.value)
         )
-    }
+    )
+    val viewState = _viewState.readOnly
 
     fun onEvent(event: AudioOutputFormatConfigurationUiEvent) {
         when (event) {
             is Change -> onChange(event)
-            is Click  -> onClick(event)
         }
     }
 
@@ -50,23 +35,7 @@ class AudioOutputFormatConfigurationViewModel(
                 }
             })
         }
-
-    }
-
-    private fun onClick(click: Click) {
-        when (click) {
-            BackClick -> navigator.onBackPressed()
-        }
-    }
-
-    override fun onDiscard() {
-        _viewState.update { it.copy(editData = initialData) }
-    }
-
-    override fun onSave() {
         ConfigurationSetting.micDomainData.value = mapper(_viewState.value.editData)
-        _viewState.update { it.copy(editData = initialData) }
     }
-
 
 }

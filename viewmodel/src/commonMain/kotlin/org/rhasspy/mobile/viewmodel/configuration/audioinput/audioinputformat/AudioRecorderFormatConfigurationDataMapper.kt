@@ -2,9 +2,9 @@ package org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat
 
 import org.rhasspy.mobile.data.domain.MicDomainData
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationViewState.AudioInputFormatConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioRecorderFormatConfigurationViewState.AudioInputFormatConfigurationData
 
-class AudioInputFormatConfigurationDataMapper {
+class AudioRecorderFormatConfigurationDataMapper {
 
     operator fun invoke(data: MicDomainData): AudioInputFormatConfigurationData {
         return AudioInputFormatConfigurationData(

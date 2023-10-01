@@ -15,11 +15,5 @@ sealed interface AudioInputFormatConfigurationUiEvent {
 
     }
 
-    sealed interface Click : AudioInputFormatConfigurationUiEvent {
-
-        data object BackClick : Click
-
-    }
-
 
 }
