@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat
+package org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
@@ -26,5 +26,4 @@ data class AudioRecorderFormatConfigurationViewState internal constructor(
 
     }
 
-    //TODO info only one encoding working for porcupine or disable?
 }

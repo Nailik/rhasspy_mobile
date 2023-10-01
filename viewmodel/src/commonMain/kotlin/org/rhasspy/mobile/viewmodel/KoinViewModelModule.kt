@@ -11,12 +11,6 @@ import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.assist.AssistantViewModel
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewModel
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewStateCreator
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioRecorderFormatConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioRecorderFormatConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
@@ -37,6 +31,12 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationDataMapper
@@ -123,8 +123,8 @@ fun viewModelModule() = module {
     singleOf(::ConnectionsScreenViewStateCreator)
     singleOf(::ConnectionsConfigurationViewModel)
 
-    singleOf(::AudioInputConfigurationDataMapper)
-    singleOf(::AudioInputConfigurationViewModel)
+    singleOf(::MicDomainConfigurationDataMapper)
+    singleOf(::MicDomainConfigurationViewModel)
 
     singleOf(::AudioRecorderFormatConfigurationDataMapper)
     singleOf(::AudioRecorderFormatConfigurationViewModel)

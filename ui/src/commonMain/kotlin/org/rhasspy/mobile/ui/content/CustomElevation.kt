@@ -21,19 +21,3 @@ fun CustomElevation(
     }
 
 }
-
-@Composable
-fun CustomAbsoluteElevation(
-    absoluteElevation: Dp,
-    content: @Composable () -> Unit
-) {
-
-    CompositionLocalProvider(
-        LocalAbsoluteTonalElevation provides absoluteElevation
-    ) {
-
-        content()
-
-    }
-
-}

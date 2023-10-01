@@ -4,6 +4,6 @@ expect object FeatureAvailability {
 
     val isPauseRecordingOnPlaybackFeatureEnabled: Boolean
 
-    val isUseAutomaticGainControlEnabled: Boolean
+    val isAudioEncodingOutputChangeEnabled: Boolean
 
 }

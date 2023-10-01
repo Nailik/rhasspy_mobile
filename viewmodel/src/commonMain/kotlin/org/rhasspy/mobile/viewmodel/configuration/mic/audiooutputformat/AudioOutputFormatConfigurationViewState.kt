@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat
+package org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
@@ -11,6 +11,7 @@ import org.rhasspy.mobile.platformspecific.toImmutableList
 @Stable
 data class AudioOutputFormatConfigurationViewState internal constructor(
     val editData: AudioOutputFormatConfigurationData,
+    val isEncodingChangeEnabled: Boolean,
 ) {
 
     @Stable

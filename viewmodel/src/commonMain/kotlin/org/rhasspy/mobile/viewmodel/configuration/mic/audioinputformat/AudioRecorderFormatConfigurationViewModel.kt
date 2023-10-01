@@ -1,11 +1,11 @@
-package org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat
+package org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioInputFormatConfigurationUiEvent.Change
+import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioInputFormatConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 class AudioRecorderFormatConfigurationViewModel(

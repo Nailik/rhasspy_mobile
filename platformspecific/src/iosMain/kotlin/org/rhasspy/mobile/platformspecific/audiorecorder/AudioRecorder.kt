@@ -31,7 +31,8 @@ internal actual class AudioRecorder : IAudioRecorder {
         audioRecorderOutputChannelType: AudioFormatChannelType,
         audioRecorderOutputEncodingType: AudioFormatEncodingType,
         audioRecorderOutputSampleRateType: AudioFormatSampleRateType,
-        isUseAutomaticGainControl: Boolean,
+        isUseLoudnessEnhancer: Boolean,
+        gainControl: Int,
         isAutoPauseOnMediaPlayback: Boolean,
     ) {
         //TODO #509

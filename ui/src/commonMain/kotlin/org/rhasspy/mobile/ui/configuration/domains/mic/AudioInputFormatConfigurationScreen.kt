@@ -21,10 +21,10 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel2
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioInputFormatConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioRecorderFormatConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioRecorderFormatConfigurationViewState.AudioInputFormatConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioInputFormatConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioInputFormatConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationViewState.AudioInputFormatConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.AudioInputDomainScreenDestination.AudioInputFormatScreen
 
 /**
@@ -93,7 +93,6 @@ private fun AudioRecorderFormatEditContent(
             RadioButtonsEnumSelectionList(
                 modifier = Modifier.testTag(TestTag.AudioInputEncodingType),
                 selected = editData.audioInputEncoding,
-                enabled = true, //TODO
                 onSelect = { onEvent(SelectInputFormatEncodingType(it)) },
                 combinedTestTag = TestTag.AudioInputEncodingType,
                 values = editData.audioFormatEncodingTypes

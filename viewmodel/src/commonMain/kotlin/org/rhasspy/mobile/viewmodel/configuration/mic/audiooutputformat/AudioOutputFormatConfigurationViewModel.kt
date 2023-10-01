@@ -1,11 +1,12 @@
-package org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat
+package org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import org.rhasspy.mobile.platformspecific.features.FeatureAvailability
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationUiEvent.Change
+import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 class AudioOutputFormatConfigurationViewModel(
@@ -14,10 +15,18 @@ class AudioOutputFormatConfigurationViewModel(
 
     private val _viewState = MutableStateFlow(
         AudioOutputFormatConfigurationViewState(
-            editData = mapper(ConfigurationSetting.micDomainData.value)
+            editData = mapper(ConfigurationSetting.micDomainData.value),
+            isEncodingChangeEnabled = FeatureAvailability.isAudioEncodingOutputChangeEnabled,
         )
     )
     val viewState = _viewState.readOnly
+
+    override fun onVisible() {
+        super.onVisible()
+        _viewState.update {
+            it.copy(editData = mapper(ConfigurationSetting.micDomainData.value))
+        }
+    }
 
     fun onEvent(event: AudioOutputFormatConfigurationUiEvent) {
         when (event) {

@@ -40,6 +40,7 @@ interface IScreenViewModel {
     fun onEvent(event: ScreenViewModelUiEvent)
     fun onBackPressedClick(): Boolean
     fun onDismissed()
+    fun onVisible()
 
 }
 
@@ -195,6 +196,10 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
     }
 
     override fun onDismissed() {
+        //blank
+    }
+
+    override fun onVisible() {
         //blank
     }
 

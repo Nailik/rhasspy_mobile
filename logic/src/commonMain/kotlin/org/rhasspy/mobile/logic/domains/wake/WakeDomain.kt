@@ -88,6 +88,7 @@ internal class WakeDomain(
      * setup porcupine with params, close old if already exists
      */
     private fun initializePorcupine(): TextWrapper? {
+        //TODO error when recorder has another encoding thatn pcm16Bit
         logger.d { "initializePorcupine" }
         porcupineWakeWordClient.close()
         porcupineWakeWordClient = PorcupineWakeWordClient(

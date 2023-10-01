@@ -1,10 +1,8 @@
 package org.rhasspy.mobile.ui.content
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -19,70 +17,10 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.data.service.ConnectionState.*
-import org.rhasspy.mobile.data.viewstate.TextWrapper
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Text
-import org.rhasspy.mobile.ui.content.item.EventStateCard
 import org.rhasspy.mobile.ui.content.item.EventStateIcon
 import org.rhasspy.mobile.ui.content.list.ListElement
-
-@Composable
-fun ConnectionStateDialog(
-    dialogText: TextWrapper,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
-
-    Dialog(
-        testTag = TestTag.DialogServiceState,
-        icon = Icons.Filled.Info,
-        title = MR.strings.error.stable,
-        message = dialogText,
-        confirmLabel = MR.strings.close.stable,
-        onConfirm = onConfirm,
-        onDismiss = onDismiss
-    )
-
-}
-
-/**
- * service state information
- */
-@Composable
-fun ConnectionStateHeader(
-    modifier: Modifier = Modifier,
-    connectionStateFlow: StateFlow<ConnectionState>,
-    onClick: () -> Unit,
-) {
-    val connectionState by connectionStateFlow.collectAsState()
-
-    AnimatedVisibility(
-        visible = connectionState !is Disabled
-    ) {
-        Box(
-            modifier = modifier
-                .fillMaxWidth(),
-        ) {
-            EventStateCard(
-                connectionState = connectionState,
-                enabled = connectionState is ErrorState,
-                onClick = onClick
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    EventStateIcon(connectionState)
-                    ConnectionStateText(connectionState)
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun ConnectionStateHeaderItem(
@@ -110,7 +48,7 @@ fun ConnectionStateHeaderItem(
         ListElement(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .padding(top = 16.dp)
+                .padding(bottom = 16.dp)
                 .clip(RoundedCornerShape(12.dp)),
             colors = ListItemDefaults.colors(
                 containerColor = when (connectionState) {

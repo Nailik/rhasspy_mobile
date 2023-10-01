@@ -4,6 +4,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.ui.configuration.ConnectionsConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.DialogManagementConfigurationScreen
@@ -28,6 +29,10 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.*
 fun NavigationContent(
     screen: NavigationDestination
 ) {
+    LaunchedEffect(screen) {
+        screen.viewModel.onVisible()
+    }
+
     Crossfade(targetState = screen) {
         when (it) {
             is ConfigurationScreenNavigationDestination -> ConfigurationNavigationContent(it)

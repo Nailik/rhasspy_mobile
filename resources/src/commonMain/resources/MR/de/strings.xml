@@ -305,7 +305,10 @@
     <string name="recordingTimeoutText">Aufnahmezeitüberschreitung (MS)</string>
     <string name="audioFocus">Audio-Fokus</string>
     <string name="audioFocusInformation">Durch Audio Focus kann Rhasspy andere Audiostreams wie Musik oder Videos anhalten und wieder aufnehmen oder die Lautstärke verringern.</string>
-    <string name="autoStopRecording">Aufnahme anhalten, wenn eine andere Anwendung Audio abspielt.</string>
+    <string name="loudnessEnhancer">Lautstärkeverstärker</string>
+    <string name="loudnessEnhancerGain">Verstärkung (mB)</string>
+    <string name="autoStopRecording">Aufnahme automatisch anhalten</string>
+    <string name="autoStopRecordingInformation">nicht aufnehmen während eine andere Anwendung Audio abspielt</string>
     <string name="pauseAndResume">Pause und Wiederaufnahme</string>
     <string name="duck">Duck (Lautstärke senken)</string>
     <string name="onNotification">Benachrichtigung wird abgespielt</string>

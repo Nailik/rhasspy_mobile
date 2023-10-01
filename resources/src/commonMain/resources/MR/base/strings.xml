@@ -311,7 +311,10 @@
     <string name="recordingTimeoutText">Recording Timeout (MS)</string>
     <string name="audioFocus">Audio Focus</string>
     <string name="audioFocusInformation">Audio Focus allows Rhasspy to pause and resume or decrease the volume of other audio streams such as music or videos.</string>
-    <string name="autoStopRecording">Pause recording when another app plays audio.</string>
+    <string name="loudnessEnhancer">Loudness enhancer</string>
+    <string name="loudnessEnhancerGain">Gain (mB)</string>
+    <string name="autoStopRecording">Automatic Pause recording</string>
+    <string name="autoStopRecordingInformation">don\'t record while another app plays audio</string>
     <string name="pauseAndResume">Pause and Resume</string>
     <string name="duck">Duck (lower Volume)</string>
     <string name="onNotification">On Notification played</string>

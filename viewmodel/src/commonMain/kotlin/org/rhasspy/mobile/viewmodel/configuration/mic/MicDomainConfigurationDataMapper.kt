@@ -1,24 +1,25 @@
-package org.rhasspy.mobile.viewmodel.configuration.audioinput
+package org.rhasspy.mobile.viewmodel.configuration.mic
 
 import org.rhasspy.mobile.data.domain.MicDomainData
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewState.AudioInputConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationViewState.MicDomainConfigurationData
 
-class AudioInputConfigurationDataMapper {
+class MicDomainConfigurationDataMapper {
 
-    operator fun invoke(data: MicDomainData): AudioInputConfigurationData {
-        return AudioInputConfigurationData(
+    operator fun invoke(data: MicDomainData): MicDomainConfigurationData {
+        return MicDomainConfigurationData(
             audioInputChannel = data.audioInputChannel,
             audioInputEncoding = data.audioInputEncoding,
             audioInputSampleRate = data.audioInputSampleRate,
             audioOutputChannel = data.audioOutputChannel,
             audioOutputEncoding = data.audioOutputEncoding,
             audioOutputSampleRate = data.audioOutputSampleRate,
-            isUseAutomaticGainControl = data.isUseAutomaticGainControl,
+            isUseLoudnessEnhancer = data.isUseLoudnessEnhancer,
+            gainControl = data.gainControl,
             isPauseRecordingOnMediaPlayback = data.isPauseRecordingOnMediaPlayback,
         )
     }
 
-    operator fun invoke(data: AudioInputConfigurationData): MicDomainData {
+    operator fun invoke(data: MicDomainConfigurationData): MicDomainData {
         return MicDomainData(
             audioInputChannel = data.audioInputChannel,
             audioInputEncoding = data.audioInputEncoding,
@@ -26,7 +27,8 @@ class AudioInputConfigurationDataMapper {
             audioOutputChannel = data.audioOutputChannel,
             audioOutputEncoding = data.audioOutputEncoding,
             audioOutputSampleRate = data.audioOutputSampleRate,
-            isUseAutomaticGainControl = data.isUseAutomaticGainControl,
+            isUseLoudnessEnhancer = data.isUseLoudnessEnhancer,
+            gainControl = data.gainControl,
             isPauseRecordingOnMediaPlayback = data.isPauseRecordingOnMediaPlayback,
         )
     }

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat
+package org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat
 
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType

@@ -1,8 +1,9 @@
-package org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat
+package org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat
 
 import org.rhasspy.mobile.data.domain.MicDomainData
+import org.rhasspy.mobile.platformspecific.features.FeatureAvailability
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioRecorderFormatConfigurationViewState.AudioInputFormatConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationViewState.AudioInputFormatConfigurationData
 
 class AudioRecorderFormatConfigurationDataMapper {
 
@@ -19,6 +20,9 @@ class AudioRecorderFormatConfigurationDataMapper {
             audioInputChannel = data.audioInputChannel,
             audioInputEncoding = data.audioInputEncoding,
             audioInputSampleRate = data.audioInputSampleRate,
+            audioOutputEncoding = if (!FeatureAvailability.isAudioEncodingOutputChangeEnabled) {
+                data.audioInputEncoding
+            } else ConfigurationSetting.micDomainData.value.audioOutputEncoding
         )
     }
 

@@ -1,8 +1,8 @@
-package org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat
+package org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat
 
 import org.rhasspy.mobile.data.domain.MicDomainData
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationViewState.AudioOutputFormatConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationViewState.AudioOutputFormatConfigurationData
 
 class AudioOutputFormatConfigurationDataMapper {
 

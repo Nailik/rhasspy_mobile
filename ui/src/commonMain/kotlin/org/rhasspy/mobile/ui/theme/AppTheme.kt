@@ -41,5 +41,5 @@ fun GetColorScheme(): State<ColorScheme> {
 
 val ContentPaddingLevel1 = PaddingValues(vertical = 16.dp)
 val TonalElevationLevel0 = 0.dp
-val TonalElevationLevel1 = 3.dp
-val TonalElevationLevel2 = 5.dp
+val TonalElevationLevel1 = 1.dp
+val TonalElevationLevel2 = 3.dp

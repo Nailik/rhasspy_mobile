@@ -131,7 +131,8 @@ class VoiceActivityDetectionConfigurationViewModel(
             audioRecorderOutputChannelType = ConfigurationSetting.micDomainData.value.audioOutputChannel,
             audioRecorderOutputEncodingType = ConfigurationSetting.micDomainData.value.audioOutputEncoding,
             audioRecorderOutputSampleRateType = ConfigurationSetting.micDomainData.value.audioOutputSampleRate,
-            isUseAutomaticGainControl = ConfigurationSetting.micDomainData.value.isUseAutomaticGainControl,
+            isUseLoudnessEnhancer = ConfigurationSetting.micDomainData.value.isUseLoudnessEnhancer,
+            gainControl = ConfigurationSetting.micDomainData.value.gainControl,
             isAutoPauseOnMediaPlayback = ConfigurationSetting.micDomainData.value.isPauseRecordingOnMediaPlayback,
         )
     }

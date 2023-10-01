@@ -11,7 +11,6 @@ import org.rhasspy.mobile.data.pipeline.PipelineData
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.*
-import org.rhasspy.mobile.platformspecific.features.FeatureAvailability
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.ISetting
 import kotlin.time.Duration.Companion.milliseconds
@@ -128,7 +127,8 @@ internal object Migration1To2 : IMigration(1, 2) {
             audioOutputChannel = speechToTextAudioOutputChannel.value,
             audioOutputEncoding = speechToTextAudioOutputEncoding.value,
             audioOutputSampleRate = speechToTextAudioOutputSampleRate.value,
-            isUseAutomaticGainControl = FeatureAvailability.isUseAutomaticGainControlEnabled,
+            isUseLoudnessEnhancer = false,
+            gainControl = 0,
             isPauseRecordingOnMediaPlayback = isPauseRecordingOnMedia.value,
         )
 

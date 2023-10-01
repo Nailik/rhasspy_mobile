@@ -13,10 +13,12 @@ fun SwitchListItem(
     text: StableStringResource,
     secondaryText: StableStringResource? = null,
     isChecked: Boolean,
+    isEnabled: Boolean = true,
     onCheckedChange: ((Boolean) -> Unit)
 ) {
     ListElement(
         modifier = modifier.toggleable(
+            enabled = isEnabled,
             value = isChecked,
             onValueChange = onCheckedChange
         ),
@@ -25,6 +27,7 @@ fun SwitchListItem(
         trailing = {
             Switch(
                 checked = isChecked,
+                enabled = isEnabled,
                 onCheckedChange = onCheckedChange
             )
         }

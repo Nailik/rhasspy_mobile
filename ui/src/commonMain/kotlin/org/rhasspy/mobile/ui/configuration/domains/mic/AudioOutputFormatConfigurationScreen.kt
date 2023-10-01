@@ -21,10 +21,10 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel2
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationViewState.AudioOutputFormatConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationViewState.AudioOutputFormatConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.AudioInputDomainScreenDestination.AudioOutputFormatScreen
 
 /**
@@ -45,6 +45,7 @@ fun AudioOutputFormatConfigurationScreen(viewModel: AudioOutputFormatConfigurati
         val viewState by viewModel.viewState.collectAsState()
 
         AudioOutputFormatEditContent(
+            isEncodingChangeEnabled = viewState.isEncodingChangeEnabled,
             editData = viewState.editData,
             onEvent = viewModel::onEvent
         )
@@ -55,6 +56,7 @@ fun AudioOutputFormatConfigurationScreen(viewModel: AudioOutputFormatConfigurati
 
 @Composable
 private fun AudioOutputFormatEditContent(
+    isEncodingChangeEnabled: Boolean,
     editData: AudioOutputFormatConfigurationData,
     onEvent: (AudioOutputFormatConfigurationUiEvent) -> Unit
 ) {
@@ -94,7 +96,7 @@ private fun AudioOutputFormatEditContent(
             RadioButtonsEnumSelectionList(
                 modifier = Modifier.testTag(TestTag.AudioOutputEncodingType),
                 selected = editData.audioOutputEncoding,
-                enabled = true, //TODO
+                enabled = isEncodingChangeEnabled,
                 onSelect = { onEvent(SelectOutputFormatEncodingType(it)) },
                 combinedTestTag = TestTag.AudioOutputEncodingType,
                 values = editData.audioFormatEncodingTypes

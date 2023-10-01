@@ -1,12 +1,14 @@
 package org.rhasspy.mobile.ui.configuration.domains.mic
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -19,17 +21,20 @@ import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.ListElement
+import org.rhasspy.mobile.ui.content.list.SwitchListItem
+import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationUiEvent.Action.OpenInputFormatConfigurationScreen
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationUiEvent.Action.OpenOutputFormatConfigurationScreen
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Action.OpenInputFormatConfigurationScreen
+import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Action.OpenOutputFormatConfigurationScreen
+import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationViewState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.AudioInputConfigurationScreen
 
 @Composable
-fun AudioInputConfigurationScreen(viewModel: AudioInputConfigurationViewModel) {
+fun AudioInputConfigurationScreen(viewModel: MicDomainConfigurationViewModel) {
 
     ScreenContent(
         modifier = Modifier.testTag(AudioInputConfigurationScreen),
@@ -48,11 +53,10 @@ fun AudioInputConfigurationScreen(viewModel: AudioInputConfigurationViewModel) {
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AudioInputConfigurationScreenContent(
-    onEvent: (AudioInputConfigurationUiEvent) -> Unit,
-    viewState: AudioInputConfigurationViewState
+    onEvent: (MicDomainConfigurationUiEvent) -> Unit,
+    viewState: MicDomainConfigurationViewState
 ) {
 
     Column(
@@ -61,7 +65,6 @@ private fun AudioInputConfigurationScreenContent(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-
 
         //button to open audio recorder format
         ListElement(
@@ -87,6 +90,43 @@ private fun AudioInputConfigurationScreenContent(
                         translate(viewState.editData.audioOutputSampleRate.text)
                 Text(text = text)
             }
+        )
+
+        Divider()
+
+        //isUseAutomaticGainControl
+        SwitchListItem(
+            modifier = Modifier,
+            text = MR.strings.loudnessEnhancer.stable,
+            isChecked = viewState.editData.isUseLoudnessEnhancer,
+            onCheckedChange = { onEvent(SetUseLoudnessEnhancer(it)) }
+        )
+
+        AnimatedVisibility(
+            enter = expandVertically(),
+            exit = shrinkVertically(),
+            visible = viewState.editData.isUseLoudnessEnhancer
+        ) {
+
+            //gain
+            TextFieldListItem(
+                label = MR.strings.loudnessEnhancerGain.stable,
+                modifier = Modifier,
+                value = viewState.editData.gainControlText,
+                onValueChange = { onEvent(UpdateGain(it)) },
+                isLastItem = false
+            )
+
+        }
+
+        //isPauseRecordingOnMediaPlayback
+        SwitchListItem(
+            modifier = Modifier,
+            text = MR.strings.autoStopRecording.stable,
+            secondaryText = MR.strings.autoStopRecordingInformation.stable,
+            isChecked = viewState.editData.isPauseRecordingOnMediaPlayback,
+            isEnabled = viewState.isPauseRecordingOnMediaPlaybackEnabled,
+            onCheckedChange = { onEvent(SetUsePauseOnMediaPlayback(it)) }
         )
 
     }

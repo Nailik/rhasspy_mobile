@@ -5,9 +5,6 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.AudioInputConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audioinputformat.AudioRecorderFormatConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioinput.audiooutputformat.AudioOutputFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewModel
@@ -18,6 +15,9 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServe
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionConfigurationViewModel
@@ -83,7 +83,7 @@ sealed class NavigationDestination : KoinComponent {
         }
 
         data object AudioInputConfigurationScreen : ConfigurationScreenNavigationDestination() {
-            override val viewModel get() = get<AudioInputConfigurationViewModel> { parametersOf(this) }
+            override val viewModel get() = get<MicDomainConfigurationViewModel> { parametersOf(this) }
         }
 
         data object WakeWordConfigurationScreen : ConfigurationScreenNavigationDestination() {
