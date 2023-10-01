@@ -18,8 +18,8 @@ import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.*
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.RequestMicrophonePermission
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.*
@@ -83,7 +83,6 @@ class WakeWordConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             RequestMicrophonePermission -> requireMicrophonePermission {}
-            BackClick                   -> navigator.onBackPressed()
             is Navigate                 -> navigator.navigate(action.destination)
         }
     }
@@ -131,12 +130,12 @@ class WakeWordConfigurationViewModel(
 
     private fun onPorcupineAction(action: PorcupineUiEvent.Action) {
         when (action) {
-            AddCustomPorcupineKeyword         -> addCustomPorcupineKeyword()
-            DownloadCustomPorcupineKeyword    -> openLink(LinkType.PicoVoiceCustomWakeWord)
-            OpenPicoVoiceConsole              -> openLink(LinkType.PicoVoiceConsole)
-            PorcupineUiEvent.Action.BackClick -> navigator.onBackPressed()
-            PorcupineLanguageClick            -> navigator.navigate(EditPorcupineLanguageScreen)
-            is PageClick                      -> _viewState.update { it.copy(porcupineWakeWordScreen = action.screen) }
+            AddCustomPorcupineKeyword      -> addCustomPorcupineKeyword()
+            DownloadCustomPorcupineKeyword -> openLink(LinkType.PicoVoiceCustomWakeWord)
+            OpenPicoVoiceConsole           -> openLink(LinkType.PicoVoiceConsole)
+            BackClick                      -> navigator.onBackPressed()
+            PorcupineLanguageClick         -> navigator.navigate(EditPorcupineLanguageScreen)
+            is PageClick                   -> _viewState.update { it.copy(porcupineWakeWordScreen = action.screen) }
         }
     }
 

@@ -5,9 +5,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
@@ -28,11 +26,12 @@ import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
-import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.RequestMicrophonePermission
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
@@ -42,6 +41,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordUdpConfigurationData
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.EditPorcupineWakeWordScreen
 
@@ -52,33 +52,23 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordCon
  */
 @Composable
 fun WakeWordConfigurationOverviewScreen(viewModel: WakeWordConfigurationViewModel) {
+
     ScreenContent(
-        screenViewModel = viewModel
+        modifier = Modifier.testTag(WakeWordConfigurationScreen),
+        title = MR.strings.wakeWord.stable,
+        viewModel = viewModel,
+        tonalElevation = TonalElevationLevel1,
     ) {
-        SettingsScreenItemContent(
-            title = MR.strings.wakeWord.stable,
-            onBackClick = { viewModel.onEvent(BackClick) }
-        ) {
 
-            val viewState by viewModel.viewState.collectAsState()
+        val viewState by viewModel.viewState.collectAsState()
 
+        WakeWordConfigurationOptionContent(
+            viewState = viewState,
+            onEvent = viewModel::onEvent
+        )
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-
-                item {
-                    WakeWordConfigurationOptionContent(
-                        viewState = viewState,
-                        onEvent = viewModel::onEvent
-                    )
-                }
-
-            }
-
-        }
     }
+
 }
 
 @Composable

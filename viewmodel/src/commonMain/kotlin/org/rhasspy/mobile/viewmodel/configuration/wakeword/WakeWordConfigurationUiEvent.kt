@@ -18,7 +18,6 @@ sealed interface WakeWordConfigurationUiEvent {
     sealed interface Action : WakeWordConfigurationUiEvent {
 
         data object RequestMicrophonePermission : Action
-        data object BackClick : Action
         data class Navigate(val destination: WakeWordConfigurationScreenDestination) : Action
 
     }

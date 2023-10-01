@@ -7,7 +7,11 @@ import com.russhwolf.settings.get
 import com.russhwolf.settings.serialization.decodeValue
 import com.russhwolf.settings.serialization.encodeValue
 import com.russhwolf.settings.set
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import org.koin.core.component.KoinComponent
@@ -16,6 +20,8 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.migrations.SettingsInitializer
 
 private val logger = Logger.withTag("ISetting")
+
+private val settingsScope = CoroutineScope(Dispatchers.IO)
 
 open class ISetting<T>(
     private val key: Enum<*>,
@@ -40,7 +46,9 @@ open class ISetting<T>(
             return _data.value
         }
         set(value) {
-            saveValue(value)
+            settingsScope.launch {
+                saveValue(value)
+            }
             _data.value = value
             field = value
         }

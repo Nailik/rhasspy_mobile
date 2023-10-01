@@ -1,5 +1,8 @@
 package org.rhasspy.mobile.viewmodel.screens.configuration
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
@@ -24,6 +27,8 @@ class ConfigurationScreenViewStateCreator(
     private val wakeDomain: IWakeDomain,
     private val micDomain: IMicDomain,
 ) {
+    private val scope = CoroutineScope(Dispatchers.IO)
+
     private val hasConnectionError = combineStateFlow(
         rhasspy2HermesConnection.connectionState,
         rhasspy3WyomingConnection.connectionState,
