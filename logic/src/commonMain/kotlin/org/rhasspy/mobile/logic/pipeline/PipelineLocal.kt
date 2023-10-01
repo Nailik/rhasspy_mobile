@@ -18,6 +18,8 @@ import org.rhasspy.mobile.logic.pipeline.TtsResult.*
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
+interface IPipelineLocal : IPipeline
+
 class PipelineLocal(
     private val asrDomain: IAsrDomain,
     private val handleDomain: IHandleDomain,

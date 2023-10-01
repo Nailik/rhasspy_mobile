@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import org.rhasspy.mobile.ui.configuration.ConnectionsConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.DialogManagementConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.connections.*
 import org.rhasspy.mobile.ui.configuration.domains.asr.SpeechToTextConfigurationScreen

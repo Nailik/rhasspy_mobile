@@ -181,8 +181,6 @@ object ConfigurationSetting {
         key = SettingsEnum.Pipeline,
         initial = PipelineData(
             option = DialogManagementOption.Local,
-            asrDomainTimeout = 10000L,
-            intentDomainTimeout = 10000L,
         ),
         serializer = PipelineData.serializer(),
     )

@@ -62,8 +62,7 @@ fun ScreenContent(
     ) {
 
         Surface(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             tonalElevation = tonalElevation,
         ) {
             Scaffold(
@@ -94,8 +93,7 @@ fun ScreenContent(
 
                 Surface(
                     modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize(),
+                        .padding(paddingValues),
                     content = content,
                 )
 

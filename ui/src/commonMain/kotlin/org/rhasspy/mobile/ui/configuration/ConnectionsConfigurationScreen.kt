@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration.connections
+package org.rhasspy.mobile.ui.configuration
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

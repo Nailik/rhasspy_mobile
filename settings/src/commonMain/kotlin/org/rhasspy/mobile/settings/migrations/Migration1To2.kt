@@ -183,8 +183,6 @@ internal object Migration1To2 : IMigration(1, 2) {
 
         ConfigurationSetting.pipelineData.value = PipelineData(
             option = dialogManagementOption.value,
-            asrDomainTimeout = textAsrTimeout.value,
-            intentDomainTimeout = intentRecognitionTimeout.value,
         )
 
 

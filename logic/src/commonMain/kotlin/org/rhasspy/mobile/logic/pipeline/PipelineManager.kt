@@ -31,10 +31,7 @@ import org.rhasspy.mobile.logic.pipeline.TtsResult.NotSynthesized
 import org.rhasspy.mobile.logic.pipeline.TtsResult.TtsDisabled
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-interface IPipelineManager {
-
-
-}
+interface IPipelineManager
 
 class PipelineManager(
     private val mqttConnection: IMqttConnection,
@@ -129,7 +126,7 @@ class PipelineManager(
 
     private fun runPipeline(startEvent: StartEvent) {
         pipelineJob = scope.launch {
-            when (get<IPipeline>().runPipeline(startEvent)) {
+            when (getPipeline().runPipeline(startEvent)) {
                 is End,
                 is HandleDisabled,
                 is IntentDisabled,
@@ -158,8 +155,8 @@ class PipelineManager(
     }
 
     private fun getPipeline(): IPipeline {
-        when (params.option) {
-            DialogManagementOption.Local -> TODO()
+        return when (params.option) {
+            DialogManagementOption.Local -> get<IPipelineLocal>()
             DialogManagementOption.Rhasspy2HermesMQTT -> TODO()
             DialogManagementOption.Disabled -> TODO()
         }
