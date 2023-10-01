@@ -6,8 +6,6 @@ sealed interface ConnectionsConfigurationUiEvent {
 
     sealed interface Action : ConnectionsConfigurationUiEvent {
 
-        data object BackClick : Action
-
         data class Navigate(val destination: ConnectionScreenNavigationDestination) : Action
 
     }

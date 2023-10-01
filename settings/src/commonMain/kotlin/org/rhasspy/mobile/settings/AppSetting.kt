@@ -20,23 +20,39 @@ import org.rhasspy.mobile.settings.migrations.SettingsInitializer
  * directly consumed
  */
 object AppSetting : KoinComponent {
-    val version = ISetting(SettingsEnum.Version, SettingsInitializer.currentSettingsVersion)
+    val version = ISetting(SettingsEnum.Version, 2)
 
     val didShowCrashlyticsDialog = ISetting(SettingsEnum.CrashlyticsDialog, false)
     val didShowChangelogDialog = ISetting(SettingsEnum.ChangelogDialog, 0)
 
-    val languageType = ISetting(SettingsEnum.LanguageOption, get<ILanguageUtils>().getDeviceLanguage(), LanguageType.serializer())
-    val themeType = ISetting(SettingsEnum.ThemeOption, ThemeType.System, ThemeType.serializer())
+    val languageType = ISetting(
+        key = SettingsEnum.LanguageOption,
+        initial = get<ILanguageUtils>().getDeviceLanguage(),
+        serializer = LanguageType.serializer(),
+    )
+    val themeType = ISetting(
+        key = SettingsEnum.ThemeOption,
+        initial = ThemeType.System,
+        serializer = ThemeType.serializer(),
+    )
 
     val isBackgroundServiceEnabled = ISetting(SettingsEnum.BackgroundEnabled, false)
-    val microphoneOverlaySizeOption = ISetting(SettingsEnum.MicrophoneOverlaySize, MicrophoneOverlaySizeOption.Disabled, MicrophoneOverlaySizeOption.serializer())
+    val microphoneOverlaySizeOption = ISetting(
+        key = SettingsEnum.MicrophoneOverlaySize,
+        initial = MicrophoneOverlaySizeOption.Disabled,
+        serializer = MicrophoneOverlaySizeOption.serializer(),
+    )
     val isMicrophoneOverlayWhileAppEnabled = ISetting(SettingsEnum.MicrophoneOverlayWhileApp, false)
     val microphoneOverlayPositionX = ISetting(SettingsEnum.MicrophoneOverlayPositionX, 0)
     val microphoneOverlayPositionY = ISetting(SettingsEnum.MicrophoneOverlayPositionY, 0)
 
     val isWakeWordDetectionTurnOnDisplayEnabled = ISetting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
     val isSoundIndicationEnabled = ISetting(SettingsEnum.SoundIndication, true)
-    val soundIndicationOutputOption = ISetting(SettingsEnum.SoundIndicationOutput, AudioOutputOption.Notification, AudioOutputOption.serializer())
+    val soundIndicationOutputOption = ISetting(
+        key = SettingsEnum.SoundIndicationOutput,
+        initial = AudioOutputOption.Notification,
+        serializer = AudioOutputOption.serializer(),
+    )
     val isWakeWordLightIndicationEnabled = ISetting(SettingsEnum.WakeWordLightIndication, false)
 
     val isMqttApiDeviceChangeEnabled = ISetting(SettingsEnum.MqttApiDeviceChangeEnabled, false)
@@ -50,34 +66,51 @@ object AppSetting : KoinComponent {
     val recordedSoundVolume = ISetting(SettingsEnum.RecordedSoundVolume, 0.5F)
     val errorSoundVolume = ISetting(SettingsEnum.ErrorSoundVolume, 0.5F)
 
-    val wakeSound = ISetting(SettingsEnum.WakeSound, SoundOption.Default.name)
-    val recordedSound = ISetting(SettingsEnum.RecordedSound, SoundOption.Default.name)
-    val errorSound = ISetting(SettingsEnum.ErrorSound, SoundOption.Default.name)
+    val wakeSound = ISetting(
+        key = SettingsEnum.WakeSound,
+        initial = SoundOption.Default.name,
+    )
+    val recordedSound = ISetting(
+        key = SettingsEnum.RecordedSound,
+        initial = SoundOption.Default.name,
+    )
+    val errorSound = ISetting(
+        key = SettingsEnum.ErrorSound,
+        initial = SoundOption.Default.name,
+    )
 
     //saves sound as pair, first is fileName as String, second is used and indicates if this custom sound file is used
     val customWakeSounds = ISetting(
         key = SettingsEnum.CustomWakeSounds,
         initial = emptyList(),
-        serializer = ListSerializer(String.serializer())
+        serializer = ListSerializer(String.serializer()),
     )
     val customRecordedSounds = ISetting(
         key = SettingsEnum.CustomRecordedSounds,
         initial = emptyList(),
-        serializer = ListSerializer(String.serializer())
+        serializer = ListSerializer(String.serializer()),
     )
     val customErrorSounds = ISetting(
         key = SettingsEnum.CustomErrorSounds,
         initial = emptyList(),
-        serializer = ListSerializer(String.serializer())
+        serializer = ListSerializer(String.serializer()),
     )
 
     val isCrashlyticsEnabled = ISetting(SettingsEnum.Crashlytics, false)
     val isShowLogEnabled = ISetting(SettingsEnum.ShowLog, isDebug())
     val isLogAudioFramesEnabled = ISetting(SettingsEnum.LogAudioFrames, false)
-    val logLevel = ISetting(SettingsEnum.LogLevel, LogLevel.Debug, LogLevel.serializer())
+    val logLevel = ISetting(
+        key = SettingsEnum.LogLevel,
+        initial = LogLevel.Debug,
+        serializer = LogLevel.serializer(),
+    )
     val isLogAutoscroll = ISetting(SettingsEnum.LogAutoscroll, true)
 
-    val audioFocusOption = ISetting(SettingsEnum.AudioFocusOption, AudioFocusOption.Disabled, AudioFocusOption.serializer())
+    val audioFocusOption = ISetting(
+        key = SettingsEnum.AudioFocusOption,
+        initial = AudioFocusOption.Disabled,
+        serializer = AudioFocusOption.serializer(),
+    )
     val isAudioFocusOnNotification = ISetting(SettingsEnum.AudioFocusOnNotification, false)
     val isAudioFocusOnSound = ISetting(SettingsEnum.AudioFocusOnSound, false)
     val isAudioFocusOnRecord = ISetting(SettingsEnum.AudioFocusOnRecord, false)

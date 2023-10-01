@@ -3,33 +3,31 @@ package org.rhasspy.mobile.ui.configuration.connections
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.ScreenContent
-import org.rhasspy.mobile.ui.content.elements.*
+import org.rhasspy.mobile.ui.content.elements.CustomDivider
+import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.content.elements.toText
+import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.item.EventStateIconTinted
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewState.*
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.ConnectionsConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConnectionScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConnectionScreenNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
@@ -40,7 +38,12 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 @Composable
 fun ConnectionsConfigurationScreen(viewModel: ConnectionsConfigurationViewModel) {
 
-    ScreenContent(screenViewModel = viewModel) {
+    ScreenContent(
+        title = MR.strings.connections.stable,
+        viewModel = viewModel,
+        tonalElevation = TonalElevationLevel1,
+    ) {
+
         val viewState by viewModel.viewState.collectAsState()
 
         ConnectionsConfigurationScreenContent(
@@ -51,82 +54,55 @@ fun ConnectionsConfigurationScreen(viewModel: ConnectionsConfigurationViewModel)
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ConnectionsConfigurationScreenContent(
     onEvent: (ConnectionsConfigurationUiEvent) -> Unit,
     viewState: ConnectionsConfigurationViewState
 ) {
 
-    Surface(tonalElevation = 3.dp) {
-        Scaffold(
-            modifier = Modifier
-                .testTag(ConnectionsConfigurationScreen)
-                .fillMaxSize(),
-            topBar = {
-                TopAppBar(
-                    title = { Text(MR.strings.connections.stable) },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = { onEvent(BackClick) },
-                            modifier = Modifier.testTag(TestTag.AppBarBackButton)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = MR.strings.back.stable,
-                            )
-                        }
-                    }
-                )
-            },
-        ) { paddingValues ->
+    Column(
+        modifier = Modifier
+            .testTag(TestTag.List)
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
 
-            Column(
-                modifier = Modifier
-                    .testTag(TestTag.List)
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ) {
+        Rhasspy2Hermes(
+            viewState = viewState.rhasspy2Hermes,
+            onEvent = onEvent
+        )
 
-                Rhasspy2Hermes(
-                    viewState = viewState.rhasspy2Hermes,
-                    onEvent = onEvent
-                )
+        CustomDivider()
 
-                CustomDivider()
+        Rhasspy3Wyoming(
+            viewState = viewState.rhasspy3Wyoming,
+            onEvent = onEvent
+        )
 
-                Rhasspy3Wyoming(
-                    viewState = viewState.rhasspy3Wyoming,
-                    onEvent = onEvent
-                )
+        CustomDivider()
 
-                CustomDivider()
+        HomeAssistant(
+            viewState = viewState.homeAssistant,
+            onEvent = onEvent
+        )
 
-                HomeAssistant(
-                    viewState = viewState.homeAssistant,
-                    onEvent = onEvent
-                )
+        CustomDivider()
 
-                CustomDivider()
+        Mqtt(
+            viewState = viewState.mqtt,
+            onEvent = onEvent
+        )
 
-                Mqtt(
-                    viewState = viewState.mqtt,
-                    onEvent = onEvent
-                )
-
-                CustomDivider()
+        CustomDivider()
 
 
-                Webserver(
-                    viewState = viewState.webserver,
-                    onEvent = onEvent
-                )
+        Webserver(
+            viewState = viewState.webserver,
+            onEvent = onEvent
+        )
 
-                CustomDivider()
+        CustomDivider()
 
-            }
-        }
     }
 
 }

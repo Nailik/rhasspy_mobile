@@ -26,6 +26,7 @@ import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel2
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Action.AccessTokenQRCodeClick
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Change.*
@@ -42,7 +43,7 @@ fun Rhasspy2HermesConnectionScreen(viewModel: Rhasspy2HermesConnectionConfigurat
     ScreenContent(
         title = MR.strings.rhasspy2_hermes_server.stable,
         viewModel = viewModel,
-        tonalElevation = 1.dp,
+        tonalElevation = TonalElevationLevel2,
     ) {
 
         Column(

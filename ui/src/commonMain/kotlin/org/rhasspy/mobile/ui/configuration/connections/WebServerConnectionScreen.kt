@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
@@ -26,6 +25,7 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.*
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel2
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Action.OpenWebServerSSLWiki
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationUiEvent.Action.SelectSSLCertificate
@@ -45,7 +45,7 @@ fun WebServerConnectionScreen(viewModel: WebServerConnectionConfigurationViewMod
     ScreenContent(
         title = MR.strings.local_webserver.stable,
         viewModel = viewModel,
-        tonalElevation = 1.dp,
+        tonalElevation = TonalElevationLevel2,
     ) {
 
         Column(
