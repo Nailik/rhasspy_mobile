@@ -58,7 +58,7 @@ val platformSpecificModule = module {
             externalResultRequest = get()
         )
     }
-    single<IAudioRecorder> {
+    factory<IAudioRecorder> {
         AudioRecorder()
     }
     single<IOpenLinkUtils> {

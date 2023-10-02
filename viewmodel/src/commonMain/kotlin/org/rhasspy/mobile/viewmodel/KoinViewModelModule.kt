@@ -41,9 +41,9 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.AudioRecorderViewStateCreator
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.vad.AudioRecorderViewStateCreator
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
@@ -168,7 +168,7 @@ fun viewModelModule() = module {
     singleOf(::WakeWordConfigurationDataMapper)
     singleOf(::WakeWordConfigurationViewModel)
 
-    singleOf(::VoiceActivityDetectionConfigurationDataMapper)
+    singleOf(::VadDomainConfigurationDataMapper)
     factory { params ->
         AudioRecorderViewStateCreator(
             audioRecorder = params[0]
@@ -176,7 +176,7 @@ fun viewModelModule() = module {
     }
     single {
         val audioRecorder: IAudioRecorder = get()
-        VoiceActivityDetectionConfigurationViewModel(
+        VadDomainConfigurationViewModel(
             nativeApplication = get(),
             audioRecorderViewStateCreator = get { parametersOf(audioRecorder) },
             mapper = get(),

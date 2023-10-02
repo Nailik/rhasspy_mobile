@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection
+package org.rhasspy.mobile.viewmodel.configuration.vad
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,19 +13,19 @@ import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.*
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.Change.SelectVoiceActivityDetectionOption
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.LocalSilenceDetectionUiEvent.Action.ToggleAudioLevelTest
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.LocalSilenceDetectionUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.*
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.Change.SelectVadDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Action.ToggleAudioLevelTest
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import kotlin.math.pow
 import kotlin.time.Duration.Companion.milliseconds
 
 @Stable
-class VoiceActivityDetectionConfigurationViewModel(
+class VadDomainConfigurationViewModel(
     private val nativeApplication: NativeApplication,
-    private val mapper: VoiceActivityDetectionConfigurationDataMapper,
+    private val mapper: VadDomainConfigurationDataMapper,
     audioRecorderViewStateCreator: AudioRecorderViewStateCreator,
     private val audioRecorder: IAudioRecorder,
 ) : ScreenViewModel() {
@@ -43,12 +43,12 @@ class VoiceActivityDetectionConfigurationViewModel(
         }
     }
 
-    private val _viewState = MutableStateFlow(VoiceActivityDetectionViewState(mapper(ConfigurationSetting.vadDomainData.value)))
+    private val _viewState = MutableStateFlow(VadDomainViewState(mapper(ConfigurationSetting.vadDomainData.value)))
     val viewState = _viewState.readOnly
 
     val audioRecorderViewState = audioRecorderViewStateCreator(viewState)
 
-    fun onEvent(event: VoiceActivityDetectionUiEvent) {
+    fun onEvent(event: VadDomainUiEvent) {
         when (event) {
             is Change                       -> onChange(event)
             is Action                       -> onAction(event)
@@ -60,7 +60,7 @@ class VoiceActivityDetectionConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SelectVoiceActivityDetectionOption -> {
+                    is SelectVadDomainOption -> {
                         if (audioRecorder.isRecording.value && change.option != Local) {
                             stopRecording()
                         }
@@ -69,6 +69,7 @@ class VoiceActivityDetectionConfigurationViewModel(
                 }
             })
         }
+        ConfigurationSetting.vadDomainData.value = mapper(_viewState.value.editData)
     }
 
     private fun onAction(action: Action) {
@@ -122,7 +123,6 @@ class VoiceActivityDetectionConfigurationViewModel(
         //disable so recording is stopped
         AppSetting.isHotWordEnabled.value = false
         //start this recording
-        //TODO use mic domain instead?
         audioRecorder.startRecording(
             audioRecorderSourceType = ConfigurationSetting.micDomainData.value.audioInputSource,
             audioRecorderChannelType = ConfigurationSetting.micDomainData.value.audioInputChannel,
@@ -131,8 +131,6 @@ class VoiceActivityDetectionConfigurationViewModel(
             audioRecorderOutputChannelType = ConfigurationSetting.micDomainData.value.audioOutputChannel,
             audioRecorderOutputEncodingType = ConfigurationSetting.micDomainData.value.audioOutputEncoding,
             audioRecorderOutputSampleRateType = ConfigurationSetting.micDomainData.value.audioOutputSampleRate,
-            isUseLoudnessEnhancer = ConfigurationSetting.micDomainData.value.isUseLoudnessEnhancer,
-            gainControl = ConfigurationSetting.micDomainData.value.gainControl,
             isAutoPauseOnMediaPlayback = ConfigurationSetting.micDomainData.value.isPauseRecordingOnMediaPlayback,
         )
     }

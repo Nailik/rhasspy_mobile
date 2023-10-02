@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection
+package org.rhasspy.mobile.viewmodel.configuration.vad
 
 import androidx.compose.runtime.Stable
 

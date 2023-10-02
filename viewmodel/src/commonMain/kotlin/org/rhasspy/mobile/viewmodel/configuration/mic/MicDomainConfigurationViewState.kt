@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
-import org.rhasspy.mobile.data.data.toStringOrEmpty
 import org.rhasspy.mobile.data.domain.DomainState
 import org.rhasspy.mobile.logic.domains.mic.MicDomainState
 
@@ -25,13 +24,7 @@ data class MicDomainConfigurationViewState internal constructor(
         val audioOutputChannel: AudioFormatChannelType,
         val audioOutputEncoding: AudioFormatEncodingType,
         val audioOutputSampleRate: AudioFormatSampleRateType,
-        val isUseLoudnessEnhancer: Boolean,
-        val gainControl: Int,
         val isPauseRecordingOnMediaPlayback: Boolean,
-    ) {
-
-        val gainControlText: String = gainControl.toStringOrEmpty()
-
-    }
+    )
 
 }

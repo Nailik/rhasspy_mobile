@@ -94,8 +94,6 @@ object ConfigurationSetting {
             audioOutputChannel = AudioFormatChannelType.default,
             audioOutputEncoding = AudioFormatEncodingType.default,
             audioOutputSampleRate = AudioFormatSampleRateType.default,
-            isUseLoudnessEnhancer = false,
-            gainControl = 0,
             isPauseRecordingOnMediaPlayback = FeatureAvailability.isPauseRecordingOnPlaybackFeatureEnabled,
         ),
         serializer = MicDomainData.serializer(),

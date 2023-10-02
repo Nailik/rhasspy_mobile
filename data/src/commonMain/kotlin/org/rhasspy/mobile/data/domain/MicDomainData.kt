@@ -13,7 +13,5 @@ data class MicDomainData(
     val audioOutputChannel: AudioFormatChannelType,
     val audioOutputEncoding: AudioFormatEncodingType,
     val audioOutputSampleRate: AudioFormatSampleRateType,
-    val isUseLoudnessEnhancer: Boolean,
-    val gainControl: Int,
     val isPauseRecordingOnMediaPlayback: Boolean,
 )

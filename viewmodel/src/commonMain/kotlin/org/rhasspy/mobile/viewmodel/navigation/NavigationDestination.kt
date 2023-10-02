@@ -20,7 +20,7 @@ import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioReco
 import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewModel
@@ -95,7 +95,7 @@ sealed class NavigationDestination : KoinComponent {
         }
 
         data object VoiceActivityDetectionConfigurationScreen : ConfigurationScreenNavigationDestination() {
-            override val viewModel get() = get<VoiceActivityDetectionConfigurationViewModel> { parametersOf(this) }
+            override val viewModel get() = get<VadDomainConfigurationViewModel> { parametersOf(this) }
         }
 
         data object IntentRecognitionConfigurationScreen : ConfigurationScreenNavigationDestination() {

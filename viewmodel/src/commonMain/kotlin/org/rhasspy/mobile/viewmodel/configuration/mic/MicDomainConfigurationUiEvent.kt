@@ -12,10 +12,6 @@ sealed interface MicDomainConfigurationUiEvent {
 
     sealed interface Change : MicDomainConfigurationUiEvent {
 
-        data class SetUseLoudnessEnhancer(val value: Boolean) : Change
-
-        data class UpdateGain(val value: String) : Change
-
         data class SetUsePauseOnMediaPlayback(val value: Boolean) : Change
 
     }

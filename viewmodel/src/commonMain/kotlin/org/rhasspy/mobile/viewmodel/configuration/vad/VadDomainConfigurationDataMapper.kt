@@ -1,13 +1,13 @@
-package org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection
+package org.rhasspy.mobile.viewmodel.configuration.vad
 
 import org.rhasspy.mobile.data.domain.VadDomainData
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionViewState.VoiceActivityDetectionConfigurationData
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionViewState.VoiceActivityDetectionConfigurationData.LocalSilenceDetectionConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainViewState.VadDomainConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainViewState.VadDomainConfigurationData.LocalSilenceDetectionConfigurationData
 
-class VoiceActivityDetectionConfigurationDataMapper {
+class VadDomainConfigurationDataMapper {
 
-    operator fun invoke(data: VadDomainData): VoiceActivityDetectionConfigurationData {
-        return VoiceActivityDetectionConfigurationData(
+    operator fun invoke(data: VadDomainData): VadDomainConfigurationData {
+        return VadDomainConfigurationData(
             voiceActivityDetectionOption = data.option,
             timeout = data.timeout,
             localSilenceDetectionSetting = LocalSilenceDetectionConfigurationData(
@@ -18,7 +18,7 @@ class VoiceActivityDetectionConfigurationDataMapper {
         )
     }
 
-    operator fun invoke(data: VoiceActivityDetectionConfigurationData): VadDomainData {
+    operator fun invoke(data: VadDomainConfigurationData): VadDomainData {
         return VadDomainData(
             option = data.voiceActivityDetectionOption,
             timeout = data.timeout,

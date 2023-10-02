@@ -1,8 +1,5 @@
 package org.rhasspy.mobile.ui.configuration.domains.mic
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,12 +21,11 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
-import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
 import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Change.SetUsePauseOnMediaPlayback
 import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationViewState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.AudioInputConfigurationScreen
@@ -109,31 +105,6 @@ private fun AudioInputConfigurationScreenContent(
         )
 
         Divider()
-
-        //isUseAutomaticGainControl
-        SwitchListItem(
-            modifier = Modifier,
-            text = MR.strings.loudnessEnhancer.stable,
-            isChecked = viewState.editData.isUseLoudnessEnhancer,
-            onCheckedChange = { onEvent(SetUseLoudnessEnhancer(it)) }
-        )
-
-        AnimatedVisibility(
-            enter = expandVertically(),
-            exit = shrinkVertically(),
-            visible = viewState.editData.isUseLoudnessEnhancer
-        ) {
-
-            //gain
-            TextFieldListItem(
-                label = MR.strings.loudnessEnhancerGain.stable,
-                modifier = Modifier,
-                value = viewState.editData.gainControlText,
-                onValueChange = { onEvent(UpdateGain(it)) },
-                isLastItem = false
-            )
-
-        }
 
         //isPauseRecordingOnMediaPlayback
         SwitchListItem(

@@ -3,7 +3,6 @@ package org.rhasspy.mobile.viewmodel.configuration.mic
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.data.data.toIntOrZero
 import org.rhasspy.mobile.logic.pipeline.IPipelineManager
 import org.rhasspy.mobile.platformspecific.features.FeatureAvailability
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
@@ -12,7 +11,7 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Change.SetUsePauseOnMediaPlayback
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.AudioInputDomainScreenDestination.AudioInputFormatScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.AudioInputDomainScreenDestination.AudioOutputFormatScreen
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
@@ -59,9 +58,7 @@ class MicDomainConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SetUseLoudnessEnhancer     -> copy(isUseLoudnessEnhancer = change.value)
                     is SetUsePauseOnMediaPlayback -> copy(isPauseRecordingOnMediaPlayback = change.value)
-                    is UpdateGain                 -> copy(gainControl = change.value.toIntOrZero())
                 }
             })
         }

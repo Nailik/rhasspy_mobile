@@ -12,8 +12,9 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.nVerify
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.LocalSilenceDetectionUiEvent.Action.ToggleAudioLevelTest
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.LocalSilenceDetectionUiEvent.Change.UpdateSilenceDetectionAudioLevelLogarithm
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Action.ToggleAudioLevelTest
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Change.UpdateSilenceDetectionAudioLevelLogarithm
 import kotlin.math.pow
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -31,7 +32,7 @@ class VoiceActivityDetectionConfigurationViewModelTest : AppTest() {
     lateinit var overlayPermission: IOverlayPermission
 
 
-    private lateinit var voiceActivityDetectionConfigurationViewModel: VoiceActivityDetectionConfigurationViewModel
+    private lateinit var vadDomainConfigurationViewModel: VadDomainConfigurationViewModel
 
     private val isAppInBackground = MutableStateFlow(false)
 
@@ -52,18 +53,18 @@ class VoiceActivityDetectionConfigurationViewModelTest : AppTest() {
         every { audioRecorder.isRecording } returns MutableStateFlow(false)
         every { audioRecorder.stopRecording() } returns Unit
 
-        voiceActivityDetectionConfigurationViewModel = get()
+        vadDomainConfigurationViewModel = get()
     }
 
     @Test
     fun `when the user updates the audio level logarithm it's correctly updated`() = runTest {
-        voiceActivityDetectionConfigurationViewModel.onEvent(UpdateSilenceDetectionAudioLevelLogarithm(0f))
-        voiceActivityDetectionConfigurationViewModel.onEvent(Save)
+        vadDomainConfigurationViewModel.onEvent(UpdateSilenceDetectionAudioLevelLogarithm(0f))
+        vadDomainConfigurationViewModel.onEvent(Save)
         assertEquals(0f, ConfigurationSetting.automaticSilenceDetectionAudioLevel.value)
 
         arrayOf(0.25f, 0.5f, 0.75f, 1f).forEach { percentage ->
-            voiceActivityDetectionConfigurationViewModel.onEvent(UpdateSilenceDetectionAudioLevelLogarithm(percentage))
-            voiceActivityDetectionConfigurationViewModel.onEvent(Save)
+            vadDomainConfigurationViewModel.onEvent(UpdateSilenceDetectionAudioLevelLogarithm(percentage))
+            vadDomainConfigurationViewModel.onEvent(Save)
             assertEquals(audioRecorder.absoluteMaxVolume.pow(percentage), ConfigurationSetting.automaticSilenceDetectionAudioLevel.value)
         }
     }
@@ -76,7 +77,7 @@ class VoiceActivityDetectionConfigurationViewModelTest : AppTest() {
         every { microphonePermission.granted } returns MutableStateFlow(true)
         assertEquals(false, audioRecorder.isRecording.value)
 
-        voiceActivityDetectionConfigurationViewModel.onEvent(ToggleAudioLevelTest)
+        vadDomainConfigurationViewModel.onEvent(ToggleAudioLevelTest)
         nVerify {
             audioRecorder.startRecording(isAny(), isAny(), isAny(), isAny(), isAny(), isAny(), isAny(), isAny())
         }

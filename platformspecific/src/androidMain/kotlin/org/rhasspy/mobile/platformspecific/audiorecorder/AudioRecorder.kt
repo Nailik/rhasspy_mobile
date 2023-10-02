@@ -10,7 +10,6 @@ import android.media.AudioRecord
 import android.media.AudioRecord.RECORDSTATE_RECORDING
 import android.media.AudioRecord.STATE_UNINITIALIZED
 import android.media.MediaRecorder
-import android.media.audiofx.LoudnessEnhancer
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.getSystemService
@@ -97,8 +96,6 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
         audioRecorderOutputChannelType: AudioFormatChannelType,
         audioRecorderOutputEncodingType: AudioFormatEncodingType,
         audioRecorderOutputSampleRateType: AudioFormatSampleRateType,
-        isUseLoudnessEnhancer: Boolean,
-        gainControl: Int,
         isAutoPauseOnMediaPlayback: Boolean,
     ) {
         shouldRecord = true
@@ -144,15 +141,8 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
                 )
                 .setBufferSizeInBytes(tempBufferSize)
                 .build().apply {
-
-                    LoudnessEnhancer(audioSessionId).apply {
-                        setTargetGain(gainControl)
-                        setEnabled(isUseLoudnessEnhancer)
-                    }
-
                     _isRecording.value = true
                     this.startRecording()
-
                 }
 
 

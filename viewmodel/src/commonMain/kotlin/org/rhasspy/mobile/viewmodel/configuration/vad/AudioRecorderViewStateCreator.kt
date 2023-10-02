@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection
+package org.rhasspy.mobile.viewmodel.configuration.vad
 
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
@@ -11,7 +11,7 @@ class AudioRecorderViewStateCreator(
     private val audioRecorder: IAudioRecorder
 ) {
 
-    operator fun invoke(voiceActivityDetectionConfigurationData: StateFlow<VoiceActivityDetectionViewState>): StateFlow<AudioRecorderViewState> {
+    operator fun invoke(voiceActivityDetectionConfigurationData: StateFlow<VadDomainViewState>): StateFlow<AudioRecorderViewState> {
         return combineStateFlow(
             audioRecorder.maxVolume,
             audioRecorder.isRecording,
@@ -22,7 +22,7 @@ class AudioRecorderViewStateCreator(
     }
 
     private fun getViewState(
-        voiceActivityDetectionConfigurationData: StateFlow<VoiceActivityDetectionViewState>
+        voiceActivityDetectionConfigurationData: StateFlow<VadDomainViewState>
     ): AudioRecorderViewState {
         return AudioRecorderViewState(
             currentVolume = audioRecorder.maxVolume.value.toString(),

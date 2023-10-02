@@ -7,7 +7,6 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -38,64 +37,36 @@ import org.rhasspy.mobile.ui.content.list.InformationListElement
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.SliderListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
-import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.AudioRecorderViewState
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.Change.SelectVoiceActivityDetectionOption
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.LocalSilenceDetectionUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.LocalSilenceDetectionUiEvent.Action.ToggleAudioLevelTest
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionUiEvent.LocalSilenceDetectionUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionViewState
-import org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection.VoiceActivityDetectionViewState.VoiceActivityDetectionConfigurationData.LocalSilenceDetectionConfigurationData
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel2
+import org.rhasspy.mobile.viewmodel.configuration.vad.AudioRecorderViewState
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.Change.SelectVadDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Action.ToggleAudioLevelTest
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainViewState
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainViewState.VadDomainConfigurationData.LocalSilenceDetectionConfigurationData
 
 @Composable
-fun VoiceActivityDetectionConfigurationScreen(viewModel: VoiceActivityDetectionConfigurationViewModel) {
+fun VoiceActivityDetectionConfigurationScreen(viewModel: VadDomainConfigurationViewModel) {
+
 
     ScreenContent(
-        screenViewModel = viewModel
-    ) {
-        SettingsScreenItemContent(
-            title = MR.strings.textToSpeech.stable,
-            onBackClick = { viewModel.onEvent(BackClick) }
-        ) {
-
-            val viewState by viewModel.viewState.collectAsState()
-            val audioRecorderViewState by viewModel.audioRecorderViewState.collectAsState()
-
-            VoiceActivityDetectionEditContent(
-                viewState = viewState,
-                audioRecorderViewState = audioRecorderViewState,
-                onEvent = viewModel::onEvent
-            )
-
-        }
-    }
-
-}
-
-
-@Composable
-private fun VoiceActivityDetectionEditContent(
-    viewState: VoiceActivityDetectionViewState,
-    audioRecorderViewState: AudioRecorderViewState,
-    onEvent: (VoiceActivityDetectionUiEvent) -> Unit
-) {
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
+        title = MR.strings.voice_activity_detection.stable,
+        viewModel = viewModel,
+        tonalElevation = TonalElevationLevel2,
     ) {
 
-        item {
-            VoiceActivityDetectionOptionContent(
-                viewState = viewState,
-                audioRecorderViewState = audioRecorderViewState,
-                onEvent = onEvent
-            )
-        }
+        val viewState by viewModel.viewState.collectAsState()
+        val audioRecorderViewState by viewModel.audioRecorderViewState.collectAsState()
+
+        VoiceActivityDetectionOptionContent(
+            viewState = viewState,
+            audioRecorderViewState = audioRecorderViewState,
+            onEvent = viewModel::onEvent,
+        )
 
     }
 
@@ -103,15 +74,15 @@ private fun VoiceActivityDetectionEditContent(
 
 @Composable
 private fun VoiceActivityDetectionOptionContent(
-    viewState: VoiceActivityDetectionViewState,
+    viewState: VadDomainViewState,
     audioRecorderViewState: AudioRecorderViewState,
-    onEvent: (VoiceActivityDetectionUiEvent) -> Unit
+    onEvent: (VadDomainUiEvent) -> Unit
 ) {
 
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.WakeWordOptions),
         selected = viewState.editData.voiceActivityDetectionOption,
-        onSelect = { onEvent(SelectVoiceActivityDetectionOption(it)) },
+        onSelect = { onEvent(SelectVadDomainOption(it)) },
         values = viewState.editData.voiceActivityDetectionOptions
     ) { option ->
 

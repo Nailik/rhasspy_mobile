@@ -1,22 +1,22 @@
-package org.rhasspy.mobile.viewmodel.configuration.voiceactivitydetection
+package org.rhasspy.mobile.viewmodel.configuration.vad
 
 import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
 
-sealed interface VoiceActivityDetectionUiEvent {
+sealed interface VadDomainUiEvent {
 
-    sealed interface Change : VoiceActivityDetectionUiEvent {
+    sealed interface Change : VadDomainUiEvent {
 
-        data class SelectVoiceActivityDetectionOption(val option: VoiceActivityDetectionOption) : Change
+        data class SelectVadDomainOption(val option: VoiceActivityDetectionOption) : Change
 
     }
 
-    sealed interface Action : VoiceActivityDetectionUiEvent {
+    sealed interface Action : VadDomainUiEvent {
 
         data object BackClick : Action
 
     }
 
-    sealed interface LocalSilenceDetectionUiEvent : VoiceActivityDetectionUiEvent {
+    sealed interface LocalSilenceDetectionUiEvent : VadDomainUiEvent {
 
         sealed interface Change : LocalSilenceDetectionUiEvent {
             data class UpdateSilenceDetectionMinimumTime(val time: String) : Change

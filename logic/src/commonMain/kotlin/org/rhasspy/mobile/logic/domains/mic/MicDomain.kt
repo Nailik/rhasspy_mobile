@@ -88,8 +88,6 @@ internal class MicDomain(
                 audioRecorderOutputChannelType = audioOutputChannel,
                 audioRecorderOutputEncodingType = audioOutputEncoding,
                 audioRecorderOutputSampleRateType = audioOutputSampleRate,
-                isUseLoudnessEnhancer = isUseLoudnessEnhancer,
-                gainControl = gainControl,
                 isAutoPauseOnMediaPlayback = isPauseRecordingOnMediaPlayback,
             )
         }

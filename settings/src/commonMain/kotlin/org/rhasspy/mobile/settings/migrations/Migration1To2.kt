@@ -219,8 +219,6 @@ internal object Migration1To2 : IMigration(1, 2) {
             audioOutputChannel = speechToTextAudioOutputChannel.value,
             audioOutputEncoding = speechToTextAudioOutputEncoding.value,
             audioOutputSampleRate = speechToTextAudioOutputSampleRate.value,
-            isUseLoudnessEnhancer = false,
-            gainControl = 0,
             isPauseRecordingOnMediaPlayback = isPauseRecordingOnMedia.value,
         )
 

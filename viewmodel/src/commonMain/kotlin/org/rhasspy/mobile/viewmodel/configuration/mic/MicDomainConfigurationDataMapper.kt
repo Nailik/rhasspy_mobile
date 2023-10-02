@@ -13,8 +13,6 @@ class MicDomainConfigurationDataMapper {
             audioOutputChannel = data.audioOutputChannel,
             audioOutputEncoding = data.audioOutputEncoding,
             audioOutputSampleRate = data.audioOutputSampleRate,
-            isUseLoudnessEnhancer = data.isUseLoudnessEnhancer,
-            gainControl = data.gainControl,
             isPauseRecordingOnMediaPlayback = data.isPauseRecordingOnMediaPlayback,
         )
     }
@@ -27,8 +25,6 @@ class MicDomainConfigurationDataMapper {
             audioOutputChannel = data.audioOutputChannel,
             audioOutputEncoding = data.audioOutputEncoding,
             audioOutputSampleRate = data.audioOutputSampleRate,
-            isUseLoudnessEnhancer = data.isUseLoudnessEnhancer,
-            gainControl = data.gainControl,
             isPauseRecordingOnMediaPlayback = data.isPauseRecordingOnMediaPlayback,
         )
     }

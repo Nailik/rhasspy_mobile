@@ -34,7 +34,6 @@ fun DomainStateHeaderItem(
     val domainState by domainStateFlow.collectAsState()
 
     AnimatedVisibility(
-        modifier = modifier,
         visible = domainState != NoError,
         enter = fadeIn() + expandIn(
             expandFrom = Alignment.TopCenter,
@@ -84,10 +83,11 @@ private fun DomainStateHeaderItemError(
     error: Error,
 ) {
     ListElement(
-        modifier = modifier
+        modifier = Modifier
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp)
-            .clip(RoundedCornerShape(12.dp)),
+            .clip(RoundedCornerShape(12.dp))
+            .then(modifier),
         colors = ListItemDefaults.colors(
             containerColor = MaterialTheme.colorScheme.errorContainer,
             headlineColor = MaterialTheme.colorScheme.onErrorContainer,
