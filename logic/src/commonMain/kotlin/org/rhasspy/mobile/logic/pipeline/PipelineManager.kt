@@ -78,12 +78,8 @@ class PipelineManager(
         pipelineScope = CoroutineScope(Dispatchers.IO)
         pipelineJob = null
 
-        val micDomain = get<IMicDomain>().apply {
-            initialize()
-        }
-        val currentWakeDomain = get<IWakeDomain>().apply {
-            initialize()
-        }
+        val micDomain = get<IMicDomain>()
+        val currentWakeDomain = get<IWakeDomain>()
         wakeDomain = currentWakeDomain.apply {
             awaitDetection(micDomain.audioStream)
         }

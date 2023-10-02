@@ -15,8 +15,6 @@ import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
  */
 interface IMicDomain : IDomain {
 
-    fun initialize()
-
     val audioStream: Flow<MicAudioChunk>
 
     val state: StateFlow<MicDomainState>
@@ -40,7 +38,9 @@ internal class MicDomain(
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    override fun initialize() {
+    init {
+        state.value = NoError
+
         scope.launch {
             microphonePermission.granted.collectLatest {
                 if (!it) {

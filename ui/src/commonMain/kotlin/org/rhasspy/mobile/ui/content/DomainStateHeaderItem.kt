@@ -2,6 +2,7 @@ package org.rhasspy.mobile.ui.content
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
@@ -67,7 +68,11 @@ fun DomainStateIcon(
             tint = MaterialTheme.colorScheme.errorContainer,
         )
 
-        is Loading -> CircularProgressIndicator()
+        is Loading -> CircularProgressIndicator(
+            modifier = Modifier.size(24.dp),
+            strokeWidth = 3.dp,
+            color = MaterialTheme.colorScheme.errorContainer,
+        )
         is NoError -> Unit
     }
 
@@ -93,6 +98,7 @@ private fun DomainStateHeaderItemError(
             Icon(
                 imageVector = Icons.Filled.Error,
                 contentDescription = MR.strings.error.stable,
+                tint = MaterialTheme.colorScheme.onErrorContainer,
             )
         },
         text = { Text(MR.strings.error.stable) },
@@ -116,7 +122,11 @@ private fun DomainStateHeaderItemLoading() {
             supportingColor = MaterialTheme.colorScheme.onErrorContainer,
         ),
         icon = {
-            CircularProgressIndicator()
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                strokeWidth = 2.dp,
+                color = MaterialTheme.colorScheme.onErrorContainer,
+            )
         },
         text = { Text(MR.strings.loading.stable) },
     )

@@ -30,7 +30,6 @@ interface IWakeDomain : IDomain {
 
     val state: StateFlow<DomainState>
 
-    suspend fun initialize()
     fun awaitDetection(audioStream: Flow<MicAudioChunk>)
 
 }
@@ -63,12 +62,14 @@ internal class WakeDomain(
         port = params.wakeWordUdpOutputPort
     )
 
-    override suspend fun initialize() {
-        state.value = when (params.wakeWordOption) {
-            WakeWordOption.Porcupine          -> initializePorcupine()
-            WakeWordOption.Rhasspy2HermesMQTT -> NoError
-            WakeWordOption.Udp                -> initializeUdp()
-            WakeWordOption.Disabled           -> NoError
+    init {
+        scope.launch {
+            state.value = when (params.wakeWordOption) {
+                WakeWordOption.Porcupine          -> initializePorcupine()
+                WakeWordOption.Rhasspy2HermesMQTT -> NoError
+                WakeWordOption.Udp                -> initializeUdp()
+                WakeWordOption.Disabled           -> NoError
+            }
         }
     }
 
