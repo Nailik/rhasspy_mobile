@@ -93,10 +93,10 @@ private fun SpeechToTextOption(
             AsrDomainOption.Rhasspy2HermesMQTT ->
                 SpeechToTextRhasspy2HermesMQTT(
                     editData = editData,
-                onEvent = onEvent,
-            )
+                    onEvent = onEvent,
+                )
 
-            else                                  -> Unit
+            else                               -> Unit
         }
 
     }

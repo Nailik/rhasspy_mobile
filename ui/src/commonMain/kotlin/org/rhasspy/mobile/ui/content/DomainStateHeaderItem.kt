@@ -72,6 +72,7 @@ fun DomainStateIcon(
             strokeWidth = 3.dp,
             color = MaterialTheme.colorScheme.errorContainer,
         )
+
         is NoError -> Unit
     }
 

@@ -62,7 +62,7 @@ class WakeWordConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            is Navigate                 -> navigator.navigate(action.destination)
+            is Navigate -> navigator.navigate(action.destination)
         }
     }
 

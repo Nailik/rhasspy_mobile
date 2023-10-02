@@ -90,7 +90,7 @@ private fun AudioPlayingOptionContent(
     ) { option ->
 
         when (option) {
-            SndDomainOption.Local              -> LocalConfigurationContent(
+            SndDomainOption.Local -> LocalConfigurationContent(
                 audioOutputOption = editData.audioOutputOption,
                 audioOutputOptionList = editData.audioOutputOptionList,
                 onEvent = onEvent

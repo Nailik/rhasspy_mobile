@@ -87,7 +87,7 @@ private fun VoiceActivityDetectionOptionContent(
     ) { option ->
 
         when (option) {
-            VadDomainOption.Local    ->
+            VadDomainOption.Local ->
                 SilenceDetectionSettingsContent(
                     editData = viewState.editData.localSilenceDetectionSetting,
                     audioRecorderViewState = audioRecorderViewState,

@@ -98,7 +98,7 @@ private fun IntentHandlingOptionContent(
                 onEvent = onEvent
             )
 
-            else                               -> Unit
+            else -> Unit
         }
 
     }

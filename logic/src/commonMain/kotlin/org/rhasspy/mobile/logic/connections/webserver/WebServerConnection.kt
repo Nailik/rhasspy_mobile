@@ -33,8 +33,8 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ConnectionState
-import org.rhasspy.mobile.data.service.ConnectionState.ErrorState
 import org.rhasspy.mobile.data.service.ConnectionState.Disabled
+import org.rhasspy.mobile.data.service.ConnectionState.ErrorState
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.http.StreamContent
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection

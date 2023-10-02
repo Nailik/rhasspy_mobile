@@ -9,7 +9,7 @@ import org.rhasspy.mobile.data.service.ConnectionState
 data class Rhasspy2HermesConnectionConfigurationViewState internal constructor(
     val editData: Rhasspy2HermesConnectionConfigurationData,
     val connectionState: StateFlow<ConnectionState>,
-)  {
+) {
 
     @Stable
     data class Rhasspy2HermesConnectionConfigurationData internal constructor(

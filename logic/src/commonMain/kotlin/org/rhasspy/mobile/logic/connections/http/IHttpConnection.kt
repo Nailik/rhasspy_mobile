@@ -71,7 +71,7 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
                 }
             }
             Success
-        }catch (exception: Exception) {
+        } catch (exception: Exception) {
             ErrorState.Exception(exception = exception)
         }
     }

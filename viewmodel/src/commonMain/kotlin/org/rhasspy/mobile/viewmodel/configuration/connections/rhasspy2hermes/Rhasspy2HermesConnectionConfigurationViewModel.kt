@@ -50,7 +50,7 @@ class Rhasspy2HermesConnectionConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            AccessTokenQRCodeClick      -> scanQRCode { onChange(UpdateRhasspy2HermesAccessToken(it)) }
+            AccessTokenQRCodeClick -> scanQRCode { onChange(UpdateRhasspy2HermesAccessToken(it)) }
         }
     }
 
