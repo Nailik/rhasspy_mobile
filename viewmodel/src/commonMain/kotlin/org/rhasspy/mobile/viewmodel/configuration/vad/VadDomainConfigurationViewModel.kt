@@ -13,9 +13,9 @@ import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.*
-import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.Change.SelectVadDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Action.ToggleAudioLevelTest
 import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
@@ -51,7 +51,6 @@ class VadDomainConfigurationViewModel(
     fun onEvent(event: VadDomainUiEvent) {
         when (event) {
             is Change                       -> onChange(event)
-            is Action                       -> onAction(event)
             is LocalSilenceDetectionUiEvent -> onLocalSilenceDetectionUiEvent(event)
         }
     }
@@ -70,12 +69,6 @@ class VadDomainConfigurationViewModel(
             })
         }
         ConfigurationSetting.vadDomainData.value = mapper(_viewState.value.editData)
-    }
-
-    private fun onAction(action: Action) {
-        when (action) {
-            BackClick -> navigator.onBackPressed()
-        }
     }
 
     private fun onLocalSilenceDetectionUiEvent(event: LocalSilenceDetectionUiEvent) {

@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.domains.mic
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.datetime.Clock
@@ -30,9 +31,11 @@ internal class MicDomain(
     val params: MicDomainData,
 ) : IMicDomain {
 
+    private val logger = Logger.withTag("MicDomain")
+
     override var state = MutableStateFlow<MicDomainState>(MicDomainState.Loading)
 
-    override val audioStream = MutableSharedFlow<MicAudioChunk>()
+    override val audioStream = MutableSharedFlow<MicAudioChunk>(extraBufferCapacity = 1)
 
     private val isMicrophonePermissionGranted get() = microphonePermission.granted.value
 
@@ -51,30 +54,27 @@ internal class MicDomain(
             }
         }
 
-        scope.launch {
-            audioStream.subscriptionCount
-                .map { count -> count == 0 }
-                .distinctUntilChanged()
-                .onEach { isActive ->
-                    if (isActive) startRecording() else stopRecording()
-                }
-        }
+        audioStream.subscriptionCount
+            .map { count -> count != 0 }
+            .distinctUntilChanged()
+            .onEach { isActive ->
+                if (isActive) startRecording() else stopRecording()
+            }.launchIn(scope)
 
-        scope.launch {
-            audioRecorder.output.onEach { data ->
-                with(params) {
-                    audioStream.tryEmit(
-                        MicAudioChunk(
-                            timeStamp = Clock.System.now(),
-                            sampleRate = audioOutputSampleRate,
-                            encoding = audioOutputEncoding,
-                            channel = audioOutputChannel,
-                            data = data,
-                        )
+        audioRecorder.output.onEach { data ->
+            with(params) {
+                audioStream.tryEmit(
+                    MicAudioChunk(
+                        timeStamp = Clock.System.now(),
+                        sampleRate = audioOutputSampleRate,
+                        encoding = audioOutputEncoding,
+                        channel = audioOutputChannel,
+                        data = data,
                     )
-                }
+                )
             }
-        }
+        }.launchIn(scope)
+
     }
 
     private fun startRecording() {

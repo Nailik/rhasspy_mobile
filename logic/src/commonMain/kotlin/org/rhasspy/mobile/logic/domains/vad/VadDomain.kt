@@ -1,8 +1,9 @@
 package org.rhasspy.mobile.logic.domains.vad
 
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import org.rhasspy.mobile.data.domain.VadDomainData
 import org.rhasspy.mobile.data.service.option.VadDomainOption.Disabled
 import org.rhasspy.mobile.data.service.option.VadDomainOption.Local
@@ -59,16 +60,19 @@ internal class VadDomain(
     /**
      * waits for voice to end for Local with timeout (localSilenceDetectionTimeout)
      */
-    @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun awaitVoiceStopped(audioStream: Flow<MicAudioChunk>): VoiceEnd {
         logger.d { "awaitVoiceStopped" }
         return when (params.option) {
             Local    -> {
-                audioStream
-                    .mapLatest { chunk -> localSilenceDetection.onAudioChunk(chunk) }
-                    .filter { it }
-                    .map { VoiceStopped }
-                    .first()
+                flow<VoiceEnd> {
+                    audioStream
+                        .collect { chunk ->
+                            if (localSilenceDetection.onAudioChunk(chunk)) {
+                                emit(VoiceStopped)
+                            }
+
+                        }
+                }.first()
             }
 
             Disabled -> VadDisabled

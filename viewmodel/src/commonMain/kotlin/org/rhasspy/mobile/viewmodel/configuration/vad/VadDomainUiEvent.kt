@@ -10,12 +10,6 @@ sealed interface VadDomainUiEvent {
 
     }
 
-    sealed interface Action : VadDomainUiEvent {
-
-        data object BackClick : Action
-
-    }
-
     sealed interface LocalSilenceDetectionUiEvent : VadDomainUiEvent {
 
         sealed interface Change : LocalSilenceDetectionUiEvent {

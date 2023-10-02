@@ -13,10 +13,4 @@ sealed interface AsrConfigurationUiEvent {
 
     }
 
-    sealed interface Action : AsrConfigurationUiEvent {
-
-        data object BackClick : Action
-
-    }
-
 }

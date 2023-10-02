@@ -6,8 +6,6 @@ import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.data.toIntOrZero
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationUiEvent.Action
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
@@ -24,7 +22,6 @@ class AsrConfigurationViewModel(
     fun onEvent(event: AsrConfigurationUiEvent) {
         when (event) {
             is Change -> onChange(event)
-            is Action -> onAction(event)
         }
     }
 
@@ -41,11 +38,4 @@ class AsrConfigurationViewModel(
         }
         ConfigurationSetting.asrDomainData.value = mapper(_viewState.value.editData)
     }
-
-    private fun onAction(action: Action) {
-        when (action) {
-            BackClick -> navigator.onBackPressed()
-        }
-    }
-
 }

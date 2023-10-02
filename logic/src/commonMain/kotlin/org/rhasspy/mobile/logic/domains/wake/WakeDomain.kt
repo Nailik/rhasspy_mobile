@@ -140,7 +140,7 @@ internal class WakeDomain(
                 if (result != null) {
                     Detection(
                         name = result,
-                        timeStamp = Clock.System.now()
+                        timeStamp = Clock.System.now(),
                     )
                 } else {
                     NotDetected
