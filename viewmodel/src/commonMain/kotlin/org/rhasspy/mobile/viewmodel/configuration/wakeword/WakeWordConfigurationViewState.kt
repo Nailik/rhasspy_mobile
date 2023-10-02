@@ -9,7 +9,7 @@ import org.rhasspy.mobile.data.domain.DomainState
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
-import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.data.service.option.WakeDomainOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
 
 @Stable
@@ -21,12 +21,12 @@ data class WakeWordConfigurationViewState internal constructor(
 
     @Stable
     data class WakeWordConfigurationData internal constructor(
-        val wakeWordOption: WakeWordOption,
+        val wakeDomainOption: WakeDomainOption,
         val wakeWordPorcupineConfigurationData: WakeWordPorcupineConfigurationData,
         val wakeWordUdpConfigurationData: WakeWordUdpConfigurationData,
     ) {
 
-        val wakeWordOptions: ImmutableList<WakeWordOption> = WakeWordOption.entries.toTypedArray().toImmutableList()
+        val wakeDomainOptions: ImmutableList<WakeDomainOption> = WakeDomainOption.entries.toTypedArray().toImmutableList()
 
         @Stable
         data class WakeWordPorcupineConfigurationData internal constructor(

@@ -60,7 +60,7 @@ internal object Migration1To2 : IMigration(1, 2) {
 
     override fun preMigrate() {
         if (settings[DeprecatedSettingsEnum.IntentHandlingOption.name, ""] == "WithRecognition") {
-            settings[DeprecatedSettingsEnum.IntentHandlingOption.name] = IntentHandlingOption.Disabled.name
+            settings[DeprecatedSettingsEnum.IntentHandlingOption.name] = HandleDomainOption.Disabled.name
         }
     }
 
@@ -132,19 +132,19 @@ internal object Migration1To2 : IMigration(1, 2) {
 
         val isPauseRecordingOnMedia = ISetting(DeprecatedSettingsEnum.AudioRecorderPauseRecordingOnMedia, true)
 
-        val voiceActivityDetectionOption = ISetting(
+        val vadDomainOption = ISetting(
             key = DeprecatedSettingsEnum.VoiceActivityDetectionOption,
-            initial = VoiceActivityDetectionOption.Disabled,
-            serializer = VoiceActivityDetectionOption.serializer(),
+            initial = VadDomainOption.Disabled,
+            serializer = VadDomainOption.serializer(),
         )
         val automaticSilenceDetectionAudioLevel = ISetting(DeprecatedSettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
         val automaticSilenceDetectionTime = ISetting<Long?>(DeprecatedSettingsEnum.AutomaticSilenceDetectionTime, 2000L)
         val automaticSilenceDetectionMinimumTime = ISetting<Long?>(DeprecatedSettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000L)
 
-        val wakeWordOption = ISetting(
+        val wakeDomainOption = ISetting(
             key = DeprecatedSettingsEnum.WakeWordOption,
-            initial = WakeWordOption.Disabled,
-            serializer = WakeWordOption.serializer(),
+            initial = WakeDomainOption.Disabled,
+            serializer = WakeDomainOption.serializer(),
         )
         val wakeWordPorcupineAccessToken = ISetting(DeprecatedSettingsEnum.WakeWordPorcupineAccessToken, "")
         val wakeWordPorcupineKeywordDefaultOptions = ISetting(
@@ -165,31 +165,31 @@ internal object Migration1To2 : IMigration(1, 2) {
         val wakeWordUdpOutputHost = ISetting(DeprecatedSettingsEnum.WakeWordUDPOutputHost, "")
         val wakeWordUdpOutputPort = ISetting(DeprecatedSettingsEnum.WakeWordUDPOutputPort, 20000)
 
-        val speechToTextOption = ISetting(
+        val asrDomainOption = ISetting(
             key = DeprecatedSettingsEnum.SpeechToTextOption,
-            initial = SpeechToTextOption.Disabled,
-            serializer = SpeechToTextOption.serializer(),
+            initial = AsrDomainOption.Disabled,
+            serializer = AsrDomainOption.serializer(),
         )
         val isUseSpeechToTextMqttSilenceDetection = ISetting(DeprecatedSettingsEnum.SpeechToTextMqttSilenceDetection, true)
-        val intentHandlingOption = ISetting(
+        val handleDomainOption = ISetting(
             key = DeprecatedSettingsEnum.IntentHandlingOption,
-            initial = IntentHandlingOption.Disabled,
-            serializer = IntentHandlingOption.serializer(),
+            initial = HandleDomainOption.Disabled,
+            serializer = HandleDomainOption.serializer(),
         )
         val intentHandlingHomeAssistantOption = ISetting(
             key = DeprecatedSettingsEnum.IsIntentHandlingHassEvent,
             initial = HomeAssistantIntentHandlingOption.Intent,
             serializer = HomeAssistantIntentHandlingOption.serializer(),
         )
-        val intentRecognitionOption = ISetting(
+        val intentDomainOption = ISetting(
             key = DeprecatedSettingsEnum.IntentRecognitionOption,
-            initial = IntentRecognitionOption.Disabled,
-            serializer = IntentRecognitionOption.serializer(),
+            initial = IntentDomainOption.Disabled,
+            serializer = IntentDomainOption.serializer(),
         )
-        val audioPlayingOption = ISetting(
+        val sndDomainOption = ISetting(
             key = DeprecatedSettingsEnum.AudioPlayingOption,
-            initial = AudioPlayingOption.Local,
-            serializer = AudioPlayingOption.serializer(),
+            initial = SndDomainOption.Local,
+            serializer = SndDomainOption.serializer(),
         )
         val audioOutputOption = ISetting(
             key = DeprecatedSettingsEnum.AudioOutputOption,
@@ -197,16 +197,16 @@ internal object Migration1To2 : IMigration(1, 2) {
             serializer = AudioOutputOption.serializer(),
         )
         val audioPlayingMqttSiteId = ISetting(DeprecatedSettingsEnum.AudioPlayingMqttSiteId, "")
-        val textToSpeechOption = ISetting(
+        val ttsDomainOption = ISetting(
             key = DeprecatedSettingsEnum.TextToSpeechOption,
-            initial = TextToSpeechOption.Disabled,
-            serializer = TextToSpeechOption.serializer(),
+            initial = TtsDomainOption.Disabled,
+            serializer = TtsDomainOption.serializer(),
         )
 
-        val dialogManagementOption = ISetting(
+        val pipelineManagerOption = ISetting(
             key = DeprecatedSettingsEnum.DialogManagementOption,
-            initial = DialogManagementOption.Local,
-            serializer = DialogManagementOption.serializer(),
+            initial = PipelineManagerOption.Local,
+            serializer = PipelineManagerOption.serializer(),
         )
         val textAsrTimeout = ISetting(DeprecatedSettingsEnum.DialogManagementLocalAsrTimeout, 10000L)
         val intentRecognitionTimeout = ISetting(DeprecatedSettingsEnum.DialogManagementLocalIntentRecognitionTimeout, 10000L)
@@ -223,15 +223,14 @@ internal object Migration1To2 : IMigration(1, 2) {
         )
 
         ConfigurationSetting.vadDomainData.value = VadDomainData(
-            option = voiceActivityDetectionOption.value,
-            timeout = 20.seconds,
+            option = vadDomainOption.value,
             automaticSilenceDetectionAudioLevel = automaticSilenceDetectionAudioLevel.value,
             automaticSilenceDetectionTime = automaticSilenceDetectionTime.value?.milliseconds ?: 2.seconds,
             automaticSilenceDetectionMinimumTime = automaticSilenceDetectionMinimumTime.value?.milliseconds ?: 2.seconds,
         )
 
         ConfigurationSetting.wakeDomainData.value = WakeDomainData(
-            wakeWordOption = wakeWordOption.value,
+            wakeDomainOption = wakeDomainOption.value,
             wakeWordPorcupineAccessToken = wakeWordPorcupineAccessToken.value,
             wakeWordPorcupineKeywordDefaultOptions = wakeWordPorcupineKeywordDefaultOptions.value,
             wakeWordPorcupineKeywordCustomOptions = wakeWordPorcupineKeywordCustomOptions.value,
@@ -241,26 +240,27 @@ internal object Migration1To2 : IMigration(1, 2) {
         )
 
         ConfigurationSetting.asrDomainData.value = AsrDomainData(
-            option = speechToTextOption.value,
+            option = asrDomainOption.value,
             isUseSpeechToTextMqttSilenceDetection = isUseSpeechToTextMqttSilenceDetection.value,
-            mqttTimeout = 20.seconds,
+            voiceTimeout = 20.seconds,
+            mqttResultTimeout = 20.seconds,
         )
 
         ConfigurationSetting.handleDomainData.value = HandleDomainData(
-            option = intentHandlingOption.value,
+            option = handleDomainOption.value,
             homeAssistantIntentHandlingOption = intentHandlingHomeAssistantOption.value,
             homeAssistantEventTimeout = 20.seconds,
         )
 
         ConfigurationSetting.intentDomainData.value = IntentDomainData(
-            option = intentRecognitionOption.value,
+            option = intentDomainOption.value,
             isRhasspy2HermesHttpHandleWithRecognition = true,
             rhasspy2HermesHttpHandleTimeout = 20.seconds,
             rhasspy2HermesMqttHandleTimeout = 20.seconds,
         )
 
         ConfigurationSetting.sndDomainData.value = SndDomainData(
-            option = audioPlayingOption.value,
+            option = sndDomainOption.value,
             localOutputOption = audioOutputOption.value,
             mqttSiteId = audioPlayingMqttSiteId.value,
             audioTimeout = 20.seconds,
@@ -268,12 +268,12 @@ internal object Migration1To2 : IMigration(1, 2) {
         )
 
         ConfigurationSetting.ttsDomainData.value = TtsDomainData(
-            option = textToSpeechOption.value,
+            option = ttsDomainOption.value,
             rhasspy2HermesMqttTimeout = 20.seconds,
         )
 
         ConfigurationSetting.pipelineData.value = PipelineData(
-            option = dialogManagementOption.value,
+            option = pipelineManagerOption.value,
         )
 
 
@@ -287,12 +287,12 @@ internal object Migration1To2 : IMigration(1, 2) {
 
         isPauseRecordingOnMedia.delete()
 
-        voiceActivityDetectionOption.delete()
+        vadDomainOption.delete()
         automaticSilenceDetectionAudioLevel.delete()
         automaticSilenceDetectionTime.delete()
         automaticSilenceDetectionMinimumTime.delete()
 
-        wakeWordOption.delete()
+        wakeDomainOption.delete()
         wakeWordPorcupineAccessToken.delete()
         wakeWordPorcupineKeywordDefaultOptions.delete()
         wakeWordPorcupineKeywordCustomOptions.delete()
@@ -300,21 +300,21 @@ internal object Migration1To2 : IMigration(1, 2) {
         wakeWordUdpOutputHost.delete()
         wakeWordUdpOutputPort.delete()
 
-        speechToTextOption.delete()
+        asrDomainOption.delete()
         isUseSpeechToTextMqttSilenceDetection.delete()
 
-        intentHandlingOption.delete()
+        handleDomainOption.delete()
         intentHandlingHomeAssistantOption.delete()
 
-        intentRecognitionOption.delete()
+        intentDomainOption.delete()
 
-        audioPlayingOption.delete()
+        sndDomainOption.delete()
         audioOutputOption.delete()
         audioPlayingMqttSiteId.delete()
 
-        textToSpeechOption.delete()
+        ttsDomainOption.delete()
 
-        dialogManagementOption.delete()
+        pipelineManagerOption.delete()
         textAsrTimeout.delete()
         intentRecognitionTimeout.delete()
         recordingTimeout.delete()

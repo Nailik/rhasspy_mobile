@@ -4,7 +4,7 @@ import kotlinx.coroutines.test.runTest
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.data.toStringOrEmpty
-import org.rhasspy.mobile.data.service.option.DialogManagementOption
+import org.rhasspy.mobile.data.service.option.PipelineManagerOption
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
@@ -30,14 +30,14 @@ class DialogActionStateActionStateManagementConfigurationViewModelTest : AppTest
         )
 
         initialDialogManagementConfigurationData = DialogManagementConfigurationData(
-            dialogManagementOption = DialogManagementOption.Local,
+            pipelineManagerOption = PipelineManagerOption.Local,
             textAsrTimeout = 10000L,
             intentRecognitionTimeout = 10000L,
             recordingTimeout = 10000L
         )
 
         dialogManagementConfigurationData = DialogManagementConfigurationData(
-            dialogManagementOption = DialogManagementOption.Disabled,
+            pipelineManagerOption = PipelineManagerOption.Disabled,
             textAsrTimeout = 234,
             intentRecognitionTimeout = 234,
             recordingTimeout = 234
@@ -54,7 +54,7 @@ class DialogActionStateActionStateManagementConfigurationViewModelTest : AppTest
             dialogManagementConfigurationViewModel.onEvent(ChangeIntentRecognitionTimeout(recordingTimeout.toStringOrEmpty()))
             dialogManagementConfigurationViewModel.onEvent(ChangeRecordingTimeout(intentRecognitionTimeout.toStringOrEmpty()))
             dialogManagementConfigurationViewModel.onEvent(ChangeTextAsrTimeout(textAsrTimeout.toStringOrEmpty()))
-            dialogManagementConfigurationViewModel.onEvent(SelectDialogManagementOption(dialogManagementOption))
+            dialogManagementConfigurationViewModel.onEvent(SelectDialogManagementOption(pipelineManagerOption))
         }
 
         assertEquals(dialogManagementConfigurationData, dialogManagementConfigurationViewModel.viewState.value.editData)
@@ -73,7 +73,7 @@ class DialogActionStateActionStateManagementConfigurationViewModelTest : AppTest
             dialogManagementConfigurationViewModel.onEvent(ChangeIntentRecognitionTimeout(recordingTimeout.toStringOrEmpty()))
             dialogManagementConfigurationViewModel.onEvent(ChangeRecordingTimeout(intentRecognitionTimeout.toStringOrEmpty()))
             dialogManagementConfigurationViewModel.onEvent(ChangeTextAsrTimeout(textAsrTimeout.toStringOrEmpty()))
-            dialogManagementConfigurationViewModel.onEvent(SelectDialogManagementOption(dialogManagementOption))
+            dialogManagementConfigurationViewModel.onEvent(SelectDialogManagementOption(pipelineManagerOption))
         }
 
         assertEquals(dialogManagementConfigurationData, dialogManagementConfigurationViewModel.viewState.value.editData)

@@ -7,7 +7,7 @@ class IntentHandlingConfigurationDataMapper {
 
     operator fun invoke(data: HandleDomainData): IntentHandlingConfigurationData {
         return IntentHandlingConfigurationData(
-            intentHandlingOption = data.option,
+            handleDomainOption = data.option,
             intentHandlingHomeAssistantOption = data.homeAssistantIntentHandlingOption,
             homeAssistantEventTimeout = data.homeAssistantEventTimeout,
         )
@@ -15,7 +15,7 @@ class IntentHandlingConfigurationDataMapper {
 
     operator fun invoke(data: IntentHandlingConfigurationData): HandleDomainData {
         return HandleDomainData(
-            option = data.intentHandlingOption,
+            option = data.handleDomainOption,
             homeAssistantIntentHandlingOption = data.intentHandlingHomeAssistantOption,
             homeAssistantEventTimeout = data.homeAssistantEventTimeout,
         )

@@ -32,7 +32,7 @@ data class ConfigurationScreenViewState internal constructor(
 
     @Stable
     data class PipelineItemViewState internal constructor(
-        val dialogManagementOption: DialogManagementOption,
+        val pipelineManagerOption: PipelineManagerOption,
     )
 
     @Stable
@@ -42,37 +42,37 @@ data class ConfigurationScreenViewState internal constructor(
 
     @Stable
     data class WakeDomainItemViewState internal constructor(
-        val wakeWordValueOption: WakeWordOption,
+        val wakeWordValueOption: WakeDomainOption,
         val errorStateFlow: StateFlow<DomainState>,
     )
 
     @Stable
     data class AsrDomainItemViewState internal constructor(
-        val speechToTextOption: SpeechToTextOption,
+        val asrDomainOption: AsrDomainOption,
     )
 
     @Stable
     data class VadDomainItemViewState internal constructor(
-        val voiceActivityDetectionOption: VoiceActivityDetectionOption,
+        val vadDomainOption: VadDomainOption,
     )
 
     @Stable
     data class IntentDomainItemViewState internal constructor(
-        val intentRecognitionOption: IntentRecognitionOption,
+        val intentDomainOption: IntentDomainOption,
     )
 
     @Stable
     data class HandleDomainItemViewState internal constructor(
-        val intentHandlingOption: IntentHandlingOption,
+        val handleDomainOption: HandleDomainOption,
     )
 
     @Stable
     data class TtsDomainItemViewState internal constructor(
-        val textToSpeechOption: TextToSpeechOption,
+        val ttsDomainOption: TtsDomainOption,
     )
 
     @Stable
     data class SndDomainItemViewState internal constructor(
-        val audioPlayingOption: AudioPlayingOption,
+        val sndDomainOption: SndDomainOption,
     )
 }

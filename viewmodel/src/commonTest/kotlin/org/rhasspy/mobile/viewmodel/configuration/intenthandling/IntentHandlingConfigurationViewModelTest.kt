@@ -3,8 +3,8 @@ package org.rhasspy.mobile.viewmodel.configuration.intenthandling
 import kotlinx.coroutines.test.runTest
 import org.koin.core.component.get
 import org.koin.dsl.module
+import org.rhasspy.mobile.data.service.option.HandleDomainOption
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
-import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
@@ -31,12 +31,12 @@ class IntentHandlingConfigurationViewModelTest : AppTest() {
         )
 
         initialIntentHandlingConfigurationData = IntentHandlingConfigurationData(
-            intentHandlingOption = IntentHandlingOption.Disabled,
+            handleDomainOption = HandleDomainOption.Disabled,
             intentHandlingHomeAssistantOption = HomeAssistantIntentHandlingOption.Intent
         )
 
         intentHandlingConfigurationData = IntentHandlingConfigurationData(
-            intentHandlingOption = IntentHandlingOption.HomeAssistant,
+            handleDomainOption = HandleDomainOption.HomeAssistant,
             intentHandlingHomeAssistantOption = HomeAssistantIntentHandlingOption.Event
         )
 
@@ -49,7 +49,7 @@ class IntentHandlingConfigurationViewModelTest : AppTest() {
 
         with(intentHandlingConfigurationData) {
             intentHandlingConfigurationViewModel.onEvent(SelectIntentHandlingHomeAssistantOption(intentHandlingHomeAssistantOption))
-            intentHandlingConfigurationViewModel.onEvent(SelectIntentHandlingOption(intentHandlingOption))
+            intentHandlingConfigurationViewModel.onEvent(SelectIntentHandlingOption(handleDomainOption))
         }
 
         assertEquals(intentHandlingConfigurationData, intentHandlingConfigurationViewModel.viewState.value.editData)
@@ -66,7 +66,7 @@ class IntentHandlingConfigurationViewModelTest : AppTest() {
 
         with(intentHandlingConfigurationData) {
             intentHandlingConfigurationViewModel.onEvent(SelectIntentHandlingHomeAssistantOption(intentHandlingHomeAssistantOption))
-            intentHandlingConfigurationViewModel.onEvent(SelectIntentHandlingOption(intentHandlingOption))
+            intentHandlingConfigurationViewModel.onEvent(SelectIntentHandlingOption(handleDomainOption))
         }
 
         assertEquals(intentHandlingConfigurationData, intentHandlingConfigurationViewModel.viewState.value.editData)

@@ -11,7 +11,7 @@ import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
-import org.rhasspy.mobile.data.service.option.TextToSpeechOption
+import org.rhasspy.mobile.data.service.option.TtsDomainOption
 import org.rhasspy.mobile.ui.configuration.domains.TextToSpeechConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SelectTextToSpeechOption
@@ -40,28 +40,28 @@ class TextToSpeechConfigurationContentTest : FlakyTest() {
     fun testEndpoint() = runTest {
         setupContent()
 
-        viewModel.onEvent(SelectTextToSpeechOption(TextToSpeechOption.Disabled))
+        viewModel.onEvent(SelectTextToSpeechOption(TtsDomainOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
         //option disable is set
-        composeTestRule.onNodeWithTag(TextToSpeechOption.Disabled, true).onListItemRadioButton()
+        composeTestRule.onNodeWithTag(TtsDomainOption.Disabled, true).onListItemRadioButton()
             .assertIsSelected()
 
         //User clicks option remote http
-        composeTestRule.onNodeWithTag(TextToSpeechOption.Rhasspy2HermesHttp).performClick()
+        composeTestRule.onNodeWithTag(TtsDomainOption.Rhasspy2HermesHttp).performClick()
         //new option is selected
         composeTestRule.awaitIdle()
         assertEquals(
-            TextToSpeechOption.Rhasspy2HermesHttp,
-            viewModel.viewState.value.editData.textToSpeechOption
+            TtsDomainOption.Rhasspy2HermesHttp,
+            viewModel.viewState.value.editData.ttsDomainOption
         )
 
         //User clicks save
         composeTestRule.saveBottomAppBar()
         TextToSpeechConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
-            assertEquals(TextToSpeechOption.Rhasspy2HermesHttp, it.textToSpeechOption)
+            assertEquals(TtsDomainOption.Rhasspy2HermesHttp, it.ttsDomainOption)
         }
     }
 

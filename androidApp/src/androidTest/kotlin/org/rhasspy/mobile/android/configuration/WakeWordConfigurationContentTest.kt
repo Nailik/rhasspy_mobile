@@ -14,7 +14,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
-import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.data.service.option.WakeDomainOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.main.MainScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
@@ -59,16 +59,16 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         setupContent()
 
         //option is disable
-        viewModel.onEvent(SelectWakeWordOption(WakeWordOption.Disabled))
+        viewModel.onEvent(SelectWakeWordOption(WakeDomainOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
-        assertEquals(WakeWordOption.Disabled, viewModel.viewState.value.editData.wakeWordOption)
+        assertEquals(WakeDomainOption.Disabled, viewModel.viewState.value.editData.wakeDomainOption)
 
         //porcupine options not visible
         composeTestRule.onNodeWithTag(TestTag.PorcupineWakeWordSettings).assertDoesNotExist()
         //user clicks porcupine
-        composeTestRule.onNodeWithTag(WakeWordOption.Porcupine).performClick()
+        composeTestRule.onNodeWithTag(WakeDomainOption.Porcupine).performClick()
         //porcupine options visible
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.PorcupineWakeWordSettings).assertIsDisplayed()
@@ -77,7 +77,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         composeTestRule.saveBottomAppBar()
         WakeWordConfigurationViewModel(get(), get()).viewState.value.editData.also {
             //new option is saved
-            assertEquals(WakeWordOption.Porcupine, it.wakeWordOption)
+            assertEquals(WakeDomainOption.Porcupine, it.wakeDomainOption)
         }
     }
 
@@ -101,12 +101,12 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         setupContent()
 
         //option is porcupine
-        viewModel.onEvent(SelectWakeWordOption(WakeWordOption.Porcupine))
+        viewModel.onEvent(SelectWakeWordOption(WakeDomainOption.Porcupine))
         viewModel.onEvent(UpdateWakeWordPorcupineAccessToken(""))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
-        assertEquals(WakeWordOption.Porcupine, viewModel.viewState.value.editData.wakeWordOption)
+        assertEquals(WakeDomainOption.Porcupine, viewModel.viewState.value.editData.wakeDomainOption)
 
         val textInputTest = "fghfghhrtrtzh34ß639254´1´90!$/%(&$("
 
@@ -151,11 +151,11 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         setupContent()
 
         //option is porcupine
-        viewModel.onEvent(SelectWakeWordOption(WakeWordOption.Porcupine))
+        viewModel.onEvent(SelectWakeWordOption(WakeDomainOption.Porcupine))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
-        assertEquals(WakeWordOption.Porcupine, viewModel.viewState.value.editData.wakeWordOption)
+        assertEquals(WakeDomainOption.Porcupine, viewModel.viewState.value.editData.wakeDomainOption)
         composeTestRule.onNodeWithTag(WakeWordConfigurationScreen).assertIsDisplayed()
 
         //wake word is clicked,

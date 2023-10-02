@@ -14,12 +14,12 @@ import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
-import org.rhasspy.mobile.data.service.option.AudioPlayingOption
+import org.rhasspy.mobile.data.service.option.SndDomainOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.domains.AudioPlayingConfigurationScreen
-import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.SelectEditAudioPlayingOption
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import kotlin.test.assertEquals
 
 class AudioPlayingConfigurationContentTest : FlakyTest() {
@@ -45,31 +45,31 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
     fun testEndpoint() = runTest {
         setupContent()
 
-        viewModel.onEvent(SelectEditAudioPlayingOption(AudioPlayingOption.Disabled))
+        viewModel.onEvent(SelectEditAudioPlayingOption(SndDomainOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
         //option disable is set
-        composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled).onListItemRadioButton()
+        composeTestRule.onNodeWithTag(SndDomainOption.Disabled).onListItemRadioButton()
             .assertIsSelected()
 
         //User clicks option remote http
-        composeTestRule.onNodeWithTag(AudioPlayingOption.Rhasspy2HermesHttp).onListItemRadioButton()
+        composeTestRule.onNodeWithTag(SndDomainOption.Rhasspy2HermesHttp).onListItemRadioButton()
             .performClick()
         //new option is selected
         composeTestRule.awaitIdle()
         assertEquals(
-            AudioPlayingOption.Rhasspy2HermesHttp,
-            viewModel.viewState.value.editData.audioPlayingOption
+            SndDomainOption.Rhasspy2HermesHttp,
+            viewModel.viewState.value.editData.sndDomainOption
         )
-        composeTestRule.onNodeWithTag(AudioPlayingOption.Rhasspy2HermesHttp).onListItemRadioButton()
+        composeTestRule.onNodeWithTag(SndDomainOption.Rhasspy2HermesHttp).onListItemRadioButton()
             .assertIsSelected()
 
         //User clicks save
         composeTestRule.saveBottomAppBar()
         AudioPlayingConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
-            assertEquals(AudioPlayingOption.Rhasspy2HermesHttp, it.audioPlayingOption)
+            assertEquals(SndDomainOption.Rhasspy2HermesHttp, it.sndDomainOption)
         }
     }
 
@@ -96,7 +96,7 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
     fun testLocalOutput() = runTest {
         setupContent()
 
-        viewModel.onEvent(SelectEditAudioPlayingOption(AudioPlayingOption.Disabled))
+        viewModel.onEvent(SelectEditAudioPlayingOption(SndDomainOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
@@ -104,18 +104,18 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
         assertEquals(AudioOutputOption.Sound, viewModel.viewState.value.editData.audioOutputOption)
 
         //option disable is set
-        composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled, true).performScrollTo()
+        composeTestRule.onNodeWithTag(SndDomainOption.Disabled, true).performScrollTo()
             .onListItemRadioButton().assertIsSelected()
         //output options not visible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertDoesNotExist()
 
         //User clicks option local
-        composeTestRule.onNodeWithTag(AudioPlayingOption.Local).performClick()
+        composeTestRule.onNodeWithTag(SndDomainOption.Local).performClick()
         //new option is selected
         composeTestRule.awaitIdle()
         assertEquals(
-            AudioPlayingOption.Local,
-            viewModel.viewState.value.editData.audioPlayingOption
+            SndDomainOption.Local,
+            viewModel.viewState.value.editData.sndDomainOption
         )
 
         //output options visible
@@ -134,7 +134,7 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
         composeTestRule.saveBottomAppBar()
         AudioPlayingConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to local
-            assertEquals(AudioPlayingOption.Local, it.audioPlayingOption)
+            assertEquals(SndDomainOption.Local, it.sndDomainOption)
             //option notification is saved
             assertEquals(AudioOutputOption.Notification, it.audioOutputOption)
         }

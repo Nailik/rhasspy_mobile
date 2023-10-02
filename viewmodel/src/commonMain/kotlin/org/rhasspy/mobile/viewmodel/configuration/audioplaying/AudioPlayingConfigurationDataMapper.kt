@@ -7,7 +7,7 @@ class AudioPlayingConfigurationDataMapper {
 
     operator fun invoke(data: SndDomainData): AudioPlayingConfigurationData {
         return AudioPlayingConfigurationData(
-            audioPlayingOption = data.option,
+            sndDomainOption = data.option,
             audioOutputOption = data.localOutputOption,
             audioPlayingMqttSiteId = data.mqttSiteId,
             audioTimeout = data.audioTimeout,
@@ -17,7 +17,7 @@ class AudioPlayingConfigurationDataMapper {
 
     operator fun invoke(data: AudioPlayingConfigurationData): SndDomainData {
         return SndDomainData(
-            option = data.audioPlayingOption,
+            option = data.sndDomainOption,
             localOutputOption = data.audioOutputOption,
             mqttSiteId = data.audioPlayingMqttSiteId,
             audioTimeout = data.audioTimeout,

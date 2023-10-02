@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Sound
 import org.rhasspy.mobile.data.domain.SndDomainData
-import org.rhasspy.mobile.data.service.option.AudioPlayingOption
+import org.rhasspy.mobile.data.service.option.SndDomainOption
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayFinished
@@ -66,10 +66,10 @@ internal class SndDomain(
         indication.onPlayAudio()
 
         return when (params.option) {
-            AudioPlayingOption.Local              -> onLocalPlayAudio(audio)
-            AudioPlayingOption.Rhasspy2HermesHttp -> onRhasspy2HermesHttpPlayAudio(audio)
-            AudioPlayingOption.Rhasspy2HermesMQTT -> onRhasspy2HermesMQTTPlayAudio(audio)
-            AudioPlayingOption.Disabled           -> PlayDisabled
+            SndDomainOption.Local              -> onLocalPlayAudio(audio)
+            SndDomainOption.Rhasspy2HermesHttp -> onRhasspy2HermesHttpPlayAudio(audio)
+            SndDomainOption.Rhasspy2HermesMQTT -> onRhasspy2HermesMQTTPlayAudio(audio)
+            SndDomainOption.Disabled           -> PlayDisabled
         }
     }
 

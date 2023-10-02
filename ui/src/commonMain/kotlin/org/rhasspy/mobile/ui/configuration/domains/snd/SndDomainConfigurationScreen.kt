@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
-import org.rhasspy.mobile.data.service.option.AudioPlayingOption
+import org.rhasspy.mobile.data.service.option.SndDomainOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.ScreenContent
@@ -84,21 +84,21 @@ private fun AudioPlayingOptionContent(
     //radio buttons list of available values
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.AudioPlayingOptions),
-        selected = editData.audioPlayingOption,
+        selected = editData.sndDomainOption,
         onSelect = { onEvent(SelectEditAudioPlayingOption(it)) },
-        values = editData.audioPlayingOptionList
+        values = editData.sndDomainOptionLists
     ) { option ->
 
         when (option) {
-            AudioPlayingOption.Local -> LocalConfigurationContent(
+            SndDomainOption.Local              -> LocalConfigurationContent(
                 audioOutputOption = editData.audioOutputOption,
                 audioOutputOptionList = editData.audioOutputOptionList,
                 onEvent = onEvent
             )
 
-            AudioPlayingOption.Rhasspy2HermesHttp -> Unit
+            SndDomainOption.Rhasspy2HermesHttp -> Unit
 
-            AudioPlayingOption.Rhasspy2HermesMQTT -> MqttSiteIdConfigurationContent(
+            SndDomainOption.Rhasspy2HermesMQTT -> MqttSiteIdConfigurationContent(
                 audioPlayingMqttSiteId = editData.audioPlayingMqttSiteId,
                 onEvent = onEvent
             )

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.AsrDomainData
-import org.rhasspy.mobile.data.service.option.SpeechToTextOption
+import org.rhasspy.mobile.data.service.option.AsrDomainOption
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult
@@ -18,6 +18,7 @@ import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.logic.domains.AudioFileWriter
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
 import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd
+import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd.VoiceStopped
 import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceStart
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
@@ -84,20 +85,20 @@ internal class AsrDomain(
 
         //await result
         return when (params.option) {
-            SpeechToTextOption.Rhasspy2HermesHttp ->
+            AsrDomainOption.Rhasspy2HermesHttp ->
                 awaitRhasspy2HermesHttpTranscript(
                     audioStream = audioStream,
                     awaitVoiceStopped = awaitVoiceStopped
                 )
 
-            SpeechToTextOption.Rhasspy2HermesMQTT ->
+            AsrDomainOption.Rhasspy2HermesMQTT ->
                 awaitRhasspy2HermesMQTTTranscript(
                     sessionId = sessionId,
                     audioStream = audioStream,
                     awaitVoiceStopped = awaitVoiceStopped
                 )
 
-            SpeechToTextOption.Disabled           -> TranscriptDisabled
+            AsrDomainOption.Disabled           -> TranscriptDisabled
         }.also {
             audioFocus.abandon(Record)
         }
@@ -121,7 +122,10 @@ internal class AsrDomain(
         }
 
         //TODO use user connection
-        awaitVoiceStopped(audioStream)
+        flow { emit(awaitVoiceStopped(audioStream)) }
+            .filter { it is VoiceStopped }
+            .timeoutWithDefault(params.voiceTimeout, VoiceStopped)
+            .first()
 
         saveDataJob.cancelAndJoin()
         audioFileWriter?.closeFile()
@@ -177,7 +181,11 @@ internal class AsrDomain(
 
         val awaitVoiceStoppedJob = scope.launch {
             //TODO use user connection
-            awaitVoiceStopped(audioStream)
+            flow { emit(awaitVoiceStopped(audioStream)) }
+                .filter { it is VoiceStopped }
+                .timeoutWithDefault(params.voiceTimeout, VoiceStopped)
+                .first()
+
             sendDataJob.cancelAndJoin()
 
             mqttConnection.stopListening(
@@ -199,7 +207,7 @@ internal class AsrDomain(
                 }
             }
             .timeoutWithDefault(
-                timeout = params.mqttTimeout,
+                timeout = params.mqttResultTimeout,
                 default = TranscriptTimeout(Local),
             )
             .first()

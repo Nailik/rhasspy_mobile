@@ -30,7 +30,7 @@ class IntentRecognitionConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SelectIntentRecognitionOption -> copy(intentRecognitionOption = change.option)
+                    is SelectIntentRecognitionOption -> copy(intentDomainOption = change.option)
                 }
             })
         }

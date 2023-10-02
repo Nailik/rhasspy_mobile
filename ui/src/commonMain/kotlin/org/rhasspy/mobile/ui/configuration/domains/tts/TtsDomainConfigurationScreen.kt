@@ -78,9 +78,9 @@ private fun TextToSpeechOptionContent(
 
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.TextToSpeechOptions),
-        selected = editData.textToSpeechOption,
+        selected = editData.ttsDomainOption,
         onSelect = { onEvent(SelectTextToSpeechOption(it)) },
-        values = editData.textToSpeechOptions
+        values = editData.ttsDomainOptions
     )
 
 }

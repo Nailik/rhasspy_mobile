@@ -4,7 +4,7 @@ import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
-import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
+import org.rhasspy.mobile.data.service.option.IntentDomainOption
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.testutils.AppTest
@@ -40,9 +40,9 @@ class IntentRecognitionConfigurationViewModelTest : AppTest() {
             }
         )
 
-        initialIntentHandlingConfigurationData = IntentRecognitionConfigurationData(intentRecognitionOption = IntentRecognitionOption.Disabled)
+        initialIntentHandlingConfigurationData = IntentRecognitionConfigurationData(intentDomainOption = IntentDomainOption.Disabled)
 
-        intentHandlingConfigurationData = IntentRecognitionConfigurationData(intentRecognitionOption = IntentRecognitionOption.Rhasspy2HermesMQTT)
+        intentHandlingConfigurationData = IntentRecognitionConfigurationData(intentDomainOption = IntentDomainOption.Rhasspy2HermesMQTT)
 
         intentRecognitionConfigurationViewModel = get()
     }
@@ -53,7 +53,7 @@ class IntentRecognitionConfigurationViewModelTest : AppTest() {
         assertEquals(initialIntentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
 
         with(intentHandlingConfigurationData) {
-            intentRecognitionConfigurationViewModel.onEvent(SelectIntentRecognitionOption(intentRecognitionOption))
+            intentRecognitionConfigurationViewModel.onEvent(SelectIntentRecognitionOption(intentDomainOption))
         }
 
         assertEquals(intentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
@@ -72,7 +72,7 @@ class IntentRecognitionConfigurationViewModelTest : AppTest() {
         )
 
         with(intentHandlingConfigurationData) {
-            intentRecognitionConfigurationViewModel.onEvent(SelectIntentRecognitionOption(intentRecognitionOption))
+            intentRecognitionConfigurationViewModel.onEvent(SelectIntentRecognitionOption(intentDomainOption))
         }
 
         assertEquals(intentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)

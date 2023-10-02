@@ -9,10 +9,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.option.HandleDomainOption
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Event
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Intent
-import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.ScreenContent
@@ -87,13 +87,13 @@ private fun IntentHandlingOptionContent(
 
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.IntentHandlingOptions),
-        selected = editData.intentHandlingOption,
+        selected = editData.handleDomainOption,
         onSelect = { onEvent(SelectIntentHandlingOption(it)) },
-        values = editData.intentHandlingOptionList
+        values = editData.handleDomainOptionLists
     ) { option ->
 
         when (option) {
-            IntentHandlingOption.HomeAssistant -> HomeAssistantOption(
+            HandleDomainOption.HomeAssistant -> HomeAssistantOption(
                 intentHandlingHomeAssistantOption = editData.intentHandlingHomeAssistantOption,
                 onEvent = onEvent
             )

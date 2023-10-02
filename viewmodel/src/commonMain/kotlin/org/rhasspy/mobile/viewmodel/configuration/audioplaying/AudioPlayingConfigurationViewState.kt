@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
-import org.rhasspy.mobile.data.service.option.AudioPlayingOption
+import org.rhasspy.mobile.data.service.option.SndDomainOption
 import kotlin.time.Duration
 
 @Stable
@@ -14,14 +14,14 @@ data class AudioPlayingConfigurationViewState internal constructor(
 
     @Stable
     data class AudioPlayingConfigurationData internal constructor(
-        val audioPlayingOption: AudioPlayingOption,
+        val sndDomainOption: SndDomainOption,
         val audioOutputOption: AudioOutputOption,
         val audioPlayingMqttSiteId: String,
         val audioTimeout: Duration,
         val rhasspy2HermesMqttTimeout: Duration,
     ) {
 
-        val audioPlayingOptionList: ImmutableList<AudioPlayingOption> = AudioPlayingOption.entries.toImmutableList()
+        val sndDomainOptionLists: ImmutableList<SndDomainOption> = SndDomainOption.entries.toImmutableList()
         val audioOutputOptionList: ImmutableList<AudioOutputOption> = AudioOutputOption.entries.toImmutableList()
 
     }

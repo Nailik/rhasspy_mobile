@@ -2,18 +2,16 @@ package org.rhasspy.mobile.logic.domains.vad
 
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.domain.VadDomainData
-import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption.Disabled
-import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption.Local
+import org.rhasspy.mobile.data.service.option.VadDomainOption.Disabled
+import org.rhasspy.mobile.data.service.option.VadDomainOption.Local
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
 import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd
+import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd.VadDisabled
 import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd.VoiceStopped
-import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd.VoiceTimeout
 import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceStart
-import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 
 /**
  * Vad Domain detects speech in an audio stream
@@ -70,16 +68,10 @@ internal class VadDomain(
                     .mapLatest { chunk -> localSilenceDetection.onAudioChunk(chunk) }
                     .filter { it }
                     .map { VoiceStopped }
-                    .timeoutWithDefault(
-                        timeout = params.timeout,
-                        default = VoiceTimeout,
-                    ).first()
+                    .first()
             }
 
-            Disabled -> {
-                delay(params.timeout)
-                VoiceTimeout
-            }
+            Disabled -> VadDisabled
         }
     }
 

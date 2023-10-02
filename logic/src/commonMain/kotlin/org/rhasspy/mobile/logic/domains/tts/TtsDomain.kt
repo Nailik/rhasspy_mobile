@@ -5,7 +5,7 @@ import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.TtsDomainData
-import org.rhasspy.mobile.data.service.option.TextToSpeechOption
+import org.rhasspy.mobile.data.service.option.TtsDomainOption
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult
@@ -57,14 +57,14 @@ internal class TtsDomain(
         logger.d { "onSynthesize for sessionId $sessionId and volume $volume and siteId $siteId and handle $handle" }
 
         return when (params.option) {
-            TextToSpeechOption.Rhasspy2HermesHttp ->
+            TtsDomainOption.Rhasspy2HermesHttp ->
                 onRhasspy2HermesHttpSynthesize(
                     volume = volume,
                     siteId = siteId,
                     handle = handle,
                 )
 
-            TextToSpeechOption.Rhasspy2HermesMQTT ->
+            TtsDomainOption.Rhasspy2HermesMQTT ->
                 onRhasspy2HermesMQTTSynthesize(
                     sessionId = sessionId,
                     volume = volume,
@@ -72,7 +72,7 @@ internal class TtsDomain(
                     handle = handle,
                 )
 
-            TextToSpeechOption.Disabled           ->
+            TtsDomainOption.Disabled           ->
                 TtsDisabled
         }
     }

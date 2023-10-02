@@ -48,9 +48,9 @@ private fun DialogManagementEditContent(
     //drop down to select option
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.DialogManagementOptions),
-        selected = editData.dialogManagementOption,
+        selected = editData.pipelineManagerOption,
         onSelect = { onEvent(SelectDialogManagementOption(it)) },
-        values = editData.dialogManagementOptionList
+        values = editData.pipelineManagerOptionList
     )
 
 }

@@ -11,7 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.data.service.option.WakeDomainOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.DomainStateHeaderItem
@@ -81,26 +81,26 @@ private fun WakeWordConfigurationOptionContent(
 
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.WakeWordOptions),
-        selected = viewState.editData.wakeWordOption,
+        selected = viewState.editData.wakeDomainOption,
         onSelect = { onEvent(SelectWakeWordOption(it)) },
-        values = viewState.editData.wakeWordOptions
+        values = viewState.editData.wakeDomainOptions
     ) { option ->
 
         when (option) {
-            WakeWordOption.Porcupine ->
+            WakeDomainOption.Porcupine ->
                 PorcupineConfiguration(
                     editData = viewState.editData.wakeWordPorcupineConfigurationData,
                     onEvent = onEvent
                 )
 
-            WakeWordOption.Udp       ->
+            WakeDomainOption.Udp       ->
                 UdpSettings(
                     editData = viewState.editData.wakeWordUdpConfigurationData,
                     onEvent = onEvent
                 )
 
-            WakeWordOption.Rhasspy2HermesMQTT,
-            WakeWordOption.Disabled  -> Unit
+            WakeDomainOption.Rhasspy2HermesMQTT,
+            WakeDomainOption.Disabled  -> Unit
         }
 
     }

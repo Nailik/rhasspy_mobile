@@ -11,7 +11,7 @@ import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
-import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
+import org.rhasspy.mobile.data.service.option.IntentDomainOption
 import org.rhasspy.mobile.ui.configuration.domains.intent.IntentRecognitionConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
@@ -40,28 +40,28 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
     fun testEndpoint() = runTest {
         setupContent()
 
-        viewModel.onEvent(SelectIntentRecognitionOption(IntentRecognitionOption.Disabled))
+        viewModel.onEvent(SelectIntentRecognitionOption(IntentDomainOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
         //option disable is set
-        composeTestRule.onNodeWithTag(IntentRecognitionOption.Disabled, true)
+        composeTestRule.onNodeWithTag(IntentDomainOption.Disabled, true)
             .onListItemRadioButton().assertIsSelected()
 
         //User clicks option remote http
-        composeTestRule.onNodeWithTag(IntentRecognitionOption.Rhasspy2HermesHttp).performClick()
+        composeTestRule.onNodeWithTag(IntentDomainOption.Rhasspy2HermesHttp).performClick()
         //new option is selected
         composeTestRule.awaitIdle()
         assertEquals(
-            IntentRecognitionOption.Rhasspy2HermesHttp,
-            viewModel.viewState.value.editData.intentRecognitionOption
+            IntentDomainOption.Rhasspy2HermesHttp,
+            viewModel.viewState.value.editData.intentDomainOption
         )
 
         //User clicks save
         composeTestRule.saveBottomAppBar()
         IntentRecognitionConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
-            assertEquals(IntentRecognitionOption.Rhasspy2HermesHttp, it.intentRecognitionOption)
+            assertEquals(IntentDomainOption.Rhasspy2HermesHttp, it.intentDomainOption)
         }
     }
 

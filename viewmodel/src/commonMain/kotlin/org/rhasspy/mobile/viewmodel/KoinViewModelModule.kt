@@ -11,6 +11,8 @@ import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.assist.AssistantViewModel
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewModel
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewStateCreator
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
@@ -37,8 +39,6 @@ import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioReco
 import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.vad.AudioRecorderViewStateCreator
@@ -159,8 +159,8 @@ fun viewModelModule() = module {
     singleOf(::WebServerConnectionConfigurationDataMapper)
     singleOf(::WebServerConnectionConfigurationViewModel)
 
-    singleOf(::SpeechToTextConfigurationDataMapper)
-    singleOf(::SpeechToTextConfigurationViewModel)
+    singleOf(::AsrConfigurationDataMapper)
+    singleOf(::AsrConfigurationViewModel)
 
     singleOf(::TextToSpeechConfigurationDataMapper)
     singleOf(::TextToSpeechConfigurationViewModel)

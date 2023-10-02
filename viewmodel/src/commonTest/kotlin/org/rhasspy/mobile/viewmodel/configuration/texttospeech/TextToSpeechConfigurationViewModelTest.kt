@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewmodel.configuration.texttospeech
 import kotlinx.coroutines.test.runTest
 import org.koin.core.component.get
 import org.koin.dsl.module
-import org.rhasspy.mobile.data.service.option.TextToSpeechOption
+import org.rhasspy.mobile.data.service.option.TtsDomainOption
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
@@ -29,11 +29,11 @@ class TextToSpeechConfigurationViewModelTest : AppTest() {
         )
 
         initialTextToSpeechConfigurationData = TextToSpeechConfigurationData(
-            textToSpeechOption = TextToSpeechOption.Disabled,
+            ttsDomainOption = TtsDomainOption.Disabled,
         )
 
         textToSpeechConfigurationData = TextToSpeechConfigurationData(
-            textToSpeechOption = TextToSpeechOption.Rhasspy2HermesHttp,
+            ttsDomainOption = TtsDomainOption.Rhasspy2HermesHttp,
         )
 
         textToSpeechConfigurationViewModel = get()
@@ -44,7 +44,7 @@ class TextToSpeechConfigurationViewModelTest : AppTest() {
         assertEquals(initialTextToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)
 
         with(textToSpeechConfigurationData) {
-            textToSpeechConfigurationViewModel.onEvent(SelectTextToSpeechOption(textToSpeechOption))
+            textToSpeechConfigurationViewModel.onEvent(SelectTextToSpeechOption(ttsDomainOption))
         }
 
         assertEquals(textToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)
@@ -60,7 +60,7 @@ class TextToSpeechConfigurationViewModelTest : AppTest() {
         assertEquals(initialTextToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)
 
         with(textToSpeechConfigurationData) {
-            textToSpeechConfigurationViewModel.onEvent(SelectTextToSpeechOption(textToSpeechOption))
+            textToSpeechConfigurationViewModel.onEvent(SelectTextToSpeechOption(ttsDomainOption))
         }
 
         assertEquals(textToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)

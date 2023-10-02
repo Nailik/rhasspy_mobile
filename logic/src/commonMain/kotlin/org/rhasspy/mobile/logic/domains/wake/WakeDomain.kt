@@ -8,7 +8,7 @@ import org.rhasspy.mobile.data.domain.DomainState
 import org.rhasspy.mobile.data.domain.DomainState.Error
 import org.rhasspy.mobile.data.domain.DomainState.NoError
 import org.rhasspy.mobile.data.domain.WakeDomainData
-import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.data.service.option.WakeDomainOption
 import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperString
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
@@ -64,11 +64,11 @@ internal class WakeDomain(
 
     init {
         scope.launch {
-            state.value = when (params.wakeWordOption) {
-                WakeWordOption.Porcupine          -> initializePorcupine()
-                WakeWordOption.Rhasspy2HermesMQTT -> NoError
-                WakeWordOption.Udp                -> initializeUdp()
-                WakeWordOption.Disabled           -> NoError
+            state.value = when (params.wakeDomainOption) {
+                WakeDomainOption.Porcupine          -> initializePorcupine()
+                WakeDomainOption.Rhasspy2HermesMQTT -> NoError
+                WakeDomainOption.Udp                -> initializeUdp()
+                WakeDomainOption.Disabled           -> NoError
             }
         }
     }
@@ -78,11 +78,11 @@ internal class WakeDomain(
      */
     override fun awaitDetection(audioStream: Flow<MicAudioChunk>) {
         scope.launch {
-            val detection = when (params.wakeWordOption) {
-                WakeWordOption.Porcupine          -> awaitPorcupineWakeDetection(audioStream)
-                WakeWordOption.Rhasspy2HermesMQTT -> awaitRhasspy2hermesMqttWakeDetection(audioStream)
-                WakeWordOption.Udp                -> awaitUdpWakeDetection(audioStream)
-                WakeWordOption.Disabled           -> NotDetected
+            val detection = when (params.wakeDomainOption) {
+                WakeDomainOption.Porcupine          -> awaitPorcupineWakeDetection(audioStream)
+                WakeDomainOption.Rhasspy2HermesMQTT -> awaitRhasspy2hermesMqttWakeDetection(audioStream)
+                WakeDomainOption.Udp                -> awaitUdpWakeDetection(audioStream)
+                WakeDomainOption.Disabled           -> NotDetected
             }
             wakeEvents.emit(detection)
         }

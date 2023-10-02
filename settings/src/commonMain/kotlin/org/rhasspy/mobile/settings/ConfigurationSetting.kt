@@ -102,8 +102,7 @@ object ConfigurationSetting {
     val vadDomainData = ISetting(
         key = SettingsEnum.VoiceActivityDetectionDomain,
         initial = VadDomainData(
-            option = VoiceActivityDetectionOption.Disabled,
-            timeout = 20.seconds,
+            option = VadDomainOption.Disabled,
             automaticSilenceDetectionAudioLevel = 40f,
             automaticSilenceDetectionTime = 2.seconds,
             automaticSilenceDetectionMinimumTime = 2.seconds,
@@ -114,7 +113,7 @@ object ConfigurationSetting {
     val wakeDomainData = ISetting(
         key = SettingsEnum.WakeDomain,
         initial = WakeDomainData(
-            wakeWordOption = WakeWordOption.Disabled,
+            wakeDomainOption = WakeDomainOption.Disabled,
             wakeWordPorcupineAccessToken = "",
             wakeWordPorcupineKeywordDefaultOptions = PorcupineKeywordOption.entries.map { PorcupineDefaultKeyword(it, false, 0.5) },
             wakeWordPorcupineKeywordCustomOptions = emptyList(),
@@ -128,9 +127,10 @@ object ConfigurationSetting {
     val asrDomainData = ISetting(
         key = SettingsEnum.AsrDomain,
         initial = AsrDomainData(
-            option = SpeechToTextOption.Disabled,
+            option = AsrDomainOption.Disabled,
             isUseSpeechToTextMqttSilenceDetection = true,
-            mqttTimeout = 20.seconds,
+            voiceTimeout = 20.seconds,
+            mqttResultTimeout = 20.seconds,
         ),
         serializer = AsrDomainData.serializer(),
     )
@@ -138,7 +138,7 @@ object ConfigurationSetting {
     val handleDomainData = ISetting(
         key = SettingsEnum.HandleDomain,
         initial = HandleDomainData(
-            option = IntentHandlingOption.Disabled,
+            option = HandleDomainOption.Disabled,
             homeAssistantIntentHandlingOption = HomeAssistantIntentHandlingOption.Intent,
             homeAssistantEventTimeout = 20.seconds,
         ),
@@ -148,7 +148,7 @@ object ConfigurationSetting {
     val intentDomainData = ISetting(
         key = SettingsEnum.IntentDomain,
         initial = IntentDomainData(
-            option = IntentRecognitionOption.Disabled,
+            option = IntentDomainOption.Disabled,
             isRhasspy2HermesHttpHandleWithRecognition = false,
             rhasspy2HermesHttpHandleTimeout = 20.seconds,
             rhasspy2HermesMqttHandleTimeout = 20.seconds,
@@ -159,7 +159,7 @@ object ConfigurationSetting {
     val sndDomainData = ISetting(
         key = SettingsEnum.SndDomain,
         initial = SndDomainData(
-            option = AudioPlayingOption.Local,
+            option = SndDomainOption.Local,
             localOutputOption = AudioOutputOption.Sound,
             mqttSiteId = "",
             audioTimeout = 20.seconds,
@@ -171,7 +171,7 @@ object ConfigurationSetting {
     val ttsDomainData = ISetting(
         key = SettingsEnum.TtsDomain,
         initial = TtsDomainData(
-            option = TextToSpeechOption.Disabled,
+            option = TtsDomainOption.Disabled,
             rhasspy2HermesMqttTimeout = 20.seconds,
         ),
         serializer = TtsDomainData.serializer(),
@@ -180,7 +180,7 @@ object ConfigurationSetting {
     val pipelineData = ISetting(
         key = SettingsEnum.Pipeline,
         initial = PipelineData(
-            option = DialogManagementOption.Local,
+            option = PipelineManagerOption.Local,
         ),
         serializer = PipelineData.serializer(),
     )

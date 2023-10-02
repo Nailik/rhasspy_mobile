@@ -7,7 +7,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.data.domain.DomainState
 import org.rhasspy.mobile.data.domain.DomainState.Loading
 import org.rhasspy.mobile.data.pipeline.PipelineData
-import org.rhasspy.mobile.data.service.option.DialogManagementOption
+import org.rhasspy.mobile.data.service.option.PipelineManagerOption
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.HotWordDetected
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.SessionStarted
@@ -179,9 +179,9 @@ class PipelineManager(
 
     private fun getPipeline(): IPipeline {
         return when (params.option) {
-            DialogManagementOption.Local -> get<IPipelineLocal>()
-            DialogManagementOption.Rhasspy2HermesMQTT -> get<IPipelineMqtt>()
-            DialogManagementOption.Disabled -> get<IPipelineDisabled>()
+            PipelineManagerOption.Local              -> get<IPipelineLocal>()
+            PipelineManagerOption.Rhasspy2HermesMQTT -> get<IPipelineMqtt>()
+            PipelineManagerOption.Disabled           -> get<IPipelineDisabled>()
         }
     }
 

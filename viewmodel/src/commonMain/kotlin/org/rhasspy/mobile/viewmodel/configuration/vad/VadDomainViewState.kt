@@ -2,7 +2,7 @@ package org.rhasspy.mobile.viewmodel.configuration.vad
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
-import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
+import org.rhasspy.mobile.data.service.option.VadDomainOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import kotlin.time.Duration
 
@@ -13,12 +13,11 @@ data class VadDomainViewState internal constructor(
 
     @Stable
     data class VadDomainConfigurationData internal constructor(
-        val voiceActivityDetectionOption: VoiceActivityDetectionOption,
+        val vadDomainOption: VadDomainOption,
         val localSilenceDetectionSetting: LocalSilenceDetectionConfigurationData,
-        val timeout: Duration,
     ) {
 
-        val voiceActivityDetectionOptions: ImmutableList<VoiceActivityDetectionOption> = VoiceActivityDetectionOption.entries.toTypedArray().toImmutableList()
+        val vadDomainOptions: ImmutableList<VadDomainOption> = VadDomainOption.entries.toTypedArray().toImmutableList()
 
         @Stable
         data class LocalSilenceDetectionConfigurationData internal constructor(

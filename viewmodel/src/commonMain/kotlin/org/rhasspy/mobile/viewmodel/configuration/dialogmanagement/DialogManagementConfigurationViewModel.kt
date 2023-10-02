@@ -40,7 +40,7 @@ class DialogManagementConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SelectDialogManagementOption   -> copy(dialogManagementOption = change.option)
+                    is SelectDialogManagementOption -> copy(pipelineManagerOption = change.option)
                 }
             })
         }

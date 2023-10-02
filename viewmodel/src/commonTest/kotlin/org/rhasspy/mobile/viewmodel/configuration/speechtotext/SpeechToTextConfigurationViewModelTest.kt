@@ -3,23 +3,24 @@ package org.rhasspy.mobile.viewmodel.configuration.speechtotext
 import kotlinx.coroutines.test.runTest
 import org.koin.core.component.get
 import org.koin.dsl.module
-import org.rhasspy.mobile.data.service.option.SpeechToTextOption
+import org.rhasspy.mobile.data.service.option.AsrDomainOption
 import org.rhasspy.mobile.testutils.AppTest
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationUiEvent.Change.SelectAsrOption
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationUiEvent.Change.SetUseAsrMqttSilenceDetection
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationViewState.AsrConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SetUseSpeechToTextMqttSilenceDetection
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SpeechToTextConfigurationViewModelTest : AppTest() {
 
-    private lateinit var speechToTextConfigurationViewModel: SpeechToTextConfigurationViewModel
+    private lateinit var asrConfigurationViewModel: AsrConfigurationViewModel
 
-    private lateinit var initialSpeechToTextConfigurationData: SpeechToTextConfigurationData
-    private lateinit var speechToTextConfigurationData: SpeechToTextConfigurationData
+    private lateinit var initialAsrConfigurationData: AsrConfigurationData
+    private lateinit var asrConfigurationData: AsrConfigurationData
 
     @BeforeTest
     fun before() {
@@ -29,50 +30,50 @@ class SpeechToTextConfigurationViewModelTest : AppTest() {
             }
         )
 
-        initialSpeechToTextConfigurationData = SpeechToTextConfigurationData(
-            speechToTextOption = SpeechToTextOption.Disabled,
+        initialAsrConfigurationData = AsrConfigurationData(
+            asrDomainOption = AsrDomainOption.Disabled,
             isUseSpeechToTextMqttSilenceDetection = true
         )
 
-        speechToTextConfigurationData = SpeechToTextConfigurationData(
-            speechToTextOption = SpeechToTextOption.Rhasspy2HermesMQTT,
+        asrConfigurationData = AsrConfigurationData(
+            asrDomainOption = AsrDomainOption.Rhasspy2HermesMQTT,
             isUseSpeechToTextMqttSilenceDetection = false
         )
 
-        speechToTextConfigurationViewModel = get()
+        asrConfigurationViewModel = get()
     }
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(initialSpeechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
+        assertEquals(initialAsrConfigurationData, asrConfigurationViewModel.viewState.value.editData)
 
-        with(speechToTextConfigurationData) {
-            speechToTextConfigurationViewModel.onEvent(SelectSpeechToTextOption(speechToTextOption))
-            speechToTextConfigurationViewModel.onEvent(SetUseSpeechToTextMqttSilenceDetection(isUseSpeechToTextMqttSilenceDetection))
+        with(asrConfigurationData) {
+            asrConfigurationViewModel.onEvent(SelectAsrOption(asrDomainOption))
+            asrConfigurationViewModel.onEvent(SetUseAsrMqttSilenceDetection(isUseSpeechToTextMqttSilenceDetection))
         }
 
-        assertEquals(speechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
+        assertEquals(asrConfigurationData, asrConfigurationViewModel.viewState.value.editData)
 
-        speechToTextConfigurationViewModel.onEvent(Save)
+        asrConfigurationViewModel.onEvent(Save)
 
-        assertEquals(speechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
-        assertEquals(speechToTextConfigurationData, SpeechToTextConfigurationData())
+        assertEquals(asrConfigurationData, asrConfigurationViewModel.viewState.value.editData)
+        assertEquals(asrConfigurationData, AsrConfigurationData())
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
-        assertEquals(initialSpeechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
+        assertEquals(initialAsrConfigurationData, asrConfigurationViewModel.viewState.value.editData)
 
-        with(speechToTextConfigurationData) {
-            speechToTextConfigurationViewModel.onEvent(SelectSpeechToTextOption(speechToTextOption))
-            speechToTextConfigurationViewModel.onEvent(SetUseSpeechToTextMqttSilenceDetection(isUseSpeechToTextMqttSilenceDetection))
+        with(asrConfigurationData) {
+            asrConfigurationViewModel.onEvent(SelectAsrOption(asrDomainOption))
+            asrConfigurationViewModel.onEvent(SetUseAsrMqttSilenceDetection(isUseSpeechToTextMqttSilenceDetection))
         }
 
-        assertEquals(speechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
+        assertEquals(asrConfigurationData, asrConfigurationViewModel.viewState.value.editData)
 
-        speechToTextConfigurationViewModel.onEvent(Discard)
+        asrConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(initialSpeechToTextConfigurationData, speechToTextConfigurationViewModel.viewState.value.editData)
-        assertEquals(initialSpeechToTextConfigurationData, SpeechToTextConfigurationData())
+        assertEquals(initialAsrConfigurationData, asrConfigurationViewModel.viewState.value.editData)
+        assertEquals(initialAsrConfigurationData, AsrConfigurationData())
     }
 }

@@ -1,12 +1,12 @@
 package org.rhasspy.mobile.viewmodel.configuration.vad
 
-import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
+import org.rhasspy.mobile.data.service.option.VadDomainOption
 
 sealed interface VadDomainUiEvent {
 
     sealed interface Change : VadDomainUiEvent {
 
-        data class SelectVadDomainOption(val option: VoiceActivityDetectionOption) : Change
+        data class SelectVadDomainOption(val option: VadDomainOption) : Change
 
     }
 

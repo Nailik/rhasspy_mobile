@@ -267,6 +267,8 @@
     <string name="startRecordAudio">Start Record Audio</string>
     <string name="stopRecordAudio">Stop Record Audio</string>
     <string name="useMqttSilenceDetection">Use Mqtt Silence Detection</string>
+    <string name="asrVoiceTimeout">Voice Timeout (s)</string>
+    <string name="mqttResultTimeout">Mqtt Result Timeout (s)</string>
     <string name="textToSpeechText">Text To Speech</string>
     <string name="executeTextToSpeechText">Transcribe Text to Speech</string>
     <string name="textIntentRecognitionText">Text To Recognize Intent</string>

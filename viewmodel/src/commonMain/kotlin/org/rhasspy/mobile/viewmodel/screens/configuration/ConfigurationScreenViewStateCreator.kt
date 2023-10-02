@@ -2,7 +2,6 @@ package org.rhasspy.mobile.viewmodel.screens.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.data.service.ConnectionState
-import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
@@ -44,6 +43,7 @@ class ConfigurationScreenViewStateCreator(
             ConfigurationSetting.pipelineData.data,
             ConfigurationSetting.wakeDomainData.data,
             ConfigurationSetting.asrDomainData.data,
+            ConfigurationSetting.vadDomainData.data,
             ConfigurationSetting.intentDomainData.data,
             ConfigurationSetting.ttsDomainData.data,
             ConfigurationSetting.sndDomainData.data,
@@ -64,32 +64,32 @@ class ConfigurationScreenViewStateCreator(
                 hasError = hasConnectionError.value,
             ),
             pipelineItemViewState = PipelineItemViewState(
-                dialogManagementOption = ConfigurationSetting.pipelineData.value.option,
+                pipelineManagerOption = ConfigurationSetting.pipelineData.value.option,
             ),
             micDomainItemViewState = MicDomainItemViewState(
                 errorStateFlow = pipelineManager.micDomainStateFlow.mapReadonlyState { it.asDomainState() },
             ),
             wakeDomainItemViewState = WakeDomainItemViewState(
-                wakeWordValueOption = ConfigurationSetting.wakeDomainData.value.wakeWordOption,
+                wakeWordValueOption = ConfigurationSetting.wakeDomainData.value.wakeDomainOption,
                 errorStateFlow = pipelineManager.wakeDomainStateFlow,
             ),
             asrDomainItemViewState = AsrDomainItemViewState(
-                speechToTextOption = ConfigurationSetting.asrDomainData.value.option,
+                asrDomainOption = ConfigurationSetting.asrDomainData.value.option,
             ),
             vadDomainItemViewState = VadDomainItemViewState(
-                voiceActivityDetectionOption = VoiceActivityDetectionOption.Disabled,
+                vadDomainOption = ConfigurationSetting.vadDomainData.value.option,
             ),
             intentDomainItemViewState = IntentDomainItemViewState(
-                intentRecognitionOption = ConfigurationSetting.intentDomainData.value.option,
+                intentDomainOption = ConfigurationSetting.intentDomainData.value.option,
             ),
             handleDomainItemViewState = HandleDomainItemViewState(
-                intentHandlingOption = ConfigurationSetting.handleDomainData.value.option,
+                handleDomainOption = ConfigurationSetting.handleDomainData.value.option,
             ),
             ttsDomainItemViewState = TtsDomainItemViewState(
-                textToSpeechOption = ConfigurationSetting.ttsDomainData.value.option,
+                ttsDomainOption = ConfigurationSetting.ttsDomainData.value.option,
             ),
             sndDomainItemViewState = SndDomainItemViewState(
-                audioPlayingOption = ConfigurationSetting.sndDomainData.value.option,
+                sndDomainOption = ConfigurationSetting.sndDomainData.value.option,
             ),
         )
     }

@@ -32,7 +32,7 @@ class IntentHandlingConfigurationViewModel(
             it.copy(editData = with(it.editData) {
                 when (change) {
                     is SelectIntentHandlingHomeAssistantOption -> copy(intentHandlingHomeAssistantOption = change.option)
-                    is SelectIntentHandlingOption              -> copy(intentHandlingOption = change.option)
+                    is SelectIntentHandlingOption              -> copy(handleDomainOption = change.option)
                 }
             })
         }

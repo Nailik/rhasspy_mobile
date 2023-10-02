@@ -4,14 +4,14 @@ import okio.Path
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
-import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.data.service.option.WakeDomainOption
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination
 
 sealed interface WakeWordConfigurationUiEvent {
 
     sealed interface Change : WakeWordConfigurationUiEvent {
 
-        data class SelectWakeWordOption(val option: WakeWordOption) : Change
+        data class SelectWakeWordOption(val option: WakeDomainOption) : Change
 
     }
 

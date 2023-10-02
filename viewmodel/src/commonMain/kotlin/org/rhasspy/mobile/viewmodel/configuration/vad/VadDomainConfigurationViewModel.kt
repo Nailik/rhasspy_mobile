@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.data.toLongOrZero
-import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption.Local
+import org.rhasspy.mobile.data.service.option.VadDomainOption.Local
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
@@ -64,7 +64,7 @@ class VadDomainConfigurationViewModel(
                         if (audioRecorder.isRecording.value && change.option != Local) {
                             stopRecording()
                         }
-                        copy(voiceActivityDetectionOption = change.option)
+                        copy(vadDomainOption = change.option)
                     }
                 }
             })

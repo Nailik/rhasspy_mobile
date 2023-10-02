@@ -185,7 +185,7 @@ private fun PipelineItem(
             .clickable { onEvent(Navigate(DialogManagementConfigurationScreen)) }
             .testTag(DialogManagementConfigurationScreen),
         text = { Text(MR.strings.dialog_pipeline.stable) },
-        secondaryText = { Text(viewState.dialogManagementOption.text) },
+        secondaryText = { Text(viewState.pipelineManagerOption.text) },
     )
 
 }
@@ -247,7 +247,7 @@ private fun AsrDomainItem(
             .clickable { onEvent(Navigate(SpeechToTextConfigurationScreen)) }
             .testTag(SpeechToTextConfigurationScreen),
         text = { Text(MR.strings.speechToText.stable) },
-        secondaryText = { Text(viewState.speechToTextOption.text) },
+        secondaryText = { Text(viewState.asrDomainOption.text) },
     )
 
 }
@@ -267,7 +267,7 @@ private fun VadDomainItem(
             .clickable { onEvent(Navigate(VoiceActivityDetectionConfigurationScreen)) }
             .testTag(VoiceActivityDetectionConfigurationScreen),
         text = { Text(MR.strings.voice_activity_detection.stable) },
-        secondaryText = { Text(viewState.voiceActivityDetectionOption.text) },
+        secondaryText = { Text(viewState.vadDomainOption.text) },
     )
 
 }
@@ -288,7 +288,7 @@ private fun IntentDomainItem(
             .clickable { onEvent(Navigate(IntentRecognitionConfigurationScreen)) }
             .testTag(IntentRecognitionConfigurationScreen),
         text = { Text(MR.strings.intentRecognition.stable) },
-        secondaryText = { Text(viewState.intentRecognitionOption.text) },
+        secondaryText = { Text(viewState.intentDomainOption.text) },
     )
 
 }
@@ -308,7 +308,7 @@ private fun TtsDomainItem(
             .clickable { onEvent(Navigate(TextToSpeechConfigurationScreen)) }
             .testTag(TextToSpeechConfigurationScreen),
         text = { Text(MR.strings.textToSpeech.stable) },
-        secondaryText = { Text(viewState.textToSpeechOption.text) },
+        secondaryText = { Text(viewState.ttsDomainOption.text) },
     )
 
 }
@@ -328,7 +328,7 @@ private fun SndDomainItem(
             .clickable { onEvent(Navigate(AudioPlayingConfigurationScreen)) }
             .testTag(AudioPlayingConfigurationScreen),
         text = { Text(MR.strings.audioPlaying.stable) },
-        secondaryText = { Text(viewState.audioPlayingOption.text) },
+        secondaryText = { Text(viewState.sndDomainOption.text) },
     )
 
 }
@@ -348,7 +348,7 @@ private fun HandleDomainItem(
             .clickable { onEvent(Navigate(IntentHandlingConfigurationScreen)) }
             .testTag(IntentHandlingConfigurationScreen),
         text = { Text(MR.strings.intentHandling.stable) },
-        secondaryText = { Text(viewState.intentHandlingOption.text) },
+        secondaryText = { Text(viewState.handleDomainOption.text) },
     )
 
 }

@@ -11,16 +11,16 @@ import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
-import org.rhasspy.mobile.data.service.option.SpeechToTextOption
+import org.rhasspy.mobile.data.service.option.AsrDomainOption
 import org.rhasspy.mobile.ui.configuration.audioinput.SpeechToTextConfigurationScreen
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationUiEvent.Change.SelectAsrOption
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import kotlin.test.assertEquals
 
 class SpeechToTextConfigurationContentTest : FlakyTest() {
 
-    private val viewModel = get<SpeechToTextConfigurationViewModel>()
+    private val viewModel = get<AsrConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
@@ -40,28 +40,28 @@ class SpeechToTextConfigurationContentTest : FlakyTest() {
     fun testEndpoint() = runTest {
         setupContent()
 
-        viewModel.onEvent(SelectSpeechToTextOption(SpeechToTextOption.Disabled))
+        viewModel.onEvent(SelectAsrOption(AsrDomainOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
         //option disable is set
-        composeTestRule.onNodeWithTag(SpeechToTextOption.Disabled, true).onListItemRadioButton()
+        composeTestRule.onNodeWithTag(AsrDomainOption.Disabled, true).onListItemRadioButton()
             .assertIsSelected()
 
         //User clicks option remote http
-        composeTestRule.onNodeWithTag(SpeechToTextOption.Rhasspy2HermesHttp).performClick()
+        composeTestRule.onNodeWithTag(AsrDomainOption.Rhasspy2HermesHttp).performClick()
         //new option is selected
         composeTestRule.awaitIdle()
         assertEquals(
-            SpeechToTextOption.Rhasspy2HermesHttp,
-            viewModel.viewState.value.editData.speechToTextOption
+            AsrDomainOption.Rhasspy2HermesHttp,
+            viewModel.viewState.value.editData.asrDomainOption
         )
 
         //User clicks save
         composeTestRule.saveBottomAppBar()
-        SpeechToTextConfigurationViewModel(get()).viewState.value.editData.also {
+        AsrConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
-            assertEquals(SpeechToTextOption.Rhasspy2HermesHttp, it.speechToTextOption)
+            assertEquals(AsrDomainOption.Rhasspy2HermesHttp, it.asrDomainOption)
         }
     }
 

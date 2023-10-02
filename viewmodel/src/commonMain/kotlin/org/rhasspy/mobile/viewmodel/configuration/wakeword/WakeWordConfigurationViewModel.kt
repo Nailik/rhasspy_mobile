@@ -54,7 +54,7 @@ class WakeWordConfigurationViewModel(
     private fun onChange(change: Change) {
         _viewState.update {
             when (change) {
-                is SelectWakeWordOption -> it.copy(editData = with(it.editData) { copy(wakeWordOption = change.option) })
+                is SelectWakeWordOption -> it.copy(editData = with(it.editData) { copy(wakeDomainOption = change.option) })
             }
         }
         ConfigurationSetting.wakeDomainData.value = mapper(_viewState.value.editData)

@@ -261,6 +261,8 @@
     <string name="startRecordAudio">Audioaufnahme starten</string>
     <string name="stopRecordAudio">Audioaufnahme stoppen</string>
     <string name="useMqttSilenceDetection">Nutze MQTT-Stille-Erkennung</string>
+    <string name="asrVoiceTimeout">Sprachzeitlimit (s)</string>
+    <string name="mqttResultTimeout">Mqtt-Ergebnis-Zeitlimit (s)</string>
     <string name="textToSpeechText">Text-zu-Sprache</string>
     <string name="executeTextToSpeechText">Text in Sprache übersetzten</string>
     <string name="textIntentRecognitionText">Text zur Erkennung des Intent</string>

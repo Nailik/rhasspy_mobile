@@ -8,7 +8,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.IntentDomainData
-import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
+import org.rhasspy.mobile.data.service.option.IntentDomainOption
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.EndSession
@@ -63,19 +63,19 @@ internal class IntentDomain(
         indication.onThinking()
 
         return when (params.option) {
-            IntentRecognitionOption.Rhasspy2HermesHttp ->
+            IntentDomainOption.Rhasspy2HermesHttp ->
                 awaitRhasspy2HermesHttpIntent(
                     sessionId = sessionId,
                     transcript = transcript,
                 )
 
-            IntentRecognitionOption.Rhasspy2HermesMQTT ->
+            IntentDomainOption.Rhasspy2HermesMQTT ->
                 awaitRhasspy2HermesMQTTIntent(
                     sessionId = sessionId,
                     transcript = transcript,
                 )
 
-            IntentRecognitionOption.Disabled           ->
+            IntentDomainOption.Disabled           ->
                 IntentDisabled
         }
     }

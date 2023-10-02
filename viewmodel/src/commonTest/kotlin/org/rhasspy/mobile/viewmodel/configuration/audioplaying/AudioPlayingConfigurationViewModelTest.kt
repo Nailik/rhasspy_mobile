@@ -5,15 +5,15 @@ import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
-import org.rhasspy.mobile.data.service.option.AudioPlayingOption
+import org.rhasspy.mobile.data.service.option.SndDomainOption
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.getRandomString
-import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Discard
-import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewState.AudioPlayingConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Discard
+import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -43,13 +43,13 @@ class AudioPlayingConfigurationViewModelTest : AppTest() {
         )
 
         initialAudioPlayingConfigurationData = AudioPlayingConfigurationData(
-            audioPlayingOption = AudioPlayingOption.Local,
+            sndDomainOption = SndDomainOption.Local,
             audioOutputOption = AudioOutputOption.Sound,
             audioPlayingMqttSiteId = ""
         )
 
         audioPlayingConfigurationData = AudioPlayingConfigurationData(
-            audioPlayingOption = AudioPlayingOption.Rhasspy2HermesMQTT,
+            sndDomainOption = SndDomainOption.Rhasspy2HermesMQTT,
             audioOutputOption = AudioOutputOption.Notification,
             audioPlayingMqttSiteId = getRandomString(5)
         )
@@ -62,7 +62,7 @@ class AudioPlayingConfigurationViewModelTest : AppTest() {
         assertEquals(initialAudioPlayingConfigurationData, audioPlayingConfigurationViewModel.viewState.value.editData)
 
         with(audioPlayingConfigurationData) {
-            audioPlayingConfigurationViewModel.onEvent(SelectEditAudioPlayingOption(audioPlayingOption))
+            audioPlayingConfigurationViewModel.onEvent(SelectEditAudioPlayingOption(sndDomainOption))
             audioPlayingConfigurationViewModel.onEvent(SelectAudioOutputOption(audioOutputOption))
             audioPlayingConfigurationViewModel.onEvent(ChangeEditAudioPlayingMqttSiteId(audioPlayingMqttSiteId))
         }
@@ -80,7 +80,7 @@ class AudioPlayingConfigurationViewModelTest : AppTest() {
         assertEquals(initialAudioPlayingConfigurationData, audioPlayingConfigurationViewModel.viewState.value.editData)
 
         with(audioPlayingConfigurationData) {
-            audioPlayingConfigurationViewModel.onEvent(SelectEditAudioPlayingOption(audioPlayingOption))
+            audioPlayingConfigurationViewModel.onEvent(SelectEditAudioPlayingOption(sndDomainOption))
             audioPlayingConfigurationViewModel.onEvent(SelectAudioOutputOption(audioOutputOption))
             audioPlayingConfigurationViewModel.onEvent(ChangeEditAudioPlayingMqttSiteId(audioPlayingMqttSiteId))
         }

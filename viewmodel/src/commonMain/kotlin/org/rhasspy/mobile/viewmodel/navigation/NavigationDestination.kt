@@ -5,6 +5,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewModel
@@ -18,7 +19,6 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
@@ -91,7 +91,7 @@ sealed class NavigationDestination : KoinComponent {
         }
 
         data object SpeechToTextConfigurationScreen : ConfigurationScreenNavigationDestination() {
-            override val viewModel get() = get<SpeechToTextConfigurationViewModel> { parametersOf(this) }
+            override val viewModel get() = get<AsrConfigurationViewModel> { parametersOf(this) }
         }
 
         data object VoiceActivityDetectionConfigurationScreen : ConfigurationScreenNavigationDestination() {

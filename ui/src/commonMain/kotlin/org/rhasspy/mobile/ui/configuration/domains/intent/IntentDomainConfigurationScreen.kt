@@ -77,9 +77,9 @@ private fun IntentRecognitionOptionContent(
 
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.IntentRecognitionOptions),
-        selected = editData.intentRecognitionOption,
+        selected = editData.intentDomainOption,
         onSelect = { onEvent(SelectIntentRecognitionOption(it)) },
-        values = editData.intentRecognitionOptionList
+        values = editData.intentDomainOptionLists
     )
 
 }

@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.data.service.option.VoiceActivityDetectionOption
+import org.rhasspy.mobile.data.service.option.VadDomainOption
 import org.rhasspy.mobile.platformspecific.roundToDecimals
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
@@ -81,20 +81,20 @@ private fun VoiceActivityDetectionOptionContent(
 
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.WakeWordOptions),
-        selected = viewState.editData.voiceActivityDetectionOption,
+        selected = viewState.editData.vadDomainOption,
         onSelect = { onEvent(SelectVadDomainOption(it)) },
-        values = viewState.editData.voiceActivityDetectionOptions
+        values = viewState.editData.vadDomainOptions
     ) { option ->
 
         when (option) {
-            VoiceActivityDetectionOption.Local ->
+            VadDomainOption.Local    ->
                 SilenceDetectionSettingsContent(
                     editData = viewState.editData.localSilenceDetectionSetting,
                     audioRecorderViewState = audioRecorderViewState,
                     onEvent = onEvent
                 )
 
-            VoiceActivityDetectionOption.Disabled -> Unit
+            VadDomainOption.Disabled -> Unit
         }
 
     }

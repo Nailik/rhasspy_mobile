@@ -11,7 +11,7 @@ class WakeWordConfigurationDataMapper {
 
     operator fun invoke(data: WakeDomainData): WakeWordConfigurationData {
         return WakeWordConfigurationData(
-            wakeWordOption = data.wakeWordOption,
+            wakeDomainOption = data.wakeDomainOption,
             wakeWordPorcupineConfigurationData = WakeWordPorcupineConfigurationData(
                 accessToken = data.wakeWordPorcupineAccessToken,
                 porcupineLanguage = data.wakeWordPorcupineLanguage,
@@ -27,7 +27,7 @@ class WakeWordConfigurationDataMapper {
 
     operator fun invoke(data: WakeWordConfigurationData): WakeDomainData {
         return WakeDomainData(
-            wakeWordOption = data.wakeWordOption,
+            wakeDomainOption = data.wakeDomainOption,
             wakeWordPorcupineAccessToken = data.wakeWordPorcupineConfigurationData.accessToken,
             wakeWordPorcupineLanguage = data.wakeWordPorcupineConfigurationData.porcupineLanguage,
             wakeWordPorcupineKeywordDefaultOptions = data.wakeWordPorcupineConfigurationData.defaultOptions,

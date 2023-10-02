@@ -11,7 +11,7 @@ import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
-import org.rhasspy.mobile.data.service.option.DialogManagementOption
+import org.rhasspy.mobile.data.service.option.PipelineManagerOption
 import org.rhasspy.mobile.ui.configuration.DialogManagementConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
@@ -40,25 +40,25 @@ class DialogManagementConfigurationContentTest : FlakyTest() {
     fun testEndpoint() = runTest {
         setupContent()
 
-        viewModel.onEvent(SelectDialogManagementOption(DialogManagementOption.Disabled))
+        viewModel.onEvent(SelectDialogManagementOption(PipelineManagerOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
         //option disable is set
-        composeTestRule.onNodeWithTag(DialogManagementOption.Disabled, true).onListItemRadioButton()
+        composeTestRule.onNodeWithTag(PipelineManagerOption.Disabled, true).onListItemRadioButton()
             .assertIsSelected()
         //User clicks option local
-        composeTestRule.onNodeWithTag(DialogManagementOption.Local).performClick()
+        composeTestRule.onNodeWithTag(PipelineManagerOption.Local).performClick()
         composeTestRule.awaitIdle()
         //new option is selected
-        composeTestRule.onNodeWithTag(DialogManagementOption.Local, true).onListItemRadioButton()
+        composeTestRule.onNodeWithTag(PipelineManagerOption.Local, true).onListItemRadioButton()
             .assertIsSelected()
 
         //User clicks save
         composeTestRule.saveBottomAppBar()
         DialogManagementConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to local
-            assertEquals(DialogManagementOption.Local, it.dialogManagementOption)
+            assertEquals(PipelineManagerOption.Local, it.pipelineManagerOption)
         }
     }
 

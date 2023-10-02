@@ -7,13 +7,13 @@ class DialogManagementConfigurationDataMapper {
 
     operator fun invoke(data: PipelineData): DialogManagementConfigurationData {
         return DialogManagementConfigurationData(
-            dialogManagementOption = data.option,
+            pipelineManagerOption = data.option,
         )
     }
 
     operator fun invoke(data: DialogManagementConfigurationData): PipelineData {
         return PipelineData(
-            option = data.dialogManagementOption,
+            option = data.pipelineManagerOption,
         )
     }
 

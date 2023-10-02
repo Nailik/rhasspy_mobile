@@ -4,8 +4,8 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.HandleDomainData
+import org.rhasspy.mobile.data.service.option.HandleDomainOption
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
-import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
@@ -56,8 +56,8 @@ internal class HandleDomain(
         indication.onThinking()
 
         return when (params.option) {
-            IntentHandlingOption.HomeAssistant -> awaitHomeAssistantHandle(sessionId, intent)
-            IntentHandlingOption.Disabled      -> HandleDisabled
+            HandleDomainOption.HomeAssistant -> awaitHomeAssistantHandle(sessionId, intent)
+            HandleDomainOption.Disabled      -> HandleDisabled
         }
     }
 

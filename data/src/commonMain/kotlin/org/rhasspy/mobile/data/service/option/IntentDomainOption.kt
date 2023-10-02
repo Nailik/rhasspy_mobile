@@ -6,9 +6,9 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 
 @Serializable
-enum class DialogManagementOption(override val text: StableStringResource) : IOption {
+enum class IntentDomainOption(override val text: StableStringResource) : IOption {
 
-    Local(MR.strings.local.stable),
+    Rhasspy2HermesHttp(MR.strings.rhasspy2hermes_http.stable),
     Rhasspy2HermesMQTT(MR.strings.rhasspy2hermes_mqtt.stable),
     Disabled(MR.strings.disabled.stable);
 

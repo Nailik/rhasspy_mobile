@@ -6,9 +6,9 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 
 @Serializable
-enum class TextToSpeechOption(override val text: StableStringResource) : IOption {
+enum class PipelineManagerOption(override val text: StableStringResource) : IOption {
 
-    Rhasspy2HermesHttp(MR.strings.rhasspy2hermes_http.stable),
+    Local(MR.strings.local.stable),
     Rhasspy2HermesMQTT(MR.strings.rhasspy2hermes_mqtt.stable),
     Disabled(MR.strings.disabled.stable);
 

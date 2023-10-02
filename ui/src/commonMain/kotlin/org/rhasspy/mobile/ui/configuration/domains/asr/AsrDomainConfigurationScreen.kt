@@ -1,29 +1,30 @@
 package org.rhasspy.mobile.ui.configuration.domains.asr
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.data.service.option.SpeechToTextOption
+import org.rhasspy.mobile.data.service.option.AsrDomainOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
-import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
+import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SetUseSpeechToTextMqttSilenceDetection
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationViewState.AsrConfigurationData
 
 /**
  * Content to configure speech to text
@@ -31,45 +32,39 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
  * HTTP Endpoint
  */
 @Composable
-fun SpeechToTextConfigurationScreen(viewModel: SpeechToTextConfigurationViewModel) {
+fun SpeechToTextConfigurationScreen(viewModel: AsrConfigurationViewModel) {
 
     ScreenContent(
-        screenViewModel = viewModel
+        title = MR.strings.speechToText.stable,
+        viewModel = viewModel,
+        tonalElevation = TonalElevationLevel1,
     ) {
-        SettingsScreenItemContent(
-            title = MR.strings.speechToText.stable,
-            onBackClick = { viewModel.onEvent(BackClick) }
-        ) {
+        val viewState by viewModel.viewState.collectAsState()
 
-            val viewState by viewModel.viewState.collectAsState()
+        SpeechToTextOptionEditContent(
+            editData = viewState.editData,
+            onEvent = viewModel::onEvent
+        )
 
-            SpeechToTextOptionEditContent(
-                editData = viewState.editData,
-                onEvent = viewModel::onEvent
-            )
-
-        }
     }
 
 }
 
 @Composable
 private fun SpeechToTextOptionEditContent(
-    editData: SpeechToTextConfigurationData,
-    onEvent: (SpeechToTextConfigurationUiEvent) -> Unit
+    editData: AsrConfigurationData,
+    onEvent: (AsrConfigurationUiEvent) -> Unit
 ) {
 
-    LazyColumn(
+    Column(
         modifier = Modifier
-            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
 
-        item {
-            SpeechToTextOption(
-                editData = editData,
-                onEvent = onEvent
-            )
-        }
+        SpeechToTextOption(
+            editData = editData,
+            onEvent = onEvent
+        )
 
     }
 
@@ -78,21 +73,26 @@ private fun SpeechToTextOptionEditContent(
 
 @Composable
 private fun SpeechToTextOption(
-    editData: SpeechToTextConfigurationData,
-    onEvent: (SpeechToTextConfigurationUiEvent) -> Unit
+    editData: AsrConfigurationData,
+    onEvent: (AsrConfigurationUiEvent) -> Unit
 ) {
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.SpeechToTextOptions),
-        selected = editData.speechToTextOption,
-        onSelect = { onEvent(SelectSpeechToTextOption(it)) },
-        values = editData.speechToTextOptions
+        selected = editData.asrDomainOption,
+        onSelect = { onEvent(SelectAsrOption(it)) },
+        values = editData.asrDomainOptions
     ) {
 
         when (it) {
-            SpeechToTextOption.Rhasspy2HermesHttp -> Unit
+            AsrDomainOption.Rhasspy2HermesHttp ->
+                SpeechToTextRhasspy2HermesHttp(
+                    editData = editData,
+                    onEvent = onEvent,
+                )
 
-            SpeechToTextOption.Rhasspy2HermesMQTT -> SpeechToTextMqtt(
-                isUseSpeechToTextMqttSilenceDetection = editData.isUseSpeechToTextMqttSilenceDetection,
+            AsrDomainOption.Rhasspy2HermesMQTT ->
+                SpeechToTextRhasspy2HermesMQTT(
+                    editData = editData,
                 onEvent = onEvent,
             )
 
@@ -102,24 +102,59 @@ private fun SpeechToTextOption(
     }
 }
 
+@Composable
+private fun SpeechToTextRhasspy2HermesHttp(
+    editData: AsrConfigurationData,
+    onEvent: (AsrConfigurationUiEvent) -> Unit
+) {
+
+    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
+
+        TextFieldListItem(
+            label = MR.strings.asrVoiceTimeout.stable,
+            modifier = Modifier,
+            value = editData.voiceTimeoutText,
+            onValueChange = { onEvent(UpdateVoiceTimeout(it)) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+
+    }
+
+}
 
 /**
  * mqtt silence detection settings
  */
 @Composable
-private fun SpeechToTextMqtt(
-    isUseSpeechToTextMqttSilenceDetection: Boolean,
-    onEvent: (SpeechToTextConfigurationUiEvent) -> Unit
+private fun SpeechToTextRhasspy2HermesMQTT(
+    editData: AsrConfigurationData,
+    onEvent: (AsrConfigurationUiEvent) -> Unit
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
+
+        TextFieldListItem(
+            label = MR.strings.asrVoiceTimeout.stable,
+            modifier = Modifier,
+            value = editData.voiceTimeoutText,
+            onValueChange = { onEvent(UpdateVoiceTimeout(it)) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+
+        TextFieldListItem(
+            label = MR.strings.mqttResultTimeout.stable,
+            modifier = Modifier,
+            value = editData.mqttResultTimeoutText,
+            onValueChange = { onEvent(UpdateMqttResultTimeout(it)) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
 
         //switch to use silence detection
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.MqttSilenceDetectionSwitch),
             text = MR.strings.useMqttSilenceDetection.stable,
-            isChecked = isUseSpeechToTextMqttSilenceDetection,
-            onCheckedChange = { onEvent(SetUseSpeechToTextMqttSilenceDetection(it)) }
+            isChecked = editData.isUseSpeechToTextMqttSilenceDetection,
+            onCheckedChange = { onEvent(SetUseAsrMqttSilenceDetection(it)) }
         )
 
     }

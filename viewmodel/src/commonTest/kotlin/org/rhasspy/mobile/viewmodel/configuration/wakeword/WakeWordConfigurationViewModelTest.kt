@@ -10,7 +10,7 @@ import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineKeywordOption
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
-import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.data.service.option.WakeDomainOption
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.getRandomString
@@ -45,7 +45,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
         initialWakeWordConfigurationData = WakeWordConfigurationData()
 
         wakeWordConfigurationData = WakeWordConfigurationData(
-            wakeWordOption = WakeWordOption.Rhasspy2HermesMQTT,
+            wakeDomainOption = WakeDomainOption.Rhasspy2HermesMQTT,
             wakeWordPorcupineConfigurationData = WakeWordPorcupineConfigurationData(
                 accessToken = getRandomString(5),
                 porcupineLanguage = PorcupineLanguageOption.DE,
@@ -74,7 +74,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
         assertEquals(initialWakeWordConfigurationData, wakeWordConfigurationViewModel.viewState.value.editData)
 
         with(wakeWordConfigurationData) {
-            wakeWordConfigurationViewModel.onEvent(SelectWakeWordOption(wakeWordOption))
+            wakeWordConfigurationViewModel.onEvent(SelectWakeWordOption(wakeDomainOption))
 
             with(wakeWordPorcupineConfigurationData) {
                 wakeWordConfigurationViewModel.onEvent(UpdateWakeWordPorcupineAccessToken(accessToken))
@@ -159,7 +159,7 @@ class WakeWordConfigurationViewModelTest : AppTest() {
         assertEquals(initialWakeWordConfigurationData, wakeWordConfigurationViewModel.viewState.value.editData)
 
         with(wakeWordConfigurationData) {
-            wakeWordConfigurationViewModel.onEvent(SelectWakeWordOption(wakeWordOption))
+            wakeWordConfigurationViewModel.onEvent(SelectWakeWordOption(wakeDomainOption))
 
             with(wakeWordPorcupineConfigurationData) {
                 wakeWordConfigurationViewModel.onEvent(UpdateWakeWordPorcupineAccessToken(accessToken))

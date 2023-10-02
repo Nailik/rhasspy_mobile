@@ -2,7 +2,7 @@ package org.rhasspy.mobile.viewmodel.configuration.dialogmanagement
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.toImmutableList
-import org.rhasspy.mobile.data.service.option.DialogManagementOption
+import org.rhasspy.mobile.data.service.option.PipelineManagerOption
 
 @Stable
 data class DialogManagementConfigurationViewState internal constructor(
@@ -11,10 +11,10 @@ data class DialogManagementConfigurationViewState internal constructor(
 
     @Stable
     data class DialogManagementConfigurationData internal constructor(
-        val dialogManagementOption: DialogManagementOption,
+        val pipelineManagerOption: PipelineManagerOption,
     ) {
 
-        val dialogManagementOptionList = DialogManagementOption.entries.toImmutableList()
+        val pipelineManagerOptionList = PipelineManagerOption.entries.toImmutableList()
 
     }
 

@@ -12,8 +12,8 @@ import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
+import org.rhasspy.mobile.data.service.option.HandleDomainOption
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
-import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.domains.IntentHandlingConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
@@ -52,21 +52,21 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
     fun testHomeAssistant() = runTest {
         setupContent()
 
-        viewModel.onEvent(SelectIntentHandlingOption(IntentHandlingOption.Disabled))
+        viewModel.onEvent(SelectIntentHandlingOption(HandleDomainOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
         //option disable is set
-        composeTestRule.onNodeWithTag(IntentHandlingOption.Disabled, true).onListItemRadioButton()
+        composeTestRule.onNodeWithTag(HandleDomainOption.Disabled, true).onListItemRadioButton()
             .assertIsSelected()
 
         //User clicks option HomeAssistant
-        composeTestRule.onNodeWithTag(IntentHandlingOption.HomeAssistant).performClick()
+        composeTestRule.onNodeWithTag(HandleDomainOption.HomeAssistant).performClick()
         //new option is selected
         composeTestRule.awaitIdle()
         assertEquals(
-            IntentHandlingOption.HomeAssistant,
-            viewModel.viewState.value.editData.intentHandlingOption
+            HandleDomainOption.HomeAssistant,
+            viewModel.viewState.value.editData.handleDomainOption
         )
 
         //send events visible
@@ -88,7 +88,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
         composeTestRule.awaitIdle()
         IntentHandlingConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to HomeAssistant
-            assertEquals(IntentHandlingOption.HomeAssistant, it.intentHandlingOption)
+            assertEquals(HandleDomainOption.HomeAssistant, it.handleDomainOption)
             //send events is saved
             assertEquals(
                 HomeAssistantIntentHandlingOption.Event,
