@@ -91,7 +91,7 @@ private fun ColumnScope.HttpConnectionDetailContent(
         TextFieldListItem(
             label = MR.strings.requestTimeout.stable,
             modifier = Modifier.testTag(TestTag.Timeout),
-            value = editData.timeoutText,
+            value = editData.timeout,
             onValueChange = { onEvent(UpdateRhasspy3WyomingTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )

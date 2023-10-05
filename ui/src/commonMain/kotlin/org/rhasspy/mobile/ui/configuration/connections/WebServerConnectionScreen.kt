@@ -101,7 +101,7 @@ private fun ColumnScope.WebServerConnectionEditContent(
                 TextFieldListItem(
                     label = MR.strings.port.stable,
                     modifier = Modifier.testTag(TestTag.Port),
-                    value = editData.portText,
+                    value = editData.port,
                     isLastItem = true,
                     onValueChange = { onEvent(UpdateHttpServerPort(it)) },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)

@@ -80,8 +80,8 @@ class WakeDomainConfigurationViewModel(
                     when (change) {
                         is UpdateWakeDomainPorcupineAccessToken               -> copy(accessToken = change.value)
                         is ClickPorcupineKeywordCustom                        -> copy(customOptions = customOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
-                        is ClickPorcupineKeywordDefault                     -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
-                        is DeletePorcupineKeywordCustom                     -> {
+                        is ClickPorcupineKeywordDefault                       -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
+                        is DeletePorcupineKeywordCustom                       -> {
                             Path.commonInternalFilePath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
                             copy(customOptions = customOptions.updateList { remove(change.item) })
                         }

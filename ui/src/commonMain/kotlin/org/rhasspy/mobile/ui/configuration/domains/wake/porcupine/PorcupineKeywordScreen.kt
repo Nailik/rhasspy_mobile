@@ -5,9 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -17,13 +18,13 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.ScreenContent
-import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel2
 import org.rhasspy.mobile.ui.theme.horizontalAnimationSpec
-import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Action.PageClick
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Action.PorcupineLanguageClick
 import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewModel
 
 /**
@@ -39,7 +40,9 @@ fun PorcupineKeywordScreen(viewModel: WakeDomainConfigurationViewModel) {
     val editData = viewState.editData.wakeWordPorcupineConfigurationData
 
     ScreenContent(
-        screenViewModel = viewModel
+        title = MR.strings.porcupineKeyword.stable,
+        viewModel = viewModel,
+        tonalElevation = TonalElevationLevel2,
     ) {
 
         Surface(tonalElevation = 3.dp) {
@@ -47,17 +50,14 @@ fun PorcupineKeywordScreen(viewModel: WakeDomainConfigurationViewModel) {
                 modifier = Modifier
                     .fillMaxSize(),
                 topBar = {
-                    Column {
-                        AppBar(viewModel::onEvent)
-                        //opens page for porcupine language selection
-                        ListElement(
-                            modifier = Modifier
-                                .testTag(TestTag.PorcupineLanguage)
-                                .clickable { viewModel.onEvent(PorcupineLanguageClick) },
-                            text = { Text(MR.strings.language.stable) },
-                            secondaryText = { Text(editData.porcupineLanguage.text) }
-                        )
-                    }
+                    //opens page for porcupine language selection
+                    ListElement(
+                        modifier = Modifier
+                            .testTag(TestTag.PorcupineLanguage)
+                            .clickable { viewModel.onEvent(PorcupineLanguageClick) },
+                        text = { Text(MR.strings.language.stable) },
+                        secondaryText = { Text(editData.porcupineLanguage.text) }
+                    )
                 },
                 bottomBar = {
                     Surface(tonalElevation = 3.dp) {
@@ -101,31 +101,6 @@ fun PorcupineKeywordScreen(viewModel: WakeDomainConfigurationViewModel) {
         }
 
     }
-
-}
-
-
-/**
- * app bar for title and back button
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun AppBar(onEvent: (PorcupineUiEvent) -> Unit) {
-
-    TopAppBar(
-        title = { Text(MR.strings.porcupineKeyword.stable) },
-        navigationIcon = {
-            IconButton(
-                onClick = { onEvent(BackClick) },
-                modifier = Modifier.testTag(TestTag.AppBarBackButton)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = MR.strings.back.stable
-                )
-            }
-        }
-    )
 
 }
 

@@ -114,9 +114,9 @@ private fun ColumnScope.MqttConnectionEditContent(
                 )
 
                 MqttConnectionTiming(
-                    mqttConnectionTimeoutText = editData.connectionTimeoutText,
-                    mqttKeepAliveIntervalText = editData.keepAliveIntervalText,
-                    mqttRetryIntervalText = editData.retryIntervalText,
+                    mqttConnectionTimeoutText = editData.connectionTimeout,
+                    mqttKeepAliveIntervalText = editData.keepAliveInterval,
+                    mqttRetryIntervalText = editData.retryInterval,
                     onEvent = onEvent
                 )
 

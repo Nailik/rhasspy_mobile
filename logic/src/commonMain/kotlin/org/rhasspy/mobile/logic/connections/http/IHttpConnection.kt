@@ -54,7 +54,7 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
             expectSuccess = true
             install(WebSockets)
             install(HttpTimeout) {
-                requestTimeoutMillis = params.timeout
+                requestTimeoutMillis = params.timeout.inWholeMilliseconds
             }
             engine {
                 configureEngine(params.isSSLVerificationDisabled)
