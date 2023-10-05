@@ -14,13 +14,13 @@ import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.PipelineManagerOption
 import org.rhasspy.mobile.ui.configuration.DialogManagementConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.PipelineConfigurationUiEvent.Change.SelectPipelineOption
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.PipelineConfigurationViewModel
 import kotlin.test.assertEquals
 
 class DialogManagementConfigurationContentTest : FlakyTest() {
 
-    private val viewModel = get<DialogManagementConfigurationViewModel>()
+    private val viewModel = get<PipelineConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
@@ -40,7 +40,7 @@ class DialogManagementConfigurationContentTest : FlakyTest() {
     fun testEndpoint() = runTest {
         setupContent()
 
-        viewModel.onEvent(SelectDialogManagementOption(PipelineManagerOption.Disabled))
+        viewModel.onEvent(SelectPipelineOption(PipelineManagerOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
@@ -56,7 +56,7 @@ class DialogManagementConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar()
-        DialogManagementConfigurationViewModel(get()).viewState.value.editData.also {
+        PipelineConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to local
             assertEquals(PipelineManagerOption.Local, it.pipelineManagerOption)
         }

@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -130,5 +131,6 @@ private fun DomainStateHeaderItemLoading() {
             )
         },
         text = { Text(MR.strings.loading.stable) },
+        secondaryText = { Text("") }
     )
 }

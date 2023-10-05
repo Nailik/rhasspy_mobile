@@ -8,6 +8,6 @@ import kotlin.time.Duration
 data class IntentDomainData(
     val option: IntentDomainOption,
     val isRhasspy2HermesHttpHandleWithRecognition: Boolean,
-    val rhasspy2HermesHttpHandleTimeout: Duration,
-    val rhasspy2HermesMqttHandleTimeout: Duration,
+    val rhasspy2HermesHttpIntentHandlingTimeout: Duration,
+    val timeout: Duration,
 )

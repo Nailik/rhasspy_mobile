@@ -17,14 +17,14 @@ import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.domains.IntentHandlingConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.handle.HandleDomainConfigurationUiEvent.Change.SelectHandleDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.handle.HandleDomainConfigurationViewModel
 import kotlin.test.assertEquals
 
 class IntentHandlingConfigurationContentTest : FlakyTest() {
 
 
-    private val viewModel = get<IntentHandlingConfigurationViewModel>()
+    private val viewModel = get<HandleDomainConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
@@ -52,7 +52,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
     fun testHomeAssistant() = runTest {
         setupContent()
 
-        viewModel.onEvent(SelectIntentHandlingOption(HandleDomainOption.Disabled))
+        viewModel.onEvent(SelectHandleDomainOption(HandleDomainOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
@@ -86,7 +86,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
         //User clicks save
         composeTestRule.saveBottomAppBar()
         composeTestRule.awaitIdle()
-        IntentHandlingConfigurationViewModel(get()).viewState.value.editData.also {
+        HandleDomainConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to HomeAssistant
             assertEquals(HandleDomainOption.HomeAssistant, it.handleDomainOption)
             //send events is saved

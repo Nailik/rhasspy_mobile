@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
+import org.rhasspy.mobile.data.data.takeInt
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -40,7 +40,7 @@ class HomeAssistantConnectionConfigurationViewModel(
                 when (change) {
                     is SetHomeAssistantSSLVerificationDisabled     -> copy(isSSLVerificationDisabled = change.disabled)
                     is UpdateHomeAssistantClientServerEndpointHost -> copy(host = change.host)
-                    is UpdateHomeAssistantClientTimeout            -> copy(timeout = change.text.toLongOrNullOrConstant())
+                    is UpdateHomeAssistantClientTimeout            -> copy(timeout = change.text.takeInt())
                     is UpdateHomeAssistantAccessToken              -> copy(bearerToken = change.text)
                 }
             })

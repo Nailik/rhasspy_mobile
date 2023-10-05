@@ -7,18 +7,19 @@ import org.rhasspy.mobile.data.service.option.TtsDomainOption
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SelectTextToSpeechOption
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewState.TextToSpeechConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationUiEvent.Change.SelectTtsDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationViewState.TtsDomainConfigurationData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class TextToSpeechConfigurationViewModelTest : AppTest() {
 
-    private lateinit var textToSpeechConfigurationViewModel: TextToSpeechConfigurationViewModel
+    private lateinit var ttsDomainConfigurationViewModel: TtsDomainConfigurationViewModel
 
-    private lateinit var initialTextToSpeechConfigurationData: TextToSpeechConfigurationData
-    private lateinit var textToSpeechConfigurationData: TextToSpeechConfigurationData
+    private lateinit var initialTtsDomainConfigurationData: TtsDomainConfigurationData
+    private lateinit var ttsDomainConfigurationData: TtsDomainConfigurationData
 
     @BeforeTest
     fun before() {
@@ -28,46 +29,46 @@ class TextToSpeechConfigurationViewModelTest : AppTest() {
             }
         )
 
-        initialTextToSpeechConfigurationData = TextToSpeechConfigurationData(
+        initialTtsDomainConfigurationData = TtsDomainConfigurationData(
             ttsDomainOption = TtsDomainOption.Disabled,
         )
 
-        textToSpeechConfigurationData = TextToSpeechConfigurationData(
+        ttsDomainConfigurationData = TtsDomainConfigurationData(
             ttsDomainOption = TtsDomainOption.Rhasspy2HermesHttp,
         )
 
-        textToSpeechConfigurationViewModel = get()
+        ttsDomainConfigurationViewModel = get()
     }
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(initialTextToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)
+        assertEquals(initialTtsDomainConfigurationData, ttsDomainConfigurationViewModel.viewState.value.editData)
 
-        with(textToSpeechConfigurationData) {
-            textToSpeechConfigurationViewModel.onEvent(SelectTextToSpeechOption(ttsDomainOption))
+        with(ttsDomainConfigurationData) {
+            ttsDomainConfigurationViewModel.onEvent(SelectTtsDomainOption(ttsDomainOption))
         }
 
-        assertEquals(textToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)
+        assertEquals(ttsDomainConfigurationData, ttsDomainConfigurationViewModel.viewState.value.editData)
 
-        textToSpeechConfigurationViewModel.onEvent(Save)
+        ttsDomainConfigurationViewModel.onEvent(Save)
 
-        assertEquals(textToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)
-        assertEquals(textToSpeechConfigurationData, TextToSpeechConfigurationData())
+        assertEquals(ttsDomainConfigurationData, ttsDomainConfigurationViewModel.viewState.value.editData)
+        assertEquals(ttsDomainConfigurationData, TtsDomainConfigurationData())
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
-        assertEquals(initialTextToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)
+        assertEquals(initialTtsDomainConfigurationData, ttsDomainConfigurationViewModel.viewState.value.editData)
 
-        with(textToSpeechConfigurationData) {
-            textToSpeechConfigurationViewModel.onEvent(SelectTextToSpeechOption(ttsDomainOption))
+        with(ttsDomainConfigurationData) {
+            ttsDomainConfigurationViewModel.onEvent(SelectTtsDomainOption(ttsDomainOption))
         }
 
-        assertEquals(textToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)
+        assertEquals(ttsDomainConfigurationData, ttsDomainConfigurationViewModel.viewState.value.editData)
 
-        textToSpeechConfigurationViewModel.onEvent(Discard)
+        ttsDomainConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(initialTextToSpeechConfigurationData, textToSpeechConfigurationViewModel.viewState.value.editData)
-        assertEquals(initialTextToSpeechConfigurationData, TextToSpeechConfigurationData())
+        assertEquals(initialTtsDomainConfigurationData, ttsDomainConfigurationViewModel.viewState.value.editData)
+        assertEquals(initialTtsDomainConfigurationData, TtsDomainConfigurationData())
     }
 }

@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
+import org.rhasspy.mobile.data.data.takeInt
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -40,7 +40,7 @@ class Rhasspy2HermesConnectionConfigurationViewModel(
                 when (change) {
                     is SetRhasspy2HermesSSLVerificationDisabled -> copy(isSSLVerificationDisabled = change.disabled)
                     is UpdateRhasspy2HermesServerEndpointHost   -> copy(host = change.host)
-                    is UpdateRhasspy2HermesTimeout              -> copy(timeout = change.text.toLongOrNullOrConstant())
+                    is UpdateRhasspy2HermesTimeout              -> copy(timeout = change.text.takeInt())
                     is UpdateRhasspy2HermesAccessToken          -> copy(bearerToken = change.text)
                 }
             })

@@ -11,13 +11,12 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
-import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SelectTextToSpeechOption
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewState.TextToSpeechConfigurationData
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
+import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationUiEvent.Change.SelectTtsDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationViewState.TtsDomainConfigurationData
 
 /**
  * Content to configure text to speech
@@ -25,32 +24,29 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
  * HTTP Endpoint
  */
 @Composable
-fun TextToSpeechConfigurationScreen(viewModel: TextToSpeechConfigurationViewModel) {
+fun TextToSpeechConfigurationScreen(viewModel: TtsDomainConfigurationViewModel) {
 
     ScreenContent(
-        screenViewModel = viewModel
+        title = MR.strings.textToSpeech.stable,
+        viewModel = viewModel,
+        tonalElevation = TonalElevationLevel1,
     ) {
-        SettingsScreenItemContent(
-            title = MR.strings.textToSpeech.stable,
-            onBackClick = { viewModel.onEvent(BackClick) }
-        ) {
 
-            val viewState by viewModel.viewState.collectAsState()
+        val viewState by viewModel.viewState.collectAsState()
 
-            TextToSpeechEditContent(
-                editData = viewState.editData,
-                onEvent = viewModel::onEvent
-            )
+        TextToSpeechEditContent(
+            editData = viewState.editData,
+            onEvent = viewModel::onEvent
+        )
 
-        }
     }
 
 }
 
 @Composable
 private fun TextToSpeechEditContent(
-    editData: TextToSpeechConfigurationData,
-    onEvent: (TextToSpeechConfigurationUiEvent) -> Unit
+    editData: TtsDomainConfigurationData,
+    onEvent: (TtsDomainConfigurationUiEvent) -> Unit
 ) {
 
     LazyColumn(
@@ -72,14 +68,14 @@ private fun TextToSpeechEditContent(
 
 @Composable
 private fun TextToSpeechOptionContent(
-    editData: TextToSpeechConfigurationData,
-    onEvent: (TextToSpeechConfigurationUiEvent) -> Unit
+    editData: TtsDomainConfigurationData,
+    onEvent: (TtsDomainConfigurationUiEvent) -> Unit
 ) {
 
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.TextToSpeechOptions),
         selected = editData.ttsDomainOption,
-        onSelect = { onEvent(SelectTextToSpeechOption(it)) },
+        onSelect = { onEvent(SelectTtsDomainOption(it)) },
         values = editData.ttsDomainOptions
     )
 

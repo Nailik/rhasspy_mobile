@@ -27,17 +27,17 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.Navigate
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordUdpConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.Change.SelectWakeDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeDomainPorcupineAccessToken
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewState.WakeDomainConfigurationData.WakeWordPorcupineConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewState.WakeDomainConfigurationData.WakeWordUdpConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.EditPorcupineWakeWordScreen
@@ -48,7 +48,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordCon
  * porcupine wake word settings
  */
 @Composable
-fun WakeWordConfigurationOverviewScreen(viewModel: WakeWordConfigurationViewModel) {
+fun WakeWordConfigurationOverviewScreen(viewModel: WakeDomainConfigurationViewModel) {
 
     ScreenContent(
         modifier = Modifier.testTag(WakeWordConfigurationScreen),
@@ -75,14 +75,14 @@ fun WakeWordConfigurationOverviewScreen(viewModel: WakeWordConfigurationViewMode
 
 @Composable
 private fun WakeWordConfigurationOptionContent(
-    viewState: WakeWordConfigurationViewState,
-    onEvent: (WakeWordConfigurationUiEvent) -> Unit
+    viewState: WakeDomainConfigurationViewState,
+    onEvent: (WakeDomainConfigurationUiEvent) -> Unit
 ) {
 
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.WakeWordOptions),
         selected = viewState.editData.wakeDomainOption,
-        onSelect = { onEvent(SelectWakeWordOption(it)) },
+        onSelect = { onEvent(SelectWakeDomainOption(it)) },
         values = viewState.editData.wakeDomainOptions
     ) { option ->
 
@@ -117,7 +117,7 @@ private fun WakeWordConfigurationOptionContent(
 @Composable
 private fun PorcupineConfiguration(
     editData: WakeWordPorcupineConfigurationData,
-    onEvent: (WakeWordConfigurationUiEvent) -> Unit
+    onEvent: (WakeDomainConfigurationUiEvent) -> Unit
 ) {
 
     Column(
@@ -135,7 +135,7 @@ private fun PorcupineConfiguration(
             label = MR.strings.porcupineAccessKey.stable,
             modifier = Modifier.testTag(TestTag.PorcupineAccessToken),
             value = editData.accessToken,
-            onValueChange = { onEvent(UpdateWakeWordPorcupineAccessToken(it)) }
+            onValueChange = { onEvent(UpdateWakeDomainPorcupineAccessToken(it)) }
         )
 
         //button to open pico voice console to generate access token
@@ -184,7 +184,7 @@ private fun PorcupineConfiguration(
 @Composable
 private fun UdpSettings(
     editData: WakeWordUdpConfigurationData,
-    onEvent: (WakeWordConfigurationUiEvent) -> Unit
+    onEvent: (WakeDomainConfigurationUiEvent) -> Unit
 ) {
 
     Column {

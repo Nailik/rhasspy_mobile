@@ -346,6 +346,8 @@
     <string name="clear_text">clear</string>
     <string name="scan_qr_code">Scan QR-Code</string>
     <string name="scan_qr_code_failed">Unable to scan QR-Code</string>
+    <string name="intentHandlingTimeout">Intent Handling timeout (s)</string>
+    <string name="handleWithRecognition">Handle Intent with Recognition</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>

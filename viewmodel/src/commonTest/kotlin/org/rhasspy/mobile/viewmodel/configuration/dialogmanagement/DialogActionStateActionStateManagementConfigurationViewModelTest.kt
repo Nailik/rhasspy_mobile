@@ -8,18 +8,19 @@ import org.rhasspy.mobile.data.service.option.PipelineManagerOption
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewState.DialogManagementConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.PipelineConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.PipelineConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.PipelineConfigurationViewState.PipelineConfigurationData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DialogActionStateActionStateManagementConfigurationViewModelTest : AppTest() {
 
-    private lateinit var dialogManagementConfigurationViewModel: DialogManagementConfigurationViewModel
+    private lateinit var pipelineConfigurationViewModel: PipelineConfigurationViewModel
 
-    private lateinit var initialDialogManagementConfigurationData: DialogManagementConfigurationData
-    private lateinit var dialogManagementConfigurationData: DialogManagementConfigurationData
+    private lateinit var initialPipelineConfigurationData: PipelineConfigurationData
+    private lateinit var pipelineConfigurationData: PipelineConfigurationData
 
     @BeforeTest
     fun before() {
@@ -29,58 +30,58 @@ class DialogActionStateActionStateManagementConfigurationViewModelTest : AppTest
             }
         )
 
-        initialDialogManagementConfigurationData = DialogManagementConfigurationData(
+        initialPipelineConfigurationData = PipelineConfigurationData(
             pipelineManagerOption = PipelineManagerOption.Local,
             textAsrTimeout = 10000L,
             intentRecognitionTimeout = 10000L,
             recordingTimeout = 10000L
         )
 
-        dialogManagementConfigurationData = DialogManagementConfigurationData(
+        pipelineConfigurationData = PipelineConfigurationData(
             pipelineManagerOption = PipelineManagerOption.Disabled,
             textAsrTimeout = 234,
             intentRecognitionTimeout = 234,
             recordingTimeout = 234
         )
 
-        dialogManagementConfigurationViewModel = get()
+        pipelineConfigurationViewModel = get()
     }
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(initialDialogManagementConfigurationData, dialogManagementConfigurationViewModel.viewState.value.editData)
+        assertEquals(initialPipelineConfigurationData, pipelineConfigurationViewModel.viewState.value.editData)
 
-        with(dialogManagementConfigurationData) {
-            dialogManagementConfigurationViewModel.onEvent(ChangeIntentRecognitionTimeout(recordingTimeout.toStringOrEmpty()))
-            dialogManagementConfigurationViewModel.onEvent(ChangeRecordingTimeout(intentRecognitionTimeout.toStringOrEmpty()))
-            dialogManagementConfigurationViewModel.onEvent(ChangeTextAsrTimeout(textAsrTimeout.toStringOrEmpty()))
-            dialogManagementConfigurationViewModel.onEvent(SelectDialogManagementOption(pipelineManagerOption))
+        with(pipelineConfigurationData) {
+            pipelineConfigurationViewModel.onEvent(ChangeIntentRecognitionTimeout(recordingTimeout.toStringOrEmpty()))
+            pipelineConfigurationViewModel.onEvent(ChangeRecordingTimeout(intentRecognitionTimeout.toStringOrEmpty()))
+            pipelineConfigurationViewModel.onEvent(ChangeTextAsrTimeout(textAsrTimeout.toStringOrEmpty()))
+            pipelineConfigurationViewModel.onEvent(SelectPipelineOption(pipelineManagerOption))
         }
 
-        assertEquals(dialogManagementConfigurationData, dialogManagementConfigurationViewModel.viewState.value.editData)
+        assertEquals(pipelineConfigurationData, pipelineConfigurationViewModel.viewState.value.editData)
 
-        dialogManagementConfigurationViewModel.onEvent(Save)
+        pipelineConfigurationViewModel.onEvent(Save)
 
-        assertEquals(dialogManagementConfigurationData, dialogManagementConfigurationViewModel.viewState.value.editData)
-        assertEquals(dialogManagementConfigurationData, DialogManagementConfigurationData())
+        assertEquals(pipelineConfigurationData, pipelineConfigurationViewModel.viewState.value.editData)
+        assertEquals(pipelineConfigurationData, PipelineConfigurationData())
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
-        assertEquals(initialDialogManagementConfigurationData, dialogManagementConfigurationViewModel.viewState.value.editData)
+        assertEquals(initialPipelineConfigurationData, pipelineConfigurationViewModel.viewState.value.editData)
 
-        with(dialogManagementConfigurationData) {
-            dialogManagementConfigurationViewModel.onEvent(ChangeIntentRecognitionTimeout(recordingTimeout.toStringOrEmpty()))
-            dialogManagementConfigurationViewModel.onEvent(ChangeRecordingTimeout(intentRecognitionTimeout.toStringOrEmpty()))
-            dialogManagementConfigurationViewModel.onEvent(ChangeTextAsrTimeout(textAsrTimeout.toStringOrEmpty()))
-            dialogManagementConfigurationViewModel.onEvent(SelectDialogManagementOption(pipelineManagerOption))
+        with(pipelineConfigurationData) {
+            pipelineConfigurationViewModel.onEvent(ChangeIntentRecognitionTimeout(recordingTimeout.toStringOrEmpty()))
+            pipelineConfigurationViewModel.onEvent(ChangeRecordingTimeout(intentRecognitionTimeout.toStringOrEmpty()))
+            pipelineConfigurationViewModel.onEvent(ChangeTextAsrTimeout(textAsrTimeout.toStringOrEmpty()))
+            pipelineConfigurationViewModel.onEvent(SelectPipelineOption(pipelineManagerOption))
         }
 
-        assertEquals(dialogManagementConfigurationData, dialogManagementConfigurationViewModel.viewState.value.editData)
+        assertEquals(pipelineConfigurationData, pipelineConfigurationViewModel.viewState.value.editData)
 
-        dialogManagementConfigurationViewModel.onEvent(Discard)
+        pipelineConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(initialDialogManagementConfigurationData, dialogManagementConfigurationViewModel.viewState.value.editData)
-        assertEquals(initialDialogManagementConfigurationData, DialogManagementConfigurationData())
+        assertEquals(initialPipelineConfigurationData, pipelineConfigurationViewModel.viewState.value.editData)
+        assertEquals(initialPipelineConfigurationData, PipelineConfigurationData())
     }
 }

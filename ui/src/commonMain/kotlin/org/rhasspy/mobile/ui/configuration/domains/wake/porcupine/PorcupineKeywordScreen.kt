@@ -22,9 +22,9 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.horizontalAnimationSpec
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewModel
 
 /**
  *  screen for porcupine keyword option
@@ -33,7 +33,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
  *  bottom bar to switch between pages
  */
 @Composable
-fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
+fun PorcupineKeywordScreen(viewModel: WakeDomainConfigurationViewModel) {
 
     val viewState by viewModel.viewState.collectAsState()
     val editData = viewState.editData.wakeWordPorcupineConfigurationData

@@ -11,10 +11,8 @@ import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.assist.AssistantViewModel
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewModel
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewStateCreator
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationDataMapper
@@ -27,25 +25,27 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rh
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.handle.HandleDomainConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.handle.HandleDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.PipelineConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.PipelineConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.snd.AudioPlayingConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.snd.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.vad.AudioRecorderViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
@@ -135,14 +135,14 @@ fun viewModelModule() = module {
     singleOf(::AudioPlayingConfigurationDataMapper)
     singleOf(::AudioPlayingConfigurationViewModel)
 
-    singleOf(::DialogManagementConfigurationDataMapper)
-    singleOf(::DialogManagementConfigurationViewModel)
+    singleOf(::PipelineConfigurationDataMapper)
+    singleOf(::PipelineConfigurationViewModel)
 
-    singleOf(::IntentHandlingConfigurationDataMapper)
-    singleOf(::IntentHandlingConfigurationViewModel)
+    singleOf(::HandleDomainConfigurationDataMapper)
+    singleOf(::HandleDomainConfigurationViewModel)
 
     singleOf(::IntentRecognitionConfigurationDataMapper)
-    singleOf(::IntentRecognitionConfigurationViewModel)
+    singleOf(::IntentDomainConfigurationViewModel)
 
     singleOf(::Rhasspy2HermesConnectionConfigurationDataMapper)
     singleOf(::Rhasspy2HermesConnectionConfigurationViewModel)
@@ -159,14 +159,14 @@ fun viewModelModule() = module {
     singleOf(::WebServerConnectionConfigurationDataMapper)
     singleOf(::WebServerConnectionConfigurationViewModel)
 
-    singleOf(::AsrConfigurationDataMapper)
-    singleOf(::AsrConfigurationViewModel)
+    singleOf(::AsrDomainConfigurationDataMapper)
+    singleOf(::AsrDomainConfigurationViewModel)
 
-    singleOf(::TextToSpeechConfigurationDataMapper)
-    singleOf(::TextToSpeechConfigurationViewModel)
+    singleOf(::TtsDomainConfigurationDataMapper)
+    singleOf(::TtsDomainConfigurationViewModel)
 
-    singleOf(::WakeWordConfigurationDataMapper)
-    singleOf(::WakeWordConfigurationViewModel)
+    singleOf(::WakeDomainConfigurationDataMapper)
+    singleOf(::WakeDomainConfigurationViewModel)
 
     singleOf(::VadDomainConfigurationDataMapper)
     factory { params ->

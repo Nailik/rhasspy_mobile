@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
+import org.rhasspy.mobile.data.data.takeInt
 import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -40,7 +40,7 @@ class Rhasspy3WyomingConnectionConfigurationViewModel(
                 when (change) {
                     is SetRhasspy3WyomingSSLVerificationDisabled -> copy(isSSLVerificationDisabled = change.disabled)
                     is UpdateRhasspy3WyomingServerEndpointHost   -> copy(host = change.host)
-                    is UpdateRhasspy3WyomingTimeout              -> copy(timeout = change.text.toLongOrNullOrConstant())
+                    is UpdateRhasspy3WyomingTimeout              -> copy(timeout = change.text.takeInt())
                     is UpdateRhasspy3WyomingAccessToken          -> copy(bearerToken = change.text)
                 }
             })

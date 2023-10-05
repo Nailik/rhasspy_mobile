@@ -19,14 +19,13 @@ import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
-import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewState.AudioPlayingConfigurationData
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
+import org.rhasspy.mobile.viewmodel.configuration.snd.AudioPlayingConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.snd.AudioPlayingConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.snd.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.snd.AudioPlayingConfigurationViewState.AudioPlayingConfigurationData
 
 /**
  * Content to configure audio playing
@@ -37,20 +36,19 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
 fun AudioPlayingConfigurationScreen(viewModel: AudioPlayingConfigurationViewModel) {
 
     ScreenContent(
-        screenViewModel = viewModel
+        title = MR.strings.audioPlaying.stable,
+        viewModel = viewModel,
+        tonalElevation = TonalElevationLevel1,
     ) {
-        SettingsScreenItemContent(
-            title = MR.strings.audioPlaying.stable,
-            onBackClick = { viewModel.onEvent(BackClick) }
-        ) {
-            val viewState by viewModel.viewState.collectAsState()
+        val viewState by viewModel.viewState.collectAsState()
 
-            AudioPlayingEditContent(
-                editData = viewState.editData,
-                onEvent = viewModel::onEvent
-            )
-        }
+        AudioPlayingEditContent(
+            editData = viewState.editData,
+            onEvent = viewModel::onEvent
+        )
+
     }
+
 }
 
 @Composable

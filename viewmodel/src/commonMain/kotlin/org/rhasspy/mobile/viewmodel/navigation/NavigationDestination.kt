@@ -5,23 +5,23 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.handle.HandleDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.PipelineConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.snd.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
@@ -79,7 +79,7 @@ sealed class NavigationDestination : KoinComponent {
         }
 
         data object DialogManagementConfigurationScreen : ConfigurationScreenNavigationDestination() {
-            override val viewModel get() = get<DialogManagementConfigurationViewModel> { parametersOf(this) }
+            override val viewModel get() = get<PipelineConfigurationViewModel> { parametersOf(this) }
         }
 
         data object AudioInputConfigurationScreen : ConfigurationScreenNavigationDestination() {
@@ -87,11 +87,11 @@ sealed class NavigationDestination : KoinComponent {
         }
 
         data object WakeWordConfigurationScreen : ConfigurationScreenNavigationDestination() {
-            override val viewModel get() = get<WakeWordConfigurationViewModel> { parametersOf(this) }
+            override val viewModel get() = get<WakeDomainConfigurationViewModel> { parametersOf(this) }
         }
 
         data object SpeechToTextConfigurationScreen : ConfigurationScreenNavigationDestination() {
-            override val viewModel get() = get<AsrConfigurationViewModel> { parametersOf(this) }
+            override val viewModel get() = get<AsrDomainConfigurationViewModel> { parametersOf(this) }
         }
 
         data object VoiceActivityDetectionConfigurationScreen : ConfigurationScreenNavigationDestination() {
@@ -99,15 +99,15 @@ sealed class NavigationDestination : KoinComponent {
         }
 
         data object IntentRecognitionConfigurationScreen : ConfigurationScreenNavigationDestination() {
-            override val viewModel get() = get<IntentRecognitionConfigurationViewModel> { parametersOf(this) }
+            override val viewModel get() = get<IntentDomainConfigurationViewModel> { parametersOf(this) }
         }
 
         data object IntentHandlingConfigurationScreen : ConfigurationScreenNavigationDestination() {
-            override val viewModel get() = get<IntentHandlingConfigurationViewModel> { parametersOf(this) }
+            override val viewModel get() = get<HandleDomainConfigurationViewModel> { parametersOf(this) }
         }
 
         data object TextToSpeechConfigurationScreen : ConfigurationScreenNavigationDestination() {
-            override val viewModel get() = get<TextToSpeechConfigurationViewModel> { parametersOf(this) }
+            override val viewModel get() = get<TtsDomainConfigurationViewModel> { parametersOf(this) }
         }
 
         data object AudioPlayingConfigurationScreen : ConfigurationScreenNavigationDestination() {
@@ -186,11 +186,11 @@ sealed class NavigationDestination : KoinComponent {
     sealed class WakeWordConfigurationScreenDestination : NavigationDestination() {
 
         data object EditPorcupineLanguageScreen : WakeWordConfigurationScreenDestination() {
-            override val viewModel get() = get<WakeWordConfigurationViewModel> { parametersOf(this) }
+            override val viewModel get() = get<WakeDomainConfigurationViewModel> { parametersOf(this) }
         }
 
         data object EditPorcupineWakeWordScreen : WakeWordConfigurationScreenDestination() {
-            override val viewModel get() = get<WakeWordConfigurationViewModel> { parametersOf(this) }
+            override val viewModel get() = get<WakeDomainConfigurationViewModel> { parametersOf(this) }
         }
 
     }

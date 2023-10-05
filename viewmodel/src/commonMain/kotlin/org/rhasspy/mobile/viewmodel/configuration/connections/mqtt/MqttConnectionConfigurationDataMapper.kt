@@ -1,7 +1,9 @@
 package org.rhasspy.mobile.viewmodel.configuration.connections.mqtt
 
 import org.rhasspy.mobile.data.connection.MqttConnectionData
+import org.rhasspy.mobile.data.data.toIntOrZero
 import org.rhasspy.mobile.viewmodel.configuration.connections.mqtt.MqttConnectionConfigurationViewState.MqttConnectionConfigurationData
+import kotlin.time.Duration.Companion.seconds
 
 class MqttConnectionConfigurationDataMapper {
 
@@ -12,10 +14,10 @@ class MqttConnectionConfigurationDataMapper {
             userName = data.userName,
             password = data.password,
             isSSLEnabled = data.isSSLEnabled,
-            connectionTimeout = data.connectionTimeout,
-            keepAliveInterval = data.keepAliveInterval,
-            retryInterval = data.retryInterval,
-            keystoreFile = data.keystoreFile
+            connectionTimeout = data.connectionTimeout.inWholeSeconds.toString(),
+            keepAliveInterval = data.keepAliveInterval.inWholeSeconds.toString(),
+            retryInterval = data.retryInterval.inWholeSeconds.toString(),
+            keystoreFile = data.keystoreFile,
         )
     }
 
@@ -26,10 +28,10 @@ class MqttConnectionConfigurationDataMapper {
             userName = data.userName,
             password = data.password,
             isSSLEnabled = data.isSSLEnabled,
-            connectionTimeout = data.connectionTimeout ?: 0,
-            keepAliveInterval = data.keepAliveInterval ?: 0,
-            retryInterval = data.retryInterval ?: 0L,
-            keystoreFile = data.keystoreFile
+            connectionTimeout = data.connectionTimeout.toIntOrZero().seconds,
+            keepAliveInterval = data.keepAliveInterval.toIntOrZero().seconds,
+            retryInterval = data.retryInterval.toIntOrZero().seconds,
+            keystoreFile = data.keystoreFile,
         )
     }
 

@@ -1,23 +1,31 @@
 package org.rhasspy.mobile.ui.configuration.domains.intent
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.option.IntentDomainOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
-import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
+import org.rhasspy.mobile.ui.content.list.SwitchListItem
+import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentDomainConfigurationViewState.IntentDomainConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewState.IntentRecognitionConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
 
 /**
  * configuration content for intent recognition
@@ -25,53 +33,28 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
  * text field for endpoint
  */
 @Composable
-fun IntentRecognitionConfigurationScreen(viewModel: IntentRecognitionConfigurationViewModel) {
+fun IntentRecognitionConfigurationScreen(viewModel: IntentDomainConfigurationViewModel) {
 
     ScreenContent(
-        screenViewModel = viewModel
+        title = MR.strings.intentRecognition.stable,
+        viewModel = viewModel,
+        tonalElevation = TonalElevationLevel1,
     ) {
-        SettingsScreenItemContent(
-            title = MR.strings.intentRecognition.stable,
-            onBackClick = { viewModel.onEvent(BackClick) }
-        ) {
 
-            val viewState by viewModel.viewState.collectAsState()
+        val viewState by viewModel.viewState.collectAsState()
 
-            IntentRecognitionEditContent(
-                editData = viewState.editData,
-                onEvent = viewModel::onEvent
-            )
+        IntentRecognitionEditContent(
+            editData = viewState.editData,
+            onEvent = viewModel::onEvent,
+        )
 
-        }
     }
 
 }
 
 @Composable
 fun IntentRecognitionEditContent(
-    editData: IntentRecognitionConfigurationData,
-    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit
-) {
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-
-        item {
-            IntentRecognitionOptionContent(
-                editData = editData,
-                onEvent = onEvent
-            )
-        }
-
-    }
-
-}
-
-@Composable
-private fun IntentRecognitionOptionContent(
-    editData: IntentRecognitionConfigurationData,
+    editData: IntentDomainConfigurationData,
     onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit
 ) {
 
@@ -79,7 +62,75 @@ private fun IntentRecognitionOptionContent(
         modifier = Modifier.testTag(TestTag.IntentRecognitionOptions),
         selected = editData.intentDomainOption,
         onSelect = { onEvent(SelectIntentRecognitionOption(it)) },
-        values = editData.intentDomainOptionLists
-    )
+        values = editData.intentDomainOptionLists,
+    ) {
+
+        when (it) {
+            IntentDomainOption.Rhasspy2HermesHttp ->
+                IntentRhasspy2HermesHttp(
+                    editData = editData,
+                    onEvent = onEvent,
+                )
+
+            IntentDomainOption.Rhasspy2HermesMQTT ->
+                IntentRhasspy2HermesMQTT(
+                    editData = editData,
+                    onEvent = onEvent,
+                )
+
+            IntentDomainOption.Disabled           -> Unit
+        }
+
+    }
+
+}
+
+@Composable
+fun IntentRhasspy2HermesHttp(
+    editData: IntentDomainConfigurationData,
+    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit,
+) {
+
+    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
+
+        SwitchListItem(
+            text = MR.strings.handleWithRecognition.stable,
+            isChecked = editData.isRhasspy2HermesHttpIntentHandleWithRecognition,
+            onCheckedChange = { onEvent(SetRhasspy2HttpIntentIntentHandlingEnabled(it)) }
+        )
+
+        AnimatedVisibility(
+            enter = expandVertically(),
+            exit = shrinkVertically(),
+            visible = editData.isRhasspy2HermesHttpIntentHandleWithRecognition
+        ) {
+            TextFieldListItem(
+                label = MR.strings.intentHandlingTimeout.stable,
+                value = editData.rhasspy2HermesHttpIntentHandlingTimeout,
+                onValueChange = { onEvent(UpdateRhasspy2HttpIntentHandlingTimeout(it)) },
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+            )
+
+        }
+    }
+
+}
+
+@Composable
+fun IntentRhasspy2HermesMQTT(
+    editData: IntentDomainConfigurationData,
+    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit,
+) {
+
+    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
+
+        TextFieldListItem(
+            label = MR.strings.intentRecognitionTimeoutText.stable,
+            value = editData.timeout,
+            onValueChange = { onEvent(UpdateVoiceTimeout(it)) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+
+    }
 
 }

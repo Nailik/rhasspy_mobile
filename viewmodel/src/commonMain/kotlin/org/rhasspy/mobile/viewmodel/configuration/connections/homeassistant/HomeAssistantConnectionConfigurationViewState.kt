@@ -2,7 +2,6 @@ package org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.data.toStringOrEmpty
 import org.rhasspy.mobile.data.service.ConnectionState
 
 @Stable
@@ -14,13 +13,9 @@ data class HomeAssistantConnectionConfigurationViewState internal constructor(
     @Stable
     data class HomeAssistantConnectionConfigurationData internal constructor(
         val host: String,
-        val timeout: Long?,
+        val timeout: String,
         val bearerToken: String,
         val isSSLVerificationDisabled: Boolean,
-    ) {
-
-        val timeoutText: String = timeout.toStringOrEmpty()
-
-    }
+    )
 
 }

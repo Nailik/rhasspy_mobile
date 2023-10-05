@@ -13,13 +13,13 @@ import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.ui.configuration.domains.wake.porcupine.PorcupineLanguageScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeWordPorcupineLanguage
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeDomainPorcupineLanguage
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewModel
 import kotlin.test.assertEquals
 
 class PorcupineLanguageScreenTest : FlakyTest() {
 
-    private val viewModel = get<WakeWordConfigurationViewModel>()
+    private val viewModel = get<WakeDomainConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
@@ -43,7 +43,7 @@ class PorcupineLanguageScreenTest : FlakyTest() {
         setupContent()
 
         //English is saved
-        viewModel.onEvent(SelectWakeWordPorcupineLanguage(PorcupineLanguageOption.EN))
+        viewModel.onEvent(SelectWakeDomainPorcupineLanguage(PorcupineLanguageOption.EN))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
         val editData = viewModel.viewState.value.editData.wakeWordPorcupineConfigurationData

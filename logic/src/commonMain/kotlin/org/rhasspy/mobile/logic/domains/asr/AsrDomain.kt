@@ -24,7 +24,6 @@ import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.pipeline.Source
-import org.rhasspy.mobile.logic.pipeline.Source.Local
 import org.rhasspy.mobile.logic.pipeline.Source.Rhasspy2HermesMqtt
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.*
@@ -208,7 +207,7 @@ internal class AsrDomain(
             }
             .timeoutWithDefault(
                 timeout = params.mqttResultTimeout,
-                default = TranscriptTimeout(Local),
+                default = TranscriptTimeout(Rhasspy2HermesMqtt),
             )
             .first()
             .also {

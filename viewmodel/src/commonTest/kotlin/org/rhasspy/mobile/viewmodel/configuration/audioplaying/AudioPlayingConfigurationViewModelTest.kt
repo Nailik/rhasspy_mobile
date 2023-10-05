@@ -10,10 +10,11 @@ import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.testutils.getRandomString
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewState.AudioPlayingConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.snd.AudioPlayingConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.snd.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.snd.AudioPlayingConfigurationViewState.AudioPlayingConfigurationData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

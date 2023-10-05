@@ -8,11 +8,11 @@ sealed interface IntentRecognitionConfigurationUiEvent {
 
         data class SelectIntentRecognitionOption(val option: IntentDomainOption) : Change
 
-    }
+        data class SetRhasspy2HttpIntentIntentHandlingEnabled(val enabled: Boolean) : Change
 
-    sealed interface Action : IntentRecognitionConfigurationUiEvent {
+        data class UpdateRhasspy2HttpIntentHandlingTimeout(val timeout: String) : Change
 
-        data object BackClick : Action
+        data class UpdateVoiceTimeout(val timeout: String) : Change
 
     }
 

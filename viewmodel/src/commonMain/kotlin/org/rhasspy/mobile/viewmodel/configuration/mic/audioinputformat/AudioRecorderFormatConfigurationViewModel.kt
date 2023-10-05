@@ -4,8 +4,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioInputFormatConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioInputFormatConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationUiEvent.Change
+import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 class AudioRecorderFormatConfigurationViewModel(
@@ -19,7 +19,7 @@ class AudioRecorderFormatConfigurationViewModel(
     )
     val viewState = _viewState.readOnly
 
-    fun onEvent(event: AudioInputFormatConfigurationUiEvent) {
+    fun onEvent(event: AudioRecorderFormatConfigurationUiEvent) {
         when (event) {
             is Change -> onChange(event)
         }
@@ -29,9 +29,9 @@ class AudioRecorderFormatConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SelectInputFormatChannelType    -> copy(audioInputChannel = change.value)
-                    is SelectInputFormatEncodingType   -> copy(audioInputEncoding = change.value)
-                    is SelectInputFormatSampleRateType -> copy(audioInputSampleRate = change.value)
+                    is SelectRecorderFormatChannelType    -> copy(audioInputChannel = change.value)
+                    is SelectRecorderFormatEncodingType   -> copy(audioInputEncoding = change.value)
+                    is SelectRecorderFormatSampleRateType -> copy(audioInputSampleRate = change.value)
                 }
             })
         }

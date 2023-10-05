@@ -14,13 +14,13 @@ import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.TtsDomainOption
 import org.rhasspy.mobile.ui.configuration.domains.TextToSpeechConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SelectTextToSpeechOption
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationUiEvent.Change.SelectTtsDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationViewModel
 import kotlin.test.assertEquals
 
 class TextToSpeechConfigurationContentTest : FlakyTest() {
 
-    private val viewModel = get<TextToSpeechConfigurationViewModel>()
+    private val viewModel = get<TtsDomainConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
@@ -40,7 +40,7 @@ class TextToSpeechConfigurationContentTest : FlakyTest() {
     fun testEndpoint() = runTest {
         setupContent()
 
-        viewModel.onEvent(SelectTextToSpeechOption(TtsDomainOption.Disabled))
+        viewModel.onEvent(SelectTtsDomainOption(TtsDomainOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
@@ -59,7 +59,7 @@ class TextToSpeechConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar()
-        TextToSpeechConfigurationViewModel(get()).viewState.value.editData.also {
+        TtsDomainConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
             assertEquals(TtsDomainOption.Rhasspy2HermesHttp, it.ttsDomainOption)
         }

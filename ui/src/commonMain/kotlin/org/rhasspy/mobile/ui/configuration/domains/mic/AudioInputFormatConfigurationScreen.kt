@@ -22,10 +22,10 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel2
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel3
-import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioInputFormatConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioInputFormatConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationViewState.AudioInputFormatConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationViewState.AudioRecorderFormatConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.AudioInputDomainScreenDestination.AudioInputFormatScreen
 
 /**
@@ -56,8 +56,8 @@ fun AudioRecorderFormatConfigurationScreen(viewModel: AudioRecorderFormatConfigu
 
 @Composable
 private fun AudioRecorderFormatEditContent(
-    editData: AudioInputFormatConfigurationData,
-    onEvent: (AudioInputFormatConfigurationUiEvent) -> Unit
+    editData: AudioRecorderFormatConfigurationData,
+    onEvent: (AudioRecorderFormatConfigurationUiEvent) -> Unit
 ) {
 
     Column(
@@ -77,7 +77,7 @@ private fun AudioRecorderFormatEditContent(
             RadioButtonsEnumSelectionList(
                 modifier = Modifier.testTag(TestTag.AudioInputChannelType),
                 selected = editData.audioInputChannel,
-                onSelect = { onEvent(SelectInputFormatChannelType(it)) },
+                onSelect = { onEvent(SelectRecorderFormatChannelType(it)) },
                 combinedTestTag = TestTag.AudioInputChannelType,
                 values = editData.audioFormatChannelTypes
             )
@@ -94,7 +94,7 @@ private fun AudioRecorderFormatEditContent(
             RadioButtonsEnumSelectionList(
                 modifier = Modifier.testTag(TestTag.AudioInputEncodingType),
                 selected = editData.audioInputEncoding,
-                onSelect = { onEvent(SelectInputFormatEncodingType(it)) },
+                onSelect = { onEvent(SelectRecorderFormatEncodingType(it)) },
                 combinedTestTag = TestTag.AudioInputEncodingType,
                 values = editData.audioFormatEncodingTypes
             )
@@ -111,7 +111,7 @@ private fun AudioRecorderFormatEditContent(
             RadioButtonsEnumSelectionList(
                 modifier = Modifier.testTag(TestTag.AudioInputSampleRateType),
                 selected = editData.audioInputSampleRate,
-                onSelect = { onEvent(SelectInputFormatSampleRateType(it)) },
+                onSelect = { onEvent(SelectRecorderFormatSampleRateType(it)) },
                 combinedTestTag = TestTag.AudioInputSampleRateType,
                 values = editData.audioFormatSampleRateTypes
             )

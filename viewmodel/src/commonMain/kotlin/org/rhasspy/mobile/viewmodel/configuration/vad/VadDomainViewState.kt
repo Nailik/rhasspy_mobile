@@ -4,7 +4,6 @@ import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.service.option.VadDomainOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
-import kotlin.time.Duration
 
 @Stable
 data class VadDomainViewState internal constructor(
@@ -21,15 +20,10 @@ data class VadDomainViewState internal constructor(
 
         @Stable
         data class LocalSilenceDetectionConfigurationData internal constructor(
-            val silenceDetectionTime: Duration,
-            val silenceDetectionMinimumTime: Duration,
+            val silenceDetectionTime: String,
+            val silenceDetectionMinimumTime: String,
             val silenceDetectionAudioLevel: Float,
-        ) {
-
-            val silenceDetectionTimeText: String = silenceDetectionTime.inWholeMilliseconds.toString()
-            val silenceDetectionMinimumTimeText: String = silenceDetectionMinimumTime.inWholeMilliseconds.toString()
-
-        }
+        )
 
     }
 

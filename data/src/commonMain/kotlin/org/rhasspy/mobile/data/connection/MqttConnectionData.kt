@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.data.connection
 
 import kotlinx.serialization.Serializable
+import kotlin.time.Duration
 
 @Serializable
 data class MqttConnectionData(
@@ -9,8 +10,8 @@ data class MqttConnectionData(
     val userName: String,
     val password: String,
     val isSSLEnabled: Boolean,
-    val connectionTimeout: Int,
-    val keepAliveInterval: Int,
-    val retryInterval: Long,
+    val connectionTimeout: Duration,
+    val keepAliveInterval: Duration,
+    val retryInterval: Duration,
     val keystoreFile: String?
 )

@@ -14,13 +14,13 @@ import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.IntentDomainOption
 import org.rhasspy.mobile.ui.configuration.domains.intent.IntentRecognitionConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
 import kotlin.test.assertEquals
 
 class IntentRecognitionConfigurationContentTest : FlakyTest() {
 
-    private val viewModel = get<IntentRecognitionConfigurationViewModel>()
+    private val viewModel = get<IntentDomainConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
@@ -59,7 +59,7 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar()
-        IntentRecognitionConfigurationViewModel(get()).viewState.value.editData.also {
+        IntentDomainConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
             assertEquals(IntentDomainOption.Rhasspy2HermesHttp, it.intentDomainOption)
         }

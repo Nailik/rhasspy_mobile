@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.data.toLongOrZero
+import org.rhasspy.mobile.data.data.takeLong
 import org.rhasspy.mobile.data.service.option.VadDomainOption.Local
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
@@ -20,7 +20,6 @@ import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.LocalSile
 import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import kotlin.math.pow
-import kotlin.time.Duration.Companion.milliseconds
 
 @Stable
 class VadDomainConfigurationViewModel(
@@ -101,8 +100,8 @@ class VadDomainConfigurationViewModel(
                             } else 0f
                         )
 
-                        is UpdateSilenceDetectionMinimumTime         -> copy(silenceDetectionMinimumTime = change.time.toLongOrZero().milliseconds)
-                        is UpdateSilenceDetectionTime                -> copy(silenceDetectionTime = change.time.toLongOrZero().milliseconds)
+                        is UpdateSilenceDetectionMinimumTime -> copy(silenceDetectionMinimumTime = change.time.takeLong())
+                        is UpdateSilenceDetectionTime        -> copy(silenceDetectionTime = change.time.takeLong())
                     }
                 })
             })
@@ -137,6 +136,11 @@ class VadDomainConfigurationViewModel(
     override fun onDismissed() {
         stopRecording()
         super.onDismissed()
+    }
+
+    override fun onVisible() {
+        _viewState.value = VadDomainViewState(mapper(ConfigurationSetting.vadDomainData.value))
+        super.onVisible()
     }
 
 }

@@ -27,5 +27,4 @@ data class AudioOutputFormatConfigurationViewState internal constructor(
 
     }
 
-    //TODO disable encoding change for android
 }

@@ -19,9 +19,9 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.SliderListItem
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewState.WakeDomainConfigurationData.WakeWordPorcupineConfigurationData
 
 /**
  * default keywords screen
@@ -45,7 +45,7 @@ fun PorcupineKeywordDefaultScreen(
                 onToggle = { onEvent(SetPorcupineKeywordDefault(option, it)) },
                 onUpdateSensitivity = {
                     onEvent(
-                        UpdateWakeWordPorcupineKeywordDefaultSensitivity(
+                        UpdateWakeDomainPorcupineKeywordDefaultSensitivity(
                             item = option,
                             value = it.toDouble()
                         )

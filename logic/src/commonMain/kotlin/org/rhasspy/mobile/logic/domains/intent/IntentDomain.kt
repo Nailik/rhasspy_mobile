@@ -134,7 +134,7 @@ internal class IntentDomain(
                             )
                         },
                 ).timeoutWithDefault(
-                    timeout = params.rhasspy2HermesHttpHandleTimeout,
+                    timeout = params.timeout,
                     default = NotHandled(Local),
                 ).first()
             }
@@ -169,7 +169,7 @@ internal class IntentDomain(
                         NotRecognized(source = Rhasspy2HermesMqtt)
                 }
             }.timeoutWithDefault(
-                timeout = params.rhasspy2HermesMqttHandleTimeout,
+                timeout = params.timeout,
                 default = NotHandled(Local),
             ).first()
     }

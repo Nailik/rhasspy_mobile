@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import okio.Path
-import org.rhasspy.mobile.data.data.toIntOrNullOrConstant
+import org.rhasspy.mobile.data.data.takeInt
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
@@ -51,7 +51,7 @@ class WebServerConnectionConfigurationViewModel(
                     is UpdateHttpSSLKeyAlias         -> copy(keyAlias = change.value)
                     is UpdateHttpSSLKeyPassword      -> copy(keyPassword = change.value)
                     is UpdateHttpSSLKeyStorePassword -> copy(keyStorePassword = change.value)
-                    is UpdateHttpServerPort          -> copy(port = change.value.toIntOrNullOrConstant())
+                    is UpdateHttpServerPort          -> copy(port = change.value.takeInt())
                     is SetHttpServerSSLKeyStoreFile  -> copy(keyStoreFile = "${FolderType.CertificateFolder.WebServer}/${change.value.name}")
                 }
             })

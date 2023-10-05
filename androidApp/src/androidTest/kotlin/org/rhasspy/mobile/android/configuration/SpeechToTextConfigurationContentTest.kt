@@ -13,14 +13,14 @@ import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.AsrDomainOption
 import org.rhasspy.mobile.ui.configuration.audioinput.SpeechToTextConfigurationScreen
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationUiEvent.Change.SelectAsrOption
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationUiEvent.Change.SelectAsrOptionDomain
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import kotlin.test.assertEquals
 
 class SpeechToTextConfigurationContentTest : FlakyTest() {
 
-    private val viewModel = get<AsrConfigurationViewModel>()
+    private val viewModel = get<AsrDomainConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
@@ -40,7 +40,7 @@ class SpeechToTextConfigurationContentTest : FlakyTest() {
     fun testEndpoint() = runTest {
         setupContent()
 
-        viewModel.onEvent(SelectAsrOption(AsrDomainOption.Disabled))
+        viewModel.onEvent(SelectAsrOptionDomain(AsrDomainOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
@@ -59,7 +59,7 @@ class SpeechToTextConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar()
-        AsrConfigurationViewModel(get()).viewState.value.editData.also {
+        AsrDomainConfigurationViewModel(get()).viewState.value.editData.also {
             //option is saved to remote http
             assertEquals(AsrDomainOption.Rhasspy2HermesHttp, it.asrDomainOption)
         }

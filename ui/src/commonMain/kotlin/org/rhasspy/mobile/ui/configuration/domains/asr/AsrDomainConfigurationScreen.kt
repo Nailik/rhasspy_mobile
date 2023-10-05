@@ -21,10 +21,10 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationViewState.AsrConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationViewState.AsrDomainConfigurationData
 
 /**
  * Content to configure speech to text
@@ -32,7 +32,7 @@ import org.rhasspy.mobile.viewmodel.configuration.asr.AsrConfigurationViewState.
  * HTTP Endpoint
  */
 @Composable
-fun SpeechToTextConfigurationScreen(viewModel: AsrConfigurationViewModel) {
+fun SpeechToTextConfigurationScreen(viewModel: AsrDomainConfigurationViewModel) {
 
     ScreenContent(
         title = MR.strings.speechToText.stable,
@@ -52,8 +52,8 @@ fun SpeechToTextConfigurationScreen(viewModel: AsrConfigurationViewModel) {
 
 @Composable
 private fun SpeechToTextOptionEditContent(
-    editData: AsrConfigurationData,
-    onEvent: (AsrConfigurationUiEvent) -> Unit
+    editData: AsrDomainConfigurationData,
+    onEvent: (AsrDomainConfigurationUiEvent) -> Unit
 ) {
 
     Column(
@@ -61,51 +61,40 @@ private fun SpeechToTextOptionEditContent(
             .verticalScroll(rememberScrollState())
     ) {
 
-        SpeechToTextOption(
-            editData = editData,
-            onEvent = onEvent
-        )
+        RadioButtonsEnumSelection(
+            modifier = Modifier.testTag(TestTag.SpeechToTextOptions),
+            selected = editData.asrDomainOption,
+            onSelect = { onEvent(SelectAsrOptionDomain(it)) },
+            values = editData.asrDomainOptions
+        ) {
 
-    }
+            when (it) {
+                AsrDomainOption.Rhasspy2HermesHttp ->
+                    SpeechToTextRhasspy2HermesHttp(
+                        editData = editData,
+                        onEvent = onEvent,
+                    )
 
-}
+                AsrDomainOption.Rhasspy2HermesMQTT ->
+                    SpeechToTextRhasspy2HermesMQTT(
+                        editData = editData,
+                        onEvent = onEvent,
+                    )
 
+                else                               -> Unit
+            }
 
-@Composable
-private fun SpeechToTextOption(
-    editData: AsrConfigurationData,
-    onEvent: (AsrConfigurationUiEvent) -> Unit
-) {
-    RadioButtonsEnumSelection(
-        modifier = Modifier.testTag(TestTag.SpeechToTextOptions),
-        selected = editData.asrDomainOption,
-        onSelect = { onEvent(SelectAsrOption(it)) },
-        values = editData.asrDomainOptions
-    ) {
-
-        when (it) {
-            AsrDomainOption.Rhasspy2HermesHttp ->
-                SpeechToTextRhasspy2HermesHttp(
-                    editData = editData,
-                    onEvent = onEvent,
-                )
-
-            AsrDomainOption.Rhasspy2HermesMQTT ->
-                SpeechToTextRhasspy2HermesMQTT(
-                    editData = editData,
-                    onEvent = onEvent,
-                )
-
-            else                               -> Unit
         }
 
     }
+
 }
+
 
 @Composable
 private fun SpeechToTextRhasspy2HermesHttp(
-    editData: AsrConfigurationData,
-    onEvent: (AsrConfigurationUiEvent) -> Unit
+    editData: AsrDomainConfigurationData,
+    onEvent: (AsrDomainConfigurationUiEvent) -> Unit
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
@@ -113,7 +102,7 @@ private fun SpeechToTextRhasspy2HermesHttp(
         TextFieldListItem(
             label = MR.strings.asrVoiceTimeout.stable,
             modifier = Modifier,
-            value = editData.voiceTimeoutText,
+            value = editData.voiceTimeout,
             onValueChange = { onEvent(UpdateVoiceTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
@@ -127,8 +116,8 @@ private fun SpeechToTextRhasspy2HermesHttp(
  */
 @Composable
 private fun SpeechToTextRhasspy2HermesMQTT(
-    editData: AsrConfigurationData,
-    onEvent: (AsrConfigurationUiEvent) -> Unit
+    editData: AsrDomainConfigurationData,
+    onEvent: (AsrDomainConfigurationUiEvent) -> Unit
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
@@ -136,7 +125,7 @@ private fun SpeechToTextRhasspy2HermesMQTT(
         TextFieldListItem(
             label = MR.strings.asrVoiceTimeout.stable,
             modifier = Modifier,
-            value = editData.voiceTimeoutText,
+            value = editData.voiceTimeout,
             onValueChange = { onEvent(UpdateVoiceTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
@@ -144,7 +133,7 @@ private fun SpeechToTextRhasspy2HermesMQTT(
         TextFieldListItem(
             label = MR.strings.mqttResultTimeout.stable,
             modifier = Modifier,
-            value = editData.mqttResultTimeoutText,
+            value = editData.mqttResultTimeout,
             onValueChange = { onEvent(UpdateMqttResultTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
@@ -154,7 +143,7 @@ private fun SpeechToTextRhasspy2HermesMQTT(
             modifier = Modifier.testTag(TestTag.MqttSilenceDetectionSwitch),
             text = MR.strings.useMqttSilenceDetection.stable,
             isChecked = editData.isUseSpeechToTextMqttSilenceDetection,
-            onCheckedChange = { onEvent(SetUseAsrMqttSilenceDetection(it)) }
+            onCheckedChange = { onEvent(SetUseAsrMqttSilenceDetectionDomain(it)) }
         )
 
     }

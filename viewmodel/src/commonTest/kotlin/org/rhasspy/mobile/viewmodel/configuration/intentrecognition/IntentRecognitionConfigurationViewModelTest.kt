@@ -10,8 +10,8 @@ import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentDomainConfigurationViewState.IntentDomainConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewState.IntentRecognitionConfigurationData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,10 +26,10 @@ class IntentRecognitionConfigurationViewModelTest : AppTest() {
 
     override fun setUpMocks() = injectMocks(mocker)
 
-    private lateinit var intentRecognitionConfigurationViewModel: IntentRecognitionConfigurationViewModel
+    private lateinit var intentDomainConfigurationViewModel: IntentDomainConfigurationViewModel
 
-    private lateinit var initialIntentHandlingConfigurationData: IntentRecognitionConfigurationData
-    private lateinit var intentHandlingConfigurationData: IntentRecognitionConfigurationData
+    private lateinit var initialIntentHandlingConfigurationData: IntentDomainConfigurationData
+    private lateinit var intentHandlingConfigurationData: IntentDomainConfigurationData
 
     @BeforeTest
     fun before() {
@@ -40,46 +40,46 @@ class IntentRecognitionConfigurationViewModelTest : AppTest() {
             }
         )
 
-        initialIntentHandlingConfigurationData = IntentRecognitionConfigurationData(intentDomainOption = IntentDomainOption.Disabled)
+        initialIntentHandlingConfigurationData = IntentDomainConfigurationData(intentDomainOption = IntentDomainOption.Disabled)
 
-        intentHandlingConfigurationData = IntentRecognitionConfigurationData(intentDomainOption = IntentDomainOption.Rhasspy2HermesMQTT)
+        intentHandlingConfigurationData = IntentDomainConfigurationData(intentDomainOption = IntentDomainOption.Rhasspy2HermesMQTT)
 
-        intentRecognitionConfigurationViewModel = get()
+        intentDomainConfigurationViewModel = get()
     }
 
 
     @Test
     fun `when data is changed it's updated and on save it's saved`() = runTest {
-        assertEquals(initialIntentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
+        assertEquals(initialIntentHandlingConfigurationData, intentDomainConfigurationViewModel.viewState.value.editData)
 
         with(intentHandlingConfigurationData) {
-            intentRecognitionConfigurationViewModel.onEvent(SelectIntentRecognitionOption(intentDomainOption))
+            intentDomainConfigurationViewModel.onEvent(SelectIntentRecognitionOption(intentDomainOption))
         }
 
-        assertEquals(intentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
+        assertEquals(intentHandlingConfigurationData, intentDomainConfigurationViewModel.viewState.value.editData)
 
-        intentRecognitionConfigurationViewModel.onEvent(Save)
+        intentDomainConfigurationViewModel.onEvent(Save)
 
-        assertEquals(intentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
-        assertEquals(intentHandlingConfigurationData, IntentRecognitionConfigurationData())
+        assertEquals(intentHandlingConfigurationData, intentDomainConfigurationViewModel.viewState.value.editData)
+        assertEquals(intentHandlingConfigurationData, IntentDomainConfigurationData())
     }
 
     @Test
     fun `when data is changed it's updated and on discard it's discarded`() = runTest {
         assertEquals(
             initialIntentHandlingConfigurationData,
-            intentRecognitionConfigurationViewModel.viewState.value.editData
+            intentDomainConfigurationViewModel.viewState.value.editData
         )
 
         with(intentHandlingConfigurationData) {
-            intentRecognitionConfigurationViewModel.onEvent(SelectIntentRecognitionOption(intentDomainOption))
+            intentDomainConfigurationViewModel.onEvent(SelectIntentRecognitionOption(intentDomainOption))
         }
 
-        assertEquals(intentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
+        assertEquals(intentHandlingConfigurationData, intentDomainConfigurationViewModel.viewState.value.editData)
 
-        intentRecognitionConfigurationViewModel.onEvent(Discard)
+        intentDomainConfigurationViewModel.onEvent(Discard)
 
-        assertEquals(initialIntentHandlingConfigurationData, intentRecognitionConfigurationViewModel.viewState.value.editData)
-        assertEquals(initialIntentHandlingConfigurationData, IntentRecognitionConfigurationData())
+        assertEquals(initialIntentHandlingConfigurationData, intentDomainConfigurationViewModel.viewState.value.editData)
+        assertEquals(initialIntentHandlingConfigurationData, IntentDomainConfigurationData())
     }
 }

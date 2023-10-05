@@ -122,27 +122,27 @@ private fun SilenceDetectionSettingsContent(
         InformationListElement(text = MR.strings.silenceDetectionInformation.stable)
 
         Time(
-            silenceDetectionMinimumTimeText = editData.silenceDetectionMinimumTimeText,
-            silenceDetectionTimeText = editData.silenceDetectionTimeText,
-            onEvent = onEvent
+            silenceDetectionMinimumTime = editData.silenceDetectionMinimumTime,
+            silenceDetectionTime = editData.silenceDetectionTime,
+            onEvent = onEvent,
         )
 
         CurrentAudioLevel(
             isRecording = audioRecorderViewState.isRecording,
             isAudioLevelBiggerThanMax = audioRecorderViewState.isAudioLevelBiggerThanMax,
             audioLevelPercentage = audioRecorderViewState.audioLevelPercentage,
-            currentVolume = audioRecorderViewState.currentVolume
+            currentVolume = audioRecorderViewState.currentVolume,
         )
 
         AudioLevel(
             silenceDetectionAudioLevelPercentage = audioRecorderViewState.silenceDetectionAudioLevelPercentage,
             silenceDetectionAudioLevel = editData.silenceDetectionAudioLevel,
-            onEvent = onEvent
+            onEvent = onEvent,
         )
 
         StartTestButton(
             isRecording = audioRecorderViewState.isRecording,
-            onEvent = onEvent
+            onEvent = onEvent,
         )
 
     }
@@ -154,15 +154,15 @@ private fun SilenceDetectionSettingsContent(
  */
 @Composable
 private fun Time(
-    silenceDetectionMinimumTimeText: String,
-    silenceDetectionTimeText: String,
+    silenceDetectionMinimumTime: String,
+    silenceDetectionTime: String,
     onEvent: (LocalSilenceDetectionUiEvent) -> Unit
 ) {
 
     TextFieldListItem(
         label = MR.strings.silenceDetectionMinimumTime.stable,
         modifier = Modifier.testTag(TestTag.AutomaticSilenceDetectionSettingsMinimumTime),
-        value = silenceDetectionMinimumTimeText,
+        value = silenceDetectionMinimumTime,
         onValueChange = { onEvent(UpdateSilenceDetectionMinimumTime(it)) },
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         isLastItem = false
@@ -171,7 +171,7 @@ private fun Time(
     TextFieldListItem(
         label = MR.strings.silenceDetectionTime.stable,
         modifier = Modifier.testTag(TestTag.AutomaticSilenceDetectionSettingsTime),
-        value = silenceDetectionTimeText,
+        value = silenceDetectionTime,
         onValueChange = { onEvent(UpdateSilenceDetectionTime(it)) },
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
     )

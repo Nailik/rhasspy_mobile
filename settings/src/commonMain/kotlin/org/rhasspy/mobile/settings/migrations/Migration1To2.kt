@@ -255,8 +255,8 @@ internal object Migration1To2 : IMigration(1, 2) {
         ConfigurationSetting.intentDomainData.value = IntentDomainData(
             option = intentDomainOption.value,
             isRhasspy2HermesHttpHandleWithRecognition = true,
-            rhasspy2HermesHttpHandleTimeout = 20.seconds,
-            rhasspy2HermesMqttHandleTimeout = 20.seconds,
+            rhasspy2HermesHttpIntentHandlingTimeout = 20.seconds,
+            timeout = 20.seconds,
         )
 
         ConfigurationSetting.sndDomainData.value = SndDomainData(

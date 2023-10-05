@@ -1,8 +1,10 @@
 package org.rhasspy.mobile.viewmodel.configuration.vad
 
+import org.rhasspy.mobile.data.data.toLongOrZero
 import org.rhasspy.mobile.data.domain.VadDomainData
 import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainViewState.VadDomainConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainViewState.VadDomainConfigurationData.LocalSilenceDetectionConfigurationData
+import kotlin.time.Duration.Companion.milliseconds
 
 class VadDomainConfigurationDataMapper {
 
@@ -10,8 +12,8 @@ class VadDomainConfigurationDataMapper {
         return VadDomainConfigurationData(
             vadDomainOption = data.option,
             localSilenceDetectionSetting = LocalSilenceDetectionConfigurationData(
-                silenceDetectionTime = data.automaticSilenceDetectionTime,
-                silenceDetectionMinimumTime = data.automaticSilenceDetectionMinimumTime,
+                silenceDetectionTime = data.automaticSilenceDetectionTime.inWholeMilliseconds.toString(),
+                silenceDetectionMinimumTime = data.automaticSilenceDetectionMinimumTime.inWholeMilliseconds.toString(),
                 silenceDetectionAudioLevel = data.automaticSilenceDetectionAudioLevel,
             ),
         )
@@ -20,8 +22,8 @@ class VadDomainConfigurationDataMapper {
     operator fun invoke(data: VadDomainConfigurationData): VadDomainData {
         return VadDomainData(
             option = data.vadDomainOption,
-            automaticSilenceDetectionTime = data.localSilenceDetectionSetting.silenceDetectionTime,
-            automaticSilenceDetectionMinimumTime = data.localSilenceDetectionSetting.silenceDetectionMinimumTime,
+            automaticSilenceDetectionTime = data.localSilenceDetectionSetting.silenceDetectionTime.toLongOrZero().milliseconds,
+            automaticSilenceDetectionMinimumTime = data.localSilenceDetectionSetting.silenceDetectionMinimumTime.toLongOrZero().milliseconds,
             automaticSilenceDetectionAudioLevel = data.localSilenceDetectionSetting.silenceDetectionAudioLevel,
         )
     }

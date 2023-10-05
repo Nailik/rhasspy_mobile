@@ -18,9 +18,9 @@ import org.rhasspy.mobile.data.service.option.WakeDomainOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.main.MainScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.Change.SelectWakeDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeDomainPorcupineAccessToken
+import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
@@ -32,7 +32,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
     private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     private val mainViewModel = get<MainScreenViewModel>()
-    private val viewModel = get<WakeWordConfigurationViewModel>()
+    private val viewModel = get<WakeDomainConfigurationViewModel>()
 
     @Composable
     override fun ComposableContent() {
@@ -59,7 +59,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         setupContent()
 
         //option is disable
-        viewModel.onEvent(SelectWakeWordOption(WakeDomainOption.Disabled))
+        viewModel.onEvent(SelectWakeDomainOption(WakeDomainOption.Disabled))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
@@ -75,7 +75,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
 
         //user clicks save
         composeTestRule.saveBottomAppBar()
-        WakeWordConfigurationViewModel(get(), get()).viewState.value.editData.also {
+        WakeDomainConfigurationViewModel(get(), get()).viewState.value.editData.also {
             //new option is saved
             assertEquals(WakeDomainOption.Porcupine, it.wakeDomainOption)
         }
@@ -101,8 +101,8 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         setupContent()
 
         //option is porcupine
-        viewModel.onEvent(SelectWakeWordOption(WakeDomainOption.Porcupine))
-        viewModel.onEvent(UpdateWakeWordPorcupineAccessToken(""))
+        viewModel.onEvent(SelectWakeDomainOption(WakeDomainOption.Porcupine))
+        viewModel.onEvent(UpdateWakeDomainPorcupineAccessToken(""))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 
@@ -151,7 +151,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         setupContent()
 
         //option is porcupine
-        viewModel.onEvent(SelectWakeWordOption(WakeDomainOption.Porcupine))
+        viewModel.onEvent(SelectWakeDomainOption(WakeDomainOption.Porcupine))
         viewModel.onEvent(Save)
         composeTestRule.awaitIdle()
 

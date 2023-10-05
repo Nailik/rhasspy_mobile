@@ -4,8 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import okio.Path.Companion.toPath
-import org.rhasspy.mobile.data.data.toIntOrNullOrConstant
-import org.rhasspy.mobile.data.data.toLongOrNullOrConstant
+import org.rhasspy.mobile.data.data.takeInt
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
@@ -46,11 +45,11 @@ class MqttConnectionConfigurationViewModel(
                 when (change) {
                     is SetMqttEnabled              -> copy(isEnabled = change.enabled)
                     is SetMqttSSLEnabled           -> copy(isSSLEnabled = change.enabled)
-                    is UpdateMqttConnectionTimeout -> copy(connectionTimeout = change.timeout.toIntOrNullOrConstant())
+                    is UpdateMqttConnectionTimeout -> copy(connectionTimeout = change.timeout.takeInt())
                     is UpdateMqttHost              -> copy(host = change.host)
-                    is UpdateMqttKeepAliveInterval -> copy(keepAliveInterval = change.keepAliveInterval.toIntOrNullOrConstant())
+                    is UpdateMqttKeepAliveInterval -> copy(keepAliveInterval = change.keepAliveInterval.takeInt())
                     is UpdateMqttPassword          -> copy(password = change.password)
-                    is UpdateMqttRetryInterval     -> copy(retryInterval = change.retryInterval.toLongOrNullOrConstant())
+                    is UpdateMqttRetryInterval     -> copy(retryInterval = change.retryInterval.takeInt())
                     is UpdateMqttUserName          -> copy(userName = change.userName)
                     is UpdateMqttKeyStoreFile      -> copy(keystoreFile = change.file.name)
                 }

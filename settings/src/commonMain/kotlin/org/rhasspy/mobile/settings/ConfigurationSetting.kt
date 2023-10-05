@@ -150,8 +150,8 @@ object ConfigurationSetting {
         initial = IntentDomainData(
             option = IntentDomainOption.Disabled,
             isRhasspy2HermesHttpHandleWithRecognition = false,
-            rhasspy2HermesHttpHandleTimeout = 20.seconds,
-            rhasspy2HermesMqttHandleTimeout = 20.seconds,
+            rhasspy2HermesHttpIntentHandlingTimeout = 20.seconds,
+            timeout = 20.seconds,
         ),
         serializer = IntentDomainData.serializer(),
     )

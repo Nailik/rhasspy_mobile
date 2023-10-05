@@ -6,27 +6,30 @@ fun Int?.toStringOrEmpty(): String = this?.toString() ?: ""
 fun Long?.toStringOrEmpty(): String = this?.toString() ?: ""
 fun String?.toLongOrNullOrConstant(): Long? =
     this?.replace(" ", "")?.let {
-        if (it.length > 10) this.substring(0..9).toLong() else it.trim().trimTrailingZeros()
+        if (it.length > 10) this.takeLong().toLong() else it.trim().trimTrailingZeros()
             ?.toLongOrNull()
     }
 
 fun String?.toLongOrZero(): Long =
     this?.replace(" ", "")?.let {
-        if (it.length > 10) this.substring(0..9).toLong() else it.trim().trimTrailingZeros()
+        if (it.length > 10) this.takeLong().toLong() else it.trim().trimTrailingZeros()
             ?.toLongOrNull()
     } ?: 0
 
 fun String?.toIntOrZero(): Int =
     this?.replace(" ", "")?.let {
-        if (it.length > 9) this.substring(0..9).toInt() else it.trimTrailingZeros()
+        if (it.length > 9) this.takeInt().toInt() else it.trimTrailingZeros()
             ?.toIntOrNull()
     } ?: 0
 
 fun String?.toIntOrNullOrConstant(): Int? =
     this?.replace(" ", "")?.let {
-        if (it.length > 9) this.substring(0..9).toInt() else it.trimTrailingZeros()
+        if (it.length > 9) this.takeInt().toInt() else it.trimTrailingZeros()
             ?.toIntOrNull()
     }
+
+fun String.takeLong(): String = this.take(10)
+fun String.takeInt(): String = this.take(0)
 
 private fun String?.trimTrailingZeros(): String? {
     if (this == null) return null

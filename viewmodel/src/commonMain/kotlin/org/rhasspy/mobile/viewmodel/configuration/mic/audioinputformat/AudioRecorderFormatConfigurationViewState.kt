@@ -10,11 +10,11 @@ import org.rhasspy.mobile.platformspecific.toImmutableList
 
 @Stable
 data class AudioRecorderFormatConfigurationViewState internal constructor(
-    val editData: AudioInputFormatConfigurationData,
+    val editData: AudioRecorderFormatConfigurationData,
 ) {
 
     @Stable
-    data class AudioInputFormatConfigurationData internal constructor(
+    data class AudioRecorderFormatConfigurationData internal constructor(
         val audioInputChannel: AudioFormatChannelType,
         val audioInputEncoding: AudioFormatEncodingType,
         val audioInputSampleRate: AudioFormatSampleRateType,
