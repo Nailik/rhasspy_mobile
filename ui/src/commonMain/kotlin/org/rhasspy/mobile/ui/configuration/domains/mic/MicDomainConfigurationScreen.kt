@@ -29,7 +29,7 @@ import org.rhasspy.mobile.viewmodel.configuration.domains.mic.MicDomainConfigura
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.AudioInputConfigurationScreen
 
 @Composable
-fun AudioInputConfigurationScreen(viewModel: MicDomainConfigurationViewModel) {
+fun MicDomainConfigurationScreen(viewModel: MicDomainConfigurationViewModel) {
 
     ScreenContent(
         modifier = Modifier.testTag(AudioInputConfigurationScreen),
@@ -53,7 +53,7 @@ fun AudioInputConfigurationScreen(viewModel: MicDomainConfigurationViewModel) {
                 domainStateFlow = viewState.domainStateFlow
             )
 
-            AudioInputConfigurationScreenContent(
+            MicDomainScreenContent(
                 onEvent = viewModel::onEvent,
                 viewState = viewState
             )
@@ -64,7 +64,7 @@ fun AudioInputConfigurationScreen(viewModel: MicDomainConfigurationViewModel) {
 }
 
 @Composable
-private fun AudioInputConfigurationScreenContent(
+private fun MicDomainScreenContent(
     onEvent: (MicDomainConfigurationUiEvent) -> Unit,
     viewState: MicDomainConfigurationViewState
 ) {

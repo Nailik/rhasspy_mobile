@@ -52,8 +52,7 @@ import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainViewState
 import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainViewState.VadDomainConfigurationData.LocalSilenceDetectionConfigurationData
 
 @Composable
-fun VoiceActivityDetectionConfigurationScreen(viewModel: VadDomainConfigurationViewModel) {
-
+fun VadDomainConfigurationScreen(viewModel: VadDomainConfigurationViewModel) {
 
     ScreenContent(
         title = MR.strings.voice_activity_detection.stable,
@@ -64,7 +63,7 @@ fun VoiceActivityDetectionConfigurationScreen(viewModel: VadDomainConfigurationV
         val viewState by viewModel.viewState.collectAsState()
         val audioRecorderViewState by viewModel.audioRecorderViewState.collectAsState()
 
-        VoiceActivityDetectionOptionContent(
+        VadDomainScreenContent(
             viewState = viewState,
             audioRecorderViewState = audioRecorderViewState,
             onEvent = viewModel::onEvent,
@@ -75,7 +74,7 @@ fun VoiceActivityDetectionConfigurationScreen(viewModel: VadDomainConfigurationV
 }
 
 @Composable
-private fun VoiceActivityDetectionOptionContent(
+private fun VadDomainScreenContent(
     viewState: VadDomainViewState,
     audioRecorderViewState: AudioRecorderViewState,
     onEvent: (VadDomainUiEvent) -> Unit
@@ -93,11 +92,11 @@ private fun VoiceActivityDetectionOptionContent(
         ) { option ->
 
             when (option) {
-                VadDomainOption.Local    ->
-                    SilenceDetectionSettingsContent(
-                        editData = viewState.editData.localSilenceDetectionSetting,
+                VadDomainOption.Local ->
+                    VadDomainLocal(
+                        localSilenceDetectionSetting = viewState.editData.localSilenceDetectionSetting,
                         audioRecorderViewState = audioRecorderViewState,
-                        onEvent = onEvent
+                        onEvent = onEvent,
                     )
 
                 VadDomainOption.Disabled -> Unit
@@ -115,8 +114,8 @@ private fun VoiceActivityDetectionOptionContent(
  */
 
 @Composable
-private fun SilenceDetectionSettingsContent(
-    editData: LocalSilenceDetectionConfigurationData,
+private fun VadDomainLocal(
+    localSilenceDetectionSetting: LocalSilenceDetectionConfigurationData,
     audioRecorderViewState: AudioRecorderViewState,
     onEvent: (LocalSilenceDetectionUiEvent) -> Unit
 ) {
@@ -130,8 +129,8 @@ private fun SilenceDetectionSettingsContent(
         InformationListElement(text = MR.strings.silenceDetectionInformation.stable)
 
         Time(
-            silenceDetectionMinimumTime = editData.silenceDetectionMinimumTime,
-            silenceDetectionTime = editData.silenceDetectionTime,
+            silenceDetectionMinimumTime = localSilenceDetectionSetting.silenceDetectionMinimumTime,
+            silenceDetectionTime = localSilenceDetectionSetting.silenceDetectionTime,
             onEvent = onEvent,
         )
 
@@ -144,7 +143,7 @@ private fun SilenceDetectionSettingsContent(
 
         AudioLevel(
             silenceDetectionAudioLevelPercentage = audioRecorderViewState.silenceDetectionAudioLevelPercentage,
-            silenceDetectionAudioLevel = editData.silenceDetectionAudioLevel,
+            silenceDetectionAudioLevel = localSilenceDetectionSetting.silenceDetectionAudioLevel,
             onEvent = onEvent,
         )
 

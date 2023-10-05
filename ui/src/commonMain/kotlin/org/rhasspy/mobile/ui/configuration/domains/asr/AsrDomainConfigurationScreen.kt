@@ -32,7 +32,7 @@ import org.rhasspy.mobile.viewmodel.configuration.domains.asr.AsrDomainConfigura
  * HTTP Endpoint
  */
 @Composable
-fun SpeechToTextConfigurationScreen(viewModel: AsrDomainConfigurationViewModel) {
+fun AsrDomainConfigurationScreen(viewModel: AsrDomainConfigurationViewModel) {
 
     ScreenContent(
         title = MR.strings.speechToText.stable,
@@ -41,7 +41,7 @@ fun SpeechToTextConfigurationScreen(viewModel: AsrDomainConfigurationViewModel) 
     ) {
         val viewState by viewModel.viewState.collectAsState()
 
-        SpeechToTextOptionEditContent(
+        AsrDomainScreenContent(
             editData = viewState.editData,
             onEvent = viewModel::onEvent
         )
@@ -51,7 +51,7 @@ fun SpeechToTextConfigurationScreen(viewModel: AsrDomainConfigurationViewModel) 
 }
 
 @Composable
-private fun SpeechToTextOptionEditContent(
+private fun AsrDomainScreenContent(
     editData: AsrDomainConfigurationData,
     onEvent: (AsrDomainConfigurationUiEvent) -> Unit
 ) {
@@ -65,18 +65,20 @@ private fun SpeechToTextOptionEditContent(
             selected = editData.asrDomainOption,
             onSelect = { onEvent(SelectAsrOptionDomain(it)) },
             values = editData.asrDomainOptions
-        ) {
+        ) { option ->
 
-            when (it) {
+            when (option) {
                 AsrDomainOption.Rhasspy2HermesHttp ->
-                    SpeechToTextRhasspy2HermesHttp(
-                        editData = editData,
+                    AsrDomainRhasspy2HermesHttp(
+                        voiceTimeout = editData.voiceTimeout,
                         onEvent = onEvent,
                     )
 
                 AsrDomainOption.Rhasspy2HermesMQTT ->
-                    SpeechToTextRhasspy2HermesMQTT(
-                        editData = editData,
+                    AsrDomainRhasspy2HermesMQTT(
+                        voiceTimeout = editData.voiceTimeout,
+                        mqttResultTimeout = editData.mqttResultTimeout,
+                        isUseSpeechToTextMqttSilenceDetection = editData.isUseSpeechToTextMqttSilenceDetection,
                         onEvent = onEvent,
                     )
 
@@ -91,8 +93,8 @@ private fun SpeechToTextOptionEditContent(
 
 
 @Composable
-private fun SpeechToTextRhasspy2HermesHttp(
-    editData: AsrDomainConfigurationData,
+private fun AsrDomainRhasspy2HermesHttp(
+    voiceTimeout: String,
     onEvent: (AsrDomainConfigurationUiEvent) -> Unit
 ) {
 
@@ -101,7 +103,7 @@ private fun SpeechToTextRhasspy2HermesHttp(
         TextFieldListItem(
             label = MR.strings.asrVoiceTimeout.stable,
             modifier = Modifier,
-            value = editData.voiceTimeout,
+            value = voiceTimeout,
             onValueChange = { onEvent(UpdateVoiceTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
@@ -114,8 +116,10 @@ private fun SpeechToTextRhasspy2HermesHttp(
  * mqtt silence detection settings
  */
 @Composable
-private fun SpeechToTextRhasspy2HermesMQTT(
-    editData: AsrDomainConfigurationData,
+private fun AsrDomainRhasspy2HermesMQTT(
+    voiceTimeout: String,
+    mqttResultTimeout: String,
+    isUseSpeechToTextMqttSilenceDetection: Boolean,
     onEvent: (AsrDomainConfigurationUiEvent) -> Unit
 ) {
 
@@ -124,7 +128,7 @@ private fun SpeechToTextRhasspy2HermesMQTT(
         TextFieldListItem(
             label = MR.strings.asrVoiceTimeout.stable,
             modifier = Modifier,
-            value = editData.voiceTimeout,
+            value = voiceTimeout,
             onValueChange = { onEvent(UpdateVoiceTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
@@ -132,7 +136,7 @@ private fun SpeechToTextRhasspy2HermesMQTT(
         TextFieldListItem(
             label = MR.strings.mqttResultTimeout.stable,
             modifier = Modifier,
-            value = editData.mqttResultTimeout,
+            value = mqttResultTimeout,
             onValueChange = { onEvent(UpdateMqttResultTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
@@ -141,7 +145,7 @@ private fun SpeechToTextRhasspy2HermesMQTT(
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.MqttSilenceDetectionSwitch),
             text = MR.strings.useMqttSilenceDetection.stable,
-            isChecked = editData.isUseSpeechToTextMqttSilenceDetection,
+            isChecked = isUseSpeechToTextMqttSilenceDetection,
             onCheckedChange = { onEvent(SetUseAsrMqttSilenceDetectionDomain(it)) }
         )
 

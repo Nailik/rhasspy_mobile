@@ -32,7 +32,7 @@ import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigura
  * HTTP Endpoint
  */
 @Composable
-fun TextToSpeechConfigurationScreen(viewModel: TtsDomainConfigurationViewModel) {
+fun TtsDomainConfigurationScreen(viewModel: TtsDomainConfigurationViewModel) {
 
     ScreenContent(
         title = MR.strings.textToSpeech.stable,
@@ -42,7 +42,7 @@ fun TextToSpeechConfigurationScreen(viewModel: TtsDomainConfigurationViewModel) 
 
         val viewState by viewModel.viewState.collectAsState()
 
-        TextToSpeechEditContent(
+        TtsDomainScreenContent(
             editData = viewState.editData,
             onEvent = viewModel::onEvent
         )
@@ -52,7 +52,7 @@ fun TextToSpeechConfigurationScreen(viewModel: TtsDomainConfigurationViewModel) 
 }
 
 @Composable
-private fun TextToSpeechEditContent(
+private fun TtsDomainScreenContent(
     editData: TtsDomainConfigurationData,
     onEvent: (TtsDomainConfigurationUiEvent) -> Unit
 ) {
@@ -71,7 +71,7 @@ private fun TextToSpeechEditContent(
             when (it) {
                 TtsDomainOption.Rhasspy2HermesHttp -> Unit
                 TtsDomainOption.Rhasspy2HermesMQTT ->
-                    TtsRhasspy2HermesMQTT(
+                    TtsDomainRhasspy2HermesMQTT(
                         timeout = editData.rhasspy2HermesMqttTimeout,
                         onEvent = onEvent,
                     )
@@ -86,7 +86,7 @@ private fun TextToSpeechEditContent(
 }
 
 @Composable
-private fun TtsRhasspy2HermesMQTT(
+private fun TtsDomainRhasspy2HermesMQTT(
     timeout: String,
     onEvent: (TtsDomainConfigurationUiEvent) -> Unit
 ) {

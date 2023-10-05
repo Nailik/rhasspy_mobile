@@ -9,16 +9,16 @@ import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.ui.configuration.ConnectionsConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.DialogManagementConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.connections.*
-import org.rhasspy.mobile.ui.configuration.domains.asr.SpeechToTextConfigurationScreen
-import org.rhasspy.mobile.ui.configuration.domains.handle.IntentHandlingConfigurationScreen
-import org.rhasspy.mobile.ui.configuration.domains.intent.IntentRecognitionConfigurationScreen
-import org.rhasspy.mobile.ui.configuration.domains.mic.AudioInputConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.domains.asr.AsrDomainConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.domains.handle.HandleDomainConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.domains.intent.IntentDomainConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.mic.AudioOutputFormatConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.mic.AudioRecorderFormatConfigurationScreen
-import org.rhasspy.mobile.ui.configuration.domains.snd.AudioPlayingConfigurationScreen
-import org.rhasspy.mobile.ui.configuration.domains.tts.TextToSpeechConfigurationScreen
-import org.rhasspy.mobile.ui.configuration.domains.vad.VoiceActivityDetectionConfigurationScreen
-import org.rhasspy.mobile.ui.configuration.domains.wake.WakeWordConfigurationOverviewScreen
+import org.rhasspy.mobile.ui.configuration.domains.mic.MicDomainConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.domains.snd.SndDomainConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.domains.tts.TtsDomainConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.domains.vad.VadDomainConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.domains.wake.WakeDomainConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.wake.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.ui.configuration.domains.wake.porcupine.PorcupineLanguageScreen
 import org.rhasspy.mobile.ui.settings.*
@@ -76,14 +76,14 @@ private fun ConfigurationNavigationContent(
         when (screen) {
             is ConfigurationScreenNavigationDestination.ConnectionsConfigurationScreen            -> ConnectionsConfigurationScreen(screen.viewModel)
             is ConfigurationScreenNavigationDestination.DialogManagementConfigurationScreen       -> DialogManagementConfigurationScreen(screen.viewModel)
-            is ConfigurationScreenNavigationDestination.AudioInputConfigurationScreen             -> AudioInputConfigurationScreen(screen.viewModel)
-            is ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen               -> WakeWordConfigurationOverviewScreen(screen.viewModel)
-            is ConfigurationScreenNavigationDestination.SpeechToTextConfigurationScreen           -> SpeechToTextConfigurationScreen(screen.viewModel)
-            is ConfigurationScreenNavigationDestination.VoiceActivityDetectionConfigurationScreen -> VoiceActivityDetectionConfigurationScreen(screen.viewModel)
-            is ConfigurationScreenNavigationDestination.IntentRecognitionConfigurationScreen      -> IntentRecognitionConfigurationScreen(screen.viewModel)
-            is ConfigurationScreenNavigationDestination.IntentHandlingConfigurationScreen         -> IntentHandlingConfigurationScreen(screen.viewModel)
-            is ConfigurationScreenNavigationDestination.TextToSpeechConfigurationScreen           -> TextToSpeechConfigurationScreen(screen.viewModel)
-            is ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen           -> AudioPlayingConfigurationScreen(screen.viewModel)
+            is ConfigurationScreenNavigationDestination.AudioInputConfigurationScreen             -> MicDomainConfigurationScreen(screen.viewModel)
+            is ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen               -> WakeDomainConfigurationScreen(screen.viewModel)
+            is ConfigurationScreenNavigationDestination.SpeechToTextConfigurationScreen           -> AsrDomainConfigurationScreen(screen.viewModel)
+            is ConfigurationScreenNavigationDestination.VoiceActivityDetectionConfigurationScreen -> VadDomainConfigurationScreen(screen.viewModel)
+            is ConfigurationScreenNavigationDestination.IntentRecognitionConfigurationScreen      -> IntentDomainConfigurationScreen(screen.viewModel)
+            is ConfigurationScreenNavigationDestination.IntentHandlingConfigurationScreen         -> HandleDomainConfigurationScreen(screen.viewModel)
+            is ConfigurationScreenNavigationDestination.TextToSpeechConfigurationScreen           -> TtsDomainConfigurationScreen(screen.viewModel)
+            is ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen           -> SndDomainConfigurationScreen(screen.viewModel)
         }
     }
 }

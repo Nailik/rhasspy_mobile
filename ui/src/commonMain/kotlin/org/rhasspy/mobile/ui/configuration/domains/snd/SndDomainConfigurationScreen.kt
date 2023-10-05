@@ -34,7 +34,7 @@ import org.rhasspy.mobile.viewmodel.configuration.domains.snd.AudioPlayingConfig
  * HTTP Endpoint
  */
 @Composable
-fun AudioPlayingConfigurationScreen(viewModel: AudioPlayingConfigurationViewModel) {
+fun SndDomainConfigurationScreen(viewModel: AudioPlayingConfigurationViewModel) {
 
     ScreenContent(
         title = MR.strings.audioPlaying.stable,
@@ -43,7 +43,7 @@ fun AudioPlayingConfigurationScreen(viewModel: AudioPlayingConfigurationViewMode
     ) {
         val viewState by viewModel.viewState.collectAsState()
 
-        AudioPlayingEditContent(
+        SndDomainScreenContent(
             editData = viewState.editData,
             onEvent = viewModel::onEvent
         )
@@ -53,7 +53,7 @@ fun AudioPlayingConfigurationScreen(viewModel: AudioPlayingConfigurationViewMode
 }
 
 @Composable
-private fun AudioPlayingEditContent(
+private fun SndDomainScreenContent(
     editData: SndDomainConfigurationData,
     onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
 ) {
@@ -71,7 +71,7 @@ private fun AudioPlayingEditContent(
 
             when (option) {
                 SndDomainOption.Local              ->
-                    LocalConfigurationContent(
+                    SndDomainLocal(
                         audioOutputOption = editData.audioOutputOption,
                         audioOutputOptionList = editData.audioOutputOptionList,
                         audioTimeout = editData.audioTimeout,
@@ -79,13 +79,13 @@ private fun AudioPlayingEditContent(
                     )
 
                 SndDomainOption.Rhasspy2HermesHttp ->
-                    SndRhasspy2HermesHttp(
+                    SndDomainRhasspy2HermesHttp(
                         audioTimeout = editData.audioTimeout,
-                        onEvent = onEvent
+                        onEvent = onEvent,
                     )
 
                 SndDomainOption.Rhasspy2HermesMQTT ->
-                    MqttSiteIdConfigurationContent(
+                    SndDomainRhasspy2HermesMQTT(
                         audioPlayingMqttSiteId = editData.audioPlayingMqttSiteId,
                         timeout = editData.rhasspy2HermesMqttTimeout,
                         audioTimeout = editData.audioTimeout,
@@ -104,7 +104,7 @@ private fun AudioPlayingEditContent(
  * show output options for local audio
  */
 @Composable
-private fun LocalConfigurationContent(
+private fun SndDomainLocal(
     audioOutputOption: AudioOutputOption,
     audioTimeout: String,
     audioOutputOptionList: ImmutableList<AudioOutputOption>,
@@ -135,7 +135,7 @@ private fun LocalConfigurationContent(
 
 
 @Composable
-private fun SndRhasspy2HermesHttp(
+private fun SndDomainRhasspy2HermesHttp(
     audioTimeout: String,
     onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
 ) {
@@ -157,7 +157,7 @@ private fun SndRhasspy2HermesHttp(
  * show mqtt site id options
  */
 @Composable
-private fun MqttSiteIdConfigurationContent(
+private fun SndDomainRhasspy2HermesMQTT(
     audioPlayingMqttSiteId: String,
     audioTimeout: String,
     timeout: String,

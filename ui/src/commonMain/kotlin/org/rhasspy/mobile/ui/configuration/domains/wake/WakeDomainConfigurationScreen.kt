@@ -50,7 +50,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordCon
  * porcupine wake word settings
  */
 @Composable
-fun WakeWordConfigurationOverviewScreen(viewModel: WakeDomainConfigurationViewModel) {
+fun WakeDomainConfigurationScreen(viewModel: WakeDomainConfigurationViewModel) {
 
     ScreenContent(
         modifier = Modifier.testTag(WakeWordConfigurationScreen),
@@ -64,7 +64,7 @@ fun WakeWordConfigurationOverviewScreen(viewModel: WakeDomainConfigurationViewMo
 
             DomainStateHeaderItem(domainStateFlow = viewState.domainStateFlow)
 
-            WakeWordConfigurationOptionContent(
+            WakeDomainScreenContent(
                 viewState = viewState,
                 onEvent = viewModel::onEvent
             )
@@ -76,7 +76,7 @@ fun WakeWordConfigurationOverviewScreen(viewModel: WakeDomainConfigurationViewMo
 }
 
 @Composable
-private fun WakeWordConfigurationOptionContent(
+private fun WakeDomainScreenContent(
     viewState: WakeDomainConfigurationViewState,
     onEvent: (WakeDomainConfigurationUiEvent) -> Unit
 ) {
@@ -154,7 +154,7 @@ private fun PorcupineConfiguration(
             icon = {
                 Icon(
                     imageVector = Icons.Filled.Link,
-                    contentDescription = MR.strings.openPicoVoiceConsole.stable
+                    contentDescription = MR.strings.openPicoVoiceConsole.stable,
                 )
             },
             text = { Text(MR.strings.openPicoVoiceConsole.stable) },

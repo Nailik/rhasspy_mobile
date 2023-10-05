@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.HandleDomainOption
+import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Event
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Intent
 import org.rhasspy.mobile.resources.MR
@@ -38,7 +39,7 @@ import org.rhasspy.mobile.viewmodel.configuration.domains.handle.HandleDomainCon
  * home assistant configuration
  */
 @Composable
-fun IntentHandlingConfigurationScreen(viewModel: HandleDomainConfigurationViewModel) {
+fun HandleDomainConfigurationScreen(viewModel: HandleDomainConfigurationViewModel) {
 
     ScreenContent(
         title = MR.strings.intentHandling.stable,
@@ -48,7 +49,7 @@ fun IntentHandlingConfigurationScreen(viewModel: HandleDomainConfigurationViewMo
 
         val viewState by viewModel.viewState.collectAsState()
 
-        IntentHandlingEditContent(
+        HandleDomainScreenContent(
             editData = viewState.editData,
             onEvent = viewModel::onEvent
         )
@@ -58,7 +59,7 @@ fun IntentHandlingConfigurationScreen(viewModel: HandleDomainConfigurationViewMo
 }
 
 @Composable
-private fun IntentHandlingEditContent(
+private fun HandleDomainScreenContent(
     editData: HandleDomainConfigurationData,
     onEvent: (HandleDomainConfigurationUiEvent) -> Unit
 ) {
@@ -76,9 +77,10 @@ private fun IntentHandlingEditContent(
 
             when (option) {
                 HandleDomainOption.HomeAssistant ->
-                    HomeAssistantOption(
-                        editData = editData,
-                        onEvent = onEvent
+                    HandleDomainHomeAssistant(
+                        intentHandlingHomeAssistantOption = editData.intentHandlingHomeAssistantOption,
+                        homeAssistantEventTimeout = editData.homeAssistantEventTimeout,
+                        onEvent = onEvent,
                     )
 
                 else                             -> Unit
@@ -94,11 +96,12 @@ private fun IntentHandlingEditContent(
  * configuration of home assistant intent handling
  * url
  * access token
- * hass event or intent
+ * home assistant event or intent
  */
 @Composable
-private fun HomeAssistantOption(
-    editData: HandleDomainConfigurationData,
+private fun HandleDomainHomeAssistant(
+    intentHandlingHomeAssistantOption: HomeAssistantIntentHandlingOption,
+    homeAssistantEventTimeout: String,
     onEvent: (HandleDomainConfigurationUiEvent) -> Unit
 ) {
 
@@ -108,26 +111,26 @@ private fun HomeAssistantOption(
         RadioButtonListItem(
             modifier = Modifier.testTag(TestTag.SendIntents),
             text = MR.strings.homeAssistantIntents.stable,
-            isChecked = editData.intentHandlingHomeAssistantOption == Intent,
+            isChecked = intentHandlingHomeAssistantOption == Intent,
             onClick = { onEvent(SelectHandleDomainHomeAssistantOption(Intent)) }
         )
 
         RadioButtonListItem(
             modifier = Modifier.testTag(TestTag.SendEvents),
             text = MR.strings.homeAssistantEvents.stable,
-            isChecked = editData.intentHandlingHomeAssistantOption == Event,
+            isChecked = intentHandlingHomeAssistantOption == Event,
             onClick = { onEvent(SelectHandleDomainHomeAssistantOption(Event)) }
         )
 
         AnimatedVisibility(
             enter = expandVertically(),
             exit = shrinkVertically(),
-            visible = editData.intentHandlingHomeAssistantOption == Event
+            visible = intentHandlingHomeAssistantOption == Event
         ) {
 
             TextFieldListItem(
                 label = MR.strings.intentHandlingTimeout.stable,
-                value = editData.homeAssistantEventTimeout,
+                value = homeAssistantEventTimeout,
                 onValueChange = { onEvent(UpdateHandleDomainHomeAssistantEventTimeout(it)) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
             )

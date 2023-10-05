@@ -35,7 +35,7 @@ import org.rhasspy.mobile.viewmodel.configuration.domains.intent.IntentDomainCon
  * text field for endpoint
  */
 @Composable
-fun IntentRecognitionConfigurationScreen(viewModel: IntentDomainConfigurationViewModel) {
+fun IntentDomainConfigurationScreen(viewModel: IntentDomainConfigurationViewModel) {
 
     ScreenContent(
         title = MR.strings.intentRecognition.stable,
@@ -45,7 +45,7 @@ fun IntentRecognitionConfigurationScreen(viewModel: IntentDomainConfigurationVie
 
         val viewState by viewModel.viewState.collectAsState()
 
-        IntentRecognitionEditContent(
+        IntentDomainScreenContent(
             editData = viewState.editData,
             onEvent = viewModel::onEvent,
         )
@@ -55,7 +55,7 @@ fun IntentRecognitionConfigurationScreen(viewModel: IntentDomainConfigurationVie
 }
 
 @Composable
-fun IntentRecognitionEditContent(
+fun IntentDomainScreenContent(
     editData: IntentDomainConfigurationData,
     onEvent: (IntentDomainConfigurationUiEvent) -> Unit
 ) {
@@ -69,17 +69,18 @@ fun IntentRecognitionEditContent(
             selected = editData.intentDomainOption,
             onSelect = { onEvent(SelectIntentDomainOption(it)) },
             values = editData.intentDomainOptionLists,
-        ) {
+        ) { option ->
 
-            when (it) {
+            when (option) {
                 IntentDomainOption.Rhasspy2HermesHttp ->
-                    IntentRhasspy2HermesHttp(
-                        editData = editData,
+                    IntentDomainRhasspy2HermesHttp(
+                        isRhasspy2HermesHttpIntentHandleWithRecognition = editData.isRhasspy2HermesHttpIntentHandleWithRecognition,
+                        timeout = editData.timeout,
                         onEvent = onEvent,
                     )
 
                 IntentDomainOption.Rhasspy2HermesMQTT ->
-                    IntentRhasspy2HermesMQTT(
+                    IntentDomainRhasspy2HermesMQTT(
                         timeout = editData.timeout,
                         onEvent = onEvent,
                     )
@@ -94,8 +95,9 @@ fun IntentRecognitionEditContent(
 }
 
 @Composable
-fun IntentRhasspy2HermesHttp(
-    editData: IntentDomainConfigurationData,
+fun IntentDomainRhasspy2HermesHttp(
+    isRhasspy2HermesHttpIntentHandleWithRecognition: Boolean,
+    timeout: String,
     onEvent: (IntentDomainConfigurationUiEvent) -> Unit,
 ) {
 
@@ -103,18 +105,19 @@ fun IntentRhasspy2HermesHttp(
 
         SwitchListItem(
             text = MR.strings.handleWithRecognition.stable,
-            isChecked = editData.isRhasspy2HermesHttpIntentHandleWithRecognition,
+            isChecked = isRhasspy2HermesHttpIntentHandleWithRecognition,
             onCheckedChange = { onEvent(SetRhasspy2HttpIntentIntentHandlingEnabled(it)) }
         )
 
         AnimatedVisibility(
             enter = expandVertically(),
             exit = shrinkVertically(),
-            visible = editData.isRhasspy2HermesHttpIntentHandleWithRecognition
+            visible = isRhasspy2HermesHttpIntentHandleWithRecognition
         ) {
+
             TextFieldListItem(
                 label = MR.strings.intentHandlingTimeout.stable,
-                value = editData.rhasspy2HermesHttpIntentHandlingTimeout,
+                value = timeout,
                 onValueChange = { onEvent(UpdateRhasspy2HttpIntentHandlingTimeout(it)) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
             )
@@ -125,7 +128,7 @@ fun IntentRhasspy2HermesHttp(
 }
 
 @Composable
-fun IntentRhasspy2HermesMQTT(
+fun IntentDomainRhasspy2HermesMQTT(
     timeout: String,
     onEvent: (IntentDomainConfigurationUiEvent) -> Unit,
 ) {

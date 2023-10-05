@@ -12,7 +12,7 @@ import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.IntentDomainOption
-import org.rhasspy.mobile.ui.configuration.domains.intent.IntentRecognitionConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.domains.intent.IntentDomainConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.domains.intent.IntentDomainConfigurationUiEvent.Change.SelectIntentDomainOption
 import org.rhasspy.mobile.viewmodel.configuration.domains.intent.IntentDomainConfigurationViewModel
@@ -24,7 +24,7 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
 
     @Composable
     override fun ComposableContent() {
-        IntentRecognitionConfigurationScreen(viewModel)
+        IntentDomainConfigurationScreen(viewModel)
     }
 
     /**
