@@ -17,8 +17,8 @@ import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.domains.IntentHandlingConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.handle.HandleDomainConfigurationUiEvent.Change.SelectHandleDomainOption
-import org.rhasspy.mobile.viewmodel.configuration.handle.HandleDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.handle.HandleDomainConfigurationUiEvent.Change.SelectHandleDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.domains.handle.HandleDomainConfigurationViewModel
 import kotlin.test.assertEquals
 
 class IntentHandlingConfigurationContentTest : FlakyTest() {

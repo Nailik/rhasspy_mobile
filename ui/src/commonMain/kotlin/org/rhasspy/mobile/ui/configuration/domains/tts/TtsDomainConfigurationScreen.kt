@@ -13,10 +13,10 @@ import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
-import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationUiEvent.Change.SelectTtsDomainOption
-import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationViewState.TtsDomainConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigurationUiEvent.Change.SelectTtsDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigurationViewState.TtsDomainConfigurationData
 
 /**
  * Content to configure text to speech

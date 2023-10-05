@@ -14,8 +14,8 @@ import org.rhasspy.mobile.ui.content.elements.CustomDivider
 import org.rhasspy.mobile.ui.content.list.RadioButtonListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel2
-import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeDomainPorcupineLanguage
-import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeDomainPorcupineLanguage
+import org.rhasspy.mobile.viewmodel.configuration.domains.wake.WakeDomainConfigurationViewModel
 
 /**
  *  list of porcupine languages

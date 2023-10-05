@@ -23,11 +23,11 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
-import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationUiEvent.Change.SetUsePauseOnMediaPlayback
-import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.domains.mic.MicDomainConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.domains.mic.MicDomainConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.domains.mic.MicDomainConfigurationUiEvent.Change.SetUsePauseOnMediaPlayback
+import org.rhasspy.mobile.viewmodel.configuration.domains.mic.MicDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.mic.MicDomainConfigurationViewState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.AudioInputConfigurationScreen
 
 @Composable

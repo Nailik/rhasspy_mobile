@@ -23,9 +23,9 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel2
 import org.rhasspy.mobile.ui.theme.horizontalAnimationSpec
-import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Action.PageClick
-import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Action.PorcupineLanguageClick
-import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Action.PageClick
+import org.rhasspy.mobile.viewmodel.configuration.domains.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Action.PorcupineLanguageClick
+import org.rhasspy.mobile.viewmodel.configuration.domains.wake.WakeDomainConfigurationViewModel
 
 /**
  *  screen for porcupine keyword option

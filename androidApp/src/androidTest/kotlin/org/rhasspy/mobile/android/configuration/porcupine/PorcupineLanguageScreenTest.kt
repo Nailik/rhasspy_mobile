@@ -13,8 +13,8 @@ import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.ui.configuration.domains.wake.porcupine.PorcupineLanguageScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeDomainPorcupineLanguage
-import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.wake.WakeDomainConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeDomainPorcupineLanguage
+import org.rhasspy.mobile.viewmodel.configuration.domains.wake.WakeDomainConfigurationViewModel
 import kotlin.test.assertEquals
 
 class PorcupineLanguageScreenTest : FlakyTest() {

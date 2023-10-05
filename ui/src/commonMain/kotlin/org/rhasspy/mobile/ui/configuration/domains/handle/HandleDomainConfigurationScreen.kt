@@ -26,10 +26,10 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
-import org.rhasspy.mobile.viewmodel.configuration.handle.HandleDomainConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.handle.HandleDomainConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.handle.HandleDomainConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.handle.HandleDomainConfigurationViewState.HandleDomainConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.domains.handle.HandleDomainConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.domains.handle.HandleDomainConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.domains.handle.HandleDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.handle.HandleDomainConfigurationViewState.HandleDomainConfigurationData
 
 /**
  * content for intent handling configuration

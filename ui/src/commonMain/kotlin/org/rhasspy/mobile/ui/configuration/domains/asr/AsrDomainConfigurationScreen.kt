@@ -21,10 +21,10 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationViewState.AsrDomainConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.domains.asr.AsrDomainConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.domains.asr.AsrDomainConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.domains.asr.AsrDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.asr.AsrDomainConfigurationViewState.AsrDomainConfigurationData
 
 /**
  * Content to configure speech to text

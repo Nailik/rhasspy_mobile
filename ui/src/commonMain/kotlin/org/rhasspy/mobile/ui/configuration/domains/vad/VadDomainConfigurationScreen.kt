@@ -39,15 +39,15 @@ import org.rhasspy.mobile.ui.content.list.SliderListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel2
-import org.rhasspy.mobile.viewmodel.configuration.vad.AudioRecorderViewState
-import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.Change.SelectVadDomainOption
-import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Action.ToggleAudioLevelTest
-import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainViewState
-import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainViewState.VadDomainConfigurationData.LocalSilenceDetectionConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.domains.vad.AudioRecorderViewState
+import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent.Change.SelectVadDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Action.ToggleAudioLevelTest
+import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainViewState
+import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainViewState.VadDomainConfigurationData.LocalSilenceDetectionConfigurationData
 
 @Composable
 fun VoiceActivityDetectionConfigurationScreen(viewModel: VadDomainConfigurationViewModel) {

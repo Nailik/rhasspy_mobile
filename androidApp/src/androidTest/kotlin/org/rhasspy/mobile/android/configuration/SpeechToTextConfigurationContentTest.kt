@@ -13,9 +13,9 @@ import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.AsrDomainOption
 import org.rhasspy.mobile.ui.configuration.audioinput.SpeechToTextConfigurationScreen
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationUiEvent.Change.SelectAsrOptionDomain
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.domains.asr.AsrDomainConfigurationUiEvent.Change.SelectAsrOptionDomain
+import org.rhasspy.mobile.viewmodel.configuration.domains.asr.AsrDomainConfigurationViewModel
 import kotlin.test.assertEquals
 
 class SpeechToTextConfigurationContentTest : FlakyTest() {

@@ -11,8 +11,6 @@ import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.assist.AssistantViewModel
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewModel
 import org.rhasspy.mobile.viewmodel.bottomnavigation.BottomNavigationViewStateCreator
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationDataMapper
@@ -25,27 +23,29 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rh
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy3wyoming.Rhasspy3WyomingConnectionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.connections.webserver.WebServerConnectionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.handle.HandleDomainConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.handle.HandleDomainConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentDomainConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.mic.MicDomainConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.mic.audioinputformat.AudioRecorderFormatConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.asr.AsrDomainConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.domains.asr.AsrDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.handle.HandleDomainConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.domains.handle.HandleDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.intent.IntentDomainConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.domains.intent.IntentDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.mic.MicDomainConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.domains.mic.MicDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.mic.audioinputformat.AudioRecorderFormatConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.domains.mic.audioinputformat.AudioRecorderFormatConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.mic.audiooutputformat.AudioOutputFormatConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.domains.mic.audiooutputformat.AudioOutputFormatConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.snd.AudioPlayingConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.domains.snd.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.vad.AudioRecorderViewStateCreator
+import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.wake.WakeDomainConfigurationDataMapper
+import org.rhasspy.mobile.viewmodel.configuration.domains.wake.WakeDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.pipeline.PipelineConfigurationDataMapper
 import org.rhasspy.mobile.viewmodel.configuration.pipeline.PipelineConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.snd.AudioPlayingConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.snd.AudioPlayingConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.vad.AudioRecorderViewStateCreator
-import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.vad.VadDomainConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationDataMapper
-import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
@@ -141,7 +141,7 @@ fun viewModelModule() = module {
     singleOf(::HandleDomainConfigurationDataMapper)
     singleOf(::HandleDomainConfigurationViewModel)
 
-    singleOf(::IntentRecognitionConfigurationDataMapper)
+    singleOf(::IntentDomainConfigurationDataMapper)
     singleOf(::IntentDomainConfigurationViewModel)
 
     singleOf(::Rhasspy2HermesConnectionConfigurationDataMapper)

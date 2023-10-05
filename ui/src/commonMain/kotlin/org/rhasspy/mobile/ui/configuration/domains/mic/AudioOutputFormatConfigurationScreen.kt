@@ -22,10 +22,10 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel2
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel3
-import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.mic.audiooutputformat.AudioOutputFormatConfigurationViewState.AudioOutputFormatConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.domains.mic.audiooutputformat.AudioOutputFormatConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.domains.mic.audiooutputformat.AudioOutputFormatConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.domains.mic.audiooutputformat.AudioOutputFormatConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.mic.audiooutputformat.AudioOutputFormatConfigurationViewState.AudioOutputFormatConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.AudioInputDomainScreenDestination.AudioOutputFormatScreen
 
 /**

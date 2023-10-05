@@ -29,7 +29,7 @@ import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.domains.wake.porcupine.PorcupineKeywordCustomScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.wake.WakeDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.wake.WakeDomainConfigurationViewModel
 import java.io.File
 import kotlin.test.assertTrue
 

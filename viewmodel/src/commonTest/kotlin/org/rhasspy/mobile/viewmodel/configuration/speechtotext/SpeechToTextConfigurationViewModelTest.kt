@@ -5,12 +5,12 @@ import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.AsrDomainOption
 import org.rhasspy.mobile.testutils.AppTest
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationUiEvent.Change.SelectAsrOptionDomain
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationUiEvent.Change.SetUseAsrMqttSilenceDetectionDomain
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.asr.AsrDomainConfigurationViewState.AsrDomainConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.domains.asr.AsrDomainConfigurationUiEvent.Change.SelectAsrOptionDomain
+import org.rhasspy.mobile.viewmodel.configuration.domains.asr.AsrDomainConfigurationUiEvent.Change.SetUseAsrMqttSilenceDetectionDomain
+import org.rhasspy.mobile.viewmodel.configuration.domains.asr.AsrDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.asr.AsrDomainConfigurationViewState.AsrDomainConfigurationData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

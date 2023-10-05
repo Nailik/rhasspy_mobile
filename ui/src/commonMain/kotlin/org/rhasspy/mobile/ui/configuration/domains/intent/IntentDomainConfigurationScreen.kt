@@ -22,10 +22,10 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentDomainConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentDomainConfigurationViewState.IntentDomainConfigurationData
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.domains.intent.IntentDomainConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.domains.intent.IntentDomainConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.domains.intent.IntentDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.intent.IntentDomainConfigurationViewState.IntentDomainConfigurationData
 
 /**
  * configuration content for intent recognition
@@ -55,13 +55,13 @@ fun IntentRecognitionConfigurationScreen(viewModel: IntentDomainConfigurationVie
 @Composable
 fun IntentRecognitionEditContent(
     editData: IntentDomainConfigurationData,
-    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit
+    onEvent: (IntentDomainConfigurationUiEvent) -> Unit
 ) {
 
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.IntentRecognitionOptions),
         selected = editData.intentDomainOption,
-        onSelect = { onEvent(SelectIntentRecognitionOption(it)) },
+        onSelect = { onEvent(SelectIntentDomainOption(it)) },
         values = editData.intentDomainOptionLists,
     ) {
 
@@ -88,7 +88,7 @@ fun IntentRecognitionEditContent(
 @Composable
 fun IntentRhasspy2HermesHttp(
     editData: IntentDomainConfigurationData,
-    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit,
+    onEvent: (IntentDomainConfigurationUiEvent) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
@@ -119,7 +119,7 @@ fun IntentRhasspy2HermesHttp(
 @Composable
 fun IntentRhasspy2HermesMQTT(
     editData: IntentDomainConfigurationData,
-    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit,
+    onEvent: (IntentDomainConfigurationUiEvent) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {

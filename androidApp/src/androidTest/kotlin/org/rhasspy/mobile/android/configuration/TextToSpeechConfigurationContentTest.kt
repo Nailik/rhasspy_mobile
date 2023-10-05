@@ -14,8 +14,8 @@ import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.TtsDomainOption
 import org.rhasspy.mobile.ui.configuration.domains.TextToSpeechConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationUiEvent.Change.SelectTtsDomainOption
-import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigurationUiEvent.Change.SelectTtsDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigurationViewModel
 import kotlin.test.assertEquals
 
 class TextToSpeechConfigurationContentTest : FlakyTest() {

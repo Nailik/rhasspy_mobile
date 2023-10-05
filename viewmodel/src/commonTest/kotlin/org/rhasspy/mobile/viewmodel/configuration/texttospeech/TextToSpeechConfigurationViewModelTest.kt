@@ -7,9 +7,9 @@ import org.rhasspy.mobile.data.service.option.TtsDomainOption
 import org.rhasspy.mobile.testutils.AppTest
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Discard
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationUiEvent.Change.SelectTtsDomainOption
-import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.tts.TtsDomainConfigurationViewState.TtsDomainConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigurationUiEvent.Change.SelectTtsDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigurationViewState.TtsDomainConfigurationData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
