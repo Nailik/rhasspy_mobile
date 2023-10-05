@@ -868,7 +868,7 @@ internal class MqttConnection(
             createMqttMessage {
                 put(MqttParams.Id, id)
                 put(MqttParams.SiteId, siteId)
-                put(MqttParams.Volume, volume.toString()) //TODO null volume?
+                put(MqttParams.Volume, volume.toString())
                 put(MqttParams.SessionId, sessionId)
                 put(MqttParams.Text, JsonPrimitive(text))
             },

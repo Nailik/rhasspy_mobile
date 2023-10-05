@@ -18,7 +18,7 @@ interface IRhasspy2HermesConnection : IConnection {
 
     suspend fun speechToText(audioFilePath: Path): HttpClientResult<String>
     suspend fun recognizeIntent(text: String): HttpClientResult<String>
-    suspend fun textToSpeech(text: String, volume: Float?, siteId: String?): HttpClientResult<ByteArray> //TODO save to file
+    suspend fun textToSpeech(text: String, volume: Float?, siteId: String?): HttpClientResult<ByteArray>
     suspend fun playWav(audioSource: AudioSource): HttpClientResult<String>
 
 }

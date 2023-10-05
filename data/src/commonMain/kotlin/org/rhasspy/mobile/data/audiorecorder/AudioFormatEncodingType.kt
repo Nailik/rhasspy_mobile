@@ -13,7 +13,7 @@ expect enum class AudioFormatEncodingType : IOption {
 
     companion object {
         val default: AudioFormatEncodingType
-        val porcupine: AudioFormatEncodingType
+
         fun supportedValues(): List<AudioFormatEncodingType>
     }
 

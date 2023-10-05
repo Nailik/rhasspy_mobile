@@ -18,7 +18,6 @@ actual enum class AudioFormatEncodingType(
 
     actual companion object {
         actual val default: AudioFormatEncodingType = Default
-        actual val porcupine: AudioFormatEncodingType = Default
         actual fun supportedValues(): List<AudioFormatEncodingType> {
             //TODO #509
             return listOf()

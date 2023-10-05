@@ -25,8 +25,6 @@ actual enum class AudioFormatEncodingType(
     actual companion object {
         actual val default: AudioFormatEncodingType get() = PCM16Bit
 
-        actual val porcupine: AudioFormatEncodingType get() = PCM16Bit
-
         actual fun supportedValues(): List<AudioFormatEncodingType> {
             return mutableListOf(
                 PCM8Bit,

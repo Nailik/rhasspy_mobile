@@ -4,7 +4,6 @@ import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
-import org.rhasspy.mobile.platformspecific.features.FeatureAvailability
 
 @Stable
 data class AudioFocusSettingsViewState(
@@ -13,11 +12,8 @@ data class AudioFocusSettingsViewState(
     val isAudioFocusOnSound: Boolean,
     val isAudioFocusOnRecord: Boolean,
     val isAudioFocusOnDialog: Boolean,
-    //TODO moved to mic domain val isPauseRecordingOnMedia: Boolean,
 ) {
 
     val audioFocusOptions: ImmutableList<AudioFocusOption> = AudioFocusOption.entries.toImmutableList()
-
-    val isPauseRecordingOnMediaFeatureEnabled = FeatureAvailability.isPauseRecordingOnPlaybackFeatureEnabled //TODO maybe use it for audio lauter machen as well
 
 }
