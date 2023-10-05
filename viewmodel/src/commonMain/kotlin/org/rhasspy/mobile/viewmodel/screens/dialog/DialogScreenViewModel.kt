@@ -24,7 +24,7 @@ class DialogScreenViewModel(
         when (change) {
             ToggleListAutoScroll -> AppSetting.isDialogAutoscroll.value = !AppSetting.isDialogAutoscroll.value
             ManualListScroll     -> AppSetting.isDialogAutoscroll.value = false
-            ClearHistory         -> Unit //TODO dialogManagerService.clearHistory()
+            ClearHistory         -> Unit //TODO #466 dialogManagerService.clearHistory()
         }
     }
 

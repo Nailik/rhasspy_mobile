@@ -34,7 +34,7 @@ class SaveAndRestoreSettingsViewModel(
         }
     }
 
-    //TODO how to do remove??
+    //TODO #466 how to do remove??
     private val toRemove: List<String>
         get() = listOfNotNull(
             ConfigurationSetting.rhasspy2Connection.value.host,

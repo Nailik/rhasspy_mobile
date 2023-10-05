@@ -5,5 +5,5 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 actual fun SetSystemColor(color: Color) {
-    //TODO("Not yet implemented")
+    //TODO #518 ("Not yet implemented")
 }

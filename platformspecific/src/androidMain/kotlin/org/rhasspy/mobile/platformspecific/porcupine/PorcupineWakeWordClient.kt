@@ -61,7 +61,7 @@ actual class PorcupineWakeWordClient actual constructor(
         encoding: AudioFormatEncodingType,
         channel: AudioFormatChannelType,
         data: ByteArray,
-    ): String? { //TODO convert audio if necessary
+    ): String? {
         val keywordIndex = porcupineClient?.audioFrame(data)
 
         if (keywordIndex == null || keywordIndex < 0) return null

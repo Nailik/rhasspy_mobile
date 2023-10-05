@@ -34,7 +34,7 @@ class AssistantViewModel(
 
     fun onEvent(event: AssistantUiEvent) {
         when (event) {
-            is Activate -> Unit//TODO serviceMiddleware.action(StartListening(Source.Local, false))
+            is Activate -> Unit//TODO #466 serviceMiddleware.action(StartListening(Source.Local, false))
         }
     }
 

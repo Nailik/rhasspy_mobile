@@ -177,7 +177,7 @@ class PipelineManager(
         }
     }
 
-    private fun getPipeline(): IPipeline { //TODO use same mic domain
+    private fun getPipeline(): IPipeline { //TODO #466 use same mic domain
         return when (params.option) {
             PipelineManagerOption.Local              -> get<IPipelineLocal>()
             PipelineManagerOption.Rhasspy2HermesMQTT -> get<IPipelineMqtt>()

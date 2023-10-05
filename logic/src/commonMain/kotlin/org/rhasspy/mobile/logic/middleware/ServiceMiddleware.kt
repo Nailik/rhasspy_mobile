@@ -10,7 +10,7 @@ interface IServiceMiddleware {
     val isPlayingRecordingEnabled: StateFlow<Boolean>
     fun userSessionClick()
     fun playRecording() {
-        TODO("Not yet implemented")
+        //TODO #466 ("Not yet implemented")
     }
 
 }
@@ -26,7 +26,7 @@ internal class ServiceMiddleware : IServiceMiddleware {
     override val isPlayingRecordingEnabled: StateFlow<Boolean>
         get() = MutableStateFlow(false)
 
-    //TODO listen and wait for wake
+    //TODO #466 listen and wait for wake
     override fun userSessionClick() {
         /*
         when (dialogManagerService.currentDialogState.value) {
