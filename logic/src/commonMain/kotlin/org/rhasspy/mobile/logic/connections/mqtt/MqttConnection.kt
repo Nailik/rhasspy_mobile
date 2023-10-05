@@ -196,8 +196,8 @@ internal class MqttConnection(
                     MqttServiceConnectionOptions(
                         isSSLEnabled = params.mqttConnectionData.isSSLEnabled,
                         keyStorePath = params.mqttConnectionData.keystoreFile?.toPath(),
-                        connectionTimeout = params.mqttConnectionData.connectionTimeout,
-                        keepAliveInterval = params.mqttConnectionData.keepAliveInterval,
+                        connectionTimeout = params.mqttConnectionData.connectionTimeout.inWholeSeconds.toInt(),
+                        keepAliveInterval = params.mqttConnectionData.keepAliveInterval.inWholeSeconds.toInt(),
                         connUsername = params.mqttConnectionData.userName,
                         connPassword = params.mqttConnectionData.password,
                     )
