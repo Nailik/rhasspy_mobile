@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import okio.Path
 import org.koin.core.component.get
-import org.rhasspy.mobile.data.data.toIntOrZero
+import org.rhasspy.mobile.data.data.takeInt
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.logic.pipeline.IPipelineManager
@@ -135,7 +135,7 @@ class WakeDomainConfigurationViewModel(
                 copy(wakeWordUdpConfigurationData = wakeWordUdpConfigurationData.let { data ->
                     when (change) {
                         is UpdateUdpOutputHost -> data.copy(outputHost = change.value)
-                        is UpdateUdpOutputPort -> data.copy(outputPort = change.value.toIntOrZero())
+                        is UpdateUdpOutputPort -> data.copy(outputPort = change.value.takeInt())
                     }
                 })
             })

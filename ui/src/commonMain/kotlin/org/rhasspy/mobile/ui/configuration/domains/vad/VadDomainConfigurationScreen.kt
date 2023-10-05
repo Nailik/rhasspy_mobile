@@ -7,8 +7,10 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
@@ -79,22 +81,28 @@ private fun VoiceActivityDetectionOptionContent(
     onEvent: (VadDomainUiEvent) -> Unit
 ) {
 
-    RadioButtonsEnumSelection(
-        modifier = Modifier.testTag(TestTag.WakeWordOptions),
-        selected = viewState.editData.vadDomainOption,
-        onSelect = { onEvent(SelectVadDomainOption(it)) },
-        values = viewState.editData.vadDomainOptions
-    ) { option ->
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
+    ) {
 
-        when (option) {
-            VadDomainOption.Local ->
-                SilenceDetectionSettingsContent(
-                    editData = viewState.editData.localSilenceDetectionSetting,
-                    audioRecorderViewState = audioRecorderViewState,
-                    onEvent = onEvent
-                )
+        RadioButtonsEnumSelection(
+            modifier = Modifier.testTag(TestTag.WakeWordOptions),
+            selected = viewState.editData.vadDomainOption,
+            onSelect = { onEvent(SelectVadDomainOption(it)) },
+            values = viewState.editData.vadDomainOptions
+        ) { option ->
 
-            VadDomainOption.Disabled -> Unit
+            when (option) {
+                VadDomainOption.Local    ->
+                    SilenceDetectionSettingsContent(
+                        editData = viewState.editData.localSilenceDetectionSetting,
+                        audioRecorderViewState = audioRecorderViewState,
+                        onEvent = onEvent
+                    )
+
+                VadDomainOption.Disabled -> Unit
+            }
+
         }
 
     }

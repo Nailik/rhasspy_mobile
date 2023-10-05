@@ -1,15 +1,5 @@
 package org.rhasspy.mobile.data.data
 
-fun Int?.toIntOrZero(): Int = this ?: 0
-fun Long?.toLongOrZero(): Long = this ?: 0
-fun Int?.toStringOrEmpty(): String = this?.toString() ?: ""
-fun Long?.toStringOrEmpty(): String = this?.toString() ?: ""
-fun String?.toLongOrNullOrConstant(): Long? =
-    this?.replace(" ", "")?.let {
-        if (it.length > 10) this.takeLong().toLong() else it.trim().trimTrailingZeros()
-            ?.toLongOrNull()
-    }
-
 fun String?.toLongOrZero(): Long =
     this?.replace(" ", "")?.let {
         if (it.length > 10) this.takeLong().toLong() else it.trim().trimTrailingZeros()
@@ -21,12 +11,6 @@ fun String?.toIntOrZero(): Int =
         if (it.length > 9) this.takeInt().toInt() else it.trimTrailingZeros()
             ?.toIntOrNull()
     } ?: 0
-
-fun String?.toIntOrNullOrConstant(): Int? =
-    this?.replace(" ", "")?.let {
-        if (it.length > 9) this.takeInt().toInt() else it.trimTrailingZeros()
-            ?.toIntOrNull()
-    }
 
 fun String.takeLong(): String = this.take(10)
 fun String.takeInt(): String = this.take(0)

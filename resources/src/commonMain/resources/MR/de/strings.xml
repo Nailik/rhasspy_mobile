@@ -33,6 +33,7 @@
     <string name="rhasspyTextToSpeechURL">Rhasspy-Text-zu-Sprache-URL (%s)</string>
     <string name="audioOutputURL">Audioausgabe-URL (%s)</string>
     <string name="audioPlaying">Audiowiedergabe</string>
+    <string name="audioTimeout">Audio Zeitüberschreitung (Sekunden)</string>
     <string name="dialog_pipeline">Dialog und Pipeline</string>
     <string name="audio_input">Audioeingang</string>
     <string name="audio_input_information">Sprache-zu-Text und Aktivierungswort</string>
@@ -107,8 +108,8 @@
     <string name="stop">Stop</string>
     <string name="audioLevelThreshold">Audio-Level-Schwelle</string>
     <string name="silenceDetectionInformation">Stille wird erkannt, wenn der Audiopegel für die gewählte Zeitspanne unter dem gewählten Grenzwert bleibt und die Aufnahme mindestens die Länge der Mindestdauer hat</string>
-    <string name="silenceDetectionMinimumTime">Sprachbefehl Mindestdauer (ms)</string>
-    <string name="silenceDetectionTime">Stille-Erkennungszeit (ms)</string>
+    <string name="silenceDetectionMinimumTime">Sprachbefehl Mindestdauer (Millisekunden)</string>
+    <string name="silenceDetectionTime">Stille-Erkennungszeit (Millisekunden)</string>
     <string name="overlayPermissionTitle">Overlay-Erlaubnis</string>
     <string name="overlay">Overlay</string>
     <string name="overlayPermissionInfo">Die visuelle Anzeige verwendet ein Overlay, um die Anzeige darzustellen.\nKlicken Sie auf "OK", scrollen Sie zu Rhasspy und erlauben Sie die Berechtigung.</string>
@@ -187,9 +188,9 @@
     <string name="changelog">Changelog</string>
     <string name="remove">Entfernen</string>
     <string name="selectCustomSoundFile">Benutzerdefinierte Sounddatei auswählen</string>
-    <string name="connectionTimeout">Verbindungstimeout (s)</string>
-    <string name="keepAliveInterval">Keepalive-Intervall (s)</string>
-    <string name="retryInterval">Wiederverbindungsintervall (s)</string>
+    <string name="connectionTimeout">Verbindungstimeout (Sekunden)</string>
+    <string name="keepAliveInterval">Keepalive-Intervall (Sekunden)</string>
+    <string name="retryInterval">Wiederverbindungsintervall (Sekunden)</string>
     <string name="testConnection">Verbindung testen</string>
     <string name="background">Hintergrund</string>
     <string name="batteryOptimization">Akku-Optimierung deaktivieren</string>
@@ -261,8 +262,8 @@
     <string name="startRecordAudio">Audioaufnahme starten</string>
     <string name="stopRecordAudio">Audioaufnahme stoppen</string>
     <string name="useMqttSilenceDetection">Nutze MQTT-Stille-Erkennung</string>
-    <string name="asrVoiceTimeout">Sprachzeitlimit (s)</string>
-    <string name="mqttResultTimeout">Mqtt-Ergebnis-Zeitlimit (s)</string>
+    <string name="asrVoiceTimeout">Sprachzeitlimit (Sekunden)</string>
+    <string name="mqttResultTimeout">Mqtt-Ergebnis-Zeitlimit (Sekunden)</string>
     <string name="textToSpeechText">Text-zu-Sprache</string>
     <string name="executeTextToSpeechText">Text in Sprache übersetzten</string>
     <string name="textIntentRecognitionText">Text zur Erkennung des Intent</string>
@@ -301,15 +302,13 @@
     <string name="keyStoreKeyPassword">Key-Passwort</string>
     <string name="filterList">Liste filtern</string>
     <string name="autoscrollList">Liste automatisch scrollen</string>
-    <string name="requestTimeout">Anfrage-Timeout (MS)</string>
+    <string name="requestTimeout">Anfrage-Timeout (Sekunden)</string>
     <string name="allowMicrophonePermission">Mikrofonzugriff erlauben</string>
-    <string name="textAsrTimeoutText">Sprache-zu-Text-Timeout (MS)</string>
-    <string name="intentRecognitionTimeoutText">Zeitüberschreitung bei der Erkennung des Intents (MS)</string>
-    <string name="recordingTimeoutText">Aufnahmezeitüberschreitung (MS)</string>
+    <string name="textAsrTimeoutText">Sprache-zu-Text-Timeout (Sekunden)</string>
+    <string name="intentRecognitionTimeoutText">Zeitüberschreitung bei der Erkennung des Intents (Sekunden)</string>
+    <string name="recordingTimeoutText">Aufnahmezeitüberschreitung (Sekunden)</string>
     <string name="audioFocus">Audio-Fokus</string>
     <string name="audioFocusInformation">Durch Audio Focus kann Rhasspy andere Audiostreams wie Musik oder Videos anhalten und wieder aufnehmen oder die Lautstärke verringern.</string>
-    <string name="loudnessEnhancer">Lautstärkeverstärker</string>
-    <string name="loudnessEnhancerGain">Verstärkung (mB)</string>
     <string name="autoStopRecording">Aufnahme automatisch anhalten</string>
     <string name="autoStopRecordingInformation">nicht aufnehmen während eine andere Anwendung Audio abspielt</string>
     <string name="pauseAndResume">Pause und Wiederaufnahme</string>
@@ -340,7 +339,7 @@
     <string name="clear_text">leeren</string>
     <string name="scan_qr_code">QR-Code scannen</string>
     <string name="scan_qr_code_failed">QR-Code konnte nicht gescannt werden</string>
-    <string name="intentHandlingTimeout">Zeitüberschreitung bei Intent verarbeitung (s)</string>
+    <string name="intentHandlingTimeout">Zeitüberschreitung bei Intent verarbeitung (Sekunden)</string>
     <string name="handleWithRecognition">Verarbeite Intent mit Erkennung</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>

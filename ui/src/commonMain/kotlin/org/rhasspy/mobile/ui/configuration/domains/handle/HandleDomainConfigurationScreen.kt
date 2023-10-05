@@ -64,8 +64,7 @@ private fun IntentHandlingEditContent(
 ) {
 
     Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
+        modifier = Modifier.verticalScroll(rememberScrollState())
     ) {
 
         RadioButtonsEnumSelection(

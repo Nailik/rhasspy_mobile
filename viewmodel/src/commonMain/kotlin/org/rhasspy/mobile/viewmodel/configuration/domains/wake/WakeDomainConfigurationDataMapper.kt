@@ -20,7 +20,7 @@ class WakeDomainConfigurationDataMapper {
             ),
             wakeWordUdpConfigurationData = WakeWordUdpConfigurationData(
                 outputHost = data.wakeWordUdpOutputHost,
-                outputPort = data.wakeWordUdpOutputPort,
+                outputPort = data.wakeWordUdpOutputPort.toString(),
             )
         )
     }

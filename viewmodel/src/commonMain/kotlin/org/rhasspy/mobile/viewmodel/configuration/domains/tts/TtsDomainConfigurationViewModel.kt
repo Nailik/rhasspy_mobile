@@ -8,6 +8,7 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigurationUiEvent.Change.SelectTtsDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigurationUiEvent.Change.UpdateRhasspy2HermesMqttTimeout
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
@@ -28,8 +29,8 @@ class TtsDomainConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SelectTtsDomainOption                  -> copy(ttsDomainOption = change.option)
-                    is Change.UpdateRhasspy2HermesMqttTimeout -> copy(rhasspy2HermesMqttTimeout = change.timeout.takeInt())
+                    is SelectTtsDomainOption           -> copy(ttsDomainOption = change.option)
+                    is UpdateRhasspy2HermesMqttTimeout -> copy(rhasspy2HermesMqttTimeout = change.timeout.takeInt())
                 }
             })
         }

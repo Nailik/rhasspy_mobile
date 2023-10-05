@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.domains.intent
 
 import org.rhasspy.mobile.data.data.toIntOrZero
-import org.rhasspy.mobile.data.data.toLongOrZero
 import org.rhasspy.mobile.data.domain.IntentDomainData
 import org.rhasspy.mobile.viewmodel.configuration.domains.intent.IntentDomainConfigurationViewState.IntentDomainConfigurationData
 import kotlin.time.Duration.Companion.seconds
@@ -22,7 +21,7 @@ class IntentDomainConfigurationDataMapper {
             option = data.intentDomainOption,
             isRhasspy2HermesHttpHandleWithRecognition = data.isRhasspy2HermesHttpIntentHandleWithRecognition,
             rhasspy2HermesHttpIntentHandlingTimeout = data.timeout.toIntOrZero().seconds,
-            timeout = data.timeout.toLongOrZero().seconds,
+            timeout = data.timeout.toIntOrZero().seconds,
         )
     }
 

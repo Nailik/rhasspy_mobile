@@ -2,13 +2,13 @@ package org.rhasspy.mobile.viewmodel.configuration.domains.snd
 
 import org.rhasspy.mobile.data.data.toIntOrZero
 import org.rhasspy.mobile.data.domain.SndDomainData
-import org.rhasspy.mobile.viewmodel.configuration.domains.snd.AudioPlayingConfigurationViewState.AudioPlayingConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.domains.snd.AudioPlayingConfigurationViewState.SndDomainConfigurationData
 import kotlin.time.Duration.Companion.seconds
 
 class AudioPlayingConfigurationDataMapper {
 
-    operator fun invoke(data: SndDomainData): AudioPlayingConfigurationData {
-        return AudioPlayingConfigurationData(
+    operator fun invoke(data: SndDomainData): SndDomainConfigurationData {
+        return SndDomainConfigurationData(
             sndDomainOption = data.option,
             audioOutputOption = data.localOutputOption,
             audioPlayingMqttSiteId = data.mqttSiteId,
@@ -17,7 +17,7 @@ class AudioPlayingConfigurationDataMapper {
         )
     }
 
-    operator fun invoke(data: AudioPlayingConfigurationData): SndDomainData {
+    operator fun invoke(data: SndDomainConfigurationData): SndDomainData {
         return SndDomainData(
             option = data.sndDomainOption,
             localOutputOption = data.audioOutputOption,

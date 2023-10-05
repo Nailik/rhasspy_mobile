@@ -8,11 +8,11 @@ import org.rhasspy.mobile.data.service.option.SndDomainOption
 
 @Stable
 data class AudioPlayingConfigurationViewState internal constructor(
-    val editData: AudioPlayingConfigurationData
+    val editData: SndDomainConfigurationData
 ) {
 
     @Stable
-    data class AudioPlayingConfigurationData internal constructor(
+    data class SndDomainConfigurationData internal constructor(
         val sndDomainOption: SndDomainOption,
         val audioOutputOption: AudioOutputOption,
         val audioPlayingMqttSiteId: String,

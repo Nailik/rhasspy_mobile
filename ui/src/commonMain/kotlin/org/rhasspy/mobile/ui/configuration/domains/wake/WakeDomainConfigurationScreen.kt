@@ -3,7 +3,9 @@ package org.rhasspy.mobile.ui.configuration.domains.wake
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material3.Text
@@ -79,28 +81,34 @@ private fun WakeWordConfigurationOptionContent(
     onEvent: (WakeDomainConfigurationUiEvent) -> Unit
 ) {
 
-    RadioButtonsEnumSelection(
-        modifier = Modifier.testTag(TestTag.WakeWordOptions),
-        selected = viewState.editData.wakeDomainOption,
-        onSelect = { onEvent(SelectWakeDomainOption(it)) },
-        values = viewState.editData.wakeDomainOptions
-    ) { option ->
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
+    ) {
 
-        when (option) {
-            WakeDomainOption.Porcupine ->
-                PorcupineConfiguration(
-                    editData = viewState.editData.wakeWordPorcupineConfigurationData,
-                    onEvent = onEvent
-                )
+        RadioButtonsEnumSelection(
+            modifier = Modifier.testTag(TestTag.WakeWordOptions),
+            selected = viewState.editData.wakeDomainOption,
+            onSelect = { onEvent(SelectWakeDomainOption(it)) },
+            values = viewState.editData.wakeDomainOptions
+        ) { option ->
 
-            WakeDomainOption.Udp       ->
-                UdpSettings(
-                    editData = viewState.editData.wakeWordUdpConfigurationData,
-                    onEvent = onEvent
-                )
+            when (option) {
+                WakeDomainOption.Porcupine ->
+                    PorcupineConfiguration(
+                        editData = viewState.editData.wakeWordPorcupineConfigurationData,
+                        onEvent = onEvent
+                    )
 
-            WakeDomainOption.Rhasspy2HermesMQTT,
-            WakeDomainOption.Disabled  -> Unit
+                WakeDomainOption.Udp       ->
+                    UdpSettings(
+                        editData = viewState.editData.wakeWordUdpConfigurationData,
+                        onEvent = onEvent
+                    )
+
+                WakeDomainOption.Rhasspy2HermesMQTT,
+                WakeDomainOption.Disabled  -> Unit
+            }
+
         }
 
     }
@@ -202,7 +210,7 @@ private fun UdpSettings(
         TextFieldListItem(
             label = MR.strings.port.stable,
             modifier = Modifier.testTag(TestTag.AudioRecordingUdpPort),
-            value = editData.outputPortText,
+            value = editData.outputPort,
             onValueChange = { onEvent(UpdateUdpOutputPort(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )

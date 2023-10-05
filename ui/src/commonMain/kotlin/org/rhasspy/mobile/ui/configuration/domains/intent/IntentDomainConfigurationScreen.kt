@@ -5,7 +5,9 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -58,27 +60,33 @@ fun IntentRecognitionEditContent(
     onEvent: (IntentDomainConfigurationUiEvent) -> Unit
 ) {
 
-    RadioButtonsEnumSelection(
-        modifier = Modifier.testTag(TestTag.IntentRecognitionOptions),
-        selected = editData.intentDomainOption,
-        onSelect = { onEvent(SelectIntentDomainOption(it)) },
-        values = editData.intentDomainOptionLists,
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
     ) {
 
-        when (it) {
-            IntentDomainOption.Rhasspy2HermesHttp ->
-                IntentRhasspy2HermesHttp(
-                    editData = editData,
-                    onEvent = onEvent,
-                )
+        RadioButtonsEnumSelection(
+            modifier = Modifier.testTag(TestTag.IntentRecognitionOptions),
+            selected = editData.intentDomainOption,
+            onSelect = { onEvent(SelectIntentDomainOption(it)) },
+            values = editData.intentDomainOptionLists,
+        ) {
 
-            IntentDomainOption.Rhasspy2HermesMQTT ->
-                IntentRhasspy2HermesMQTT(
-                    editData = editData,
-                    onEvent = onEvent,
-                )
+            when (it) {
+                IntentDomainOption.Rhasspy2HermesHttp ->
+                    IntentRhasspy2HermesHttp(
+                        editData = editData,
+                        onEvent = onEvent,
+                    )
 
-            IntentDomainOption.Disabled           -> Unit
+                IntentDomainOption.Rhasspy2HermesMQTT ->
+                    IntentRhasspy2HermesMQTT(
+                        timeout = editData.timeout,
+                        onEvent = onEvent,
+                    )
+
+                IntentDomainOption.Disabled           -> Unit
+            }
+
         }
 
     }
@@ -118,7 +126,7 @@ fun IntentRhasspy2HermesHttp(
 
 @Composable
 fun IntentRhasspy2HermesMQTT(
-    editData: IntentDomainConfigurationData,
+    timeout: String,
     onEvent: (IntentDomainConfigurationUiEvent) -> Unit,
 ) {
 
@@ -126,7 +134,7 @@ fun IntentRhasspy2HermesMQTT(
 
         TextFieldListItem(
             label = MR.strings.intentRecognitionTimeoutText.stable,
-            value = editData.timeout,
+            value = timeout,
             onValueChange = { onEvent(UpdateVoiceTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )

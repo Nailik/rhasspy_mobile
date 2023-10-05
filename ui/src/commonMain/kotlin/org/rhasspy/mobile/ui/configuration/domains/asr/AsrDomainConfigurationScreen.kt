@@ -57,8 +57,7 @@ private fun SpeechToTextOptionEditContent(
 ) {
 
     Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
+        modifier = Modifier.verticalScroll(rememberScrollState())
     ) {
 
         RadioButtonsEnumSelection(

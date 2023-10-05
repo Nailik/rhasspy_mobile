@@ -4,7 +4,6 @@ import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.data.toStringOrEmpty
 import org.rhasspy.mobile.data.domain.DomainState
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
@@ -48,12 +47,8 @@ data class WakeDomainConfigurationViewState internal constructor(
         @Stable
         data class WakeWordUdpConfigurationData internal constructor(
             val outputHost: String,
-            val outputPort: Int?,
-        ) {
-
-            val outputPortText: String = outputPort.toStringOrEmpty()
-
-        }
+            val outputPort: String,
+        )
 
     }
 

@@ -1,13 +1,15 @@
 package org.rhasspy.mobile.ui.configuration.domains.snd
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
@@ -17,7 +19,6 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
-import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
@@ -25,7 +26,7 @@ import org.rhasspy.mobile.ui.theme.TonalElevationLevel1
 import org.rhasspy.mobile.viewmodel.configuration.domains.snd.AudioPlayingConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.domains.snd.AudioPlayingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.domains.snd.AudioPlayingConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.domains.snd.AudioPlayingConfigurationViewState.AudioPlayingConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.domains.snd.AudioPlayingConfigurationViewState.SndDomainConfigurationData
 
 /**
  * Content to configure audio playing
@@ -53,57 +54,48 @@ fun AudioPlayingConfigurationScreen(viewModel: AudioPlayingConfigurationViewMode
 
 @Composable
 private fun AudioPlayingEditContent(
-    editData: AudioPlayingConfigurationData,
+    editData: SndDomainConfigurationData,
     onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
 ) {
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
     ) {
+        //radio buttons list of available values
+        RadioButtonsEnumSelection(
+            modifier = Modifier.testTag(TestTag.AudioPlayingOptions),
+            selected = editData.sndDomainOption,
+            onSelect = { onEvent(SelectEditAudioPlayingOption(it)) },
+            values = editData.sndDomainOptionLists
+        ) { option ->
 
-        item {
-            AudioPlayingOptionContent(
-                editData = editData,
-                onEvent = onEvent
-            )
+            when (option) {
+                SndDomainOption.Local              ->
+                    LocalConfigurationContent(
+                        audioOutputOption = editData.audioOutputOption,
+                        audioOutputOptionList = editData.audioOutputOptionList,
+                        audioTimeout = editData.audioTimeout,
+                        onEvent = onEvent,
+                    )
+
+                SndDomainOption.Rhasspy2HermesHttp ->
+                    SndRhasspy2HermesHttp(
+                        audioTimeout = editData.audioTimeout,
+                        onEvent = onEvent
+                    )
+
+                SndDomainOption.Rhasspy2HermesMQTT ->
+                    MqttSiteIdConfigurationContent(
+                        audioPlayingMqttSiteId = editData.audioPlayingMqttSiteId,
+                        timeout = editData.rhasspy2HermesMqttTimeout,
+                        audioTimeout = editData.audioTimeout,
+                        onEvent = onEvent,
+                    )
+
+                else                               -> Unit
+            }
+
         }
-
-    }
-
-}
-
-@Composable
-private fun AudioPlayingOptionContent(
-    editData: AudioPlayingConfigurationData,
-    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
-) {
-
-    //radio buttons list of available values
-    RadioButtonsEnumSelection(
-        modifier = Modifier.testTag(TestTag.AudioPlayingOptions),
-        selected = editData.sndDomainOption,
-        onSelect = { onEvent(SelectEditAudioPlayingOption(it)) },
-        values = editData.sndDomainOptionLists
-    ) { option ->
-
-        when (option) {
-            SndDomainOption.Local -> LocalConfigurationContent(
-                audioOutputOption = editData.audioOutputOption,
-                audioOutputOptionList = editData.audioOutputOptionList,
-                onEvent = onEvent
-            )
-
-            SndDomainOption.Rhasspy2HermesHttp -> Unit
-
-            SndDomainOption.Rhasspy2HermesMQTT -> MqttSiteIdConfigurationContent(
-                audioPlayingMqttSiteId = editData.audioPlayingMqttSiteId,
-                onEvent = onEvent
-            )
-
-            else                  -> Unit
-        }
-
     }
 
 }
@@ -114,6 +106,7 @@ private fun AudioPlayingOptionContent(
 @Composable
 private fun LocalConfigurationContent(
     audioOutputOption: AudioOutputOption,
+    audioTimeout: String,
     audioOutputOptionList: ImmutableList<AudioOutputOption>,
     onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
 ) {
@@ -128,6 +121,34 @@ private fun LocalConfigurationContent(
             values = audioOutputOptionList
         )
 
+
+        TextFieldListItem(
+            label = MR.strings.audioTimeout.stable,
+            value = audioTimeout,
+            onValueChange = { onEvent(UpdateAudioTimeout(it)) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+
+    }
+
+}
+
+
+@Composable
+private fun SndRhasspy2HermesHttp(
+    audioTimeout: String,
+    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
+) {
+
+    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
+
+        TextFieldListItem(
+            label = MR.strings.mqttResultTimeout.stable,
+            value = audioTimeout,
+            onValueChange = { onEvent(UpdateAudioTimeout(it)) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+
     }
 
 }
@@ -138,6 +159,8 @@ private fun LocalConfigurationContent(
 @Composable
 private fun MqttSiteIdConfigurationContent(
     audioPlayingMqttSiteId: String,
+    audioTimeout: String,
+    timeout: String,
     onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
 ) {
 
@@ -146,10 +169,24 @@ private fun MqttSiteIdConfigurationContent(
 
         //http endpoint input field
         TextFieldListItem(
+            label = MR.strings.siteId.stable,
             modifier = Modifier.testTag(TestTag.ConfigurationSiteId),
             value = audioPlayingMqttSiteId,
             onValueChange = { onEvent(ChangeEditAudioPlayingMqttSiteId(it)) },
-            label = translate(MR.strings.siteId.stable)
+        )
+
+        TextFieldListItem(
+            label = MR.strings.audioTimeout.stable,
+            value = audioTimeout,
+            onValueChange = { onEvent(UpdateAudioTimeout(it)) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+
+        TextFieldListItem(
+            label = MR.strings.mqttResultTimeout.stable,
+            value = timeout,
+            onValueChange = { onEvent(UpdateRhasspy2HermesMqttTimeout(it)) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
 
     }
