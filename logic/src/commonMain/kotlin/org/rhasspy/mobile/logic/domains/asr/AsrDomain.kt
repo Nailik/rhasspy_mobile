@@ -15,6 +15,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.A
 import org.rhasspy.mobile.logic.connections.mqtt.MqttResult
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.user.IUserConnection
+import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent.StartStopRhasspy
 import org.rhasspy.mobile.logic.domains.AudioFileWriter
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
 import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd
@@ -127,11 +128,16 @@ internal class AsrDomain(
             }
         }
 
-        //TODO use user connection
-        flow { emit(awaitVoiceStopped(audioStream)) }
-            .filter { it is VoiceStopped }
-            .timeoutWithDefault(params.voiceTimeout, VoiceStopped)
-            .first()
+        merge(
+            userConnection.incomingMessages
+                .filterIsInstance<StartStopRhasspy>()
+                .map { VoiceStopped },
+            flow { emit(awaitVoiceStopped(audioStream)) }
+                .filter { it is VoiceStopped }
+        ).timeoutWithDefault(
+            timeout = params.voiceTimeout,
+            default = VoiceStopped,
+        ).first()
 
         saveDataJob.cancelAndJoin()
         audioFileWriter?.closeFile()
@@ -165,7 +171,7 @@ internal class AsrDomain(
                 isUseSilenceDetection = params.isUseSpeechToTextMqttSilenceDetection,
             )
         ) {
-            MqttResult.Error   -> return TranscriptError(Rhasspy2HermesMqtt)
+            MqttResult.Error -> return TranscriptError(Rhasspy2HermesMqtt)
             MqttResult.Success -> Unit
         }
 
@@ -186,11 +192,17 @@ internal class AsrDomain(
         }
 
         val awaitVoiceStoppedJob = scope.launch {
-            //TODO use user connection
-            flow { emit(awaitVoiceStopped(audioStream)) }
-                .filter { it is VoiceStopped }
-                .timeoutWithDefault(params.voiceTimeout, VoiceStopped)
-                .first()
+
+            merge(
+                userConnection.incomingMessages
+                    .filterIsInstance<StartStopRhasspy>()
+                    .map { VoiceStopped },
+                flow { emit(awaitVoiceStopped(audioStream)) }
+                    .filter { it is VoiceStopped }
+            ).timeoutWithDefault(
+                timeout = params.voiceTimeout,
+                default = VoiceStopped,
+            ).first()
 
             sendDataJob.cancelAndJoin()
 

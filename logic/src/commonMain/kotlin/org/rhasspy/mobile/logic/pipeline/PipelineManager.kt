@@ -136,7 +136,7 @@ internal class PipelineManager(
                             sessionId = null,
                             wakeWord = it.name,
                         )
-                    }
+                    },
             ).first()
 
             //run pipeline with event
@@ -196,7 +196,7 @@ internal class PipelineManager(
         }
     }
 
-    private fun getPipeline(domains: DomainBundle): IPipeline { //TODO #466 use same mic domain
+    private fun getPipeline(domains: DomainBundle): IPipeline {
         return when (params.option) {
             PipelineManagerOption.Local              -> get<IPipelineLocal> { parametersOf(domains) }
             PipelineManagerOption.Rhasspy2HermesMQTT -> get<IPipelineMqtt> { parametersOf(domains) }
