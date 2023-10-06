@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.logic.connections.webserver
 
-sealed interface WebServerResult {
+internal sealed interface WebServerResult {
 
     data object Ok : WebServerResult
 

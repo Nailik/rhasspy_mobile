@@ -1,19 +1,19 @@
 package org.rhasspy.mobile.viewmodel.overlay.indication
 
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.logic.local.indication.IIndication
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 
 class IndicationOverlayViewStateCreator(
-    private val indicationService: IIndication
+    private val userConnection: IUserConnection,
 ) {
 
     operator fun invoke(): StateFlow<IndicationOverlayViewState> {
 
         return combineStateFlow(
-            indicationService.indicationState,
-            indicationService.isShowVisualIndication
+            userConnection.indicationState,
+            userConnection.showVisualIndicationState
         ).mapReadonlyState {
             getViewState()
         }
@@ -22,8 +22,8 @@ class IndicationOverlayViewStateCreator(
 
     private fun getViewState(): IndicationOverlayViewState {
         return IndicationOverlayViewState(
-            indicationState = indicationService.indicationState.value,
-            isShowVisualIndication = indicationService.isShowVisualIndication.value
+            indicationState = userConnection.indicationState.value,
+            isShowVisualIndication = userConnection.showVisualIndicationState.value
         )
     }
 

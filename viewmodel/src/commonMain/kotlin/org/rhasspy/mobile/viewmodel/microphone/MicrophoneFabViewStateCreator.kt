@@ -1,8 +1,7 @@
 package org.rhasspy.mobile.viewmodel.microphone
 
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.logic.domains.asr.IAsrDomain
-import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
@@ -10,17 +9,16 @@ import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 
 class MicrophoneFabViewStateCreator(
     private val serviceMiddleware: IServiceMiddleware,
-    private val wakeWordService: IWakeDomain,
     private val microphonePermission: IMicrophonePermission,
-    private val speechToTextService: IAsrDomain
+    private val userConnection: IUserConnection,
 ) {
 
     operator fun invoke(): StateFlow<MicrophoneFabViewState> {
 
         return combineStateFlow(
-            //TODO #466 speechToTextService.isRecording,
+            userConnection.micDomainRecordingState,
             serviceMiddleware.isUserActionEnabled,
-            //TODO #466 wakeWordService.isRecording,
+            userConnection.asrDomainRecordingState,
             microphonePermission.granted,
         ).mapReadonlyState {
             getViewState()
@@ -32,8 +30,8 @@ class MicrophoneFabViewStateCreator(
         return MicrophoneFabViewState(
             isMicrophonePermissionAllowed = microphonePermission.granted.value,
             isUserActionEnabled = serviceMiddleware.isUserActionEnabled.value,
-            isShowBorder = false,//TODO #466 wakeWordService.isRecording.value,
-            isRecording = false,//TODO #466  speechToTextService.isRecording.value
+            isShowBorder = userConnection.micDomainRecordingState.value,
+            isRecording = userConnection.asrDomainRecordingState.value,
         )
     }
 

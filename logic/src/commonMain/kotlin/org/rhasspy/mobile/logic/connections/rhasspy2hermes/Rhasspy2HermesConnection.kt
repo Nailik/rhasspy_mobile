@@ -14,7 +14,7 @@ import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.*
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-interface IRhasspy2HermesConnection : IConnection {
+internal interface IRhasspy2HermesConnection : IConnection {
 
     suspend fun speechToText(audioFilePath: Path): HttpClientResult<String>
     suspend fun recognizeIntent(text: String): HttpClientResult<String>

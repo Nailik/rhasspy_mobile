@@ -24,7 +24,7 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 /**
  * HandleDomain handles an intent using the defined option
  */
-interface IHandleDomain : IDomain {
+internal interface IHandleDomain : IDomain {
 
     /**
      * sends Intent and waits for an HandleResult result, normally text that is to be spoken

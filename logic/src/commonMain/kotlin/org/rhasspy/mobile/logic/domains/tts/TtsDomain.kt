@@ -27,7 +27,7 @@ import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 /**
  * sends text from Handle and converts it into audio chunks that are returned via TtsResult
  */
-interface ITtsDomain : IDomain {
+internal interface ITtsDomain : IDomain {
 
     suspend fun onSynthesize(
         sessionId: String,

@@ -4,10 +4,9 @@ import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.data.service.ConnectionState
 
-interface IConnection : KoinComponent {
+internal interface IConnection : KoinComponent {
 
     val connectionState: StateFlow<ConnectionState>
 
-    suspend fun testConnection()
 
 }

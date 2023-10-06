@@ -19,7 +19,7 @@ data class ConnectionsConfigurationViewState internal constructor(
 
     @Stable
     data class MqttViewState internal constructor(
-        val isMQTTConnected: Boolean,
+        val isMQTTEnabled: Boolean,
         val serviceViewState: ServiceViewState
     )
 

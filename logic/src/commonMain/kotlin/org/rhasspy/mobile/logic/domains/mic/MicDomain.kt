@@ -14,11 +14,13 @@ import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 /**
  * records audio as soon as audioStream has subscribers
  */
-interface IMicDomain : IDomain {
+internal interface IMicDomain : IDomain {
 
     val audioStream: Flow<MicAudioChunk>
 
     val state: StateFlow<MicDomainState>
+
+    val isRecordingState: StateFlow<Boolean>
 
 }
 
@@ -37,6 +39,7 @@ internal class MicDomain(
 
     override val audioStream = MutableSharedFlow<MicAudioChunk>(extraBufferCapacity = 1)
 
+    override var isRecordingState = MutableStateFlow(false)
     private val isMicrophonePermissionGranted get() = microphonePermission.granted.value
 
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -80,6 +83,8 @@ internal class MicDomain(
     private fun startRecording() {
         if (!isMicrophonePermissionGranted) return
 
+        isRecordingState.value = true
+
         with(params) {
             audioRecorder.startRecording(
                 audioRecorderChannelType = audioInputChannel,
@@ -95,6 +100,8 @@ internal class MicDomain(
 
     private fun stopRecording() {
         audioRecorder.stopRecording()
+
+        isRecordingState.value = false
     }
 
     override fun dispose() {

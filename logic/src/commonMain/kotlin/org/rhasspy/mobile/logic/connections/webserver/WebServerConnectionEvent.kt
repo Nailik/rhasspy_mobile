@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.logic.connections.webserver
 
-sealed interface WebServerConnectionEvent {
+internal sealed interface WebServerConnectionEvent {
     sealed interface StartSession
 
     data object WebServerListenForCommand : StartSession, WebServerConnectionEvent

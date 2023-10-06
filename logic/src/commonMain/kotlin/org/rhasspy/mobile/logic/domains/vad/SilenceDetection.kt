@@ -10,7 +10,7 @@ import kotlin.time.Duration
  *
  * this will only be checked after a specific time of recording (automaticSilenceDetectionMinimumTime) has passed
  */
-class SilenceDetection(
+internal class SilenceDetection(
     private val automaticSilenceDetectionTime: Duration,
     private val automaticSilenceDetectionMinimumTime: Duration,
     private val automaticSilenceDetectionAudioLevel: Float,

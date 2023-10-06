@@ -9,7 +9,7 @@ import kotlinx.coroutines.Job
 //best is probably to build 3 different dialog management options that have a common api
 //(just on action)
 
-sealed interface PipelineState {
+internal sealed interface PipelineState {
 
     data object DetectState : PipelineState
 

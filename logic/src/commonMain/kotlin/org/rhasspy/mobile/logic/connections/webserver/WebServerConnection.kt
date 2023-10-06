@@ -35,6 +35,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.data.service.ConnectionState.Disabled
 import org.rhasspy.mobile.data.service.ConnectionState.ErrorState
+import org.rhasspy.mobile.logic.Source
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.http.StreamContent
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
@@ -44,7 +45,6 @@ import org.rhasspy.mobile.logic.connections.webserver.WebServerResult.*
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.settings.IAppSettingsUtil
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonExists
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
@@ -55,7 +55,7 @@ import org.rhasspy.mobile.platformspecific.ktor.installConnector
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-interface IWebServerConnection : IConnection {
+internal interface IWebServerConnection : IConnection {
 
     val incomingMessages: Flow<WebServerConnectionEvent>
 
@@ -81,9 +81,6 @@ internal class WebServerConnection(
     override val incomingMessages = MutableSharedFlow<WebServerConnectionEvent>()
 
     override val connectionState = MutableStateFlow<ConnectionState>(Disabled)
-    override suspend fun testConnection() {
-
-    }
 
     private val nativeApplication by inject<NativeApplication>()
 

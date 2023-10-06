@@ -8,7 +8,7 @@ import okio.Path
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
@@ -22,11 +22,11 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSe
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Consumed.ShowSnackBar
-import kotlin.reflect.KFunction1
+import kotlin.reflect.KFunction0
 
 @Stable
 abstract class IIndicationSoundSettingsViewModel(
-    private val localAudioService: ILocalAudioPlayer,
+    private val userConnection: IUserConnection,
     private val nativeApplication: NativeApplication,
     private val customSoundOptions: ISetting<List<String>>,
     private val soundSetting: ISetting<String>,
@@ -36,7 +36,7 @@ abstract class IIndicationSoundSettingsViewModel(
 
     val viewStateCreator: IIndicationSoundSettingsViewStateCreator =
         get { parametersOf(customSoundOptions, soundSetting, soundVolume) }
-    abstract val playSound: KFunction1<ILocalAudioPlayer, Unit>
+    abstract val playSound: KFunction0<Unit>
 
     private val _viewState: MutableStateFlow<IIndicationSoundSettingsViewState> = viewStateCreator()
     val viewState = _viewState.readOnly
@@ -91,7 +91,7 @@ abstract class IIndicationSoundSettingsViewModel(
                 }
             }
 
-            ToggleAudioPlayerActive -> if (localAudioService.isPlayingState.value) localAudioService.stop() else playSound(localAudioService)
+            ToggleAudioPlayerActive -> if (userConnection.isPlayingState.value) userConnection.stopPlaySound() else playSound()
 
             BackClick               -> navigator.onBackPressed()
         }
@@ -108,7 +108,7 @@ abstract class IIndicationSoundSettingsViewModel(
 
 
     override fun onDismissed() {
-        localAudioService.stop()
+        userConnection.stopPlaySound()
         super.onDismissed()
     }
 

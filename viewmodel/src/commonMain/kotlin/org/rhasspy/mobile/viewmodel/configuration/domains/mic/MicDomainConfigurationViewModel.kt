@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewmodel.configuration.domains.mic
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.logic.pipeline.IPipelineManager
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.platformspecific.features.FeatureAvailability
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -18,15 +18,15 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
 class MicDomainConfigurationViewModel(
-    pipelineManager: IPipelineManager,
     private val mapper: MicDomainConfigurationDataMapper,
+    userConnection: IUserConnection,
 ) : ScreenViewModel() {
 
     private val _viewState = MutableStateFlow(
         MicDomainConfigurationViewState(
             editData = mapper(ConfigurationSetting.micDomainData.value),
-            micDomainStateFlow = pipelineManager.micDomainStateFlow,
-            domainStateFlow = pipelineManager.micDomainStateFlow.mapReadonlyState { it.asDomainState() },
+            micDomainStateFlow = userConnection.micDomainState,
+            domainStateFlow = userConnection.micDomainState.mapReadonlyState { it.asDomainState() },
             isPauseRecordingOnMediaPlaybackEnabled = FeatureAvailability.isPauseRecordingOnPlaybackFeatureEnabled,
         )
     )

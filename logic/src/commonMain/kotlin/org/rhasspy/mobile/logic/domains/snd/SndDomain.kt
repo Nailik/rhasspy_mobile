@@ -30,7 +30,7 @@ import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 /**
  * records audio as soon as audioStream has subscribers
  */
-interface ISndDomain : IDomain {
+internal interface ISndDomain : IDomain {
 
     /**
      * play audio stream from Audio and return SndResult after finished

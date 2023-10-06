@@ -1,9 +1,13 @@
 package org.rhasspy.mobile.logic.pipeline
 
-interface IPipelineDisabled : IPipeline
-class PipelineDisabled : IPipelineDisabled {
+internal interface IPipelineDisabled : IPipeline
+internal class PipelineDisabled(
+    private val domains: DomainBundle,
+) : IPipelineDisabled {
+
     override suspend fun runPipeline(startEvent: StartEvent): PipelineResult {
-        //TODO #466 ("Not yet implemented")
+        //TODO #466TODO("Not yet implemented")
         return PipelineResult.End(Source.Local)
     }
+
 }

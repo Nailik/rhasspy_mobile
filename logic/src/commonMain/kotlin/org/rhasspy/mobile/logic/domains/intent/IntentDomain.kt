@@ -33,7 +33,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResul
 /**
  * IntentDomain recognizes an intent from a transcript
  */
-interface IIntentDomain : IDomain {
+internal interface IIntentDomain : IDomain {
 
     /**
      * sends Text and waits for an IntentResult result

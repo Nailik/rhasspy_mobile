@@ -14,13 +14,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
-import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
-import org.rhasspy.mobile.logic.domains.handle.IHandleDomain
-import org.rhasspy.mobile.logic.domains.intent.IIntentDomain
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.logic.logger.IDatabaseLogger
 import org.rhasspy.mobile.logic.logicModule
-import org.rhasspy.mobile.logic.pipeline.IPipelineManager
 import org.rhasspy.mobile.overlay.IIndicationOverlay
 import org.rhasspy.mobile.overlay.IMicrophoneOverlay
 import org.rhasspy.mobile.overlay.koinOverlayModule
@@ -105,11 +101,7 @@ class Application : NativeApplication(), KoinComponent {
         get<IMicrophonePermission>().update()
         get<IOverlayPermission>().update()
         //start services
-        get<IWebServerConnection>()
-        get<IMqttConnection>()
-        get<IPipelineManager>()
-        get<IIntentDomain>()
-        get<IHandleDomain>()
+        get<IUserConnection>()
         //start overlay
         checkOverlayPermission()
         get<IIndicationOverlay>().start()

@@ -32,7 +32,7 @@ import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 /**
  * AsrDomain tries to detect text within a Flow of MicAudioChunk Events using the defined option
  */
-interface IAsrDomain : IDomain {
+internal interface IAsrDomain : IDomain {
 
     /**
      * awaits VoiceStart, afterwards audioStream is send to Asr until VoiceStopped or a TranscriptResult is found
@@ -43,6 +43,8 @@ interface IAsrDomain : IDomain {
         awaitVoiceStart: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStart,
         awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
     ): TranscriptResult
+
+    val isRecordingState: StateFlow<Boolean>
 
 }
 
@@ -58,6 +60,8 @@ internal class AsrDomain(
     private val audioFocus: IAudioFocus,
     private val userConnection: IUserConnection,
 ) : IAsrDomain {
+
+    override var isRecordingState = MutableStateFlow(false)
 
     private val logger = Logger.withTag("SpeechToTextService")
 
@@ -75,6 +79,8 @@ internal class AsrDomain(
         awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
     ): TranscriptResult {
         logger.d { "awaitTranscript for session $sessionId" }
+
+        isRecordingState.value = true
 
         indication.onRecording()
         audioFocus.request(Record)
@@ -100,6 +106,7 @@ internal class AsrDomain(
             AsrDomainOption.Disabled           -> TranscriptDisabled
         }.also {
             audioFocus.abandon(Record)
+            isRecordingState.value = false
         }
     }
 

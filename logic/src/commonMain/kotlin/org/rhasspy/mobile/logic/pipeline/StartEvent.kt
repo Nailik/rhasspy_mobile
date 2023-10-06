@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.logic.pipeline
 
-data class StartEvent(
+internal data class StartEvent(
     val sessionId: String?,
     val wakeWord: String?
 )

@@ -9,10 +9,9 @@ import org.rhasspy.mobile.data.indication.IndicationState.*
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
 import org.rhasspy.mobile.platformspecific.indication.NativeIndication
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 
-interface IIndication : IDomain {
+internal interface IIndication : IDomain {
 
     val isShowVisualIndication: StateFlow<Boolean>
     val indicationState: StateFlow<IndicationState>
@@ -33,18 +32,16 @@ internal class Indication : IIndication {
     private val localAudioService by inject<ILocalAudioPlayer>()
 
     //states are used by overlay
-    private val _isShowVisualIndication = MutableStateFlow(false)
-    override val isShowVisualIndication = _isShowVisualIndication.readOnly
-    private val _indicationState = MutableStateFlow(Idle)
-    override val indicationState = _indicationState.readOnly
+    override val isShowVisualIndication = MutableStateFlow(false)
+    override val indicationState = MutableStateFlow(Idle)
 
     /**
      * idle shows no indication and stops screen wakeup
      */
     override fun onIdle() {
         logger.d { "onIdle" }
-        _indicationState.value = Idle
-        _isShowVisualIndication.value = false
+        indicationState.value = Idle
+        isShowVisualIndication.value = false
         NativeIndication.releaseWakeUp()
     }
 
@@ -52,13 +49,13 @@ internal class Indication : IIndication {
      * wake up screen when hotword is detected and play sound eventually
      */
     override fun onSessionStarted() {
-        _indicationState.value = WakeUp
+        indicationState.value = WakeUp
         logger.d { "onWakeWordDetected" }
         if (AppSetting.isWakeWordDetectionTurnOnDisplayEnabled.value) {
             NativeIndication.wakeUpScreen()
         }
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
-            _isShowVisualIndication.value = true
+            isShowVisualIndication.value = true
         }
         if (AppSetting.isSoundIndicationEnabled.value) {
             localAudioService.playWakeSound()
@@ -69,10 +66,10 @@ internal class Indication : IIndication {
      * update indication state
      */
     override fun onRecording() {
-        _indicationState.value = Recording
+        indicationState.value = Recording
         logger.d { "onRecording" }
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
-            _isShowVisualIndication.value = true
+            isShowVisualIndication.value = true
         }
     }
 
@@ -90,10 +87,10 @@ internal class Indication : IIndication {
      * when intent is recognized show thinking animation
      */
     override fun onThinking() {
-        _indicationState.value = Thinking
+        indicationState.value = Thinking
         logger.d { "onRecognizingIntent" }
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
-            _isShowVisualIndication.value = true
+            isShowVisualIndication.value = true
         }
     }
 
@@ -101,10 +98,10 @@ internal class Indication : IIndication {
      * show animation that audio is playing
      */
     override fun onPlayAudio() {
-        _indicationState.value = Speaking
+        indicationState.value = Speaking
         logger.d { "onPlayAudio" }
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
-            _isShowVisualIndication.value = true
+            isShowVisualIndication.value = true
         }
     }
 

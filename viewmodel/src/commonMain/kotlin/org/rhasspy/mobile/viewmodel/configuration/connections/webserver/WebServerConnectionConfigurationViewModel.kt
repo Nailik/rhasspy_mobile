@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.update
 import okio.Path
 import org.rhasspy.mobile.data.data.takeInt
 import org.rhasspy.mobile.data.link.LinkType
-import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
@@ -24,13 +24,13 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 class WebServerConnectionConfigurationViewModel(
     private val mapper: WebServerConnectionConfigurationDataMapper,
     private val nativeApplication: NativeApplication,
-    webServerConnection: IWebServerConnection
+    userConnection: IUserConnection,
 ) : ScreenViewModel() {
 
     private val _viewState = MutableStateFlow(
         WebServerConnectionConfigurationViewState(
             editData = mapper(ConfigurationSetting.localWebserverConnection.value),
-            connectionState = webServerConnection.connectionState,
+            connectionState = userConnection.webServerConnectionState,
         )
     )
     val viewState = _viewState.readOnly

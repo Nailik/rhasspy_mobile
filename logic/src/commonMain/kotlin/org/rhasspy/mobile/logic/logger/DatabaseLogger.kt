@@ -35,7 +35,7 @@ interface IDatabaseLogger {
 
 }
 
-internal class DatabaseLogger(
+class DatabaseLogger(
     private val nativeApplication: NativeApplication,
     private val externalResultRequest: IExternalResultRequest,
     driverFactory: IDriverFactory

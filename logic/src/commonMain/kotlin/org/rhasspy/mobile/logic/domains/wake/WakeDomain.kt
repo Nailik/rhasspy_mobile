@@ -21,7 +21,7 @@ import org.rhasspy.mobile.platformspecific.porcupine.PorcupineWakeWordClient
 /**
  * WakeDomain checks for WakeWord within a Flow of MicAudioChunk Events
  */
-interface IWakeDomain : IDomain {
+internal interface IWakeDomain : IDomain {
 
     /**
      * collect audioStream until a WakeResult is Detected or NotDetected

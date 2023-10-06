@@ -6,7 +6,7 @@ import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.*
 import org.rhasspy.mobile.platformspecific.media.AudioFocusUtil
 import org.rhasspy.mobile.settings.AppSetting
 
-interface IAudioFocus {
+internal interface IAudioFocus {
 
     fun request(reason: AudioFocusRequestReason)
     fun abandon(reason: AudioFocusRequestReason)

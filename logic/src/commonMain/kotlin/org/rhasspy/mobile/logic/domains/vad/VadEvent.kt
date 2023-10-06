@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.logic.domains.vad
 
-sealed interface VadEvent {
+internal sealed interface VadEvent {
 
     data object VoiceStart : VadEvent
 

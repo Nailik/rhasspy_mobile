@@ -28,7 +28,7 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.ktor.configureEngine
 import org.rhasspy.mobile.settings.ISetting
 
-abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnection, KoinComponent {
+internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnection, KoinComponent {
 
     protected abstract val logger: Logger
 
@@ -62,7 +62,7 @@ abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnec
         }
     }
 
-    override suspend fun testConnection() {
+    suspend fun testConnection() {
         connectionState.value = try {
             httpClient?.request(httpConnectionParams.host) {
                 headers {

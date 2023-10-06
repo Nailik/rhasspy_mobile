@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.logic.pipeline
 
-interface IPipeline {
+internal interface IPipeline {
 
     suspend fun runPipeline(startEvent: StartEvent): PipelineResult
 

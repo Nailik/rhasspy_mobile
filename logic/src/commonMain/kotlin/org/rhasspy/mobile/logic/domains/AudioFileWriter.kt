@@ -6,7 +6,7 @@ import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
 
-class AudioFileWriter(
+internal class AudioFileWriter(
     val path: Path,
     private val channel: Int,
     private val sampleRate: Int,

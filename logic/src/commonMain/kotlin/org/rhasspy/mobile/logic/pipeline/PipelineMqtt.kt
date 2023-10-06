@@ -8,12 +8,6 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.A
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrTextCaptured
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentNotRecognized
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentRecognitionResult
-import org.rhasspy.mobile.logic.domains.asr.IAsrDomain
-import org.rhasspy.mobile.logic.domains.handle.IHandleDomain
-import org.rhasspy.mobile.logic.domains.intent.IIntentDomain
-import org.rhasspy.mobile.logic.domains.mic.IMicDomain
-import org.rhasspy.mobile.logic.domains.tts.ITtsDomain
-import org.rhasspy.mobile.logic.domains.vad.IVadDomain
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
 import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
@@ -25,16 +19,11 @@ import org.rhasspy.mobile.logic.pipeline.TranscriptResult.TranscriptError
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-interface IPipelineMqtt : IPipeline
+internal interface IPipelineMqtt : IPipeline
 
-class PipelineMqtt(
+internal class PipelineMqtt(
     private val mqttConnection: IMqttConnection,
-    private val intentDomain: IIntentDomain,
-    private val handleDomain: IHandleDomain,
-    private val ttsDomain: ITtsDomain,
-    private val asrDomain: IAsrDomain,
-    private val micDomain: IMicDomain,
-    private val vadDomain: IVadDomain,
+    private val domains: DomainBundle,
     private val audioFocus: IAudioFocus,
 ) : IPipelineMqtt {
 
@@ -52,12 +41,7 @@ class PipelineMqtt(
             .first()
 
         return runPipeline(sessionId).also {
-            asrDomain.dispose()
-            handleDomain.dispose()
-            intentDomain.dispose()
-            micDomain.dispose()
-            ttsDomain.dispose()
-            vadDomain.dispose()
+            domains.dispose()
         }
     }
 
@@ -86,7 +70,7 @@ class PipelineMqtt(
 
     private suspend fun onAsrTextCaptured(sessionId: String, text: String): PipelineResult {
         //find intent from text, eventually already handles
-        intentDomain.awaitIntent(
+        domains.intentDomain.awaitIntent(
             sessionId = sessionId,
             transcript = Transcript(text, Rhasspy2HermesMqtt),
         )
@@ -94,7 +78,7 @@ class PipelineMqtt(
     }
 
     private suspend fun onIntentRecognitionResult(sessionId: String, intentName: String?, intent: String): PipelineResult {
-        handleDomain.awaitIntentHandle(
+        domains.handleDomain.awaitIntentHandle(
             sessionId = sessionId,
             intent = Intent(intentName, intent, Rhasspy2HermesMqtt)
         )
@@ -102,7 +86,7 @@ class PipelineMqtt(
     }
 
     private suspend fun onSay(sessionId: String, text: String, volume: Float?): PipelineResult {
-        ttsDomain.onSynthesize(
+        domains.ttsDomain.onSynthesize(
             sessionId = sessionId,
             volume = AppSetting.volume.value,
             siteId = ConfigurationSetting.siteId.value,
@@ -112,11 +96,11 @@ class PipelineMqtt(
     }
 
     private suspend fun onStartListening(sessionId: String): PipelineResult {
-        asrDomain.awaitTranscript(
+        domains.asrDomain.awaitTranscript(
             sessionId = sessionId,
-            audioStream = micDomain.audioStream,
-            awaitVoiceStart = vadDomain::awaitVoiceStart,
-            awaitVoiceStopped = vadDomain::awaitVoiceStopped,
+            audioStream = domains.micDomain.audioStream,
+            awaitVoiceStart = domains.vadDomain::awaitVoiceStart,
+            awaitVoiceStopped = domains.vadDomain::awaitVoiceStopped,
         ).also {
             audioFocus.abandon(AudioFocusRequestReason.Record)
         }

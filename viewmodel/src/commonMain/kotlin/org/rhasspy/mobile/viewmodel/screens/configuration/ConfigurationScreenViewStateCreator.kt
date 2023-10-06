@@ -2,32 +2,22 @@ package org.rhasspy.mobile.viewmodel.screens.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.data.service.ConnectionState
-import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
-import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
-import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
-import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
-import org.rhasspy.mobile.logic.pipeline.IPipelineManager
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
 
 class ConfigurationScreenViewStateCreator(
-    rhasspy2HermesConnection: IRhasspy2HermesConnection,
-    rhasspy3WyomingConnection: IRhasspy3WyomingConnection,
-    homeAssistantConnection: IHomeAssistantConnection,
-    mqttConnection: IMqttConnection,
-    webServerConnection: IWebServerConnection,
-    private val pipelineManager: IPipelineManager,
+    private val userConnection: IUserConnection,
 ) {
 
     private val hasConnectionError = combineStateFlow(
-        rhasspy2HermesConnection.connectionState,
-        rhasspy3WyomingConnection.connectionState,
-        homeAssistantConnection.connectionState,
-        mqttConnection.connectionState,
-        webServerConnection.connectionState,
+        userConnection.rhasspy2HermesMqttConnectionState,
+        userConnection.rhasspy2HermesMqttConnectionState,
+        userConnection.rhasspy3WyomingConnectionState,
+        userConnection.homeAssistantConnectionState,
+        userConnection.webServerConnectionState,
     ).mapReadonlyState { arr ->
         arr.any { it is ConnectionState.ErrorState }
     }
@@ -37,8 +27,8 @@ class ConfigurationScreenViewStateCreator(
     init {
         combineStateFlow(
             hasConnectionError,
-            pipelineManager.micDomainStateFlow,
-            pipelineManager.wakeDomainStateFlow,
+            userConnection.micDomainState,
+            userConnection.wakeDomainState,
             ConfigurationSetting.siteId.data,
             ConfigurationSetting.pipelineData.data,
             ConfigurationSetting.wakeDomainData.data,
@@ -67,11 +57,11 @@ class ConfigurationScreenViewStateCreator(
                 pipelineManagerOption = ConfigurationSetting.pipelineData.value.option,
             ),
             micDomainItemViewState = MicDomainItemViewState(
-                errorStateFlow = pipelineManager.micDomainStateFlow.mapReadonlyState { it.asDomainState() },
+                errorStateFlow = userConnection.micDomainState.mapReadonlyState { it.asDomainState() },
             ),
             wakeDomainItemViewState = WakeDomainItemViewState(
                 wakeWordValueOption = ConfigurationSetting.wakeDomainData.value.wakeDomainOption,
-                errorStateFlow = pipelineManager.wakeDomainStateFlow,
+                errorStateFlow = userConnection.wakeDomainState,
             ),
             asrDomainItemViewState = AsrDomainItemViewState(
                 asrDomainOption = ConfigurationSetting.asrDomainData.value.option,

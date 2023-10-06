@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.logic.connections.mqtt
 
-sealed interface MqttConnectionEvent {
+internal sealed interface MqttConnectionEvent {
 
     sealed interface SessionEvent {
 

@@ -17,7 +17,7 @@ import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceStart
 /**
  * Vad Domain detects speech in an audio stream
  */
-interface IVadDomain : IDomain {
+internal interface IVadDomain : IDomain {
 
     suspend fun awaitVoiceStart(audioStream: Flow<MicAudioChunk>): VoiceStart
 

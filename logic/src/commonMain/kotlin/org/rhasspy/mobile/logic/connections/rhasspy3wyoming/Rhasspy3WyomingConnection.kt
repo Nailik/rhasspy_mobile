@@ -5,7 +5,7 @@ import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.http.IHttpConnection
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-interface IRhasspy3WyomingConnection : IConnection
+internal interface IRhasspy3WyomingConnection : IConnection
 
 /**
  * contains client to send data to http endpoints

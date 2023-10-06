@@ -1,11 +1,7 @@
 package org.rhasspy.mobile.viewmodel.configuration.connections
 
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
-import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
-import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
-import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -13,11 +9,7 @@ import org.rhasspy.mobile.viewmodel.configuration.connections.ConnectionsConfigu
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 class ConnectionsScreenViewStateCreator(
-    private val rhasspy2HermesConnection: IRhasspy2HermesConnection,
-    private val rhasspy3WyomingConnection: IRhasspy3WyomingConnection,
-    private val homeAssistantConnection: IHomeAssistantConnection,
-    private val webServerService: IWebServerConnection,
-    private val mqttService: IMqttConnection,
+    private val userConnection: IUserConnection,
 ) {
 
     operator fun invoke(): StateFlow<ConnectionsConfigurationViewState> {
@@ -26,7 +18,7 @@ class ConnectionsScreenViewStateCreator(
             ConfigurationSetting.rhasspy3Connection.data,
             ConfigurationSetting.homeAssistantConnection.data,
             ConfigurationSetting.localWebserverConnection.data,
-            mqttService.isConnected,
+            ConfigurationSetting.mqttConnection.data,
         ).mapReadonlyState {
             getViewState()
         }
@@ -36,23 +28,23 @@ class ConnectionsScreenViewStateCreator(
         return ConnectionsConfigurationViewState(
             rhasspy2Hermes = HttpViewState(
                 host = ConfigurationSetting.rhasspy2Connection.value.host,
-                serviceViewState = ServiceViewState(rhasspy2HermesConnection.connectionState)
+                serviceViewState = ServiceViewState(userConnection.rhasspy2HermesHttpConnectionState)
             ),
             rhasspy3Wyoming = HttpViewState(
                 host = ConfigurationSetting.rhasspy3Connection.value.host,
-                serviceViewState = ServiceViewState(rhasspy3WyomingConnection.connectionState)
+                serviceViewState = ServiceViewState(userConnection.rhasspy3WyomingConnectionState)
             ),
             homeAssistant = HttpViewState(
                 host = ConfigurationSetting.homeAssistantConnection.value.host,
-                serviceViewState = ServiceViewState(homeAssistantConnection.connectionState)
+                serviceViewState = ServiceViewState(userConnection.homeAssistantConnectionState)
             ),
             webserver = WebServerViewState(
                 isHttpServerEnabled = ConfigurationSetting.localWebserverConnection.value.isEnabled,
-                serviceViewState = ServiceViewState(webServerService.connectionState)
+                serviceViewState = ServiceViewState(userConnection.webServerConnectionState)
             ),
             mqtt = MqttViewState(
-                isMQTTConnected = mqttService.isConnected.value,
-                serviceViewState = ServiceViewState(mqttService.connectionState)
+                isMQTTEnabled = ConfigurationSetting.mqttConnection.value.isEnabled,
+                serviceViewState = ServiceViewState(userConnection.rhasspy2HermesMqttConnectionState)
             ),
         )
     }

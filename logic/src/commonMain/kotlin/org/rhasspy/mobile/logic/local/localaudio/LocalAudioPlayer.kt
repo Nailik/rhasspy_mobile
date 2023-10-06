@@ -17,7 +17,7 @@ import org.rhasspy.mobile.settings.AppSetting
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-interface ILocalAudioPlayer {
+internal interface ILocalAudioPlayer {
 
     val isPlayingState: StateFlow<Boolean>
 

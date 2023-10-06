@@ -11,7 +11,7 @@ import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.http.IHttpConnection
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-interface IHomeAssistantConnection : IConnection {
+internal interface IHomeAssistantConnection : IConnection {
 
     suspend fun awaitIntent(
         intentName: String?,

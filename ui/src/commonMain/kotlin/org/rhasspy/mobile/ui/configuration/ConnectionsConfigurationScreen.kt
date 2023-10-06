@@ -161,10 +161,9 @@ private fun Mqtt(
     onEvent: (ConnectionsConfigurationUiEvent) -> Unit
 ) {
 
-
     ConnectionListItem(
         text = MR.strings.mqtt.stable,
-        secondaryText = if (viewState.isMQTTConnected) MR.strings.connected.stable else MR.strings.notConnected.stable,
+        secondaryText = viewState.isMQTTEnabled.toText(),
         serviceViewState = viewState.serviceViewState,
         destination = MqttConnectionScreen,
         onEvent = onEvent

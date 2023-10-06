@@ -2,11 +2,11 @@ package org.rhasspy.mobile.logic.local.settings
 
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.logic.IDomain
-import org.rhasspy.mobile.logic.middleware.Source
-import org.rhasspy.mobile.logic.middleware.Source.*
+import org.rhasspy.mobile.logic.Source
+import org.rhasspy.mobile.logic.Source.*
 import org.rhasspy.mobile.settings.AppSetting
 
-interface IAppSettingsUtil : IDomain {
+internal interface IAppSettingsUtil : IDomain {
 
     fun hotWordToggle(value: Boolean, source: Source)
     fun intentHandlingToggle(value: Boolean, source: Source)

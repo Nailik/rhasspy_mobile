@@ -4,7 +4,7 @@ import okio.Path
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 
-interface IFileStorage {
+internal interface IFileStorage {
 
     val speechToTextAudioFile: Path
 

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.data.takeInt
-import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.connections.rhasspy2hermes.Rhasspy2HermesConnectionConfigurationUiEvent.Action
@@ -16,13 +16,13 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 @Stable
 class Rhasspy2HermesConnectionConfigurationViewModel(
     private val mapper: Rhasspy2HermesConnectionConfigurationDataMapper,
-    rhasspy2HermesConnection: IRhasspy2HermesConnection
+    userConnection: IUserConnection,
 ) : ScreenViewModel() {
 
     private val _viewState = MutableStateFlow(
         Rhasspy2HermesConnectionConfigurationViewState(
             editData = mapper(ConfigurationSetting.rhasspy2Connection.value),
-            connectionState = rhasspy2HermesConnection.connectionState
+            connectionState = userConnection.rhasspy2HermesMqttConnectionState,
         )
     )
     val viewState = _viewState.readOnly

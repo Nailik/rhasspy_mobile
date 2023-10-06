@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.logic.domains.snd
 
-sealed interface SndAudio {
+internal sealed interface SndAudio {
 
     data class AudioStartEvent(
         val sampleRate: Int,

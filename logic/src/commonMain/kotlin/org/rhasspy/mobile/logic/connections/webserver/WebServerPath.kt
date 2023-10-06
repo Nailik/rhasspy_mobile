@@ -3,7 +3,7 @@ package org.rhasspy.mobile.logic.connections.webserver
 import org.rhasspy.mobile.logic.connections.webserver.WebServerPath.WebServerCallType.GET
 import org.rhasspy.mobile.logic.connections.webserver.WebServerPath.WebServerCallType.POST
 
-enum class WebServerPath(val path: String, val type: WebServerCallType) {
+internal enum class WebServerPath(val path: String, val type: WebServerCallType) {
     ListenForCommand("/api/listen-for-command", POST),
     ListenForWake("/api/listen-for-wake", POST),
     PlayRecordingPost("/api/play-recording", POST),

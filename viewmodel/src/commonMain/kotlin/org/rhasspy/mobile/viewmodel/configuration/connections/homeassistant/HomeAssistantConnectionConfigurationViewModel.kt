@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.data.takeInt
-import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.connections.homeassistant.HomeAssistantConnectionConfigurationUiEvent.Action
@@ -16,13 +16,13 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 @Stable
 class HomeAssistantConnectionConfigurationViewModel(
     private val mapper: HomeAssistantConnectionConfigurationDataMapper,
-    homeAssistantConnection: IHomeAssistantConnection,
+    userConnection: IUserConnection,
 ) : ScreenViewModel() {
 
     private val _viewState = MutableStateFlow(
         HomeAssistantConnectionConfigurationViewState(
             editData = mapper(ConfigurationSetting.homeAssistantConnection.value),
-            connectionState = homeAssistantConnection.connectionState,
+            connectionState = userConnection.homeAssistantConnectionState,
         )
     )
     val viewState = _viewState.readOnly

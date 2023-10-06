@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.domain.DomainState
 import org.rhasspy.mobile.data.domain.DomainState.Loading
 import org.rhasspy.mobile.data.pipeline.PipelineData
@@ -15,7 +16,6 @@ import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent.StartStopRhasspy
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.StartSession
-import org.rhasspy.mobile.logic.domains.mic.IMicDomain
 import org.rhasspy.mobile.logic.domains.mic.MicDomainState
 import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
 import org.rhasspy.mobile.logic.domains.wake.WakeEvent.Detection
@@ -31,14 +31,16 @@ import org.rhasspy.mobile.logic.pipeline.TtsResult.NotSynthesized
 import org.rhasspy.mobile.logic.pipeline.TtsResult.TtsDisabled
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-interface IPipelineManager {
+internal interface IPipelineManager {
 
     val wakeDomainStateFlow: StateFlow<DomainState>
     val micDomainStateFlow: StateFlow<MicDomainState>
+    val micDomainRecordingStateFlow: StateFlow<Boolean>
+    val asrDomainRecordingStateFlow: StateFlow<Boolean>
 
 }
 
-class PipelineManager(
+internal class PipelineManager(
     private val mqttConnection: IMqttConnection,
     private val webServerConnection: IWebServerConnection,
     private val userConnection: IUserConnection,
@@ -56,6 +58,8 @@ class PipelineManager(
 
     override val wakeDomainStateFlow = MutableStateFlow<DomainState>(Loading)
     override val micDomainStateFlow = MutableStateFlow<MicDomainState>(MicDomainState.Loading)
+    override val micDomainRecordingStateFlow = MutableStateFlow(false)
+    override val asrDomainRecordingStateFlow = MutableStateFlow(false)
 
     init {
         scope.launch {
@@ -78,21 +82,13 @@ class PipelineManager(
         pipelineScope = CoroutineScope(Dispatchers.IO)
         pipelineJob = null
 
-        val micDomain = get<IMicDomain>()
+        val domains = get<DomainBundle>()
         val currentWakeDomain = get<IWakeDomain>()
         wakeDomain = currentWakeDomain.apply {
-            awaitDetection(micDomain.audioStream)
+            awaitDetection(domains.micDomain.audioStream)
         }
-        pipelineScope.launch {
-            currentWakeDomain.state.collect {
-                wakeDomainStateFlow.value = it
-            }
-        }
-        pipelineScope.launch {
-            micDomain.state.collect {
-                micDomainStateFlow.value = it
-            }
-        }
+
+        collectStateFlows(currentWakeDomain, domains)
 
         pipelineScope.launch {
             val startEvent = merge(
@@ -144,13 +140,36 @@ class PipelineManager(
             ).first()
 
             //run pipeline with event
-            runPipeline(startEvent)
+            runPipeline(startEvent, domains)
         }
     }
 
-    private fun runPipeline(startEvent: StartEvent) {
+    private fun collectStateFlows(wakeDomain: IWakeDomain, domains: DomainBundle) {
+        pipelineScope.launch {
+            wakeDomain.state.collect {
+                wakeDomainStateFlow.value = it
+            }
+        }
+        pipelineScope.launch {
+            domains.micDomain.state.collect {
+                micDomainStateFlow.value = it
+            }
+        }
+        pipelineScope.launch {
+            domains.micDomain.isRecordingState.collect {
+                micDomainRecordingStateFlow.value = it
+            }
+        }
+        pipelineScope.launch {
+            domains.asrDomain.isRecordingState.collect {
+                asrDomainRecordingStateFlow.value = it
+            }
+        }
+    }
+
+    private fun runPipeline(startEvent: StartEvent, domains: DomainBundle) {
         pipelineJob = pipelineScope.launch {
-            when (getPipeline().runPipeline(startEvent)) {
+            when (getPipeline(domains).runPipeline(startEvent)) {
                 is End,
                 is HandleDisabled,
                 is IntentDisabled,
@@ -177,11 +196,11 @@ class PipelineManager(
         }
     }
 
-    private fun getPipeline(): IPipeline { //TODO #466 use same mic domain
+    private fun getPipeline(domains: DomainBundle): IPipeline { //TODO #466 use same mic domain
         return when (params.option) {
-            PipelineManagerOption.Local              -> get<IPipelineLocal>()
-            PipelineManagerOption.Rhasspy2HermesMQTT -> get<IPipelineMqtt>()
-            PipelineManagerOption.Disabled           -> get<IPipelineDisabled>()
+            PipelineManagerOption.Local              -> get<IPipelineLocal> { parametersOf(domains) }
+            PipelineManagerOption.Rhasspy2HermesMQTT -> get<IPipelineMqtt> { parametersOf(domains) }
+            PipelineManagerOption.Disabled           -> get<IPipelineDisabled> { parametersOf(domains) }
         }
     }
 

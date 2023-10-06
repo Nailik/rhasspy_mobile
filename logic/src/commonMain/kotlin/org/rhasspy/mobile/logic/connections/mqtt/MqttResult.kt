@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.logic.connections.mqtt
 
-sealed interface MqttResult {
+internal sealed interface MqttResult {
 
     data object Success : MqttResult
     data object Error : MqttResult

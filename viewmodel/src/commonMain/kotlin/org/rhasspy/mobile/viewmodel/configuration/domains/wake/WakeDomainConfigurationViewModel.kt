@@ -8,7 +8,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.data.data.takeInt
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
-import org.rhasspy.mobile.logic.pipeline.IPipelineManager
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 import org.rhasspy.mobile.platformspecific.file.FolderType
@@ -28,15 +28,15 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
 class WakeDomainConfigurationViewModel(
-    pipelineManager: IPipelineManager,
     private val mapper: WakeDomainConfigurationDataMapper,
+    userConnection: IUserConnection,
 ) : ScreenViewModel() {
 
     private val initialData = mapper(ConfigurationSetting.wakeDomainData.value)
     private val _viewState = MutableStateFlow(
         WakeDomainConfigurationViewState(
             editData = initialData,
-            domainStateFlow = pipelineManager.wakeDomainStateFlow,
+            domainStateFlow = userConnection.wakeDomainState,
             porcupineWakeWordScreen = 0,
         )
     )

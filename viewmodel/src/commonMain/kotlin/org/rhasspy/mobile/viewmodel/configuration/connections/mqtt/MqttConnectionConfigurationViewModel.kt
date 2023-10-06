@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.update
 import okio.Path.Companion.toPath
 import org.rhasspy.mobile.data.data.takeInt
 import org.rhasspy.mobile.data.link.LinkType
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -21,13 +21,13 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 @Stable
 class MqttConnectionConfigurationViewModel(
     private val mapper: MqttConnectionConfigurationDataMapper,
-    mqttConnection: IMqttConnection,
+    userConnection: IUserConnection,
 ) : ScreenViewModel() {
 
     private val _viewState = MutableStateFlow(
         MqttConnectionConfigurationViewState(
             editData = mapper(ConfigurationSetting.mqttConnection.value),
-            connectionState = mqttConnection.connectionState,
+            connectionState = userConnection.rhasspy2HermesMqttConnectionState,
         )
     )
     val viewState = _viewState.readOnly

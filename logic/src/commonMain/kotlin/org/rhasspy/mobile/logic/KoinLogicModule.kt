@@ -50,8 +50,8 @@ import org.rhasspy.mobile.logic.pipeline.*
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 fun logicModule() = module {
-    factory<IPipelineLocal> {
-        PipelineLocal(
+    factory {
+        DomainBundle(
             asrDomain = get(),
             handleDomain = get(),
             intentDomain = get(),
@@ -59,23 +59,26 @@ fun logicModule() = module {
             sndDomain = get(),
             ttsDomain = get(),
             vadDomain = get(),
+        )
+    }
+
+    factory<IPipelineLocal> { params ->
+        PipelineLocal(
+            domains = params.get(),
             audioFocus = get(),
         )
     }
-    factory<IPipelineMqtt> {
+    factory<IPipelineMqtt> { params ->
         PipelineMqtt(
             mqttConnection = get(),
-            intentDomain = get(),
-            handleDomain = get(),
-            ttsDomain = get(),
-            asrDomain = get(),
-            micDomain = get(),
-            vadDomain = get(),
+            domains = params.get(),
             audioFocus = get(),
         )
     }
-    factory<IPipelineDisabled> {
-        PipelineDisabled()
+    factory<IPipelineDisabled> { params ->
+        PipelineDisabled(
+            domains = params.get(),
+        )
     }
 
     single<IPipelineManager> {
@@ -179,7 +182,17 @@ fun logicModule() = module {
 
     single<IAppSettingsUtil> { AppSettingsUtil() }
 
-    single<IUserConnection> { UserConnection() }
+    single<IUserConnection> {
+        UserConnection(
+            indication = get(),
+            localAudioService = get(),
+            rhasspy2HermesConnection = get(),
+            rhasspy3WyomingConnection = get(),
+            homeAssistantConnection = get(),
+            webServerService = get(),
+            mqttService = get(),
+        )
+    }
     single<IHomeAssistantConnection> { HomeAssistantConnection() }
     single<IRhasspy2HermesConnection> { Rhasspy2HermesConnection() }
     single<IRhasspy3WyomingConnection> { Rhasspy3WyomingConnection() }

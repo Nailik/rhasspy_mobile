@@ -5,7 +5,7 @@ import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 
-class MicAudioChunk(
+internal class MicAudioChunk(
     val timeStamp: Instant,
     val sampleRate: AudioFormatSampleRateType,
     val encoding: AudioFormatEncodingType,
