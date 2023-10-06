@@ -2,6 +2,7 @@ package org.rhasspy.mobile.logic.connections.user
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -12,6 +13,8 @@ import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnecti
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
+import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent.StartStopPlayRecording
+import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent.StartStopRhasspy
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.domains.mic.MicDomainState
 import org.rhasspy.mobile.logic.local.indication.IIndication
@@ -25,6 +28,8 @@ interface IUserConnection {
     val indicationState: StateFlow<IndicationState>
     val showVisualIndicationState: StateFlow<Boolean>
 
+    val isPlayingRecording: StateFlow<Boolean>
+    val isPlayingRecordingEnabled: StateFlow<Boolean>
 
     //user clicks microphone button
     fun sessionAction()
@@ -35,6 +40,8 @@ interface IUserConnection {
     fun playErrorSound()
 
     fun stopPlaySound()
+
+    fun playRecordingAction()
 
 
     val isPlayingState: StateFlow<Boolean>
@@ -55,11 +62,11 @@ interface IUserConnection {
 
 internal class UserConnection(
     indication: IIndication,
-    localAudioService: ILocalAudioPlayer,
+    private val localAudioService: ILocalAudioPlayer,
     rhasspy2HermesConnection: IRhasspy2HermesConnection,
     rhasspy3WyomingConnection: IRhasspy3WyomingConnection,
     homeAssistantConnection: IHomeAssistantConnection,
-    webServerService: IWebServerConnection,
+    webServerConnection: IWebServerConnection,
     mqttService: IMqttConnection,
 ) : IUserConnection, KoinComponent {
 
@@ -69,10 +76,13 @@ internal class UserConnection(
     override val indicationState = indication.indicationState
     override val showVisualIndicationState = indication.isShowVisualIndication
 
+    override val isPlayingRecording: StateFlow<Boolean> = MutableStateFlow(false)//TODO
+    override val isPlayingRecordingEnabled: StateFlow<Boolean> = MutableStateFlow(false)//TODO
+
     override val rhasspy2HermesHttpConnectionState = rhasspy2HermesConnection.connectionState
     override val rhasspy3WyomingConnectionState = rhasspy3WyomingConnection.connectionState
     override val homeAssistantConnectionState = homeAssistantConnection.connectionState
-    override val webServerConnectionState = webServerService.connectionState
+    override val webServerConnectionState = webServerConnection.connectionState
     override val rhasspy2HermesMqttConnectionState = mqttService.connectionState
 
     override val micDomainState get() = pipelineManager.micDomainStateFlow
@@ -84,24 +94,27 @@ internal class UserConnection(
     override val isPlayingState: StateFlow<Boolean> = localAudioService.isPlayingState
 
     override fun sessionAction() {
-        // TODO("Not yet implemented")
+        incomingMessages.tryEmit(StartStopRhasspy)
+    }
+
+    override fun playRecordingAction() {
+        incomingMessages.tryEmit(StartStopPlayRecording)
     }
 
     override fun playRecordedSound() {
-        localAudioService.p
+        localAudioService.playRecordedSound()
     }
 
     override fun playWakeSound() {
-        // TODO("Not yet implemented")
+        localAudioService.playWakeSound()
     }
 
     override fun playErrorSound() {
-        // TODO("Not yet implemented")
+        localAudioService.playErrorSound()
     }
 
     override fun stopPlaySound() {
-        //TODO #466
-        //TODO("Not yet implemented")
+        localAudioService.stop()
     }
 
 

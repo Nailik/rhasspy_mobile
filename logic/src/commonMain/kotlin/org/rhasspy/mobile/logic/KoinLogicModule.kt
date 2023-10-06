@@ -44,8 +44,6 @@ import org.rhasspy.mobile.logic.local.settings.AppSettingsUtil
 import org.rhasspy.mobile.logic.local.settings.IAppSettingsUtil
 import org.rhasspy.mobile.logic.logger.DatabaseLogger
 import org.rhasspy.mobile.logic.logger.IDatabaseLogger
-import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.pipeline.*
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
@@ -161,11 +159,6 @@ fun logicModule() = module {
         )
     }
 
-
-    single<IServiceMiddleware> {
-        ServiceMiddleware()
-    }
-
     single<IAudioFocus> { AudioFocus() }
 
 
@@ -189,7 +182,7 @@ fun logicModule() = module {
             rhasspy2HermesConnection = get(),
             rhasspy3WyomingConnection = get(),
             homeAssistantConnection = get(),
-            webServerService = get(),
+            webServerConnection = get(),
             mqttService = get(),
         )
     }
@@ -207,8 +200,6 @@ fun logicModule() = module {
         WebServerConnection(
             appSettingsUtil = get(),
             fileStorage = get(),
-            mqttConnection = get(),
-            serviceMiddleware = get(),
         )
     }
 

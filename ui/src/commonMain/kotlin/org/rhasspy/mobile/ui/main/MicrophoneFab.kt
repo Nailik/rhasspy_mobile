@@ -47,19 +47,15 @@ fun MicrophoneFab(
                 it
             },
         onClick = {
-            if (viewState.isUserActionEnabled) {
-                onEvent(MicrophoneFabClick)
-            }
+            onEvent(MicrophoneFabClick)
         },
-        isEnabled = viewState.isUserActionEnabled,
         containerColor = getContainerColorForMicrophoneFab(
-            viewState.isUserActionEnabled,
             viewState.isRecording
         ),
         contentColor = getContentColorForMicrophoneFab(
-            viewState.isUserActionEnabled,
             viewState.isRecording
         ),
+        isEnabled = true,
         icon = {
             Icon(
                 modifier = Modifier.size(iconSize),
@@ -73,19 +69,17 @@ fun MicrophoneFab(
 
 
 @Composable
-fun getContainerColorForMicrophoneFab(isActionEnabled: Boolean, isRecording: Boolean): Color {
+fun getContainerColorForMicrophoneFab(isRecording: Boolean): Color {
     return when {
-        isRecording     -> MaterialTheme.colorScheme.errorContainer
-        isActionEnabled -> MaterialTheme.colorScheme.primaryContainer
-        else            -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+        isRecording -> MaterialTheme.colorScheme.errorContainer
+        else        -> MaterialTheme.colorScheme.primaryContainer
     }
 }
 
 @Composable
-fun getContentColorForMicrophoneFab(isActionEnabled: Boolean, isRecording: Boolean): Color {
+fun getContentColorForMicrophoneFab(isRecording: Boolean): Color {
     return when {
-        isRecording     -> MaterialTheme.colorScheme.onErrorContainer
-        isActionEnabled -> MaterialTheme.colorScheme.onPrimaryContainer
-        else            -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.4f)
+        isRecording -> MaterialTheme.colorScheme.onErrorContainer
+        else        -> MaterialTheme.colorScheme.onPrimaryContainer
     }
 }

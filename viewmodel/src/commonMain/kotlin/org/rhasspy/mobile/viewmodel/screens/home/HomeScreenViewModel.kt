@@ -2,7 +2,7 @@ package org.rhasspy.mobile.viewmodel.screens.home
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
@@ -14,7 +14,7 @@ interface IHomeScreeViewModel : IScreenViewModel
 
 @Stable
 class HomeScreenViewModel(
-    private val serviceMiddleware: IServiceMiddleware,
+    private val userConnection: IUserConnection,
     val indicationOverlayViewModel: IndicationOverlayViewModel,
     viewStateCreator: HomeScreenViewStateCreator
 ) : IHomeScreeViewModel, ScreenViewModel() {
@@ -29,8 +29,8 @@ class HomeScreenViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            TogglePlayRecording -> Unit //TODO #466 serviceMiddleware.action(PlayStopRecording)
-            MicrophoneFabClick  -> requireMicrophonePermission(serviceMiddleware::userSessionClick)
+            TogglePlayRecording -> userConnection.playRecordingAction()
+            MicrophoneFabClick  -> requireMicrophonePermission(userConnection::sessionAction)
         }
     }
 

@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import okio.Path
+import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
@@ -39,12 +40,12 @@ import org.rhasspy.mobile.logic.Source
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.http.StreamContent
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionErrorType.WakeOptionInvalid
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.*
 import org.rhasspy.mobile.logic.connections.webserver.WebServerResult.*
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.settings.IAppSettingsUtil
-import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonExists
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
@@ -73,8 +74,6 @@ internal interface IWebServerConnection : IConnection {
 internal class WebServerConnection(
     private val appSettingsUtil: IAppSettingsUtil,
     private val fileStorage: IFileStorage,
-    private val mqttConnection: IMqttConnection,
-    private val serviceMiddleware: IServiceMiddleware
 ) : IWebServerConnection {
 
     private val logger = Logger.withTag("WebServerConnection")
@@ -300,7 +299,7 @@ internal class WebServerConnection(
      * POST to play last recorded voice command
      */
     private fun playRecordingPost(): WebServerResult {
-        serviceMiddleware.playRecording()
+        get<IUserConnection>().playRecordingAction()
         return Ok
     }
 
@@ -401,7 +400,7 @@ internal class WebServerConnection(
      */
     private suspend fun mqtt(call: ApplicationCall): WebServerResult {
         val topic = call.request.path().substringAfter("/mqtt")
-        mqttConnection.onMessageReceived(topic, call.receive())
+        get<IMqttConnection>().onMessageReceived(topic, call.receive())
         return Ok
     }
 
