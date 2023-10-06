@@ -16,6 +16,7 @@ import org.rhasspy.mobile.logic.pipeline.PipelineResult.End
 import org.rhasspy.mobile.logic.pipeline.Source.Rhasspy2HermesMqtt
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.TranscriptError
+import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
@@ -27,7 +28,6 @@ internal class PipelineMqtt(
     private val audioFocus: IAudioFocus,
 ) : IPipelineMqtt {
 
-    //TODO #466 play bytes? (snd domain unused)
     override suspend fun runPipeline(startEvent: StartEvent): PipelineResult {
 
         if (startEvent.sessionId != null) return runPipeline(startEvent.sessionId)
@@ -44,7 +44,6 @@ internal class PipelineMqtt(
             domains.dispose()
         }
     }
-
 
     private suspend fun runPipeline(sessionId: String): PipelineResult {
 
@@ -66,6 +65,7 @@ internal class PipelineMqtt(
                     is StopListening           -> runPipeline(sessionId)
                 }
             }.first()
+
     }
 
     private suspend fun onAsrTextCaptured(sessionId: String, text: String): PipelineResult {
@@ -86,12 +86,17 @@ internal class PipelineMqtt(
     }
 
     private suspend fun onSay(sessionId: String, text: String, volume: Float?): PipelineResult {
-        domains.ttsDomain.onSynthesize(
+        val result = domains.ttsDomain.onSynthesize(
             sessionId = sessionId,
             volume = AppSetting.volume.value,
             siteId = ConfigurationSetting.siteId.value,
             handle = Handle(text = text, volume = volume, Rhasspy2HermesMqtt),
         )
+
+        if (result is Audio) {
+            domains.sndDomain.awaitPlayAudio(result)
+        }
+
         return runPipeline(sessionId)
     }
 

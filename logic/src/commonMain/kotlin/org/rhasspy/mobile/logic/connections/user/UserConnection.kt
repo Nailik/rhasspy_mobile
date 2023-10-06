@@ -70,14 +70,14 @@ internal class UserConnection(
     mqttService: IMqttConnection,
 ) : IUserConnection, KoinComponent {
 
-    private val pipelineManager get() = get<IPipelineManager>() //TODO maybe single directional data flow?
+    private val pipelineManager get() = get<IPipelineManager>()
 
     override val incomingMessages = MutableSharedFlow<UserConnectionEvent>()
     override val indicationState = indication.indicationState
     override val showVisualIndicationState = indication.isShowVisualIndication
 
-    override val isPlayingRecording: StateFlow<Boolean> = MutableStateFlow(false)//TODO
-    override val isPlayingRecordingEnabled: StateFlow<Boolean> = MutableStateFlow(false)//TODO
+    override val isPlayingRecording: StateFlow<Boolean> = MutableStateFlow(false)//TODO #466
+    override val isPlayingRecordingEnabled: StateFlow<Boolean> = MutableStateFlow(false)//TODO #466
 
     override val rhasspy2HermesHttpConnectionState = rhasspy2HermesConnection.connectionState
     override val rhasspy3WyomingConnectionState = rhasspy3WyomingConnection.connectionState

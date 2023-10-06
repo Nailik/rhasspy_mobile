@@ -12,7 +12,7 @@ internal actual class SettingsUtils actual constructor(
      * export the settings file
      */
     actual override suspend fun exportSettingsFile(): Boolean {
-        //TODO("Not yet implemented")
+        //TODO #517
         return true
     }
 
@@ -20,7 +20,7 @@ internal actual class SettingsUtils actual constructor(
      * restore all settings from a file
      */
     actual override suspend fun restoreSettingsFromFile(): Boolean {
-        //TODO("Not yet implemented")
+        //TODO #517
         return true
     }
 
@@ -28,7 +28,7 @@ internal actual class SettingsUtils actual constructor(
      * share settings file but without sensitive data
      */
     actual override suspend fun shareSettingsFile(toRemove: List<String>): Boolean {
-        //TODO("Not yet implemented")
+        //TODO #517
         return true
     }
 }
