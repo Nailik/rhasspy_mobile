@@ -12,10 +12,16 @@ import org.rhasspy.mobile.data.service.option.WakeDomainOption
 import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperString
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.HotWordDetected
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
+import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent
+import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
+import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent
+import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
-import org.rhasspy.mobile.logic.domains.wake.WakeEvent.Detection
-import org.rhasspy.mobile.logic.domains.wake.WakeEvent.NotDetected
+import org.rhasspy.mobile.logic.pipeline.Source
+import org.rhasspy.mobile.logic.pipeline.WakeResult
 import org.rhasspy.mobile.platformspecific.porcupine.PorcupineWakeWordClient
 
 /**
@@ -23,14 +29,12 @@ import org.rhasspy.mobile.platformspecific.porcupine.PorcupineWakeWordClient
  */
 internal interface IWakeDomain : IDomain {
 
+    val state: StateFlow<DomainState>
+
     /**
      * collect audioStream until a WakeResult is Detected or NotDetected
      */
-    val wakeEvents: Flow<WakeEvent>
-
-    val state: StateFlow<DomainState>
-
-    fun awaitDetection(audioStream: Flow<MicAudioChunk>)
+    suspend fun awaitDetection(audioStream: Flow<MicAudioChunk>): WakeResult
 
 }
 
@@ -40,13 +44,14 @@ internal interface IWakeDomain : IDomain {
 internal class WakeDomain(
     private val params: WakeDomainData,
     private val mqttConnection: IMqttConnection,
+    private val webServerConnection: IWebServerConnection,
+    private val userConnection: IUserConnection,
+    private val domainHistory: IDomainHistory,
 ) : IWakeDomain {
 
     private val logger = Logger.withTag("WakeWordService")
 
     override val state = MutableStateFlow<DomainState>(DomainState.Loading)
-
-    override val wakeEvents = MutableSharedFlow<WakeEvent>()
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
@@ -76,16 +81,22 @@ internal class WakeDomain(
     /**
      * collectLatest of audioStream until a WakeResult is Detected or NotDetected
      */
-    override fun awaitDetection(audioStream: Flow<MicAudioChunk>) {
-        scope.launch {
-            val detection = when (params.wakeDomainOption) {
-                WakeDomainOption.Porcupine          -> awaitPorcupineWakeDetection(audioStream)
-                WakeDomainOption.Rhasspy2HermesMQTT -> awaitRhasspy2hermesMqttWakeDetection(audioStream)
-                WakeDomainOption.Udp                -> awaitUdpWakeDetection(audioStream)
-                WakeDomainOption.Disabled           -> NotDetected
+    override suspend fun awaitDetection(audioStream: Flow<MicAudioChunk>): WakeResult {
+
+        val localFlow = flow {
+            when (params.wakeDomainOption) {
+                WakeDomainOption.Porcupine          -> emit(awaitPorcupineWakeDetection(audioStream))
+                WakeDomainOption.Rhasspy2HermesMQTT -> emit(awaitRhasspy2hermesMqttWakeDetection(audioStream))
+                WakeDomainOption.Udp                -> emit(awaitUdpWakeDetection(audioStream))
+                WakeDomainOption.Disabled           -> Unit
             }
-            wakeEvents.emit(detection)
         }
+        val remoteFlow = awaitRemoteWakeEvent()
+
+        return merge(
+            localFlow,
+            remoteFlow,
+        ).first()
     }
 
     /**
@@ -128,7 +139,7 @@ internal class WakeDomain(
      * send MicAudioChunk from Flow to Porcupine and return Detection as soon as WakeWord was Detected
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    private suspend fun awaitPorcupineWakeDetection(audioStream: Flow<MicAudioChunk>): WakeEvent {
+    private suspend fun awaitPorcupineWakeDetection(audioStream: Flow<MicAudioChunk>): WakeResult {
         return audioStream.mapLatest { chunk ->
             with(chunk) {
                 val result = porcupineWakeWordClient.audioFrame(
@@ -138,21 +149,23 @@ internal class WakeDomain(
                     data = data
                 )
                 if (result != null) {
-                    Detection(
+                    WakeResult(
+                        source = Source.Local,
+                        sessionId = null,
                         name = result,
                         timeStamp = Clock.System.now(),
                     )
                 } else {
-                    NotDetected
+                    null
                 }
             }
-        }.first { it is Detection }
+        }.filterIsInstance<WakeResult>().first()
     }
 
     /**
      * send to mqtt await for mqtt to send HotWordDetected message
      */
-    private suspend fun awaitRhasspy2hermesMqttWakeDetection(audioStream: Flow<MicAudioChunk>): WakeEvent {
+    private suspend fun awaitRhasspy2hermesMqttWakeDetection(audioStream: Flow<MicAudioChunk>): WakeResult {
         val sendDataJob = scope.launch {
             audioStream.collectLatest { chunk ->
                 with(chunk) {
@@ -169,7 +182,9 @@ internal class WakeDomain(
         return mqttConnection.incomingMessages
             .filterIsInstance<HotWordDetected>()
             .map {
-                Detection(
+                WakeResult(
+                    source = Source.Rhasspy2HermesMqtt,
+                    sessionId = null,
                     name = it.hotWord,
                     timeStamp = Clock.System.now()
                 )
@@ -184,7 +199,7 @@ internal class WakeDomain(
     /**
      * send to udp and await for mqtt to send HotWordDetected message
      */
-    private suspend fun awaitUdpWakeDetection(audioStream: Flow<MicAudioChunk>): WakeEvent {
+    private suspend fun awaitUdpWakeDetection(audioStream: Flow<MicAudioChunk>): WakeResult {
         val sendDataJob = scope.launch {
             audioStream.collectLatest { chunk ->
                 with(chunk) {
@@ -201,7 +216,9 @@ internal class WakeDomain(
         return mqttConnection.incomingMessages
             .filterIsInstance<HotWordDetected>()
             .map {
-                Detection(
+                WakeResult(
+                    source = Source.Local,
+                    sessionId = null,
                     name = it.hotWord,
                     timeStamp = Clock.System.now()
                 )
@@ -212,6 +229,55 @@ internal class WakeDomain(
             }
     }
 
+
+    private fun awaitRemoteWakeEvent(): Flow<WakeResult> {
+        return merge(
+            //Mqtt: SessionStarted
+            mqttConnection.incomingMessages
+                .filterIsInstance<MqttConnectionEvent.SessionStarted>()
+                .map {
+                    WakeResult(
+                        source = Source.Rhasspy2HermesMqtt,
+                        sessionId = it.sessionId,
+                        name = null,
+                        timeStamp = Clock.System.now(),
+                    )
+                },
+            //Mqtt: HotWordDetected
+            mqttConnection.incomingMessages
+                .filterIsInstance<HotWordDetected>()
+                .map {
+                    WakeResult(
+                        source = Source.Rhasspy2HermesMqtt,
+                        sessionId = null,
+                        name = it.hotWord,
+                        timeStamp = Clock.System.now(),
+                    )
+                },
+            //User: User Button Click
+            userConnection.incomingMessages
+                .filterIsInstance<UserConnectionEvent.StartStopRhasspy>()
+                .map {
+                    WakeResult(
+                        source = Source.User,
+                        sessionId = null,
+                        name = null,
+                        timeStamp = Clock.System.now(),
+                    )
+                },
+            //Webserver: startRecording, listenForCommand
+            webServerConnection.incomingMessages
+                .filterIsInstance<WebServerConnectionEvent.StartSession>()
+                .map {
+                    WakeResult(
+                        source = Source.Rhasspy2HermesHttp,
+                        sessionId = null,
+                        name = null,
+                        timeStamp = Clock.System.now(),
+                    )
+                },
+        )
+    }
 
     override fun dispose() {
         porcupineWakeWordClient.close()

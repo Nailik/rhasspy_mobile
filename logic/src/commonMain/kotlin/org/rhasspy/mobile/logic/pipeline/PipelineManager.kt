@@ -10,25 +10,19 @@ import org.rhasspy.mobile.data.domain.DomainState.Loading
 import org.rhasspy.mobile.data.pipeline.PipelineData
 import org.rhasspy.mobile.data.service.option.PipelineManagerOption
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
-import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.HotWordDetected
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayBytes
-import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.SessionStarted
 import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent.StartStopPlayRecording
-import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent.StartStopRhasspy
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
-import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.StartSession
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.WebServerPlayWav
 import org.rhasspy.mobile.logic.domains.mic.MicDomainState
 import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
-import org.rhasspy.mobile.logic.domains.wake.WakeEvent.Detection
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.pipeline.HandleResult.*
 import org.rhasspy.mobile.logic.pipeline.IntentResult.IntentDisabled
 import org.rhasspy.mobile.logic.pipeline.IntentResult.NotRecognized
 import org.rhasspy.mobile.logic.pipeline.PipelineEvent.PlayAudioEvent
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.StartEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineResult.End
 import org.rhasspy.mobile.logic.pipeline.SndResult.*
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.*
@@ -91,21 +85,19 @@ internal class PipelineManager(
 
         val domains = get<DomainBundle>()
         val currentWakeDomain = get<IWakeDomain>()
-        wakeDomain = currentWakeDomain.apply {
-            awaitDetection(domains.micDomain.audioStream)
-        }
+        wakeDomain = currentWakeDomain
 
         collectStateFlows(currentWakeDomain, domains)
 
         pipelineScope.launch {
             when (
                 val startEvent = merge(
-                    startEventFlow(currentWakeDomain),
-                    playAudioFlow()
+                    flow { emit(currentWakeDomain.awaitDetection(domains.micDomain.audioStream)) },
+                    // playAudioFlow()  //TODO #466
                 ).first()
             ) {
-                is StartEvent     -> runPipeline(startEvent, domains)
-                is PlayAudioEvent -> {} //TODO #466
+                is WakeResult -> runPipeline(startEvent, domains)
+                //   is PlayAudioEvent -> {} //TODO #466
             }
         }
     }
@@ -133,9 +125,9 @@ internal class PipelineManager(
         }
     }
 
-    private fun runPipeline(startEvent: StartEvent, domains: DomainBundle) {
+    private fun runPipeline(wakeResult: WakeResult, domains: DomainBundle) {
         pipelineJob = pipelineScope.launch {
-            when (getPipeline(domains).runPipeline(startEvent)) {
+            when (getPipeline(domains).runPipeline(wakeResult)) {
                 is End,
                 is HandleDisabled,
                 is IntentDisabled,
@@ -197,57 +189,6 @@ internal class PipelineManager(
                     PlayAudioEvent(AudioSource.File(fileStorage.speechToTextAudioFile))
                 },
         )
-    }
-
-    private fun startEventFlow(currentWakeDomain: IWakeDomain): Flow<StartEvent> {
-        return merge(
-            //Mqtt: SessionStarted
-            mqttConnection.incomingMessages
-                .filterIsInstance<SessionStarted>()
-                .map {
-                    StartEvent(
-                        sessionId = it.sessionId,
-                        wakeWord = "Rhasspy2HermesMqtt_SessionStarted",
-                    )
-                },
-            //Mqtt: HotWordDetected
-            mqttConnection.incomingMessages
-                .filterIsInstance<HotWordDetected>()
-                .map {
-                    StartEvent(
-                        sessionId = null,
-                        wakeWord = it.hotWord,
-                    )
-                },
-            //User: User Button Click
-            userConnection.incomingMessages
-                .filterIsInstance<StartStopRhasspy>()
-                .map {
-                    StartEvent(
-                        sessionId = null,
-                        wakeWord = "ManualUser",
-                    )
-                },
-            //Webserver: startRecording, listenForCommand
-            webServerConnection.incomingMessages
-                .filterIsInstance<StartSession>()
-                .map {
-                    StartEvent(
-                        sessionId = null,
-                        wakeWord = "Rhasspy2HermesHttp",
-                    )
-                },
-            //Local: Local WakeWord
-            currentWakeDomain.wakeEvents
-                .filterIsInstance<Detection>()
-                .map {
-                    StartEvent(
-                        sessionId = null,
-                        wakeWord = it.name,
-                    )
-                },
-        )
-        //TODO #466 addToHistory(startEvent)
     }
 
 

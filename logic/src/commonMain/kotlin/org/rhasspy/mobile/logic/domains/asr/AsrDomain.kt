@@ -17,10 +17,8 @@ import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnec
 import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent.StartStopRhasspy
 import org.rhasspy.mobile.logic.domains.AudioFileWriter
+import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
-import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd
-import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd.VoiceStopped
-import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceStart
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
@@ -28,6 +26,10 @@ import org.rhasspy.mobile.logic.pipeline.Source
 import org.rhasspy.mobile.logic.pipeline.Source.Rhasspy2HermesMqtt
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.*
+import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd
+import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VadTimeout
+import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VoiceStopped
+import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceStart
 import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 
 /**
@@ -60,6 +62,7 @@ internal class AsrDomain(
     private val fileStorage: IFileStorage,
     private val audioFocus: IAudioFocus,
     private val userConnection: IUserConnection,
+    private val domainHistory: IDomainHistory,
 ) : IAsrDomain {
 
     override var isRecordingState = MutableStateFlow(false)
@@ -131,12 +134,12 @@ internal class AsrDomain(
         merge(
             userConnection.incomingMessages
                 .filterIsInstance<StartStopRhasspy>()
-                .map { VoiceStopped },
+                .map { VoiceStopped(Source.User) },
             flow { emit(awaitVoiceStopped(audioStream)) }
                 .filter { it is VoiceStopped }
         ).timeoutWithDefault(
             timeout = params.voiceTimeout,
-            default = VoiceStopped,
+            default = VadTimeout(Source.Local),
         ).first()
 
         saveDataJob.cancelAndJoin()
@@ -195,12 +198,12 @@ internal class AsrDomain(
             merge(
                 userConnection.incomingMessages
                     .filterIsInstance<StartStopRhasspy>()
-                    .map { VoiceStopped },
+                    .map { VoiceStopped(Source.User) },
                 flow { emit(awaitVoiceStopped(audioStream)) }
                     .filter { it is VoiceStopped }
             ).timeoutWithDefault(
                 timeout = params.voiceTimeout,
-                default = VoiceStopped,
+                default = VadTimeout(Source.Local),
             ).first()
 
             sendDataJob.cancelAndJoin()

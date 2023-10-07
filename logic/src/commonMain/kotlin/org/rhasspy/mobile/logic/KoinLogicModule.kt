@@ -99,6 +99,7 @@ fun logicModule() = module {
             params = ConfigurationSetting.micDomainData.value,
             audioRecorder = get(),
             microphonePermission = get(),
+            domainHistory = get(),
         )
     }
     factory<ISndDomain> {
@@ -110,6 +111,7 @@ fun logicModule() = module {
             mqttConnection = get(),
             httpClientConnection = get(),
             indication = get(),
+            domainHistory = get(),
         )
     }
 
@@ -120,6 +122,7 @@ fun logicModule() = module {
             homeAssistantConnection = get(),
             webServerConnection = get(),
             indication = get(),
+            domainHistory = get(),
         )
     }
 
@@ -130,6 +133,7 @@ fun logicModule() = module {
             webServerConnection = get(),
             rhasspy2HermesConnection = get(),
             indication = get(),
+            domainHistory = get(),
         )
     }
     factory<IAsrDomain> {
@@ -141,6 +145,7 @@ fun logicModule() = module {
             fileStorage = get(),
             audioFocus = get(),
             userConnection = get(),
+            domainHistory = get(),
         )
     }
 
@@ -149,6 +154,7 @@ fun logicModule() = module {
             params = ConfigurationSetting.ttsDomainData.value,
             mqttConnection = get(),
             rhasspy2HermesConnection = get(),
+            domainHistory = get(),
         )
     }
 
@@ -156,12 +162,16 @@ fun logicModule() = module {
         WakeDomain(
             params = ConfigurationSetting.wakeDomainData.value,
             mqttConnection = get(),
+            webServerConnection = get(),
+            userConnection = get(),
+            domainHistory = get(),
         )
     }
 
     factory<IVadDomain> {
         VadDomain(
             params = ConfigurationSetting.vadDomainData.value,
+            domainHistory = get(),
         )
     }
 

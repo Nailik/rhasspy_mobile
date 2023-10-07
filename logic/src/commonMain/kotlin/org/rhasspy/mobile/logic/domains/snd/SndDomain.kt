@@ -15,6 +15,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayFinished
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.domains.AudioFileWriter
+import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.snd.SndAudio.*
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
@@ -50,6 +51,7 @@ internal class SndDomain(
     private val mqttConnection: IMqttConnection,
     private val httpClientConnection: IRhasspy2HermesConnection,
     private val indication: IIndication,
+    private val domainHistory: IDomainHistory,
 ) : ISndDomain {
 
     private val logger = Logger.withTag("AudioPlayingService")

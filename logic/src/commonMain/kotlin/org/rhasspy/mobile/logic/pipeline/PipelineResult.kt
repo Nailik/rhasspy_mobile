@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.logic.pipeline
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.Instant
 import org.rhasspy.mobile.logic.domains.snd.SndAudio
 
 enum class Source {
@@ -9,6 +10,7 @@ enum class Source {
     Rhasspy2HermesMqtt,
     HomeAssistant,
     WebServer,
+    User,
 }
 
 sealed interface Result {
@@ -17,6 +19,27 @@ sealed interface Result {
 
 sealed interface PipelineResult : Result {
     data class End(override val source: Source) : PipelineResult
+}
+
+data class WakeResult(
+    override val source: Source,
+    val sessionId: String?,
+    val name: String?,
+    val timeStamp: Instant,
+) : Result
+
+sealed interface VadResult : Result {
+
+    data class VoiceStart(override val source: Source) : VadResult
+
+    sealed interface VoiceEnd : VadResult {
+
+        data class VoiceStopped(override val source: Source) : VoiceEnd
+        data class VadDisabled(override val source: Source) : VoiceEnd
+        data class VadTimeout(override val source: Source) : VoiceEnd
+
+    }
+
 }
 
 sealed interface TranscriptResult : Result {

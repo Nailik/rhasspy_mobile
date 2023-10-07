@@ -13,6 +13,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.EndSession
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.Say
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.WebServerSay
+import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.pipeline.HandleResult
 import org.rhasspy.mobile.logic.pipeline.HandleResult.*
@@ -44,6 +45,7 @@ internal class HandleDomain(
     private val homeAssistantConnection: IHomeAssistantConnection,
     private val webServerConnection: IWebServerConnection,
     private val indication: IIndication,
+    private val domainHistory: IDomainHistory,
 ) : IHandleDomain {
 
     private val logger = Logger.withTag("IntentHandlingService")

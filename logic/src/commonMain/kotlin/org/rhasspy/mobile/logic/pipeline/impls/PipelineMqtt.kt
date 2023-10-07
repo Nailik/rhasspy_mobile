@@ -18,13 +18,13 @@ import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
 import org.rhasspy.mobile.logic.pipeline.IPipeline
 import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
 import org.rhasspy.mobile.logic.pipeline.IntentResult.NotRecognized
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.StartEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineResult
 import org.rhasspy.mobile.logic.pipeline.PipelineResult.End
 import org.rhasspy.mobile.logic.pipeline.Source.Rhasspy2HermesMqtt
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.TranscriptError
 import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
+import org.rhasspy.mobile.logic.pipeline.WakeResult
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
@@ -36,11 +36,11 @@ internal class PipelineMqtt(
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    override suspend fun runPipeline(startEvent: StartEvent): PipelineResult {
+    override suspend fun runPipeline(wakeResult: WakeResult): PipelineResult {
 
-        if (startEvent.sessionId != null) return runPipeline(startEvent.sessionId)
+        if (wakeResult.sessionId != null) return runPipeline(wakeResult.sessionId)
 
-        mqttConnection.hotWordDetected(startEvent.wakeWord ?: "Unknown")
+        mqttConnection.hotWordDetected(wakeResult.name ?: "Unknown")
 
         //use session id from event or wait for session to start
         val sessionId = mqttConnection.incomingMessages

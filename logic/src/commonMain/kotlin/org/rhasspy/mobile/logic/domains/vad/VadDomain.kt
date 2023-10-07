@@ -8,11 +8,13 @@ import org.rhasspy.mobile.data.domain.VadDomainData
 import org.rhasspy.mobile.data.service.option.VadDomainOption.Disabled
 import org.rhasspy.mobile.data.service.option.VadDomainOption.Local
 import org.rhasspy.mobile.logic.IDomain
+import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
-import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd
-import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd.VadDisabled
-import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceEnd.VoiceStopped
-import org.rhasspy.mobile.logic.domains.vad.VadEvent.VoiceStart
+import org.rhasspy.mobile.logic.pipeline.Source
+import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd
+import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VadDisabled
+import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VoiceStopped
+import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceStart
 
 /**
  * Vad Domain detects speech in an audio stream
@@ -29,7 +31,8 @@ internal interface IVadDomain : IDomain {
  * Vad Domain detects speech in an audio stream
  */
 internal class VadDomain(
-    private val params: VadDomainData
+    private val params: VadDomainData,
+    private val domainHistory: IDomainHistory,
 ) : IVadDomain {
 
     private val logger = Logger.withTag("VadDomain")
@@ -49,10 +52,10 @@ internal class VadDomain(
         return when (params.option) {
             Local    -> {
                 localSilenceDetection.start()
-                VoiceStart
+                VoiceStart(Source.Local)
             }
 
-            Disabled -> VoiceStart
+            Disabled -> VoiceStart(Source.Local)
         }
     }
 
@@ -68,14 +71,14 @@ internal class VadDomain(
                     audioStream
                         .collect { chunk ->
                             if (localSilenceDetection.onAudioChunk(chunk)) {
-                                emit(VoiceStopped)
+                                emit(VoiceStopped(Source.Local))
                             }
 
                         }
                 }.first()
             }
 
-            Disabled -> VadDisabled
+            Disabled -> VadDisabled(Source.Local)
         }
     }
 

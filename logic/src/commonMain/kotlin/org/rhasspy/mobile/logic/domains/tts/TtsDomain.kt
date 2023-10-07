@@ -13,6 +13,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayFinished
 import org.rhasspy.mobile.logic.connections.mqtt.MqttResult.Error
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
+import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.snd.SndAudio.*
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
 import org.rhasspy.mobile.logic.pipeline.SndResult.Played
@@ -44,7 +45,8 @@ internal interface ITtsDomain : IDomain {
 internal class TtsDomain(
     private val params: TtsDomainData,
     private val mqttConnection: IMqttConnection,
-    private val rhasspy2HermesConnection: IRhasspy2HermesConnection
+    private val rhasspy2HermesConnection: IRhasspy2HermesConnection,
+    private val domainHistory: IDomainHistory,
 ) : ITtsDomain {
 
     private val logger = Logger.withTag("TextToSpeechService")

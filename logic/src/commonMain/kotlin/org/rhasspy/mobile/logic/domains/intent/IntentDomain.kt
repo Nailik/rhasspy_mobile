@@ -19,6 +19,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttResult.Error
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.WebServerSay
+import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
 import org.rhasspy.mobile.logic.pipeline.HandleResult.NotHandled
@@ -51,6 +52,7 @@ internal class IntentDomain(
     private val webServerConnection: IWebServerConnection,
     private val rhasspy2HermesConnection: IRhasspy2HermesConnection,
     private val indication: IIndication,
+    private val domainHistory: IDomainHistory,
 ) : IIntentDomain {
 
     private val logger = Logger.withTag("IntentRecognitionService")

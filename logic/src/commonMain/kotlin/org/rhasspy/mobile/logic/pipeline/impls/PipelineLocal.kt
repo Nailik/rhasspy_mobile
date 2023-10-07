@@ -7,10 +7,10 @@ import org.rhasspy.mobile.logic.pipeline.DomainBundle
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
 import org.rhasspy.mobile.logic.pipeline.IPipeline
 import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.StartEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineResult
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
 import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
+import org.rhasspy.mobile.logic.pipeline.WakeResult
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
@@ -19,10 +19,10 @@ internal class PipelineLocal(
     private val audioFocus: IAudioFocus,
 ) : IPipeline {
 
-    override suspend fun runPipeline(startEvent: StartEvent): PipelineResult {
+    override suspend fun runPipeline(wakeResult: WakeResult): PipelineResult {
 
         //use session id from event or create own one
-        val sessionId = startEvent.sessionId ?: uuid4().toString()
+        val sessionId = wakeResult.sessionId ?: uuid4().toString()
 
         //transcript audio to text from voice start till voice stop
         val transcript = when (
