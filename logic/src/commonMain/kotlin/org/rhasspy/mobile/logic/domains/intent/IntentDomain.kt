@@ -22,7 +22,7 @@ import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.W
 import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
-import org.rhasspy.mobile.logic.pipeline.HandleResult.NotHandled
+import org.rhasspy.mobile.logic.pipeline.HandleResult.HandleTimeout
 import org.rhasspy.mobile.logic.pipeline.IntentResult
 import org.rhasspy.mobile.logic.pipeline.IntentResult.*
 import org.rhasspy.mobile.logic.pipeline.Source.*
@@ -55,7 +55,7 @@ internal class IntentDomain(
     private val domainHistory: IDomainHistory,
 ) : IIntentDomain {
 
-    private val logger = Logger.withTag("IntentRecognitionService")
+    private val logger = Logger.withTag("IntentDomain")
 
     /**
      * sends Text and waits for an IntentResult result
@@ -79,6 +79,8 @@ internal class IntentDomain(
 
             IntentDomainOption.Disabled           ->
                 IntentDisabled(Local)
+        }.also {
+            domainHistory.addToHistory(it)
         }
     }
 
@@ -137,7 +139,7 @@ internal class IntentDomain(
                         },
                 ).timeoutWithDefault(
                     timeout = params.timeout,
-                    default = NotHandled(Local),
+                    default = HandleTimeout(Local),
                 ).first()
             }
         }
@@ -172,7 +174,7 @@ internal class IntentDomain(
                 }
             }.timeoutWithDefault(
                 timeout = params.timeout,
-                default = NotHandled(Local),
+                default = HandleTimeout(Local),
             ).first()
     }
 

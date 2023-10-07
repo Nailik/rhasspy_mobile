@@ -78,7 +78,7 @@ internal class UserConnection(
 
     private val pipelineManager get() = get<IPipelineManager>()
 
-    override val incomingMessages = MutableSharedFlow<UserConnectionEvent>()
+    override val incomingMessages = MutableSharedFlow<UserConnectionEvent>(extraBufferCapacity = 1)
     override val indicationState = indication.indicationState
     override val showVisualIndicationState = indication.isShowVisualIndication
 

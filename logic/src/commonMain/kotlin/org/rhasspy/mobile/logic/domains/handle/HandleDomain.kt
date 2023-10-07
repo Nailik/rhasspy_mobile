@@ -48,7 +48,7 @@ internal class HandleDomain(
     private val domainHistory: IDomainHistory,
 ) : IHandleDomain {
 
-    private val logger = Logger.withTag("IntentHandlingService")
+    private val logger = Logger.withTag("HandleDomain")
 
     /**
      * sends Intent and waits for an HandleResult result, normally text that is to be spoken
@@ -60,6 +60,8 @@ internal class HandleDomain(
         return when (params.option) {
             HandleDomainOption.HomeAssistant -> awaitHomeAssistantHandle(sessionId, intent)
             HandleDomainOption.Disabled      -> HandleDisabled(Local)
+        }.also {
+            domainHistory.addToHistory(it)
         }
     }
 

@@ -22,13 +22,9 @@ import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.pipeline.*
-import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.resources.color_http
-import org.rhasspy.mobile.resources.color_local
-import org.rhasspy.mobile.resources.color_mqtt
+import org.rhasspy.mobile.resources.*
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Icon
-import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel0
 import org.rhasspy.mobile.ui.utils.ListType.DialogScreenList
@@ -131,7 +127,10 @@ private fun PipelineEventItem(item: PipelineEvent) {
         ),
         text = {
             Row {
-                Text(item.getName())
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = item.getName()
+                )
 
                 Badge(
                     contentColor = MaterialTheme.colorScheme.inverseOnSurface,
@@ -140,7 +139,7 @@ private fun PipelineEventItem(item: PipelineEvent) {
                 ) {
 
                     Text(
-                        resource = item.source.getName(),
+                        text = item.source.getName(),
                         modifier = Modifier
                             .wrapContentSize()
                             .padding(4.dp),
@@ -164,43 +163,48 @@ private fun Source.getColor() = when (this) {
     Source.Local              -> MaterialTheme.colorScheme.color_local
     Source.Rhasspy2HermesHttp -> MaterialTheme.colorScheme.color_http
     Source.Rhasspy2HermesMqtt -> MaterialTheme.colorScheme.color_mqtt
-    Source.HomeAssistant      -> TODO()
-    Source.WebServer          -> TODO()
-    Source.User               -> TODO()
+    Source.HomeAssistant      -> MaterialTheme.colorScheme.color_home_assistant
+    Source.WebServer          -> MaterialTheme.colorScheme.color_webserver
+    Source.User               -> MaterialTheme.colorScheme.color_user
 }
 
 private fun Source.getName() = when (this) {
-    Source.Local              -> MR.strings.local.stable
-    Source.Rhasspy2HermesHttp -> TODO()
-    Source.Rhasspy2HermesMqtt -> TODO()
-    Source.HomeAssistant      -> TODO()
-    Source.WebServer          -> TODO()
-    Source.User               -> TODO()
+    Source.Local              -> "Local"
+    Source.Rhasspy2HermesHttp -> "Rhasspy2HermesHttp"
+    Source.Rhasspy2HermesMqtt -> "Rhasspy2HermesMqtt"
+    Source.HomeAssistant      -> "HomeAssistant"
+    Source.WebServer          -> "WebServer"
+    Source.User               -> "User"
 }
 
 private fun PipelineEvent.getName() = when (this) {
-    is HandleResult.Handle                 -> MR.strings.handleWithRecognition.stable
-    is HandleResult.HandleDisabled         -> TODO()
-    is HandleResult.HandleTimeout          -> TODO()
-    is HandleResult.NotHandled             -> TODO()
-    is IntentResult.Intent                 -> TODO()
-    is IntentResult.IntentDisabled         -> TODO()
-    is IntentResult.NotRecognized          -> TODO()
-    is PipelineResult.End                  -> TODO()
-    is TtsResult.NotSynthesized            -> TODO()
-    is SndResult.NotPlayed                 -> TODO()
-    is SndResult.PlayDisabled              -> TODO()
-    is SndResult.Played                    -> TODO()
-    is TranscriptResult.TranscriptDisabled -> TODO()
-    is TranscriptResult.TranscriptError    -> TODO()
-    is TranscriptResult.TranscriptTimeout  -> TODO()
-    is TtsResult.TtsDisabled               -> TODO()
-    is TranscriptResult.Transcript         -> TODO()
-    is TtsResult.Audio                     -> TODO()
-    is VadResult.VoiceEnd.VadDisabled      -> TODO()
-    is VadResult.VoiceEnd.VadTimeout       -> TODO()
-    is VadResult.VoiceEnd.VoiceStopped     -> TODO()
-    is VadResult.VoiceStart                -> TODO()
-    is WakeResult                          -> TODO()
+    is HandleResult.Handle                 -> "Handle"
+    is HandleResult.HandleDisabled         -> "HandleDisabled"
+    is HandleResult.HandleTimeout          -> "HandleTimeout"
+    is HandleResult.NotHandled             -> "NotHandled"
+    is IntentResult.Intent                 -> "Intent"
+    is IntentResult.IntentDisabled         -> "IntentDisabled"
+    is IntentResult.NotRecognized          -> "NotRecognized"
+    is PipelineResult.End                  -> "End"
+    is TtsResult.NotSynthesized            -> "NotSynthesized"
+    is SndResult.NotPlayed                 -> "NotPlayed"
+    is SndResult.PlayDisabled              -> "PlayDisabled"
+    is SndResult.Played                    -> "Played"
+    is TranscriptResult.TranscriptDisabled -> "TranscriptDisabled"
+    is TranscriptResult.TranscriptError    -> "TranscriptError"
+    is TranscriptResult.TranscriptTimeout  -> "TranscriptTimeout"
+    is TtsResult.TtsDisabled               -> "TtsDisabled"
+    is TranscriptResult.Transcript         -> "Transcript"
+    is TtsResult.Audio                     -> "Audio"
+    is VadResult.VoiceEnd.VadDisabled      -> "VadDisabled"
+    is VadResult.VoiceEnd.VadTimeout       -> "VadTimeout"
+    is VadResult.VoiceEnd.VoiceStopped     -> "VoiceStopped"
+    is VadResult.VoiceStart                -> "VoiceStart"
+    is WakeResult                          -> "WakeResult"
+    is SndResult.SndTimeout                -> "SndTimeout"
+    is TtsResult.TtsTimeout                -> "TtsTimeout"
+    is SndAudio.AudioChunkEvent            -> "AudioChunkEvent"
+    is SndAudio.AudioStartEvent            -> "AudioStartEvent"
+    is SndAudio.AudioStopEvent             -> "AudioStopEvent"
 }
 

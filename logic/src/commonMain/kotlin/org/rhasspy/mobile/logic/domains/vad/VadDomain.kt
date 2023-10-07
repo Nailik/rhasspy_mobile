@@ -56,6 +56,8 @@ internal class VadDomain(
             }
 
             Disabled -> VoiceStart(Source.Local)
+        }.also {
+            domainHistory.addToHistory(it)
         }
     }
 

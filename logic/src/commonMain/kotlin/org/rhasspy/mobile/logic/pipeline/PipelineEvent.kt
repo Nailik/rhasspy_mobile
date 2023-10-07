@@ -3,7 +3,6 @@ package org.rhasspy.mobile.logic.pipeline
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import org.rhasspy.mobile.logic.domains.snd.SndAudio
 
 enum class Source {
     Local,
@@ -17,6 +16,29 @@ enum class Source {
 sealed interface PipelineEvent {
     val source: Source
     val timeStamp: Instant
+}
+
+sealed interface SndAudio : PipelineEvent {
+
+    data class AudioStartEvent(
+        val sampleRate: Int,
+        val bitRate: Int,
+        val channel: Int,
+        override val source: Source,
+        override val timeStamp: Instant = Clock.System.now(),
+    ) : SndAudio
+
+    class AudioChunkEvent(
+        val data: ByteArray,
+        override val source: Source,
+        override val timeStamp: Instant = Clock.System.now(),
+    ) : SndAudio
+
+    data class AudioStopEvent(
+        override val source: Source,
+        override val timeStamp: Instant = Clock.System.now(),
+    ) : SndAudio
+
 }
 
 sealed interface PipelineResult : PipelineEvent {
@@ -146,6 +168,11 @@ sealed interface TtsResult : PipelineEvent {
         override val timeStamp: Instant = Clock.System.now(),
     ) : TtsResult, PipelineResult
 
+    data class TtsTimeout(
+        override val source: Source,
+        override val timeStamp: Instant = Clock.System.now(),
+    ) : TtsResult, PipelineResult
+
 }
 
 sealed interface SndResult : PipelineEvent, PipelineResult {
@@ -163,5 +190,10 @@ sealed interface SndResult : PipelineEvent, PipelineResult {
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
     ) : SndResult
+
+    data class SndTimeout(
+        override val source: Source,
+        override val timeStamp: Instant = Clock.System.now(),
+    ) : SndResult, TtsResult
 
 }

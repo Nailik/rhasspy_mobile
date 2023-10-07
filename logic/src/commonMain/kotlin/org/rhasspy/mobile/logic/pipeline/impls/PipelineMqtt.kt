@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.pipeline.impls
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -34,9 +35,13 @@ internal class PipelineMqtt(
     private val audioFocus: IAudioFocus,
 ) : IPipeline {
 
+    private val logger = Logger.withTag("PipelineDisabled")
+
     private val scope = CoroutineScope(Dispatchers.IO)
 
     override suspend fun runPipeline(wakeResult: WakeResult): PipelineResult {
+
+        logger.d { "runPipeline $wakeResult" }
 
         if (wakeResult.sessionId != null) return runPipeline(wakeResult.sessionId)
 
@@ -46,7 +51,7 @@ internal class PipelineMqtt(
         val sessionId = mqttConnection.incomingMessages
             .filterIsInstance<SessionStarted>()
             .mapNotNull { it.sessionId }
-            .first()
+            .first() //TODO timeout?
 
         return runPipeline(sessionId).also {
             domains.dispose()

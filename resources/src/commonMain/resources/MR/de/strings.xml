@@ -336,6 +336,7 @@
     <string name="encoding">Encoding</string>
     <string name="dialog">Dialog</string>
     <string name="notInitialized">nicht initialisiert</string>
+    <string name="notEnabled">not aktiv</string>
     <string name="clear_text">leeren</string>
     <string name="scan_qr_code">QR-Code scannen</string>
     <string name="scan_qr_code_failed">QR-Code konnte nicht gescannt werden</string>

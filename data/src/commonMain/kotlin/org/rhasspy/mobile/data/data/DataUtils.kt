@@ -13,7 +13,7 @@ fun String?.toIntOrZero(): Int =
     } ?: 0
 
 fun String.takeLong(): String = this.take(10)
-fun String.takeInt(): String = this.take(0)
+fun String.takeInt(): String = this.take(9)
 
 private fun String?.trimTrailingZeros(): String? {
     if (this == null) return null

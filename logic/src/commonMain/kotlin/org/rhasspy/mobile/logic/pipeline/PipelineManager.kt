@@ -22,8 +22,7 @@ import org.rhasspy.mobile.logic.pipeline.IntentResult.NotRecognized
 import org.rhasspy.mobile.logic.pipeline.PipelineResult.End
 import org.rhasspy.mobile.logic.pipeline.SndResult.*
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.*
-import org.rhasspy.mobile.logic.pipeline.TtsResult.NotSynthesized
-import org.rhasspy.mobile.logic.pipeline.TtsResult.TtsDisabled
+import org.rhasspy.mobile.logic.pipeline.TtsResult.*
 import org.rhasspy.mobile.logic.pipeline.impls.PipelineDisabled
 import org.rhasspy.mobile.logic.pipeline.impls.PipelineLocal
 import org.rhasspy.mobile.logic.pipeline.impls.PipelineMqtt
@@ -140,6 +139,8 @@ internal class PipelineManager(
                 is NotRecognized,
                 is NotSynthesized,
                 is TranscriptError,
+                is SndTimeout,
+                is TtsTimeout,
                 is TranscriptTimeout  -> {
                     //Error: indication error
                     indication.onIdle()

@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.domains
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -11,14 +12,18 @@ interface IDomainHistory {
 
     fun clearHistory()
 
+    fun addToHistory(result: PipelineEvent)
+
 }
 
 class DomainHistory : IDomainHistory {
 
+    private val logger = Logger.withTag("DomainHistory")
 
     override val historyState = MutableStateFlow<MutableList<PipelineEvent>>(mutableListOf())
 
-    internal fun addToHistory(result: PipelineEvent) {
+    override fun addToHistory(result: PipelineEvent) {
+        logger.d { "$result" }
         historyState.update {
             it.apply {
                 add(result)

@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.datetime.Clock
 import org.rhasspy.mobile.data.domain.MicDomainData
 import org.rhasspy.mobile.logic.IDomain
-import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.mic.MicDomainState.MicrophonePermissionMissing
 import org.rhasspy.mobile.logic.domains.mic.MicDomainState.NoError
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
@@ -32,7 +31,6 @@ internal class MicDomain(
     val audioRecorder: IAudioRecorder,
     val microphonePermission: IMicrophonePermission,
     val params: MicDomainData,
-    private val domainHistory: IDomainHistory,
 ) : IMicDomain {
 
     private val logger = Logger.withTag("MicDomain")
@@ -83,6 +81,8 @@ internal class MicDomain(
     }
 
     private fun startRecording() {
+        logger.d { "startRecording permission: $isMicrophonePermissionGranted" }
+
         if (!isMicrophonePermissionGranted) return
 
         isRecordingState.value = true
@@ -101,6 +101,8 @@ internal class MicDomain(
     }
 
     private fun stopRecording() {
+        logger.d { "stopRecording" }
+
         audioRecorder.stopRecording()
 
         isRecordingState.value = false

@@ -49,7 +49,7 @@ internal class WakeDomain(
     private val domainHistory: IDomainHistory,
 ) : IWakeDomain {
 
-    private val logger = Logger.withTag("WakeWordService")
+    private val logger = Logger.withTag("WakeDomain")
 
     override val state = MutableStateFlow<DomainState>(DomainState.Loading)
 
@@ -96,7 +96,9 @@ internal class WakeDomain(
         return merge(
             localFlow,
             remoteFlow,
-        ).first()
+        ).first().also {
+            domainHistory.addToHistory(it)
+        }
     }
 
     /**
@@ -270,7 +272,7 @@ internal class WakeDomain(
                 .filterIsInstance<WebServerConnectionEvent.StartSession>()
                 .map {
                     WakeResult(
-                        source = Source.Rhasspy2HermesHttp,
+                        source = Source.WebServer,
                         sessionId = null,
                         name = null,
                         timeStamp = Clock.System.now(),

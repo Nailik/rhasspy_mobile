@@ -88,7 +88,7 @@ internal class MqttConnection(
 
     override val connectionState = MutableStateFlow<ConnectionState>(Disabled)
 
-    override val incomingMessages = MutableSharedFlow<MqttConnectionEvent>()
+    override val incomingMessages = MutableSharedFlow<MqttConnectionEvent>(extraBufferCapacity = 1)
 
     private val nativeApplication by inject<NativeApplication>()
 
@@ -340,7 +340,7 @@ internal class MqttConnection(
      */
     private suspend fun publishMessage(topic: String, message: MqttMessage): MqttResult {
         return try {
-            if (params.mqttConnectionData.isSSLEnabled) {
+            if (params.mqttConnectionData.isEnabled) {
                 message.msgId = id
 
                 client?.let { mqttClient ->
@@ -357,7 +357,7 @@ internal class MqttConnection(
                 }
 
             } else {
-                Success
+                Error(MR.strings.notEnabled.stable)
             }
         } catch (exception: Exception) {
             ConnectionState.ErrorState.Exception(exception)

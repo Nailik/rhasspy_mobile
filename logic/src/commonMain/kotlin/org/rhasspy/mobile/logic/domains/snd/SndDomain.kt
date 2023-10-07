@@ -16,11 +16,11 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.domains.AudioFileWriter
 import org.rhasspy.mobile.logic.domains.IDomainHistory
-import org.rhasspy.mobile.logic.domains.snd.SndAudio.*
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
+import org.rhasspy.mobile.logic.pipeline.SndAudio.*
 import org.rhasspy.mobile.logic.pipeline.SndResult
 import org.rhasspy.mobile.logic.pipeline.SndResult.*
 import org.rhasspy.mobile.logic.pipeline.Source.*
@@ -54,7 +54,7 @@ internal class SndDomain(
     private val domainHistory: IDomainHistory,
 ) : ISndDomain {
 
-    private val logger = Logger.withTag("AudioPlayingService")
+    private val logger = Logger.withTag("SndDomain")
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
@@ -72,6 +72,8 @@ internal class SndDomain(
             SndDomainOption.Rhasspy2HermesHttp -> onRhasspy2HermesHttpPlayAudio(audio)
             SndDomainOption.Rhasspy2HermesMQTT -> onRhasspy2HermesMQTTPlayAudio(audio)
             SndDomainOption.Disabled           -> PlayDisabled(Local)
+        }.also {
+            domainHistory.addToHistory(it)
         }
     }
 
@@ -81,7 +83,9 @@ internal class SndDomain(
     private suspend fun onLocalPlayAudio(audio: Audio): SndResult {
         logger.d { "onLocalPlayAudio $audio" }
 
-        val data = collectAudioToFile(audio)
+        val data = withTimeoutOrNull(params.audioTimeout) {
+            collectAudioToFile(audio)
+        } ?: return SndTimeout(Local)
 
         audioFocusService.request(Sound)
 
@@ -101,7 +105,9 @@ internal class SndDomain(
     private suspend fun onRhasspy2HermesHttpPlayAudio(audio: Audio): SndResult {
         logger.d { "onRhasspy2HermesHttpPlayAudio $audio" }
 
-        val data = collectAudioToFile(audio)
+        val data = withTimeoutOrNull(params.audioTimeout) {
+            collectAudioToFile(audio)
+        } ?: return SndTimeout(Local)
 
         httpClientConnection.playWav(
             audioSource = data,
@@ -116,7 +122,9 @@ internal class SndDomain(
     private suspend fun onRhasspy2HermesMQTTPlayAudio(audio: Audio): SndResult {
         logger.d { "onRhasspy2HermesMQTTPlayAudio $audio" }
 
-        val data = collectAudioToFile(audio)
+        val data = withTimeoutOrNull(params.audioTimeout) {
+            collectAudioToFile(audio)
+        } ?: return SndTimeout(Local)
 
         val mqttRequestId = uuid4().toString()
 
@@ -145,19 +153,22 @@ internal class SndDomain(
      */
     private suspend fun collectAudioToFile(audio: Audio): AudioSource {
         //await audio start
-        val localAudioFileWriter = audio.data
+        val audioStartEvent = audio.data
             .filterIsInstance<AudioStartEvent>()
-            .map {
-                AudioFileWriter(
-                    path = fileStorage.playAudioFile,
-                    channel = it.channel,
-                    sampleRate = it.sampleRate,
-                    bitRate = it.bitRate,
-                ).apply {
-                    openFile()
-                }
-            }
             .first()
+            .also {
+                domainHistory.addToHistory(it)
+            }
+
+        val localAudioFileWriter = AudioFileWriter(
+            path = fileStorage.playAudioFile,
+            channel = audioStartEvent.channel,
+            sampleRate = audioStartEvent.sampleRate,
+            bitRate = audioStartEvent.bitRate,
+        ).apply {
+            openFile()
+        }
+
         audioFileWriter = localAudioFileWriter
 
         val collectJob = scope.launch {
@@ -172,11 +183,10 @@ internal class SndDomain(
         //await audio stop
         audio.data
             .filterIsInstance<AudioStopEvent>()
-            .timeoutWithDefault(
-                timeout = params.audioTimeout,
-                default = AudioStopEvent,
-            )
             .first()
+            .also {
+                domainHistory.addToHistory(it)
+            }
 
         collectJob.cancelAndJoin()
         localAudioFileWriter.closeFile()

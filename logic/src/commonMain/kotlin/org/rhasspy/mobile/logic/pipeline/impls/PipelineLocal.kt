@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.pipeline.impls
 
+import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
@@ -19,7 +20,10 @@ internal class PipelineLocal(
     private val audioFocus: IAudioFocus,
 ) : IPipeline {
 
+    private val logger = Logger.withTag("PipelineDisabled")
     override suspend fun runPipeline(wakeResult: WakeResult): PipelineResult {
+
+        logger.d { "runPipeline $wakeResult" }
 
         //use session id from event or create own one
         val sessionId = wakeResult.sessionId ?: uuid4().toString()

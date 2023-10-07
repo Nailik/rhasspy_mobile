@@ -14,8 +14,8 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.
 import org.rhasspy.mobile.logic.connections.mqtt.MqttResult.Error
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.domains.IDomainHistory
-import org.rhasspy.mobile.logic.domains.snd.SndAudio.*
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
+import org.rhasspy.mobile.logic.pipeline.SndAudio.*
 import org.rhasspy.mobile.logic.pipeline.SndResult.Played
 import org.rhasspy.mobile.logic.pipeline.Source.*
 import org.rhasspy.mobile.logic.pipeline.TtsResult
@@ -49,7 +49,7 @@ internal class TtsDomain(
     private val domainHistory: IDomainHistory,
 ) : ITtsDomain {
 
-    private val logger = Logger.withTag("TextToSpeechService")
+    private val logger = Logger.withTag("TtsDomain")
 
     /**
      * sends text and returned audio stream via TtsResult
@@ -76,6 +76,8 @@ internal class TtsDomain(
 
             TtsDomainOption.Disabled           ->
                 TtsDisabled(Local)
+        }.also {
+            domainHistory.addToHistory(it)
         }
     }
 
@@ -98,6 +100,7 @@ internal class TtsDomain(
                     data = flow {
                         emit(
                             AudioStartEvent(
+                                source = Rhasspy2HermesHttp,
                                 sampleRate = result.data.getWavHeaderSampleRate(),
                                 bitRate = result.data.getWavHeaderBitRate(),
                                 channel = result.data.getWavHeaderChannel(),
@@ -105,10 +108,15 @@ internal class TtsDomain(
                         )
                         emit(
                             AudioChunkEvent(
+                                source = Rhasspy2HermesHttp,
                                 data = result.data,
                             )
                         )
-                        emit(AudioStopEvent)
+                        emit(
+                            AudioStopEvent(
+                                source = Rhasspy2HermesHttp,
+                            )
+                        )
                     },
                     source = Rhasspy2HermesHttp,
                 )
@@ -135,7 +143,7 @@ internal class TtsDomain(
             .map { mapMqttPlayResult(it) }
             .timeoutWithDefault(
                 timeout = params.rhasspy2HermesMqttTimeout,
-                default = NotSynthesized(Local)
+                default = TtsTimeout(Local)
             )
             .first()
     }
@@ -147,6 +155,7 @@ internal class TtsDomain(
                     data = flow {
                         emit(
                             AudioStartEvent(
+                                source = Rhasspy2HermesMqtt,
                                 sampleRate = result.byteArray.getWavHeaderSampleRate(),
                                 bitRate = result.byteArray.getWavHeaderBitRate(),
                                 channel = result.byteArray.getWavHeaderChannel(),
@@ -154,10 +163,15 @@ internal class TtsDomain(
                         )
                         emit(
                             AudioChunkEvent(
+                                source = Rhasspy2HermesMqtt,
                                 data = result.byteArray,
                             )
                         )
-                        emit(AudioStopEvent)
+                        emit(
+                            AudioStopEvent(
+                                source = Rhasspy2HermesMqtt,
+                            )
+                        )
                     },
                     source = Rhasspy2HermesHttp,
                 )

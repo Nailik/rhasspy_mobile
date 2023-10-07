@@ -68,7 +68,7 @@ internal class AsrDomain(
 
     override var isRecordingState = MutableStateFlow(false)
 
-    private val logger = Logger.withTag("SpeechToTextService")
+    private val logger = Logger.withTag("AsrDomain")
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
@@ -113,6 +113,7 @@ internal class AsrDomain(
         }.also {
             audioFocus.abandon(Record)
             isRecordingState.value = false
+            domainHistory.addToHistory(it)
         }
     }
 
@@ -142,7 +143,9 @@ internal class AsrDomain(
         ).timeoutWithDefault(
             timeout = params.voiceTimeout,
             default = VadTimeout(Local),
-        ).first()
+        ).first().also {
+            domainHistory.addToHistory(it)
+        }
 
         saveDataJob.cancelAndJoin()
         audioFileWriter?.closeFile()
@@ -206,7 +209,9 @@ internal class AsrDomain(
             ).timeoutWithDefault(
                 timeout = params.voiceTimeout,
                 default = VadTimeout(Local),
-            ).first()
+            ).first().also {
+                domainHistory.addToHistory(it)
+            }
 
             sendDataJob.cancelAndJoin()
 
@@ -233,7 +238,6 @@ internal class AsrDomain(
                 default = TranscriptTimeout(Rhasspy2HermesMqtt),
             )
             .first()
-
             .also {
                 sendDataJob.cancelAndJoin()
                 awaitVoiceStoppedJob.cancelAndJoin()

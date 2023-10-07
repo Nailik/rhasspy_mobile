@@ -105,7 +105,6 @@ fun logicModule() = module {
             params = ConfigurationSetting.micDomainData.value,
             audioRecorder = get(),
             microphonePermission = get(),
-            domainHistory = get(),
         )
     }
     factory<ISndDomain> {

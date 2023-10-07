@@ -85,6 +85,9 @@ private val color_assert_any = Color(0xFF673AB7)
 private val color_http_any = Color(0xFF2196F3)
 private val color_local_any = Color(0xFFF44336)
 private val color_mqtt_any = Color(0xFFFFEB3B)
+private val color_home_assistant_any = Color(0xFFCDDC39)
+private val color_webserver_any = Color(0xFFFF9800)
+private val color_user_any = Color(0xFF673AB7)
 
 val ColorScheme.warn: Color
     @Composable
@@ -122,6 +125,12 @@ val ColorScheme.color_local: Color
     get() = color_local_any
 val ColorScheme.color_mqtt: Color
     get() = color_mqtt_any
+val ColorScheme.color_home_assistant: Color
+    get() = color_home_assistant_any
+val ColorScheme.color_webserver: Color
+    get() = color_webserver_any
+val ColorScheme.color_user: Color
+    get() = color_user_any
 
 /**
  * colors for light theme
