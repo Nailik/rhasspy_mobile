@@ -1,15 +1,19 @@
 package org.rhasspy.mobile.viewmodel.screens.dialog
 
 import androidx.compose.runtime.Stable
+import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change.*
 
 @Stable
-class DialogScreenViewModel : ScreenViewModel() {
+class DialogScreenViewModel(
+    viewStateCreator: DialogScreenViewStateCreator,
+    private val userConnection: IUserConnection,
+) : ScreenViewModel() {
 
-    //  val viewState = viewStateCreator()
+    val viewState = viewStateCreator()
 
     fun onEvent(event: DialogScreenUiEvent) {
         when (event) {
@@ -21,7 +25,7 @@ class DialogScreenViewModel : ScreenViewModel() {
         when (change) {
             ToggleListAutoScroll -> AppSetting.isDialogAutoscroll.value = !AppSetting.isDialogAutoscroll.value
             ManualListScroll     -> AppSetting.isDialogAutoscroll.value = false
-            ClearHistory         -> Unit //TODO #466 dialogManagerService.clearHistory()
+            ClearHistory         -> userConnection.clearPipelineHistory()
         }
     }
 

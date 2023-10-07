@@ -11,22 +11,17 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LowPriority
 import androidx.compose.material.icons.filled.PlaylistRemove
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.format
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.logic.pipeline.SessionData
+import org.rhasspy.mobile.logic.pipeline.*
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.resources.color_http
 import org.rhasspy.mobile.resources.color_local
@@ -35,12 +30,9 @@ import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel0
 import org.rhasspy.mobile.ui.utils.ListType.DialogScreenList
 import org.rhasspy.mobile.ui.utils.rememberForeverLazyListState
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogActionViewState
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogActionViewState.SourceViewState.SourceType.*
-import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogStateViewState
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewModel
@@ -48,76 +40,55 @@ import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewModel
 @Composable
 fun DialogScreen(viewModel: DialogScreenViewModel) {
 
-    ScreenContent(screenViewModel = viewModel) {
-        /* val viewState by viewModel.viewState.collectAsState()
+    val viewState by viewModel.viewState.collectAsState()
 
-         Scaffold(
-             modifier = Modifier
-                 .testTag(DialogScreen)
-                 .fillMaxSize(),
-             topBar = {
-                 AppBar(
-                     isLogAutoscroll = viewState.isDialogAutoscroll,
-                     onEvent = viewModel::onEvent
-                 )
-             },
-         ) { paddingValues ->
-
-             Surface(Modifier.padding(paddingValues)) {
-                 DialogScreenContent(
-                     isLogAutoscroll = viewState.isDialogAutoscroll,
-                     history = viewState.history,
-                     onEvent = viewModel::onEvent
-                 )
-             }
-
-         }*/
-    }
-}
-
-/**
- * app bar of log screen
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun AppBar(
-    isLogAutoscroll: Boolean,
-    onEvent: (DialogScreenUiEvent) -> Unit
-) {
-    TopAppBar(
-        modifier = Modifier,
-        title = { Text(MR.strings.dialog.stable) },
+    ScreenContent(
+        title = MR.strings.dialog_pipeline.stable,
         actions = {
-            IconButton(onClick = { onEvent(ToggleListAutoScroll) }) {
+            IconButton(onClick = { viewModel.onEvent(ToggleListAutoScroll) }) {
                 Icon(
-                    imageVector = if (isLogAutoscroll) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
+                    imageVector = if (viewState.isDialogAutoscroll) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
                     contentDescription = MR.strings.autoscrollList.stable
                 )
             }
-            IconButton(onClick = { onEvent(ClearHistory) }) {
+            IconButton(onClick = { viewModel.onEvent(ClearHistory) }) {
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = MR.strings.clear_text.stable
                 )
             }
-        }
-    )
+        },
+        viewModel = viewModel,
+        tonalElevation = TonalElevationLevel0,
+    ) {
+
+        DialogScreenContent(
+            isLogAutoscroll = viewState.isDialogAutoscroll,
+            history = viewState.history,
+            onEvent = viewModel::onEvent,
+        )
+
+    }
+
+
 }
 
 @Composable
 private fun DialogScreenContent(
     isLogAutoscroll: Boolean,
-    history: ImmutableList<DialogInformationItem>,
+    history: StateFlow<ImmutableList<PipelineEvent>>,
     onEvent: (DialogScreenUiEvent) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberForeverLazyListState(DialogScreenList)
 
+    val historyList by history.collectAsState()
+
     if (isLogAutoscroll) {
-        LaunchedEffect(history.size) {
+        LaunchedEffect(historyList.size) {
             coroutineScope.launch {
-                if (history.isNotEmpty()) {
-                    lazyListState.animateScrollToItem(history.size - 1)
+                if (historyList.isNotEmpty()) {
+                    lazyListState.animateScrollToItem(historyList.size - 1)
                 }
             }
         }
@@ -137,8 +108,8 @@ private fun DialogScreenContent(
         state = lazyListState
     ) {
 
-        items(history) { item ->
-            DialogTransitionListItem(item)
+        items(historyList) { item ->
+            PipelineEventItem(item)
         }
 
         item {
@@ -149,29 +120,9 @@ private fun DialogScreenContent(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DialogTransitionListItem(item: DialogInformationItem) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        HorizontalDivider(
-            color = MaterialTheme.colorScheme.surfaceVariant,
-            modifier = Modifier
-                .height(10.dp)
-                .width(1.dp)
-        )
-
-        when (item) {
-            is DialogActionViewState -> DialogActionListItem(item)
-            is DialogStateViewState  -> DialogStateListItem(item)
-        }
-
-    }
-}
-
-@Composable
-private fun DialogActionListItem(item: DialogActionViewState) {
+private fun PipelineEventItem(item: PipelineEvent) {
     ListElement(
         modifier = Modifier.border(
             width = 1.dp,
@@ -180,63 +131,76 @@ private fun DialogActionListItem(item: DialogActionViewState) {
         ),
         text = {
             Row {
-                Text(
-                    resource = item.name,
-                    modifier = Modifier.weight(1f)
-                )
-                val color = when (item.source.type) {
-                    Http -> MaterialTheme.colorScheme.color_http
-                    Local -> MaterialTheme.colorScheme.color_local
-                    MQTT -> MaterialTheme.colorScheme.color_mqtt
-                }
+                Text(item.getName())
 
                 Badge(
                     contentColor = MaterialTheme.colorScheme.inverseOnSurface,
-                    containerColor = color,
+                    containerColor = item.source.getColor(),
                     modifier = Modifier.wrapContentSize()
                 ) {
+
                     Text(
-                        resource = item.source.name,
+                        resource = item.source.getName(),
                         modifier = Modifier
                             .wrapContentSize()
                             .padding(4.dp),
                         style = MaterialTheme.typography.labelSmall,
                         textAlign = TextAlign.End
                     )
+
                 }
             }
         },
-        secondaryText = item.information?.let {
-            {
-                Text(
-                    resource = it,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        },
+        secondaryText = null, //TODO #466 information
         overlineText = {
             Text(item.timeStamp.toLocalDateTime(currentSystemDefault()).toString())
         }
     )
 }
 
-@Composable
-private fun DialogStateListItem(item: DialogStateViewState) {
-    ListElement(
-        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-        modifier = Modifier.clip(RoundedCornerShape(5.dp)),
-        text = { Text(item.name) },
-        secondaryText = item.sessionData?.let { { DialogSessionData(it) } },
-        overlineText = { Text(item.timeStamp.toLocalDateTime(currentSystemDefault()).toString()) }
-    )
-}
 
 @Composable
-private fun DialogSessionData(sessionData: SessionData) {
-    Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text(MR.strings.session_id.format(sessionData.sessionId).stable)
-        Text(MR.strings.wake_word.format(sessionData.wakeWord.toString()).stable)
-        Text(MR.strings.send_audio_captured.format(sessionData.sendAudioCaptured.toString()).stable)
-        Text(MR.strings.asr_text.format(sessionData.recognizedText.toString()).stable)
-    }
+private fun Source.getColor() = when (this) {
+    Source.Local              -> MaterialTheme.colorScheme.color_local
+    Source.Rhasspy2HermesHttp -> MaterialTheme.colorScheme.color_http
+    Source.Rhasspy2HermesMqtt -> MaterialTheme.colorScheme.color_mqtt
+    Source.HomeAssistant      -> TODO()
+    Source.WebServer          -> TODO()
+    Source.User               -> TODO()
 }
+
+private fun Source.getName() = when (this) {
+    Source.Local              -> MR.strings.local.stable
+    Source.Rhasspy2HermesHttp -> TODO()
+    Source.Rhasspy2HermesMqtt -> TODO()
+    Source.HomeAssistant      -> TODO()
+    Source.WebServer          -> TODO()
+    Source.User               -> TODO()
+}
+
+private fun PipelineEvent.getName() = when (this) {
+    is HandleResult.Handle                 -> MR.strings.handleWithRecognition.stable
+    is HandleResult.HandleDisabled         -> TODO()
+    is HandleResult.HandleTimeout          -> TODO()
+    is HandleResult.NotHandled             -> TODO()
+    is IntentResult.Intent                 -> TODO()
+    is IntentResult.IntentDisabled         -> TODO()
+    is IntentResult.NotRecognized          -> TODO()
+    is PipelineResult.End                  -> TODO()
+    is TtsResult.NotSynthesized            -> TODO()
+    is SndResult.NotPlayed                 -> TODO()
+    is SndResult.PlayDisabled              -> TODO()
+    is SndResult.Played                    -> TODO()
+    is TranscriptResult.TranscriptDisabled -> TODO()
+    is TranscriptResult.TranscriptError    -> TODO()
+    is TranscriptResult.TranscriptTimeout  -> TODO()
+    is TtsResult.TtsDisabled               -> TODO()
+    is TranscriptResult.Transcript         -> TODO()
+    is TtsResult.Audio                     -> TODO()
+    is VadResult.VoiceEnd.VadDisabled      -> TODO()
+    is VadResult.VoiceEnd.VadTimeout       -> TODO()
+    is VadResult.VoiceEnd.VoiceStopped     -> TODO()
+    is VadResult.VoiceStart                -> TODO()
+    is WakeResult                          -> TODO()
+}
+

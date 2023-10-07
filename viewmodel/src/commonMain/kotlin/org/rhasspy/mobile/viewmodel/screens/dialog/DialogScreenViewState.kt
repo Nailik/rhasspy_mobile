@@ -1,43 +1,10 @@
 package org.rhasspy.mobile.viewmodel.screens.dialog
 
-import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.datetime.Instant
-import org.rhasspy.mobile.data.resource.StableStringResource
-import org.rhasspy.mobile.logic.pipeline.SessionData
+import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.logic.pipeline.PipelineEvent
 
 data class DialogScreenViewState(
     val isDialogAutoscroll: Boolean,
-    val history: ImmutableList<DialogInformationItem>
+    val history: StateFlow<ImmutableList<PipelineEvent>>,
 )
-
-@Stable
-sealed interface DialogInformationItem {
-
-    data class DialogStateViewState(
-        val name: StableStringResource,
-        val timeStamp: Instant,
-        val sessionData: SessionData?
-    ) : DialogInformationItem
-
-    data class DialogActionViewState(
-        val name: StableStringResource,
-        val timeStamp: Instant,
-        val source: SourceViewState,
-        val information: StableStringResource?
-    ) : DialogInformationItem {
-
-        data class SourceViewState(
-            val type: SourceType,
-            val name: StableStringResource
-        ) {
-
-            enum class SourceType {
-                Http, Local, MQTT
-            }
-
-        }
-
-    }
-
-}

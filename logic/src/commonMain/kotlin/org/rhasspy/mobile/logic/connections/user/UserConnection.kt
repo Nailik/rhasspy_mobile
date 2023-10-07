@@ -16,10 +16,12 @@ import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConn
 import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent.StartStopPlayRecording
 import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent.StartStopRhasspy
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
+import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.mic.MicDomainState
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
 import org.rhasspy.mobile.logic.pipeline.IPipelineManager
+import org.rhasspy.mobile.logic.pipeline.PipelineEvent
 
 interface IUserConnection {
 
@@ -43,6 +45,7 @@ interface IUserConnection {
 
     fun playRecordingAction()
 
+    fun clearPipelineHistory()
 
     val isPlayingState: StateFlow<Boolean>
 
@@ -58,6 +61,8 @@ interface IUserConnection {
 
     val micDomainRecordingState: StateFlow<Boolean>
     val asrDomainRecordingState: StateFlow<Boolean>
+
+    val pipelineHistory: StateFlow<List<PipelineEvent>>
 }
 
 internal class UserConnection(
@@ -68,6 +73,7 @@ internal class UserConnection(
     homeAssistantConnection: IHomeAssistantConnection,
     webServerConnection: IWebServerConnection,
     mqttService: IMqttConnection,
+    private val domainHistory: IDomainHistory,
 ) : IUserConnection, KoinComponent {
 
     private val pipelineManager get() = get<IPipelineManager>()
@@ -90,6 +96,7 @@ internal class UserConnection(
 
     override val micDomainRecordingState get() = pipelineManager.micDomainRecordingStateFlow
     override val asrDomainRecordingState get() = pipelineManager.asrDomainRecordingStateFlow
+    override val pipelineHistory: StateFlow<List<PipelineEvent>> = domainHistory.historyState
 
     override val isPlayingState: StateFlow<Boolean> = localAudioService.isPlayingState
 
@@ -99,6 +106,10 @@ internal class UserConnection(
 
     override fun playRecordingAction() {
         incomingMessages.tryEmit(StartStopPlayRecording)
+    }
+
+    override fun clearPipelineHistory() {
+        domainHistory.clearHistory()
     }
 
     override fun playRecordedSound() {

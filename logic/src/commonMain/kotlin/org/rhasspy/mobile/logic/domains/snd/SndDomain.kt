@@ -71,7 +71,7 @@ internal class SndDomain(
             SndDomainOption.Local              -> onLocalPlayAudio(audio)
             SndDomainOption.Rhasspy2HermesHttp -> onRhasspy2HermesHttpPlayAudio(audio)
             SndDomainOption.Rhasspy2HermesMQTT -> onRhasspy2HermesMQTTPlayAudio(audio)
-            SndDomainOption.Disabled           -> PlayDisabled
+            SndDomainOption.Disabled           -> PlayDisabled(Local)
         }
     }
 

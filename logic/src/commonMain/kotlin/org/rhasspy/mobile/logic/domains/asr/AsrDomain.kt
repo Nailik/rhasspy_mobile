@@ -23,6 +23,7 @@ import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.pipeline.Source
+import org.rhasspy.mobile.logic.pipeline.Source.Local
 import org.rhasspy.mobile.logic.pipeline.Source.Rhasspy2HermesMqtt
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.*
@@ -107,7 +108,8 @@ internal class AsrDomain(
                     awaitVoiceStopped = awaitVoiceStopped
                 )
 
-            AsrDomainOption.Disabled           -> TranscriptDisabled
+            AsrDomainOption.Disabled ->
+                TranscriptDisabled(Local)
         }.also {
             audioFocus.abandon(Record)
             isRecordingState.value = false
@@ -139,7 +141,7 @@ internal class AsrDomain(
                 .filter { it is VoiceStopped }
         ).timeoutWithDefault(
             timeout = params.voiceTimeout,
-            default = VadTimeout(Source.Local),
+            default = VadTimeout(Local),
         ).first()
 
         saveDataJob.cancelAndJoin()
@@ -203,7 +205,7 @@ internal class AsrDomain(
                     .filter { it is VoiceStopped }
             ).timeoutWithDefault(
                 timeout = params.voiceTimeout,
-                default = VadTimeout(Source.Local),
+                default = VadTimeout(Local),
             ).first()
 
             sendDataJob.cancelAndJoin()

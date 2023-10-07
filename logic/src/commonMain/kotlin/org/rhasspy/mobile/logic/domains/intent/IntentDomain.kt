@@ -78,7 +78,7 @@ internal class IntentDomain(
                 )
 
             IntentDomainOption.Disabled           ->
-                IntentDisabled
+                IntentDisabled(Local)
         }
     }
 

@@ -81,7 +81,10 @@ internal class PipelineMqtt(
             //find intent from text, eventually already handles
             domains.intentDomain.awaitIntent(
                 sessionId = sessionId,
-                transcript = Transcript(text, Rhasspy2HermesMqtt),
+                transcript = Transcript(
+                    text = text,
+                    source = Rhasspy2HermesMqtt
+                ),
             )
         }
         return runPipeline(sessionId)
@@ -91,7 +94,11 @@ internal class PipelineMqtt(
         scope.launch {
             domains.handleDomain.awaitIntentHandle(
                 sessionId = sessionId,
-                intent = Intent(intentName, intent, Rhasspy2HermesMqtt)
+                intent = Intent(
+                    intentName = intentName,
+                    intent = intent,
+                    source = Rhasspy2HermesMqtt
+                )
             )
         }
         return runPipeline(sessionId)
@@ -103,7 +110,11 @@ internal class PipelineMqtt(
                 sessionId = sessionId,
                 volume = AppSetting.volume.value,
                 siteId = ConfigurationSetting.siteId.value,
-                handle = Handle(text = text, volume = volume, Rhasspy2HermesMqtt),
+                handle = Handle(
+                    text = text,
+                    volume = volume,
+                    source = Rhasspy2HermesMqtt
+                ),
             )
 
             if (result is Audio) {

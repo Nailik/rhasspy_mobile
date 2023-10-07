@@ -75,7 +75,7 @@ internal class TtsDomain(
                 )
 
             TtsDomainOption.Disabled           ->
-                TtsDisabled
+                TtsDisabled(Local)
         }
     }
 

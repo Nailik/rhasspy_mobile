@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.ui.content
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.IconButton
@@ -40,10 +41,6 @@ val LocalSnackBarHostState = compositionLocalOf<SnackbarHostState> {
     error("No SnackBarHostState provided")
 }
 
-////val LocalViewModelFactory = compositionLocalOf<ViewModelFactory> {
-//    error("No LocalViewModelFactory provided")
-//}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenContent(
@@ -52,6 +49,7 @@ fun ScreenContent(
     viewModel: IScreenViewModel,
     icon: ImageVector? = Icons.Filled.ArrowBack,
     tonalElevation: Dp,
+    actions: @Composable RowScope.() -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
     content: @Composable () -> Unit
 ) {
@@ -85,7 +83,8 @@ fun ScreenContent(
                                     contentDescription = MR.strings.back.stable,
                                 )
                             }
-                        }
+                        },
+                        actions = actions,
                     )
                 },
                 bottomBar = bottomBar,

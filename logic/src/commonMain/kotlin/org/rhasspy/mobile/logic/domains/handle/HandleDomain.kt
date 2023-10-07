@@ -59,7 +59,7 @@ internal class HandleDomain(
 
         return when (params.option) {
             HandleDomainOption.HomeAssistant -> awaitHomeAssistantHandle(sessionId, intent)
-            HandleDomainOption.Disabled      -> HandleDisabled
+            HandleDomainOption.Disabled      -> HandleDisabled(Local)
         }
     }
 

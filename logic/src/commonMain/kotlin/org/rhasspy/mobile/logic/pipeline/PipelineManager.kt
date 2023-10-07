@@ -10,11 +10,8 @@ import org.rhasspy.mobile.data.domain.DomainState.Loading
 import org.rhasspy.mobile.data.pipeline.PipelineData
 import org.rhasspy.mobile.data.service.option.PipelineManagerOption
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
-import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayBytes
 import org.rhasspy.mobile.logic.connections.user.IUserConnection
-import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent.StartStopPlayRecording
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
-import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.WebServerPlayWav
 import org.rhasspy.mobile.logic.domains.mic.MicDomainState
 import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
 import org.rhasspy.mobile.logic.local.file.IFileStorage
@@ -22,7 +19,6 @@ import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.pipeline.HandleResult.*
 import org.rhasspy.mobile.logic.pipeline.IntentResult.IntentDisabled
 import org.rhasspy.mobile.logic.pipeline.IntentResult.NotRecognized
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent.PlayAudioEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineResult.End
 import org.rhasspy.mobile.logic.pipeline.SndResult.*
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.*
@@ -31,7 +27,6 @@ import org.rhasspy.mobile.logic.pipeline.TtsResult.TtsDisabled
 import org.rhasspy.mobile.logic.pipeline.impls.PipelineDisabled
 import org.rhasspy.mobile.logic.pipeline.impls.PipelineLocal
 import org.rhasspy.mobile.logic.pipeline.impls.PipelineMqtt
-import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 internal interface IPipelineManager {
@@ -166,30 +161,29 @@ internal class PipelineManager(
 
 
     //TODO #466 allow:
-    //Mqtt: PlayBytes
-
-    private fun playAudioFlow(): Flow<PlayAudioEvent> {
-        return merge(
-            //Mqtt: PlayBytes
-            mqttConnection.incomingMessages
-                .filterIsInstance<PlayBytes>()
-                .map {
-                    PlayAudioEvent(AudioSource.Data(it.byteArray))
-                },
-            //WebServer: WebServerPlayWav, WebServerSay
-            webServerConnection.incomingMessages
-                .filterIsInstance<WebServerPlayWav>()
-                .map {
-                    PlayAudioEvent(AudioSource.Data(it.data))
-                },
-            //Local: PlayRecording
-            userConnection.incomingMessages
-                .filterIsInstance<StartStopPlayRecording>()
-                .map {
-                    PlayAudioEvent(AudioSource.File(fileStorage.speechToTextAudioFile))
-                },
-        )
-    }
+    /*
+        private fun playAudioFlow(): Flow<PlayAudioEvent> {
+            return merge(
+                //Mqtt: PlayBytes
+                mqttConnection.incomingMessages
+                    .filterIsInstance<PlayBytes>()
+                    .map {
+                        PlayAudioEvent(AudioSource.Data(it.byteArray))
+                    },
+                //WebServer: WebServerPlayWav, WebServerSay
+                webServerConnection.incomingMessages
+                    .filterIsInstance<WebServerPlayWav>()
+                    .map {
+                        PlayAudioEvent(AudioSource.Data(it.data))
+                    },
+                //Local: PlayRecording
+                userConnection.incomingMessages
+                    .filterIsInstance<StartStopPlayRecording>()
+                    .map {
+                        PlayAudioEvent(AudioSource.File(fileStorage.speechToTextAudioFile))
+                    },
+            )
+        }*/
 
 
 }

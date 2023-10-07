@@ -15,6 +15,8 @@ import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.logic.connections.user.UserConnection
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.connections.webserver.WebServerConnection
+import org.rhasspy.mobile.logic.domains.DomainHistory
+import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.asr.AsrDomain
 import org.rhasspy.mobile.logic.domains.asr.IAsrDomain
 import org.rhasspy.mobile.logic.domains.handle.HandleDomain
@@ -63,6 +65,10 @@ fun logicModule() = module {
             ttsDomain = get(),
             vadDomain = get(),
         )
+    }
+
+    single<IDomainHistory> {
+        DomainHistory()
     }
 
     factory { params ->
@@ -200,6 +206,7 @@ fun logicModule() = module {
             homeAssistantConnection = get(),
             webServerConnection = get(),
             mqttService = get(),
+            domainHistory = get(),
         )
     }
     single<IHomeAssistantConnection> { HomeAssistantConnection() }
