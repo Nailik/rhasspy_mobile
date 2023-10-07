@@ -128,7 +128,7 @@ internal class HandleDomain(
                 },
         ).timeoutWithDefault(
             timeout = params.homeAssistantEventTimeout,
-            default = NotHandled(Local),
+            default = HandleTimeout(Local),
         ).first()
     }
 

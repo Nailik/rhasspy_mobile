@@ -44,7 +44,12 @@ import org.rhasspy.mobile.logic.local.settings.AppSettingsUtil
 import org.rhasspy.mobile.logic.local.settings.IAppSettingsUtil
 import org.rhasspy.mobile.logic.logger.DatabaseLogger
 import org.rhasspy.mobile.logic.logger.IDatabaseLogger
-import org.rhasspy.mobile.logic.pipeline.*
+import org.rhasspy.mobile.logic.pipeline.DomainBundle
+import org.rhasspy.mobile.logic.pipeline.IPipelineManager
+import org.rhasspy.mobile.logic.pipeline.PipelineManager
+import org.rhasspy.mobile.logic.pipeline.impls.PipelineDisabled
+import org.rhasspy.mobile.logic.pipeline.impls.PipelineLocal
+import org.rhasspy.mobile.logic.pipeline.impls.PipelineMqtt
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 fun logicModule() = module {
@@ -60,20 +65,20 @@ fun logicModule() = module {
         )
     }
 
-    factory<IPipelineLocal> { params ->
+    factory { params ->
         PipelineLocal(
             domains = params.get(),
             audioFocus = get(),
         )
     }
-    factory<IPipelineMqtt> { params ->
+    factory { params ->
         PipelineMqtt(
             mqttConnection = get(),
             domains = params.get(),
             audioFocus = get(),
         )
     }
-    factory<IPipelineDisabled> { params ->
+    factory { params ->
         PipelineDisabled(
             domains = params.get(),
         )
@@ -85,6 +90,7 @@ fun logicModule() = module {
             webServerConnection = get(),
             userConnection = get(),
             indication = get(),
+            fileStorage = get(),
         )
     }
 

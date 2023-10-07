@@ -1,6 +1,10 @@
-package org.rhasspy.mobile.logic.pipeline
+package org.rhasspy.mobile.logic.pipeline.impls
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.*
@@ -9,9 +13,13 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.A
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentNotRecognized
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentRecognitionResult
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
+import org.rhasspy.mobile.logic.pipeline.DomainBundle
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
+import org.rhasspy.mobile.logic.pipeline.IPipeline
 import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
 import org.rhasspy.mobile.logic.pipeline.IntentResult.NotRecognized
+import org.rhasspy.mobile.logic.pipeline.PipelineEvent.StartEvent
+import org.rhasspy.mobile.logic.pipeline.PipelineResult
 import org.rhasspy.mobile.logic.pipeline.PipelineResult.End
 import org.rhasspy.mobile.logic.pipeline.Source.Rhasspy2HermesMqtt
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
@@ -20,13 +28,13 @@ import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-internal interface IPipelineMqtt : IPipeline
-
 internal class PipelineMqtt(
     private val mqttConnection: IMqttConnection,
     private val domains: DomainBundle,
     private val audioFocus: IAudioFocus,
-) : IPipelineMqtt {
+) : IPipeline {
+
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     override suspend fun runPipeline(startEvent: StartEvent): PipelineResult {
 
@@ -69,45 +77,52 @@ internal class PipelineMqtt(
     }
 
     private suspend fun onAsrTextCaptured(sessionId: String, text: String): PipelineResult {
-        //find intent from text, eventually already handles
-        domains.intentDomain.awaitIntent(
-            sessionId = sessionId,
-            transcript = Transcript(text, Rhasspy2HermesMqtt),
-        )
+        scope.launch {
+            //find intent from text, eventually already handles
+            domains.intentDomain.awaitIntent(
+                sessionId = sessionId,
+                transcript = Transcript(text, Rhasspy2HermesMqtt),
+            )
+        }
         return runPipeline(sessionId)
     }
 
     private suspend fun onIntentRecognitionResult(sessionId: String, intentName: String?, intent: String): PipelineResult {
-        domains.handleDomain.awaitIntentHandle(
-            sessionId = sessionId,
-            intent = Intent(intentName, intent, Rhasspy2HermesMqtt)
-        )
+        scope.launch {
+            domains.handleDomain.awaitIntentHandle(
+                sessionId = sessionId,
+                intent = Intent(intentName, intent, Rhasspy2HermesMqtt)
+            )
+        }
         return runPipeline(sessionId)
     }
 
     private suspend fun onSay(sessionId: String, text: String, volume: Float?): PipelineResult {
-        val result = domains.ttsDomain.onSynthesize(
-            sessionId = sessionId,
-            volume = AppSetting.volume.value,
-            siteId = ConfigurationSetting.siteId.value,
-            handle = Handle(text = text, volume = volume, Rhasspy2HermesMqtt),
-        )
+        scope.launch {
+            val result = domains.ttsDomain.onSynthesize(
+                sessionId = sessionId,
+                volume = AppSetting.volume.value,
+                siteId = ConfigurationSetting.siteId.value,
+                handle = Handle(text = text, volume = volume, Rhasspy2HermesMqtt),
+            )
 
-        if (result is Audio) {
-            domains.sndDomain.awaitPlayAudio(result)
+            if (result is Audio) {
+                domains.sndDomain.awaitPlayAudio(result)
+            }
         }
-
         return runPipeline(sessionId)
     }
 
     private suspend fun onStartListening(sessionId: String): PipelineResult {
-        domains.asrDomain.awaitTranscript(
-            sessionId = sessionId,
-            audioStream = domains.micDomain.audioStream,
-            awaitVoiceStart = domains.vadDomain::awaitVoiceStart,
-            awaitVoiceStopped = domains.vadDomain::awaitVoiceStopped,
-        ).also {
-            audioFocus.abandon(AudioFocusRequestReason.Record)
+        scope.launch {
+            domains.asrDomain.awaitTranscript(
+                sessionId = sessionId,
+                audioStream = domains.micDomain.audioStream,
+                awaitVoiceStart = domains.vadDomain::awaitVoiceStart,
+                awaitVoiceStopped = domains.vadDomain::awaitVoiceStopped,
+            ).also {
+                audioFocus.abandon(AudioFocusRequestReason.Record)
+            }
         }
         return runPipeline(sessionId)
     }

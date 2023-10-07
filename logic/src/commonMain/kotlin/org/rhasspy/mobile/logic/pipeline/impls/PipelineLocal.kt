@@ -1,22 +1,23 @@
-package org.rhasspy.mobile.logic.pipeline
+package org.rhasspy.mobile.logic.pipeline.impls
 
 import com.benasher44.uuid.uuid4
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
-import org.rhasspy.mobile.logic.pipeline.HandleResult.*
-import org.rhasspy.mobile.logic.pipeline.IntentResult.*
-import org.rhasspy.mobile.logic.pipeline.SndResult.*
-import org.rhasspy.mobile.logic.pipeline.TranscriptResult.*
-import org.rhasspy.mobile.logic.pipeline.TtsResult.*
+import org.rhasspy.mobile.logic.pipeline.DomainBundle
+import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
+import org.rhasspy.mobile.logic.pipeline.IPipeline
+import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
+import org.rhasspy.mobile.logic.pipeline.PipelineEvent.StartEvent
+import org.rhasspy.mobile.logic.pipeline.PipelineResult
+import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
+import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
-
-internal interface IPipelineLocal : IPipeline
 
 internal class PipelineLocal(
     private val domains: DomainBundle,
     private val audioFocus: IAudioFocus,
-) : IPipelineLocal {
+) : IPipeline {
 
     override suspend fun runPipeline(startEvent: StartEvent): PipelineResult {
 
@@ -34,10 +35,8 @@ internal class PipelineLocal(
                 audioFocus.abandon(Record)
             }
         ) {
-            is Transcript         -> result
-            is TranscriptError    -> return result
-            is TranscriptDisabled -> return result
-            is TranscriptTimeout  -> return result
+            is Transcript     -> result
+            is PipelineResult -> return result
         }
 
         //find intent from text, eventually already handles
@@ -49,7 +48,6 @@ internal class PipelineLocal(
         //handle intent
         val handle = when (intent) {
             is Handle         -> intent
-            is NotHandled     -> return intent
             is Intent         -> {
                 when (
                     val result = domains.handleDomain.awaitIntentHandle(
@@ -58,14 +56,11 @@ internal class PipelineLocal(
                     )
                 ) {
                     is Handle         -> result
-                    is NotHandled     -> return result
-                    is HandleDisabled -> return result
+                    is PipelineResult -> return result
                 }
             }
 
-            is NotRecognized  -> return intent
-            is HandleDisabled -> return intent
-            is IntentDisabled -> return intent
+            is PipelineResult -> return intent
         }
 
         //translate handle text to speech
@@ -76,17 +71,11 @@ internal class PipelineLocal(
             handle = handle,
         )) {
             is Audio          -> result
-            is NotSynthesized -> return result
-            is Played         -> return result
-            is TtsDisabled    -> return result
+            is PipelineResult -> return result
         }
 
         //play audio
-        return when (val result = domains.sndDomain.awaitPlayAudio(tts)) {
-            is Played       -> result
-            is NotPlayed    -> result
-            is PlayDisabled -> result
-        }.also {
+        return domains.sndDomain.awaitPlayAudio(tts).also {
             domains.dispose()
         }
     }

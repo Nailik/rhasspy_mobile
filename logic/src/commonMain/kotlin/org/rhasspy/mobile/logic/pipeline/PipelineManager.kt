@@ -24,15 +24,19 @@ import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
 import org.rhasspy.mobile.logic.domains.wake.WakeEvent.Detection
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
-import org.rhasspy.mobile.logic.pipeline.HandleResult.HandleDisabled
-import org.rhasspy.mobile.logic.pipeline.HandleResult.NotHandled
+import org.rhasspy.mobile.logic.pipeline.HandleResult.*
 import org.rhasspy.mobile.logic.pipeline.IntentResult.IntentDisabled
 import org.rhasspy.mobile.logic.pipeline.IntentResult.NotRecognized
+import org.rhasspy.mobile.logic.pipeline.PipelineEvent.PlayAudioEvent
+import org.rhasspy.mobile.logic.pipeline.PipelineEvent.StartEvent
 import org.rhasspy.mobile.logic.pipeline.PipelineResult.End
 import org.rhasspy.mobile.logic.pipeline.SndResult.*
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.*
 import org.rhasspy.mobile.logic.pipeline.TtsResult.NotSynthesized
 import org.rhasspy.mobile.logic.pipeline.TtsResult.TtsDisabled
+import org.rhasspy.mobile.logic.pipeline.impls.PipelineDisabled
+import org.rhasspy.mobile.logic.pipeline.impls.PipelineLocal
+import org.rhasspy.mobile.logic.pipeline.impls.PipelineMqtt
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
@@ -144,6 +148,7 @@ internal class PipelineManager(
                 }
 
                 is NotHandled,
+                is HandleTimeout,
                 is NotPlayed,
                 is NotRecognized,
                 is NotSynthesized,
@@ -153,6 +158,7 @@ internal class PipelineManager(
                     indication.onIdle()
                     indication.onError()
                 }
+
             }
             awaitPipelineStart()
         }
@@ -160,9 +166,9 @@ internal class PipelineManager(
 
     private fun getPipeline(domains: DomainBundle): IPipeline {
         return when (params.option) {
-            PipelineManagerOption.Local              -> get<IPipelineLocal> { parametersOf(domains) }
-            PipelineManagerOption.Rhasspy2HermesMQTT -> get<IPipelineMqtt> { parametersOf(domains) }
-            PipelineManagerOption.Disabled           -> get<IPipelineDisabled> { parametersOf(domains) }
+            PipelineManagerOption.Local              -> get<PipelineLocal> { parametersOf(domains) }
+            PipelineManagerOption.Rhasspy2HermesMQTT -> get<PipelineMqtt> { parametersOf(domains) }
+            PipelineManagerOption.Disabled           -> get<PipelineDisabled> { parametersOf(domains) }
         }
     }
 
@@ -241,6 +247,7 @@ internal class PipelineManager(
                     )
                 },
         )
+        //TODO #466 addToHistory(startEvent)
     }
 
 

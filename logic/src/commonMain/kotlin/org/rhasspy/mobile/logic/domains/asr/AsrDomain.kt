@@ -192,7 +192,6 @@ internal class AsrDomain(
         }
 
         val awaitVoiceStoppedJob = scope.launch {
-
             merge(
                 userConnection.incomingMessages
                     .filterIsInstance<StartStopRhasspy>()
@@ -229,6 +228,7 @@ internal class AsrDomain(
                 default = TranscriptTimeout(Rhasspy2HermesMqtt),
             )
             .first()
+
             .also {
                 sendDataJob.cancelAndJoin()
                 awaitVoiceStoppedJob.cancelAndJoin()
