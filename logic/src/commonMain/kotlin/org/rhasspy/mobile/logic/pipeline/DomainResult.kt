@@ -7,6 +7,7 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.viewstate.TextWrapper
 import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperStableStringResource
 import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperString
+import org.rhasspy.mobile.logic.pipeline.PipelineResult.PipelineErrorResult
 
 enum class Source {
     Local,
@@ -50,13 +51,19 @@ sealed interface PipelineResult : DomainResult {
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
     ) : PipelineResult
+
+    sealed interface PipelineErrorResult : PipelineResult {
+
+        val reason: Reason
+
+    }
 }
 
 data class WakeResult(
+    val name: String?,
+    val sessionId: String?,
     override val source: Source,
     override val timeStamp: Instant = Clock.System.now(),
-    val sessionId: String?,
-    val name: String?,
 ) : DomainResult
 
 sealed interface Reason {
@@ -89,10 +96,10 @@ sealed interface VadResult : DomainResult {
         ) : VoiceEnd
 
         data class VadError(
-            val reason: Reason,
+            override val reason: Reason,
             override val source: Source,
             override val timeStamp: Instant = Clock.System.now(),
-        ) : VoiceEnd
+        ) : PipelineErrorResult, VoiceEnd
 
     }
 
@@ -106,10 +113,10 @@ sealed interface TranscriptResult : DomainResult {
     ) : TranscriptResult
 
     data class TranscriptError(
-        val reason: Reason,
+        override val reason: Reason,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
-    ) : TranscriptResult, PipelineResult
+    ) : TranscriptResult, PipelineErrorResult
 
 }
 
@@ -122,10 +129,10 @@ sealed interface IntentResult : DomainResult {
     ) : IntentResult
 
     data class IntentError(
-        val reason: Reason,
+        override val reason: Reason,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
-    ) : PipelineResult, IntentResult
+    ) : IntentResult, PipelineErrorResult
 
 }
 
@@ -138,10 +145,10 @@ sealed interface HandleResult : IntentResult, DomainResult {
     ) : HandleResult
 
     data class HandleError(
-        val reason: Reason,
+        override val reason: Reason,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
-    ) : HandleResult, PipelineResult
+    ) : HandleResult, PipelineErrorResult
 
 }
 
@@ -153,10 +160,10 @@ sealed interface TtsResult : DomainResult {
     ) : TtsResult
 
     data class TtsError(
-        val reason: Reason,
+        override val reason: Reason,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
-    ) : TtsResult, PipelineResult
+    ) : TtsResult, PipelineErrorResult
 
 }
 
@@ -167,9 +174,9 @@ sealed interface SndResult : DomainResult, PipelineResult {
     ) : SndResult, TtsResult
 
     data class SndError(
-        val reason: Reason,
+        override val reason: Reason,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
-    ) : SndResult
+    ) : SndResult, PipelineErrorResult
 
 }

@@ -1,7 +1,10 @@
 package org.rhasspy.mobile.ui.main
 
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LowPriority
@@ -10,7 +13,6 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.cash.paging.LoadStateError
@@ -137,11 +139,9 @@ private fun LogScreenContent(
     }
 
     LazyColumn(
-        Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxSize(),
         state = lazyListState,
-        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        @Suppress("USELESS_IS_CHECK")
         when (val loadState = items.loadState.refresh) {
             is LoadStateLoading -> {
                 item {

@@ -1,11 +1,12 @@
 package org.rhasspy.mobile.ui.main
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LowPriority
@@ -22,9 +23,13 @@ import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.pipeline.*
+import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
+import org.rhasspy.mobile.logic.pipeline.PipelineResult.PipelineErrorResult
 import org.rhasspy.mobile.resources.*
 import org.rhasspy.mobile.ui.content.ScreenContent
+import org.rhasspy.mobile.ui.content.elements.CustomDivider
 import org.rhasspy.mobile.ui.content.elements.Icon
+import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel0
 import org.rhasspy.mobile.ui.utils.ListType.DialogScreenList
@@ -98,18 +103,13 @@ private fun DialogScreenContent(
     }
 
     LazyColumn(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         state = lazyListState
     ) {
 
         items(historyList) { item ->
             PipelineEventItem(item)
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
+            CustomDivider()
         }
 
     }
@@ -120,11 +120,9 @@ private fun DialogScreenContent(
 @Composable
 private fun PipelineEventItem(item: DomainResult) {
     ListElement(
-        modifier = Modifier.border(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.surfaceVariant,
-            shape = RoundedCornerShape(5.dp)
-        ),
+        overlineText = {
+            Text(item.timeStamp.toLocalDateTime(currentSystemDefault()).toString())
+        },
         text = {
             Row {
                 Text(
@@ -150,9 +148,8 @@ private fun PipelineEventItem(item: DomainResult) {
                 }
             }
         },
-        secondaryText = null, //TODO #466 information
-        overlineText = {
-            Text(item.timeStamp.toLocalDateTime(currentSystemDefault()).toString())
+        secondaryText = {
+            InformationText(item)
         }
     )
 }
@@ -168,6 +165,48 @@ private fun Source.getColor() = when (this) {
     Source.User               -> MaterialTheme.colorScheme.color_user
 }
 
+@Composable
+private fun InformationText(domainResult: DomainResult) {
+    with(domainResult) {
+        when (this) {
+            is Handle                          -> {
+                Text("text: $text\nvolume: $volume")
+            }
+
+            is PipelineErrorResult             -> {
+                with(reason) {
+                    when (this) {
+                        is Reason.Disabled -> Text("Disabled")
+                        is Reason.Error    -> Text(wrapper = information)
+                        is Reason.Timeout  -> Text("Timeout")
+                    }
+                }
+
+            }
+
+            is IntentResult.Intent             ->
+                Text("intentName: $intentName\nintent: $intent")
+
+            is PipelineResult.End              -> {}
+            is SndResult.Played                -> {}
+            is SndAudio.AudioChunkEvent        -> {}
+            is SndAudio.AudioStartEvent        ->
+                Text("sampleRate: $sampleRate\nbitRate: $bitRate\nchannel: $channel")
+
+            is SndAudio.AudioStopEvent         -> {}
+            is TranscriptResult.Transcript     ->
+                Text("text: $text")
+
+            is TtsResult.Audio                 -> {}
+            is VadResult.VoiceEnd.VoiceStopped -> {}
+            is VadResult.VoiceStart            -> {}
+            is WakeResult                      ->
+                Text("name: $name")
+        }
+    }
+}
+
+//TODO #466 information
 private fun Source.getName() = when (this) {
     Source.Local              -> "Local"
     Source.Rhasspy2HermesHttp -> "Rhasspy2HermesHttp"
@@ -177,8 +216,9 @@ private fun Source.getName() = when (this) {
     Source.User               -> "User"
 }
 
+//TODO #466 information
 private fun DomainResult.getName() = when (this) {
-    is HandleResult.Handle              -> "Handle"
+    is Handle -> "Handle"
     is HandleResult.HandleError         -> "NotHandled"
     is IntentResult.Intent              -> "Intent"
     is IntentResult.IntentError         -> "NotRecognized"

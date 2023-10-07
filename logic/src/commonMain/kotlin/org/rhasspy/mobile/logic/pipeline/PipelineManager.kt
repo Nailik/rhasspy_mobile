@@ -23,6 +23,7 @@ import org.rhasspy.mobile.logic.pipeline.SndResult.Played
 import org.rhasspy.mobile.logic.pipeline.SndResult.SndError
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.TranscriptError
 import org.rhasspy.mobile.logic.pipeline.TtsResult.TtsError
+import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VadError
 import org.rhasspy.mobile.logic.pipeline.impls.PipelineDisabled
 import org.rhasspy.mobile.logic.pipeline.impls.PipelineLocal
 import org.rhasspy.mobile.logic.pipeline.impls.PipelineMqtt
@@ -132,11 +133,13 @@ internal class PipelineManager(
                 is IntentError,
                 is SndError,
                 is TranscriptError,
-                is TtsError -> {
+                is TtsError,
+                is VadError -> {
                     //Error: indication error
                     indication.onIdle()
                     indication.onError()
                 }
+
             }
 
             awaitPipelineStart()
