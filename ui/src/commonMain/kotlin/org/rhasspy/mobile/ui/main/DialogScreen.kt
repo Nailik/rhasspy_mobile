@@ -72,7 +72,7 @@ fun DialogScreen(viewModel: DialogScreenViewModel) {
 @Composable
 private fun DialogScreenContent(
     isLogAutoscroll: Boolean,
-    history: StateFlow<ImmutableList<PipelineEvent>>,
+    history: StateFlow<ImmutableList<DomainResult>>,
     onEvent: (DialogScreenUiEvent) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -118,7 +118,7 @@ private fun DialogScreenContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PipelineEventItem(item: PipelineEvent) {
+private fun PipelineEventItem(item: DomainResult) {
     ListElement(
         modifier = Modifier.border(
             width = 1.dp,
@@ -177,34 +177,24 @@ private fun Source.getName() = when (this) {
     Source.User               -> "User"
 }
 
-private fun PipelineEvent.getName() = when (this) {
-    is HandleResult.Handle                 -> "Handle"
-    is HandleResult.HandleDisabled         -> "HandleDisabled"
-    is HandleResult.HandleTimeout          -> "HandleTimeout"
-    is HandleResult.NotHandled             -> "NotHandled"
-    is IntentResult.Intent                 -> "Intent"
-    is IntentResult.IntentDisabled         -> "IntentDisabled"
-    is IntentResult.NotRecognized          -> "NotRecognized"
-    is PipelineResult.End                  -> "End"
-    is TtsResult.NotSynthesized            -> "NotSynthesized"
-    is SndResult.NotPlayed                 -> "NotPlayed"
-    is SndResult.PlayDisabled              -> "PlayDisabled"
-    is SndResult.Played                    -> "Played"
-    is TranscriptResult.TranscriptDisabled -> "TranscriptDisabled"
-    is TranscriptResult.TranscriptError    -> "TranscriptError"
-    is TranscriptResult.TranscriptTimeout  -> "TranscriptTimeout"
-    is TtsResult.TtsDisabled               -> "TtsDisabled"
-    is TranscriptResult.Transcript         -> "Transcript"
-    is TtsResult.Audio                     -> "Audio"
-    is VadResult.VoiceEnd.VadDisabled      -> "VadDisabled"
-    is VadResult.VoiceEnd.VadTimeout       -> "VadTimeout"
-    is VadResult.VoiceEnd.VoiceStopped     -> "VoiceStopped"
-    is VadResult.VoiceStart                -> "VoiceStart"
-    is WakeResult                          -> "WakeResult"
-    is SndResult.SndTimeout                -> "SndTimeout"
-    is TtsResult.TtsTimeout                -> "TtsTimeout"
-    is SndAudio.AudioChunkEvent            -> "AudioChunkEvent"
-    is SndAudio.AudioStartEvent            -> "AudioStartEvent"
-    is SndAudio.AudioStopEvent             -> "AudioStopEvent"
+private fun DomainResult.getName() = when (this) {
+    is HandleResult.Handle              -> "Handle"
+    is HandleResult.HandleError         -> "NotHandled"
+    is IntentResult.Intent              -> "Intent"
+    is IntentResult.IntentError         -> "NotRecognized"
+    is PipelineResult.End               -> "End"
+    is TtsResult.TtsError               -> "NotSynthesized"
+    is SndResult.SndError               -> "NotPlayed"
+    is SndResult.Played                 -> "Played"
+    is TranscriptResult.TranscriptError -> "TranscriptError"
+    is TranscriptResult.Transcript      -> "Transcript"
+    is TtsResult.Audio                  -> "Audio"
+    is VadResult.VoiceEnd.VadError      -> "VadDisabled"
+    is VadResult.VoiceEnd.VoiceStopped  -> "VoiceStopped"
+    is VadResult.VoiceStart             -> "VoiceStart"
+    is WakeResult                       -> "WakeResult"
+    is SndAudio.AudioChunkEvent         -> "AudioChunkEvent"
+    is SndAudio.AudioStartEvent         -> "AudioStartEvent"
+    is SndAudio.AudioStopEvent          -> "AudioStopEvent"
 }
 

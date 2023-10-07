@@ -5,7 +5,9 @@ import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.TtsDomainData
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.TtsDomainOption
+import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperStableStringResource
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult
@@ -15,15 +17,19 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttResult.Error
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
+import org.rhasspy.mobile.logic.pipeline.Reason
+import org.rhasspy.mobile.logic.pipeline.Reason.Disabled
 import org.rhasspy.mobile.logic.pipeline.SndAudio.*
 import org.rhasspy.mobile.logic.pipeline.SndResult.Played
 import org.rhasspy.mobile.logic.pipeline.Source.*
 import org.rhasspy.mobile.logic.pipeline.TtsResult
-import org.rhasspy.mobile.logic.pipeline.TtsResult.*
+import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
+import org.rhasspy.mobile.logic.pipeline.TtsResult.TtsError
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeaderBitRate
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeaderChannel
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeaderSampleRate
 import org.rhasspy.mobile.platformspecific.timeoutWithDefault
+import org.rhasspy.mobile.resources.MR
 
 /**
  * sends text from Handle and converts it into audio chunks that are returned via TtsResult
@@ -75,7 +81,10 @@ internal class TtsDomain(
                 )
 
             TtsDomainOption.Disabled           ->
-                TtsDisabled(Local)
+                TtsError(
+                    reason = Disabled,
+                    source = Local,
+                )
         }.also {
             domainHistory.addToHistory(it)
         }
@@ -87,14 +96,21 @@ internal class TtsDomain(
     private suspend fun onRhasspy2HermesHttpSynthesize(volume: Float?, siteId: String, handle: Handle): TtsResult {
         logger.d { "onRhasspy2HermesHttpSynthesize for volume $volume and siteId $siteId and handle $handle" }
 
-        if (handle.text == null) return NotSynthesized(Local)
+        if (handle.text == null) return TtsError(
+            reason = Reason.Error(TextWrapperStableStringResource(MR.strings.empty_text.stable)),
+            source = Local,
+        )
 
         return when (val result = rhasspy2HermesConnection.textToSpeech(
             text = handle.text,
             volume = volume,
             siteId = siteId
         )) {
-            is HttpClientResult.HttpClientError -> NotSynthesized(Rhasspy2HermesHttp)
+            is HttpClientResult.HttpClientError -> TtsError(
+                reason = Reason.Error(result.message),
+                source = Rhasspy2HermesHttp,
+            )
+
             is HttpClientResult.Success         -> {
                 Audio(
                     data = flow {
@@ -130,12 +146,18 @@ internal class TtsDomain(
     private suspend fun onRhasspy2HermesMQTTSynthesize(sessionId: String, volume: Float?, siteId: String, handle: Handle): TtsResult {
         logger.d { "onRhasspy2HermesHttpSynthesize for volume $volume and siteId $siteId and handle $handle" }
 
-        if (handle.text == null) return NotSynthesized(Local)
+        if (handle.text == null) return TtsError(
+            reason = Reason.Error(MR.strings.empty_text.stable),
+            source = Local,
+        )
 
         val requestId = uuid4().toString()
 
         val result = mqttConnection.say(sessionId, handle.text, volume, siteId, requestId)
-        if (result is Error) return NotSynthesized(Rhasspy2HermesMqtt)
+        if (result is Error) return TtsError(
+            reason = Reason.Error(result.message),
+            source = Rhasspy2HermesMqtt,
+        )
 
         return mqttConnection.incomingMessages
             .filterIsInstance<PlayResult>()
@@ -143,7 +165,10 @@ internal class TtsDomain(
             .map { mapMqttPlayResult(it) }
             .timeoutWithDefault(
                 timeout = params.rhasspy2HermesMqttTimeout,
-                default = TtsTimeout(Local)
+                default = TtsError(
+                    reason = Reason.Timeout,
+                    source = Local,
+                )
             )
             .first()
     }

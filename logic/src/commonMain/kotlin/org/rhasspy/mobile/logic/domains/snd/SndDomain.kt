@@ -20,9 +20,11 @@ import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
+import org.rhasspy.mobile.logic.pipeline.Reason
 import org.rhasspy.mobile.logic.pipeline.SndAudio.*
 import org.rhasspy.mobile.logic.pipeline.SndResult
-import org.rhasspy.mobile.logic.pipeline.SndResult.*
+import org.rhasspy.mobile.logic.pipeline.SndResult.Played
+import org.rhasspy.mobile.logic.pipeline.SndResult.SndError
 import org.rhasspy.mobile.logic.pipeline.Source.*
 import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
@@ -71,7 +73,11 @@ internal class SndDomain(
             SndDomainOption.Local              -> onLocalPlayAudio(audio)
             SndDomainOption.Rhasspy2HermesHttp -> onRhasspy2HermesHttpPlayAudio(audio)
             SndDomainOption.Rhasspy2HermesMQTT -> onRhasspy2HermesMQTTPlayAudio(audio)
-            SndDomainOption.Disabled           -> PlayDisabled(Local)
+            SndDomainOption.Disabled           ->
+                SndError(
+                    reason = Reason.Disabled,
+                    source = Local,
+                )
         }.also {
             domainHistory.addToHistory(it)
         }
@@ -85,7 +91,10 @@ internal class SndDomain(
 
         val data = withTimeoutOrNull(params.audioTimeout) {
             collectAudioToFile(audio)
-        } ?: return SndTimeout(Local)
+        } ?: return SndError(
+            reason = Reason.Timeout,
+            source = Local,
+        )
 
         audioFocusService.request(Sound)
 
@@ -107,7 +116,10 @@ internal class SndDomain(
 
         val data = withTimeoutOrNull(params.audioTimeout) {
             collectAudioToFile(audio)
-        } ?: return SndTimeout(Local)
+        } ?: return SndError(
+            reason = Reason.Timeout,
+            source = Local,
+        )
 
         httpClientConnection.playWav(
             audioSource = data,
@@ -124,7 +136,10 @@ internal class SndDomain(
 
         val data = withTimeoutOrNull(params.audioTimeout) {
             collectAudioToFile(audio)
-        } ?: return SndTimeout(Local)
+        } ?: return SndError(
+            reason = Reason.Timeout,
+            source = Local,
+        )
 
         val mqttRequestId = uuid4().toString()
 
@@ -143,7 +158,10 @@ internal class SndDomain(
                 Played(Rhasspy2HermesMqtt)
             }.timeoutWithDefault(
                 timeout = params.rhasspy2HermesMqttTimeout,
-                default = NotPlayed(Local),
+                default = SndError(
+                    reason = Reason.Timeout,
+                    source = Local,
+                ),
             )
             .first()
     }

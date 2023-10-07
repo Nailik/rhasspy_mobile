@@ -13,18 +13,12 @@ sealed class ConnectionState {
 
     data object Success : ConnectionState()
 
-    sealed class ErrorState : ConnectionState() {
+    data class ErrorState(val message: TextWrapper) : ConnectionState() {
 
-        class Exception(val exception: kotlin.Exception) : ErrorState()
+        constructor(text: String) : this(TextWrapperString(text))
+        constructor(resource: StableStringResource) : this(TextWrapperStableStringResource(resource))
+        constructor(exception: Exception) : this(TextWrapperString("$exception ${exception.message}"))
 
-        class Error(val information: StableStringResource) : ErrorState()
-
-        fun getText(): TextWrapper {
-            return when (this) {
-                is Error     -> TextWrapperStableStringResource(this.information)
-                is Exception -> TextWrapperString(this.exception.message ?: this.exception.toString())
-            }
-        }
     }
 
 }

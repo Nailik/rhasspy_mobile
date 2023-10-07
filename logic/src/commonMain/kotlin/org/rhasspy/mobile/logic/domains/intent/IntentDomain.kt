@@ -8,6 +8,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.IntentDomainData
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.IntentDomainOption
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
@@ -22,12 +23,14 @@ import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.W
 import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
-import org.rhasspy.mobile.logic.pipeline.HandleResult.HandleTimeout
 import org.rhasspy.mobile.logic.pipeline.IntentResult
-import org.rhasspy.mobile.logic.pipeline.IntentResult.*
+import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
+import org.rhasspy.mobile.logic.pipeline.IntentResult.IntentError
+import org.rhasspy.mobile.logic.pipeline.Reason
 import org.rhasspy.mobile.logic.pipeline.Source.*
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
 import org.rhasspy.mobile.platformspecific.timeoutWithDefault
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult as MqttIntentResult
 
@@ -78,7 +81,10 @@ internal class IntentDomain(
                 )
 
             IntentDomainOption.Disabled           ->
-                IntentDisabled(Local)
+                IntentError(
+                    reason = Reason.Disabled,
+                    source = Local,
+                )
         }.also {
             domainHistory.addToHistory(it)
         }
@@ -93,7 +99,12 @@ internal class IntentDomain(
         logger.d { "awaitIntent for sessionId $sessionId and transcript $transcript" }
 
         return when (val result = rhasspy2HermesConnection.recognizeIntent(transcript.text)) {
-            is HttpClientResult.HttpClientError -> NotRecognized(Rhasspy2HermesHttp)
+            is HttpClientResult.HttpClientError ->
+                IntentError(
+                    reason = Reason.Error(result.message),
+                    source = Rhasspy2HermesHttp,
+                )
+
             is HttpClientResult.Success         -> {
                 val intentName = readIntentNameFromJson(result.data)
 
@@ -101,7 +112,7 @@ internal class IntentDomain(
                     return Intent(
                         intentName = intentName,
                         intent = result.data,
-                        source = Rhasspy2HermesHttp
+                        source = Rhasspy2HermesHttp,
                     )
                 }
 
@@ -139,7 +150,10 @@ internal class IntentDomain(
                         },
                 ).timeoutWithDefault(
                     timeout = params.timeout,
-                    default = HandleTimeout(Local),
+                    default = IntentError(
+                        reason = Reason.Timeout,
+                        source = Local,
+                    ),
                 ).first()
             }
         }
@@ -155,7 +169,10 @@ internal class IntentDomain(
             sessionId = sessionId,
             text = transcript.text,
         )
-        if (result is Error) return NotRecognized(Rhasspy2HermesMqtt)
+        if (result is Error) return IntentError(
+            reason = Reason.Error(result.message),
+            source = Rhasspy2HermesMqtt,
+        )
 
         return mqttConnection.incomingMessages
             .filterIsInstance<MqttIntentResult>()
@@ -170,11 +187,17 @@ internal class IntentDomain(
                         )
 
                     is IntentNotRecognized     ->
-                        NotRecognized(source = Rhasspy2HermesMqtt)
+                        IntentError(
+                            reason = Reason.Error(MR.strings.intent_not_recognized.stable),
+                            source = Rhasspy2HermesMqtt,
+                        )
                 }
             }.timeoutWithDefault(
                 timeout = params.timeout,
-                default = HandleTimeout(Local),
+                default = IntentError(
+                    reason = Reason.Timeout,
+                    source = Local,
+                ),
             ).first()
     }
 

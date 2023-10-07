@@ -16,13 +16,13 @@ import org.rhasspy.mobile.logic.domains.mic.MicDomainState
 import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
-import org.rhasspy.mobile.logic.pipeline.HandleResult.*
-import org.rhasspy.mobile.logic.pipeline.IntentResult.IntentDisabled
-import org.rhasspy.mobile.logic.pipeline.IntentResult.NotRecognized
+import org.rhasspy.mobile.logic.pipeline.HandleResult.HandleError
+import org.rhasspy.mobile.logic.pipeline.IntentResult.IntentError
 import org.rhasspy.mobile.logic.pipeline.PipelineResult.End
-import org.rhasspy.mobile.logic.pipeline.SndResult.*
-import org.rhasspy.mobile.logic.pipeline.TranscriptResult.*
-import org.rhasspy.mobile.logic.pipeline.TtsResult.*
+import org.rhasspy.mobile.logic.pipeline.SndResult.Played
+import org.rhasspy.mobile.logic.pipeline.SndResult.SndError
+import org.rhasspy.mobile.logic.pipeline.TranscriptResult.TranscriptError
+import org.rhasspy.mobile.logic.pipeline.TtsResult.TtsError
 import org.rhasspy.mobile.logic.pipeline.impls.PipelineDisabled
 import org.rhasspy.mobile.logic.pipeline.impls.PipelineLocal
 import org.rhasspy.mobile.logic.pipeline.impls.PipelineMqtt
@@ -123,31 +123,22 @@ internal class PipelineManager(
         pipelineJob = pipelineScope.launch {
             when (getPipeline(domains).runPipeline(wakeResult)) {
                 is End,
-                is HandleDisabled,
-                is IntentDisabled,
-                is PlayDisabled,
-                is Played,
-                is TtsDisabled,
-                is TranscriptDisabled -> {
+                is Played   -> {
                     //Success: indication idle
                     indication.onIdle()
                 }
 
-                is NotHandled,
-                is HandleTimeout,
-                is NotPlayed,
-                is NotRecognized,
-                is NotSynthesized,
+                is HandleError,
+                is IntentError,
+                is SndError,
                 is TranscriptError,
-                is SndTimeout,
-                is TtsTimeout,
-                is TranscriptTimeout  -> {
+                is TtsError -> {
                     //Error: indication error
                     indication.onIdle()
                     indication.onError()
                 }
-
             }
+
             awaitPipelineStart()
         }
     }

@@ -10,9 +10,10 @@ import org.rhasspy.mobile.data.service.option.VadDomainOption.Local
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
+import org.rhasspy.mobile.logic.pipeline.Reason
 import org.rhasspy.mobile.logic.pipeline.Source
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd
-import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VadDisabled
+import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VadError
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VoiceStopped
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceStart
 
@@ -80,7 +81,10 @@ internal class VadDomain(
                 }.first()
             }
 
-            Disabled -> VadDisabled(Source.Local)
+            Disabled -> VadError(
+                reason = Reason.Disabled,
+                source = Source.Local,
+            )
         }
     }
 

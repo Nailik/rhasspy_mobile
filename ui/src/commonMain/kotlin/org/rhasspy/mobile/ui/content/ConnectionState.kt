@@ -64,7 +64,7 @@ fun ConnectionStateHeaderItem(
             text = { ConnectionStateText(connectionState) },
             secondaryText = {
                 when (val state = connectionState) {
-                    is ErrorState -> Text(state.getText())
+                    is ErrorState -> Text(state.message)
                     else          -> Unit
                 }
             }

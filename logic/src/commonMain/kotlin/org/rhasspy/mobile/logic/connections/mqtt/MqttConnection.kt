@@ -19,9 +19,8 @@ import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ConnectionState
-import org.rhasspy.mobile.data.service.ConnectionState.Disabled
-import org.rhasspy.mobile.data.service.ConnectionState.ErrorState.Error
-import org.rhasspy.mobile.data.service.ConnectionState.Success
+import org.rhasspy.mobile.data.service.ConnectionState.*
+import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperStableStringResource
 import org.rhasspy.mobile.logic.Source
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.*
@@ -135,13 +134,13 @@ internal class MqttConnection(
                     } catch (exception: Exception) {
                         //start error
                         logger.e(exception) { "client connect error" }
-                        connectionState.value = ConnectionState.ErrorState.Exception(exception)
+                        connectionState.value = ErrorState(exception)
                     }
                 }
             } catch (exception: Exception) {
                 //start error
                 logger.e(exception) { "client initialization error" }
-                connectionState.value = ConnectionState.ErrorState.Exception(exception)
+                connectionState.value = ErrorState(exception)
             }
         } else {
             connectionState.value = Disabled
@@ -194,7 +193,7 @@ internal class MqttConnection(
                     logger.e { "connectClient error $error" }
                     MqttConnectionStateType.fromMqttStatus(error.statusCode).connectionState
                 } ?: run {
-                    if (it.isConnected.value) Success else Error(MR.strings.notConnected.stable)
+                    if (it.isConnected.value) Success else ErrorState(TextWrapperStableStringResource(MR.strings.notConnected.stable))
                 }
             } else {
                 Success
@@ -353,18 +352,22 @@ internal class MqttConnection(
                     }
                 } ?: run {
                     logger.a { "mqttClient not initialized" }
-                    Error(MR.strings.notInitialized.stable)
+                    ErrorState(MR.strings.notInitialized.stable)
                 }
 
             } else {
-                Error(MR.strings.notEnabled.stable)
+                ErrorState(MR.strings.notEnabled.stable)
             }
         } catch (exception: Exception) {
-            ConnectionState.ErrorState.Exception(exception)
+            ErrorState(exception)
         }.let {
             connectionState.value = it
 
-            if (it == Success) MqttResult.Success else MqttResult.Error
+            when (it) {
+                Disabled      -> MqttResult.Error(MR.strings.disabled.stable)
+                is ErrorState -> MqttResult.Error(it.message)
+                Success       -> MqttResult.Success
+            }
         }
     }
 

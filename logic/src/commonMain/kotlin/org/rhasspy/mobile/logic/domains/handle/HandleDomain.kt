@@ -16,8 +16,10 @@ import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.W
 import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.pipeline.HandleResult
-import org.rhasspy.mobile.logic.pipeline.HandleResult.*
+import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
+import org.rhasspy.mobile.logic.pipeline.HandleResult.HandleError
 import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
+import org.rhasspy.mobile.logic.pipeline.Reason
 import org.rhasspy.mobile.logic.pipeline.Source.*
 import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -59,7 +61,11 @@ internal class HandleDomain(
 
         return when (params.option) {
             HandleDomainOption.HomeAssistant -> awaitHomeAssistantHandle(sessionId, intent)
-            HandleDomainOption.Disabled      -> HandleDisabled(Local)
+            HandleDomainOption.Disabled      ->
+                HandleError(
+                    reason = Reason.Disabled,
+                    source = Local,
+                )
         }.also {
             domainHistory.addToHistory(it)
         }
@@ -81,10 +87,15 @@ internal class HandleDomain(
     private suspend fun awaitHomeAssistantIntentHandle(intent: Intent): HandleResult {
         logger.d { "awaitHomeAssistantIntentHandle for intent $intent" }
         return when (val result = homeAssistantConnection.awaitIntent(intent.intentName, intent.intent)) {
-            is HttpClientResult.HttpClientError -> NotHandled(HomeAssistant)
+            is HttpClientResult.HttpClientError ->
+                HandleError(
+                    reason = Reason.Error(result.message),
+                    source = HomeAssistant,
+                )
+
             is HttpClientResult.Success         ->
                 Handle(
-                    text = result.data ?: return NotHandled(source = HomeAssistant),
+                    text = result.data,
                     volume = null,
                     source = HomeAssistant
                 )
@@ -132,7 +143,10 @@ internal class HandleDomain(
                 },
         ).timeoutWithDefault(
             timeout = params.homeAssistantEventTimeout,
-            default = HandleTimeout(Local),
+            default = HandleError(
+                reason = Reason.Timeout,
+                source = Local,
+            ),
         ).first()
     }
 

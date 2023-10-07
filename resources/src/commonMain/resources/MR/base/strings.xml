@@ -348,6 +348,7 @@
     <string name="scan_qr_code_failed">Unable to scan QR-Code</string>
     <string name="intentHandlingTimeout">Intent Handling timeout (s)</string>
     <string name="handleWithRecognition">Handle Intent with Recognition</string>
+    <string name="empty_text">empty text</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>
@@ -522,7 +523,7 @@
     <string name="asr_error">AsrError</string>
     <string name="asr_text_captured">AsrTextCaptured</string>
     <string name="end_session">EndSession</string>
-    <string name="intent_recognition_error">IntentRecognitionError</string>
+    <string name="intent_not_recognized">intent not recognized</string>
     <string name="intent_recognition_result">IntentRecognitionResult</string>
     <string name="play_audio">PlayAudio</string>
     <string name="play_finished">PlayFinished</string>

@@ -6,7 +6,9 @@ import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
 import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.AsrDomainData
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AsrDomainOption
+import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperStableStringResource
 import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult
@@ -22,16 +24,16 @@ import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
-import org.rhasspy.mobile.logic.pipeline.Source
-import org.rhasspy.mobile.logic.pipeline.Source.Local
-import org.rhasspy.mobile.logic.pipeline.Source.Rhasspy2HermesMqtt
+import org.rhasspy.mobile.logic.pipeline.Reason.*
+import org.rhasspy.mobile.logic.pipeline.Source.*
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult
-import org.rhasspy.mobile.logic.pipeline.TranscriptResult.*
+import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
+import org.rhasspy.mobile.logic.pipeline.TranscriptResult.TranscriptError
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd
-import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VadTimeout
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VoiceStopped
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceStart
 import org.rhasspy.mobile.platformspecific.timeoutWithDefault
+import org.rhasspy.mobile.resources.MR
 
 /**
  * AsrDomain tries to detect text within a Flow of MicAudioChunk Events using the defined option
@@ -98,18 +100,21 @@ internal class AsrDomain(
             AsrDomainOption.Rhasspy2HermesHttp ->
                 awaitRhasspy2HermesHttpTranscript(
                     audioStream = audioStream,
-                    awaitVoiceStopped = awaitVoiceStopped
+                    awaitVoiceStopped = awaitVoiceStopped,
                 )
 
             AsrDomainOption.Rhasspy2HermesMQTT ->
                 awaitRhasspy2HermesMQTTTranscript(
                     sessionId = sessionId,
                     audioStream = audioStream,
-                    awaitVoiceStopped = awaitVoiceStopped
+                    awaitVoiceStopped = awaitVoiceStopped,
                 )
 
-            AsrDomainOption.Disabled ->
-                TranscriptDisabled(Local)
+            AsrDomainOption.Disabled           ->
+                TranscriptError(
+                    reason = Disabled,
+                    source = Local,
+                )
         }.also {
             audioFocus.abandon(Record)
             isRecordingState.value = false
@@ -137,12 +142,15 @@ internal class AsrDomain(
         merge(
             userConnection.incomingMessages
                 .filterIsInstance<StartStopRhasspy>()
-                .map { VoiceStopped(Source.User) },
+                .map { VoiceStopped(User) },
             flow { emit(awaitVoiceStopped(audioStream)) }
                 .filter { it is VoiceStopped }
         ).timeoutWithDefault(
             timeout = params.voiceTimeout,
-            default = VadTimeout(Local),
+            default = TranscriptError(
+                reason = Timeout,
+                source = Local,
+            ),
         ).first().also {
             domainHistory.addToHistory(it)
         }
@@ -151,8 +159,16 @@ internal class AsrDomain(
         audioFileWriter?.closeFile()
 
         return when (val result = rhasspy2HermesConnection.speechToText(fileStorage.speechToTextAudioFile)) {
-            is HttpClientResult.HttpClientError -> TranscriptError(source = Source.Rhasspy2HermesHttp)
-            is HttpClientResult.Success         -> Transcript(text = result.data, source = Source.Rhasspy2HermesHttp)
+            is HttpClientResult.HttpClientError ->
+                TranscriptError(
+                    reason = Error(information = result.message),
+                    source = Rhasspy2HermesHttp,
+                )
+
+            is HttpClientResult.Success         -> Transcript(
+                text = result.data,
+                source = Rhasspy2HermesHttp,
+            )
         }
     }
 
@@ -174,13 +190,17 @@ internal class AsrDomain(
         logger.d { "awaitRhasspy2HermesMQTTTranscript for session $sessionId" }
 
         when (
-            mqttConnection.startListening(
+            val result = mqttConnection.startListening(
                 sessionId = sessionId,
                 isUseSilenceDetection = params.isUseSpeechToTextMqttSilenceDetection,
             )
         ) {
-            MqttResult.Error -> return TranscriptError(Rhasspy2HermesMqtt)
-            MqttResult.Success -> Unit
+            is MqttResult.Error   -> return TranscriptError(
+                reason = Error(result.message),
+                source = Rhasspy2HermesMqtt,
+            )
+
+            is MqttResult.Success -> Unit
         }
 
         val sendDataJob = scope.launch {
@@ -203,12 +223,15 @@ internal class AsrDomain(
             merge(
                 userConnection.incomingMessages
                     .filterIsInstance<StartStopRhasspy>()
-                    .map { VoiceStopped(Source.User) },
+                    .map { VoiceStopped(User) },
                 flow { emit(awaitVoiceStopped(audioStream)) }
                     .filter { it is VoiceStopped }
             ).timeoutWithDefault(
                 timeout = params.voiceTimeout,
-                default = VadTimeout(Local),
+                default = TranscriptError(
+                    reason = Timeout,
+                    source = Local,
+                ),
             ).first().also {
                 domainHistory.addToHistory(it)
             }
@@ -226,16 +249,25 @@ internal class AsrDomain(
             .map {
                 when (it) {
                     is AsrTextCaptured -> Transcript(
-                        text = it.text ?: return@map TranscriptError(Rhasspy2HermesMqtt),
+                        text = it.text ?: return@map TranscriptError(
+                            reason = Error(TextWrapperStableStringResource(MR.strings.asr_error.stable)),
+                            source = Rhasspy2HermesMqtt,
+                        ),
                         source = Rhasspy2HermesMqtt
                     )
 
-                    is AsrError        -> TranscriptError(Rhasspy2HermesMqtt)
+                    is AsrError        -> TranscriptError(
+                        reason = Error(TextWrapperStableStringResource(MR.strings.asr_error.stable)),
+                        source = Rhasspy2HermesMqtt,
+                    )
                 }
             }
             .timeoutWithDefault(
                 timeout = params.mqttResultTimeout,
-                default = TranscriptTimeout(Rhasspy2HermesMqtt),
+                default = TranscriptError(
+                    reason = Timeout,
+                    source = Local
+                ),
             )
             .first()
             .also {

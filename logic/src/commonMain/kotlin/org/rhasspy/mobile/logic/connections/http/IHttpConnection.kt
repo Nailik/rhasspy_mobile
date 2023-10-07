@@ -16,16 +16,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.connection.HttpClientErrorType
 import org.rhasspy.mobile.data.connection.HttpClientResult
-import org.rhasspy.mobile.data.connection.HttpClientResult.HttpClientError.KnownError
-import org.rhasspy.mobile.data.connection.HttpClientResult.HttpClientError.UnknownError
+import org.rhasspy.mobile.data.connection.HttpClientResult.HttpClientError
 import org.rhasspy.mobile.data.connection.HttpConnectionData
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.data.service.ConnectionState.*
+import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperStableStringResource
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.ktor.configureEngine
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ISetting
 
 internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) : IConnection, KoinComponent {
@@ -72,7 +73,7 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
             }
             Success
         } catch (exception: Exception) {
-            ErrorState.Exception(exception = exception)
+            ErrorState(exception)
         }
     }
 
@@ -91,7 +92,7 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
             testConnection()
         } catch (exception: Exception) {
             logger.e(exception) { "error on building client" }
-            connectionState.value = ErrorState.Exception(exception = exception)
+            connectionState.value = ErrorState(exception)
         }
     }
 
@@ -133,10 +134,10 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
             }
         } ?: run {
             logger.a { "post client not initialized" }
-            UnknownError(Exception())
+            HttpClientError(TextWrapperStableStringResource(MR.strings.unknown_error.stable))
         }
 
-        connectionState.value = result.toServiceState()
+        connectionState.value = result.toConnectionState()
 
         return result
     }
@@ -147,24 +148,24 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
     protected fun <T> mapError(exception: Exception): HttpClientResult<T> {
         val type = if (exception::class.simpleName == "IllegalArgumentException") {
             if (exception.message == "Invalid TLS record type code: 72") {
-                HttpClientErrorType.InvalidTLSRecordType
+                MR.strings.invalid_tls_record_type.stable
             } else {
-                HttpClientErrorType.IllegalArgumentError
+                MR.strings.illegal_argument_exception.stable
             }
         } else if (exception::class.simpleName == "UnresolvedAddressException") {
-            HttpClientErrorType.UnresolvedAddressError
+            MR.strings.unresolved_address_exception.stable
         } else if (exception::class.simpleName == "ConnectException") {
             if (exception.message == "Connection refused") {
-                HttpClientErrorType.ConnectionRefused
+                MR.strings.connection_refused.stable
             } else {
-                HttpClientErrorType.ConnectError
+                MR.strings.connection_exception.stable
             }
-            HttpClientErrorType.UnresolvedAddressError
+            MR.strings.unresolved_address_exception.stable
         } else {
             null
         }
 
-        return if (type == null) UnknownError(exception) else KnownError(type)
+        return HttpClientError(type ?: return HttpClientError(exception))
     }
 
 

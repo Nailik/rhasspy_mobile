@@ -164,7 +164,7 @@ private fun ConnectionsItem(
         text = { Text(MR.strings.connections.stable) },
         secondaryText = { Text(MR.strings.connections_information.stable) },
         trailing = if (connectionsItemViewState.hasError) {
-            { EventStateIconTinted(ErrorState.Error(MR.strings.error.stable)) }
+            { EventStateIconTinted(ErrorState(MR.strings.error.stable)) }
         } else null
     )
 

@@ -342,6 +342,7 @@
     <string name="scan_qr_code_failed">QR-Code konnte nicht gescannt werden</string>
     <string name="intentHandlingTimeout">Zeitüberschreitung bei Intent verarbeitung (Sekunden)</string>
     <string name="handleWithRecognition">Verarbeite Intent mit Erkennung</string>
+    <string name="empty_text">Text leer</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>
@@ -515,8 +516,7 @@
     <!-- DialogServiceMiddlewareAction -->
     <string name="asr_error">AsrError</string>
     <string name="asr_text_captured">AsrTextCaptured</string>
-    <string name="end_session">EndSession</string>
-    <string name="intent_recognition_error">IntentRecognitionError</string>
+    <string name="intent_not_recognized">Intent wurde nicht erkannt</string>
     <string name="intent_recognition_result">IntentRecognitionResult</string>
     <string name="play_audio">PlayAudio</string>
     <string name="play_finished">PlayFinished</string>

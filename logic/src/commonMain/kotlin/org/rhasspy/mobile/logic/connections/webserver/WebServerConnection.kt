@@ -117,7 +117,7 @@ internal class WebServerConnection(
             logger.d { "initialization" }
 
             if (params.isSSLEnabled && !params.keyStoreFile?.let { Path.commonInternalFilePath(nativeApplication, it) }.commonExists()) {
-                connectionState.value = ErrorState.Error(MR.strings.certificate_missing.stable)
+                connectionState.value = ErrorState(MR.strings.certificate_missing.stable)
                 return
             }
 
@@ -141,7 +141,7 @@ internal class WebServerConnection(
             } catch (exception: Exception) {
                 //start error
                 logger.a(exception) { "initialization error" }
-                connectionState.value = ErrorState.Exception(exception)
+                connectionState.value = ErrorState(exception)
             }
         } else {
             connectionState.value = Disabled
@@ -255,7 +255,7 @@ internal class WebServerConnection(
 
         } catch (exception: Exception) {
             logger.e(exception) { "evaluateCall error" }
-            ErrorState.Exception(exception)
+            ErrorState(exception)
         }
     }
 

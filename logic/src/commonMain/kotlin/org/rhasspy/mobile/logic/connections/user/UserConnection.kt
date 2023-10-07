@@ -20,8 +20,8 @@ import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.mic.MicDomainState
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
+import org.rhasspy.mobile.logic.pipeline.DomainResult
 import org.rhasspy.mobile.logic.pipeline.IPipelineManager
-import org.rhasspy.mobile.logic.pipeline.PipelineEvent
 
 interface IUserConnection {
 
@@ -62,7 +62,7 @@ interface IUserConnection {
     val micDomainRecordingState: StateFlow<Boolean>
     val asrDomainRecordingState: StateFlow<Boolean>
 
-    val pipelineHistory: StateFlow<List<PipelineEvent>>
+    val pipelineHistory: StateFlow<List<DomainResult>>
 }
 
 internal class UserConnection(
@@ -96,7 +96,7 @@ internal class UserConnection(
 
     override val micDomainRecordingState get() = pipelineManager.micDomainRecordingStateFlow
     override val asrDomainRecordingState get() = pipelineManager.asrDomainRecordingStateFlow
-    override val pipelineHistory: StateFlow<List<PipelineEvent>> = domainHistory.historyState
+    override val pipelineHistory: StateFlow<List<DomainResult>> = domainHistory.historyState
 
     override val isPlayingState: StateFlow<Boolean> = localAudioService.isPlayingState
 

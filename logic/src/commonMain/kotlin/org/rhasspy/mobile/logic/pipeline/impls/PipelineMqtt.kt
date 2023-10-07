@@ -7,6 +7,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.*
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrError
@@ -14,18 +15,16 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.A
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentNotRecognized
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentRecognitionResult
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
-import org.rhasspy.mobile.logic.pipeline.DomainBundle
+import org.rhasspy.mobile.logic.pipeline.*
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
-import org.rhasspy.mobile.logic.pipeline.IPipeline
 import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
-import org.rhasspy.mobile.logic.pipeline.IntentResult.NotRecognized
-import org.rhasspy.mobile.logic.pipeline.PipelineResult
+import org.rhasspy.mobile.logic.pipeline.IntentResult.IntentError
 import org.rhasspy.mobile.logic.pipeline.PipelineResult.End
 import org.rhasspy.mobile.logic.pipeline.Source.Rhasspy2HermesMqtt
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.TranscriptError
 import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
-import org.rhasspy.mobile.logic.pipeline.WakeResult
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
@@ -65,10 +64,17 @@ internal class PipelineMqtt(
             .filter { it.sessionId == sessionId }
             .map {
                 when (it) {
-                    is AsrError                -> TranscriptError(Rhasspy2HermesMqtt)
+                    is AsrError                -> TranscriptError(
+                        reason = Reason.Error(MR.strings.asr_error.stable),
+                        source = Rhasspy2HermesMqtt,
+                    )
+
                     is AsrTextCaptured         -> onAsrTextCaptured(sessionId, it.text ?: "")
                     is EndSession              -> End(Rhasspy2HermesMqtt)
-                    is IntentNotRecognized     -> NotRecognized(Rhasspy2HermesMqtt)
+                    is IntentNotRecognized     -> IntentError(
+                        reason = Reason.Error(MR.strings.intent_not_recognized.stable),
+                        source = Rhasspy2HermesMqtt,
+                    )
                     is IntentRecognitionResult -> onIntentRecognitionResult(sessionId, it.intentName, it.intent)
                     is Say                     -> onSay(sessionId, it.text, it.volume)
                     is SessionEnded            -> End(Rhasspy2HermesMqtt)
