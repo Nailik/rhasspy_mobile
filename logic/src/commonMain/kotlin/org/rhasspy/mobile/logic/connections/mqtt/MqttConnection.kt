@@ -39,7 +39,6 @@ import org.rhasspy.mobile.platformspecific.extensions.commonSource
 import org.rhasspy.mobile.platformspecific.mqtt.*
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.settings.ConfigurationSetting
 import kotlin.random.Random
 
 internal interface IMqttConnection : IConnection {
@@ -220,7 +219,7 @@ internal class MqttConnection(
     }
 
     private fun onMessageInternalReceived(topic: String, message: MqttMessage) {
-        logger.d { "onMessageInternalReceived id ${message.msgId} $topic" }
+        logger.d { "onMessageInternalReceived id ${message.msgId} $topic different from id $id" }
 
         if (message.msgId == id) {
             //ignore all messages that i have send
@@ -239,65 +238,71 @@ internal class MqttConnection(
      * returns true when message was consumed
      */
     override suspend fun onMessageReceived(topic: String, payload: ByteArray) {
-        logger.d { "compareTopic $topic" }
+        try {
 
-        //topic matches enum
-        getMqttTopic(topic)?.also { mqttTopic ->
-            logger.d { "resulting topic $topic" }
+            //topic matches enum
+            getMqttTopic(topic)?.also { mqttTopic ->
 
-            if (!mqttTopic.topic.contains(MqttTopicPlaceholder.SiteId.toString())) {
-                //site id in payload
-                //decode json object
-                val jsonObject = Json.decodeFromString<JsonObject>(payload.decodeToString())
-                //validate site id
-                if (jsonObject.isThisSiteId()) {
-                    when (mqttTopic) {
-                        MqttTopicsSubscription.StartSession            -> startSession(jsonObject)
-                        MqttTopicsSubscription.EndSession              -> endSession(jsonObject)
-                        MqttTopicsSubscription.SessionStarted          -> sessionStarted(jsonObject)
-                        MqttTopicsSubscription.SessionEnded            -> sessionEnded(jsonObject)
-                        MqttTopicsSubscription.HotWordToggleOn         -> hotWordToggleOn()
-                        MqttTopicsSubscription.HotWordToggleOff        -> hotWordToggleOff()
-                        MqttTopicsSubscription.AsrStartListening       -> startListening(jsonObject)
-                        MqttTopicsSubscription.AsrStopListening        -> stopListening(jsonObject)
-                        MqttTopicsSubscription.AsrTextCaptured         -> asrTextCaptured(jsonObject)
-                        MqttTopicsSubscription.AsrError                -> asrError(jsonObject)
-                        MqttTopicsSubscription.IntentNotRecognized     -> intentNotRecognized(jsonObject)
-                        MqttTopicsSubscription.IntentHandlingToggleOn  -> intentHandlingToggleOn()
-                        MqttTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff()
-                        MqttTopicsSubscription.AudioOutputToggleOn     -> audioOutputToggleOn()
-                        MqttTopicsSubscription.AudioOutputToggleOff    -> audioOutputToggleOff()
-                        MqttTopicsSubscription.HotWordDetected         -> hotWordDetectedCalled(topic)
-                        MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(jsonObject)
-                        MqttTopicsSubscription.SetVolume               -> setVolume(jsonObject)
-                        MqttTopicsSubscription.Say                     -> say(jsonObject)
-                        MqttTopicsSubscription.PlayBytes,
-                        MqttTopicsSubscription.PlayFinished            -> {
-                            logger.d { "isThisSiteId mqttTopic notFound $topic" }
+                if (!mqttTopic.topic.contains(MqttTopicPlaceholder.SiteId.toString())) {
+                    //site id in payload
+                    //decode json object
+                    val jsonObject = Json.decodeFromString<JsonObject>(payload.decodeToString())
+                    //validate site id
+                    if (jsonObject.isThisSiteId()) {
+                        when (mqttTopic) {
+                            MqttTopicsSubscription.StartSession            -> startSession(jsonObject)
+                            MqttTopicsSubscription.EndSession              -> endSession(jsonObject)
+                            MqttTopicsSubscription.SessionStarted          -> sessionStarted(jsonObject)
+                            MqttTopicsSubscription.SessionEnded            -> sessionEnded(jsonObject)
+                            MqttTopicsSubscription.HotWordToggleOn         -> hotWordToggleOn()
+                            MqttTopicsSubscription.HotWordToggleOff        -> hotWordToggleOff()
+                            MqttTopicsSubscription.AsrStartListening       -> startListening(jsonObject)
+                            MqttTopicsSubscription.AsrStopListening        -> stopListening(jsonObject)
+                            MqttTopicsSubscription.AsrTextCaptured         -> asrTextCaptured(jsonObject)
+                            MqttTopicsSubscription.AsrError                -> asrError(jsonObject)
+                            MqttTopicsSubscription.IntentNotRecognized     -> intentNotRecognized(jsonObject)
+                            MqttTopicsSubscription.IntentHandlingToggleOn  -> intentHandlingToggleOn()
+                            MqttTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff()
+                            MqttTopicsSubscription.AudioOutputToggleOn     -> audioOutputToggleOn()
+                            MqttTopicsSubscription.AudioOutputToggleOff    -> audioOutputToggleOff()
+                            MqttTopicsSubscription.HotWordDetected         -> hotWordDetectedCalled(topic)
+                            MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(jsonObject)
+                            MqttTopicsSubscription.SetVolume               -> setVolume(jsonObject)
+                            MqttTopicsSubscription.Say                     -> say(jsonObject)
+                            MqttTopicsSubscription.PlayBytes,
+                            MqttTopicsSubscription.PlayFinished            -> {
+                                logger.d { "isThisSiteId mqttTopic notFound $topic" }
+                            }
+                        }
+                    } else {
+                        when (mqttTopic) {
+                            MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
+                            MqttTopicsSubscription.AsrError        -> asrError(jsonObject)
+                            else                                   -> {
+                                logger.d { "isNotThisSiteId mqttTopic notFound $topic $jsonObject" }
+                            }
                         }
                     }
                 } else {
                     when (mqttTopic) {
-                        MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
-                        MqttTopicsSubscription.AsrError        -> asrError(jsonObject)
-                        else                                   -> {
-                            logger.d { "isNotThisSiteId mqttTopic notFound $topic $jsonObject" }
+                        MqttTopicsSubscription.PlayBytes    -> playBytes(payload, mqttTopic.topic.substringAfterLast("/"))
+                        MqttTopicsSubscription.PlayFinished -> {
+                            val id: String = try {
+                                Json.decodeFromString<JsonObject>(payload.decodeToString()).getId() ?: ""
+                            } catch (_: Exception) {
+                                ""
+                            }
+                            playFinishedCall(id)
+                        }
+
+                        else                                -> {
+                            logger.d { "isNotThisSiteId mqttTopic notFound $topic" }
                         }
                     }
                 }
-            } else {
-                when (mqttTopic) {
-                    MqttTopicsSubscription.PlayBytes    -> playBytes(payload, mqttTopic.topic.substringAfterLast("/"))
-                    MqttTopicsSubscription.PlayFinished -> {
-                        val jsonObject = Json.decodeFromString<JsonObject>(payload.decodeToString())
-                        playFinishedCall(jsonObject.getId() ?: "")
-                    }
-
-                    else                                -> {
-                        logger.d { "isNotThisSiteId mqttTopic notFound $topic" }
-                    }
-                }
             }
+        } catch (exception: Exception) {
+            logger.e(exception) { "mqtt topic received" }
         }
     }
 
@@ -508,7 +513,7 @@ internal class MqttConnection(
         val dataToSend = data.appendWavHeader(
             sampleRate = sampleRate.value,
             bitRate = encoding.bitRate,
-            channel = channel.value,
+            channel = channel.count,
         )
 
         return publishMessage(
@@ -534,7 +539,7 @@ internal class MqttConnection(
         val dataToSend = data.appendWavHeader(
             sampleRate = sampleRate.value,
             bitRate = encoding.bitRate,
-            channel = channel.value,
+            channel = channel.count,
         )
 
         return publishMessage(
@@ -948,11 +953,13 @@ internal class MqttConnection(
      * Response to hermes/audioServer/<siteId>/playBytes/<requestId>
      * siteId: string - Hermes site ID (part of topic)
      */
-    private suspend fun playFinished() {
+    private suspend fun playFinished(id: String) {
         publishMessage(
             MqttTopicsPublish.AudioOutputPlayFinished.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId),
-            MqttMessage(ByteArray(0))
+            createMqttMessage {
+                put(MqttParams.Id, id)
+            },
         )
     }
 
@@ -999,7 +1006,6 @@ internal class MqttConnection(
         this.replace(key.placeholder, value)
 
     private fun String.matches(regex: String): Boolean {
-        println("match topic $this with $regex")
         return this
             .replace("/", "\\/") //escape slashes
             .replace("+", ".*") //replace wildcard with regex text
@@ -1027,7 +1033,7 @@ internal class MqttConnection(
         }
     }
 
-    override fun notify(sessionId: String?, result: DomainResult) {
+    override fun notify(sessionId: String?, result: DomainResult) { //TODO #466 id's into result
         if (result.source == Source.Rhasspy2HermesMqtt) return
 
         scope.launch {
@@ -1037,20 +1043,20 @@ internal class MqttConnection(
                 is IntentResult.Intent              -> Unit
                 is IntentResult.IntentError         -> intentNotRecognized(sessionId ?: return@launch)
                 is PipelineResult.End               -> sessionEnded(sessionId ?: return@launch)
-                is SndResult.SndError               -> playFinished()
+                is SndResult.SndError               -> playFinished(sessionId ?: return@launch)
                 is TranscriptResult.TranscriptError -> asrError(sessionId ?: return@launch)
                 is TtsResult.TtsError               -> Unit
                 is VadResult.VoiceEnd.VadError      -> Unit
-                is SndResult.Played                 -> playFinished()
+                is SndResult.Played                 -> playFinished(sessionId ?: return@launch)
                 is SndAudio.AudioChunkEvent         -> Unit
                 is SndAudio.AudioStartEvent         -> Unit
                 is SndAudio.AudioStopEvent          -> Unit
                 is TranscriptResult.Transcript      -> asrTextCaptured(sessionId ?: return@launch, result.text)
                 is TtsResult.Audio                  -> Unit
-                is VadResult.VoiceEnd.VoiceStopped  -> stopListening(sessionId ?: return@launch)
-                is VadResult.VoiceStart             -> startListening(sessionId ?: return@launch, ConfigurationSetting.asrDomainData.value.isUseSpeechToTextMqttSilenceDetection)
+                is VadResult.VoiceEnd.VoiceStopped  -> Unit //TODO stopListening(sessionId ?: return@launch)
+                is VadResult.VoiceStart             -> Unit //TODO startListening(sessionId ?: return@launch, ConfigurationSetting.asrDomainData.value.isUseSpeechToTextMqttSilenceDetection)
                 is WakeResult                       -> hotWordDetected(result.name.toString())
-                is PipelineStarted                  -> sessionStarted(sessionId ?: return@launch)
+                is PipelineStarted                  -> Unit //sessionStarted(sessionId ?: return@launch)
             }
         }
 

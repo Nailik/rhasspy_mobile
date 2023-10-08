@@ -149,6 +149,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
             read(tempBufferSize)
 
             if (isAutoPauseOnMediaPlayback) {
+                //TODO #466 issue when the app itself is playing audio
                 audioPlaybackCallback.register()
             }
 

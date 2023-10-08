@@ -88,7 +88,7 @@ internal class AsrDomain(
         audioFocus.request(Record)
 
         //wait for voice to start
-        awaitVoiceStart(sessionId, audioStream)
+        awaitVoiceStart(sessionId, audioStream) //TODO inform that request from mqtt
 
         //await result
         return when (params.option) {
@@ -132,8 +132,7 @@ internal class AsrDomain(
 
         val saveDataJob = scope.launch {
             audioStream.collectLatest { chunk ->
-                getFileWriter(chunk)
-                audioFileWriter?.writeToFile(chunk.data)
+                getFileWriter(chunk).writeToFile(chunk.data)
             }
         }
 
@@ -141,6 +140,7 @@ internal class AsrDomain(
 
         saveDataJob.cancelAndJoin()
         audioFileWriter?.closeFile()
+        audioFileWriter = null
 
         return when (val result = rhasspy2HermesConnection.speechToText(fileStorage.speechToTextAudioFile)) {
             is HttpClientResult.HttpClientError ->
@@ -183,8 +183,7 @@ internal class AsrDomain(
                         channel = channel,
                         data = data,
                     )
-                    getFileWriter(chunk)
-                    audioFileWriter?.writeToFile(chunk.data)
+                    getFileWriter(chunk).writeToFile(chunk.data)
                 }
             }
         }
@@ -225,6 +224,7 @@ internal class AsrDomain(
                 sendDataJob.cancelAndJoin()
                 awaitVoiceStoppedJob.cancelAndJoin()
                 audioFileWriter?.closeFile()
+                audioFileWriter = null
             }
     }
 
@@ -234,6 +234,7 @@ internal class AsrDomain(
     override fun dispose() {
         logger.d { "dispose" }
         audioFileWriter?.closeFile()
+        audioFileWriter = null
         scope.cancel()
     }
 
@@ -243,7 +244,7 @@ internal class AsrDomain(
     private fun getFileWriter(chunk: MicAudioChunk): AudioFileWriter {
         return audioFileWriter ?: AudioFileWriter(
             path = fileStorage.speechToTextAudioFile,
-            channel = chunk.channel.value,
+            channel = chunk.channel.count,
             sampleRate = chunk.sampleRate.value,
             bitRate = chunk.encoding.bitRate,
         ).apply {

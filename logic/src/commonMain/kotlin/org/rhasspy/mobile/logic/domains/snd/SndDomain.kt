@@ -65,10 +65,9 @@ internal class SndDomain(
     /**
      * play audio stream from Audio and return SndResult after finished
      */
-    //TODO #466 request id to tell mqtt that play finished
     override suspend fun awaitPlayAudio(id: String, audio: Audio): SndResult {
         logger.d { "awaitPlayAudio $audio" }
-        indication.onPlayAudio()
+        //TODO #466 indication.onPlayAudio()
 
         return when (params.option) {
             SndDomainOption.Local              -> onLocalPlayAudio(id, audio)

@@ -9,7 +9,6 @@ actual object MicrophoneWidgetUtils : KoinComponent {
 
     actual suspend fun updateWidget() {
         val context = get<NativeApplication>()
-        println("MicrophoneWidget updateAll")
         MicrophoneWidget().updateAll(context)
     }
 

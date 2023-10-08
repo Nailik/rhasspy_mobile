@@ -195,7 +195,6 @@ internal actual class SettingsUtils actual constructor(
             if (sharedPreferencesFile.exists()) {
                 var text = sharedPreferencesFile.readText()
                 toRemove.filter { it.isNotEmpty() && it.isNotBlank() }.forEach { content ->
-                    println("replace $content")
                     text = text.replace("\"$content\"", "*hidden*")
                 }
             }

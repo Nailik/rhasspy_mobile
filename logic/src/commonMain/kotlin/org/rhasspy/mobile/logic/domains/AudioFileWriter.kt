@@ -13,10 +13,12 @@ internal class AudioFileWriter(
     private val bitRate: Int,
 ) {
 
+    private var closed = false
     private var fileHandle: FileHandle? = null
 
     fun openFile() {
         path.commonDelete()
+        closed = false
         fileHandle = path.commonReadWrite()
     }
 
@@ -30,7 +32,8 @@ internal class AudioFileWriter(
     }
 
     fun closeFile() {
-        if (fileHandle == null) return
+        if (fileHandle == null || closed) return
+        closed = true
 
         val header = AudioRecorderUtils.getWavHeader(
             sampleRate = sampleRate,
@@ -42,12 +45,6 @@ internal class AudioFileWriter(
 
         fileHandle?.flush()
         fileHandle?.close()
-        fileHandle = null
-
-        fileHandle?.apply {
-            flush()
-            close()
-        }
         fileHandle = null
     }
 

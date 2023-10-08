@@ -49,7 +49,7 @@ internal class PipelineManager(
 
     private val logger = Logger.withTag("PipelineManager")
 
-    private val params: PipelineData = ConfigurationSetting.pipelineData.value
+    private val params: PipelineData get() = ConfigurationSetting.pipelineData.value
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private var pipelineScope = CoroutineScope(Dispatchers.IO)

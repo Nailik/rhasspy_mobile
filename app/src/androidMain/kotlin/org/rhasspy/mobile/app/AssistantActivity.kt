@@ -52,7 +52,6 @@ class AssistantActivity : AppCompatActivity(), KoinComponent {
             viewModel.onEvent(Activate)
 
             viewModel.awaitIdle {
-                println("AssistantActivity finish")
                 finish()
             }
         }
