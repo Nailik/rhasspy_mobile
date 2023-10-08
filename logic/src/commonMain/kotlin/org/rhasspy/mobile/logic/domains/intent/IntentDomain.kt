@@ -87,6 +87,7 @@ internal class IntentDomain(
                 )
         }.also {
             domainHistory.addToHistory(it)
+            mqttConnection.notify(sessionId, it)
         }
     }
 

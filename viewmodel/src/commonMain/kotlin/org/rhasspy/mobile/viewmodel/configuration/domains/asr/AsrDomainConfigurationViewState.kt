@@ -14,7 +14,6 @@ data class AsrDomainConfigurationViewState internal constructor(
     data class AsrDomainConfigurationData internal constructor(
         val asrDomainOption: AsrDomainOption,
         val isUseSpeechToTextMqttSilenceDetection: Boolean,
-        val voiceTimeout: String,
         val mqttResultTimeout: String,
     ) {
 

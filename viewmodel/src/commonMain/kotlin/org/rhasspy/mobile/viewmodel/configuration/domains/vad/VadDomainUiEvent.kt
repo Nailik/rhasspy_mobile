@@ -7,6 +7,7 @@ sealed interface VadDomainUiEvent {
     sealed interface Change : VadDomainUiEvent {
 
         data class SelectVadDomainOption(val option: VadDomainOption) : Change
+        data class UpdateVoiceTimeout(val timeout: String) : Change
 
     }
 

@@ -1,7 +1,9 @@
 package org.rhasspy.mobile.ui.content.item
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DomainDisabled
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Pending
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -17,12 +19,14 @@ fun EventStateIcon(connectionState: ConnectionState) {
         imageVector = when (connectionState) {
             is Success    -> Icons.Outlined.Done
             is ErrorState -> Icons.Filled.Error
-            is Disabled   -> return
+            is Disabled   -> Icons.Filled.DomainDisabled
+            is Loading    -> Icons.Filled.Pending
         },
         contentDescription = when (connectionState) {
             is Success    -> MR.strings.success.stable
             is ErrorState -> MR.strings.error.stable
-            is Disabled   -> return
+            is Disabled   -> MR.strings.disabled.stable
+            is Loading    -> MR.strings.loading.stable
         }
     )
 }
@@ -33,17 +37,20 @@ fun EventStateIconTinted(connectionState: ConnectionState) {
         imageVector = when (connectionState) {
             is Success    -> Icons.Outlined.Done
             is ErrorState -> Icons.Filled.Error
-            is Disabled   -> return
+            is Disabled   -> Icons.Filled.DomainDisabled
+            is Loading    -> Icons.Filled.Pending
         },
         contentDescription = when (connectionState) {
             is Success    -> MR.strings.success.stable
             is ErrorState -> MR.strings.error.stable
-            is Disabled   -> return
+            is Disabled   -> MR.strings.disabled.stable
+            is Loading    -> MR.strings.loading.stable
         },
         tint = when (connectionState) {
             is Success    -> MaterialTheme.colorScheme.primary
             is ErrorState -> MaterialTheme.colorScheme.errorContainer
-            is Disabled   -> return
+            is Disabled   -> MaterialTheme.colorScheme.secondaryContainer
+            is Loading    -> MaterialTheme.colorScheme.surfaceVariant
         }
     )
 }

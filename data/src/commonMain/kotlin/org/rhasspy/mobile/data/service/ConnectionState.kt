@@ -10,6 +10,7 @@ import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperString
 sealed class ConnectionState {
 
     data object Disabled : ConnectionState()
+    data object Loading : ConnectionState()
 
     data object Success : ConnectionState()
 
@@ -17,7 +18,7 @@ sealed class ConnectionState {
 
         constructor(text: String) : this(TextWrapperString(text))
         constructor(resource: StableStringResource) : this(TextWrapperStableStringResource(resource))
-        constructor(exception: Exception) : this(TextWrapperString("$exception ${exception.message}"))
+        constructor(exception: Exception) : this(TextWrapperString("${exception.message ?: exception}"))
 
     }
 

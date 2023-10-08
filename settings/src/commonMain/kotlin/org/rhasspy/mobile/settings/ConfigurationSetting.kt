@@ -103,6 +103,7 @@ object ConfigurationSetting {
         key = SettingsEnum.VoiceActivityDetectionDomain,
         initial = VadDomainData(
             option = VadDomainOption.Disabled,
+            voiceTimeout = 20.seconds,
             automaticSilenceDetectionAudioLevel = 40f,
             automaticSilenceDetectionTime = 2.seconds,
             automaticSilenceDetectionMinimumTime = 2.seconds,
@@ -129,7 +130,6 @@ object ConfigurationSetting {
         initial = AsrDomainData(
             option = AsrDomainOption.Disabled,
             isUseSpeechToTextMqttSilenceDetection = true,
-            voiceTimeout = 20.seconds,
             mqttResultTimeout = 20.seconds,
         ),
         serializer = AsrDomainData.serializer(),

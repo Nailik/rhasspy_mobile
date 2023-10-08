@@ -11,7 +11,6 @@ class AsrDomainConfigurationDataMapper {
         return AsrDomainConfigurationData(
             asrDomainOption = data.option,
             isUseSpeechToTextMqttSilenceDetection = data.isUseSpeechToTextMqttSilenceDetection,
-            voiceTimeout = data.voiceTimeout.inWholeSeconds.toString(),
             mqttResultTimeout = data.mqttResultTimeout.inWholeSeconds.toString(),
         )
     }
@@ -20,7 +19,6 @@ class AsrDomainConfigurationDataMapper {
         return AsrDomainData(
             option = data.asrDomainOption,
             isUseSpeechToTextMqttSilenceDetection = data.isUseSpeechToTextMqttSilenceDetection,
-            voiceTimeout = data.voiceTimeout.toIntOrZero().seconds,
             mqttResultTimeout = data.mqttResultTimeout.toIntOrZero().seconds,
         )
     }

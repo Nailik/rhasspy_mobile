@@ -14,10 +14,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrError
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrTextCaptured
-import org.rhasspy.mobile.logic.connections.mqtt.MqttResult
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
-import org.rhasspy.mobile.logic.connections.user.IUserConnection
-import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent.StartStopRhasspy
 import org.rhasspy.mobile.logic.domains.AudioFileWriter
 import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
@@ -30,7 +27,6 @@ import org.rhasspy.mobile.logic.pipeline.TranscriptResult
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.TranscriptError
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd
-import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VoiceStopped
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceStart
 import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 import org.rhasspy.mobile.resources.MR
@@ -46,8 +42,8 @@ internal interface IAsrDomain : IDomain {
     suspend fun awaitTranscript(
         sessionId: String,
         audioStream: Flow<MicAudioChunk>,
-        awaitVoiceStart: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStart,
-        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
+        awaitVoiceStart: suspend (sessionId: String, audioStream: Flow<MicAudioChunk>) -> VoiceStart,
+        awaitVoiceStopped: suspend (sessionId: String, audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
     ): TranscriptResult
 
     val isRecordingState: StateFlow<Boolean>
@@ -64,7 +60,6 @@ internal class AsrDomain(
     private val indication: IIndication,
     private val fileStorage: IFileStorage,
     private val audioFocus: IAudioFocus,
-    private val userConnection: IUserConnection,
     private val domainHistory: IDomainHistory,
 ) : IAsrDomain {
 
@@ -82,8 +77,8 @@ internal class AsrDomain(
     override suspend fun awaitTranscript(
         sessionId: String,
         audioStream: Flow<MicAudioChunk>,
-        awaitVoiceStart: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceStart,
-        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
+        awaitVoiceStart: suspend (sessionId: String, audioStream: Flow<MicAudioChunk>) -> VoiceStart,
+        awaitVoiceStopped: suspend (sessionId: String, audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
     ): TranscriptResult {
         logger.d { "awaitTranscript for session $sessionId" }
 
@@ -93,15 +88,17 @@ internal class AsrDomain(
         audioFocus.request(Record)
 
         //wait for voice to start
-        awaitVoiceStart(audioStream)
+        awaitVoiceStart(sessionId, audioStream)
 
         //await result
         return when (params.option) {
-            AsrDomainOption.Rhasspy2HermesHttp ->
+            AsrDomainOption.Rhasspy2HermesHttp -> {
                 awaitRhasspy2HermesHttpTranscript(
+                    sessionId = sessionId,
                     audioStream = audioStream,
                     awaitVoiceStopped = awaitVoiceStopped,
                 )
+            }
 
             AsrDomainOption.Rhasspy2HermesMQTT ->
                 awaitRhasspy2HermesMQTTTranscript(
@@ -119,6 +116,7 @@ internal class AsrDomain(
             audioFocus.abandon(Record)
             isRecordingState.value = false
             domainHistory.addToHistory(it)
+            mqttConnection.notify(sessionId, it)
         }
     }
 
@@ -127,8 +125,9 @@ internal class AsrDomain(
      * then sends Data to Rhasspy2HermesHttp and returns result
      */
     private suspend fun awaitRhasspy2HermesHttpTranscript(
+        sessionId: String,
         audioStream: Flow<MicAudioChunk>,
-        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
+        awaitVoiceStopped: suspend (sessionId: String, audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
     ): TranscriptResult {
         logger.d { "awaitRhasspy2HermesHttpTranscript" }
 
@@ -139,21 +138,7 @@ internal class AsrDomain(
             }
         }
 
-        merge(
-            userConnection.incomingMessages
-                .filterIsInstance<StartStopRhasspy>()
-                .map { VoiceStopped(User) },
-            flow { emit(awaitVoiceStopped(audioStream)) }
-                .filter { it is VoiceStopped }
-        ).timeoutWithDefault(
-            timeout = params.voiceTimeout,
-            default = TranscriptError(
-                reason = Timeout,
-                source = Local,
-            ),
-        ).first().also {
-            domainHistory.addToHistory(it)
-        }
+        awaitVoiceStopped(sessionId, audioStream)
 
         saveDataJob.cancelAndJoin()
         audioFileWriter?.closeFile()
@@ -185,23 +170,9 @@ internal class AsrDomain(
     private suspend fun awaitRhasspy2HermesMQTTTranscript(
         sessionId: String,
         audioStream: Flow<MicAudioChunk>,
-        awaitVoiceStopped: suspend (audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
+        awaitVoiceStopped: suspend (sessionId: String, audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
     ): TranscriptResult {
         logger.d { "awaitRhasspy2HermesMQTTTranscript for session $sessionId" }
-
-        when (
-            val result = mqttConnection.startListening(
-                sessionId = sessionId,
-                isUseSilenceDetection = params.isUseSpeechToTextMqttSilenceDetection,
-            ) //TODO #466 when mqtt pipeline triggers this it will trigger itself again
-        ) {
-            is MqttResult.Error   -> return TranscriptError(
-                reason = Error(result.message),
-                source = Rhasspy2HermesMqtt,
-            )
-
-            is MqttResult.Success -> Unit
-        }
 
         val sendDataJob = scope.launch {
             audioStream.collectLatest { chunk ->
@@ -220,27 +191,8 @@ internal class AsrDomain(
         }
 
         val awaitVoiceStoppedJob = scope.launch {
-            merge(
-                userConnection.incomingMessages
-                    .filterIsInstance<StartStopRhasspy>()
-                    .map { VoiceStopped(User) },
-                flow { emit(awaitVoiceStopped(audioStream)) }
-                    .filter { it is VoiceStopped }
-            ).timeoutWithDefault(
-                timeout = params.voiceTimeout,
-                default = TranscriptError(
-                    reason = Timeout,
-                    source = Local,
-                ),
-            ).first().also {
-                domainHistory.addToHistory(it)
-            }
-
+            awaitVoiceStopped(sessionId, audioStream)
             sendDataJob.cancelAndJoin()
-
-            mqttConnection.stopListening(
-                sessionId = sessionId,
-            )
         }
 
         return mqttConnection.incomingMessages

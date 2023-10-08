@@ -68,15 +68,10 @@ private fun AsrDomainScreenContent(
         ) { option ->
 
             when (option) {
-                AsrDomainOption.Rhasspy2HermesHttp ->
-                    AsrDomainRhasspy2HermesHttp(
-                        voiceTimeout = editData.voiceTimeout,
-                        onEvent = onEvent,
-                    )
+                AsrDomainOption.Rhasspy2HermesHttp -> Unit
 
                 AsrDomainOption.Rhasspy2HermesMQTT ->
                     AsrDomainRhasspy2HermesMQTT(
-                        voiceTimeout = editData.voiceTimeout,
                         mqttResultTimeout = editData.mqttResultTimeout,
                         isUseSpeechToTextMqttSilenceDetection = editData.isUseSpeechToTextMqttSilenceDetection,
                         onEvent = onEvent,
@@ -92,46 +87,17 @@ private fun AsrDomainScreenContent(
 }
 
 
-@Composable
-private fun AsrDomainRhasspy2HermesHttp(
-    voiceTimeout: String,
-    onEvent: (AsrDomainConfigurationUiEvent) -> Unit
-) {
-
-    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
-
-        TextFieldListItem(
-            label = MR.strings.asrVoiceTimeout.stable,
-            modifier = Modifier,
-            value = voiceTimeout,
-            onValueChange = { onEvent(UpdateVoiceTimeout(it)) },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-        )
-
-    }
-
-}
-
 /**
  * mqtt silence detection settings
  */
 @Composable
 private fun AsrDomainRhasspy2HermesMQTT(
-    voiceTimeout: String,
     mqttResultTimeout: String,
     isUseSpeechToTextMqttSilenceDetection: Boolean,
     onEvent: (AsrDomainConfigurationUiEvent) -> Unit
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
-
-        TextFieldListItem(
-            label = MR.strings.asrVoiceTimeout.stable,
-            modifier = Modifier,
-            value = voiceTimeout,
-            onValueChange = { onEvent(UpdateVoiceTimeout(it)) },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-        )
 
         TextFieldListItem(
             label = MR.strings.mqttResultTimeout.stable,

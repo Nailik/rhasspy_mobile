@@ -224,6 +224,7 @@ internal object Migration1To2 : IMigration(1, 2) {
 
         ConfigurationSetting.vadDomainData.value = VadDomainData(
             option = vadDomainOption.value,
+            voiceTimeout = 20.seconds,
             automaticSilenceDetectionAudioLevel = automaticSilenceDetectionAudioLevel.value,
             automaticSilenceDetectionTime = automaticSilenceDetectionTime.value?.milliseconds ?: 2.seconds,
             automaticSilenceDetectionMinimumTime = automaticSilenceDetectionMinimumTime.value?.milliseconds ?: 2.seconds,
@@ -242,7 +243,6 @@ internal object Migration1To2 : IMigration(1, 2) {
         ConfigurationSetting.asrDomainData.value = AsrDomainData(
             option = asrDomainOption.value,
             isUseSpeechToTextMqttSilenceDetection = isUseSpeechToTextMqttSilenceDetection.value,
-            voiceTimeout = 20.seconds,
             mqttResultTimeout = 20.seconds,
         )
 

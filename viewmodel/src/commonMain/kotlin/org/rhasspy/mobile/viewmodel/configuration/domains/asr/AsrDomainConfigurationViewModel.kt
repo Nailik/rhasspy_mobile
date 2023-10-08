@@ -31,7 +31,6 @@ class AsrDomainConfigurationViewModel(
                     is SelectAsrOptionDomain               -> copy(asrDomainOption = change.option)
                     is SetUseAsrMqttSilenceDetectionDomain -> copy(isUseSpeechToTextMqttSilenceDetection = change.enabled)
                     is UpdateMqttResultTimeout             -> copy(mqttResultTimeout = change.timeout.takeInt())
-                    is UpdateVoiceTimeout                  -> copy(voiceTimeout = change.timeout.takeInt())
                 }
             })
         }

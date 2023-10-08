@@ -8,6 +8,5 @@ import kotlin.time.Duration
 data class AsrDomainData(
     val option: AsrDomainOption,
     val isUseSpeechToTextMqttSilenceDetection: Boolean,
-    val voiceTimeout: Duration,
     val mqttResultTimeout: Duration,
 )

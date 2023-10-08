@@ -68,6 +68,7 @@ internal class HandleDomain(
                 )
         }.also {
             domainHistory.addToHistory(it)
+            mqttConnection.notify(sessionId, it)
         }
     }
 

@@ -20,8 +20,6 @@ import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ConnectionState
 import org.rhasspy.mobile.data.service.ConnectionState.*
-import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperStableStringResource
-import org.rhasspy.mobile.logic.Source
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.*
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrError
@@ -31,6 +29,8 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResul
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayBytes
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayFinished
 import org.rhasspy.mobile.logic.local.settings.IAppSettingsUtil
+import org.rhasspy.mobile.logic.pipeline.*
+import org.rhasspy.mobile.logic.pipeline.IntentResult
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
@@ -39,17 +39,14 @@ import org.rhasspy.mobile.platformspecific.extensions.commonSource
 import org.rhasspy.mobile.platformspecific.mqtt.*
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import kotlin.random.Random
 
 internal interface IMqttConnection : IConnection {
 
     val incomingMessages: Flow<MqttConnectionEvent>
 
-    fun onMessageReceived(topic: String, payload: ByteArray)
-
-    fun sessionStarted(sessionId: String)
-    fun sessionEnded(sessionId: String)
-    fun intentNotRecognized(sessionId: String)
+    suspend fun onMessageReceived(topic: String, payload: ByteArray)
     suspend fun asrAudioFrame(
         data: ByteArray,
         sampleRate: AudioFormatSampleRateType,
@@ -65,17 +62,12 @@ internal interface IMqttConnection : IConnection {
         data: ByteArray,
     ): MqttResult
 
-    suspend fun hotWordDetected(keyword: String): MqttResult
-    fun wakeWordError(description: String)
     suspend fun startListening(sessionId: String, isUseSilenceDetection: Boolean): MqttResult
     suspend fun stopListening(sessionId: String): MqttResult
-    fun asrTextCaptured(sessionId: String, text: String?)
-    fun asrError(sessionId: String)
-    fun audioCaptured(sessionId: String, audioFilePath: Path)
     suspend fun recognizeIntent(sessionId: String, text: String): MqttResult
     suspend fun say(sessionId: String, text: String, volume: Float?, siteId: String, id: String): MqttResult
     suspend fun playAudioRemote(audioSource: AudioSource, siteId: String, id: String): MqttResult
-    fun playFinished()
+    fun notify(sessionId: String?, result: DomainResult)
 
 }
 
@@ -86,7 +78,7 @@ internal class MqttConnection(
 
     private val logger = Logger.withTag("MqttConnection")
 
-    override val connectionState = MutableStateFlow<ConnectionState>(Disabled)
+    override val connectionState = MutableStateFlow<ConnectionState>(Loading)
 
     override val incomingMessages = MutableSharedFlow<MqttConnectionEvent>()
 
@@ -98,7 +90,10 @@ internal class MqttConnection(
     private val params: MqttConnectionParams get() = paramsFlow.value
 
     private var client: MqttClient? = null
+
     private var retryJob: Job? = null
+    private var connectJob: Job? = null
+
     private val id = Random.nextInt()
 
     /**
@@ -126,7 +121,8 @@ internal class MqttConnection(
 
             try {
                 client = buildClient()
-                scope.launch {
+                connectJob?.cancel()
+                connectJob = scope.launch {
                     try {
                         connectClient()
                         if (connectionState.value == Success) {
@@ -194,7 +190,7 @@ internal class MqttConnection(
                     logger.e { "connectClient error $error" }
                     MqttConnectionStateType.fromMqttStatus(error.statusCode).connectionState
                 } ?: run {
-                    if (it.isConnected.value) Success else ErrorState(TextWrapperStableStringResource(MR.strings.notConnected.stable))
+                    if (it.isConnected.value) Success else ErrorState(MR.strings.notConnected.stable)
                 }
             } else {
                 Success
@@ -233,7 +229,9 @@ internal class MqttConnection(
             return
         }
 
-        onMessageReceived(topic, message.payload)
+        scope.launch {
+            onMessageReceived(topic, message.payload)
+        }
     }
 
     /**
@@ -241,7 +239,7 @@ internal class MqttConnection(
      *
      * returns true when message was consumed
      */
-    override fun onMessageReceived(topic: String, payload: ByteArray) {
+    override suspend fun onMessageReceived(topic: String, payload: ByteArray) {
         logger.d { "compareTopic $topic" }
 
         //topic matches enum
@@ -359,7 +357,7 @@ internal class MqttConnection(
                 }
 
             } else {
-                ErrorState(MR.strings.notEnabled.stable)
+                Disabled
             }
         } catch (exception: Exception) {
             ErrorState(exception)
@@ -370,6 +368,7 @@ internal class MqttConnection(
                 Disabled      -> MqttResult.Error(MR.strings.disabled.stable)
                 is ErrorState -> MqttResult.Error(it.message)
                 Success       -> MqttResult.Success
+                Loading       -> MqttResult.Error(MR.strings.loading.stable)
             }
         }
     }
@@ -398,10 +397,8 @@ internal class MqttConnection(
      * hermes/dialogueManager/sessionStarted
      * hermes/dialogueManager/sessionQueued
      */
-    private fun startSession(jsonObject: JsonObject) {
-        scope.launch {
-            incomingMessages.emit(StartSession(jsonObject.getSessionId()))
-        }
+    private suspend fun startSession(jsonObject: JsonObject) {
+        incomingMessages.emit(StartSession(jsonObject.getSessionId()))
     }
 
 
@@ -412,10 +409,8 @@ internal class MqttConnection(
      * Requests that a session be terminated nominally
      * sessionId: string - current session ID (required)
      */
-    private fun endSession(jsonObject: JsonObject) {
-        scope.launch {
-            incomingMessages.emit(EndSession(jsonObject.getSessionId(), jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content))
-        }
+    private suspend fun endSession(jsonObject: JsonObject) {
+        incomingMessages.emit(EndSession(jsonObject.getSessionId(), jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content))
     }
 
     /**
@@ -429,10 +424,8 @@ internal class MqttConnection(
      *
      * used to save the sessionId and check for it when recording etc
      */
-    private fun sessionStarted(jsonObject: JsonObject) {
-        scope.launch {
-            incomingMessages.emit(SessionStarted(jsonObject.getSessionId()))
-        }
+    private suspend fun sessionStarted(jsonObject: JsonObject) {
+        incomingMessages.emit(SessionStarted(jsonObject.getSessionId()))
     }
 
     /**
@@ -444,16 +437,14 @@ internal class MqttConnection(
      * Response to [hermes/dialogueManager/startSession]
      * Also used when session has started for other reasons
      */
-    override fun sessionStarted(sessionId: String) {
-        scope.launch {
-            publishMessage(
-                MqttTopicsPublish.SessionStarted,
-                createMqttMessage {
-                    put(MqttParams.SiteId, params.siteId)
-                    put(MqttParams.SessionId, sessionId)
-                }
-            )
-        }
+    private suspend fun sessionStarted(sessionId: String) {
+        publishMessage(
+            MqttTopicsPublish.SessionStarted,
+            createMqttMessage {
+                put(MqttParams.SiteId, params.siteId)
+                put(MqttParams.SessionId, sessionId)
+            }
+        )
     }
 
     /**
@@ -465,10 +456,8 @@ internal class MqttConnection(
      *
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
-    private fun sessionEnded(jsonObject: JsonObject) {
-        scope.launch {
-            incomingMessages.emit(SessionEnded(jsonObject.getSessionId()))
-        }
+    private suspend fun sessionEnded(jsonObject: JsonObject) {
+        incomingMessages.emit(SessionEnded(jsonObject.getSessionId()))
     }
 
     /**
@@ -480,16 +469,14 @@ internal class MqttConnection(
      *
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
-    override fun sessionEnded(sessionId: String) {
-        scope.launch {
-            publishMessage(
-                MqttTopicsPublish.SessionEnded,
-                createMqttMessage {
-                    put(MqttParams.SiteId, params.siteId)
-                    put(MqttParams.SessionId, sessionId)
-                }
-            )
-        }
+    private suspend fun sessionEnded(sessionId: String) {
+        publishMessage(
+            MqttTopicsPublish.SessionEnded,
+            createMqttMessage {
+                put(MqttParams.SiteId, params.siteId)
+                put(MqttParams.SessionId, sessionId)
+            }
+        )
     }
 
     /**
@@ -498,16 +485,14 @@ internal class MqttConnection(
      * sessionId: string - current session ID
      * siteId: string = "default" - Hermes site ID
      */
-    override fun intentNotRecognized(sessionId: String) {
-        scope.launch {
-            publishMessage(
-                MqttTopicsPublish.IntentNotRecognizedInSession,
-                createMqttMessage {
-                    put(MqttParams.SiteId, params.siteId)
-                    put(MqttParams.SessionId, sessionId)
-                }
-            )
-        }
+    private suspend fun intentNotRecognized(sessionId: String) {
+        publishMessage(
+            MqttTopicsPublish.IntentNotRecognizedInSession,
+            createMqttMessage {
+                put(MqttParams.SiteId, params.siteId)
+                put(MqttParams.SessionId, sessionId)
+            }
+        )
     }
 
     /**
@@ -567,8 +552,7 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      * reason: string = "" - Reason for toggle on
      */
-    private fun hotWordToggleOn() = appSettingsUtil.hotWordToggle(true, Source.Mqtt)
-    // serviceMiddleware.action(HotWordToggle(true, Mqtt(null)))
+    private fun hotWordToggleOn() = appSettingsUtil.hotWordToggle(true, Source.Rhasspy2HermesMqtt)
 
     /**
      * hermes/hotword/toggleOff (JSON)
@@ -576,7 +560,7 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      * reason: string = "" - Reason for toggle off
      */
-    private fun hotWordToggleOff() = appSettingsUtil.hotWordToggle(false, Source.Mqtt)
+    private fun hotWordToggleOff() = appSettingsUtil.hotWordToggle(false, Source.Rhasspy2HermesMqtt)
 
 
     /**
@@ -587,14 +571,12 @@ internal class MqttConnection(
      * currentSensitivity: float = 1.0 - sensitivity of wake word detection (service specific)
      * siteId: string = "default" - Hermes site ID
      */
-    private fun hotWordDetectedCalled(topic: String) {
-        scope.launch {
-            topic.split("/").let {
-                if (it.size > 2) {
-                    incomingMessages.emit(HotWordDetected(it[2]))
-                } else {
-                    incomingMessages.emit(HotWordDetected(""))
-                }
+    private suspend fun hotWordDetectedCalled(topic: String) {
+        topic.split("/").let {
+            if (it.size > 2) {
+                incomingMessages.emit(HotWordDetected(it[2]))
+            } else {
+                incomingMessages.emit(HotWordDetected(""))
             }
         }
     }
@@ -608,7 +590,7 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      * modelId: string = "keyword" - Wake Word
      */
-    override suspend fun hotWordDetected(keyword: String): MqttResult =
+    private suspend fun hotWordDetected(keyword: String): MqttResult =
         publishMessage(
             MqttTopicsPublish.HotWordDetected.topic
                 .set(MqttTopicPlaceholder.WakeWord, keyword),
@@ -619,25 +601,6 @@ internal class MqttConnection(
         )
 
     /**
-     * hermes/error/hotword (JSON, Rhasspy only)
-     * Sent when an error occurs in the hotword system
-     * error: string - description of the error
-     *
-     * siteId: string = "default" - Hermes site ID
-     */
-    override fun wakeWordError(description: String) {
-        scope.launch {
-            publishMessage(
-                MqttTopicsPublish.WakeWordError,
-                createMqttMessage {
-                    put(MqttParams.SiteId, params.siteId)
-                    put(MqttParams.Error, description)
-                }
-            )
-        }
-    }
-
-    /**
      * hermes/asr/startListening (JSON)
      * Tell ASR system to start recording/transcribing
      * siteId: string = "default" - Hermes site ID
@@ -645,15 +608,13 @@ internal class MqttConnection(
      * wakewordId: string? = null - id of wake word that triggered session (Rhasspy only)
      * sessionId: string? = null - current session ID
      */
-    private fun startListening(jsonObject: JsonObject) {
-        scope.launch {
-            incomingMessages.emit(
-                StartListening(
-                    sessionId = jsonObject.getSessionId(),
-                    sendAudioCaptured = jsonObject[MqttParams.SendAudioCaptured.value]?.jsonPrimitive?.booleanOrNull == true
-                )
+    private suspend fun startListening(jsonObject: JsonObject) {
+        incomingMessages.emit(
+            StartListening(
+                sessionId = jsonObject.getSessionId(),
+                sendAudioCaptured = jsonObject[MqttParams.SendAudioCaptured.value]?.jsonPrimitive?.booleanOrNull == true
             )
-        }
+        )
     }
 
     /**
@@ -684,10 +645,8 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      * sessionId: string = "" - current session ID
      */
-    private fun stopListening(jsonObject: JsonObject) {
-        scope.launch {
-            incomingMessages.emit(StopListening(jsonObject.getSessionId()))
-        }
+    private suspend fun stopListening(jsonObject: JsonObject) {
+        incomingMessages.emit(StopListening(jsonObject.getSessionId()))
     }
 
     /**
@@ -714,15 +673,13 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      * sessionId: string? = null - current session ID
      */
-    private fun asrTextCaptured(jsonObject: JsonObject) {
-        scope.launch {
-            incomingMessages.emit(
-                AsrTextCaptured(
-                    sessionId = jsonObject.getSessionId(),
-                    text = jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content
-                )
+    private suspend fun asrTextCaptured(jsonObject: JsonObject) {
+        incomingMessages.emit(
+            AsrTextCaptured(
+                sessionId = jsonObject.getSessionId(),
+                text = jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content
             )
-        }
+        )
     }
 
     /**
@@ -733,17 +690,15 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      * sessionId: string? = null - current session ID
      */
-    override fun asrTextCaptured(sessionId: String, text: String?) {
-        scope.launch {
-            publishMessage(
-                MqttTopicsPublish.AsrTextCaptured,
-                createMqttMessage {
-                    put(MqttParams.Text, JsonPrimitive(text))
-                    put(MqttParams.SiteId, params.siteId)
-                    put(MqttParams.SessionId, sessionId)
-                }
-            )
-        }
+    private suspend fun asrTextCaptured(sessionId: String, text: String?) {
+        publishMessage(
+            MqttTopicsPublish.AsrTextCaptured,
+            createMqttMessage {
+                put(MqttParams.Text, JsonPrimitive(text))
+                put(MqttParams.SiteId, params.siteId)
+                put(MqttParams.SessionId, sessionId)
+            }
+        )
     }
 
     /**
@@ -753,10 +708,8 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      * sessionId: string? = null - current session ID
      */
-    private fun asrError(jsonObject: JsonObject) {
-        scope.launch {
-            incomingMessages.emit(AsrError(jsonObject.getSessionId()))
-        }
+    private suspend fun asrError(jsonObject: JsonObject) {
+        incomingMessages.emit(AsrError(jsonObject.getSessionId()))
     }
 
 
@@ -767,15 +720,13 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      * sessionId: string? = null - current session ID
      */
-    override fun asrError(sessionId: String) {
-        scope.launch {
-            publishMessage(
-                MqttTopicsPublish.AsrError,
-                createMqttMessage {
-                    put(MqttParams.SessionId, sessionId)
-                }
-            )
-        }
+    private suspend fun asrError(sessionId: String) {
+        publishMessage(
+            MqttTopicsPublish.AsrError,
+            createMqttMessage {
+                put(MqttParams.SessionId, sessionId)
+            }
+        )
     }
 
     /**
@@ -785,17 +736,15 @@ internal class MqttConnection(
      * sessionId: string - current session ID (part of topic)
      * Only sent if sendAudioCaptured = true in startListening
      */
-    override fun audioCaptured(sessionId: String, audioFilePath: Path) {
-        scope.launch {
-            with(audioFilePath.commonSource().buffer()) {
-                publishMessage(
-                    MqttTopicsPublish.AudioCaptured.topic
-                        .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                        .set(MqttTopicPlaceholder.SessionId, sessionId),
-                    MqttMessage(this.readByteArray())
-                )
-                this.close()
-            }
+    private suspend fun audioCaptured(sessionId: String, audioFilePath: Path) {
+        with(audioFilePath.commonSource().buffer()) {
+            publishMessage(
+                MqttTopicsPublish.AudioCaptured.topic
+                    .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                    .set(MqttTopicPlaceholder.SessionId, sessionId),
+                MqttMessage(this.readByteArray())
+            )
+            this.close()
         }
     }
 
@@ -833,16 +782,14 @@ internal class MqttConnection(
      *
      * Response to hermes/nlu/query
      */
-    private fun intentRecognitionResult(jsonObject: JsonObject) {
-        scope.launch {
-            incomingMessages.emit(
-                IntentRecognitionResult(
-                    sessionId = jsonObject.getSessionId(),
-                    intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content,
-                    intent = jsonObject.toString()
-                )
+    private suspend fun intentRecognitionResult(jsonObject: JsonObject) {
+        incomingMessages.emit(
+            IntentRecognitionResult(
+                sessionId = jsonObject.getSessionId(),
+                intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content,
+                intent = jsonObject.toString()
             )
-        }
+        )
     }
 
     /**
@@ -851,10 +798,8 @@ internal class MqttConnection(
      * sessionId: string - current session ID
      * siteId: string = "default" - Hermes site ID
      */
-    private fun intentNotRecognized(jsonObject: JsonObject) {
-        scope.launch {
-            incomingMessages.emit(IntentNotRecognized(jsonObject.getSessionId()))
-        }
+    private suspend fun intentNotRecognized(jsonObject: JsonObject) {
+        incomingMessages.emit(IntentNotRecognized(jsonObject.getSessionId()))
     }
 
     /**
@@ -862,14 +807,14 @@ internal class MqttConnection(
      * Enable intent handling
      */
     private fun intentHandlingToggleOn() =
-        appSettingsUtil.intentHandlingToggle(false, Source.Mqtt)
+        appSettingsUtil.intentHandlingToggle(false, Source.Rhasspy2HermesMqtt)
 
     /**
      * hermes/handle/toggleOff
      * Disable intent handling
      */
     private fun intentHandlingToggleOff() =
-        appSettingsUtil.intentHandlingToggle(false, Source.Mqtt)
+        appSettingsUtil.intentHandlingToggle(false, Source.Rhasspy2HermesMqtt)
 
     /**
      * hermes/tts/say (JSON)
@@ -914,18 +859,16 @@ internal class MqttConnection(
      * Response(s)
      * hermes/tts/sayFinished (JSON)
      */
-    private fun say(jsonObject: JsonObject) {
-        scope.launch {
-            jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content?.also {
-                incomingMessages.emit(
-                    Say(
-                        sessionId = jsonObject.getSessionId(),
-                        text = it,
-                        volume = jsonObject[MqttParams.Volume.value]?.jsonPrimitive?.floatOrNull,
-                        siteId = jsonObject.getSiteId() ?: "default"
-                    )
+    private suspend fun say(jsonObject: JsonObject) {
+        jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content?.also {
+            incomingMessages.emit(
+                Say(
+                    sessionId = jsonObject.getSessionId(),
+                    text = it,
+                    volume = jsonObject[MqttParams.Volume.value]?.jsonPrimitive?.floatOrNull,
+                    siteId = jsonObject.getSiteId() ?: "default"
                 )
-            }
+            )
         }
     }
 
@@ -940,10 +883,8 @@ internal class MqttConnection(
      * Response(s)
      * hermes/audioServer/<siteId>/playFinished (JSON)
      */
-    private fun playBytes(byteArray: ByteArray, requestId: String) {
-        scope.launch {
-            incomingMessages.emit(PlayBytes(requestId, byteArray))
-        }
+    private suspend fun playBytes(byteArray: ByteArray, requestId: String) {
+        incomingMessages.emit(PlayBytes(requestId, byteArray))
     }
 
     /**
@@ -953,10 +894,8 @@ internal class MqttConnection(
      * siteId: string - Hermes site ID (part of topic)
      * id: string = "" - requestId from request message
      */
-    private fun playFinishedCall(requestId: String) {
-        scope.launch {
-            incomingMessages.emit(PlayFinished(id = requestId))
-        }
+    private suspend fun playFinishedCall(requestId: String) {
+        incomingMessages.emit(PlayFinished(id = requestId))
     }
 
     /**
@@ -992,7 +931,7 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      */
     private fun audioOutputToggleOn() =
-        appSettingsUtil.audioOutputToggle(false, Source.Mqtt)
+        appSettingsUtil.audioOutputToggle(false, Source.Rhasspy2HermesMqtt)
 
     /**
      * hermes/audioServer/toggleOff (JSON)
@@ -1000,7 +939,7 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      */
     private fun audioOutputToggleOff() =
-        appSettingsUtil.audioOutputToggle(false, Source.Mqtt)
+        appSettingsUtil.audioOutputToggle(false, Source.Rhasspy2HermesMqtt)
 
     /**
      * hermes/audioServer/<siteId>/playFinished
@@ -1008,14 +947,12 @@ internal class MqttConnection(
      * Response to hermes/audioServer/<siteId>/playBytes/<requestId>
      * siteId: string - Hermes site ID (part of topic)
      */
-    override fun playFinished() {
-        scope.launch {
-            publishMessage(
-                MqttTopicsPublish.AudioOutputPlayFinished.topic
-                    .set(MqttTopicPlaceholder.SiteId, params.siteId),
-                MqttMessage(ByteArray(0))
-            )
-        }
+    private suspend fun playFinished() {
+        publishMessage(
+            MqttTopicsPublish.AudioOutputPlayFinished.topic
+                .set(MqttTopicPlaceholder.SiteId, params.siteId),
+            MqttMessage(ByteArray(0))
+        )
     }
 
 
@@ -1027,7 +964,7 @@ internal class MqttConnection(
      */
     private fun setVolume(jsonObject: JsonObject) =
         jsonObject[MqttParams.Volume.value]?.jsonPrimitive?.floatOrNull?.let { volume ->
-            appSettingsUtil.setAudioVolume(volume, Source.Mqtt)
+            appSettingsUtil.setAudioVolume(volume, Source.Rhasspy2HermesMqtt)
         }
 
     /**
@@ -1087,6 +1024,34 @@ internal class MqttConnection(
 
             else                -> MqttTopicsSubscription.fromTopic(topic)
         }
+    }
+
+    override fun notify(sessionId: String?, result: DomainResult) {
+        if (result.source == Source.Rhasspy2HermesMqtt) return
+
+        scope.launch {
+            when (result) {
+                is HandleResult.Handle              -> TODO()
+                is HandleResult.HandleError         -> TODO()
+                is IntentResult.Intent              -> TODO()
+                is IntentResult.IntentError         -> intentNotRecognized(sessionId ?: return@launch)
+                is PipelineResult.End               -> sessionEnded(sessionId ?: return@launch)
+                is SndResult.SndError               -> TODO()
+                is TranscriptResult.TranscriptError -> asrError(sessionId ?: return@launch)
+                is TtsResult.TtsError               -> TODO()
+                is VadResult.VoiceEnd.VadError      -> TODO()
+                is SndResult.Played                 -> playFinished()
+                is SndAudio.AudioChunkEvent         -> Unit
+                is SndAudio.AudioStartEvent         -> Unit
+                is SndAudio.AudioStopEvent          -> Unit
+                is TranscriptResult.Transcript      -> asrTextCaptured(sessionId ?: return@launch, result.text)
+                is TtsResult.Audio                  -> Unit
+                is VadResult.VoiceEnd.VoiceStopped  -> stopListening(sessionId ?: return@launch)
+                is VadResult.VoiceStart             -> startListening(sessionId ?: return@launch, ConfigurationSetting.asrDomainData.value.isUseSpeechToTextMqttSilenceDetection)
+                is WakeResult                       -> hotWordDetected(result.name.toString())
+            }
+        }
+        //TODO sessionStarted
     }
 
 }

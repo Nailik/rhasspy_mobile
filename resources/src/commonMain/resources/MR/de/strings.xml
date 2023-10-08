@@ -258,6 +258,7 @@
     <string name="recordingService">Aufnahme-Dienst</string>
     <string name="pending">Wartet</string>
     <string name="loading">Lädt</string>
+    <string name="disabled">Deaktiviert</string>
     <string name="noDetails">Keine Details</string>
     <string name="startRecordAudio">Audioaufnahme starten</string>
     <string name="stopRecordAudio">Audioaufnahme stoppen</string>

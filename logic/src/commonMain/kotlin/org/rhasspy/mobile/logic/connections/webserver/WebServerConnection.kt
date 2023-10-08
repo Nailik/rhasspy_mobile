@@ -34,9 +34,7 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ConnectionState
-import org.rhasspy.mobile.data.service.ConnectionState.Disabled
-import org.rhasspy.mobile.data.service.ConnectionState.ErrorState
-import org.rhasspy.mobile.logic.Source
+import org.rhasspy.mobile.data.service.ConnectionState.*
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.http.StreamContent
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
@@ -46,6 +44,7 @@ import org.rhasspy.mobile.logic.connections.webserver.WebServerConnectionEvent.*
 import org.rhasspy.mobile.logic.connections.webserver.WebServerResult.*
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.settings.IAppSettingsUtil
+import org.rhasspy.mobile.logic.pipeline.Source
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonExists
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
@@ -79,7 +78,7 @@ internal class WebServerConnection(
     private val logger = Logger.withTag("WebServerConnection")
     override val incomingMessages = MutableSharedFlow<WebServerConnectionEvent>()
 
-    override val connectionState = MutableStateFlow<ConnectionState>(Disabled)
+    override val connectionState = MutableStateFlow<ConnectionState>(Loading)
 
     private val nativeApplication by inject<NativeApplication>()
 
@@ -113,6 +112,7 @@ internal class WebServerConnection(
     }
 
     private fun start() {
+        connectionState.value = Loading
         if (params.isEnabled) {
             logger.d { "initialization" }
 
@@ -137,7 +137,7 @@ internal class WebServerConnection(
                     },
                 )
                 server?.start()
-                connectionState.value = ConnectionState.Success
+                connectionState.value = Success
             } catch (exception: Exception) {
                 //start error
                 logger.a(exception) { "initialization error" }
@@ -251,7 +251,7 @@ internal class WebServerConnection(
                 Ok          -> call.respond(HttpStatusCode.OK)
                 else        -> Unit
             }
-            ConnectionState.Success
+            Success
 
         } catch (exception: Exception) {
             logger.e(exception) { "evaluateCall error" }
@@ -290,7 +290,7 @@ internal class WebServerConnection(
         }
 
         return action?.let {
-            appSettingsUtil.hotWordToggle(it, Source.HttpApi)
+            appSettingsUtil.hotWordToggle(it, Source.WebServer)
             Accepted(value)
         } ?: Error(WakeOptionInvalid)
     }
@@ -344,7 +344,7 @@ internal class WebServerConnection(
         val result = call.receive<String>()
         return result.toFloatOrNull()?.let { volume ->
             if (volume in 0f..1f) {
-                appSettingsUtil.setAudioVolume(volume, Source.Mqtt)
+                appSettingsUtil.setAudioVolume(volume, Source.WebServer)
                 Accepted(volume.toString())
             } else {
                 logger.w { "setVolume VolumeValueOutOfRange $volume" }

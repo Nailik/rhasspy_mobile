@@ -33,7 +33,7 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
 
     protected abstract val logger: Logger
 
-    override val connectionState = MutableStateFlow<ConnectionState>(Disabled)
+    override val connectionState = MutableStateFlow<ConnectionState>(Loading)
 
     protected val nativeApplication by inject<NativeApplication>()
 
@@ -46,6 +46,8 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
     private var coroutineScope = CoroutineScope(Dispatchers.IO)
 
     protected var httpClient: HttpClient? = null
+
+    private var testConnectionJob: Job? = null
 
     /**
      * builds client
@@ -63,7 +65,8 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
         }
     }
 
-    suspend fun testConnection() {
+    private suspend fun testConnection() {
+        connectionState.value = Loading
         connectionState.value = try {
             httpClient?.request(httpConnectionParams.host) {
                 headers {
@@ -89,7 +92,10 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
 
         try {
             httpClient = buildClient(params)
-            testConnection()
+            testConnectionJob?.cancel()
+            testConnectionJob = coroutineScope.launch {
+                testConnection()
+            }
         } catch (exception: Exception) {
             logger.e(exception) { "error on building client" }
             connectionState.value = ErrorState(exception)

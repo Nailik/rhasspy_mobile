@@ -13,6 +13,7 @@ data class VadDomainViewState internal constructor(
     @Stable
     data class VadDomainConfigurationData internal constructor(
         val vadDomainOption: VadDomainOption,
+        val voiceTimeout: String,
         val localSilenceDetectionSetting: LocalSilenceDetectionConfigurationData,
     ) {
 

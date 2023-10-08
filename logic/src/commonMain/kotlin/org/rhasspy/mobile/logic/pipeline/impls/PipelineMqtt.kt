@@ -44,13 +44,11 @@ internal class PipelineMqtt(
             mqttConnection.incomingMessages
                 .filterIsInstance<PlayResult.PlayBytes>()
                 .collect {
-                    domains.sndDomain.awaitPlayAudio(it.toAudio())
+                    domains.sndDomain.awaitPlayAudio(it.id, it.toAudio())
                 }
         }
 
         if (wakeResult.sessionId != null) return runPipeline(wakeResult.sessionId)
-
-        mqttConnection.hotWordDetected(wakeResult.name ?: "Unknown")
 
         //use session id from event or wait for session to start
         val sessionId = mqttConnection.incomingMessages
@@ -138,7 +136,7 @@ internal class PipelineMqtt(
             )
 
             if (result is Audio) {
-                domains.sndDomain.awaitPlayAudio(result)
+                domains.sndDomain.awaitPlayAudio(sessionId, result)
             }
         }
     }

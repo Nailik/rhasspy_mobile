@@ -80,7 +80,7 @@ internal class PipelineLocal(
         }
 
         //play audio
-        return domains.sndDomain.awaitPlayAudio(tts).also {
+        return domains.sndDomain.awaitPlayAudio(sessionId, tts).also {
             domains.dispose()
         }
     }

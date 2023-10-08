@@ -40,11 +40,13 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.SliderListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel2
 import org.rhasspy.mobile.viewmodel.configuration.domains.vad.AudioRecorderViewState
 import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent.Change.SelectVadDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent.Change.UpdateVoiceTimeout
 import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Action.ToggleAudioLevelTest
 import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Change.*
@@ -94,12 +96,17 @@ private fun VadDomainScreenContent(
             when (option) {
                 VadDomainOption.Local ->
                     VadDomainLocal(
+                        voiceTimeout = viewState.editData.voiceTimeout,
                         localSilenceDetectionSetting = viewState.editData.localSilenceDetectionSetting,
                         audioRecorderViewState = audioRecorderViewState,
                         onEvent = onEvent,
                     )
 
-                VadDomainOption.Disabled -> Unit
+                VadDomainOption.Disabled ->
+                    VadDomainDisabled(
+                        voiceTimeout = viewState.editData.voiceTimeout,
+                        onEvent = onEvent,
+                    )
             }
 
         }
@@ -115,16 +122,25 @@ private fun VadDomainScreenContent(
 
 @Composable
 private fun VadDomainLocal(
+    voiceTimeout: String,
     localSilenceDetectionSetting: LocalSilenceDetectionConfigurationData,
     audioRecorderViewState: AudioRecorderViewState,
-    onEvent: (LocalSilenceDetectionUiEvent) -> Unit
+    onEvent: (VadDomainUiEvent) -> Unit
 ) {
 
     Column(
         modifier = Modifier
+            .padding(ContentPaddingLevel1)
             .testTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)
-            .padding(bottom = 16.dp)
     ) {
+
+        TextFieldListItem(
+            label = MR.strings.asrVoiceTimeout.stable,
+            modifier = Modifier,
+            value = voiceTimeout,
+            onValueChange = { onEvent(UpdateVoiceTimeout(it)) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
 
         InformationListElement(text = MR.strings.silenceDetectionInformation.stable)
 
@@ -150,6 +166,26 @@ private fun VadDomainLocal(
         StartTestButton(
             isRecording = audioRecorderViewState.isRecording,
             onEvent = onEvent,
+        )
+
+    }
+
+}
+
+@Composable
+private fun VadDomainDisabled(
+    voiceTimeout: String,
+    onEvent: (VadDomainUiEvent) -> Unit
+) {
+
+    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
+
+        TextFieldListItem(
+            label = MR.strings.asrVoiceTimeout.stable,
+            modifier = Modifier,
+            value = voiceTimeout,
+            onValueChange = { onEvent(UpdateVoiceTimeout(it)) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
 
     }

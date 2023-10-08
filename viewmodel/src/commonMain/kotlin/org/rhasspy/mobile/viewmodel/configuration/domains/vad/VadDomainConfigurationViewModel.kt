@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.data.takeInt
 import org.rhasspy.mobile.data.data.takeLong
 import org.rhasspy.mobile.data.service.option.VadDomainOption.Local
 import org.rhasspy.mobile.platformspecific.IDispatcherProvider
@@ -15,6 +16,7 @@ import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent.Change.SelectVadDomainOption
+import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent.Change.UpdateVoiceTimeout
 import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Action.ToggleAudioLevelTest
 import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainUiEvent.LocalSilenceDetectionUiEvent.Change.*
@@ -64,6 +66,8 @@ class VadDomainConfigurationViewModel(
                         }
                         copy(vadDomainOption = change.option)
                     }
+
+                    is UpdateVoiceTimeout    -> copy(voiceTimeout = change.timeout.takeInt())
                 }
             })
         }

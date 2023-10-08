@@ -2,8 +2,7 @@ package org.rhasspy.mobile.logic.local.settings
 
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.logic.IDomain
-import org.rhasspy.mobile.logic.Source
-import org.rhasspy.mobile.logic.Source.*
+import org.rhasspy.mobile.logic.pipeline.Source
 import org.rhasspy.mobile.settings.AppSetting
 
 internal interface IAppSettingsUtil : IDomain {
@@ -25,9 +24,9 @@ internal class AppSettingsUtil : IAppSettingsUtil {
     override fun hotWordToggle(value: Boolean, source: Source) {
 
         when (source) {
-            HttpApi -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
-            Local   -> Unit
-            is Mqtt -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
+            Source.WebServer -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
+            Source.User      -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
+            else             -> Unit
         }
 
         logger.d { "hotWordToggle value: $value" }
@@ -37,9 +36,9 @@ internal class AppSettingsUtil : IAppSettingsUtil {
     override fun intentHandlingToggle(value: Boolean, source: Source) {
 
         when (source) {
-            HttpApi -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
-            Local   -> Unit
-            is Mqtt -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
+            Source.WebServer -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
+            Source.User      -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
+            else             -> Unit
         }
 
         logger.d { "intentHandlingToggle value: $value" }
@@ -49,9 +48,9 @@ internal class AppSettingsUtil : IAppSettingsUtil {
     override fun audioOutputToggle(value: Boolean, source: Source) {
 
         when (source) {
-            HttpApi -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
-            Local   -> Unit
-            is Mqtt -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
+            Source.WebServer -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
+            Source.User      -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
+            else             -> Unit
         }
 
         logger.d { "audioOutputToggle value: $value" }
@@ -61,9 +60,9 @@ internal class AppSettingsUtil : IAppSettingsUtil {
     override fun setAudioVolume(volume: Float, source: Source) {
 
         when (source) {
-            HttpApi -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
-            Local   -> Unit
-            is Mqtt -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
+            Source.WebServer -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
+            Source.User      -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
+            else             -> Unit
         }
 
         logger.d { "setAudioVolume volume: $volume" }

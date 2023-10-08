@@ -7,6 +7,7 @@ import kotlin.time.Duration
 @Serializable
 data class VadDomainData(
     val option: VadDomainOption,
+    val voiceTimeout: Duration,
     val automaticSilenceDetectionAudioLevel: Float,
     val automaticSilenceDetectionTime: Duration,
     val automaticSilenceDetectionMinimumTime: Duration,

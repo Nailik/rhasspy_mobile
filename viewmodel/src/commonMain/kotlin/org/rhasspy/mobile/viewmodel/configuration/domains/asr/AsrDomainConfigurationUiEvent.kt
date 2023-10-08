@@ -9,7 +9,6 @@ sealed interface AsrDomainConfigurationUiEvent {
         data class SelectAsrOptionDomain(val option: AsrDomainOption) : Change
         data class SetUseAsrMqttSilenceDetectionDomain(val enabled: Boolean) : Change
         data class UpdateMqttResultTimeout(val timeout: String) : Change
-        data class UpdateVoiceTimeout(val timeout: String) : Change
 
     }
 

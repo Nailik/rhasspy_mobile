@@ -38,7 +38,7 @@ internal interface ISndDomain : IDomain {
     /**
      * play audio stream from Audio and return SndResult after finished
      */
-    suspend fun awaitPlayAudio(audio: Audio): SndResult
+    suspend fun awaitPlayAudio(id: String, audio: Audio): SndResult
 
 }
 
@@ -65,7 +65,8 @@ internal class SndDomain(
     /**
      * play audio stream from Audio and return SndResult after finished
      */
-    override suspend fun awaitPlayAudio(audio: Audio): SndResult {
+    //TODO #466 request id to tell mqtt that play finished
+    override suspend fun awaitPlayAudio(id: String, audio: Audio): SndResult {
         logger.d { "awaitPlayAudio $audio" }
         indication.onPlayAudio()
 
@@ -80,6 +81,7 @@ internal class SndDomain(
                 )
         }.also {
             domainHistory.addToHistory(it)
+            mqttConnection.notify(id, it)
         }
     }
 

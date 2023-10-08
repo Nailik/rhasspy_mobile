@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.ui.content
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ListItemDefaults
@@ -8,10 +8,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.resource.stable
@@ -28,48 +26,41 @@ fun ConnectionStateHeaderItem(
 ) {
     val connectionState by connectionStateFlow.collectAsState()
 
-    AnimatedVisibility(
-        visible = connectionState !is Disabled,
-        enter = fadeIn() + expandIn(
-            expandFrom = Alignment.TopCenter,
-            initialSize = { fullSize -> IntSize(fullSize.width, 0) },
-        ),
-        exit = shrinkOut(
-            shrinkTowards = Alignment.TopCenter,
-            targetSize = { fullSize -> IntSize(fullSize.width, 0) }
-        ) + fadeOut(),
-    ) {
-        val contentColor = when (connectionState) {
-            is Success    -> MaterialTheme.colorScheme.onPrimaryContainer
-            is ErrorState -> MaterialTheme.colorScheme.onErrorContainer
-            is Disabled   -> return@AnimatedVisibility
-        }
+    val contentColor = when (connectionState) {
+        is Success    -> MaterialTheme.colorScheme.onPrimaryContainer
+        is ErrorState -> MaterialTheme.colorScheme.onErrorContainer
+        is Disabled   -> MaterialTheme.colorScheme.onSecondaryContainer
+        is Loading    -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
 
+    AnimatedContent(connectionState) { state ->
         ListElement(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 16.dp)
                 .clip(RoundedCornerShape(12.dp)),
             colors = ListItemDefaults.colors(
-                containerColor = when (connectionState) {
+                containerColor = when (state) {
                     is Success    -> MaterialTheme.colorScheme.primaryContainer
                     is ErrorState -> MaterialTheme.colorScheme.errorContainer
-                    is Disabled   -> return@AnimatedVisibility
+                    is Disabled   -> MaterialTheme.colorScheme.secondaryContainer
+                    is Loading    -> MaterialTheme.colorScheme.surfaceVariant
                 },
                 headlineColor = contentColor,
                 leadingIconColor = contentColor,
                 supportingColor = contentColor,
             ),
-            icon = { EventStateIcon(connectionState) },
-            text = { ConnectionStateText(connectionState) },
+            icon = { EventStateIcon(state) },
+            text = { ConnectionStateText(state) },
             secondaryText = {
-                when (val state = connectionState) {
-                    is ErrorState -> Text(state.message)
-                    else          -> Unit
+                when (state) {
+                    is ErrorState -> Text(state.message, maxLines = 2, minLines = 2)
+                    is Disabled   -> Text(MR.strings.disabled.stable, maxLines = 2, minLines = 2)
+                    is Loading    -> Text(MR.strings.loading.stable, maxLines = 2, minLines = 2)
+                    is Success    -> Text(MR.strings.success.stable, maxLines = 2, minLines = 2)
                 }
             }
         )
-
     }
 
 }
@@ -84,7 +75,8 @@ private fun ConnectionStateText(connectionState: ConnectionState) {
         resource = when (connectionState) {
             is Success    -> MR.strings.success.stable
             is ErrorState -> MR.strings.error.stable
-            Disabled      -> return
+            is Disabled   -> MR.strings.disabled.stable
+            is Loading    -> MR.strings.loading.stable
         }
     )
 

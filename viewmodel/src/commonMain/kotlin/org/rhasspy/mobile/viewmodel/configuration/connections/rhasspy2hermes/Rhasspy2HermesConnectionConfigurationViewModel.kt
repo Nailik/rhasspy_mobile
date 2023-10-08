@@ -22,7 +22,7 @@ class Rhasspy2HermesConnectionConfigurationViewModel(
     private val _viewState = MutableStateFlow(
         Rhasspy2HermesConnectionConfigurationViewState(
             editData = mapper(ConfigurationSetting.rhasspy2Connection.value),
-            connectionState = userConnection.rhasspy2HermesMqttConnectionState,
+            connectionState = userConnection.rhasspy2HermesHttpConnectionState,
         )
     )
     val viewState = _viewState.readOnly
