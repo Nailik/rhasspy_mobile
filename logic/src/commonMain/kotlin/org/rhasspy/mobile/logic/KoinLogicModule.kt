@@ -179,7 +179,6 @@ fun logicModule() = module {
     factory<IVadDomain> {
         VadDomain(
             params = ConfigurationSetting.vadDomainData.value,
-            mqttConnection = get(),
             userConnection = get(),
             domainHistory = get(),
         )

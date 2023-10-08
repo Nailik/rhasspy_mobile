@@ -6,13 +6,13 @@ import org.rhasspy.mobile.data.domain.VadDomainData
 import org.rhasspy.mobile.data.service.option.VadDomainOption.Disabled
 import org.rhasspy.mobile.data.service.option.VadDomainOption.Local
 import org.rhasspy.mobile.logic.IDomain
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent
 import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
 import org.rhasspy.mobile.logic.pipeline.Reason
 import org.rhasspy.mobile.logic.pipeline.Source
+import org.rhasspy.mobile.logic.pipeline.StartRecording
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VadError
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VoiceStopped
@@ -24,9 +24,9 @@ import org.rhasspy.mobile.platformspecific.timeoutWithDefault
  */
 internal interface IVadDomain : IDomain {
 
-    suspend fun awaitVoiceStart(sessionId: String, audioStream: Flow<MicAudioChunk>): VoiceStart
+    suspend fun awaitVoiceStart(startRecording: StartRecording, audioStream: Flow<MicAudioChunk>): VoiceStart
 
-    suspend fun awaitVoiceStopped(sessionId: String, audioStream: Flow<MicAudioChunk>): VoiceEnd
+    suspend fun awaitVoiceStopped(startRecording: StartRecording, audioStream: Flow<MicAudioChunk>): VoiceEnd
 
 }
 
@@ -35,7 +35,6 @@ internal interface IVadDomain : IDomain {
  */
 internal class VadDomain(
     private val params: VadDomainData,
-    private val mqttConnection: IMqttConnection,
     private val userConnection: IUserConnection,
     private val domainHistory: IDomainHistory,
 ) : IVadDomain {
@@ -52,7 +51,7 @@ internal class VadDomain(
      * waits for voice to start,
      * local and disabled instantly return VoiceStart
      */
-    override suspend fun awaitVoiceStart(sessionId: String, audioStream: Flow<MicAudioChunk>): VoiceStart {
+    override suspend fun awaitVoiceStart(startRecording: StartRecording, audioStream: Flow<MicAudioChunk>): VoiceStart {
         logger.d { "awaitVoiceStart" }
         return when (params.option) {
             Local    -> {
@@ -62,7 +61,7 @@ internal class VadDomain(
 
             Disabled -> VoiceStart(Source.Local)
         }.also {
-            domainHistory.addToHistory(sessionId, it)
+            domainHistory.addToHistory(startRecording, it)
         }
     }
 
@@ -70,13 +69,13 @@ internal class VadDomain(
     /**
      * waits for voice to end for Local with timeout (localSilenceDetectionTimeout)
      */
-    override suspend fun awaitVoiceStopped(sessionId: String, audioStream: Flow<MicAudioChunk>): VoiceEnd {
+    override suspend fun awaitVoiceStopped(startRecording: StartRecording, audioStream: Flow<MicAudioChunk>): VoiceEnd {
         logger.d { "awaitVoiceStopped" }
         return when (params.option) {
             Local    -> awaitVoiceStoppedLocal(audioStream)
             Disabled -> awaitVoiceStoppedDisabled()
         }.also {
-            domainHistory.addToHistory(sessionId, it)
+            domainHistory.addToHistory(startRecording, it)
         }
     }
 

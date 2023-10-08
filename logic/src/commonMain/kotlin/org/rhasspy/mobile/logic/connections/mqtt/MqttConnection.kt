@@ -68,6 +68,7 @@ internal interface IMqttConnection : IConnection {
     suspend fun say(sessionId: String, text: String, volume: Float?, siteId: String, id: String): MqttResult
     suspend fun playAudioRemote(audioSource: AudioSource, siteId: String, id: String): MqttResult
     fun notify(sessionId: String?, result: DomainResult)
+    fun notify(start: DomainResult, result: DomainResult)
 
 }
 
@@ -1034,6 +1035,11 @@ internal class MqttConnection(
         }
     }
 
+
+    override fun notify(start: DomainResult, result: DomainResult) {
+//TODO #466 id's into result
+    }
+
     override fun notify(sessionId: String?, result: DomainResult) { //TODO #466 id's into result
         if (result.source == Source.Rhasspy2HermesMqtt) return
 
@@ -1058,6 +1064,7 @@ internal class MqttConnection(
                 is VadResult.VoiceStart             -> startListening(sessionId ?: return@launch, ConfigurationSetting.asrDomainData.value.isUseSpeechToTextMqttSilenceDetection)
                 is WakeResult                       -> hotWordDetected(result.name.toString())
                 is PipelineStarted                  -> sessionStarted(sessionId ?: return@launch)
+                is StartRecording                   -> Unit
             }
         }
 

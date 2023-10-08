@@ -13,7 +13,6 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResul
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayBytes
 import org.rhasspy.mobile.logic.connections.mqtt.toAudio
 import org.rhasspy.mobile.logic.domains.IDomainHistory
-import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.pipeline.*
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
@@ -97,7 +96,7 @@ internal class PipelineMqtt(
     private fun onSessionStarted(sessionId: String) {
         domainHistory.addToHistory(
             sessionId = sessionId,
-            PipelineStarted(
+            result = PipelineStarted(
                 sessionId = sessionId,
                 source = Rhasspy2HermesMqtt,
             )
@@ -152,22 +151,17 @@ internal class PipelineMqtt(
     private fun onStartListening(sessionId: String) {
         scope.launch {
             domains.asrDomain.awaitTranscript(
-                sessionId = sessionId,
+                startRecording = StartRecording(
+                    sessionId = sessionId,
+                    source = Rhasspy2HermesMqtt,
+                ),
                 audioStream = domains.micDomain.audioStream,
-                awaitVoiceStart = ::awaitVoiceStart,
-                awaitVoiceStopped = ::awaitVoiceStopped,
+                awaitVoiceStart = domains.vadDomain::awaitVoiceStart,
+                awaitVoiceStopped = domains.vadDomain::awaitVoiceStopped,
             ).also {
                 audioFocus.abandon(AudioFocusRequestReason.Record)
             }
         }
-    }
-
-    private suspend fun awaitVoiceStart(sessionId: String, audioStream: Flow<MicAudioChunk>): VadResult.VoiceStart {
-        return flow { emit(VadResult.VoiceStart(Rhasspy2HermesMqtt)) }.first()
-    }
-
-    private suspend fun awaitVoiceStopped(sessionId: String, audioStream: Flow<MicAudioChunk>): VadResult.VoiceEnd {
-        return flow<VadResult.VoiceEnd> { }.first()
     }
 
 }

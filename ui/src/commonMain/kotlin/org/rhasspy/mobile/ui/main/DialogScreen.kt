@@ -202,6 +202,8 @@ private fun InformationText(domainResult: DomainResult) {
 
             is PipelineStarted                 ->
                 Text("sessionId: $sessionId")
+
+            is StartRecording                  -> {}
         }
     }
 }
@@ -237,5 +239,6 @@ private fun DomainResult.getName() = when (this) {
     is SndAudio.AudioStartEvent         -> "AudioStartEvent"
     is SndAudio.AudioStopEvent          -> "AudioStopEvent"
     is PipelineStarted                  -> "PipelineStarted"
+    is StartRecording                   -> "StartRecording"
 }
 

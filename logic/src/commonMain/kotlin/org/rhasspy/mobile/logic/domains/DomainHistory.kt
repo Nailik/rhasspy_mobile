@@ -15,6 +15,8 @@ interface IDomainHistory {
 
     fun addToHistory(sessionId: String?, result: DomainResult)
 
+    fun addToHistory(start: DomainResult, result: DomainResult)
+
 }
 
 //TODO DomainState - Start - await - Result
@@ -28,6 +30,16 @@ internal class DomainHistory(
 
     override fun addToHistory(sessionId: String?, result: DomainResult) {
         mqttConnection.notify(sessionId, result)
+        logger.d { "$result" }
+        historyState.update {
+            it.toMutableList().apply {
+                add(result)
+            }
+        }
+    }
+
+    override fun addToHistory(start: DomainResult, result: DomainResult) {
+        mqttConnection.notify(start, result)
         logger.d { "$result" }
         historyState.update {
             it.toMutableList().apply {

@@ -23,6 +23,7 @@ import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.pipeline.Reason.*
 import org.rhasspy.mobile.logic.pipeline.Source.*
+import org.rhasspy.mobile.logic.pipeline.StartRecording
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.TranscriptError
@@ -40,10 +41,10 @@ internal interface IAsrDomain : IDomain {
      * awaits VoiceStart, afterwards audioStream is send to Asr until VoiceStopped or a TranscriptResult is found
      */
     suspend fun awaitTranscript(
-        sessionId: String,
+        startRecording: StartRecording,
         audioStream: Flow<MicAudioChunk>,
-        awaitVoiceStart: suspend (sessionId: String, audioStream: Flow<MicAudioChunk>) -> VoiceStart,
-        awaitVoiceStopped: suspend (sessionId: String, audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
+        awaitVoiceStart: suspend (startRecording: StartRecording, audioStream: Flow<MicAudioChunk>) -> VoiceStart,
+        awaitVoiceStopped: suspend (startRecording: StartRecording, audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
     ): TranscriptResult
 
     val isRecordingState: StateFlow<Boolean>
@@ -75,12 +76,12 @@ internal class AsrDomain(
      * awaits VoiceStart, afterwards audioStream is send to Asr until VoiceStopped or a TranscriptResult is found
      */
     override suspend fun awaitTranscript(
-        sessionId: String,
+        startRecording: StartRecording,
         audioStream: Flow<MicAudioChunk>,
-        awaitVoiceStart: suspend (sessionId: String, audioStream: Flow<MicAudioChunk>) -> VoiceStart,
-        awaitVoiceStopped: suspend (sessionId: String, audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
+        awaitVoiceStart: suspend (startRecording: StartRecording, audioStream: Flow<MicAudioChunk>) -> VoiceStart,
+        awaitVoiceStopped: suspend (startRecording: StartRecording, audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
     ): TranscriptResult {
-        logger.d { "awaitTranscript for session $sessionId" }
+        logger.d { "awaitTranscript for $startRecording" }
 
         isRecordingState.value = true
 
@@ -88,13 +89,13 @@ internal class AsrDomain(
         audioFocus.request(Record)
 
         //wait for voice to start
-        awaitVoiceStart(sessionId, audioStream) //TODO inform that request from mqtt
+        awaitVoiceStart(startRecording, audioStream) //TODO inform that request from mqtt
 
         //await result
         return when (params.option) {
             AsrDomainOption.Rhasspy2HermesHttp -> {
                 awaitRhasspy2HermesHttpTranscript(
-                    sessionId = sessionId,
+                    startRecording = startRecording,
                     audioStream = audioStream,
                     awaitVoiceStopped = awaitVoiceStopped,
                 )
@@ -102,7 +103,7 @@ internal class AsrDomain(
 
             AsrDomainOption.Rhasspy2HermesMQTT ->
                 awaitRhasspy2HermesMQTTTranscript(
-                    sessionId = sessionId,
+                    startRecording = startRecording,
                     audioStream = audioStream,
                     awaitVoiceStopped = awaitVoiceStopped,
                 )
@@ -115,7 +116,7 @@ internal class AsrDomain(
         }.also {
             audioFocus.abandon(Record)
             isRecordingState.value = false
-            domainHistory.addToHistory(sessionId, it)
+            domainHistory.addToHistory(startRecording.sessionId, startRecording)
         }
     }
 
@@ -124,9 +125,9 @@ internal class AsrDomain(
      * then sends Data to Rhasspy2HermesHttp and returns result
      */
     private suspend fun awaitRhasspy2HermesHttpTranscript(
-        sessionId: String,
+        startRecording: StartRecording,
         audioStream: Flow<MicAudioChunk>,
-        awaitVoiceStopped: suspend (sessionId: String, audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
+        awaitVoiceStopped: suspend (startRecording: StartRecording, audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
     ): TranscriptResult {
         logger.d { "awaitRhasspy2HermesHttpTranscript" }
 
@@ -136,7 +137,7 @@ internal class AsrDomain(
             }
         }
 
-        awaitVoiceStopped(sessionId, audioStream)
+        awaitVoiceStopped(startRecording, audioStream)
 
         saveDataJob.cancelAndJoin()
         audioFileWriter?.closeFile()
@@ -167,17 +168,17 @@ internal class AsrDomain(
      * in case of stopping by VoiceStopped, AsrResult is awaited with timeout
      */
     private suspend fun awaitRhasspy2HermesMQTTTranscript(
-        sessionId: String,
+        startRecording: StartRecording,
         audioStream: Flow<MicAudioChunk>,
-        awaitVoiceStopped: suspend (sessionId: String, audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
+        awaitVoiceStopped: suspend (startRecording: StartRecording, audioStream: Flow<MicAudioChunk>) -> VoiceEnd,
     ): TranscriptResult {
-        logger.d { "awaitRhasspy2HermesMQTTTranscript for session $sessionId" }
+        logger.d { "awaitRhasspy2HermesMQTTTranscript for $startRecording" }
 
         val sendDataJob = scope.launch {
             audioStream.collectLatest { chunk ->
                 with(chunk) {
                     mqttConnection.asrAudioSessionFrame(
-                        sessionId = sessionId,
+                        sessionId = startRecording.sessionId,
                         sampleRate = sampleRate,
                         encoding = encoding,
                         channel = channel,
@@ -189,13 +190,13 @@ internal class AsrDomain(
         }
 
         val awaitVoiceStoppedJob = scope.launch {
-            awaitVoiceStopped(sessionId, audioStream)
+            awaitVoiceStopped(startRecording, audioStream)
             sendDataJob.cancelAndJoin()
         }
 
         return mqttConnection.incomingMessages
             .filterIsInstance<AsrResult>()
-            .filter { it.sessionId == sessionId }
+            .filter { it.sessionId == startRecording.sessionId }
             .map {
                 when (it) {
                     is AsrTextCaptured -> Transcript(

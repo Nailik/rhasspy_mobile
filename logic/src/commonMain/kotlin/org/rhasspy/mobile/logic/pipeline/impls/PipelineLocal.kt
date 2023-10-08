@@ -40,7 +40,10 @@ internal class PipelineLocal(
         //transcript audio to text from voice start till voice stop
         val transcript = when (
             val result = domains.asrDomain.awaitTranscript(
-                sessionId = sessionId,
+                startRecording = StartRecording(
+                    sessionId = sessionId,
+                    source = Source.Local,
+                ),
                 audioStream = domains.micDomain.audioStream,
                 awaitVoiceStart = domains.vadDomain::awaitVoiceStart,
                 awaitVoiceStopped = domains.vadDomain::awaitVoiceStopped,
