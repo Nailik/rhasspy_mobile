@@ -39,6 +39,7 @@ import org.rhasspy.mobile.platformspecific.extensions.commonSource
 import org.rhasspy.mobile.platformspecific.mqtt.*
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import kotlin.random.Random
 
 internal interface IMqttConnection : IConnection {
@@ -1053,10 +1054,10 @@ internal class MqttConnection(
                 is SndAudio.AudioStopEvent          -> Unit
                 is TranscriptResult.Transcript      -> asrTextCaptured(sessionId ?: return@launch, result.text)
                 is TtsResult.Audio                  -> Unit
-                is VadResult.VoiceEnd.VoiceStopped  -> Unit //TODO stopListening(sessionId ?: return@launch)
-                is VadResult.VoiceStart             -> Unit //TODO startListening(sessionId ?: return@launch, ConfigurationSetting.asrDomainData.value.isUseSpeechToTextMqttSilenceDetection)
+                is VadResult.VoiceEnd.VoiceStopped  -> stopListening(sessionId ?: return@launch)
+                is VadResult.VoiceStart             -> startListening(sessionId ?: return@launch, ConfigurationSetting.asrDomainData.value.isUseSpeechToTextMqttSilenceDetection)
                 is WakeResult                       -> hotWordDetected(result.name.toString())
-                is PipelineStarted                  -> Unit //sessionStarted(sessionId ?: return@launch)
+                is PipelineStarted                  -> sessionStarted(sessionId ?: return@launch)
             }
         }
 

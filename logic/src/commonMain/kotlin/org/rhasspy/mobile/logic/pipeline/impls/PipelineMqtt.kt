@@ -13,6 +13,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResul
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayBytes
 import org.rhasspy.mobile.logic.connections.mqtt.toAudio
 import org.rhasspy.mobile.logic.domains.IDomainHistory
+import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.pipeline.*
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
@@ -153,12 +154,20 @@ internal class PipelineMqtt(
             domains.asrDomain.awaitTranscript(
                 sessionId = sessionId,
                 audioStream = domains.micDomain.audioStream,
-                awaitVoiceStart = domains.vadDomain::awaitVoiceStart, //TODO this fucks everything up because start listening is send to
-                awaitVoiceStopped = domains.vadDomain::awaitVoiceStopped,
+                awaitVoiceStart = ::awaitVoiceStart,
+                awaitVoiceStopped = ::awaitVoiceStopped,
             ).also {
                 audioFocus.abandon(AudioFocusRequestReason.Record)
             }
         }
+    }
+
+    private suspend fun awaitVoiceStart(sessionId: String, audioStream: Flow<MicAudioChunk>): VadResult.VoiceStart {
+        return flow { emit(VadResult.VoiceStart(Rhasspy2HermesMqtt)) }.first()
+    }
+
+    private suspend fun awaitVoiceStopped(sessionId: String, audioStream: Flow<MicAudioChunk>): VadResult.VoiceEnd {
+        return flow<VadResult.VoiceEnd> { }.first()
     }
 
 }
