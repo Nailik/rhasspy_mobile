@@ -268,7 +268,9 @@ internal class WebServerConnection(
      * ?entity=<entity>&value=<value> - set custom entities/values in recognized intent
      */
     private fun listenForCommand(): WebServerResult {
-        incomingMessages.tryEmit(WebServerListenForCommand)
+        scope.launch {
+            incomingMessages.emit(WebServerListenForCommand)
+        }
         return Ok
     }
 
@@ -325,8 +327,9 @@ internal class WebServerConnection(
             Error(WebServerConnectionErrorType.AudioContentTypeWarning)
         } else Ok
         //play even without content type
-        incomingMessages.tryEmit(WebServerPlayWav(call.receive()))
-
+        scope.launch {
+            incomingMessages.emit(WebServerPlayWav(call.receive()))
+        }
         return result
     }
 
@@ -359,7 +362,9 @@ internal class WebServerConnection(
      * actually starts a session
      */
     private fun startRecording(): WebServerResult {
-        incomingMessages.tryEmit(WebServerStartRecording)
+        scope.launch {
+            incomingMessages.emit(WebServerStartRecording)
+        }
         return Ok
     }
 
@@ -375,7 +380,9 @@ internal class WebServerConnection(
      * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
      */
     private fun stopRecording(): WebServerResult {
-        incomingMessages.tryEmit(WebServerStopRecording)
+        scope.launch {
+            incomingMessages.emit(WebServerStopRecording)
+        }
         return Ok
     }
 
@@ -388,7 +395,9 @@ internal class WebServerConnection(
      * just like using say in the ui start screen but remote
      */
     private suspend fun say(call: ApplicationCall): WebServerResult {
-        incomingMessages.tryEmit(WebServerSay(call.receive()))
+        scope.launch {
+            incomingMessages.emit(WebServerSay(call.receive()))
+        }
         return Ok
     }
 

@@ -87,7 +87,7 @@ internal class MqttConnection(
 
     override val connectionState = MutableStateFlow<ConnectionState>(Disabled)
 
-    override val incomingMessages = MutableSharedFlow<MqttConnectionEvent>(extraBufferCapacity = 1)
+    override val incomingMessages = MutableSharedFlow<MqttConnectionEvent>()
 
     private val nativeApplication by inject<NativeApplication>()
 
@@ -395,8 +395,11 @@ internal class MqttConnection(
      * hermes/dialogueManager/sessionStarted
      * hermes/dialogueManager/sessionQueued
      */
-    private fun startSession(jsonObject: JsonObject) =
-        incomingMessages.tryEmit(StartSession(jsonObject.getSessionId()))
+    private fun startSession(jsonObject: JsonObject) {
+        scope.launch {
+            incomingMessages.emit(StartSession(jsonObject.getSessionId()))
+        }
+    }
 
 
     /**
@@ -406,8 +409,11 @@ internal class MqttConnection(
      * Requests that a session be terminated nominally
      * sessionId: string - current session ID (required)
      */
-    private fun endSession(jsonObject: JsonObject) =
-        incomingMessages.tryEmit(EndSession(jsonObject.getSessionId(), jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content))
+    private fun endSession(jsonObject: JsonObject) {
+        scope.launch {
+            incomingMessages.emit(EndSession(jsonObject.getSessionId(), jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content))
+        }
+    }
 
     /**
      * hermes/dialogueManager/sessionStarted (JSON)
@@ -420,8 +426,11 @@ internal class MqttConnection(
      *
      * used to save the sessionId and check for it when recording etc
      */
-    private fun sessionStarted(jsonObject: JsonObject) =
-        incomingMessages.tryEmit(SessionStarted(jsonObject.getSessionId()))
+    private fun sessionStarted(jsonObject: JsonObject) {
+        scope.launch {
+            incomingMessages.emit(SessionStarted(jsonObject.getSessionId()))
+        }
+    }
 
     /**
      * hermes/dialogueManager/sessionStarted (JSON)
@@ -453,8 +462,11 @@ internal class MqttConnection(
      *
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
-    private fun sessionEnded(jsonObject: JsonObject) =
-        incomingMessages.tryEmit(SessionEnded(jsonObject.getSessionId()))
+    private fun sessionEnded(jsonObject: JsonObject) {
+        scope.launch {
+            incomingMessages.emit(SessionEnded(jsonObject.getSessionId()))
+        }
+    }
 
     /**
      * hermes/dialogueManager/sessionEnded (JSON)
@@ -572,15 +584,17 @@ internal class MqttConnection(
      * currentSensitivity: float = 1.0 - sensitivity of wake word detection (service specific)
      * siteId: string = "default" - Hermes site ID
      */
-    private fun hotWordDetectedCalled(topic: String): Boolean =
-        topic.split("/").let {
-            if (it.size > 2) {
-                incomingMessages.tryEmit(HotWordDetected(it[2]))
-                true
-            } else {
-                false
+    private fun hotWordDetectedCalled(topic: String) {
+        scope.launch {
+            topic.split("/").let {
+                if (it.size > 2) {
+                    incomingMessages.emit(HotWordDetected(it[2]))
+                } else {
+                    incomingMessages.emit(HotWordDetected("HotWordDetected(it[2])")) //TODO #466
+                }
             }
         }
+    }
 
     /**
      * hermes/hotword/<wakewordId>/detected (JSON)
@@ -628,13 +642,16 @@ internal class MqttConnection(
      * wakewordId: string? = null - id of wake word that triggered session (Rhasspy only)
      * sessionId: string? = null - current session ID
      */
-    private fun startListening(jsonObject: JsonObject) =
-        incomingMessages.tryEmit(
-            StartListening(
-                sessionId = jsonObject.getSessionId(),
-                sendAudioCaptured = jsonObject[MqttParams.SendAudioCaptured.value]?.jsonPrimitive?.booleanOrNull == true
+    private fun startListening(jsonObject: JsonObject) {
+        scope.launch {
+            incomingMessages.emit(
+                StartListening(
+                    sessionId = jsonObject.getSessionId(),
+                    sendAudioCaptured = jsonObject[MqttParams.SendAudioCaptured.value]?.jsonPrimitive?.booleanOrNull == true
+                )
             )
-        )
+        }
+    }
 
     /**
      * hermes/asr/startListening (JSON)
@@ -664,8 +681,11 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      * sessionId: string = "" - current session ID
      */
-    private fun stopListening(jsonObject: JsonObject) =
-        incomingMessages.tryEmit(StopListening(jsonObject.getSessionId()))
+    private fun stopListening(jsonObject: JsonObject) {
+        scope.launch {
+            incomingMessages.emit(StopListening(jsonObject.getSessionId()))
+        }
+    }
 
     /**
      * hermes/asr/stopListening (JSON)
@@ -691,13 +711,16 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      * sessionId: string? = null - current session ID
      */
-    private fun asrTextCaptured(jsonObject: JsonObject) =
-        incomingMessages.tryEmit(
-            AsrTextCaptured(
-                sessionId = jsonObject.getSessionId(),
-                text = jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content
+    private fun asrTextCaptured(jsonObject: JsonObject) {
+        scope.launch {
+            incomingMessages.emit(
+                AsrTextCaptured(
+                    sessionId = jsonObject.getSessionId(),
+                    text = jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content
+                )
             )
-        )
+        }
+    }
 
     /**
      * hermes/asr/textCaptured (JSON)
@@ -727,8 +750,11 @@ internal class MqttConnection(
      * siteId: string = "default" - Hermes site ID
      * sessionId: string? = null - current session ID
      */
-    private fun asrError(jsonObject: JsonObject) =
-        incomingMessages.tryEmit(AsrError(jsonObject.getSessionId()))
+    private fun asrError(jsonObject: JsonObject) {
+        scope.launch {
+            incomingMessages.emit(AsrError(jsonObject.getSessionId()))
+        }
+    }
 
 
     /**
@@ -804,14 +830,17 @@ internal class MqttConnection(
      *
      * Response to hermes/nlu/query
      */
-    private fun intentRecognitionResult(jsonObject: JsonObject) =
-        incomingMessages.tryEmit(
-            IntentRecognitionResult(
-                sessionId = jsonObject.getSessionId(),
-                intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content,
-                intent = jsonObject.toString()
+    private fun intentRecognitionResult(jsonObject: JsonObject) {
+        scope.launch {
+            incomingMessages.emit(
+                IntentRecognitionResult(
+                    sessionId = jsonObject.getSessionId(),
+                    intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content,
+                    intent = jsonObject.toString()
+                )
             )
-        )
+        }
+    }
 
     /**
      * hermes/dialogueManager/intentNotRecognized (JSON)
@@ -819,8 +848,11 @@ internal class MqttConnection(
      * sessionId: string - current session ID
      * siteId: string = "default" - Hermes site ID
      */
-    private fun intentNotRecognized(jsonObject: JsonObject) =
-        incomingMessages.tryEmit(IntentNotRecognized(jsonObject.getSessionId()))
+    private fun intentNotRecognized(jsonObject: JsonObject) {
+        scope.launch {
+            incomingMessages.emit(IntentNotRecognized(jsonObject.getSessionId()))
+        }
+    }
 
     /**
      * hermes/handle/toggleOn
@@ -879,17 +911,20 @@ internal class MqttConnection(
      * Response(s)
      * hermes/tts/sayFinished (JSON)
      */
-    private fun say(jsonObject: JsonObject) =
-        jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content?.let {
-            incomingMessages.tryEmit(
-                Say(
-                    sessionId = jsonObject.getSessionId(),
-                    text = it,
-                    volume = jsonObject[MqttParams.Volume.value]?.jsonPrimitive?.floatOrNull,
-                    siteId = jsonObject.getSiteId() ?: "default"
+    private fun say(jsonObject: JsonObject) {
+        scope.launch {
+            jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content?.also {
+                incomingMessages.emit(
+                    Say(
+                        sessionId = jsonObject.getSessionId(),
+                        text = it,
+                        volume = jsonObject[MqttParams.Volume.value]?.jsonPrimitive?.floatOrNull,
+                        siteId = jsonObject.getSiteId() ?: "default"
+                    )
                 )
-            )
+            }
         }
+    }
 
 
     /**
@@ -902,8 +937,11 @@ internal class MqttConnection(
      * Response(s)
      * hermes/audioServer/<siteId>/playFinished (JSON)
      */
-    private fun playBytes(byteArray: ByteArray, requestId: String) =
-        incomingMessages.tryEmit(PlayBytes(requestId, byteArray))
+    private fun playBytes(byteArray: ByteArray, requestId: String) {
+        scope.launch {
+            incomingMessages.emit(PlayBytes(requestId, byteArray))
+        }
+    }
 
     /**
      * hermes/audioServer/<siteId>/playFinished
@@ -912,8 +950,11 @@ internal class MqttConnection(
      * siteId: string - Hermes site ID (part of topic)
      * id: string = "" - requestId from request message
      */
-    private fun playFinishedCall(requestId: String) =
-        incomingMessages.tryEmit(PlayFinished(id = requestId))
+    private fun playFinishedCall(requestId: String) {
+        scope.launch {
+            incomingMessages.emit(PlayFinished(id = requestId))
+        }
+    }
 
     /**
      * hermes/audioServer/<siteId>/playBytes/<requestId> (JSON)

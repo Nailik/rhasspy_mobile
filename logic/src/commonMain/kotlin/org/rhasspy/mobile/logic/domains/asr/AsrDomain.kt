@@ -193,7 +193,7 @@ internal class AsrDomain(
             val result = mqttConnection.startListening(
                 sessionId = sessionId,
                 isUseSilenceDetection = params.isUseSpeechToTextMqttSilenceDetection,
-            )
+            ) //TODO #466 when mqtt pipeline triggers this it will trigger itself again
         ) {
             is MqttResult.Error   -> return TranscriptError(
                 reason = Error(result.message),

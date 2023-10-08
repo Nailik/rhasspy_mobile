@@ -1,9 +1,13 @@
 package org.rhasspy.mobile.logic.connections.user
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.domain.DomainState
@@ -78,7 +82,7 @@ internal class UserConnection(
 
     private val pipelineManager get() = get<IPipelineManager>()
 
-    override val incomingMessages = MutableSharedFlow<UserConnectionEvent>(extraBufferCapacity = 1)
+    override val incomingMessages = MutableSharedFlow<UserConnectionEvent>()
     override val indicationState = indication.indicationState
     override val showVisualIndicationState = indication.isShowVisualIndication
 
@@ -100,12 +104,18 @@ internal class UserConnection(
 
     override val isPlayingState: StateFlow<Boolean> = localAudioService.isPlayingState
 
+    private val scope = CoroutineScope(Dispatchers.IO)
+
     override fun sessionAction() {
-        incomingMessages.tryEmit(StartStopRhasspy)
+        scope.launch {
+            incomingMessages.emit(StartStopRhasspy)
+        }
     }
 
     override fun playRecordingAction() {
-        incomingMessages.tryEmit(StartStopPlayRecording)
+        scope.launch {
+            incomingMessages.emit(StartStopPlayRecording)
+        }
     }
 
     override fun clearPipelineHistory() {

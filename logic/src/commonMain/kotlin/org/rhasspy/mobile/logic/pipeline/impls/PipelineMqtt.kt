@@ -34,10 +34,11 @@ internal class PipelineMqtt(
     private val audioFocus: IAudioFocus,
 ) : IPipeline {
 
-    private val logger = Logger.withTag("PipelineDisabled")
+    private val logger = Logger.withTag("PipelineMqtt")
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
+    //TODO #466 playBytes for notification sounds not working via mqtt
     override suspend fun runPipeline(wakeResult: WakeResult): PipelineResult {
 
         logger.d { "runPipeline $wakeResult" }
@@ -51,6 +52,8 @@ internal class PipelineMqtt(
             .filterIsInstance<SessionStarted>()
             .mapNotNull { it.sessionId }
             .first() //TODO timeout?
+
+        logger.d { "SessionStarted $sessionId" }
 
         return runPipeline(sessionId).also {
             domains.dispose()
@@ -79,15 +82,17 @@ internal class PipelineMqtt(
                     is Say                     -> onSay(sessionId, it.text, it.volume)
                     is SessionEnded            -> End(Rhasspy2HermesMqtt)
                     is StartListening          -> onStartListening(sessionId)
-                    is SessionStarted          -> runPipeline(sessionId)
-                    is StartSession            -> runPipeline(sessionId)
-                    is StopListening           -> runPipeline(sessionId)
+                    is SessionStarted          -> Unit
+                    is StartSession            -> Unit
+                    is StopListening           -> Unit
                 }
-            }.first()
+            }
+            .filterIsInstance<End>()
+            .first()
 
     }
 
-    private suspend fun onAsrTextCaptured(sessionId: String, text: String): PipelineResult {
+    private fun onAsrTextCaptured(sessionId: String, text: String) {
         scope.launch {
             //find intent from text, eventually already handles
             domains.intentDomain.awaitIntent(
@@ -98,10 +103,9 @@ internal class PipelineMqtt(
                 ),
             )
         }
-        return runPipeline(sessionId)
     }
 
-    private suspend fun onIntentRecognitionResult(sessionId: String, intentName: String?, intent: String): PipelineResult {
+    private fun onIntentRecognitionResult(sessionId: String, intentName: String?, intent: String) {
         scope.launch {
             domains.handleDomain.awaitIntentHandle(
                 sessionId = sessionId,
@@ -112,10 +116,9 @@ internal class PipelineMqtt(
                 )
             )
         }
-        return runPipeline(sessionId)
     }
 
-    private suspend fun onSay(sessionId: String, text: String, volume: Float?): PipelineResult {
+    private fun onSay(sessionId: String, text: String, volume: Float?) {
         scope.launch {
             val result = domains.ttsDomain.onSynthesize(
                 sessionId = sessionId,
@@ -132,10 +135,9 @@ internal class PipelineMqtt(
                 domains.sndDomain.awaitPlayAudio(result)
             }
         }
-        return runPipeline(sessionId)
     }
 
-    private suspend fun onStartListening(sessionId: String): PipelineResult {
+    private fun onStartListening(sessionId: String) {
         scope.launch {
             domains.asrDomain.awaitTranscript(
                 sessionId = sessionId,
@@ -146,7 +148,6 @@ internal class PipelineMqtt(
                 audioFocus.abandon(AudioFocusRequestReason.Record)
             }
         }
-        return runPipeline(sessionId)
     }
 
 }
