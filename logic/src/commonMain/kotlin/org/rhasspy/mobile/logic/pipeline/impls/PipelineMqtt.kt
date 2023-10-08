@@ -12,6 +12,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.A
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentNotRecognized
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentRecognitionResult
 import org.rhasspy.mobile.logic.connections.mqtt.toAudio
+import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.pipeline.*
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
@@ -29,6 +30,7 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 internal class PipelineMqtt(
     private val mqttConnection: IMqttConnection,
     private val domains: DomainBundle,
+    private val domainHistory: IDomainHistory,
     private val audioFocus: IAudioFocus,
 ) : IPipeline {
 
@@ -56,6 +58,14 @@ internal class PipelineMqtt(
             .mapNotNull { it.sessionId }
             .first() //TODO #466 timeout?
 
+        domainHistory.addToHistory(
+            sessionId = sessionId,
+            PipelineStarted(
+                sessionId = sessionId,
+                source = Rhasspy2HermesMqtt,
+            )
+        )
+
         logger.d { "SessionStarted $sessionId" }
 
         return runPipeline(sessionId).also {
@@ -82,6 +92,7 @@ internal class PipelineMqtt(
                         reason = Reason.Error(MR.strings.intent_not_recognized.stable),
                         source = Rhasspy2HermesMqtt,
                     )
+
                     is IntentRecognitionResult -> onIntentRecognitionResult(sessionId, it.intentName, it.intent)
                     is Say                     -> onSay(sessionId, it.text, it.volume)
                     is SessionEnded            -> End(Rhasspy2HermesMqtt)

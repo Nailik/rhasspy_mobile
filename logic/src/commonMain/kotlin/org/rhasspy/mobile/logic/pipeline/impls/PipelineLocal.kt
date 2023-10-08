@@ -2,23 +2,23 @@ package org.rhasspy.mobile.logic.pipeline.impls
 
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
+import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
+import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
-import org.rhasspy.mobile.logic.pipeline.DomainBundle
+import org.rhasspy.mobile.logic.pipeline.*
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
-import org.rhasspy.mobile.logic.pipeline.IPipeline
 import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
-import org.rhasspy.mobile.logic.pipeline.PipelineResult
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
 import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
-import org.rhasspy.mobile.logic.pipeline.WakeResult
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 internal class PipelineLocal(
     private val domains: DomainBundle,
+    private val domainHistory: IDomainHistory,
     private val audioFocus: IAudioFocus,
-) : IPipeline {
+) : IPipeline, KoinComponent {
     //TODO #466 move audio hints to here
 
     private val logger = Logger.withTag("PipelineDisabled")
@@ -28,6 +28,14 @@ internal class PipelineLocal(
 
         //use session id from event or create own one
         val sessionId = wakeResult.sessionId ?: uuid4().toString()
+
+        domainHistory.addToHistory(
+            sessionId = sessionId,
+            PipelineStarted(
+                sessionId = sessionId,
+                source = Source.Local,
+            )
+        )
 
         //transcript audio to text from voice start till voice stop
         val transcript = when (

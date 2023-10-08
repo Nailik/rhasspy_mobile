@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.pipeline
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.koin.core.component.KoinComponent
@@ -46,6 +47,8 @@ internal class PipelineManager(
     private val fileStorage: IFileStorage,
 ) : IPipelineManager, KoinComponent {
 
+    private val logger = Logger.withTag("PipelineManager")
+
     private val params: PipelineData = ConfigurationSetting.pipelineData.value
 
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -78,7 +81,7 @@ internal class PipelineManager(
         pipelineScope = CoroutineScope(Dispatchers.IO)
         pipelineJob = null
 
-        val domains = get<DomainBundle>()
+        val domains = get<DomainBundle>() //TODO  #466 issue when data changes because it has just effect on next await
         val currentWakeDomain = get<IWakeDomain>()
         wakeDomain = currentWakeDomain
 
@@ -122,9 +125,10 @@ internal class PipelineManager(
 
     private fun runPipeline(wakeResult: WakeResult, domains: DomainBundle) {
         pipelineJob = pipelineScope.launch {
-            when (getPipeline(domains).runPipeline(wakeResult)) {
+            when (val result = getPipeline(domains).runPipeline(wakeResult)) {
                 is End,
                 is Played   -> {
+                    logger.e { "result is (Success) $result" }
                     //Success: indication idle
                     indication.onIdle()
                 }
@@ -135,6 +139,7 @@ internal class PipelineManager(
                 is TranscriptError,
                 is TtsError,
                 is VadError -> {
+                    logger.e { "result is (Error) $result" }
                     //Error: indication error
                     indication.onIdle()
                     indication.onError()

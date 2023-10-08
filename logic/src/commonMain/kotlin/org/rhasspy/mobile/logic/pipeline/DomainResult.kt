@@ -66,6 +66,13 @@ data class WakeResult(
     override val timeStamp: Instant = Clock.System.now(),
 ) : DomainResult
 
+
+data class PipelineStarted(
+    val sessionId: String,
+    override val source: Source,
+    override val timeStamp: Instant = Clock.System.now(),
+) : DomainResult
+
 sealed interface Reason {
 
     data object Disabled : Reason

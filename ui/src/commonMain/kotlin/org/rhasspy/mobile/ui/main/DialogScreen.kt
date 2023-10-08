@@ -199,6 +199,9 @@ private fun InformationText(domainResult: DomainResult) {
             is VadResult.VoiceStart            -> {}
             is WakeResult                      ->
                 Text("name: $name")
+
+            is PipelineStarted                 ->
+                Text("sessionId: $sessionId")
         }
     }
 }
@@ -215,7 +218,7 @@ private fun Source.getName() = when (this) {
 
 //TODO #466 information
 private fun DomainResult.getName() = when (this) {
-    is Handle -> "Handle"
+    is Handle                           -> "Handle"
     is HandleResult.HandleError         -> "NotHandled"
     is IntentResult.Intent              -> "Intent"
     is IntentResult.IntentError         -> "NotRecognized"
@@ -233,5 +236,6 @@ private fun DomainResult.getName() = when (this) {
     is SndAudio.AudioChunkEvent         -> "AudioChunkEvent"
     is SndAudio.AudioStartEvent         -> "AudioStartEvent"
     is SndAudio.AudioStopEvent          -> "AudioStopEvent"
+    is PipelineStarted                  -> "PipelineStarted"
 }
 

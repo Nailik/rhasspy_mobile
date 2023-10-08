@@ -68,12 +68,15 @@ fun logicModule() = module {
     }
 
     single<IDomainHistory> {
-        DomainHistory()
+        DomainHistory(
+            mqttConnection = get()
+        )
     }
 
     factory { params ->
         PipelineLocal(
             domains = params.get(),
+            domainHistory = get(),
             audioFocus = get(),
         )
     }
@@ -81,6 +84,7 @@ fun logicModule() = module {
         PipelineMqtt(
             mqttConnection = get(),
             domains = params.get(),
+            domainHistory = get(),
             audioFocus = get(),
         )
     }

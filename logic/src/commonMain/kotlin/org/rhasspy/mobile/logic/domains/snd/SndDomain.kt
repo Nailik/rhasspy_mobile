@@ -71,28 +71,27 @@ internal class SndDomain(
         indication.onPlayAudio()
 
         return when (params.option) {
-            SndDomainOption.Local              -> onLocalPlayAudio(audio)
-            SndDomainOption.Rhasspy2HermesHttp -> onRhasspy2HermesHttpPlayAudio(audio)
-            SndDomainOption.Rhasspy2HermesMQTT -> onRhasspy2HermesMQTTPlayAudio(audio)
+            SndDomainOption.Local              -> onLocalPlayAudio(id, audio)
+            SndDomainOption.Rhasspy2HermesHttp -> onRhasspy2HermesHttpPlayAudio(id, audio)
+            SndDomainOption.Rhasspy2HermesMQTT -> onRhasspy2HermesMQTTPlayAudio(id, audio)
             SndDomainOption.Disabled           ->
                 SndError(
                     reason = Reason.Disabled,
                     source = Local,
                 )
         }.also {
-            domainHistory.addToHistory(it)
-            mqttConnection.notify(id, it)
+            domainHistory.addToHistory(id, it)
         }
     }
 
     /**
      * collect chunk stream into file and then plays audio
      */
-    private suspend fun onLocalPlayAudio(audio: Audio): SndResult {
+    private suspend fun onLocalPlayAudio(id: String, audio: Audio): SndResult {
         logger.d { "onLocalPlayAudio $audio" }
 
         val data = withTimeoutOrNull(params.audioTimeout) {
-            collectAudioToFile(audio)
+            collectAudioToFile(id, audio)
         } ?: return SndError(
             reason = Reason.Timeout,
             source = Local,
@@ -113,11 +112,11 @@ internal class SndDomain(
     /**
      * collect chunk stream into file and then plays audio, doesn't await for end
      */
-    private suspend fun onRhasspy2HermesHttpPlayAudio(audio: Audio): SndResult {
+    private suspend fun onRhasspy2HermesHttpPlayAudio(id: String, audio: Audio): SndResult {
         logger.d { "onRhasspy2HermesHttpPlayAudio $audio" }
 
         val data = withTimeoutOrNull(params.audioTimeout) {
-            collectAudioToFile(audio)
+            collectAudioToFile(id, audio)
         } ?: return SndError(
             reason = Reason.Timeout,
             source = Local,
@@ -133,11 +132,11 @@ internal class SndDomain(
     /**
      * collect chunk stream into file and then plays audio via mqtt, awaits for play finished
      */
-    private suspend fun onRhasspy2HermesMQTTPlayAudio(audio: Audio): SndResult {
+    private suspend fun onRhasspy2HermesMQTTPlayAudio(id: String, audio: Audio): SndResult {
         logger.d { "onRhasspy2HermesMQTTPlayAudio $audio" }
 
         val data = withTimeoutOrNull(params.audioTimeout) {
-            collectAudioToFile(audio)
+            collectAudioToFile(id, audio)
         } ?: return SndError(
             reason = Reason.Timeout,
             source = Local,
@@ -171,13 +170,13 @@ internal class SndDomain(
     /**
      * collect chunk stream into file, awaits for AudioStopEvent with timeout
      */
-    private suspend fun collectAudioToFile(audio: Audio): AudioSource {
+    private suspend fun collectAudioToFile(id: String, audio: Audio): AudioSource {
         //await audio start
         val audioStartEvent = audio.data
             .filterIsInstance<AudioStartEvent>()
             .first()
             .also {
-                domainHistory.addToHistory(it)
+                domainHistory.addToHistory(id, it)
             }
 
         val localAudioFileWriter = AudioFileWriter(
@@ -205,7 +204,7 @@ internal class SndDomain(
             .filterIsInstance<AudioStopEvent>()
             .first()
             .also {
-                domainHistory.addToHistory(it)
+                domainHistory.addToHistory(id, it)
             }
 
         collectJob.cancelAndJoin()

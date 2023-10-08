@@ -115,8 +115,7 @@ internal class AsrDomain(
         }.also {
             audioFocus.abandon(Record)
             isRecordingState.value = false
-            domainHistory.addToHistory(it)
-            mqttConnection.notify(sessionId, it)
+            domainHistory.addToHistory(sessionId, it)
         }
     }
 

@@ -97,8 +97,7 @@ internal class WakeDomain(
             localFlow,
             remoteFlow,
         ).first().also {
-            domainHistory.addToHistory(it)
-            mqttConnection.notify(null, it)
+            domainHistory.addToHistory(null, it)
         }
     }
 

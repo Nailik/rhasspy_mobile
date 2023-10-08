@@ -154,7 +154,6 @@ internal class MqttConnection(
         retryJob = null
         client?.disconnect()
         client = null
-        connectionState.value = Disabled
     }
 
     private fun buildClient(): MqttClient {
@@ -347,7 +346,7 @@ internal class MqttConnection(
                         MqttConnectionStateType.fromMqttStatus(it.statusCode).connectionState
                     } ?: run {
                         if (AppSetting.isLogAudioFramesEnabled.value || (!topic.contains("audioFrame") && !topic.contains("audioSessionFrame"))) {
-                            logger.v { "$topic mqtt message published" }
+                            logger.v { "$topic mqtt message published ${message.payload.size}" }
                         }
                         Success
                     }
@@ -674,6 +673,7 @@ internal class MqttConnection(
      * sessionId: string? = null - current session ID
      */
     private suspend fun asrTextCaptured(jsonObject: JsonObject) {
+        logger.e { "receive asrTextCaptured $jsonObject" }
         incomingMessages.emit(
             AsrTextCaptured(
                 sessionId = jsonObject.getSessionId(),
@@ -691,6 +691,7 @@ internal class MqttConnection(
      * sessionId: string? = null - current session ID
      */
     private suspend fun asrTextCaptured(sessionId: String, text: String?) {
+        logger.e { "send asrTextCaptured sessionId $sessionId text $text" }
         publishMessage(
             MqttTopicsPublish.AsrTextCaptured,
             createMqttMessage {
@@ -1031,15 +1032,15 @@ internal class MqttConnection(
 
         scope.launch {
             when (result) {
-                is HandleResult.Handle              -> TODO()
-                is HandleResult.HandleError         -> TODO()
-                is IntentResult.Intent              -> TODO()
+                is HandleResult.Handle              -> Unit
+                is HandleResult.HandleError         -> Unit
+                is IntentResult.Intent              -> Unit
                 is IntentResult.IntentError         -> intentNotRecognized(sessionId ?: return@launch)
                 is PipelineResult.End               -> sessionEnded(sessionId ?: return@launch)
-                is SndResult.SndError               -> TODO()
+                is SndResult.SndError               -> playFinished()
                 is TranscriptResult.TranscriptError -> asrError(sessionId ?: return@launch)
-                is TtsResult.TtsError               -> TODO()
-                is VadResult.VoiceEnd.VadError      -> TODO()
+                is TtsResult.TtsError               -> Unit
+                is VadResult.VoiceEnd.VadError      -> Unit
                 is SndResult.Played                 -> playFinished()
                 is SndAudio.AudioChunkEvent         -> Unit
                 is SndAudio.AudioStartEvent         -> Unit
@@ -1049,9 +1050,10 @@ internal class MqttConnection(
                 is VadResult.VoiceEnd.VoiceStopped  -> stopListening(sessionId ?: return@launch)
                 is VadResult.VoiceStart             -> startListening(sessionId ?: return@launch, ConfigurationSetting.asrDomainData.value.isUseSpeechToTextMqttSilenceDetection)
                 is WakeResult                       -> hotWordDetected(result.name.toString())
+                is PipelineStarted                  -> sessionStarted(sessionId ?: return@launch)
             }
         }
-        //TODO sessionStarted
+
     }
 
 }

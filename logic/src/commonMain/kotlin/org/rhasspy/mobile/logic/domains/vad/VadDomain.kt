@@ -62,8 +62,7 @@ internal class VadDomain(
 
             Disabled -> VoiceStart(Source.Local)
         }.also {
-            domainHistory.addToHistory(it)
-            mqttConnection.notify(sessionId, it)
+            domainHistory.addToHistory(sessionId, it)
         }
     }
 
@@ -77,8 +76,7 @@ internal class VadDomain(
             Local    -> awaitVoiceStoppedLocal(audioStream)
             Disabled -> awaitVoiceStoppedDisabled()
         }.also {
-            domainHistory.addToHistory(it)
-            mqttConnection.notify(sessionId, it)
+            domainHistory.addToHistory(sessionId, it)
         }
     }
 
