@@ -14,6 +14,7 @@ class DialogScreenViewStateCreator(
     operator fun invoke(): StateFlow<DialogScreenViewState> {
         return combineStateFlow(
             AppSetting.isDialogAutoscroll.data,
+            userConnection.pipelineHistory
         ).mapReadonlyState {
             getViewState()
         }
@@ -22,7 +23,7 @@ class DialogScreenViewStateCreator(
     private fun getViewState(): DialogScreenViewState {
         return DialogScreenViewState(
             isDialogAutoscroll = AppSetting.isDialogAutoscroll.value,
-            history = userConnection.pipelineHistory.mapReadonlyState { it.toImmutableList() }
+            history = userConnection.pipelineHistory.value.toImmutableList()
         )
     }
 

@@ -21,12 +21,12 @@ class DomainHistory : IDomainHistory {
 
     private val logger = Logger.withTag("DomainHistory")
 
-    override val historyState = MutableStateFlow<MutableList<DomainResult>>(mutableListOf())
+    override val historyState = MutableStateFlow<List<DomainResult>>(mutableListOf())
 
     override fun addToHistory(result: DomainResult) {
         logger.d { "$result" }
         historyState.update {
-            it.apply {
+            it.toMutableList().apply {
                 add(result)
             }
         }

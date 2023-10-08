@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
@@ -77,19 +76,17 @@ fun DialogScreen(viewModel: DialogScreenViewModel) {
 @Composable
 private fun DialogScreenContent(
     isLogAutoscroll: Boolean,
-    history: StateFlow<ImmutableList<DomainResult>>,
+    history: ImmutableList<DomainResult>,
     onEvent: (DialogScreenUiEvent) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberForeverLazyListState(DialogScreenList)
 
-    val historyList by history.collectAsState()
-
     if (isLogAutoscroll) {
-        LaunchedEffect(historyList.size) {
+        LaunchedEffect(history.size) {
             coroutineScope.launch {
-                if (historyList.isNotEmpty()) {
-                    lazyListState.animateScrollToItem(historyList.size - 1)
+                if (history.isNotEmpty()) {
+                    lazyListState.animateScrollToItem(history.size - 1)
                 }
             }
         }
@@ -107,7 +104,7 @@ private fun DialogScreenContent(
         state = lazyListState
     ) {
 
-        items(historyList) { item ->
+        items(history) { item ->
             PipelineEventItem(item)
             CustomDivider()
         }

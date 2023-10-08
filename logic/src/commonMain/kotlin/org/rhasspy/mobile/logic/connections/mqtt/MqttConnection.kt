@@ -347,7 +347,7 @@ internal class MqttConnection(
                         logger.e { "mqtt publish error $it" }
                         MqttConnectionStateType.fromMqttStatus(it.statusCode).connectionState
                     } ?: run {
-                        logger.v { "$topic mqtt message published" }
+                        //TODO #466 filter audio frame logger.v { "$topic mqtt message published" }
                         Success
                     }
                 } ?: run {

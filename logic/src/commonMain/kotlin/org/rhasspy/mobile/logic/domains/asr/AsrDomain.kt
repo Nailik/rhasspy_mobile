@@ -290,7 +290,6 @@ internal class AsrDomain(
      * creates a file writer if null or returns current
      */
     private fun getFileWriter(chunk: MicAudioChunk): AudioFileWriter {
-        logger.d { "getFileWriter $chunk" }
         return audioFileWriter ?: AudioFileWriter(
             path = fileStorage.speechToTextAudioFile,
             channel = chunk.channel.value,

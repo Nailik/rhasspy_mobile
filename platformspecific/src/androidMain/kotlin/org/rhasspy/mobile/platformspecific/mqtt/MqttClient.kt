@@ -64,7 +64,7 @@ actual class MqttClient actual constructor(
      * to publish and audio frame
      */
     actual suspend fun publish(topic: String, msg: MqttMessage, timeout: Long): MqttError? = try {
-        logger.v { "publish message to $topic" }
+        //TODO #466 filter audio frame logger.v { "publish message to $topic" }
 
         client.publish(topic, org.eclipse.paho.client.mqttv3.MqttMessage(msg.payload).apply {
             id = msg.msgId
