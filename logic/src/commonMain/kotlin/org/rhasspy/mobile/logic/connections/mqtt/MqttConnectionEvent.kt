@@ -1,5 +1,14 @@
 package org.rhasspy.mobile.logic.connections.mqtt
 
+import kotlinx.coroutines.flow.flow
+import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayBytes
+import org.rhasspy.mobile.logic.pipeline.SndAudio
+import org.rhasspy.mobile.logic.pipeline.Source
+import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeaderBitRate
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeaderChannel
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeaderSampleRate
+
 internal sealed interface MqttConnectionEvent {
 
     sealed interface SessionEvent {
@@ -39,4 +48,31 @@ internal sealed interface MqttConnectionEvent {
 
     }
 
+}
+
+internal fun PlayBytes.toAudio(): Audio {
+    return Audio(
+        data = flow {
+            emit(
+                SndAudio.AudioStartEvent(
+                    source = Source.Rhasspy2HermesMqtt,
+                    sampleRate = byteArray.getWavHeaderSampleRate(),
+                    bitRate = byteArray.getWavHeaderBitRate(),
+                    channel = byteArray.getWavHeaderChannel(),
+                )
+            )
+            emit(
+                SndAudio.AudioChunkEvent(
+                    source = Source.Rhasspy2HermesMqtt,
+                    data = byteArray,
+                )
+            )
+            emit(
+                SndAudio.AudioStopEvent(
+                    source = Source.Rhasspy2HermesMqtt,
+                )
+            )
+        },
+        source = Source.Rhasspy2HermesHttp,
+    )
 }

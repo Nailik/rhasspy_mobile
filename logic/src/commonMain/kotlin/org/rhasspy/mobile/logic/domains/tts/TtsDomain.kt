@@ -14,6 +14,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayBytes
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayFinished
 import org.rhasspy.mobile.logic.connections.mqtt.MqttResult.Error
+import org.rhasspy.mobile.logic.connections.mqtt.toAudio
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
@@ -162,7 +163,12 @@ internal class TtsDomain(
         return mqttConnection.incomingMessages
             .filterIsInstance<PlayResult>()
             .filter { it.id == requestId }
-            .map { mapMqttPlayResult(it) }
+            .map {
+                when (it) {
+                    is PlayBytes    -> it.toAudio()
+                    is PlayFinished -> Played(source = Rhasspy2HermesHttp)
+                }
+            }
             .timeoutWithDefault(
                 timeout = params.rhasspy2HermesMqttTimeout,
                 default = TtsError(
@@ -171,39 +177,6 @@ internal class TtsDomain(
                 )
             )
             .first()
-    }
-
-    private fun mapMqttPlayResult(result: PlayResult): TtsResult {
-        return when (result) {
-            is PlayBytes    -> {
-                Audio(
-                    data = flow {
-                        emit(
-                            AudioStartEvent(
-                                source = Rhasspy2HermesMqtt,
-                                sampleRate = result.byteArray.getWavHeaderSampleRate(),
-                                bitRate = result.byteArray.getWavHeaderBitRate(),
-                                channel = result.byteArray.getWavHeaderChannel(),
-                            )
-                        )
-                        emit(
-                            AudioChunkEvent(
-                                source = Rhasspy2HermesMqtt,
-                                data = result.byteArray,
-                            )
-                        )
-                        emit(
-                            AudioStopEvent(
-                                source = Rhasspy2HermesMqtt,
-                            )
-                        )
-                    },
-                    source = Rhasspy2HermesHttp,
-                )
-            }
-
-            is PlayFinished -> Played(source = Rhasspy2HermesHttp)
-        }
     }
 
     override fun dispose() {}

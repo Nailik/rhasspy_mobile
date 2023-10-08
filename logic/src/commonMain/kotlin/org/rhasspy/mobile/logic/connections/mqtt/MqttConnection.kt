@@ -38,6 +38,7 @@ import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.extensions.commonSource
 import org.rhasspy.mobile.platformspecific.mqtt.*
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.settings.AppSetting
 import kotlin.random.Random
 
 internal interface IMqttConnection : IConnection {
@@ -347,7 +348,9 @@ internal class MqttConnection(
                         logger.e { "mqtt publish error $it" }
                         MqttConnectionStateType.fromMqttStatus(it.statusCode).connectionState
                     } ?: run {
-                        //TODO #466 filter audio frame logger.v { "$topic mqtt message published" }
+                        if (AppSetting.isLogAudioFramesEnabled.value || (!topic.contains("audioFrame") && !topic.contains("audioSessionFrame"))) {
+                            logger.v { "$topic mqtt message published" }
+                        }
                         Success
                     }
                 } ?: run {
@@ -590,7 +593,7 @@ internal class MqttConnection(
                 if (it.size > 2) {
                     incomingMessages.emit(HotWordDetected(it[2]))
                 } else {
-                    incomingMessages.emit(HotWordDetected("HotWordDetected(it[2])")) //TODO #466
+                    incomingMessages.emit(HotWordDetected(""))
                 }
             }
         }

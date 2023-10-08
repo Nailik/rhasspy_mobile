@@ -11,6 +11,7 @@ import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.A
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.AsrResult.AsrTextCaptured
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentNotRecognized
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.IntentResult.IntentRecognitionResult
+import org.rhasspy.mobile.logic.connections.mqtt.toAudio
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.pipeline.*
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
@@ -35,10 +36,17 @@ internal class PipelineMqtt(
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    //TODO #466 playBytes for notification sounds not working via mqtt
     override suspend fun runPipeline(wakeResult: WakeResult): PipelineResult {
 
         logger.d { "runPipeline $wakeResult" }
+
+        scope.launch {
+            mqttConnection.incomingMessages
+                .filterIsInstance<PlayResult.PlayBytes>()
+                .collect {
+                    domains.sndDomain.awaitPlayAudio(it.toAudio())
+                }
+        }
 
         if (wakeResult.sessionId != null) return runPipeline(wakeResult.sessionId)
 
