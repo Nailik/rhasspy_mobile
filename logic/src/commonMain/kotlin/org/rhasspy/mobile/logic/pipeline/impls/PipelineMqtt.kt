@@ -1,11 +1,8 @@
 package org.rhasspy.mobile.logic.pipeline.impls
 
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
@@ -51,12 +48,13 @@ internal class PipelineMqtt(
         val sessionId = mqttConnection.incomingMessages
             .filterIsInstance<SessionStarted>()
             .mapNotNull { it.sessionId }
-            .first() //TODO timeout?
+            .first() //TODO #466 timeout?
 
         logger.d { "SessionStarted $sessionId" }
 
         return runPipeline(sessionId).also {
             domains.dispose()
+            scope.cancel()
         }
     }
 
