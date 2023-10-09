@@ -3,11 +3,8 @@ package org.rhasspy.mobile.logic.pipeline
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import org.rhasspy.mobile.data.resource.StableStringResource
-import org.rhasspy.mobile.data.viewstate.TextWrapper
-import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperStableStringResource
-import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperString
 import org.rhasspy.mobile.logic.pipeline.PipelineResult.PipelineErrorResult
+import org.rhasspy.mobile.logic.pipeline.domain.Reason
 
 enum class Source {
     Local,
@@ -46,19 +43,6 @@ sealed interface SndAudio : DomainResult {
 
 }
 
-sealed interface PipelineResult : DomainResult {
-    data class End(
-        override val source: Source,
-        override val timeStamp: Instant = Clock.System.now(),
-    ) : PipelineResult
-
-    sealed interface PipelineErrorResult : PipelineResult {
-
-        val reason: Reason
-
-    }
-}
-
 data class WakeResult(
     val name: String?,
     val sessionId: String?,
@@ -67,36 +51,43 @@ data class WakeResult(
 ) : DomainResult
 
 
-data class PipelineStarted(
-    val sessionId: String,
-    override val source: Source,
-    override val timeStamp: Instant = Clock.System.now(),
-) : DomainResult
-
-data class StartRecording(
-    val sessionId: String,
-    override val source: Source,
-    override val timeStamp: Instant = Clock.System.now(),
-) : DomainResult
-
-sealed interface Reason {
-
-    data object Disabled : Reason
-
-    data object Timeout : Reason
-
-    data class Error(val information: TextWrapper) : Reason {
-
-        constructor(text: String) : this(TextWrapperString(text))
-        constructor(resource: StableStringResource) : this(TextWrapperStableStringResource(resource))
-        constructor(exception: Exception) : this(TextWrapperString("$exception ${exception.message}"))
-
-    }
+sealed interface DomainSessionResult : DomainResult {
+    val sessionId: String
 }
 
-sealed interface VadResult : DomainResult {
+sealed interface PipelineResult : DomainSessionResult {
+
+    data class End(
+        override val sessionId: String,
+        override val source: Source,
+        override val timeStamp: Instant = Clock.System.now(),
+    ) : PipelineResult
+
+    sealed interface PipelineErrorResult : PipelineResult {
+        val reason: Reason
+    }
+
+}
+
+
+
+data class PipelineStarted(
+    override val sessionId: String,
+    override val source: Source,
+    override val timeStamp: Instant = Clock.System.now(),
+) : DomainSessionResult
+
+data class StartRecording(
+    override val sessionId: String,
+    override val source: Source,
+    override val timeStamp: Instant = Clock.System.now(),
+) : DomainSessionResult
+
+
+sealed interface VadResult : DomainSessionResult {
 
     data class VoiceStart(
+        override val sessionId: String,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
     ) : VadResult
@@ -104,11 +95,13 @@ sealed interface VadResult : DomainResult {
     sealed interface VoiceEnd : VadResult {
 
         data class VoiceStopped(
+            override val sessionId: String,
             override val source: Source,
             override val timeStamp: Instant = Clock.System.now(),
         ) : VoiceEnd
 
         data class VadError(
+            override val sessionId: String,
             override val reason: Reason,
             override val source: Source,
             override val timeStamp: Instant = Clock.System.now(),
@@ -118,14 +111,16 @@ sealed interface VadResult : DomainResult {
 
 }
 
-sealed interface TranscriptResult : DomainResult {
+sealed interface TranscriptResult : DomainSessionResult {
     data class Transcript(
         val text: String,
+        override val sessionId: String,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
     ) : TranscriptResult
 
     data class TranscriptError(
+        override val sessionId: String,
         override val reason: Reason,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
@@ -133,15 +128,17 @@ sealed interface TranscriptResult : DomainResult {
 
 }
 
-sealed interface IntentResult : DomainResult {
+sealed interface IntentResult : DomainSessionResult {
     data class Intent(
         val intentName: String?,
         val intent: String,
+        override val sessionId: String,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
     ) : IntentResult
 
     data class IntentError(
+        override val sessionId: String,
         override val reason: Reason,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
@@ -149,15 +146,17 @@ sealed interface IntentResult : DomainResult {
 
 }
 
-sealed interface HandleResult : IntentResult, DomainResult {
+sealed interface HandleResult : IntentResult, DomainSessionResult {
     data class Handle(
         val text: String?,
         val volume: Float?,
+        override val sessionId: String,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
     ) : HandleResult
 
     data class HandleError(
+        override val sessionId: String,
         override val reason: Reason,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
@@ -165,14 +164,16 @@ sealed interface HandleResult : IntentResult, DomainResult {
 
 }
 
-sealed interface TtsResult : DomainResult {
+sealed interface TtsResult : DomainSessionResult {
     data class Audio(
         val data: Flow<SndAudio>,
+        override val sessionId: String,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
     ) : TtsResult
 
     data class TtsError(
+        override val sessionId: String,
         override val reason: Reason,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
@@ -180,13 +181,17 @@ sealed interface TtsResult : DomainResult {
 
 }
 
-sealed interface SndResult : DomainResult, PipelineResult {
+sealed interface SndResult : PipelineResult {
     data class Played(
+        val id: String?,
+        override val sessionId: String,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),
     ) : SndResult, TtsResult
 
     data class SndError(
+        val id: String?,
+        override val sessionId: String,
         override val reason: Reason,
         override val source: Source,
         override val timeStamp: Instant = Clock.System.now(),

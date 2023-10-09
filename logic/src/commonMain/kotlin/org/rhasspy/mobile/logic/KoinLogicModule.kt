@@ -119,7 +119,6 @@ fun logicModule() = module {
             localAudioService = get(),
             mqttConnection = get(),
             httpClientConnection = get(),
-            indication = get(),
             domainHistory = get(),
         )
     }

@@ -3,11 +3,9 @@ package org.rhasspy.mobile.logic.local.indication
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.koin.core.component.inject
 import org.rhasspy.mobile.data.indication.IndicationState
 import org.rhasspy.mobile.data.indication.IndicationState.*
 import org.rhasspy.mobile.logic.IDomain
-import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
 import org.rhasspy.mobile.platformspecific.indication.NativeIndication
 import org.rhasspy.mobile.settings.AppSetting
 
@@ -19,17 +17,14 @@ internal interface IIndication : IDomain {
     fun onIdle()
     fun onSessionStarted()
     fun onRecording()
-    fun onSilenceDetected()
     fun onThinking()
     fun onPlayAudio()
-    fun onError()
 
 }
 
 internal class Indication : IIndication {
 
-    private val logger = Logger.withTag("IndicationService")
-    private val localAudioService by inject<ILocalAudioPlayer>()
+    private val logger = Logger.withTag("Indication")
 
     //states are used by overlay
     override val isShowVisualIndication = MutableStateFlow(false)
@@ -57,9 +52,6 @@ internal class Indication : IIndication {
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             isShowVisualIndication.value = true
         }
-        if (AppSetting.isSoundIndicationEnabled.value) {
-            localAudioService.playWakeSound()
-        }
     }
 
     /**
@@ -70,16 +62,6 @@ internal class Indication : IIndication {
         logger.d { "onRecording" }
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             isShowVisualIndication.value = true
-        }
-    }
-
-    /**
-     * play sound that speech was recorded
-     */
-    override fun onSilenceDetected() {
-        logger.d { "onSilenceDetected" }
-        if (AppSetting.isSoundIndicationEnabled.value) {
-            localAudioService.playRecordedSound()
         }
     }
 
@@ -102,16 +84,6 @@ internal class Indication : IIndication {
         logger.d { "onPlayAudio" }
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             isShowVisualIndication.value = true
-        }
-    }
-
-    /**
-     * play error sound on error
-     */
-    override fun onError() {
-        logger.d { "onError" }
-        if (AppSetting.isSoundIndicationEnabled.value) {
-            localAudioService.playErrorSound()
         }
     }
 

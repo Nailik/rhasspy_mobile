@@ -19,8 +19,8 @@ import org.rhasspy.mobile.logic.pipeline.HandleResult
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
 import org.rhasspy.mobile.logic.pipeline.HandleResult.HandleError
 import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
-import org.rhasspy.mobile.logic.pipeline.Reason
 import org.rhasspy.mobile.logic.pipeline.Source.*
+import org.rhasspy.mobile.logic.pipeline.domain.Reason
 import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
@@ -32,7 +32,7 @@ internal interface IHandleDomain : IDomain {
     /**
      * sends Intent and waits for an HandleResult result, normally text that is to be spoken
      */
-    suspend fun awaitIntentHandle(sessionId: String, intent: Intent): HandleResult
+    suspend fun awaitIntentHandle(intent: Intent): HandleResult
 
 }
 
@@ -55,28 +55,29 @@ internal class HandleDomain(
     /**
      * sends Intent and waits for an HandleResult result, normally text that is to be spoken
      */
-    override suspend fun awaitIntentHandle(sessionId: String, intent: Intent): HandleResult {
-        logger.d { "awaitIntentHandle for sessionId $sessionId and intent $intent" }
+    override suspend fun awaitIntentHandle(intent: Intent): HandleResult {
+        logger.d { "awaitIntentHandle for intent $intent" }
         indication.onThinking()
 
         return when (params.option) {
-            HandleDomainOption.HomeAssistant -> awaitHomeAssistantHandle(sessionId, intent)
+            HandleDomainOption.HomeAssistant -> awaitHomeAssistantHandle(intent)
             HandleDomainOption.Disabled      ->
                 HandleError(
+                    sessionId = intent.sessionId,
                     reason = Reason.Disabled,
                     source = Local,
                 )
         }.also {
-            domainHistory.addToHistory(sessionId, it)
+            domainHistory.addToHistory(intent, it)
         }
     }
 
     /**
      * awaits for HomeAssistant to handle the intent
      */
-    private suspend fun awaitHomeAssistantHandle(sessionId: String, intent: Intent): HandleResult {
+    private suspend fun awaitHomeAssistantHandle(intent: Intent): HandleResult {
         return when (params.homeAssistantIntentHandlingOption) {
-            HomeAssistantIntentHandlingOption.Event -> awaitHomeAssistantEventHandle(sessionId, intent)
+            HomeAssistantIntentHandlingOption.Event -> awaitHomeAssistantEventHandle(intent)
             HomeAssistantIntentHandlingOption.Intent -> awaitHomeAssistantIntentHandle(intent)
         }
     }
@@ -89,12 +90,14 @@ internal class HandleDomain(
         return when (val result = homeAssistantConnection.awaitIntent(intent.intentName, intent.intent)) {
             is HttpClientResult.HttpClientError ->
                 HandleError(
+                    sessionId = intent.sessionId,
                     reason = Reason.Error(result.message),
                     source = HomeAssistant,
                 )
 
             is HttpClientResult.Success         ->
                 Handle(
+                    sessionId = intent.sessionId,
                     text = result.data,
                     volume = null,
                     source = HomeAssistant
@@ -105,17 +108,18 @@ internal class HandleDomain(
     /**
      * awaits for HomeAssistant to handle the intent on event endpoint, awaits end session or say from mqtt or say from webserver
      */
-    private suspend fun awaitHomeAssistantEventHandle(sessionId: String, intent: Intent): HandleResult {
-        logger.d { "awaitHomeAssistantEventHandle for sessionId $sessionId and intent $intent" }
+    private suspend fun awaitHomeAssistantEventHandle(intent: Intent): HandleResult {
+        logger.d { "awaitHomeAssistantEventHandle for intent $intent" }
         homeAssistantConnection.awaitEvent(intent.intentName, intent.intent)
 
         //await for EndSession or Say
         return merge(
             mqttConnection.incomingMessages
                 .filterIsInstance<EndSession>()
-                .filter { it.sessionId == sessionId }
+                .filter { it.sessionId == intent.sessionId }
                 .map {
                     Handle(
+                        sessionId = intent.sessionId,
                         text = it.text,
                         volume = null,
                         source = Rhasspy2HermesMqtt,
@@ -123,10 +127,11 @@ internal class HandleDomain(
                 },
             mqttConnection.incomingMessages
                 .filterIsInstance<Say>()
-                .filter { it.sessionId == sessionId }
+                .filter { it.sessionId == intent.sessionId }
                 .filter { it.siteId == ConfigurationSetting.siteId.value }
                 .map {
                     Handle(
+                        sessionId = intent.sessionId,
                         text = it.text,
                         volume = it.volume,
                         source = Rhasspy2HermesMqtt,
@@ -136,6 +141,7 @@ internal class HandleDomain(
                 .filterIsInstance<WebServerSay>()
                 .map {
                     Handle(
+                        sessionId = intent.sessionId,
                         text = it.text,
                         volume = null,
                         source = WebServer,
@@ -144,6 +150,7 @@ internal class HandleDomain(
         ).timeoutWithDefault(
             timeout = params.homeAssistantEventTimeout,
             default = HandleError(
+                sessionId = intent.sessionId,
                 reason = Reason.Timeout,
                 source = Local,
             ),

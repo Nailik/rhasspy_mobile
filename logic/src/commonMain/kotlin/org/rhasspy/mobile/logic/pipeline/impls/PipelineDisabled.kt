@@ -12,7 +12,7 @@ internal class PipelineDisabled(
     override suspend fun runPipeline(wakeResult: WakeResult): PipelineResult {
         logger.d { "runPipeline $wakeResult" }
         //TODO #466 TODO("Not yet implemented")
-        return PipelineResult.End(Source.Local)
+        return PipelineResult.End("", Source.Local)
     }
 
 }

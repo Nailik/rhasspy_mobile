@@ -13,9 +13,7 @@ interface IDomainHistory {
 
     fun clearHistory()
 
-    fun addToHistory(sessionId: String?, result: DomainResult)
-
-    fun addToHistory(start: DomainResult, result: DomainResult)
+    fun addToHistory(start: DomainResult?, result: DomainResult)
 
 }
 
@@ -28,17 +26,7 @@ internal class DomainHistory(
 
     override val historyState = MutableStateFlow<List<DomainResult>>(mutableListOf())
 
-    override fun addToHistory(sessionId: String?, result: DomainResult) {
-        mqttConnection.notify(sessionId, result)
-        logger.d { "$result" }
-        historyState.update {
-            it.toMutableList().apply {
-                add(result)
-            }
-        }
-    }
-
-    override fun addToHistory(start: DomainResult, result: DomainResult) {
+    override fun addToHistory(start: DomainResult?, result: DomainResult) {
         mqttConnection.notify(start, result)
         logger.d { "$result" }
         historyState.update {

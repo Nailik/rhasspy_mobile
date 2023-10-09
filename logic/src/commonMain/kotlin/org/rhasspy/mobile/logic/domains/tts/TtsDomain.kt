@@ -18,14 +18,14 @@ import org.rhasspy.mobile.logic.connections.mqtt.toAudio
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
-import org.rhasspy.mobile.logic.pipeline.Reason
-import org.rhasspy.mobile.logic.pipeline.Reason.Disabled
 import org.rhasspy.mobile.logic.pipeline.SndAudio.*
 import org.rhasspy.mobile.logic.pipeline.SndResult.Played
 import org.rhasspy.mobile.logic.pipeline.Source.*
 import org.rhasspy.mobile.logic.pipeline.TtsResult
 import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
 import org.rhasspy.mobile.logic.pipeline.TtsResult.TtsError
+import org.rhasspy.mobile.logic.pipeline.domain.Reason
+import org.rhasspy.mobile.logic.pipeline.domain.Reason.Disabled
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeaderBitRate
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeaderChannel
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeaderSampleRate
@@ -38,7 +38,6 @@ import org.rhasspy.mobile.resources.MR
 internal interface ITtsDomain : IDomain {
 
     suspend fun onSynthesize(
-        sessionId: String,
         volume: Float?,
         siteId: String,
         handle: Handle,
@@ -62,8 +61,8 @@ internal class TtsDomain(
      * sends text and returned audio stream via TtsResult
      * in case of text is null NotSynthesized is returned
      */
-    override suspend fun onSynthesize(sessionId: String, volume: Float?, siteId: String, handle: Handle): TtsResult {
-        logger.d { "onSynthesize for sessionId $sessionId and volume $volume and siteId $siteId and handle $handle" }
+    override suspend fun onSynthesize(volume: Float?, siteId: String, handle: Handle): TtsResult {
+        logger.d { "onSynthesize for handle $handle with volume $volume and siteId $siteId" }
 
         return when (params.option) {
             TtsDomainOption.Rhasspy2HermesHttp ->
@@ -75,7 +74,6 @@ internal class TtsDomain(
 
             TtsDomainOption.Rhasspy2HermesMQTT ->
                 onRhasspy2HermesMQTTSynthesize(
-                    sessionId = sessionId,
                     volume = volume,
                     siteId = siteId,
                     handle = handle,
@@ -83,11 +81,12 @@ internal class TtsDomain(
 
             TtsDomainOption.Disabled           ->
                 TtsError(
+                    sessionId = handle.sessionId,
                     reason = Disabled,
                     source = Local,
                 )
         }.also {
-            domainHistory.addToHistory(sessionId, it)
+            domainHistory.addToHistory(handle, it)
         }
     }
 
@@ -98,6 +97,7 @@ internal class TtsDomain(
         logger.d { "onRhasspy2HermesHttpSynthesize for volume $volume and siteId $siteId and handle $handle" }
 
         if (handle.text == null) return TtsError(
+            sessionId = handle.sessionId,
             reason = Reason.Error(TextWrapperStableStringResource(MR.strings.empty_text.stable)),
             source = Local,
         )
@@ -108,12 +108,14 @@ internal class TtsDomain(
             siteId = siteId
         )) {
             is HttpClientResult.HttpClientError -> TtsError(
+                sessionId = handle.sessionId,
                 reason = Reason.Error(result.message),
                 source = Rhasspy2HermesHttp,
             )
 
             is HttpClientResult.Success         -> {
                 Audio(
+                    sessionId = handle.sessionId,
                     data = flow {
                         emit(
                             AudioStartEvent(
@@ -144,18 +146,20 @@ internal class TtsDomain(
     /**
      * sends text to Rhasspy2HermesHttp and waits for PlayResult with timeout
      */
-    private suspend fun onRhasspy2HermesMQTTSynthesize(sessionId: String, volume: Float?, siteId: String, handle: Handle): TtsResult {
+    private suspend fun onRhasspy2HermesMQTTSynthesize(volume: Float?, siteId: String, handle: Handle): TtsResult {
         logger.d { "onRhasspy2HermesHttpSynthesize for volume $volume and siteId $siteId and handle $handle" }
 
         if (handle.text == null) return TtsError(
+            sessionId = handle.sessionId,
             reason = Reason.Error(MR.strings.empty_text.stable),
             source = Local,
         )
 
         val requestId = uuid4().toString()
 
-        val result = mqttConnection.say(sessionId, handle.text, volume, siteId, requestId)
+        val result = mqttConnection.say(handle.sessionId, handle.text, volume, siteId, requestId)
         if (result is Error) return TtsError(
+            sessionId = requestId,
             reason = Reason.Error(result.message),
             source = Rhasspy2HermesMqtt,
         )
@@ -166,12 +170,17 @@ internal class TtsDomain(
             .map {
                 when (it) {
                     is PlayBytes    -> it.toAudio()
-                    is PlayFinished -> Played(source = Rhasspy2HermesHttp)
+                    is PlayFinished -> Played(
+                        id = requestId,
+                        sessionId = handle.sessionId,
+                        source = Rhasspy2HermesHttp,
+                    )
                 }
             }
             .timeoutWithDefault(
                 timeout = params.rhasspy2HermesMqttTimeout,
                 default = TtsError(
+                    sessionId = handle.sessionId,
                     reason = Reason.Timeout,
                     source = Local,
                 )

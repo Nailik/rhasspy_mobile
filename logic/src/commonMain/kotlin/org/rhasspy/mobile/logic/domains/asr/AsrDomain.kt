@@ -21,7 +21,6 @@ import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
-import org.rhasspy.mobile.logic.pipeline.Reason.*
 import org.rhasspy.mobile.logic.pipeline.Source.*
 import org.rhasspy.mobile.logic.pipeline.StartRecording
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult
@@ -29,6 +28,7 @@ import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.TranscriptError
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceStart
+import org.rhasspy.mobile.logic.pipeline.domain.Reason.*
 import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 import org.rhasspy.mobile.resources.MR
 
@@ -110,13 +110,14 @@ internal class AsrDomain(
 
             AsrDomainOption.Disabled           ->
                 TranscriptError(
+                    sessionId = startRecording.sessionId,
                     reason = Disabled,
                     source = Local,
                 )
         }.also {
             audioFocus.abandon(Record)
             isRecordingState.value = false
-            domainHistory.addToHistory(startRecording.sessionId, startRecording)
+            domainHistory.addToHistory(startRecording, it)
         }
     }
 
@@ -146,14 +147,17 @@ internal class AsrDomain(
         return when (val result = rhasspy2HermesConnection.speechToText(fileStorage.speechToTextAudioFile)) {
             is HttpClientResult.HttpClientError ->
                 TranscriptError(
+                    sessionId = startRecording.sessionId,
                     reason = Error(information = result.message),
                     source = Rhasspy2HermesHttp,
                 )
 
-            is HttpClientResult.Success         -> Transcript(
-                text = result.data,
-                source = Rhasspy2HermesHttp,
-            )
+            is HttpClientResult.Success         ->
+                Transcript(
+                    sessionId = startRecording.sessionId,
+                    text = result.data,
+                    source = Rhasspy2HermesHttp,
+                )
         }
     }
 
@@ -200,7 +204,9 @@ internal class AsrDomain(
             .map {
                 when (it) {
                     is AsrTextCaptured -> Transcript(
+                        sessionId = startRecording.sessionId,
                         text = it.text ?: return@map TranscriptError(
+                            sessionId = startRecording.sessionId,
                             reason = Error(TextWrapperStableStringResource(MR.strings.asr_error.stable)),
                             source = Rhasspy2HermesMqtt,
                         ),
@@ -208,6 +214,7 @@ internal class AsrDomain(
                     )
 
                     is AsrError        -> TranscriptError(
+                        sessionId = startRecording.sessionId,
                         reason = Error(TextWrapperStableStringResource(MR.strings.asr_error.stable)),
                         source = Rhasspy2HermesMqtt,
                     )
@@ -216,6 +223,7 @@ internal class AsrDomain(
             .timeoutWithDefault(
                 timeout = params.mqttResultTimeout,
                 default = TranscriptError(
+                    sessionId = startRecording.sessionId,
                     reason = Timeout,
                     source = Local
                 ),

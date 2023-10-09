@@ -43,7 +43,7 @@ internal class PipelineMqtt(
             mqttConnection.incomingMessages
                 .filterIsInstance<PlayBytes>()
                 .collect {
-                    domains.sndDomain.awaitPlayAudio(it.id, it.toAudio())
+                    domains.sndDomain.awaitPlayAudio(it.toAudio())
                 }
         }
 
@@ -76,11 +76,19 @@ internal class PipelineMqtt(
                     when (event) {
                         is AsrError                -> Unit
                         is AsrTextCaptured         -> onAsrTextCaptured(id, event.text ?: "")
-                        is EndSession              -> End(Rhasspy2HermesMqtt)
+                        is EndSession              -> End(
+                            sessionId = id,
+                            source = Rhasspy2HermesMqtt,
+                        )
+
                         is IntentNotRecognized     -> Unit
                         is IntentRecognitionResult -> onIntentRecognitionResult(id, event.intentName, event.intent)
                         is Say                     -> onSay(id, event.text, event.volume)
-                        is SessionEnded            -> End(Rhasspy2HermesMqtt)
+                        is SessionEnded            -> End(
+                            sessionId = id,
+                            source = Rhasspy2HermesMqtt,
+                        )
+
                         is StartListening          -> onStartListening(id)
                         is SessionStarted          -> Unit
                         is StartSession            -> Unit
@@ -95,7 +103,7 @@ internal class PipelineMqtt(
 
     private fun onSessionStarted(sessionId: String) {
         domainHistory.addToHistory(
-            sessionId = sessionId,
+            null,
             result = PipelineStarted(
                 sessionId = sessionId,
                 source = Rhasspy2HermesMqtt,
@@ -107,8 +115,8 @@ internal class PipelineMqtt(
         scope.launch {
             //find intent from text, eventually already handles
             domains.intentDomain.awaitIntent(
-                sessionId = sessionId,
                 transcript = Transcript(
+                    sessionId = sessionId,
                     text = text,
                     source = Rhasspy2HermesMqtt
                 ),
@@ -119,8 +127,8 @@ internal class PipelineMqtt(
     private fun onIntentRecognitionResult(sessionId: String, intentName: String?, intent: String) {
         scope.launch {
             domains.handleDomain.awaitIntentHandle(
-                sessionId = sessionId,
                 intent = Intent(
+                    sessionId = sessionId,
                     intentName = intentName,
                     intent = intent,
                     source = Rhasspy2HermesMqtt
@@ -132,10 +140,10 @@ internal class PipelineMqtt(
     private fun onSay(sessionId: String, text: String, volume: Float?) {
         scope.launch {
             val result = domains.ttsDomain.onSynthesize(
-                sessionId = sessionId,
                 volume = AppSetting.volume.value,
                 siteId = ConfigurationSetting.siteId.value,
                 handle = Handle(
+                    sessionId = sessionId,
                     text = text,
                     volume = volume,
                     source = Rhasspy2HermesMqtt
@@ -143,7 +151,7 @@ internal class PipelineMqtt(
             )
 
             if (result is Audio) {
-                domains.sndDomain.awaitPlayAudio(sessionId, result)
+                domains.sndDomain.awaitPlayAudio(result)
             }
         }
     }

@@ -6,6 +6,7 @@ import okio.Path
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Notification
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.sounds.SoundOption
+import org.rhasspy.mobile.data.sounds.SoundOption.*
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioPlayer
@@ -23,9 +24,20 @@ internal interface ILocalAudioPlayer {
 
     suspend fun playAudio(audioSource: AudioSource, audioOutputOption: AudioOutputOption)
     fun playWakeSoundNow()
-    fun playWakeSound(onFinished: (() -> Unit)? = null)
+    fun playWakeSound(
+        onFinished: (() -> Unit)? = null
+    )
+
     fun playRecordedSound()
     fun playErrorSound()
+
+    fun playIndicationSound(
+        soundIndicationOutputOption: AudioOutputOption,
+        volume: Float,
+        option: SoundOption,
+        onFinished: (() -> Unit)?,
+    )
+
     fun stop()
 
 }
@@ -60,47 +72,21 @@ internal class LocalAudioPlayer(
     override fun playWakeSoundNow() = playWakeSound(null)
 
     override fun playWakeSound(onFinished: (() -> Unit)?) {
-        logger.d { "playWakeSound" }
-        when (AppSetting.wakeSound.value) {
-            SoundOption.Disabled.name -> {
-                onFinished?.invoke()
-            }
 
-            SoundOption.Default.name  ->
-                playAudio(
-                    audioSource = AudioSource.Resource(MR.files.etc_wav_beep_hi),
-                    volume = AppSetting.wakeSoundVolume.data,
-                    audioOutputOption = AppSetting.soundIndicationOutputOption.value,
-                    onFinished = onFinished
-                )
-
-            else                      ->
-                playAudio(
-                    audioSource = AudioSource.File(
-                        Path.commonInternalFilePath(
-                            nativeApplication = nativeApplication,
-                            fileName = "${FolderType.SoundFolder.Wake}/${AppSetting.wakeSound.value}"
-                        )
-                    ),
-                    volume = AppSetting.wakeSoundVolume.data,
-                    audioOutputOption = AppSetting.soundIndicationOutputOption.value,
-                    onFinished = onFinished
-                )
-        }
     }
 
     override fun playRecordedSound() {
         logger.d { "playRecordedSound" }
         when (AppSetting.recordedSound.value) {
-            SoundOption.Disabled.name -> Unit
-            SoundOption.Default.name  ->
+            Disabled.name -> Unit
+            Default.name  ->
                 playAudio(
                     audioSource = AudioSource.Resource(MR.files.etc_wav_beep_lo),
                     volume = AppSetting.recordedSoundVolume.data,
                     audioOutputOption = AppSetting.soundIndicationOutputOption.value
                 )
 
-            else                      ->
+            else          ->
                 playAudio(
                     audioSource = AudioSource.File(
                         Path.commonInternalFilePath(
@@ -117,14 +103,14 @@ internal class LocalAudioPlayer(
     override fun playErrorSound() {
         logger.d { "playErrorSound" }
         when (AppSetting.errorSound.value) {
-            SoundOption.Disabled.name -> Unit
-            SoundOption.Default.name  -> playAudio(
+            Disabled.name -> Unit
+            Default.name  -> playAudio(
                 audioSource = AudioSource.Resource(MR.files.etc_wav_beep_error),
                 volume = AppSetting.errorSoundVolume.data,
                 audioOutputOption = AppSetting.soundIndicationOutputOption.value
             )
 
-            else                      ->
+            else          ->
                 playAudio(
                     audioSource = AudioSource.File(
                         Path.commonInternalFilePath(
@@ -138,9 +124,43 @@ internal class LocalAudioPlayer(
         }
     }
 
+    override fun playIndicationSound(
+        soundIndicationOutputOption: AudioOutputOption,
+        volume: Float,
+        option: SoundOption,
+        onFinished: (() -> Unit)?,
+    ) {
+        logger.d { "playWakeSound" }
+        when (option) {
+            is Disabled ->
+                onFinished?.invoke()
+
+            is Default  ->
+                playAudio(
+                    audioSource = AudioSource.Resource(MR.files.etc_wav_beep_hi),
+                    volume = volume,
+                    audioOutputOption = soundIndicationOutputOption,
+                    onFinished = onFinished
+                )
+
+            is Custom   ->
+                playAudio(
+                    audioSource = AudioSource.File(
+                        Path.commonInternalFilePath(
+                            nativeApplication = nativeApplication, //TODO #466 folder??
+                            fileName = "${FolderType.SoundFolder.Wake}/${option.name}"
+                        )
+                    ),
+                    volume = volume,
+                    audioOutputOption = soundIndicationOutputOption,
+                    onFinished = onFinished
+                )
+        }
+    }
+
     private fun playAudio(
         audioSource: AudioSource,
-        volume: StateFlow<Float>,
+        volume: Float,
         audioOutputOption: AudioOutputOption,
         onFinished: (() -> Unit)? = null
     ) {

@@ -67,8 +67,7 @@ internal interface IMqttConnection : IConnection {
     suspend fun recognizeIntent(sessionId: String, text: String): MqttResult
     suspend fun say(sessionId: String, text: String, volume: Float?, siteId: String, id: String): MqttResult
     suspend fun playAudioRemote(audioSource: AudioSource, siteId: String, id: String): MqttResult
-    fun notify(sessionId: String?, result: DomainResult)
-    fun notify(start: DomainResult, result: DomainResult)
+    fun notify(start: DomainResult?, result: DomainResult)
 
 }
 
@@ -955,7 +954,7 @@ internal class MqttConnection(
      * Response to hermes/audioServer/<siteId>/playBytes/<requestId>
      * siteId: string - Hermes site ID (part of topic)
      */
-    private suspend fun playFinished(id: String) {
+    private suspend fun playFinished(id: String?) {
         publishMessage(
             MqttTopicsPublish.AudioOutputPlayFinished.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId),
@@ -1036,11 +1035,7 @@ internal class MqttConnection(
     }
 
 
-    override fun notify(start: DomainResult, result: DomainResult) {
-//TODO #466 id's into result
-    }
-
-    override fun notify(sessionId: String?, result: DomainResult) { //TODO #466 id's into result
+    override fun notify(start: DomainResult?, result: DomainResult) {
         if (result.source == Source.Rhasspy2HermesMqtt) return
 
         scope.launch {
@@ -1048,26 +1043,34 @@ internal class MqttConnection(
                 is HandleResult.Handle              -> Unit
                 is HandleResult.HandleError         -> Unit
                 is IntentResult.Intent              -> Unit
-                is IntentResult.IntentError         -> intentNotRecognized(sessionId ?: return@launch)
-                is PipelineResult.End               -> sessionEnded(sessionId ?: return@launch)
-                is SndResult.SndError               -> playFinished(sessionId ?: return@launch)
-                is TranscriptResult.TranscriptError -> asrError(sessionId ?: return@launch)
+                is IntentResult.IntentError         -> intentNotRecognized(result.sessionId)
+                is PipelineResult.End               -> sessionEnded(result.sessionId)
+                is SndResult.SndError               -> playFinished(result.id)
+                is TranscriptResult.TranscriptError -> asrError(result.sessionId)
                 is TtsResult.TtsError               -> Unit
                 is VadResult.VoiceEnd.VadError      -> Unit
-                is SndResult.Played                 -> playFinished(sessionId ?: return@launch)
+                is SndResult.Played                 -> playFinished(result.id)
                 is SndAudio.AudioChunkEvent         -> Unit
                 is SndAudio.AudioStartEvent         -> Unit
                 is SndAudio.AudioStopEvent          -> Unit
-                is TranscriptResult.Transcript      -> asrTextCaptured(sessionId ?: return@launch, result.text)
+                is TranscriptResult.Transcript      -> asrTextCaptured(result.sessionId, result.text)
                 is TtsResult.Audio                  -> Unit
-                is VadResult.VoiceEnd.VoiceStopped  -> stopListening(sessionId ?: return@launch)
-                is VadResult.VoiceStart             -> startListening(sessionId ?: return@launch, ConfigurationSetting.asrDomainData.value.isUseSpeechToTextMqttSilenceDetection)
+                is VadResult.VoiceEnd.VoiceStopped  -> {
+                    if (start?.source == Source.Rhasspy2HermesMqtt) return@launch
+                    stopListening(result.sessionId)
+                }
+
+                is VadResult.VoiceStart             -> {
+                    if (start?.source == Source.Rhasspy2HermesMqtt) return@launch
+                    startListening(result.sessionId, ConfigurationSetting.asrDomainData.value.isUseSpeechToTextMqttSilenceDetection)
+                }
+
                 is WakeResult                       -> hotWordDetected(result.name.toString())
-                is PipelineStarted                  -> sessionStarted(sessionId ?: return@launch)
+                is PipelineStarted                  -> sessionStarted(result.sessionId)
                 is StartRecording                   -> Unit
             }
         }
-
     }
+
 
 }

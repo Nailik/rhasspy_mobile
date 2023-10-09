@@ -52,6 +52,7 @@ internal sealed interface MqttConnectionEvent {
 
 internal fun PlayBytes.toAudio(): Audio {
     return Audio(
+        sessionId = id,
         data = flow {
             emit(
                 SndAudio.AudioStartEvent(

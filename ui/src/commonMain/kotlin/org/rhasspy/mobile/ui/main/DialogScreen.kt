@@ -24,6 +24,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.pipeline.*
 import org.rhasspy.mobile.logic.pipeline.HandleResult.Handle
 import org.rhasspy.mobile.logic.pipeline.PipelineResult.PipelineErrorResult
+import org.rhasspy.mobile.logic.pipeline.domain.Reason
 import org.rhasspy.mobile.resources.*
 import org.rhasspy.mobile.ui.content.ScreenContent
 import org.rhasspy.mobile.ui.content.elements.CustomDivider
@@ -162,6 +163,7 @@ private fun Source.getColor() = when (this) {
     Source.User               -> MaterialTheme.colorScheme.color_user
 }
 
+//TODO #466 InformationText
 @Composable
 private fun InformationText(domainResult: DomainResult) {
     with(domainResult) {

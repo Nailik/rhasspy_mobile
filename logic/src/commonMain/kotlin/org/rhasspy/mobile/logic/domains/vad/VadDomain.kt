@@ -10,13 +10,13 @@ import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent
 import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
-import org.rhasspy.mobile.logic.pipeline.Reason
 import org.rhasspy.mobile.logic.pipeline.Source
 import org.rhasspy.mobile.logic.pipeline.StartRecording
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VadError
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VoiceStopped
 import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceStart
+import org.rhasspy.mobile.logic.pipeline.domain.Reason
 import org.rhasspy.mobile.platformspecific.timeoutWithDefault
 
 /**
@@ -56,10 +56,16 @@ internal class VadDomain(
         return when (params.option) {
             Local    -> {
                 localSilenceDetection.start()
-                VoiceStart(Source.Local)
+                VoiceStart(
+                    sessionId = startRecording.sessionId,
+                    source = Source.Local,
+                )
             }
 
-            Disabled -> VoiceStart(Source.Local)
+            Disabled -> VoiceStart(
+                sessionId = startRecording.sessionId,
+                source = Source.Local,
+            )
         }.also {
             domainHistory.addToHistory(startRecording, it)
         }
@@ -72,29 +78,40 @@ internal class VadDomain(
     override suspend fun awaitVoiceStopped(startRecording: StartRecording, audioStream: Flow<MicAudioChunk>): VoiceEnd {
         logger.d { "awaitVoiceStopped" }
         return when (params.option) {
-            Local    -> awaitVoiceStoppedLocal(audioStream)
-            Disabled -> awaitVoiceStoppedDisabled()
+            Local    -> awaitVoiceStoppedLocal(startRecording, audioStream)
+            Disabled -> awaitVoiceStoppedDisabled(startRecording)
         }.also {
             domainHistory.addToHistory(startRecording, it)
         }
     }
 
-    private suspend fun awaitVoiceStoppedLocal(audioStream: Flow<MicAudioChunk>): VoiceEnd {
+    private suspend fun awaitVoiceStoppedLocal(startRecording: StartRecording, audioStream: Flow<MicAudioChunk>): VoiceEnd {
         return merge(
             flow<VoiceEnd> {
                 audioStream
                     .collect { chunk ->
                         if (localSilenceDetection.onAudioChunk(chunk)) {
-                            emit(VoiceStopped(Source.Local))
+                            emit(
+                                VoiceStopped(
+                                    sessionId = startRecording.sessionId,
+                                    source = Source.Local,
+                                )
+                            )
                         }
                     }
             },
             userConnection.incomingMessages
                 .filterIsInstance<UserConnectionEvent.StartStopRhasspy>()
-                .map { VoiceStopped(Source.User) },
+                .map {
+                    VoiceStopped(
+                        sessionId = startRecording.sessionId,
+                        source = Source.User,
+                    )
+                },
         ).timeoutWithDefault(
             timeout = params.voiceTimeout,
             default = VadError(
+                sessionId = startRecording.sessionId,
                 reason = Reason.Timeout,
                 source = Source.Local,
             ),
@@ -102,13 +119,19 @@ internal class VadDomain(
     }
 
 
-    private suspend fun awaitVoiceStoppedDisabled(): VoiceEnd {
+    private suspend fun awaitVoiceStoppedDisabled(startRecording: StartRecording): VoiceEnd {
         return userConnection.incomingMessages
             .filterIsInstance<UserConnectionEvent.StartStopRhasspy>()
-            .map { VoiceStopped(Source.User) }
+            .map {
+                VoiceStopped(
+                    sessionId = startRecording.sessionId,
+                    source = Source.User,
+                )
+            }
             .timeoutWithDefault(
                 timeout = params.voiceTimeout,
                 default = VadError(
+                    sessionId = startRecording.sessionId,
                     reason = Reason.Timeout,
                     source = Source.Local,
                 ),

@@ -10,21 +10,9 @@ import org.rhasspy.mobile.data.domain.DomainState
 import org.rhasspy.mobile.data.domain.DomainState.Loading
 import org.rhasspy.mobile.data.pipeline.PipelineData
 import org.rhasspy.mobile.data.service.option.PipelineManagerOption
-import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
-import org.rhasspy.mobile.logic.connections.user.IUserConnection
-import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.domains.mic.MicDomainState
 import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
-import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
-import org.rhasspy.mobile.logic.pipeline.HandleResult.HandleError
-import org.rhasspy.mobile.logic.pipeline.IntentResult.IntentError
-import org.rhasspy.mobile.logic.pipeline.PipelineResult.End
-import org.rhasspy.mobile.logic.pipeline.SndResult.Played
-import org.rhasspy.mobile.logic.pipeline.SndResult.SndError
-import org.rhasspy.mobile.logic.pipeline.TranscriptResult.TranscriptError
-import org.rhasspy.mobile.logic.pipeline.TtsResult.TtsError
-import org.rhasspy.mobile.logic.pipeline.VadResult.VoiceEnd.VadError
 import org.rhasspy.mobile.logic.pipeline.impls.PipelineDisabled
 import org.rhasspy.mobile.logic.pipeline.impls.PipelineLocal
 import org.rhasspy.mobile.logic.pipeline.impls.PipelineMqtt
@@ -40,11 +28,7 @@ internal interface IPipelineManager {
 }
 
 internal class PipelineManager(
-    private val mqttConnection: IMqttConnection,
-    private val webServerConnection: IWebServerConnection,
-    private val userConnection: IUserConnection,
     private val indication: IIndication,
-    private val fileStorage: IFileStorage,
 ) : IPipelineManager, KoinComponent {
 
     private val logger = Logger.withTag("PipelineManager")
@@ -78,6 +62,8 @@ internal class PipelineManager(
 
 
     private suspend fun awaitPipelineStart() {
+        logger.d { "awaitPipelineStart" }
+
         pipelineScope = CoroutineScope(Dispatchers.IO)
         pipelineJob = null
 
@@ -124,28 +110,13 @@ internal class PipelineManager(
     }
 
     private fun runPipeline(wakeResult: WakeResult, domains: DomainBundle) {
+        logger.d { "runPipeline $wakeResult" }
+
         pipelineJob = pipelineScope.launch {
-            when (val result = getPipeline(domains).runPipeline(wakeResult)) {
-                is End,
-                is Played   -> {
-                    logger.e { "result is (Success) $result" }
-                    //Success: indication idle
-                    indication.onIdle()
-                }
+            val result = getPipeline(domains).runPipeline(wakeResult)
 
-                is HandleError,
-                is IntentError,
-                is SndError,
-                is TranscriptError,
-                is TtsError,
-                is VadError -> {
-                    logger.e { "result is (Error) $result" }
-                    //Error: indication error
-                    indication.onIdle()
-                    indication.onError()
-                }
-
-            }
+            logger.d { "runPipeline result $result" }
+            indication.onIdle()
 
             awaitPipelineStart()
         }
