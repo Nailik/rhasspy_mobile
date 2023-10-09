@@ -8,9 +8,11 @@ import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
 import org.rhasspy.mobile.data.connection.MqttConnectionData
 import org.rhasspy.mobile.data.domain.*
 import org.rhasspy.mobile.data.pipeline.PipelineData
+import org.rhasspy.mobile.data.pipeline.PipelineData.LocalPipelineData.IndicationSoundOption
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.data.settings.SettingsEnum
+import org.rhasspy.mobile.data.sounds.SoundOption
 import org.rhasspy.mobile.platformspecific.features.FeatureAvailability
 import kotlin.time.Duration.Companion.seconds
 
@@ -181,6 +183,22 @@ object ConfigurationSetting {
         key = SettingsEnum.Pipeline,
         initial = PipelineData(
             option = PipelineManagerOption.Local,
+            localPipelineData = PipelineData.LocalPipelineData(
+                isSoundIndicationEnabled = true,
+                soundIndicationOutputOption = AudioOutputOption.Sound,
+                wakeSound = IndicationSoundOption(
+                    volume = 0.5F,
+                    option = SoundOption.Disabled
+                ),
+                errorSound = IndicationSoundOption(
+                    volume = 0.5F,
+                    option = SoundOption.Disabled
+                ),
+                recordedSound = IndicationSoundOption(
+                    volume = 0.5F,
+                    option = SoundOption.Disabled
+                ),
+            ),
         ),
         serializer = PipelineData.serializer(),
     )

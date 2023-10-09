@@ -26,9 +26,7 @@ enum class SettingsEnum {
     MicrophoneOverlayPositionY,
 
     BackgroundWakeWordDetectionTurnOnDisplay,
-    SoundIndication,
     WakeWordLightIndication,
-    SoundIndicationOutput,
 
     MqttApiDeviceChangeEnabled,
     HttpApiDeviceChangeEnabled,
@@ -36,16 +34,6 @@ enum class SettingsEnum {
     HotWordEnabled,
     AudioOutputEnabled,
     IntentHandlingEnabled,
-
-    WakeSoundVolume,
-    RecordedSoundVolume,
-    ErrorSoundVolume,
-    WakeSound,
-    RecordedSound,
-    ErrorSound,
-    CustomWakeSounds,
-    CustomRecordedSounds,
-    CustomErrorSounds,
 
     AudioFocusOption,
     AudioFocusOnNotification,

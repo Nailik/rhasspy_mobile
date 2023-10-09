@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface SoundOption {
     data class Custom(
-        val name: String
+        val file: String
     ) : SoundOption
 
     data object Disabled : SoundOption

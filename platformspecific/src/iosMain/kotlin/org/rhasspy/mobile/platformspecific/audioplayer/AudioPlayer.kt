@@ -20,7 +20,7 @@ actual class AudioPlayer : Closeable {
      */
     actual fun playAudio(
         audioSource: AudioSource,
-        volume: StateFlow<Float>,
+        volume: Float,
         audioOutputOption: AudioOutputOption,
         onFinished: () -> Unit
     ) {

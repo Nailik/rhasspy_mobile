@@ -3,14 +3,19 @@ package org.rhasspy.mobile.settings.migrations
 import com.russhwolf.settings.get
 import com.russhwolf.settings.set
 import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.serializer
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.domain.*
 import org.rhasspy.mobile.data.pipeline.PipelineData
+import org.rhasspy.mobile.data.pipeline.PipelineData.LocalPipelineData
+import org.rhasspy.mobile.data.pipeline.PipelineData.LocalPipelineData.IndicationSoundOption
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.*
+import org.rhasspy.mobile.data.sounds.SoundOption
+import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.ISetting
 import kotlin.time.Duration.Companion.milliseconds
@@ -55,7 +60,18 @@ internal object Migration1To2 : IMigration(1, 2) {
         DialogManagementOption,
         DialogManagementLocalAsrTimeout,
         DialogManagementLocalIntentRecognitionTimeout,
-        DialogManagementLocalRecordingTimeout
+        DialogManagementLocalRecordingTimeout,
+        SoundIndication,
+        SoundIndicationOutput,
+        WakeSoundVolume,
+        RecordedSoundVolume,
+        ErrorSoundVolume,
+        WakeSound,
+        RecordedSound,
+        ErrorSound,
+        CustomWakeSounds,
+        CustomRecordedSounds,
+        CustomErrorSounds,
     }
 
     override fun preMigrate() {
@@ -63,7 +79,6 @@ internal object Migration1To2 : IMigration(1, 2) {
             settings[DeprecatedSettingsEnum.IntentHandlingOption.name] = HandleDomainOption.Disabled.name
         }
     }
-
 
     override fun migrate() {
         val speechToTextAudioRecorderChannel = ISetting(
@@ -212,6 +227,50 @@ internal object Migration1To2 : IMigration(1, 2) {
         val intentRecognitionTimeout = ISetting(DeprecatedSettingsEnum.DialogManagementLocalIntentRecognitionTimeout, 10000L)
         val recordingTimeout = ISetting(DeprecatedSettingsEnum.DialogManagementLocalRecordingTimeout, 10000L)
 
+
+        val isSoundIndicationEnabled = ISetting(DeprecatedSettingsEnum.SoundIndication, true)
+        val soundIndicationOutputOption = ISetting(
+            key = DeprecatedSettingsEnum.SoundIndicationOutput,
+            initial = AudioOutputOption.Notification,
+            serializer = AudioOutputOption.serializer(),
+        )
+
+
+        val wakeSoundVolume = ISetting(DeprecatedSettingsEnum.WakeSoundVolume, 0.5F)
+        val recordedSoundVolume = ISetting(DeprecatedSettingsEnum.RecordedSoundVolume, 0.5F)
+        val errorSoundVolume = ISetting(DeprecatedSettingsEnum.ErrorSoundVolume, 0.5F)
+
+        val wakeSound = ISetting(
+            key = DeprecatedSettingsEnum.WakeSound,
+            initial = "Default",
+        )
+        val recordedSound = ISetting(
+            key = DeprecatedSettingsEnum.RecordedSound,
+            initial = "Default",
+        )
+        val errorSound = ISetting(
+            key = DeprecatedSettingsEnum.ErrorSound,
+            initial = "Default",
+        )
+
+        //saves sound as pair, first is fileName as String, second is used and indicates if this custom sound file is used
+        val customWakeSounds = ISetting(
+            key = DeprecatedSettingsEnum.CustomWakeSounds,
+            initial = emptyList(),
+            serializer = ListSerializer(String.serializer()),
+        )
+        val customRecordedSounds = ISetting(
+            key = DeprecatedSettingsEnum.CustomRecordedSounds,
+            initial = emptyList(),
+            serializer = ListSerializer(String.serializer()),
+        )
+        val customErrorSounds = ISetting(
+            key = DeprecatedSettingsEnum.CustomErrorSounds,
+            initial = emptyList(),
+            serializer = ListSerializer(String.serializer()),
+        )
+
+
         ConfigurationSetting.micDomainData.value = MicDomainData(
             audioInputChannel = speechToTextAudioRecorderChannel.value,
             audioInputEncoding = speechToTextAudioRecorderEncoding.value,
@@ -274,6 +333,34 @@ internal object Migration1To2 : IMigration(1, 2) {
 
         ConfigurationSetting.pipelineData.value = PipelineData(
             option = pipelineManagerOption.value,
+            localPipelineData = LocalPipelineData(
+                isSoundIndicationEnabled = isSoundIndicationEnabled.value,
+                soundIndicationOutputOption = soundIndicationOutputOption.value,
+                wakeSound = IndicationSoundOption(
+                    volume = wakeSoundVolume.value,
+                    option = when (val value = wakeSound.value) {
+                        "Default"  -> SoundOption.Default
+                        "Disabled" -> SoundOption.Disabled
+                        else       -> SoundOption.Custom("${FolderType.SoundFolder.Wake}/$value")
+                    },
+                ),
+                errorSound = IndicationSoundOption(
+                    volume = errorSoundVolume.value,
+                    option = when (val value = errorSound.value) {
+                        "Default"  -> SoundOption.Default
+                        "Disabled" -> SoundOption.Disabled
+                        else       -> SoundOption.Custom("${FolderType.SoundFolder.Recorded}/$value")
+                    },
+                ),
+                recordedSound = IndicationSoundOption(
+                    volume = recordedSoundVolume.value,
+                    option = when (val value = recordedSound.value) {
+                        "Default"  -> SoundOption.Default
+                        "Disabled" -> SoundOption.Disabled
+                        else       -> SoundOption.Custom("${FolderType.SoundFolder.Error}/$value")
+                    },
+                ),
+            )
         )
 
 
@@ -326,6 +413,18 @@ internal object Migration1To2 : IMigration(1, 2) {
         wakeWordAudioOutputChannel.delete()
         wakeWordAudioOutputEncoding.delete()
         wakeWordAudioOutputSampleRate.delete()
+
+        isSoundIndicationEnabled.delete()
+        soundIndicationOutputOption.delete()
+        wakeSoundVolume.delete()
+        recordedSoundVolume.delete()
+        errorSoundVolume.delete()
+        wakeSound.delete()
+        recordedSound.delete()
+        errorSound.delete()
+        customWakeSounds.delete()
+        customRecordedSounds.delete()
+        customErrorSounds.delete()
     }
 
 

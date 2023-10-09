@@ -28,7 +28,7 @@ actual class AudioPlayer : Closeable, KoinComponent {
 
     actual fun playAudio(
         audioSource: AudioSource,
-        volume: StateFlow<Float>,
+        volume: Float,
         audioOutputOption: AudioOutputOption,
         onFinished: () -> Unit
     ) {

@@ -8,7 +8,6 @@ import android.net.Uri
 import androidx.annotation.AnyRes
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
@@ -20,7 +19,7 @@ import java.io.File
  */
 class InternalAudioPlayer(
     audioSource: AudioSource,
-    private val volume: StateFlow<Float>,
+    volume: Float,
     private val audioOutputOption: AudioOutputOption,
     private val onFinished: () -> Unit
 ) : KoinComponent {
@@ -36,7 +35,6 @@ class InternalAudioPlayer(
         timeoutJob = null
         logger.v { "stop" }
         try {
-            volumeChange.cancel()
             mediaPlayer.stop()
             mediaPlayer.release()
         } catch (exception: Exception) {
@@ -74,27 +72,15 @@ class InternalAudioPlayer(
         )
     }
 
-    private var volumeChange = CoroutineScope(Dispatchers.IO).launch(start = CoroutineStart.LAZY) {
-        volume.collect {
-            try {
-                if (mediaPlayer.isPlaying) {
-                    mediaPlayer.setVolume(volume.value, volume.value)
-                }
-            } catch (exception: Exception) {
-                //eventually called in false state (not yet playing, already stopped)
-                logger.a(exception) { "crash on volume change" }
-            }
-        }
-    }
 
     init {
         try {
-            mediaPlayer.setVolume(volume.value, volume.value)
+            mediaPlayer.setVolume(volume, volume)
             mediaPlayer.setOnCompletionListener { onMediaPlayerCompletion() }
             mediaPlayer.setOnErrorListener { _, _, _ -> onMediaPlayerError(); false }
             mediaPlayer.setDataSource(nativeApplication, uri)
             mediaPlayer.prepare()
-            volumeChange.start()
+
             val duration = mediaPlayer.duration
             timeoutJob = coroutineScope.launch {
                 try {
@@ -116,9 +102,6 @@ class InternalAudioPlayer(
         if (timeoutJob?.isActive == true) {
             timeoutJob?.cancel()
         }
-        if (volumeChange.isActive) {
-            volumeChange.cancel()
-        }
         timeoutJob = null
         try {
             if (mediaPlayer.isPlaying) {
@@ -134,9 +117,6 @@ class InternalAudioPlayer(
         logger.v { "onMediaPlayerError" }
         if (timeoutJob?.isActive == true) {
             timeoutJob?.cancel()
-        }
-        if (volumeChange.isActive) {
-            volumeChange.cancel()
         }
         timeoutJob = null
         try {

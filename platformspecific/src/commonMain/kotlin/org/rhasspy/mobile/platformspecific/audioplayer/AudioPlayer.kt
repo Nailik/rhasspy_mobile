@@ -26,7 +26,7 @@ expect class AudioPlayer() : Closeable {
      */
     fun playAudio(
         audioSource: AudioSource,
-        volume: StateFlow<Float>,
+        volume: Float,
         audioOutputOption: AudioOutputOption,
         onFinished: () -> Unit
     )
