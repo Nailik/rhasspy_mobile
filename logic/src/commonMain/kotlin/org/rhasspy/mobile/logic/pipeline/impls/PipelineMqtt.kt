@@ -54,7 +54,7 @@ internal class PipelineMqtt(
     }
 
     private suspend fun runPipeline(newSessionId: String?): PipelineResult {
-        logger.a { "rrunPipeline23" }
+        logger.a { "runPipeline23" }
 
         var sessionId: String? = newSessionId
 

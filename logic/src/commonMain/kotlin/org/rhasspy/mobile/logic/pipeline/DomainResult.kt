@@ -70,7 +70,6 @@ sealed interface PipelineResult : DomainSessionResult {
 }
 
 
-
 data class PipelineStarted(
     override val sessionId: String,
     override val source: Source,

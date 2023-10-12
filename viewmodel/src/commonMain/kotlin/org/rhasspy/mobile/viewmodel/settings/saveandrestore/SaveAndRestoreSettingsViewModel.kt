@@ -10,7 +10,6 @@ import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.settings.ISettingsUtils
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
@@ -34,24 +33,6 @@ class SaveAndRestoreSettingsViewModel(
         }
     }
 
-    //TODO #466 how to do remove??
-    private val toRemove: List<String>
-        get() = listOfNotNull(
-            ConfigurationSetting.rhasspy2Connection.value.host,
-            ConfigurationSetting.rhasspy2Connection.value.bearerToken,
-            ConfigurationSetting.rhasspy3Connection.value.host,
-            ConfigurationSetting.rhasspy3Connection.value.bearerToken,
-            ConfigurationSetting.homeAssistantConnection.value.host,
-            ConfigurationSetting.homeAssistantConnection.value.bearerToken,
-            ConfigurationSetting.mqttConnection.value.host,
-            ConfigurationSetting.mqttConnection.value.userName,
-            ConfigurationSetting.mqttConnection.value.password,
-            ConfigurationSetting.localWebserverConnection.value.keyStoreFile,
-            ConfigurationSetting.localWebserverConnection.value.keyStorePassword,
-            ConfigurationSetting.localWebserverConnection.value.keyAlias,
-            ConfigurationSetting.localWebserverConnection.value.keyPassword,
-        )
-
     private fun onAction(action: Action) {
         viewModelScope.launch(dispatcher.IO) {
             _viewState.update {
@@ -61,11 +42,6 @@ class SaveAndRestoreSettingsViewModel(
 
                     RestoreSettingsFromFile                ->
                         it.copy(isRestoreSettingsFromFileDialogVisible = true)
-
-                    ShareSettingsFile                      ->
-                        if (!settingsUtils.shareSettingsFile(toRemove)) {
-                            it.copy(snackBarText = MR.strings.shareSettingsFileFailed.stable)
-                        } else it
 
                     is BackClick                           -> {
                         navigator.onBackPressed()

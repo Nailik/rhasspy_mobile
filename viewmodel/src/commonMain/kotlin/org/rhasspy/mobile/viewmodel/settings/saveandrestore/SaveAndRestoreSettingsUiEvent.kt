@@ -8,7 +8,6 @@ sealed interface SaveAndRestoreSettingsUiEvent {
         data class ExportSettingsFileDialogResult(val confirmed: Boolean) : Action
         data object RestoreSettingsFromFile : Action
         data class RestoreSettingsFromFileDialogResult(val confirmed: Boolean) : Action
-        data object ShareSettingsFile : Action
         data object BackClick : Action
 
     }

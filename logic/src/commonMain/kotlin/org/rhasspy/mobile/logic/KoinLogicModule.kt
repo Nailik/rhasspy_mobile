@@ -118,6 +118,7 @@ fun logicModule() = module {
             mqttConnection = get(),
             httpClientConnection = get(),
             domainHistory = get(),
+            indication = get(),
         )
     }
 

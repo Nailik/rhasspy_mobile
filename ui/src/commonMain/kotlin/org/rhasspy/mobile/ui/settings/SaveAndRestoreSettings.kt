@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,8 +66,6 @@ fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel) {
                 onEvent = viewModel::onEvent
             )
 
-            //Share Settings
-            ShareSettings(viewModel::onEvent)
         }
     }
 
@@ -146,28 +143,6 @@ private fun RestoreSettings(
         )
 
     }
-}
-
-@Composable
-private fun ShareSettings(onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit) {
-
-    //restore settings
-    ListElement(
-        modifier = Modifier.clickable(onClick = { onEvent(ShareSettingsFile) }),
-        icon = {
-            Icon(
-                imageVector = Icons.Filled.Share,
-                contentDescription = MR.strings.share.stable
-            )
-        },
-        text = {
-            Text(MR.strings.share.stable)
-        },
-        secondaryText = {
-            Text(MR.strings.shareSettingsText.stable)
-        }
-    )
-
 }
 
 /**

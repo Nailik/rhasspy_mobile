@@ -18,6 +18,7 @@ import org.rhasspy.mobile.logic.domains.AudioFileWriter
 import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
+import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
 import org.rhasspy.mobile.logic.pipeline.SndAudio.*
 import org.rhasspy.mobile.logic.pipeline.SndResult
@@ -53,6 +54,7 @@ internal class SndDomain(
     private val mqttConnection: IMqttConnection,
     private val httpClientConnection: IRhasspy2HermesConnection,
     private val domainHistory: IDomainHistory,
+    private val indication: IIndication,
 ) : ISndDomain {
 
     private val logger = Logger.withTag("SndDomain")
@@ -102,6 +104,8 @@ internal class SndDomain(
         audioFocusService.request(Sound)
 
         if (AppSetting.isAudioOutputEnabled.value) {
+            indication.onPlayAudio()
+
             localAudioService.playAudio(
                 audioSource = data,
                 volume = AppSetting.volume.value,

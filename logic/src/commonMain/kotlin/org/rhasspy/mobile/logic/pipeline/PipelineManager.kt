@@ -76,7 +76,7 @@ internal class PipelineManager(
         pipelineScope = CoroutineScope(Dispatchers.IO)
         pipelineJob = null
 
-        val domains = get<DomainBundle>() //TODO  #466 issue when data changes because it has just effect on next await
+        val domains = get<DomainBundle>()
         val currentWakeDomain = get<IWakeDomain>()
         wakeDomain = currentWakeDomain
 
