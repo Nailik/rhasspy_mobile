@@ -22,23 +22,23 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.service.option.AudioOutputOption.Sound
-import org.rhasspy.mobile.data.sounds.SoundOption
-import org.rhasspy.mobile.data.sounds.SoundOption.Disabled
+import org.rhasspy.mobile.data.sounds.IndicationSoundOption
+import org.rhasspy.mobile.data.sounds.IndicationSoundOption.Disabled
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.settings.sound.IndicationSoundScreen
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination
+import org.rhasspy.mobile.ui.configuration.pipeline.indicationsound.IndicationSoundScreen
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.indicationsound.IndicationSoundConfigurationUiEvent.Change.SetSoundIndicationOption
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.indicationsound.IndicationSoundConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.PipelineConfigurationLocalIndicationSoundDestination
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SelectSoundIndicationOutputOption
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetSoundIndicationEnabled
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.SetSoundIndicationOption
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewModel
 import java.io.File
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 abstract class IndicationSoundScreenTest(
     val title: StableStringResource,
-    private val screen: IndicationSettingsScreenDestination,
+    private val screen: PipelineConfigurationLocalIndicationSoundDestination,
 ) : KoinComponent {
 
     @get: Rule(order = 0)
@@ -48,7 +48,7 @@ abstract class IndicationSoundScreenTest(
 
     private val fileName = "sound.wav"
 
-    abstract fun getViewModelInstance(): IIndicationSoundSettingsViewModel
+    abstract fun getViewModelInstance(): IndicationSoundConfigurationViewModel
 
     private val viewModel get() = getViewModelInstance()
 
@@ -133,7 +133,7 @@ abstract class IndicationSoundScreenTest(
         //default sound ist selected
         composeTestRule.onNodeWithTag(TestTag.Default).onListItemRadioButton().assertIsSelected()
         //default sound is saved
-        assertTrue { viewModel.viewState.value.soundSetting == SoundOption.Default.name }
+        assertTrue { viewModel.viewState.value.soundSetting == IndicationSoundOption.Default.name }
 
         //file can be deleted
         composeTestRule.onNodeWithCombinedTag(fileName, TestTag.Delete).assertIsDisplayed()

@@ -14,7 +14,6 @@ class SettingsScreenViewStateCreator {
             AppSetting.themeType.data,
             AppSetting.isBackgroundServiceEnabled.data,
             AppSetting.microphoneOverlaySizeOption.data,
-            AppSetting.isSoundIndicationEnabled.data,
             AppSetting.isWakeWordLightIndicationEnabled.data,
             AppSetting.audioFocusOption.data,
             AppSetting.logLevel.data,
@@ -30,7 +29,6 @@ class SettingsScreenViewStateCreator {
             currentTheme = AppSetting.themeType.value,
             isBackgroundEnabled = AppSetting.isBackgroundServiceEnabled.value,
             microphoneOverlaySizeOption = AppSetting.microphoneOverlaySizeOption.value,
-            isSoundIndicationEnabled = AppSetting.isSoundIndicationEnabled.value,
             isWakeWordLightIndicationEnabled = AppSetting.isWakeWordLightIndicationEnabled.value,
             audioFocusOption = AppSetting.audioFocusOption.value,
             logLevel = AppSetting.logLevel.value

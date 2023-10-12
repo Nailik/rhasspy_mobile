@@ -113,7 +113,6 @@ fun SettingsScreenContent(
 
             item {
                 Indication(
-                    isSoundIndicationEnabled = viewState.isSoundIndicationEnabled,
                     isWakeWordLightIndicationEnabled = viewState.isWakeWordLightIndicationEnabled,
                     onEvent
                 )
@@ -204,25 +203,15 @@ private fun MicrophoneOverlay(
 
 @Composable
 private fun Indication(
-    isSoundIndicationEnabled: Boolean,
     isWakeWordLightIndicationEnabled: Boolean,
     onEvent: (event: SettingsScreenUiEvent) -> Unit
 ) {
 
-    var stateText = if (isSoundIndicationEnabled) translate(MR.strings.sound.stable) else ""
-    if (isWakeWordLightIndicationEnabled) {
-        if (stateText.isNotEmpty()) {
-            stateText += " ${translate(MR.strings._and.stable)} "
-        }
-        stateText += translate(MR.strings.light.stable)
-    }
-    if (stateText.isEmpty()) {
-        stateText = translate(MR.strings.disabled.stable)
-    }
-
     SettingsListItem(
         text = MR.strings.indication.stable,
-        secondaryText = stateText,
+        secondaryText = if (isWakeWordLightIndicationEnabled) {
+            MR.strings.light.stable
+        } else MR.strings.disabled.stable,
         destination = IndicationSettings,
         onEvent = onEvent
     )

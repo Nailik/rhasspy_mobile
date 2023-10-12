@@ -49,8 +49,17 @@ internal class PipelineManager(
 
     init {
         scope.launch {
-            ConfigurationSetting.wakeDomainData.data.collect {
-                if (pipelineJob != null) return@collect
+            merge(
+                ConfigurationSetting.micDomainData.data,
+                ConfigurationSetting.vadDomainData.data,
+                ConfigurationSetting.wakeDomainData.data,
+                ConfigurationSetting.asrDomainData.data,
+                ConfigurationSetting.handleDomainData.data,
+                ConfigurationSetting.intentDomainData.data,
+                ConfigurationSetting.sndDomainData.data,
+                ConfigurationSetting.ttsDomainData.data,
+            ).collectLatest {
+                if (pipelineJob != null) return@collectLatest
 
                 pipelineScope.cancel()
                 //restart wake domain
@@ -124,7 +133,7 @@ internal class PipelineManager(
 
     private fun getPipeline(domains: DomainBundle): IPipeline {
         return when (params.option) {
-            PipelineManagerOption.Local              -> get<PipelineLocal> { parametersOf(domains) }
+            PipelineManagerOption.Local -> get<PipelineLocal> { parametersOf(params.localPipelineData, domains) }
             PipelineManagerOption.Rhasspy2HermesMQTT -> get<PipelineMqtt> { parametersOf(domains) }
             PipelineManagerOption.Disabled           -> get<PipelineDisabled> { parametersOf(domains) }
         }

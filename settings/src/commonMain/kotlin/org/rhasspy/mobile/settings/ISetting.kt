@@ -41,7 +41,7 @@ open class ISetting<T>(
     private val _data = MutableStateFlow(readValue())
     val data = _data.readOnly
 
-    var value: T = readValue()
+    var value: T
         get() {
             return _data.value
         }
@@ -50,7 +50,6 @@ open class ISetting<T>(
                 saveValue(value)
             }
             _data.value = value
-            field = value
         }
 
     /**

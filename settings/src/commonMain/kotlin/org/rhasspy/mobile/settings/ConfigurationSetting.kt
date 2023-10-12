@@ -8,11 +8,12 @@ import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
 import org.rhasspy.mobile.data.connection.MqttConnectionData
 import org.rhasspy.mobile.data.domain.*
 import org.rhasspy.mobile.data.pipeline.PipelineData
-import org.rhasspy.mobile.data.pipeline.PipelineData.LocalPipelineData.IndicationSoundOption
+import org.rhasspy.mobile.data.pipeline.PipelineData.LocalPipelineData.IndicationSoundOptionData
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.data.settings.SettingsEnum
-import org.rhasspy.mobile.data.sounds.SoundOption
+import org.rhasspy.mobile.data.sounds.IndicationSoundOption
+import org.rhasspy.mobile.data.sounds.IndicationSoundType
 import org.rhasspy.mobile.platformspecific.features.FeatureAvailability
 import kotlin.time.Duration.Companion.seconds
 
@@ -186,17 +187,20 @@ object ConfigurationSetting {
             localPipelineData = PipelineData.LocalPipelineData(
                 isSoundIndicationEnabled = true,
                 soundIndicationOutputOption = AudioOutputOption.Sound,
-                wakeSound = IndicationSoundOption(
+                wakeSound = IndicationSoundOptionData(
+                    type = IndicationSoundType.Wake,
                     volume = 0.5F,
-                    option = SoundOption.Disabled
+                    option = IndicationSoundOption.Disabled
                 ),
-                errorSound = IndicationSoundOption(
+                errorSound = IndicationSoundOptionData(
+                    type = IndicationSoundType.Error,
                     volume = 0.5F,
-                    option = SoundOption.Disabled
+                    option = IndicationSoundOption.Disabled
                 ),
-                recordedSound = IndicationSoundOption(
+                recordedSound = IndicationSoundOptionData(
+                    type = IndicationSoundType.Recorded,
                     volume = 0.5F,
-                    option = SoundOption.Disabled
+                    option = IndicationSoundOption.Disabled
                 ),
             ),
         ),

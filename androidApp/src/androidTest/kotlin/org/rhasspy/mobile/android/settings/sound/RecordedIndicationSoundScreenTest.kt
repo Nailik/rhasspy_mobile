@@ -7,19 +7,19 @@ import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.RecordedIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.indicationsound.IndicationSoundConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.indicationsound.RecordedIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.PipelineConfigurationLocalIndicationSoundDestination
 
 class RecordedIndicationSoundScreenTest : IndicationSoundScreenTest(
     title = MR.strings.recordedSound.stable,
-    screen = IndicationSettingsScreenDestination.RecordedIndicationSoundScreen
+    screen = PipelineConfigurationLocalIndicationSoundDestination.RecordedIndicationSoundScreen
 ) {
 
     override val device: UiDevice =
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-    override fun getViewModelInstance(): IIndicationSoundSettingsViewModel =
+    override fun getViewModelInstance(): IndicationSoundConfigurationViewModel =
         get<RecordedIndicationSoundSettingsViewModel>()
 
     @Before

@@ -13,7 +13,6 @@ data class SettingsScreenViewState internal constructor(
     val currentTheme: ThemeType,
     val isBackgroundEnabled: Boolean,
     val microphoneOverlaySizeOption: MicrophoneOverlaySizeOption,
-    val isSoundIndicationEnabled: Boolean,
     val isWakeWordLightIndicationEnabled: Boolean,
     val audioFocusOption: AudioFocusOption,
     val logLevel: LogLevel

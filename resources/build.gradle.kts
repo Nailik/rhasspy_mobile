@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
+@file:Suppress("UnstableApiUsage")
 
 import com.codingfeline.buildkonfig.compiler.FieldSpec
 import com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE

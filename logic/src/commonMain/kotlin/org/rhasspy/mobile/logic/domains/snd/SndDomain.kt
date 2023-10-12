@@ -28,6 +28,7 @@ import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
 import org.rhasspy.mobile.logic.pipeline.domain.Reason
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.timeoutWithDefault
+import org.rhasspy.mobile.settings.AppSetting
 
 /**
  * records audio as soon as audioStream has subscribers
@@ -100,10 +101,13 @@ internal class SndDomain(
 
         audioFocusService.request(Sound)
 
-        localAudioService.playAudio(
-            audioSource = data,
-            audioOutputOption = params.localOutputOption,
-        )
+        if (AppSetting.isAudioOutputEnabled.value) {
+            localAudioService.playAudio(
+                audioSource = data,
+                volume = AppSetting.volume.value,
+                audioOutputOption = params.localOutputOption,
+            )
+        }
 
         audioFocusService.abandon(Sound)
 

@@ -16,7 +16,7 @@ import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.settings.IndicationSettingsOverviewScreen
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.PipelineConfigurationLocalIndicationSoundDestination
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
 import kotlin.test.assertEquals
@@ -160,11 +160,11 @@ class IndicationSettingsContentTest : FlakyTest() {
         viewModel.onEvent(SetSoundIndicationEnabled(false))
         //sound settings invisible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertDoesNotExist()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.WakeIndicationSoundScreen)
+        composeTestRule.onNodeWithTag(PipelineConfigurationLocalIndicationSoundDestination.WakeIndicationSoundScreen)
             .assertDoesNotExist()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
+        composeTestRule.onNodeWithTag(PipelineConfigurationLocalIndicationSoundDestination.RecordedIndicationSoundScreen)
             .assertDoesNotExist()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
+        composeTestRule.onNodeWithTag(PipelineConfigurationLocalIndicationSoundDestination.ErrorIndicationSoundScreen)
             .assertDoesNotExist()
 
         //user clicks sound
@@ -175,11 +175,11 @@ class IndicationSettingsContentTest : FlakyTest() {
             .assertIsOn()
         //sound settings visible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.WakeIndicationSoundScreen)
+        composeTestRule.onNodeWithTag(PipelineConfigurationLocalIndicationSoundDestination.WakeIndicationSoundScreen)
             .assertIsDisplayed()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
+        composeTestRule.onNodeWithTag(PipelineConfigurationLocalIndicationSoundDestination.RecordedIndicationSoundScreen)
             .assertIsDisplayed()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
+        composeTestRule.onNodeWithTag(PipelineConfigurationLocalIndicationSoundDestination.ErrorIndicationSoundScreen)
             .assertIsDisplayed()
 
         //sound output is notification
@@ -204,28 +204,28 @@ class IndicationSettingsContentTest : FlakyTest() {
         )
 
         //user clicks wake word
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.WakeIndicationSoundScreen)
+        composeTestRule.onNodeWithTag(PipelineConfigurationLocalIndicationSoundDestination.WakeIndicationSoundScreen)
             .performClick()
         //wake word page is opened
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.WakeIndicationSoundScreen)
+        composeTestRule.onNodeWithTag(PipelineConfigurationLocalIndicationSoundDestination.WakeIndicationSoundScreen)
             .assertIsDisplayed()
         //user clicks back
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
 
         //user clicks recorded
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
+        composeTestRule.onNodeWithTag(PipelineConfigurationLocalIndicationSoundDestination.RecordedIndicationSoundScreen)
             .performClick()
         //recorded page is opened
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
+        composeTestRule.onNodeWithTag(PipelineConfigurationLocalIndicationSoundDestination.RecordedIndicationSoundScreen)
             .assertIsDisplayed()
         //user clicks back
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
 
         //user click error
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
+        composeTestRule.onNodeWithTag(PipelineConfigurationLocalIndicationSoundDestination.ErrorIndicationSoundScreen)
             .performClick()
         //error page is opened
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
+        composeTestRule.onNodeWithTag(PipelineConfigurationLocalIndicationSoundDestination.ErrorIndicationSoundScreen)
             .assertIsDisplayed()
         //user clicks back
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()

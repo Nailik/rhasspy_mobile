@@ -75,9 +75,11 @@ fun logicModule() = module {
 
     factory { params ->
         PipelineLocal(
-            domains = params.get(),
+            params = params[0],
+            domains = params[1],
             domainHistory = get(),
             audioFocus = get(),
+            localAudioPlayer = get(),
         )
     }
     factory { params ->
@@ -96,11 +98,7 @@ fun logicModule() = module {
 
     single<IPipelineManager> {
         PipelineManager(
-            mqttConnection = get(),
-            webServerConnection = get(),
-            userConnection = get(),
             indication = get(),
-            fileStorage = get(),
         )
     }
 
@@ -192,7 +190,6 @@ fun logicModule() = module {
 
     single<ILocalAudioPlayer> {
         LocalAudioPlayer(
-            nativeApplication = get(),
             audioFocusService = get(),
         )
     }

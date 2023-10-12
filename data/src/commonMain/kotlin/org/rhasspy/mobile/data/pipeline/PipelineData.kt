@@ -3,7 +3,8 @@ package org.rhasspy.mobile.data.pipeline
 import kotlinx.serialization.Serializable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.PipelineManagerOption
-import org.rhasspy.mobile.data.sounds.SoundOption
+import org.rhasspy.mobile.data.sounds.IndicationSoundOption
+import org.rhasspy.mobile.data.sounds.IndicationSoundType
 
 @Serializable
 data class PipelineData(
@@ -15,15 +16,16 @@ data class PipelineData(
     data class LocalPipelineData(
         val isSoundIndicationEnabled: Boolean,
         val soundIndicationOutputOption: AudioOutputOption,
-        val wakeSound: IndicationSoundOption,
-        val errorSound: IndicationSoundOption,
-        val recordedSound: IndicationSoundOption
+        val wakeSound: IndicationSoundOptionData,
+        val errorSound: IndicationSoundOptionData,
+        val recordedSound: IndicationSoundOptionData
     ) {
 
         @Serializable
-        data class IndicationSoundOption(
+        data class IndicationSoundOptionData(
+            val type: IndicationSoundType,
             val volume: Float,
-            val option: SoundOption,
+            val option: IndicationSoundOption,
         )
 
     }

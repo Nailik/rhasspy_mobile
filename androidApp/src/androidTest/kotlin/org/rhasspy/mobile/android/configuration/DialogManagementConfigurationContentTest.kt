@@ -12,7 +12,7 @@ import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.saveBottomAppBar
 import org.rhasspy.mobile.data.service.option.PipelineManagerOption
-import org.rhasspy.mobile.ui.configuration.DialogManagementConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.pipeline.DialogManagementConfigurationScreen
 import org.rhasspy.mobile.viewmodel.configuration.connections.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.pipeline.PipelineConfigurationUiEvent.Change.SelectPipelineOption
 import org.rhasspy.mobile.viewmodel.configuration.pipeline.PipelineConfigurationViewModel

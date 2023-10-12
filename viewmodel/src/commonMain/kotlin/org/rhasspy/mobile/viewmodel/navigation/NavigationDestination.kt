@@ -22,6 +22,7 @@ import org.rhasspy.mobile.viewmodel.configuration.domains.tts.TtsDomainConfigura
 import org.rhasspy.mobile.viewmodel.configuration.domains.vad.VadDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.domains.wake.WakeDomainConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.pipeline.PipelineConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.indicationsound.IndicationSoundConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
@@ -34,9 +35,6 @@ import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewMo
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.RecordedIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsViewModel
@@ -196,18 +194,18 @@ sealed class NavigationDestination : KoinComponent {
     }
 
     @Stable
-    sealed class IndicationSettingsScreenDestination : NavigationDestination() {
+    sealed class PipelineConfigurationLocalIndicationSoundDestination : NavigationDestination() {
 
-        data object WakeIndicationSoundScreen : IndicationSettingsScreenDestination() {
-            override val viewModel get() = get<WakeIndicationSoundSettingsViewModel> { parametersOf(this) }
+        data object WakeIndicationSoundScreen : PipelineConfigurationLocalIndicationSoundDestination() {
+            override val viewModel get() = get<IndicationSoundConfigurationViewModel> { parametersOf(this) }
         }
 
-        data object RecordedIndicationSoundScreen : IndicationSettingsScreenDestination() {
-            override val viewModel get() = get<RecordedIndicationSoundSettingsViewModel> { parametersOf(this) }
+        data object RecordedIndicationSoundScreen : PipelineConfigurationLocalIndicationSoundDestination() {
+            override val viewModel get() = get<IndicationSoundConfigurationViewModel> { parametersOf(this) }
         }
 
-        data object ErrorIndicationSoundScreen : IndicationSettingsScreenDestination() {
-            override val viewModel get() = get<ErrorIndicationSoundSettingsViewModel> { parametersOf(this) }
+        data object ErrorIndicationSoundScreen : PipelineConfigurationLocalIndicationSoundDestination() {
+            override val viewModel get() = get<IndicationSoundConfigurationViewModel> { parametersOf(this) }
         }
 
     }

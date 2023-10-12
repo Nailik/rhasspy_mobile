@@ -2,9 +2,12 @@ package org.rhasspy.mobile.logic.pipeline.impls
 
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
+import okio.Path.Companion.toPath
 import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
-import org.rhasspy.mobile.data.pipeline.LocalPipelineData
+import org.rhasspy.mobile.data.pipeline.PipelineData.LocalPipelineData
+import org.rhasspy.mobile.data.pipeline.PipelineData.LocalPipelineData.IndicationSoundOptionData
+import org.rhasspy.mobile.data.sounds.IndicationSoundOption
 import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
@@ -14,6 +17,7 @@ import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
 import org.rhasspy.mobile.logic.pipeline.PipelineResult.PipelineErrorResult
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
 import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
@@ -22,7 +26,7 @@ internal class PipelineLocal(
     private val domains: DomainBundle,
     private val domainHistory: IDomainHistory,
     private val audioFocus: IAudioFocus,
-    private val localAudioService: ILocalAudioPlayer,
+    private val localAudioPlayer: ILocalAudioPlayer,
 ) : IPipeline, KoinComponent {
 
     private val logger = Logger.withTag("PipelineDisabled")
@@ -32,11 +36,11 @@ internal class PipelineLocal(
 
         val sessionId = onStartSession(wakeResult)
 
-        playIndicationSound(params.wakeSound)
+        playSound(params.wakeSound)
 
         return runPipelineInternal(sessionId).also {
             if (it is PipelineErrorResult) {
-                playIndicationSound(params.errorSound)
+                playSound(params.errorSound)
             }
         }
     }
@@ -49,12 +53,13 @@ internal class PipelineLocal(
             is PipelineErrorResult -> return result
         }
 
-        playIndicationSound(params.recordedSound)
+        playSound(params.recordedSound)
 
         //find intent from text, eventually already handles
         val intent = when (val result = onTranscript(transcript)) {
-            is Handle              -> result
+            is Handle,
             is Intent              -> result
+
             is PipelineErrorResult -> return result
         }
 
@@ -134,12 +139,19 @@ internal class PipelineLocal(
         )
     }
 
-    private fun playIndicationSound(indicationSound: LocalPipelineData.IndicationSoundOption) {
+    private suspend fun playSound(indicationSound: IndicationSoundOptionData) {
         if (!params.isSoundIndicationEnabled) return
 
-        localAudioService.playSound(
+        val audioSource = when (val option = indicationSound.option) {
+            is IndicationSoundOption.Custom   -> AudioSource.File(option.file.toPath())
+            is IndicationSoundOption.Default  -> AudioSource.Resource(indicationSound.type.default)
+            is IndicationSoundOption.Disabled -> return
+        }
+
+        localAudioPlayer.playAudio(
+            audioSource = audioSource,
             volume = indicationSound.volume,
-            option = indicationSound.option
+            audioOutputOption = params.soundIndicationOutputOption,
         )
     }
 

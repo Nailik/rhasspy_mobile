@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import org.rhasspy.mobile.ui.configuration.ConnectionsConfigurationScreen
-import org.rhasspy.mobile.ui.configuration.DialogManagementConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.connections.*
 import org.rhasspy.mobile.ui.configuration.domains.asr.AsrDomainConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.handle.HandleDomainConfigurationScreen
@@ -21,6 +19,10 @@ import org.rhasspy.mobile.ui.configuration.domains.vad.VadDomainConfigurationScr
 import org.rhasspy.mobile.ui.configuration.domains.wake.WakeDomainConfigurationScreen
 import org.rhasspy.mobile.ui.configuration.domains.wake.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.ui.configuration.domains.wake.porcupine.PorcupineLanguageScreen
+import org.rhasspy.mobile.ui.configuration.pipeline.DialogManagementConfigurationScreen
+import org.rhasspy.mobile.ui.configuration.pipeline.indicationsound.IndicationErrorScreen
+import org.rhasspy.mobile.ui.configuration.pipeline.indicationsound.IndicationRecordedScreen
+import org.rhasspy.mobile.ui.configuration.pipeline.indicationsound.IndicationWakeScreen
 import org.rhasspy.mobile.ui.settings.*
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.*
@@ -35,13 +37,13 @@ fun NavigationContent(
 
     Crossfade(targetState = screen) {
         when (it) {
-            is ConfigurationScreenNavigationDestination -> ConfigurationNavigationContent(it)
-            is ConnectionScreenNavigationDestination    -> ConnectionScreenNavigationContent(it)
-            is MainScreenNavigationDestination          -> MainNavigationContent(it)
-            is SettingsScreenDestination                -> SettingsNavigationContent(it)
-            is WakeWordConfigurationScreenDestination   -> WakeWordNavigationContent(it)
-            is IndicationSettingsScreenDestination      -> IndicationNavigationContent(it)
-            is AudioInputDomainScreenDestination        -> AudioInputDomainNavigationContent(it)
+            is ConfigurationScreenNavigationDestination             -> ConfigurationNavigationContent(it)
+            is ConnectionScreenNavigationDestination                -> ConnectionScreenNavigationContent(it)
+            is MainScreenNavigationDestination                      -> MainNavigationContent(it)
+            is SettingsScreenDestination                            -> SettingsNavigationContent(it)
+            is WakeWordConfigurationScreenDestination               -> WakeWordNavigationContent(it)
+            is PipelineConfigurationLocalIndicationSoundDestination -> IndicationNavigationContent(it)
+            is AudioInputDomainScreenDestination                    -> AudioInputDomainNavigationContent(it)
         }
     }
 }
@@ -148,13 +150,13 @@ private fun AudioInputDomainNavigationContent(
 
 @Composable
 private fun IndicationNavigationContent(
-    screen: IndicationSettingsScreenDestination
+    screen: PipelineConfigurationLocalIndicationSoundDestination
 ) {
     Crossfade(targetState = screen) {
         when (screen) {
-            is IndicationSettingsScreenDestination.WakeIndicationSoundScreen     -> IndicationWakeScreen(screen.viewModel)
-            is IndicationSettingsScreenDestination.RecordedIndicationSoundScreen -> IndicationRecordedScreen(screen.viewModel)
-            is IndicationSettingsScreenDestination.ErrorIndicationSoundScreen    -> IndicationErrorScreen(screen.viewModel)
+            is PipelineConfigurationLocalIndicationSoundDestination.WakeIndicationSoundScreen     -> IndicationWakeScreen(screen.viewModel)
+            is PipelineConfigurationLocalIndicationSoundDestination.RecordedIndicationSoundScreen -> IndicationRecordedScreen(screen.viewModel)
+            is PipelineConfigurationLocalIndicationSoundDestination.ErrorIndicationSoundScreen    -> IndicationErrorScreen(screen.viewModel)
         }
     }
 }

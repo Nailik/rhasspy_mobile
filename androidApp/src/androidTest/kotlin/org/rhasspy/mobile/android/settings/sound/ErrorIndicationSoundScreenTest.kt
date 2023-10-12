@@ -8,19 +8,19 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.indicationsound.ErrorIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.indicationsound.IndicationSoundConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.PipelineConfigurationLocalIndicationSoundDestination
 
 class ErrorIndicationSoundScreenTest : KoinComponent, IndicationSoundScreenTest(
     title = MR.strings.errorSound.stable,
-    screen = IndicationSettingsScreenDestination.ErrorIndicationSoundScreen
+    screen = PipelineConfigurationLocalIndicationSoundDestination.ErrorIndicationSoundScreen
 ) {
 
     override val device: UiDevice =
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-    override fun getViewModelInstance(): IIndicationSoundSettingsViewModel =
+    override fun getViewModelInstance(): IndicationSoundConfigurationViewModel =
         get<ErrorIndicationSoundSettingsViewModel>()
 
     @Before

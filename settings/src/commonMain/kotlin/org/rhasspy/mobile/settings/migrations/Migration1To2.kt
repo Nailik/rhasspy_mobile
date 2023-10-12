@@ -10,11 +10,12 @@ import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
 import org.rhasspy.mobile.data.domain.*
 import org.rhasspy.mobile.data.pipeline.PipelineData
 import org.rhasspy.mobile.data.pipeline.PipelineData.LocalPipelineData
-import org.rhasspy.mobile.data.pipeline.PipelineData.LocalPipelineData.IndicationSoundOption
+import org.rhasspy.mobile.data.pipeline.PipelineData.LocalPipelineData.IndicationSoundOptionData
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.*
-import org.rhasspy.mobile.data.sounds.SoundOption
+import org.rhasspy.mobile.data.sounds.IndicationSoundOption
+import org.rhasspy.mobile.data.sounds.IndicationSoundType
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.ISetting
@@ -336,28 +337,31 @@ internal object Migration1To2 : IMigration(1, 2) {
             localPipelineData = LocalPipelineData(
                 isSoundIndicationEnabled = isSoundIndicationEnabled.value,
                 soundIndicationOutputOption = soundIndicationOutputOption.value,
-                wakeSound = IndicationSoundOption(
+                wakeSound = IndicationSoundOptionData(
+                    type = IndicationSoundType.Wake,
                     volume = wakeSoundVolume.value,
                     option = when (val value = wakeSound.value) {
-                        "Default"  -> SoundOption.Default
-                        "Disabled" -> SoundOption.Disabled
-                        else       -> SoundOption.Custom("${FolderType.SoundFolder.Wake}/$value")
+                        "Default"  -> IndicationSoundOption.Default
+                        "Disabled" -> IndicationSoundOption.Disabled
+                        else       -> IndicationSoundOption.Custom("${FolderType.SoundFolder.Wake}/$value")
                     },
                 ),
-                errorSound = IndicationSoundOption(
+                errorSound = IndicationSoundOptionData(
+                    type = IndicationSoundType.Error,
                     volume = errorSoundVolume.value,
                     option = when (val value = errorSound.value) {
-                        "Default"  -> SoundOption.Default
-                        "Disabled" -> SoundOption.Disabled
-                        else       -> SoundOption.Custom("${FolderType.SoundFolder.Recorded}/$value")
+                        "Default"  -> IndicationSoundOption.Default
+                        "Disabled" -> IndicationSoundOption.Disabled
+                        else       -> IndicationSoundOption.Custom("${FolderType.SoundFolder.Recorded}/$value")
                     },
                 ),
-                recordedSound = IndicationSoundOption(
+                recordedSound = IndicationSoundOptionData(
+                    type = IndicationSoundType.Recorded,
                     volume = recordedSoundVolume.value,
                     option = when (val value = recordedSound.value) {
-                        "Default"  -> SoundOption.Default
-                        "Disabled" -> SoundOption.Disabled
-                        else       -> SoundOption.Custom("${FolderType.SoundFolder.Error}/$value")
+                        "Default"  -> IndicationSoundOption.Default
+                        "Disabled" -> IndicationSoundOption.Disabled
+                        else       -> IndicationSoundOption.Custom("${FolderType.SoundFolder.Error}/$value")
                     },
                 ),
             )

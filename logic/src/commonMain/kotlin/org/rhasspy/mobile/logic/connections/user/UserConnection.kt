@@ -8,11 +8,15 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import okio.Path.Companion.toPath
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.domain.DomainState
 import org.rhasspy.mobile.data.indication.IndicationState
 import org.rhasspy.mobile.data.service.ConnectionState
+import org.rhasspy.mobile.data.service.option.AudioOutputOption
+import org.rhasspy.mobile.data.sounds.IndicationSoundOption
+import org.rhasspy.mobile.data.sounds.IndicationSoundType
 import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnection
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
@@ -26,6 +30,7 @@ import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
 import org.rhasspy.mobile.logic.pipeline.DomainResult
 import org.rhasspy.mobile.logic.pipeline.IPipelineManager
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 
 interface IUserConnection {
 
@@ -40,10 +45,12 @@ interface IUserConnection {
     //user clicks microphone button
     fun sessionAction()
 
-    fun playRecordedSound()
-
-    fun playWakeSound()
-    fun playErrorSound()
+    suspend fun playSound(
+        indicationSoundType: IndicationSoundType,
+        soundIndicationOutputOption: AudioOutputOption,
+        indicationSound: IndicationSoundOption,
+        volume: Float,
+    )
 
     fun stopPlaySound()
 
@@ -122,16 +129,23 @@ internal class UserConnection(
         domainHistory.clearHistory()
     }
 
-    override fun playRecordedSound() {
-        localAudioService.playRecordedSound()
-    }
+    override suspend fun playSound(
+        indicationSoundType: IndicationSoundType,
+        soundIndicationOutputOption: AudioOutputOption,
+        indicationSound: IndicationSoundOption,
+        volume: Float,
+    ) {
+        val audioSource = when (indicationSound) {
+            is IndicationSoundOption.Custom   -> AudioSource.File(indicationSound.file.toPath())
+            is IndicationSoundOption.Default  -> AudioSource.Resource(indicationSoundType.default)
+            is IndicationSoundOption.Disabled -> return
+        }
 
-    override fun playWakeSound() {
-        localAudioService.playWakeSound()
-    }
-
-    override fun playErrorSound() {
-        localAudioService.playErrorSound()
+        localAudioService.playAudio(
+            audioSource = audioSource,
+            volume = volume,
+            audioOutputOption = soundIndicationOutputOption
+        )
     }
 
     override fun stopPlaySound() {

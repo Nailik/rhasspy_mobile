@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.settings.sound
+package org.rhasspy.mobile.ui.configuration.pipeline.indicationsound
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -16,10 +16,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.data.sounds.SoundOption
+import org.rhasspy.mobile.data.sounds.IndicationSoundOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.combinedTestTag
@@ -32,24 +31,35 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.RadioButtonListItem
 import org.rhasspy.mobile.ui.content.list.SliderListItem
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.theme.TonalElevationLevel2
 import org.rhasspy.mobile.ui.theme.TonalElevationLevel3
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.indicationsound.AudioPlayerViewState
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.indicationsound.IndicationSoundConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.indicationsound.IndicationSoundConfigurationUiEvent.Action.ChooseSoundFile
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.indicationsound.IndicationSoundConfigurationUiEvent.Action.ToggleAudioPlayerActive
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.indicationsound.IndicationSoundConfigurationUiEvent.Change.SetSoundIndicationOption
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.indicationsound.IndicationSoundConfigurationUiEvent.Change.UpdateSoundVolume
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.indicationsound.IndicationSoundConfigurationUiEvent.Consumed.ShowSnackBar
+import org.rhasspy.mobile.viewmodel.configuration.pipeline.indicationsound.IndicationSoundConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.PipelineConfigurationLocalIndicationSoundDestination
 
 /**
  * screen to choose indication sound
  */
 @Composable
 fun IndicationSoundScreen(
-    viewModel: IIndicationSoundSettingsViewModel,
-    screen: IndicationSettingsScreenDestination,
+    viewModel: IndicationSoundConfigurationViewModel,
+    screen: PipelineConfigurationLocalIndicationSoundDestination,
     title: StableStringResource
 ) {
-    ScreenContent(screenViewModel = viewModel) {
+
+    ScreenContent(
+        modifier = Modifier.testTag(screen),
+        title = title,
+        viewModel = viewModel,
+        tonalElevation = TonalElevationLevel2,
+    ) {
+
         val viewState by viewModel.viewState.collectAsState()
 
         val snackBarHostState = LocalSnackBarHostState.current
@@ -62,75 +72,74 @@ fun IndicationSoundScreen(
             }
         }
 
-        Scaffold(
+        Column(
             modifier = Modifier
-                .testTag(screen)
-                .fillMaxSize(),
-            topBar = {
-                AppBar(
-                    title = title,
-                    onEvent = viewModel::onEvent
-                )
-            }
-        ) { paddingValues ->
+                .testTag(TestTag.IndicationSoundScreen)
+                .fillMaxSize()
+        ) {
 
-            Surface(Modifier.padding(paddingValues)) {
-                Column(
-                    modifier = Modifier
-                        .testTag(TestTag.IndicationSoundScreen)
-                        .fillMaxSize()
-                ) {
+            SoundElements(
+                modifier = Modifier.weight(1f),
+                soundOption = viewState.editData.option,
+                onEvent = viewModel::onEvent
+            )
 
-                    SoundElements(
-                        modifier = Modifier.weight(1f),
-                        soundSetting = viewState.soundSetting,
-                        customSoundFiles = viewState.customSoundFiles,
-                        onEvent = viewModel::onEvent
-                    )
-
-                    Card(
-                        modifier = Modifier.padding(8.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = TonalElevationLevel3)
-                    ) {
-
-                        AnimatedVisibility(
-                            enter = expandVertically(),
-                            exit = shrinkVertically(),
-                            visible = viewState.isNoSoundInformationBoxVisible
-                        ) {
-
-                            ListElement(
-                                modifier = Modifier.testTag(TestTag.Warning),
-                                icon = {
-                                    Icon(
-                                        Icons.Filled.Info,
-                                        contentDescription = MR.strings.info.stable
-                                    )
-                                },
-                                text = { Text(MR.strings.audioOutputSilentOrDisabled.stable) },
-                                secondaryText = { Text(viewState.audioOutputOption.text) }
-                            )
-
-                        }
-
-                        SliderListItem(
-                            text = MR.strings.volume.stable,
-                            value = viewState.soundVolume,
-                            onValueChange = { viewModel.onEvent(UpdateSoundVolume(it)) }
-                        )
-
-                        SoundActionButtons(
-                            onPlay = { viewModel.onEvent(ToggleAudioPlayerActive) },
-                            isPlaying = viewState.isAudioPlaying,
-                            onChooseFile = { viewModel.onEvent(ChooseSoundFile) }
-                        )
-                    }
-                }
-
-            }
+            val audioPlayerViewState by viewState.audioPlayerViewState.collectAsState()
+            AudioPlayerContent(
+                volume = viewState.editData.volume,
+                viewState = audioPlayerViewState,
+                onEvent = viewModel::onEvent
+            )
 
         }
 
+    }
+
+}
+
+
+@Composable
+private fun AudioPlayerContent(
+    volume: Float,
+    viewState: AudioPlayerViewState,
+    onEvent: (IndicationSoundConfigurationUiEvent) -> Unit
+) {
+    Card(
+        modifier = Modifier.padding(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = TonalElevationLevel3)
+    ) {
+
+        AnimatedVisibility(
+            enter = expandVertically(),
+            exit = shrinkVertically(),
+            visible = viewState.isNoSoundInformationBoxVisible
+        ) {
+
+            ListElement(
+                modifier = Modifier.testTag(TestTag.Warning),
+                icon = {
+                    Icon(
+                        Icons.Filled.Info,
+                        contentDescription = MR.strings.info.stable
+                    )
+                },
+                text = { Text(MR.strings.audioOutputSilentOrDisabled.stable) },
+                secondaryText = { Text(viewState.audioOutputOption.text) }
+            )
+
+        }
+
+        SliderListItem(
+            text = MR.strings.volume.stable,
+            value = volume,
+            onValueChange = { onEvent(UpdateSoundVolume(it)) }
+        )
+
+        SoundActionButtons(
+            onPlay = { onEvent(ToggleAudioPlayerActive) },
+            isPlaying = viewState.isAudioPlaying,
+            onChooseFile = { onEvent(ChooseSoundFile) }
+        )
     }
 }
 
@@ -140,9 +149,8 @@ fun IndicationSoundScreen(
 @Composable
 private fun SoundElements(
     modifier: Modifier,
-    soundSetting: String,
-    customSoundFiles: ImmutableList<String>,
-    onEvent: (IIndicationSoundSettingsUiEvent) -> Unit
+    soundOption: IndicationSoundOption,
+    onEvent: (IndicationSoundConfigurationUiEvent) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -152,26 +160,18 @@ private fun SoundElements(
         RadioButtonListItem(
             modifier = Modifier.testTag(TestTag.Default),
             text = MR.strings.defaultText.stable,
-            isChecked = soundSetting == SoundOption.Default.name,
-            onClick = { onEvent(SetSoundIndicationOption(SoundOption.Default)) }
+            isChecked = soundOption == IndicationSoundOption.Default,
+            onClick = { onEvent(SetSoundIndicationOption(IndicationSoundOption.Default)) }
         )
 
         RadioButtonListItem(
             modifier = Modifier.testTag(TestTag.Disabled),
             text = MR.strings.disabled.stable,
-            isChecked = soundSetting == SoundOption.Disabled.name,
-            onClick = { onEvent(SetSoundIndicationOption(SoundOption.Disabled)) }
+            isChecked = soundOption == IndicationSoundOption.Disabled,
+            onClick = { onEvent(SetSoundIndicationOption(IndicationSoundOption.Disabled)) }
         )
 
-        //added files
-        customSoundFiles.forEach { item ->
-            SoundListItem(
-                isSelected = item == soundSetting,
-                soundFile = item,
-                onClick = { onEvent(SetSoundFile(item)) },
-                onDelete = { onEvent(DeleteSoundFile(item)) }
-            )
-        }
+        //TODO visibility for custom
     }
 }
 
@@ -264,33 +264,4 @@ private fun SoundActionButtons(
 
         }
     }
-}
-
-/**
- * app bar for indication screen
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun AppBar(
-    title: StableStringResource,
-    onEvent: (event: IIndicationSoundSettingsUiEvent) -> Unit
-) {
-
-    TopAppBar(
-        title = {
-            Text(title)
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = { onEvent(BackClick) },
-                modifier = Modifier.testTag(TestTag.AppBarBackButton)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = MR.strings.back.stable,
-                )
-            }
-        }
-    )
-
 }
