@@ -17,6 +17,7 @@ import org.rhasspy.mobile.logic.pipeline.IntentResult.Intent
 import org.rhasspy.mobile.logic.pipeline.PipelineResult.PipelineErrorResult
 import org.rhasspy.mobile.logic.pipeline.TranscriptResult.Transcript
 import org.rhasspy.mobile.logic.pipeline.TtsResult.Audio
+import org.rhasspy.mobile.logic.pipeline.domain.Reason
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -39,7 +40,7 @@ internal class PipelineLocal(
         playSound(params.wakeSound)
 
         return runPipelineInternal(sessionId).also {
-            if (it is PipelineErrorResult) {
+            if (it is PipelineErrorResult && it.reason != Reason.Disabled) {
                 playSound(params.errorSound)
             }
         }

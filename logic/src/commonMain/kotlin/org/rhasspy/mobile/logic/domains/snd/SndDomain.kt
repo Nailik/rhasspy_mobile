@@ -41,6 +41,8 @@ internal interface ISndDomain : IDomain {
      */
     suspend fun awaitPlayAudio(audio: Audio): SndResult
 
+    suspend fun awaitPlayAudio(audio: AudioSource)
+
 }
 
 /**
@@ -68,7 +70,6 @@ internal class SndDomain(
      */
     override suspend fun awaitPlayAudio(audio: Audio): SndResult {
         logger.d { "awaitPlayAudio $audio" }
-        //TODO #466 indication.onPlayAudio()
 
         return when (params.option) {
             SndDomainOption.Local              -> onLocalPlayAudio(audio)
@@ -83,6 +84,15 @@ internal class SndDomain(
                 )
         }.also {
             domainHistory.addToHistory(audio, it)
+        }
+    }
+
+    override suspend fun awaitPlayAudio(audio: AudioSource) {
+        when (params.option) {
+            SndDomainOption.Local              -> onLocalPlayAudio(audio)
+            SndDomainOption.Rhasspy2HermesHttp -> onRhasspy2HermesHttpPlayAudio(audio)
+            SndDomainOption.Rhasspy2HermesMQTT -> onRhasspy2HermesMQTTPlayAudio(audio)
+            SndDomainOption.Disabled           -> Unit
         }
     }
 
@@ -101,6 +111,16 @@ internal class SndDomain(
             source = Local,
         )
 
+        onLocalPlayAudio(data)
+
+        return Played(
+            id = null,
+            sessionId = audio.sessionId,
+            source = Local,
+        )
+    }
+
+    private suspend fun onLocalPlayAudio(data: AudioSource) {
         audioFocusService.request(Sound)
 
         if (AppSetting.isAudioOutputEnabled.value) {
@@ -114,12 +134,6 @@ internal class SndDomain(
         }
 
         audioFocusService.abandon(Sound)
-
-        return Played(
-            id = null,
-            sessionId = audio.sessionId,
-            source = Local,
-        )
     }
 
     /**
@@ -137,14 +151,18 @@ internal class SndDomain(
             source = Local,
         )
 
-        httpClientConnection.playWav(
-            audioSource = data,
-        )
+        onRhasspy2HermesHttpPlayAudio(data)
 
         return Played(
             id = null,
             sessionId = audio.sessionId,
             source = Rhasspy2HermesHttp,
+        )
+    }
+
+    private suspend fun onRhasspy2HermesHttpPlayAudio(data: AudioSource) {
+        httpClientConnection.playWav(
+            audioSource = data,
         )
     }
 
@@ -163,14 +181,7 @@ internal class SndDomain(
             source = Local,
         )
 
-        val mqttRequestId = uuid4().toString()
-
-        //play
-        mqttConnection.playAudioRemote(
-            audioSource = data,
-            siteId = params.mqttSiteId,
-            id = mqttRequestId,
-        )
+        val mqttRequestId = onRhasspy2HermesMQTTPlayAudio(data)
 
         //await played
         return mqttConnection.incomingMessages
@@ -192,6 +203,19 @@ internal class SndDomain(
                 ),
             )
             .first()
+    }
+
+    private suspend fun onRhasspy2HermesMQTTPlayAudio(audio: AudioSource): String {
+        val mqttRequestId = uuid4().toString()
+
+        //play
+        mqttConnection.playAudioRemote(
+            audioSource = audio,
+            siteId = params.mqttSiteId,
+            id = mqttRequestId,
+        )
+
+        return mqttRequestId
     }
 
     /**

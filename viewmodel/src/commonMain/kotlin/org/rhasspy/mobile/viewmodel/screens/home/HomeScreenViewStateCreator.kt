@@ -19,8 +19,8 @@ class HomeScreenViewStateCreator(
 
         return combineStateFlow(
             ConfigurationSetting.wakeDomainData.data,
-            userConnection.isPlayingRecording,
-            userConnection.isPlayingRecordingEnabled,
+            userConnection.isPlayingState,
+            userConnection.isWakeUpEnabled,
             microphoneFabViewStateFlow
         ).mapReadonlyState {
             getViewState()
@@ -29,9 +29,10 @@ class HomeScreenViewStateCreator(
 
     private fun getViewState(): HomeScreenViewState {
         return HomeScreenViewState(
-            isMicrophonePermissionRequired = ConfigurationSetting.wakeDomainData.value.wakeDomainOption in listOf(WakeDomainOption.Porcupine, WakeDomainOption.Udp),
-            isPlayingRecording = userConnection.isPlayingRecording.value,
-            isPlayingRecordingEnabled = userConnection.isPlayingRecordingEnabled.value,
+            //TODO#466 add isWakeUpEnabled
+            isMicrophonePermissionRequired = ConfigurationSetting.wakeDomainData.value.wakeDomainOption in listOf(WakeDomainOption.Porcupine, WakeDomainOption.Udp), //TODO#466 move to user connection
+            isPlayingRecording = userConnection.isPlayingState.value,
+            isPlayingRecordingEnabled = !userConnection.isPlayingState.value,
             microphoneFabViewState = microphoneFabViewStateFlow.value,
         )
     }

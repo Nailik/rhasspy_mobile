@@ -5,7 +5,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import okio.Path.Companion.toPath
@@ -21,8 +20,6 @@ import org.rhasspy.mobile.logic.connections.homeassistant.IHomeAssistantConnecti
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
 import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
-import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent.StartStopPlayRecording
-import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent.StartStopRhasspy
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
 import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.mic.MicDomainState
@@ -31,6 +28,7 @@ import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
 import org.rhasspy.mobile.logic.pipeline.DomainResult
 import org.rhasspy.mobile.logic.pipeline.IPipelineManager
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
+import org.rhasspy.mobile.platformspecific.combineState
 
 interface IUserConnection {
 
@@ -39,8 +37,22 @@ interface IUserConnection {
     val indicationState: StateFlow<IndicationState>
     val showVisualIndicationState: StateFlow<Boolean>
 
-    val isPlayingRecording: StateFlow<Boolean>
-    val isPlayingRecordingEnabled: StateFlow<Boolean>
+    val isWakeUpEnabled: StateFlow<Boolean>
+    val isPlayingState: StateFlow<Boolean>
+
+    val rhasspy2HermesHttpConnectionState: StateFlow<ConnectionState>
+    val rhasspy3WyomingConnectionState: StateFlow<ConnectionState>
+    val homeAssistantConnectionState: StateFlow<ConnectionState>
+    val webServerConnectionState: StateFlow<ConnectionState>
+    val rhasspy2HermesMqttConnectionState: StateFlow<ConnectionState>
+
+    val micDomainState: StateFlow<MicDomainState>
+    val wakeDomainState: StateFlow<DomainState>
+
+    val micDomainRecordingState: StateFlow<Boolean>
+    val asrDomainRecordingState: StateFlow<Boolean>
+
+    val pipelineHistory: StateFlow<List<DomainResult>>
 
     //user clicks microphone button
     fun sessionAction()
@@ -57,44 +69,29 @@ interface IUserConnection {
     fun playRecordingAction()
 
     fun clearPipelineHistory()
-
-    val isPlayingState: StateFlow<Boolean>
-
-
-    val rhasspy2HermesHttpConnectionState: StateFlow<ConnectionState>
-    val rhasspy3WyomingConnectionState: StateFlow<ConnectionState>
-    val homeAssistantConnectionState: StateFlow<ConnectionState>
-    val webServerConnectionState: StateFlow<ConnectionState>
-    val rhasspy2HermesMqttConnectionState: StateFlow<ConnectionState>
-
-    val micDomainState: StateFlow<MicDomainState>
-    val wakeDomainState: StateFlow<DomainState>
-
-    val micDomainRecordingState: StateFlow<Boolean>
-    val asrDomainRecordingState: StateFlow<Boolean>
-
-    val pipelineHistory: StateFlow<List<DomainResult>>
 }
 
 internal class UserConnection(
     indication: IIndication,
     private val localAudioService: ILocalAudioPlayer,
+    private val domainHistory: IDomainHistory,
     rhasspy2HermesConnection: IRhasspy2HermesConnection,
     rhasspy3WyomingConnection: IRhasspy3WyomingConnection,
     homeAssistantConnection: IHomeAssistantConnection,
     webServerConnection: IWebServerConnection,
     mqttService: IMqttConnection,
-    private val domainHistory: IDomainHistory,
 ) : IUserConnection, KoinComponent {
 
-    private val pipelineManager get() = get<IPipelineManager>()
+    private val pipelineManager get() = get<IPipelineManager>() //TODO move things to ui connection
 
     override val incomingMessages = MutableSharedFlow<UserConnectionEvent>()
     override val indicationState = indication.indicationState
     override val showVisualIndicationState = indication.isShowVisualIndication
 
-    override val isPlayingRecording: StateFlow<Boolean> = MutableStateFlow(false)//TODO #466
-    override val isPlayingRecordingEnabled: StateFlow<Boolean> = MutableStateFlow(false)//TODO #466
+    override val isWakeUpEnabled
+        get() = combineState(pipelineManager.isPipelineActive, pipelineManager.isPlayingAudio) { isPipelineActive, isPlayingAudio ->
+            !isPipelineActive && !isPlayingAudio
+        }
 
     override val rhasspy2HermesHttpConnectionState = rhasspy2HermesConnection.connectionState
     override val rhasspy3WyomingConnectionState = rhasspy3WyomingConnection.connectionState
@@ -109,19 +106,21 @@ internal class UserConnection(
     override val asrDomainRecordingState get() = pipelineManager.asrDomainRecordingStateFlow
     override val pipelineHistory: StateFlow<List<DomainResult>> = domainHistory.historyState
 
-    override val isPlayingState: StateFlow<Boolean> = localAudioService.isPlayingState
+    override val isPlayingState: StateFlow<Boolean> get() = pipelineManager.isPlayingAudio
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun sessionAction() {
+        if (isWakeUpEnabled.value) return
+
         scope.launch {
-            incomingMessages.emit(StartStopRhasspy)
+            incomingMessages.emit(UserConnectionEvent.StartStopRhasspy)
         }
     }
 
     override fun playRecordingAction() {
         scope.launch {
-            incomingMessages.emit(StartStopPlayRecording)
+            incomingMessages.emit(UserConnectionEvent.StartStopPlayRecording)
         }
     }
 

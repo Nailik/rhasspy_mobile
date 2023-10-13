@@ -19,6 +19,8 @@ import org.rhasspy.mobile.logic.domains.DomainHistory
 import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.asr.AsrDomain
 import org.rhasspy.mobile.logic.domains.asr.IAsrDomain
+import org.rhasspy.mobile.logic.domains.audio.AudioDomain
+import org.rhasspy.mobile.logic.domains.audio.IAudioDomain
 import org.rhasspy.mobile.logic.domains.handle.HandleDomain
 import org.rhasspy.mobile.logic.domains.handle.IHandleDomain
 import org.rhasspy.mobile.logic.domains.intent.IIntentDomain
@@ -57,6 +59,8 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 fun logicModule() = module {
     factory {
         DomainBundle(
+            wakeDomain = get(),
+            audioDomain = get(),
             asrDomain = get(),
             handleDomain = get(),
             intentDomain = get(),
@@ -119,6 +123,15 @@ fun logicModule() = module {
             httpClientConnection = get(),
             domainHistory = get(),
             indication = get(),
+        )
+    }
+
+    factory<IAudioDomain> {
+        AudioDomain(
+            mqttConnection = get(),
+            webServerConnection = get(),
+            userConnection = get(),
+            fileStorage = get(),
         )
     }
 

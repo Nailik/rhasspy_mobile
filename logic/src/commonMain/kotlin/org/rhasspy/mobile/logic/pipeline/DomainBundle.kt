@@ -1,14 +1,18 @@
 package org.rhasspy.mobile.logic.pipeline
 
 import org.rhasspy.mobile.logic.domains.asr.IAsrDomain
+import org.rhasspy.mobile.logic.domains.audio.IAudioDomain
 import org.rhasspy.mobile.logic.domains.handle.IHandleDomain
 import org.rhasspy.mobile.logic.domains.intent.IIntentDomain
 import org.rhasspy.mobile.logic.domains.mic.IMicDomain
 import org.rhasspy.mobile.logic.domains.snd.ISndDomain
 import org.rhasspy.mobile.logic.domains.tts.ITtsDomain
 import org.rhasspy.mobile.logic.domains.vad.IVadDomain
+import org.rhasspy.mobile.logic.domains.wake.IWakeDomain
 
 internal data class DomainBundle(
+    val wakeDomain: IWakeDomain,
+    val audioDomain: IAudioDomain,
     val asrDomain: IAsrDomain,
     val handleDomain: IHandleDomain,
     val intentDomain: IIntentDomain,
@@ -19,6 +23,8 @@ internal data class DomainBundle(
 ) {
 
     fun dispose() {
+        wakeDomain.dispose()
+        audioDomain.dispose()
         asrDomain.dispose()
         handleDomain.dispose()
         intentDomain.dispose()
