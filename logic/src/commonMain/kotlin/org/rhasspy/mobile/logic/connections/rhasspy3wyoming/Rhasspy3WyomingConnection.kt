@@ -1,16 +1,12 @@
 package org.rhasspy.mobile.logic.connections.rhasspy3wyoming
 
 import co.touchlab.kermit.Logger
-import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.setBody
-import io.ktor.http.HttpMethod
 import io.ktor.websocket.Frame
 import io.ktor.websocket.close
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -114,28 +110,27 @@ internal class Rhasspy3WyomingConnection : IRhasspy3WyomingConnection, IHttpConn
         bitRate: Int,
         channel: Int,
         data: Flow<ByteArray>
-    ): String {
-        val result = MutableSharedFlow<String>()
-
-        httpClient?.webSocket(
-            method = HttpMethod.Post,
+    ): HttpClientResult<String> {
+        val result = postWebsocket(
+            url = "/wake/detect",
             request = {
                 buildMessage {
                     put("rate", sampleRate)
                     put("width", bitRate)
                     put("channels", channel)
                 }
-            },//rate, width, channels, data
-            path = "/wake/detect"
+            },
         ) {
             launch {
                 data.collectLatest { send(Frame.Binary(true, it)) }
             }
-            result.emit(incoming.receive().toString())
             close()
         }
 
-        return result.first()
+        return when (result) {
+            is Success         -> Success(result.data.data.toString())
+            is HttpClientError -> result.toType()
+        }
     }
 
     override suspend fun detectWake(data: AudioSource): HttpClientResult<String> {
@@ -148,27 +143,26 @@ internal class Rhasspy3WyomingConnection : IRhasspy3WyomingConnection, IHttpConn
     }
 
     override suspend fun transcribe(sampleRate: Int, bitRate: Int, channel: Int, data: Flow<ByteArray>): HttpClientResult<String> {
-        val result = MutableSharedFlow<HttpClientResult<String>>()
-
-        httpClient?.webSocket(
-            method = HttpMethod.Post,
+        val result = postWebsocket(
+            url = "/asr/transcribe",
             request = {
                 buildMessage {
                     put("rate", sampleRate)
                     put("width", bitRate)
                     put("channels", channel)
                 }
-            },//rate, width, channels, data
-            path = "/asr/transcribe"
+            },
         ) {
             launch {
                 data.collectLatest { send(Frame.Binary(true, it)) }
             }
-            result.emit(incoming.receive().toString())
             close()
         }
 
-        return result.first()
+        return when (result) {
+            is Success         -> Success(result.data.data.toString())
+            is HttpClientError -> result.toType()
+        }
     }
 
     override suspend fun transcribe(data: AudioSource): HttpClientResult<String> {
