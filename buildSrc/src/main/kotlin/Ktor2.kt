@@ -21,6 +21,7 @@ object Ktor2 : DependencyGroup(group = "io.ktor") {
     object Client : DependencyGroup(group = group) {
         val cio = module("ktor-client-cio")
         val core = module("ktor-client-core")
+        val websockets = module("ktor-client-websockets")
     }
 
 }

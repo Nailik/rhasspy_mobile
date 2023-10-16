@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.logic.domains
+package org.rhasspy.mobile.logic.local.audiofile
 
 import okio.FileHandle
 import okio.Path

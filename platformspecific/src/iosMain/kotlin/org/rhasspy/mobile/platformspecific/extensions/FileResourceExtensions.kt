@@ -7,3 +7,5 @@ actual fun FileResource.commonData(nativeApplication: NativeApplication): ByteAr
     //TODO #514
     return ByteArray(0)
 }
+
+actual fun FileResource.readToString(nativeApplication: NativeApplication): String = this.readText()

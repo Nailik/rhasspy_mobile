@@ -14,13 +14,12 @@ import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.PlayResult.PlayFinished
 import org.rhasspy.mobile.logic.connections.rhasspy2hermes.IRhasspy2HermesConnection
-import org.rhasspy.mobile.logic.domains.AudioFileWriter
 import org.rhasspy.mobile.logic.domains.IDomainHistory
+import org.rhasspy.mobile.logic.local.audiofile.AudioCollector
 import org.rhasspy.mobile.logic.local.audiofocus.IAudioFocus
 import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.indication.IIndication
 import org.rhasspy.mobile.logic.local.localaudio.ILocalAudioPlayer
-import org.rhasspy.mobile.logic.pipeline.SndAudio.*
 import org.rhasspy.mobile.logic.pipeline.SndResult
 import org.rhasspy.mobile.logic.pipeline.SndResult.Played
 import org.rhasspy.mobile.logic.pipeline.SndResult.SndError
@@ -63,7 +62,7 @@ internal class SndDomain(
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    private var audioFileWriter: AudioFileWriter? = null
+    private val audioCollector = AudioCollector()
 
     /**
      * play audio stream from Audio and return SndResult after finished
@@ -103,7 +102,7 @@ internal class SndDomain(
         logger.d { "onLocalPlayAudio $audio" }
 
         val data = withTimeoutOrNull(params.audioTimeout) {
-            collectAudioToFile(audio)
+            audioCollector.fileFromAudioFlow(fileStorage.speechToTextAudioFile, audio.data)
         } ?: return SndError(
             id = null,
             sessionId = audio.sessionId,
@@ -143,7 +142,7 @@ internal class SndDomain(
         logger.d { "onRhasspy2HermesHttpPlayAudio $audio" }
 
         val data = withTimeoutOrNull(params.audioTimeout) {
-            collectAudioToFile(audio)
+            audioCollector.fileFromAudioFlow(fileStorage.speechToTextAudioFile, audio.data)
         } ?: return SndError(
             id = null,
             sessionId = audio.sessionId,
@@ -173,7 +172,7 @@ internal class SndDomain(
         logger.d { "onRhasspy2HermesMQTTPlayAudio $audio" }
 
         val data = withTimeoutOrNull(params.audioTimeout) {
-            collectAudioToFile(audio)
+            audioCollector.fileFromAudioFlow(fileStorage.speechToTextAudioFile, audio.data)
         } ?: return SndError(
             id = null,
             sessionId = audio.sessionId,
@@ -218,55 +217,11 @@ internal class SndDomain(
         return mqttRequestId
     }
 
-    /**
-     * collect chunk stream into file, awaits for AudioStopEvent with timeout
-     */
-    private suspend fun collectAudioToFile(audio: Audio): AudioSource {
-        //await audio start
-        val audioStartEvent = audio.data
-            .filterIsInstance<AudioStartEvent>()
-            .first()
-            .also {
-                domainHistory.addToHistory(audio, it)
-            }
 
-        val localAudioFileWriter = AudioFileWriter(
-            path = fileStorage.playAudioFile,
-            channel = audioStartEvent.channel,
-            sampleRate = audioStartEvent.sampleRate,
-            bitRate = audioStartEvent.bitRate,
-        ).apply {
-            openFile()
-        }
-
-        audioFileWriter = localAudioFileWriter
-
-        val collectJob = scope.launch {
-            //To file
-            audio.data
-                .filterIsInstance<AudioChunkEvent>()
-                .collect {
-                    localAudioFileWriter.writeToFile(it.data)
-                }
-        }
-
-        //await audio stop
-        audio.data
-            .filterIsInstance<AudioStopEvent>()
-            .first()
-            .also {
-                domainHistory.addToHistory(audio, it)
-            }
-
-        collectJob.cancelAndJoin()
-        localAudioFileWriter.closeFile()
-
-        return AudioSource.File(localAudioFileWriter.path)
-    }
 
     override fun dispose() {
         scope.cancel()
-        audioFileWriter?.closeFile()
+        audioCollector.dispose()
     }
 
 }

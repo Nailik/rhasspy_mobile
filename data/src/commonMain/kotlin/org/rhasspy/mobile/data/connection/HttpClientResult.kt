@@ -16,6 +16,10 @@ sealed class HttpClientResult<T> {
         constructor(resource: StableStringResource) : this(TextWrapper.TextWrapperStableStringResource(resource))
         constructor(exception: Exception) : this(TextWrapper.TextWrapperString("$exception ${exception.message}"))
 
+        fun <X> toType(): HttpClientError<X> {
+            return HttpClientError(message)
+        }
+
     }
 
 

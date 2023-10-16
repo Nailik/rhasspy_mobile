@@ -5,15 +5,22 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.client.request.*
 import io.ktor.client.utils.buildHeaders
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMessageBuilder
+import io.ktor.http.HttpMethod
+import io.ktor.websocket.Frame
+import io.ktor.websocket.close
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.connection.HttpClientResult
@@ -105,6 +112,41 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
     fun close() {
         coroutineScope.cancel()
         httpClient?.close()
+    }
+
+    protected suspend inline fun postWebsocket(
+        url: String,
+        noinline request: HttpRequestBuilder.() -> Unit,
+        noinline block: suspend DefaultClientWebSocketSession.() -> Unit
+    ): HttpClientResult<Frame> {
+        val resultFlow = MutableSharedFlow<Frame>()
+
+        httpClient?.let { client ->
+            try {
+                client.webSocket(
+                    method = HttpMethod.Post,
+                    request = request,
+                    path = url,
+                    block = {
+                        resultFlow.emit(incoming.receive())
+                        block()
+                        close()
+                    }
+                )
+            } catch (exception: Exception) {
+                logger.e(exception) { "post result error" }
+                mapError<Frame>(exception)
+            }
+        } ?: run {
+            logger.a { "post client not initialized" }
+            HttpClientError<Frame>(TextWrapperStableStringResource(MR.strings.unknown_error.stable))
+        }
+
+        val result = HttpClientResult.Success(resultFlow.first())
+
+        connectionState.value = result.toConnectionState()
+
+        return result
     }
 
     /**

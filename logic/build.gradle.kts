@@ -28,6 +28,7 @@ kotlin {
                 implementation(Ktor2.Server.cio)
                 implementation(Ktor2.Server.dataConversion)
                 implementation(Ktor2.Client.cio)
+                implementation(Ktor2.Client.websockets)
                 implementation(Ktor2.Server.statusPages)
                 implementation(Ktor2.Plugins.network)
                 implementation(Ktor2.Server.core)
