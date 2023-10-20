@@ -4,10 +4,8 @@ import co.touchlab.kermit.Logger
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.setBody
 import io.ktor.websocket.Frame
-import io.ktor.websocket.close
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObjectBuilder
@@ -112,7 +110,7 @@ internal class Rhasspy3WyomingConnection : IRhasspy3WyomingConnection, IHttpConn
         data: Flow<ByteArray>
     ): HttpClientResult<String> {
         val result = postWebsocket(
-            url = "/wake/detect",
+            path = "/wake/detect",
             request = {
                 buildMessage {
                     put("rate", sampleRate)
@@ -121,10 +119,7 @@ internal class Rhasspy3WyomingConnection : IRhasspy3WyomingConnection, IHttpConn
                 }
             },
         ) {
-            launch {
-                data.collectLatest { send(Frame.Binary(true, it)) }
-            }
-            close()
+            data.collectLatest { send(Frame.Binary(true, it)) } //TODO check if stopped by close
         }
 
         return when (result) {
@@ -144,7 +139,7 @@ internal class Rhasspy3WyomingConnection : IRhasspy3WyomingConnection, IHttpConn
 
     override suspend fun transcribe(sampleRate: Int, bitRate: Int, channel: Int, data: Flow<ByteArray>): HttpClientResult<String> {
         val result = postWebsocket(
-            url = "/asr/transcribe",
+            path = "/asr/transcribe",
             request = {
                 buildMessage {
                     put("rate", sampleRate)
@@ -153,10 +148,7 @@ internal class Rhasspy3WyomingConnection : IRhasspy3WyomingConnection, IHttpConn
                 }
             },
         ) {
-            launch {
-                data.collectLatest { send(Frame.Binary(true, it)) }
-            }
-            close()
+            data.collectLatest { send(Frame.Binary(true, it)) }
         }
 
         return when (result) {
@@ -214,7 +206,7 @@ internal class Rhasspy3WyomingConnection : IRhasspy3WyomingConnection, IHttpConn
         data: Flow<ByteArray>,
     ): HttpClientResult<String> {
         val result = postWebsocket(
-            url = "/snd/play",
+            path = "/snd/play",
             request = {
                 buildMessage {
                     put("rate", sampleRate)
@@ -223,10 +215,7 @@ internal class Rhasspy3WyomingConnection : IRhasspy3WyomingConnection, IHttpConn
                 }
             },//rate, width, channels, data
             block = {
-                launch {
-                    data.collectLatest { send(Frame.Binary(true, it)) }
-                }
-                close()
+                data.collectLatest { send(Frame.Binary(true, it)) }
             }
         )
 

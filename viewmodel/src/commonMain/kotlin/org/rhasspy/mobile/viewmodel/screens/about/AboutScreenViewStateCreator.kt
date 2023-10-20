@@ -8,7 +8,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.jsonPrimitive
 import org.rhasspy.mobile.data.libraries.stable
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.resource.readToString
+import org.rhasspy.mobile.platformspecific.extensions.readToString
 import org.rhasspy.mobile.resources.MR
 
 class AboutScreenViewStateCreator(

@@ -115,7 +115,7 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
     }
 
     protected suspend inline fun postWebsocket(
-        url: String,
+        path: String,
         noinline request: HttpRequestBuilder.() -> Unit,
         noinline block: suspend DefaultClientWebSocketSession.() -> Unit
     ): HttpClientResult<Frame> {
@@ -125,11 +125,18 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
             try {
                 client.webSocket(
                     method = HttpMethod.Post,
-                    request = request,
-                    path = url,
+                    request = {
+                        request() //TODO automatically wss?
+                        buildHeaders {
+                            authorization(httpConnectionParams.bearerToken)
+                        }
+                    },
+                    path = path,
                     block = {
-                        resultFlow.emit(incoming.receive())
                         block()
+                        val received = incoming.receive()
+                        logger.e { "received $received" }
+                        resultFlow.emit(received)
                         close()
                     }
                 )

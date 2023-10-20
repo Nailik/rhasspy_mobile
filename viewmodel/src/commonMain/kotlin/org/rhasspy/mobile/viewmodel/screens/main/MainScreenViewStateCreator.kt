@@ -8,8 +8,8 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.combineStateFlow
+import org.rhasspy.mobile.platformspecific.extensions.readToString
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.resource.readToString
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.INavigator

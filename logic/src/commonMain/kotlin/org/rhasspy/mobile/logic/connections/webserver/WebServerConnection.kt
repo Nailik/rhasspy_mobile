@@ -46,6 +46,7 @@ import org.rhasspy.mobile.logic.local.file.IFileStorage
 import org.rhasspy.mobile.logic.local.settings.IAppSettingsUtil
 import org.rhasspy.mobile.logic.pipeline.Source
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.File
 import org.rhasspy.mobile.platformspecific.extensions.commonExists
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalFilePath
 import org.rhasspy.mobile.platformspecific.ktor.buildServer
@@ -311,7 +312,7 @@ internal class WebServerConnection(
      * GET to download WAV data from last recorded voice command
      */
     private suspend fun playRecordingGet(call: ApplicationCall): WebServerResult? {
-        call.respond(StreamContent(fileStorage.speechToTextAudioFile))
+        call.respond(StreamContent(File(fileStorage.speechToTextAudioFile)))
         return null
     }
 

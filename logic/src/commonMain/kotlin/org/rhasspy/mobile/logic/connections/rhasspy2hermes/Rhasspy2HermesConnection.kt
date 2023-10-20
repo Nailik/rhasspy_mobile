@@ -10,8 +10,7 @@ import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.logic.connections.http.IHttpConnection
 import org.rhasspy.mobile.logic.connections.http.StreamContent
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
-import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.*
-import org.rhasspy.mobile.platformspecific.extensions.commonData
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.File
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 internal interface IRhasspy2HermesConnection : IConnection {
@@ -44,7 +43,7 @@ internal class Rhasspy2HermesConnection : IRhasspy2HermesConnection, IHttpConnec
         return post(
             url = "/api/speech-to-text",
             block = {
-                setBody(StreamContent(audioFilePath))
+                setBody(StreamContent(File(audioFilePath)))
             }
         )
     }
@@ -97,19 +96,13 @@ internal class Rhasspy2HermesConnection : IRhasspy2HermesConnection, IHttpConnec
      */
     override suspend fun playWav(audioSource: AudioSource): HttpClientResult<String> {
         logger.d { "playWav size: $audioSource" }
-        @Suppress("DEPRECATION", "IMPLICIT_CAST_TO_ANY")
-        val body = when (audioSource) {
-            is Data -> audioSource.data
-            is File -> StreamContent(audioSource.path)
-            is Resource -> audioSource.fileResource.commonData(nativeApplication)
-        }
         return post(
             url = "/api/play-wav",
             block = {
                 buildHeaders {
                     contentType(audioContentType)
                 }
-                setBody(body)
+                setBody(StreamContent(audioSource))
             },
         )
     }
