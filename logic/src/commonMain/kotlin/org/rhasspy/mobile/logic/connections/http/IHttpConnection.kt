@@ -3,11 +3,13 @@ package org.rhasspy.mobile.logic.connections.http
 import co.touchlab.kermit.Logger
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.timeout
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.WebSockets
-import io.ktor.client.plugins.websocket.webSocket
+import io.ktor.client.plugins.websocket.webSocketSession
 import io.ktor.client.request.*
 import io.ktor.client.utils.buildHeaders
 import io.ktor.http.ContentType
@@ -15,7 +17,6 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMessageBuilder
 import io.ktor.http.HttpMethod
 import io.ktor.websocket.Frame
-import io.ktor.websocket.close
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +33,8 @@ import org.rhasspy.mobile.data.service.ConnectionState.*
 import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperStableStringResource
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.ktor.configureEngine
+import org.rhasspy.mobile.platformspecific.ktor.HttpClientF
+import org.rhasspy.mobile.platformspecific.ktor.installDeflate
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ISetting
 
@@ -60,15 +62,24 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
      * builds client
      */
     private fun buildClient(params: HttpConnectionData): HttpClient {
-        return HttpClient(CIO) {
-            expectSuccess = true
-            install(WebSockets)
+        return HttpClientF {
+            expectSuccess = false
+            install(WebSockets) {
+                extensions {
+                    installDeflate()
+                }
+
+            }
+            install(Logging) {
+                level = LogLevel.ALL
+            }
             install(HttpTimeout) {
                 requestTimeoutMillis = params.timeout.inWholeMilliseconds
+                connectTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS
             }
-            engine {
-                configureEngine(params.isSSLVerificationDisabled)
-            }
+            //  engine {
+            //       configureEngine(params.isSSLVerificationDisabled)
+            //  }
         }
     }
 
@@ -121,25 +132,47 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
     ): HttpClientResult<Frame> {
         val resultFlow = MutableSharedFlow<Frame>()
 
+
         httpClient?.let { client ->
             try {
-                client.webSocket(
-                    method = HttpMethod.Post,
+                val session = client.webSocketSession {
+                    timeout {
+                        // Disable request timeout for the websocket session.
+                        requestTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS
+                        connectTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS
+                    }
+                    this.method = HttpMethod.Get
+                    url("wss", "hassnology.synology.me", 13331, path)
+                    headers {
+                        append(HttpHeaders.Accept, "application/json")
+                    }
+                    //request()
+                }
+
+                val received = session.incoming.receive()
+                logger.e { "received $received" }
+
+                /*
+                client.webSocketSession(
+                    method = HttpMethod.Get,
+                    host = "hassnology.synology.me",
+                    port = 13331,
+                    path = path,
                     request = {
-                        request() //TODO automatically wss?
-                        buildHeaders {
-                            authorization(httpConnectionParams.bearerToken)
+                        request()
+                        headers {
+                            append(HttpHeaders.Accept, "application/json")
+                            //authorization(httpConnectionParams.bearerToken)
                         }
                     },
-                    path = path,
                     block = {
-                        block()
+                        //     block()
                         val received = incoming.receive()
                         logger.e { "received $received" }
-                        resultFlow.emit(received)
-                        close()
+                        //    resultFlow.emit(received)
+                        //    close()
                     }
-                )
+                )*/
             } catch (exception: Exception) {
                 logger.e(exception) { "post result error" }
                 mapError<Frame>(exception)

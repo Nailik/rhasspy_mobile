@@ -51,6 +51,8 @@
     <string name="disabled">Deaktiviert</string>
     <string name="rhasspy2hermes_mqtt">Rhasspy2 MQTT (Hermes)</string>
     <string name="rhasspy2hermes_http">Rhasspy2 HTTP (Hermes)</string>
+    <string name="rhasspy3wyoming_http">Rhasspy3 HTTP (Wyoming)</string>
+    <string name="rhasspy3wyoming_websocket">Rhasspy3 Websocket (Wyoming)</string>
     <string name="withRecognition">Mit Erkennung</string>
     <string name="homeAssistant">Home-Assistant</string>
     <string name="hassURL">Hass URL</string>

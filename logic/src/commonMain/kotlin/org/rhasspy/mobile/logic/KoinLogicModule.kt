@@ -184,6 +184,7 @@ fun logicModule() = module {
             webServerConnection = get(),
             userConnection = get(),
             domainHistory = get(),
+            rhasspy3WyomingConnection = get()
         )
     }
 

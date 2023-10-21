@@ -32,6 +32,7 @@ kotlin {
                 implementation(Ktor2.Server.statusPages)
                 implementation(Ktor2.Plugins.network)
                 implementation(Ktor2.Server.core)
+                implementation("io.ktor:ktor-client-logging:2.1.0")
                 implementation(Benasher.uuid)
                 implementation(Square.okio)
                 implementation(Koin.core)

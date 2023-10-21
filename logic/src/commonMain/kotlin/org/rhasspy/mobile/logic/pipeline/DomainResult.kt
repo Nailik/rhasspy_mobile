@@ -10,6 +10,8 @@ enum class Source {
     Local,
     Rhasspy2HermesHttp,
     Rhasspy2HermesMqtt,
+    Rhasspy3WyomingHttp,
+    Rhasspy3WyomingWebsocket,
     HomeAssistant,
     WebServer,
     User,

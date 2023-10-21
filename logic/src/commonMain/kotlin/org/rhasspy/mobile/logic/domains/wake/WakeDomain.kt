@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.datetime.Clock
+import org.rhasspy.mobile.data.connection.HttpClientResult
 import org.rhasspy.mobile.data.domain.DomainState
 import org.rhasspy.mobile.data.domain.DomainState.Error
 import org.rhasspy.mobile.data.domain.DomainState.NoError
@@ -14,6 +15,7 @@ import org.rhasspy.mobile.logic.IDomain
 import org.rhasspy.mobile.logic.connections.mqtt.IMqttConnection
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent
 import org.rhasspy.mobile.logic.connections.mqtt.MqttConnectionEvent.HotWordDetected
+import org.rhasspy.mobile.logic.connections.rhasspy3wyoming.IRhasspy3WyomingConnection
 import org.rhasspy.mobile.logic.connections.user.IUserConnection
 import org.rhasspy.mobile.logic.connections.user.UserConnectionEvent
 import org.rhasspy.mobile.logic.connections.webserver.IWebServerConnection
@@ -47,6 +49,7 @@ internal class WakeDomain(
     private val webServerConnection: IWebServerConnection,
     private val userConnection: IUserConnection,
     private val domainHistory: IDomainHistory,
+    private val rhasspy3WyomingConnection: IRhasspy3WyomingConnection,
 ) : IWakeDomain {
 
     private val logger = Logger.withTag("WakeDomain")
@@ -55,25 +58,18 @@ internal class WakeDomain(
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    private var porcupineWakeWordClient = PorcupineWakeWordClient(
-        wakeWordPorcupineAccessToken = params.wakeWordPorcupineAccessToken,
-        wakeWordPorcupineKeywordDefaultOptions = params.wakeWordPorcupineKeywordDefaultOptions,
-        wakeWordPorcupineKeywordCustomOptions = params.wakeWordPorcupineKeywordCustomOptions,
-        wakeWordPorcupineLanguage = params.wakeWordPorcupineLanguage,
-    )
-
-    private var udpConnection = UdpConnection(
-        host = params.wakeWordUdpOutputHost,
-        port = params.wakeWordUdpOutputPort
-    )
+    private lateinit var porcupineWakeWordClient: PorcupineWakeWordClient
+    private lateinit var udpConnection: UdpConnection
 
     init {
         scope.launch {
             state.value = when (params.wakeDomainOption) {
-                WakeDomainOption.Porcupine          -> initializePorcupine()
-                WakeDomainOption.Rhasspy2HermesMQTT -> NoError
-                WakeDomainOption.Udp                -> initializeUdp()
-                WakeDomainOption.Disabled           -> NoError
+                WakeDomainOption.Porcupine                -> initializePorcupine()
+                WakeDomainOption.Rhasspy2HermesMQTT       -> NoError
+                WakeDomainOption.Udp                      -> initializeUdp()
+                WakeDomainOption.Disabled                 -> NoError
+                WakeDomainOption.Rhasspy3WyomingHttp      -> NoError
+                WakeDomainOption.Rhasspy3WyomingWebsocket -> NoError
             }
         }
     }
@@ -85,10 +81,12 @@ internal class WakeDomain(
 
         val localFlow = flow {
             when (params.wakeDomainOption) {
-                WakeDomainOption.Porcupine          -> emit(awaitPorcupineWakeDetection(audioStream))
-                WakeDomainOption.Rhasspy2HermesMQTT -> emit(awaitRhasspy2hermesMqttWakeDetection(audioStream))
-                WakeDomainOption.Udp                -> emit(awaitUdpWakeDetection(audioStream))
-                WakeDomainOption.Disabled           -> Unit
+                WakeDomainOption.Porcupine                -> emit(awaitPorcupineWakeDetection(audioStream))
+                WakeDomainOption.Rhasspy2HermesMQTT       -> emit(awaitRhasspy2HermesMqttWakeDetection(audioStream))
+                WakeDomainOption.Udp                      -> emit(awaitUdpWakeDetection(audioStream))
+                WakeDomainOption.Disabled                 -> Unit
+                WakeDomainOption.Rhasspy3WyomingHttp      -> emit(awaitRhasspy3WyomingHttpWakeDetection(audioStream))
+                WakeDomainOption.Rhasspy3WyomingWebsocket -> emit(awaitRhasspy3WyomingWebsocketWakeDetection(audioStream))
             }
         }
         val remoteFlow = awaitRemoteWakeEvent()
@@ -106,7 +104,9 @@ internal class WakeDomain(
      */
     private fun initializePorcupine(): DomainState {
         logger.d { "initializePorcupine" }
-        porcupineWakeWordClient.close()
+        if (::porcupineWakeWordClient.isInitialized) {
+            porcupineWakeWordClient.close()
+        }
         porcupineWakeWordClient = PorcupineWakeWordClient(
             wakeWordPorcupineAccessToken = params.wakeWordPorcupineAccessToken,
             wakeWordPorcupineKeywordDefaultOptions = params.wakeWordPorcupineKeywordDefaultOptions,
@@ -125,7 +125,9 @@ internal class WakeDomain(
      */
     private suspend fun initializeUdp(): DomainState {
         logger.d { "initializeUdp" }
-        udpConnection.close()
+        if (::udpConnection.isInitialized) {
+            udpConnection.close()
+        }
         udpConnection = UdpConnection(
             params.wakeWordUdpOutputHost,
             params.wakeWordUdpOutputPort
@@ -167,7 +169,7 @@ internal class WakeDomain(
     /**
      * send to mqtt await for mqtt to send HotWordDetected message
      */
-    private suspend fun awaitRhasspy2hermesMqttWakeDetection(audioStream: Flow<MicAudioChunk>): WakeResult {
+    private suspend fun awaitRhasspy2HermesMqttWakeDetection(audioStream: Flow<MicAudioChunk>): WakeResult {
         val sendDataJob = scope.launch {
             audioStream.collectLatest { chunk ->
                 with(chunk) {
@@ -231,6 +233,35 @@ internal class WakeDomain(
             }
     }
 
+    private suspend fun awaitRhasspy3WyomingHttpWakeDetection(audioStream: Flow<MicAudioChunk>): WakeResult {
+        //TODO
+        return WakeResult(
+            name = "dummy",
+            sessionId = null,
+            source = Source.Rhasspy3WyomingHttp
+        )
+    }
+
+    private suspend fun awaitRhasspy3WyomingWebsocketWakeDetection(audioStream: Flow<MicAudioChunk>): WakeResult {
+        val first = audioStream.first()
+
+        val result = rhasspy3WyomingConnection.detectWake(
+            sampleRate = first.sampleRate.value,
+            bitRate = first.encoding.bitRate,
+            channel = first.channel.count,
+            data = audioStream.map { it.data }
+        )
+
+        return when (result) {
+            is HttpClientResult.HttpClientError -> awaitRhasspy3WyomingWebsocketWakeDetection(audioStream)
+            is HttpClientResult.Success         -> WakeResult(
+                name = "dummy",
+                sessionId = null,
+                source = Source.Rhasspy3WyomingWebsocket
+            )
+        }
+    }
+
 
     private fun awaitRemoteWakeEvent(): Flow<WakeResult> {
         return merge(
@@ -282,8 +313,12 @@ internal class WakeDomain(
     }
 
     override fun dispose() {
-        porcupineWakeWordClient.close()
-        udpConnection.close()
+        if (::porcupineWakeWordClient.isInitialized) {
+            porcupineWakeWordClient.close()
+        }
+        if (::udpConnection.isInitialized) {
+            udpConnection.close()
+        }
         scope.cancel()
     }
 

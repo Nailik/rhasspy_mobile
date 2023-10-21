@@ -106,7 +106,10 @@ private fun WakeDomainScreenContent(
                     )
 
                 WakeDomainOption.Rhasspy2HermesMQTT,
+                WakeDomainOption.Rhasspy3WyomingHttp,
+                WakeDomainOption.Rhasspy3WyomingWebsocket,
                 WakeDomainOption.Disabled  -> Unit
+
             }
 
         }

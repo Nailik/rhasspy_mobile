@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated": "2023-10-20T15:59:17.053Z"
+    "generated": "2023-10-20T16:25:04.713Z"
   },
   "libraries": [
     {
@@ -1822,7 +1822,7 @@
           "name": "Kotlin Team"
         }
       ],
-      "artifactVersion": "1.9.20-RC",
+      "artifactVersion": "1.9.20-Beta2",
       "description": "Kotlin Standard Library",
       "scm": {
         "connection": "scm:git:https://github.com/JetBrains/kotlin.git",
@@ -1891,7 +1891,7 @@
           "name": "Kotlin Team"
         }
       ],
-      "artifactVersion": "1.9.20-RC",
+      "artifactVersion": "1.9.20-Beta2",
       "description": "Kotlin Test Multiplatform library",
       "scm": {
         "connection": "scm:git:https://github.com/JetBrains/kotlin.git",
@@ -1914,7 +1914,7 @@
           "name": "Kotlin Team"
         }
       ],
-      "artifactVersion": "1.9.20-RC",
+      "artifactVersion": "1.9.20-Beta2",
       "description": "Kotlin Test Support for junit",
       "scm": {
         "connection": "scm:git:https://github.com/JetBrains/kotlin.git",

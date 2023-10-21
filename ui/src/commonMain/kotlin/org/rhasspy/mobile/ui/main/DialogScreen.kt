@@ -155,12 +155,14 @@ private fun PipelineEventItem(item: DomainResult) {
 
 @Composable
 private fun Source.getColor() = when (this) {
-    Source.Local              -> MaterialTheme.colorScheme.color_local
-    Source.Rhasspy2HermesHttp -> MaterialTheme.colorScheme.color_http
-    Source.Rhasspy2HermesMqtt -> MaterialTheme.colorScheme.color_mqtt
-    Source.HomeAssistant      -> MaterialTheme.colorScheme.color_home_assistant
-    Source.WebServer          -> MaterialTheme.colorScheme.color_webserver
-    Source.User               -> MaterialTheme.colorScheme.color_user
+    Source.Local                    -> MaterialTheme.colorScheme.color_local
+    Source.Rhasspy2HermesHttp       -> MaterialTheme.colorScheme.color_http
+    Source.Rhasspy2HermesMqtt       -> MaterialTheme.colorScheme.color_mqtt
+    Source.Rhasspy3WyomingHttp      -> MaterialTheme.colorScheme.color_http
+    Source.Rhasspy3WyomingWebsocket -> MaterialTheme.colorScheme.color_mqtt
+    Source.HomeAssistant            -> MaterialTheme.colorScheme.color_home_assistant
+    Source.WebServer                -> MaterialTheme.colorScheme.color_webserver
+    Source.User                     -> MaterialTheme.colorScheme.color_user
 }
 
 //TODO #466 InformationText
@@ -212,12 +214,14 @@ private fun InformationText(domainResult: DomainResult) {
 
 //TODO #466 information
 private fun Source.getName() = when (this) {
-    Source.Local              -> "Local"
-    Source.Rhasspy2HermesHttp -> "Rhasspy2HermesHttp"
-    Source.Rhasspy2HermesMqtt -> "Rhasspy2HermesMqtt"
-    Source.HomeAssistant      -> "HomeAssistant"
-    Source.WebServer          -> "WebServer"
-    Source.User               -> "User"
+    Source.Local                    -> "Local"
+    Source.Rhasspy2HermesHttp       -> "Rhasspy2HermesHttp"
+    Source.Rhasspy2HermesMqtt       -> "Rhasspy2HermesMqtt"
+    Source.Rhasspy3WyomingHttp      -> "Rhasspy3WyomingHttp"
+    Source.Rhasspy3WyomingWebsocket -> "Rhasspy3WyomingWebsocket"
+    Source.HomeAssistant            -> "HomeAssistant"
+    Source.WebServer                -> "WebServer"
+    Source.User                     -> "User"
 }
 
 //TODO #466 information

@@ -64,6 +64,7 @@ kotlin {
                 implementation(AndroidX.browser)
                 implementation(Cashapp.Sqldelight.android)
                 api(Requery.sqliteAndroid)
+                implementation("io.ktor:ktor-client-okhttp:2.3.5")
             }
         }
         val androidUnitTest by getting {

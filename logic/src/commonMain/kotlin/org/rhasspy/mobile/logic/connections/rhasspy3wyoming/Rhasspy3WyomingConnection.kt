@@ -110,7 +110,7 @@ internal class Rhasspy3WyomingConnection : IRhasspy3WyomingConnection, IHttpConn
         data: Flow<ByteArray>
     ): HttpClientResult<String> {
         val result = postWebsocket(
-            path = "/wake/detect",
+            path = "/wake/detect/websocket",
             request = {
                 buildMessage {
                     put("rate", sampleRate)
