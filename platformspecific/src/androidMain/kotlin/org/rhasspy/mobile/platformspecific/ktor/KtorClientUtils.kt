@@ -73,6 +73,7 @@ actual fun HttpClientF(
 
                     retryOnConnectionFailure(true)
                 }
+                //without dns selector websocket doesn't work ???
                 preconfigured = OkHttpClient.Builder().dns(DnsSelector()).build()
             }
             block()
