@@ -3,5 +3,5 @@ package org.rhasspy.mobile.platformspecific.application
 import androidx.multidex.MultiDexApplication
 
 @OptIn(ExperimentalMultiplatform::class)
-@AllowDifferentMembersInActual
+//@AllowDifferentMembersInActual
 actual open class AppApplication : MultiDexApplication()

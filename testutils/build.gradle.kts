@@ -56,6 +56,7 @@ android {
 mockmp {
     usesHelper = true
     public = true
+    installWorkaround()
 }
 mockmp.installWorkaround()
 

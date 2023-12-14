@@ -9,9 +9,12 @@ import io.ktor.websocket.WebSocketDeflateExtension
 import io.ktor.websocket.WebSocketExtensionsConfig
 import okhttp3.Dns
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import java.net.Inet4Address
 import java.net.InetAddress
 import java.security.cert.X509Certificate
+import java.util.Collections
+import java.util.concurrent.TimeUnit
 import java.util.zip.Deflater
 import javax.net.ssl.X509TrustManager
 
@@ -74,7 +77,9 @@ actual fun HttpClientF(
                     retryOnConnectionFailure(true)
                 }
                 //without dns selector websocket doesn't work ???
-                preconfigured = OkHttpClient.Builder().dns(DnsSelector()).build()
+                preconfigured = OkHttpClient.Builder()
+                    .dns(DnsSelector())
+                    .build()
             }
             block()
         }
