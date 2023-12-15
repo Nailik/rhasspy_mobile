@@ -110,7 +110,7 @@ internal class Rhasspy3WyomingConnection : IRhasspy3WyomingConnection, IHttpConn
         data: Flow<ByteArray>
     ): HttpClientResult<String> {
         val result = postWebsocket(
-            path = "/wake/detect/websocket",
+            path = "/wake/detect",
             request = {
                 buildMessage {
                     put("rate", sampleRate)
@@ -119,7 +119,9 @@ internal class Rhasspy3WyomingConnection : IRhasspy3WyomingConnection, IHttpConn
                 }
             },
         ) {
-            data.collectLatest { send(Frame.Binary(true, it)) } //TODO check if stopped by close
+            data.collectLatest {
+                send(Frame.Binary(true, it))
+            } //TODO check if stopped by close
         }
 
         return when (result) {

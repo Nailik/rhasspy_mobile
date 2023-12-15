@@ -33,6 +33,10 @@ internal interface IHomeAssistantConnection : IConnection {
  */
 internal class HomeAssistantConnection : IHomeAssistantConnection, IHttpConnection(ConfigurationSetting.homeAssistantConnection) {
 
+    //TODO https://developers.home-assistant.io/docs/voice/pipelines/
+    //use this api for wyoming
+
+
     override val logger = Logger.withTag("HomeAssistantConnection")
 
     override suspend fun awaitIntent(intentName: String?, intent: String): HttpClientResult<String?> {

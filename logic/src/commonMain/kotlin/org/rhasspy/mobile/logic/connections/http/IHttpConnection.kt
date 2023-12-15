@@ -6,16 +6,11 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.timeout
-import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
-import io.ktor.client.plugins.websocket.WebSockets
-import io.ktor.client.plugins.websocket.webSocketSession
+import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
+import io.ktor.client.request.headers
 import io.ktor.client.utils.buildHeaders
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMessageBuilder
-import io.ktor.http.HttpMethod
+import io.ktor.http.*
 import io.ktor.websocket.Frame
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -135,25 +130,25 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
 
         httpClient?.let { client ->
             try {
-                val session = client.webSocketSession {
+               /* val session = client.webSocketSession {
                     timeout {
                         // Disable request timeout for the websocket session.
                         requestTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS
                         connectTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS
                     }
                     this.method = HttpMethod.Get
-                    url("wss", "hassnology.synology.me", 13331, path)
+                    url("wss", "hassnology.synology.me", 10400, path)
                     headers {
                         append(HttpHeaders.Accept, "application/json")
                     }
-                    //request()
+                    request()
                 }
 
                 val received = session.incoming.receive()
                 logger.e { "received $received" }
 
-                /*
-                client.webSocketSession(
+                */
+                client.webSocket(
                     method = HttpMethod.Get,
                     host = "hassnology.synology.me",
                     port = 13331,
@@ -161,20 +156,20 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
                     request = {
                         request()
                         headers {
-                            append(HttpHeaders.Accept, "application/json")
-                            //authorization(httpConnectionParams.bearerToken)
+                            append(HttpHeaders.Accept, "*/*")
+                            authorization(httpConnectionParams.bearerToken)
                         }
                     },
                     block = {
-                        //     block()
+                        block()
                         val received = incoming.receive()
                         logger.e { "received $received" }
                         //    resultFlow.emit(received)
                         //    close()
                     }
-                )*/
+                )
             } catch (exception: Exception) {
-                logger.e(exception) { "post result error" }
+                logger.e(exception) { "" }
                 mapError<Frame>(exception)
             }
         } ?: run {
