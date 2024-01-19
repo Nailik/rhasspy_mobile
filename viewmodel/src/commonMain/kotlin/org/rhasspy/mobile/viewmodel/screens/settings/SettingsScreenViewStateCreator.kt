@@ -9,7 +9,7 @@ class SettingsScreenViewStateCreator {
 
     operator fun invoke(): StateFlow<SettingsScreenViewState> {
 
-        return combineStateFlow(
+        return ateFlow(
             AppSetting.languageType.data,
             AppSetting.themeType.data,
             AppSetting.isBackgroundServiceEnabled.data,
