@@ -12,4 +12,8 @@ enum class SpeechToTextOption(override val text: StableStringResource) : IOption
 
     override val internalEntries get() = entries
 
+    override fun findValue(value: String): SpeechToTextOption? {
+        return super.findValue(value)
+    }
+
 }
