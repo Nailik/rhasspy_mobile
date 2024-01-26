@@ -19,7 +19,7 @@ private val logger = Logger.withTag("ISetting")
 
 open class ISetting<T>(
     private val key: Enum<*>,
-    private val initial: T,
+    val initial: T,
     private val serializer: KSerializer<T>? = null
 ) : KoinComponent {
 
@@ -57,7 +57,6 @@ open class ISetting<T>(
                     is Long?      -> settings[key.name] = newValue as Long?
                     is Long       -> settings[key.name] = newValue as Long
                     is Boolean    -> settings[key.name] = newValue as Boolean
-                    is IOption<*> -> settings[key.name] = (newValue as IOption<*>).name
                     else          -> logger.a { "save value unsupported type initial: $initial key: ${key.name}" }
                 }
             }
@@ -83,7 +82,6 @@ open class ISetting<T>(
                     is Long?      -> settings[key.name, initial ?: 0L]
                     is Long       -> settings[key.name, initial]
                     is Boolean    -> settings[key.name, initial]
-                    is IOption<*> -> initial.findValue(settings[key.name, initial.name]) ?: initial
                     else          -> {
                         logger.a { "could not read ${key.name} resetting it to $initial" }
                         initial

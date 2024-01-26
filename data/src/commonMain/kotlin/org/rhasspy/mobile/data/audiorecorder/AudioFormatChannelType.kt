@@ -1,8 +1,10 @@
 package org.rhasspy.mobile.data.audiorecorder
 
+import kotlinx.serialization.Serializable
 import org.rhasspy.mobile.data.service.option.IOption
 
-expect enum class AudioFormatChannelType : IOption<AudioFormatChannelType> {
+@Serializable
+expect enum class AudioFormatChannelType : IOption {
 
     ;
 

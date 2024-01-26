@@ -5,6 +5,7 @@ import kotlinx.serialization.builtins.serializer
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
+import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
@@ -18,23 +19,23 @@ import org.rhasspy.mobile.platformspecific.utils.isDebug
  * directly consumed
  */
 object AppSetting : KoinComponent {
-    val version = ISetting(SettingsEnum.Version, 1)
+    val version = ISetting(SettingsEnum.Version, 2)
 
     val didShowCrashlyticsDialog = ISetting(SettingsEnum.CrashlyticsDialog, false)
     val didShowChangelogDialog = ISetting(SettingsEnum.ChangelogDialog, 0)
 
-    val languageType = ISetting(SettingsEnum.LanguageOption, get<ILanguageUtils>().getDeviceLanguage())
-    val themeType = ISetting(SettingsEnum.ThemeOption, ThemeType.System)
+    val languageType = ISetting(SettingsEnum.LanguageOption, get<ILanguageUtils>().getDeviceLanguage(), LanguageType.serializer())
+    val themeType = ISetting(SettingsEnum.ThemeOption, ThemeType.System, ThemeType.serializer())
 
     val isBackgroundServiceEnabled = ISetting(SettingsEnum.BackgroundEnabled, false)
-    val microphoneOverlaySizeOption = ISetting(SettingsEnum.MicrophoneOverlaySize, MicrophoneOverlaySizeOption.Disabled)
+    val microphoneOverlaySizeOption = ISetting(SettingsEnum.MicrophoneOverlaySize, MicrophoneOverlaySizeOption.Disabled, MicrophoneOverlaySizeOption.serializer())
     val isMicrophoneOverlayWhileAppEnabled = ISetting(SettingsEnum.MicrophoneOverlayWhileApp, false)
     val microphoneOverlayPositionX = ISetting(SettingsEnum.MicrophoneOverlayPositionX, 0)
     val microphoneOverlayPositionY = ISetting(SettingsEnum.MicrophoneOverlayPositionY, 0)
 
     val isWakeWordDetectionTurnOnDisplayEnabled = ISetting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
     val isSoundIndicationEnabled = ISetting(SettingsEnum.SoundIndication, true)
-    val soundIndicationOutputOption = ISetting(SettingsEnum.SoundIndicationOutput, AudioOutputOption.Notification)
+    val soundIndicationOutputOption = ISetting(SettingsEnum.SoundIndicationOutput, AudioOutputOption.Notification, AudioOutputOption.serializer())
     val isWakeWordLightIndicationEnabled = ISetting(SettingsEnum.WakeWordLightIndication, false)
 
     val isMqttApiDeviceChangeEnabled = ISetting(SettingsEnum.MqttApiDeviceChangeEnabled, false)
@@ -72,10 +73,10 @@ object AppSetting : KoinComponent {
     val isCrashlyticsEnabled = ISetting(SettingsEnum.Crashlytics, false)
     val isShowLogEnabled = ISetting(SettingsEnum.ShowLog, isDebug())
     val isLogAudioFramesEnabled = ISetting(SettingsEnum.LogAudioFrames, false)
-    val logLevel = ISetting(SettingsEnum.LogLevel, LogLevel.Debug)
+    val logLevel = ISetting(SettingsEnum.LogLevel, LogLevel.Debug, LogLevel.serializer())
     val isLogAutoscroll = ISetting(SettingsEnum.LogAutoscroll, true)
 
-    val audioFocusOption = ISetting(SettingsEnum.AudioFocusOption, AudioFocusOption.Disabled)
+    val audioFocusOption = ISetting(SettingsEnum.AudioFocusOption, AudioFocusOption.Disabled, AudioFocusOption.serializer())
     val isAudioFocusOnNotification = ISetting(SettingsEnum.AudioFocusOnNotification, false)
     val isAudioFocusOnSound = ISetting(SettingsEnum.AudioFocusOnSound, false)
     val isAudioFocusOnRecord = ISetting(SettingsEnum.AudioFocusOnRecord, false)

@@ -14,7 +14,7 @@ import org.rhasspy.mobile.settings.AppSetting
 object SettingsInitializer : KoinComponent {
 
     private val migrations = listOf<IMigration>(
-
+        Migrate1To2()
     )
 
     private fun initializeVersionIfMissing() {

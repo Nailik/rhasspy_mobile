@@ -82,15 +82,15 @@ object ConfigurationSetting {
         serializer = LocalWebserverConnectionData.serializer()
     )
 
-    val wakeWordOption = ISetting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled)
+    val wakeWordOption = ISetting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled, WakeWordOption.serializer())
 
-    val wakeWordAudioRecorderChannel = ISetting(SettingsEnum.WakeWordAudioRecorderChannel, AudioFormatChannelType.default)
-    val wakeWordAudioRecorderEncoding = ISetting(SettingsEnum.WakeWordAudioRecorderEncoding, AudioFormatEncodingType.default)
-    val wakeWordAudioRecorderSampleRate = ISetting(SettingsEnum.WakeWordAudioRecorderSampleRate, AudioFormatSampleRateType.default)
+    val wakeWordAudioRecorderChannel = ISetting(SettingsEnum.WakeWordAudioRecorderChannel, AudioFormatChannelType.default, AudioFormatChannelType.serializer())
+    val wakeWordAudioRecorderEncoding = ISetting(SettingsEnum.WakeWordAudioRecorderEncoding, AudioFormatEncodingType.default, AudioFormatEncodingType.serializer())
+    val wakeWordAudioRecorderSampleRate = ISetting(SettingsEnum.WakeWordAudioRecorderSampleRate, AudioFormatSampleRateType.default, AudioFormatSampleRateType.serializer())
 
-    val wakeWordAudioOutputChannel = ISetting(SettingsEnum.WakeWordAudioOutputChannel, AudioFormatChannelType.default)
-    val wakeWordAudioOutputEncoding = ISetting(SettingsEnum.WakeWordAudioROutputEncoding, AudioFormatEncodingType.default)
-    val wakeWordAudioOutputSampleRate = ISetting(SettingsEnum.WakeWordAudioOutputSampleRate, AudioFormatSampleRateType.default)
+    val wakeWordAudioOutputChannel = ISetting(SettingsEnum.WakeWordAudioOutputChannel, AudioFormatChannelType.default, AudioFormatChannelType.serializer())
+    val wakeWordAudioOutputEncoding = ISetting(SettingsEnum.WakeWordAudioROutputEncoding, AudioFormatEncodingType.default, AudioFormatEncodingType.serializer())
+    val wakeWordAudioOutputSampleRate = ISetting(SettingsEnum.WakeWordAudioOutputSampleRate, AudioFormatSampleRateType.default, AudioFormatSampleRateType.serializer())
 
     val wakeWordPorcupineAccessToken = ISetting(SettingsEnum.WakeWordPorcupineAccessToken, "")
     val wakeWordPorcupineKeywordDefaultOptions = ISetting(
@@ -103,41 +103,41 @@ object ConfigurationSetting {
         initial = emptyList(),
         serializer = ListSerializer(PorcupineCustomKeyword.serializer())
     )
-    val wakeWordPorcupineLanguage = ISetting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOption.EN)
+    val wakeWordPorcupineLanguage = ISetting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOption.EN, PorcupineLanguageOption.serializer())
     val wakeWordUdpOutputHost = ISetting(SettingsEnum.WakeWordUDPOutputHost, "")
     val wakeWordUdpOutputPort = ISetting(SettingsEnum.WakeWordUDPOutputPort, 20000)
 
-    val dialogManagementOption = ISetting(SettingsEnum.DialogManagementOption, DialogManagementOption.Local)
+    val dialogManagementOption = ISetting(SettingsEnum.DialogManagementOption, DialogManagementOption.Local, DialogManagementOption.serializer())
     val textAsrTimeout = ISetting(SettingsEnum.DialogManagementLocalAsrTimeout, 10000L)
     val intentRecognitionTimeout = ISetting(SettingsEnum.DialogManagementLocalIntentRecognitionTimeout, 10000L)
     val recordingTimeout = ISetting(SettingsEnum.DialogManagementLocalRecordingTimeout, 10000L)
 
-    val intentRecognitionOption = ISetting(SettingsEnum.IntentRecognitionOption, IntentRecognitionOption.Disabled)
+    val intentRecognitionOption = ISetting(SettingsEnum.IntentRecognitionOption, IntentRecognitionOption.Disabled, IntentRecognitionOption.serializer())
 
-    val textToSpeechOption = ISetting(SettingsEnum.TextToSpeechOption, TextToSpeechOption.Disabled)
+    val textToSpeechOption = ISetting(SettingsEnum.TextToSpeechOption, TextToSpeechOption.Disabled, TextToSpeechOption.serializer())
 
-    val audioPlayingOption = ISetting(SettingsEnum.AudioPlayingOption, AudioPlayingOption.Local)
-    val audioOutputOption = ISetting(SettingsEnum.AudioOutputOption, AudioOutputOption.Sound)
+    val audioPlayingOption = ISetting(SettingsEnum.AudioPlayingOption, AudioPlayingOption.Local, AudioPlayingOption.serializer())
+    val audioOutputOption = ISetting(SettingsEnum.AudioOutputOption, AudioOutputOption.Sound, AudioOutputOption.serializer())
 
     val audioPlayingMqttSiteId = ISetting(SettingsEnum.AudioPlayingMqttSiteId, "")
 
-    val speechToTextOption = ISetting(SettingsEnum.SpeechToTextOption, SpeechToTextOption.Disabled)
+    val speechToTextOption = ISetting(SettingsEnum.SpeechToTextOption, SpeechToTextOption.Disabled, SpeechToTextOption.serializer())
 
-    val speechToTextAudioRecorderChannel = ISetting(SettingsEnum.SpeechToTextAudioRecorderChannel, AudioFormatChannelType.default)
-    val speechToTextAudioRecorderEncoding = ISetting(SettingsEnum.SpeechToTextAudioRecorderEncoding, AudioFormatEncodingType.default)
-    val speechToTextAudioRecorderSampleRate = ISetting(SettingsEnum.SpeechToTextAudioRecorderSampleRate, AudioFormatSampleRateType.default)
+    val speechToTextAudioRecorderChannel = ISetting(SettingsEnum.SpeechToTextAudioRecorderChannel, AudioFormatChannelType.default, AudioFormatChannelType.serializer())
+    val speechToTextAudioRecorderEncoding = ISetting(SettingsEnum.SpeechToTextAudioRecorderEncoding, AudioFormatEncodingType.default, AudioFormatEncodingType.serializer())
+    val speechToTextAudioRecorderSampleRate = ISetting(SettingsEnum.SpeechToTextAudioRecorderSampleRate, AudioFormatSampleRateType.default, AudioFormatSampleRateType.serializer())
 
-    val speechToTextAudioOutputChannel = ISetting(SettingsEnum.SpeechToTextAudioOutputChannel, AudioFormatChannelType.default)
-    val speechToTextAudioOutputEncoding = ISetting(SettingsEnum.SpeechToTextAudioOutputEncoding, AudioFormatEncodingType.default)
-    val speechToTextAudioOutputSampleRate = ISetting(SettingsEnum.SpeechToTextAudioOutputSampleRate, AudioFormatSampleRateType.default)
+    val speechToTextAudioOutputChannel = ISetting(SettingsEnum.SpeechToTextAudioOutputChannel, AudioFormatChannelType.default, AudioFormatChannelType.serializer())
+    val speechToTextAudioOutputEncoding = ISetting(SettingsEnum.SpeechToTextAudioOutputEncoding, AudioFormatEncodingType.default, AudioFormatEncodingType.serializer())
+    val speechToTextAudioOutputSampleRate = ISetting(SettingsEnum.SpeechToTextAudioOutputSampleRate, AudioFormatSampleRateType.default, AudioFormatSampleRateType.serializer())
 
     val isUseSpeechToTextMqttSilenceDetection = ISetting(SettingsEnum.SpeechToTextMqttSilenceDetection, true)
 
-    val intentHandlingOption = ISetting(SettingsEnum.IntentHandlingOption, IntentHandlingOption.Disabled)
+    val intentHandlingOption = ISetting(SettingsEnum.IntentHandlingOption, IntentHandlingOption.Disabled, IntentHandlingOption.serializer())
 
-    val intentHandlingHomeAssistantOption = ISetting(SettingsEnum.IsIntentHandlingHassEvent, HomeAssistantIntentHandlingOption.Intent)
+    val intentHandlingHomeAssistantOption = ISetting(SettingsEnum.IsIntentHandlingHassEvent, HomeAssistantIntentHandlingOption.Intent, HomeAssistantIntentHandlingOption.serializer())
 
-    val voiceActivityDetectionOption = ISetting(SettingsEnum.VoiceActivityDetectionOption, VoiceActivityDetectionOption.Disabled)
+    val voiceActivityDetectionOption = ISetting(SettingsEnum.VoiceActivityDetectionOption, VoiceActivityDetectionOption.Disabled, VoiceActivityDetectionOption.serializer())
     val automaticSilenceDetectionAudioLevel = ISetting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
     val automaticSilenceDetectionTime = ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionTime, 2000L)
     val automaticSilenceDetectionMinimumTime = ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000L)

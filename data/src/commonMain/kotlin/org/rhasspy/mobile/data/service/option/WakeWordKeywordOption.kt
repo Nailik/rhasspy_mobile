@@ -1,10 +1,12 @@
 package org.rhasspy.mobile.data.service.option
 
+import kotlinx.serialization.Serializable
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 
-enum class WakeWordKeywordOption(override val text: StableStringResource) : IOption<WakeWordKeywordOption> {
+@Serializable
+enum class WakeWordKeywordOption(override val text: StableStringResource) : IOption {
 
     ALEXA(MR.strings.alexa.stable),
     AMERICANO(MR.strings.americano.stable),
@@ -20,7 +22,5 @@ enum class WakeWordKeywordOption(override val text: StableStringResource) : IOpt
     PICOVOICE(MR.strings.picovoice.stable),
     PORCUPINE(MR.strings.porcupine.stable),
     TERMINATOR(MR.strings.terminator.stable);
-
-    override val internalEntries get() = entries
 
 }
