@@ -15,76 +15,118 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 
 internal class Migrate1To2 : IMigration(1, 2) {
 
+    private lateinit var wakeWordOption: String
+    private lateinit var wakeWordAudioRecorderChannel: String
+    private lateinit var wakeWordAudioRecorderEncoding: String
+    private lateinit var wakeWordAudioRecorderSampleRate: String
+
+    private lateinit var wakeWordAudioOutputChannel: String
+    private lateinit var wakeWordAudioOutputEncoding: String
+    private lateinit var wakeWordAudioOutputSampleRate: String
+
+    private lateinit var wakeWordPorcupineLanguage: String
+    private lateinit var dialogManagementOption: String
+    private lateinit var intentRecognitionOption: String
+
+    private lateinit var textToSpeechOption: String
+    private lateinit var audioPlayingOption: String
+    private lateinit var audioOutputOption: String
+    private lateinit var speechToTextOption: String
+
+    private lateinit var speechToTextAudioRecorderChannel: String
+    private lateinit var speechToTextAudioRecorderEncoding: String
+    private lateinit var speechToTextAudioRecorderSampleRate: String
+
+    private lateinit var speechToTextAudioOutputChannel: String
+    private lateinit var speechToTextAudioOutputEncoding: String
+    private lateinit var speechToTextAudioOutputSampleRate: String
+
+    private lateinit var intentHandlingOption: String
+    private lateinit var intentHandlingHomeAssistantOption: String
+    private lateinit var voiceActivityDetectionOption: String
+
+    private lateinit var languageType: String
+
+    private lateinit var themeType: String
+    private lateinit var microphoneOverlaySizeOption: String
+    private lateinit var soundIndicationOutputOption: String
+
+    private lateinit var logLevel: String
+    private lateinit var audioFocusOption: String
+
     override fun preMigrate() {
-        val wakeWordOption = settings[SettingsEnum.WakeWordOption.name, ""]
+        wakeWordOption = settings[SettingsEnum.WakeWordOption.name, ""]
         settings.remove(SettingsEnum.WakeWordOption.name)
 
-        val wakeWordAudioRecorderChannel = settings[SettingsEnum.WakeWordAudioRecorderChannel.name, ""]
+        wakeWordAudioRecorderChannel = settings[SettingsEnum.WakeWordAudioRecorderChannel.name, ""]
         settings.remove(SettingsEnum.WakeWordAudioRecorderChannel.name)
-        val wakeWordAudioRecorderEncoding = settings[SettingsEnum.WakeWordAudioRecorderEncoding.name, ""]
+        wakeWordAudioRecorderEncoding = settings[SettingsEnum.WakeWordAudioRecorderEncoding.name, ""]
         settings.remove(SettingsEnum.WakeWordAudioRecorderEncoding.name)
-        val wakeWordAudioRecorderSampleRate = settings[SettingsEnum.WakeWordAudioRecorderSampleRate.name, ""]
+        wakeWordAudioRecorderSampleRate = settings[SettingsEnum.WakeWordAudioRecorderSampleRate.name, ""]
         settings.remove(SettingsEnum.WakeWordAudioRecorderSampleRate.name)
 
-        val wakeWordAudioOutputChannel = settings[SettingsEnum.WakeWordAudioOutputChannel.name, ""]
+        wakeWordAudioOutputChannel = settings[SettingsEnum.WakeWordAudioOutputChannel.name, ""]
         settings.remove(SettingsEnum.WakeWordAudioOutputChannel.name)
-        val wakeWordAudioOutputEncoding = settings[SettingsEnum.WakeWordAudioROutputEncoding.name, ""]
-        settings.remove(SettingsEnum.WakeWordAudioROutputEncoding.name)
-        val wakeWordAudioOutputSampleRate = settings[SettingsEnum.WakeWordAudioOutputSampleRate.name, ""]
+        wakeWordAudioOutputEncoding = settings["WakeWordAudioROutputEncoding", ""]
+        settings.remove("WakeWordAudioROutputEncoding")
+        wakeWordAudioOutputSampleRate = settings[SettingsEnum.WakeWordAudioOutputSampleRate.name, ""]
         settings.remove(SettingsEnum.WakeWordAudioOutputSampleRate.name)
 
-        val wakeWordPorcupineLanguage = settings[SettingsEnum.WakeWordPorcupineLanguage.name, ""]
+        wakeWordPorcupineLanguage = settings[SettingsEnum.WakeWordPorcupineLanguage.name, ""]
         settings.remove(SettingsEnum.WakeWordPorcupineLanguage.name)
-        val dialogManagementOption = settings[SettingsEnum.DialogManagementOption.name, ""]
+        dialogManagementOption = settings[SettingsEnum.DialogManagementOption.name, ""]
         settings.remove(SettingsEnum.DialogManagementOption.name)
-        val intentRecognitionOption = settings[SettingsEnum.IntentRecognitionOption.name, ""]
+        intentRecognitionOption = settings[SettingsEnum.IntentRecognitionOption.name, ""]
         settings.remove(SettingsEnum.IntentRecognitionOption.name)
 
-        val textToSpeechOption = settings[SettingsEnum.TextToSpeechOption.name, ""]
+        textToSpeechOption = settings[SettingsEnum.TextToSpeechOption.name, ""]
         settings.remove(SettingsEnum.TextToSpeechOption.name)
-        val audioPlayingOption = settings[SettingsEnum.AudioPlayingOption.name, ""]
+        audioPlayingOption = settings[SettingsEnum.AudioPlayingOption.name, ""]
         settings.remove(SettingsEnum.AudioPlayingOption.name)
-        val audioOutputOption = settings[SettingsEnum.AudioOutputOption.name, ""]
+        audioOutputOption = settings[SettingsEnum.AudioOutputOption.name, ""]
         settings.remove(SettingsEnum.AudioOutputOption.name)
-        val speechToTextOption = settings[SettingsEnum.SpeechToTextOption.name, ""]
+        speechToTextOption = settings[SettingsEnum.SpeechToTextOption.name, ""]
         settings.remove(SettingsEnum.SpeechToTextOption.name)
 
-        val speechToTextAudioRecorderChannel = settings[SettingsEnum.SpeechToTextAudioRecorderChannel.name, ""]
+        speechToTextAudioRecorderChannel = settings[SettingsEnum.SpeechToTextAudioRecorderChannel.name, ""]
         settings.remove(SettingsEnum.SpeechToTextAudioRecorderChannel.name)
-        val speechToTextAudioRecorderEncoding = settings[SettingsEnum.SpeechToTextAudioRecorderEncoding.name, ""]
+        speechToTextAudioRecorderEncoding = settings[SettingsEnum.SpeechToTextAudioRecorderEncoding.name, ""]
         settings.remove(SettingsEnum.SpeechToTextAudioRecorderEncoding.name)
-        val speechToTextAudioRecorderSampleRate = settings[SettingsEnum.SpeechToTextAudioRecorderSampleRate.name, ""]
+        speechToTextAudioRecorderSampleRate = settings[SettingsEnum.SpeechToTextAudioRecorderSampleRate.name, ""]
         settings.remove(SettingsEnum.SpeechToTextAudioRecorderSampleRate.name)
 
-        val speechToTextAudioOutputChannel = settings[SettingsEnum.SpeechToTextAudioOutputChannel.name, ""]
+        speechToTextAudioOutputChannel = settings[SettingsEnum.SpeechToTextAudioOutputChannel.name, ""]
         settings.remove(SettingsEnum.SpeechToTextAudioOutputChannel.name)
-        val speechToTextAudioOutputEncoding = settings[SettingsEnum.SpeechToTextAudioOutputEncoding.name, ""]
+        speechToTextAudioOutputEncoding = settings[SettingsEnum.SpeechToTextAudioOutputEncoding.name, ""]
         settings.remove(SettingsEnum.SpeechToTextAudioOutputEncoding.name)
-        val speechToTextAudioOutputSampleRate = settings[SettingsEnum.SpeechToTextAudioOutputSampleRate.name, ""]
+        speechToTextAudioOutputSampleRate = settings[SettingsEnum.SpeechToTextAudioOutputSampleRate.name, ""]
         settings.remove(SettingsEnum.SpeechToTextAudioOutputSampleRate.name)
 
-        val intentHandlingOption = settings[SettingsEnum.IntentHandlingOption.name, ""]
+        intentHandlingOption = settings[SettingsEnum.IntentHandlingOption.name, ""]
         settings.remove(SettingsEnum.IntentHandlingOption.name)
-        val intentHandlingHomeAssistantOption = settings[SettingsEnum.IsIntentHandlingHassEvent.name, ""]
+        intentHandlingHomeAssistantOption = settings[SettingsEnum.IsIntentHandlingHassEvent.name, ""]
         settings.remove(SettingsEnum.IsIntentHandlingHassEvent.name)
-        val voiceActivityDetectionOption = settings[SettingsEnum.VoiceActivityDetectionOption.name, ""]
+        voiceActivityDetectionOption = settings[SettingsEnum.VoiceActivityDetectionOption.name, ""]
         settings.remove(SettingsEnum.VoiceActivityDetectionOption.name)
 
-        val languageType = settings[SettingsEnum.LanguageOption.name, ""]
+        languageType = settings[SettingsEnum.LanguageOption.name, ""]
         settings.remove(SettingsEnum.LanguageOption.name)
 
-        val themeType = settings[SettingsEnum.ThemeOption.name, ""]
+        themeType = settings[SettingsEnum.ThemeOption.name, ""]
         settings.remove(SettingsEnum.ThemeOption.name)
-        val microphoneOverlaySizeOption = settings[SettingsEnum.MicrophoneOverlaySize.name, ""]
+        microphoneOverlaySizeOption = settings[SettingsEnum.MicrophoneOverlaySize.name, ""]
         settings.remove(SettingsEnum.MicrophoneOverlaySize.name)
-        val soundIndicationOutputOption = settings[SettingsEnum.SoundIndicationOutput.name, ""]
+        soundIndicationOutputOption = settings[SettingsEnum.SoundIndicationOutput.name, ""]
         settings.remove(SettingsEnum.SoundIndicationOutput.name)
 
-        val logLevel = settings[SettingsEnum.LogLevel.name, ""]
+        logLevel = settings[SettingsEnum.LogLevel.name, ""]
         settings.remove(SettingsEnum.LogLevel.name)
-        val audioFocusOption = settings[SettingsEnum.AudioFocusOption.name, ""]
+        audioFocusOption = settings[SettingsEnum.AudioFocusOption.name, ""]
         settings.remove(SettingsEnum.AudioFocusOption.name)
+    }
 
+
+    override fun migrate() {
         ConfigurationSetting.wakeWordOption.apply {
             value = runCatching { WakeWordOption.valueOf(wakeWordOption) }.getOrNull() ?: initial
         }
@@ -185,10 +227,6 @@ internal class Migrate1To2 : IMigration(1, 2) {
         AppSetting.audioFocusOption.apply {
             value = runCatching { AudioFocusOption.valueOf(audioFocusOption) }.getOrNull() ?: initial
         }
-
     }
-
-
-    override fun migrate() {}
 
 }
