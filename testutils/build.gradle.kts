@@ -28,7 +28,7 @@ kotlin {
         val commonTest by getting
         val androidMain by getting {
             dependencies {
-                implementation(CashApp.Sqldelight.androidTest)
+                implementation(Cashapp.Sqldelight.androidTest)
                 implementation(AndroidX.archCore.testing)
             }
         }

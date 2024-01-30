@@ -19,7 +19,7 @@ kotlin {
                 implementation(Touchlab.kermit)
                 implementation(Koin.core)
                 implementation(Square.okio)
-                implementation(CashApp.Sqldelight.coroutines)
+                implementation(Cashapp.Sqldelight.coroutines)
                 implementation(Russhwolf.multiplatformSettingsNoArg)
                 implementation(Russhwolf.multiplatformSettingsSerialization)
             }
@@ -28,7 +28,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 //only for migration
-                implementation(CashApp.Sqldelight.android)
+                implementation(Cashapp.Sqldelight.android)
             }
         }
         val androidUnitTest by getting
