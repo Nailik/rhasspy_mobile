@@ -67,6 +67,7 @@ mockmp {
     usesHelper = true
     public = true
 }
+mockmp.installWorkaround()
 
 tasks.withType<Test>().configureEach {
     retry {

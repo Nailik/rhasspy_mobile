@@ -34,7 +34,6 @@ kotlin {
             }
         }
         val commonTest by getting {
-            dependsOn(commonMain)
             dependencies {
                 implementation(project(":testutils"))
                 implementation(Koin.test)
@@ -90,6 +89,7 @@ android {
 mockmp {
     usesHelper = true
 }
+mockmp.installWorkaround()
 
 tasks.withType<Test>().configureEach {
     retry {
