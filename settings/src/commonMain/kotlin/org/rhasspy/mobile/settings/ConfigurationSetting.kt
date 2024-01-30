@@ -89,7 +89,7 @@ object ConfigurationSetting {
     val wakeWordAudioRecorderSampleRate = ISetting(SettingsEnum.WakeWordAudioRecorderSampleRate, AudioFormatSampleRateType.default, AudioFormatSampleRateType.serializer())
 
     val wakeWordAudioOutputChannel = ISetting(SettingsEnum.WakeWordAudioOutputChannel, AudioFormatChannelType.default, AudioFormatChannelType.serializer())
-    val wakeWordAudioOutputEncoding = ISetting(SettingsEnum.WakeWordAudioROutputEncoding, AudioFormatEncodingType.default, AudioFormatEncodingType.serializer())
+    val wakeWordAudioOutputEncoding = ISetting(SettingsEnum.WakeWordAudioOutputEncoding, AudioFormatEncodingType.default, AudioFormatEncodingType.serializer())
     val wakeWordAudioOutputSampleRate = ISetting(SettingsEnum.WakeWordAudioOutputSampleRate, AudioFormatSampleRateType.default, AudioFormatSampleRateType.serializer())
 
     val wakeWordPorcupineAccessToken = ISetting(SettingsEnum.WakeWordPorcupineAccessToken, "")

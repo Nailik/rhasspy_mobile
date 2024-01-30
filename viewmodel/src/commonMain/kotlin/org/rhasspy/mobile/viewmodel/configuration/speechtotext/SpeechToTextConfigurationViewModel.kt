@@ -16,6 +16,7 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SetUseSpeechToTextMqttSilenceDetection
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SpeechToTextConfigurationScreenDestination.AudioOutputFormatScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SpeechToTextConfigurationScreenDestination.AudioRecorderFormatScreen
 
@@ -125,6 +126,14 @@ class SpeechToTextConfigurationViewModel(
                 ConfigurationSetting.speechToTextAudioOutputEncoding.value = audioOutputEncodingType
                 ConfigurationSetting.speechToTextAudioOutputSampleRate.value = audioOutputSampleRateType
             }
+        }
+    }
+
+    override fun onBackPressed(): Boolean {
+        return when (navigator.topScreen.value) {
+            //do navigate sub screens back even if there are changes
+            is NavigationDestination.SpeechToTextConfigurationScreenDestination -> false
+            else                                                                -> super.onBackPressed()
         }
     }
 

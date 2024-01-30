@@ -1,6 +1,12 @@
+@file:OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
+
 package org.rhasspy.mobile.settings.migrations
 
+import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.get
+import com.russhwolf.settings.serialization.encodeValue
+import kotlinx.serialization.ExperimentalSerializationApi
+import org.koin.core.component.get
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
@@ -10,6 +16,7 @@ import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.data.theme.ThemeType
+import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
@@ -46,8 +53,8 @@ internal class Migrate1To2 : IMigration(1, 2) {
     private lateinit var voiceActivityDetectionOption: String
 
     private lateinit var languageType: String
-
     private lateinit var themeType: String
+
     private lateinit var microphoneOverlaySizeOption: String
     private lateinit var soundIndicationOutputOption: String
 
@@ -127,106 +134,113 @@ internal class Migrate1To2 : IMigration(1, 2) {
 
 
     override fun migrate() {
-        ConfigurationSetting.wakeWordOption.apply {
-            value = runCatching { WakeWordOption.valueOf(wakeWordOption) }.getOrNull() ?: initial
-        }
+        settings.encodeValue(WakeWordOption.serializer(), SettingsEnum.WakeWordOption.name,
+            runCatching { WakeWordOption.valueOf(wakeWordOption) }.getOrNull() ?: WakeWordOption.Disabled
+        )
 
-        ConfigurationSetting.wakeWordAudioRecorderChannel.apply {
-            value = runCatching { AudioFormatChannelType.valueOf(wakeWordAudioRecorderChannel) }.getOrNull() ?: initial
-        }
-        ConfigurationSetting.wakeWordAudioRecorderEncoding.apply {
-            value = runCatching { AudioFormatEncodingType.valueOf(wakeWordAudioRecorderEncoding) }.getOrNull() ?: initial
-        }
-        ConfigurationSetting.wakeWordAudioRecorderSampleRate.apply {
-            value = runCatching { AudioFormatSampleRateType.valueOf(wakeWordAudioRecorderSampleRate) }.getOrNull() ?: initial
-        }
-
-
-        ConfigurationSetting.wakeWordAudioOutputChannel.apply {
-            value = runCatching { AudioFormatChannelType.valueOf(wakeWordAudioOutputChannel) }.getOrNull() ?: initial
-        }
-        ConfigurationSetting.wakeWordAudioOutputEncoding.apply {
-            value = runCatching { AudioFormatEncodingType.valueOf(wakeWordAudioOutputEncoding) }.getOrNull() ?: initial
-        }
-        ConfigurationSetting.wakeWordAudioOutputSampleRate.apply {
-            value = runCatching { AudioFormatSampleRateType.valueOf(wakeWordAudioOutputSampleRate) }.getOrNull() ?: initial
-        }
+        settings.encodeValue(AudioFormatChannelType.serializer(), SettingsEnum.WakeWordAudioRecorderChannel.name,
+            runCatching { AudioFormatChannelType.valueOf(wakeWordAudioRecorderChannel) }.getOrNull() ?: AudioFormatChannelType.default
+        )
+        settings.encodeValue(AudioFormatEncodingType.serializer(), SettingsEnum.WakeWordAudioRecorderEncoding.name,
+            runCatching { AudioFormatEncodingType.valueOf(wakeWordAudioRecorderEncoding) }.getOrNull() ?: AudioFormatEncodingType.default
+        )
+        settings.encodeValue(AudioFormatSampleRateType.serializer(), SettingsEnum.WakeWordAudioRecorderSampleRate.name,
+            runCatching { AudioFormatSampleRateType.valueOf(wakeWordAudioRecorderSampleRate) }.getOrNull() ?: AudioFormatSampleRateType.default
+        )
 
 
-        ConfigurationSetting.wakeWordPorcupineLanguage.apply {
-            value = runCatching { PorcupineLanguageOption.valueOf(wakeWordPorcupineLanguage) }.getOrNull() ?: initial
-        }
-        ConfigurationSetting.dialogManagementOption.apply {
-            value = runCatching { DialogManagementOption.valueOf(dialogManagementOption) }.getOrNull() ?: initial
-        }
-        ConfigurationSetting.intentRecognitionOption.apply {
-            value = runCatching { IntentRecognitionOption.valueOf(intentRecognitionOption) }.getOrNull() ?: initial
-        }
+        settings.encodeValue(AudioFormatChannelType.serializer(), SettingsEnum.WakeWordAudioOutputChannel.name,
+            runCatching { AudioFormatChannelType.valueOf(wakeWordAudioOutputChannel) }.getOrNull() ?: AudioFormatChannelType.default
+        )
+        settings.encodeValue(AudioFormatEncodingType.serializer(), SettingsEnum.WakeWordAudioOutputEncoding.name,
+            runCatching { AudioFormatEncodingType.valueOf(wakeWordAudioOutputEncoding) }.getOrNull() ?: AudioFormatEncodingType.default
+        )
+        settings.encodeValue(AudioFormatSampleRateType.serializer(), SettingsEnum.WakeWordAudioOutputSampleRate.name,
+            runCatching { AudioFormatSampleRateType.valueOf(wakeWordAudioOutputSampleRate) }.getOrNull() ?: AudioFormatSampleRateType.default
+        )
 
 
-        ConfigurationSetting.textToSpeechOption.apply {
-            value = runCatching { TextToSpeechOption.valueOf(textToSpeechOption) }.getOrNull() ?: initial
-        }
-        ConfigurationSetting.audioPlayingOption.apply {
-            value = runCatching { AudioPlayingOption.valueOf(audioPlayingOption) }.getOrNull() ?: initial
-        }
-        ConfigurationSetting.audioOutputOption.apply {
-            value = runCatching { AudioOutputOption.valueOf(audioOutputOption) }.getOrNull() ?: initial
-        }
-        ConfigurationSetting.speechToTextOption.apply {
-            value = runCatching { SpeechToTextOption.valueOf(speechToTextOption) }.getOrNull() ?: initial
-        }
+        settings.encodeValue(PorcupineLanguageOption.serializer(), SettingsEnum.WakeWordPorcupineLanguage.name,
+            runCatching { PorcupineLanguageOption.valueOf(wakeWordPorcupineLanguage) }.getOrNull() ?: PorcupineLanguageOption.EN
+        )
 
-        ConfigurationSetting.speechToTextAudioRecorderChannel.apply {
-            value = runCatching { AudioFormatChannelType.valueOf(speechToTextAudioRecorderChannel) }.getOrNull() ?: initial
-        }
-        ConfigurationSetting.speechToTextAudioRecorderEncoding.apply {
-            value = runCatching { AudioFormatEncodingType.valueOf(speechToTextAudioRecorderEncoding) }.getOrNull() ?: initial
-        }
-        ConfigurationSetting.speechToTextAudioRecorderSampleRate.apply {
-            value = runCatching { AudioFormatSampleRateType.valueOf(speechToTextAudioRecorderSampleRate) }.getOrNull() ?: initial
-        }
+        settings.encodeValue(DialogManagementOption.serializer(), SettingsEnum.DialogManagementOption.name,
+            runCatching { DialogManagementOption.valueOf(dialogManagementOption) }.getOrNull() ?: DialogManagementOption.Local
+        )
+
+        settings.encodeValue(IntentRecognitionOption.serializer(), SettingsEnum.IntentRecognitionOption.name,
+            runCatching { IntentRecognitionOption.valueOf(intentRecognitionOption) }.getOrNull() ?: IntentRecognitionOption.Disabled
+        )
+
+        settings.encodeValue(TextToSpeechOption.serializer(), SettingsEnum.TextToSpeechOption.name,
+            runCatching { TextToSpeechOption.valueOf(textToSpeechOption) }.getOrNull() ?: TextToSpeechOption.Disabled
+        )
+
+        settings.encodeValue(AudioPlayingOption.serializer(), SettingsEnum.AudioPlayingOption.name,
+            runCatching { AudioPlayingOption.valueOf(audioPlayingOption) }.getOrNull() ?: AudioPlayingOption.Local
+        )
+        settings.encodeValue(AudioOutputOption.serializer(), SettingsEnum.AudioOutputOption.name,
+            runCatching { AudioOutputOption.valueOf(audioOutputOption) }.getOrNull() ?: AudioOutputOption.Sound
+        )
+
+        settings.encodeValue(SpeechToTextOption.serializer(), SettingsEnum.SpeechToTextOption.name,
+            runCatching { SpeechToTextOption.valueOf(speechToTextOption) }.getOrNull() ?: SpeechToTextOption.Disabled
+        )
+
+        settings.encodeValue(AudioFormatChannelType.serializer(), SettingsEnum.SpeechToTextAudioRecorderChannel.name,
+            runCatching { AudioFormatChannelType.valueOf(speechToTextAudioRecorderChannel) }.getOrNull() ?: AudioFormatChannelType.default
+        )
+        settings.encodeValue(AudioFormatEncodingType.serializer(), SettingsEnum.SpeechToTextAudioRecorderEncoding.name,
+            runCatching { AudioFormatEncodingType.valueOf(speechToTextAudioRecorderEncoding) }.getOrNull() ?: AudioFormatEncodingType.default
+        )
+        settings.encodeValue(AudioFormatSampleRateType.serializer(), SettingsEnum.SpeechToTextAudioRecorderSampleRate.name,
+            runCatching { AudioFormatSampleRateType.valueOf(speechToTextAudioRecorderSampleRate) }.getOrNull() ?: AudioFormatSampleRateType.default
+        )
+
+        settings.encodeValue(AudioFormatChannelType.serializer(), SettingsEnum.SpeechToTextAudioOutputChannel.name,
+            runCatching { AudioFormatChannelType.valueOf(speechToTextAudioOutputChannel) }.getOrNull() ?: AudioFormatChannelType.default
+        )
+        settings.encodeValue(AudioFormatEncodingType.serializer(), SettingsEnum.SpeechToTextAudioOutputEncoding.name,
+            runCatching { AudioFormatEncodingType.valueOf(speechToTextAudioOutputEncoding) }.getOrNull() ?: AudioFormatEncodingType.default
+        )
+        settings.encodeValue(AudioFormatSampleRateType.serializer(), SettingsEnum.SpeechToTextAudioOutputSampleRate.name,
+            runCatching { AudioFormatSampleRateType.valueOf(speechToTextAudioOutputSampleRate) }.getOrNull() ?: AudioFormatSampleRateType.default
+        )
 
 
-        ConfigurationSetting.speechToTextAudioOutputChannel.apply {
-            value = runCatching { AudioFormatChannelType.valueOf(speechToTextAudioOutputChannel) }.getOrNull() ?: initial
-        }
-        ConfigurationSetting.speechToTextAudioOutputEncoding.apply {
-            value = runCatching { AudioFormatEncodingType.valueOf(speechToTextAudioOutputEncoding) }.getOrNull() ?: initial
-        }
-        ConfigurationSetting.speechToTextAudioOutputSampleRate.apply {
-            value = runCatching { AudioFormatSampleRateType.valueOf(speechToTextAudioOutputSampleRate) }.getOrNull() ?: initial
-        }
+        settings.encodeValue(IntentHandlingOption.serializer(), SettingsEnum.IntentHandlingOption.name,
+            runCatching { IntentHandlingOption.valueOf(intentHandlingOption) }.getOrNull() ?: IntentHandlingOption.Disabled
+        )
+        settings.encodeValue(HomeAssistantIntentHandlingOption.serializer(), SettingsEnum.IsIntentHandlingHassEvent.name,
+            runCatching { HomeAssistantIntentHandlingOption.valueOf(intentHandlingHomeAssistantOption) }.getOrNull() ?: HomeAssistantIntentHandlingOption.Intent
+        )
+        settings.encodeValue(VoiceActivityDetectionOption.serializer(), SettingsEnum.VoiceActivityDetectionOption.name,
+            runCatching { VoiceActivityDetectionOption.valueOf(voiceActivityDetectionOption) }.getOrNull() ?: VoiceActivityDetectionOption.Disabled
+        )
 
-        ConfigurationSetting.intentHandlingOption.apply {
-            value = runCatching { IntentHandlingOption.valueOf(intentHandlingOption) }.getOrNull() ?: initial
-        }
-        ConfigurationSetting.intentHandlingHomeAssistantOption.apply {
-            value = runCatching { HomeAssistantIntentHandlingOption.valueOf(intentHandlingHomeAssistantOption) }.getOrNull() ?: initial
-        }
-        ConfigurationSetting.voiceActivityDetectionOption.apply {
-            value = runCatching { VoiceActivityDetectionOption.valueOf(voiceActivityDetectionOption) }.getOrNull() ?: initial
-        }
 
-        AppSetting.languageType.apply {
-            value = runCatching { LanguageType.valueOf(languageType) }.getOrNull() ?: initial
-        }
-        AppSetting.themeType.apply {
-            value = runCatching { ThemeType.valueOf(themeType) }.getOrNull() ?: initial
-        }
-        AppSetting.microphoneOverlaySizeOption.apply {
-            value = runCatching { MicrophoneOverlaySizeOption.valueOf(microphoneOverlaySizeOption) }.getOrNull() ?: initial
-        }
-        AppSetting.soundIndicationOutputOption.apply {
-            value = runCatching { AudioOutputOption.valueOf(soundIndicationOutputOption) }.getOrNull() ?: initial
-        }
 
-        AppSetting.logLevel.apply {
-            value = runCatching { LogLevel.valueOf(logLevel) }.getOrNull() ?: initial
-        }
-        AppSetting.audioFocusOption.apply {
-            value = runCatching { AudioFocusOption.valueOf(audioFocusOption) }.getOrNull() ?: initial
-        }
+        settings.encodeValue(LanguageType.serializer(), SettingsEnum.LanguageOption.name,
+            runCatching { LanguageType.valueOf(languageType) }.getOrNull() ?: get<ILanguageUtils>().getDeviceLanguage()
+        )
+        settings.encodeValue(ThemeType.serializer(), SettingsEnum.ThemeOption.name,
+            runCatching { ThemeType.valueOf(themeType) }.getOrNull() ?: ThemeType.System
+        )
+
+        settings.encodeValue(MicrophoneOverlaySizeOption.serializer(), SettingsEnum.MicrophoneOverlaySize.name,
+            runCatching { MicrophoneOverlaySizeOption.valueOf(microphoneOverlaySizeOption) }.getOrNull() ?: MicrophoneOverlaySizeOption.Disabled
+        )
+        settings.encodeValue(AudioOutputOption.serializer(), SettingsEnum.SoundIndicationOutput.name,
+            runCatching { AudioOutputOption.valueOf(soundIndicationOutputOption) }.getOrNull() ?: AudioOutputOption.Notification
+        )
+
+        settings.encodeValue(LogLevel.serializer(), SettingsEnum.LogLevel.name,
+            runCatching { LogLevel.valueOf(logLevel) }.getOrNull() ?: LogLevel.Debug
+        )
+        settings.encodeValue(AudioFocusOption.serializer(), SettingsEnum.AudioFocusOption.name,
+            runCatching { AudioFocusOption.valueOf(audioFocusOption) }.getOrNull() ?: AudioFocusOption.Disabled
+        )
+
     }
 
 }

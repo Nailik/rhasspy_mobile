@@ -49,6 +49,7 @@ class Application : NativeApplication(), KoinComponent {
     @OptIn(ExperimentalKermitApi::class)
     override fun onCreated() {
 
+        Logger.setMinSeverity(Severity.Verbose)
         startKoin {
             // declare used modules
             modules(

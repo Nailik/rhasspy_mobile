@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.ui.main
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.utils.isDebug
@@ -30,8 +32,9 @@ import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.Crashl
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
 
 @Composable
-fun MainScreen(viewModel: MainScreenViewModel) {
-
+fun MainScreen(
+    viewModel: MainScreenViewModel
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         AppTheme {
             //fixes bright flashing when navigating between screens
@@ -72,7 +75,6 @@ fun MainScreen(viewModel: MainScreenViewModel) {
             )
         }
     }
-
 }
 
 @Composable

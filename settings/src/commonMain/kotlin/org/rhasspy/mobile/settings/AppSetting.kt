@@ -14,12 +14,13 @@ import org.rhasspy.mobile.data.sounds.SoundOption
 import org.rhasspy.mobile.data.theme.ThemeType
 import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
 import org.rhasspy.mobile.platformspecific.utils.isDebug
+import org.rhasspy.mobile.settings.migrations.SettingsInitializer
 
 /**
  * directly consumed
  */
 object AppSetting : KoinComponent {
-    val version = ISetting(SettingsEnum.Version, 2)
+    val version = ISetting(SettingsEnum.Version, SettingsInitializer.currentSettingsVersion)
 
     val didShowCrashlyticsDialog = ISetting(SettingsEnum.CrashlyticsDialog, false)
     val didShowChangelogDialog = ISetting(SettingsEnum.ChangelogDialog, 0)
