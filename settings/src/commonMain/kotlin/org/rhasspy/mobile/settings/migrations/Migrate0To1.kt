@@ -92,7 +92,6 @@ internal class Migrate0To1 : IMigration(0, 1) {
     private val httpClientServerEndpointPort = settings[DeprecatedSettingsEnum.HttpClientServerEndpointPort.name, 12101]
     private val httpClientTimeout = settings[DeprecatedSettingsEnum.HttpClientTimeout.name, 30000L]
 
-    private val intentHandlingHttpEndpoint = settings[DeprecatedSettingsEnum.IntentHandlingEndpoint.name, ""]
     private val intentHandlingHomeAssistantEndpoint = settings[DeprecatedSettingsEnum.IntentHandlingHassUrl.name, ""]
     private val intentHandlingHomeAssistantAccessToken = settings[DeprecatedSettingsEnum.IntentHandlingHassAccessToken.name, ""]
 

@@ -74,8 +74,9 @@ class Application : NativeApplication(), KoinComponent {
             }
             logger.i { "######## Application \n started ########" }
 
-            //initialize/load the settings, generate the MutableStateFlow
+            //initialize/load the settings, generate the MutableStateFlow, migrate settings if necessary
             SettingsInitializer.initialize()
+            Logger.setMinSeverity(AppSetting.logLevel.value.severity)
             AppSetting
             ConfigurationSetting
 
