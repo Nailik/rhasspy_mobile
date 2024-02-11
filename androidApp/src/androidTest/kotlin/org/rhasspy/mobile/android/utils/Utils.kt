@@ -27,13 +27,11 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
 
 fun SemanticsNodeInteraction.onListItemSwitch(): SemanticsNodeInteraction {
-    //return this.onChildren().filter(isToggleable()).onFirst()
-    return this.onChildAt(0).onChildren().filter(isToggleable()).onFirst()
+    return this.onChildren().filter(isToggleable()).onFirst()
 }
 
 fun SemanticsNodeInteraction.onListItemRadioButton(): SemanticsNodeInteraction {
-    //return this.onChildren().filter(isSelectable()).onFirst()
-    return this.onChildAt(0).onChildren().filter(isSelectable()).onFirst()
+    return this.onChildren().filter(isSelectable()).onFirst()
 }
 
 fun hasTestTag(testTag: Enum<*>): SemanticsMatcher =
@@ -49,7 +47,7 @@ fun hasCombinedTestTag(tag1: Enum<*>, tag2: Enum<*>): SemanticsMatcher =
     SemanticsMatcher.expectValue(SemanticsProperties.TestTag, "${tag1.name}${tag2.name}")
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
-    testTag: IOption<*>,
+    testTag: IOption,
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag(testTag.name), useUnmergedTree)
 

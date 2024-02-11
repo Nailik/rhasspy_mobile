@@ -75,7 +75,7 @@ enum class SettingsEnum {
     WakeWordAudioRecorderSampleRate,
 
     WakeWordAudioOutputChannel,
-    WakeWordAudioROutputEncoding,
+    WakeWordAudioOutputEncoding,
     WakeWordAudioOutputSampleRate,
 
     WakeWordPorcupineAccessToken,

@@ -1,8 +1,8 @@
 import de.fayard.refreshVersions.core.DependencyGroup
 
-object CashApp {
+object Cashapp : DependencyGroup(group = "app.cash") {
 
-    object Sqldelight : DependencyGroup(group = "app.cash.sqldelight") {
+    object Sqldelight : DependencyGroup(group = "$group.sqldelight") {
         val android = module("android-driver")
         val ios = module("native-driver")
         val coroutines = module("coroutines-extensions")
@@ -10,7 +10,7 @@ object CashApp {
         val paging = module("androidx-paging3-extensions")
     }
 
-    object Paging : DependencyGroup(group = "app.cash.paging") {
+    object Paging : DependencyGroup(group = "$group.paging") {
         val runtime = module("paging-compose-common")
     }
 

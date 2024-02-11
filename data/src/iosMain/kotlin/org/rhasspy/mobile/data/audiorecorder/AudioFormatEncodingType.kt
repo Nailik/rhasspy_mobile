@@ -1,20 +1,20 @@
 package org.rhasspy.mobile.data.audiorecorder
 
+import kotlinx.serialization.Serializable
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.IOption
 import org.rhasspy.mobile.resources.MR
 
+@Serializable
 actual enum class AudioFormatEncodingType(
     override val text: StableStringResource,
     actual val value: Int,
     actual val bitRate: Int
-) : IOption<AudioFormatEncodingType> {
+) : IOption {
 
     //TODO #509
     Default(MR.strings.defaultText.stable, 1, 1);
-
-    override val internalEntries get() = entries
 
     actual companion object {
         actual val default: AudioFormatEncodingType = Default

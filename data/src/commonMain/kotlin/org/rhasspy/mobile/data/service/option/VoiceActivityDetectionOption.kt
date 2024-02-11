@@ -1,14 +1,14 @@
 package org.rhasspy.mobile.data.service.option
 
+import kotlinx.serialization.Serializable
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 
-enum class VoiceActivityDetectionOption(override val text: StableStringResource) : IOption<VoiceActivityDetectionOption> {
+@Serializable
+enum class VoiceActivityDetectionOption(override val text: StableStringResource) : IOption {
 
     Local(MR.strings.local.stable),
     Disabled(MR.strings.disabled.stable);
-
-    override val internalEntries get() = entries
 
 }

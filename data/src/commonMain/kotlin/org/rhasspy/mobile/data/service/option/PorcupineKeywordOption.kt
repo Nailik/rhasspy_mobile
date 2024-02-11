@@ -11,7 +11,7 @@ enum class PorcupineKeywordOption(
     override val text: StableStringResource,
     val file: FileResource,
     val language: PorcupineLanguageOption
-) : IOption<PorcupineKeywordOption> {
+) : IOption {
 
     //en
     ALEXA(
@@ -441,7 +441,5 @@ enum class PorcupineKeywordOption(
         MR.files.E8B1AAE78CAA_android,
         PorcupineLanguageOption.ZH
     );
-
-    override val internalEntries get() = entries
 
 }

@@ -12,18 +12,22 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.data.service.option.IOption
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.settings.migrations.SettingsInitializer
 
 private val logger = Logger.withTag("ISetting")
 
 open class ISetting<T>(
     private val key: Enum<*>,
-    private val initial: T,
+    val initial: T,
     private val serializer: KSerializer<T>? = null
 ) : KoinComponent {
 
     private val settings = get<Settings>()
+
+    init {
+        logger.d { "initialize ISetting" }
+    }
 
     /**
      * data used to get current saved value or to set value for unsaved changes
@@ -46,6 +50,7 @@ open class ISetting<T>(
      */
     @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
     private fun saveValue(newValue: T) {
+        logger.v { "saveValue $newValue to ${key.name} with initial $initial" }
         try {
             if (serializer != null) {
                 settings.encodeValue(serializer, key.name, newValue)
@@ -57,7 +62,6 @@ open class ISetting<T>(
                     is Long?      -> settings[key.name] = newValue as Long?
                     is Long       -> settings[key.name] = newValue as Long
                     is Boolean    -> settings[key.name] = newValue as Boolean
-                    is IOption<*> -> settings[key.name] = (newValue as IOption<*>).name
                     else          -> logger.a { "save value unsupported type initial: $initial key: ${key.name}" }
                 }
             }
@@ -69,9 +73,10 @@ open class ISetting<T>(
     /**
      * reads current saved value
      */
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
     @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
     private fun readValue(): T {
+        logger.v { "readValue from ${key.name}" }
         return try {
             if (serializer != null) {
                 settings.decodeValue(serializer, key.name, initial)
@@ -83,7 +88,6 @@ open class ISetting<T>(
                     is Long?      -> settings[key.name, initial ?: 0L]
                     is Long       -> settings[key.name, initial]
                     is Boolean    -> settings[key.name, initial]
-                    is IOption<*> -> initial.findValue(settings[key.name, initial.name]) ?: initial
                     else          -> {
                         logger.a { "could not read ${key.name} resetting it to $initial" }
                         initial
@@ -92,13 +96,8 @@ open class ISetting<T>(
             }
         } catch (e: Exception) {
             logger.a { "reset of ${key.name} to $initial" }
-            saveValue(initial)
             initial
         }
-    }
-
-    fun delete() {
-        settings.remove(key.name)
     }
 
 }

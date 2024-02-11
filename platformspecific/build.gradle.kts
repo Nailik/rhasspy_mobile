@@ -30,8 +30,8 @@ kotlin {
                 implementation(Ktor2.Server.statusPages)
                 implementation(Ktor2.Plugins.network)
                 implementation(Ktor2.Server.core)
-                api(CashApp.Paging.runtime)
-                api(CashApp.Sqldelight.paging)
+                api(Cashapp.Paging.runtime)
+                api(Cashapp.Sqldelight.paging)
             }
         }
         val commonTest by getting {
@@ -56,11 +56,11 @@ kotlin {
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
                 implementation(Firebase.analyticsKtx)
                 implementation(Firebase.crashlyticsKtx)
-                implementation(platform(Firebase.bom))
+                implementation(project.dependencies.platform(Firebase.bom))
                 implementation(Nailik.androidResampler)
                 implementation(Journeyapps.zXingAndroid)
                 implementation(AndroidX.browser)
-                implementation(CashApp.Sqldelight.android)
+                implementation(Cashapp.Sqldelight.android)
                 api(Requery.sqliteAndroid)
             }
         }
@@ -76,7 +76,7 @@ kotlin {
             dependencies {
                 implementation(Kotlin.Stdlib.common)
                 implementation(Square.okio)
-                implementation(CashApp.Sqldelight.ios)
+                implementation(Cashapp.Sqldelight.ios)
             }
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)

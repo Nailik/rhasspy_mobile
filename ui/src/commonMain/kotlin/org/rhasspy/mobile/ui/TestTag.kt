@@ -146,7 +146,7 @@ enum class TestTag {
     DialogRestoreDeprecatedSettings,
 }
 
-fun Modifier.combinedTestTag(IOption: IOption<*>, tag: TestTag) = semantics(
+fun Modifier.combinedTestTag(IOption: IOption, tag: TestTag) = semantics(
     properties = {
         testTag = "${IOption.name}${tag.name}"
     }
@@ -172,7 +172,7 @@ fun Modifier.testTag(enum: TestTag) = semantics(
     }
 )
 
-fun Modifier.testTag(option: IOption<*>) = semantics(
+fun Modifier.testTag(option: IOption) = semantics(
     properties = {
         testTag = option.name
     }

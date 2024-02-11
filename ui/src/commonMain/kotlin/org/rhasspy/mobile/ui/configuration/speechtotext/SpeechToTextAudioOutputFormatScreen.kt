@@ -51,7 +51,7 @@ fun SpeechToTextAudioOutputFormatScreen(viewModel: SpeechToTextConfigurationView
                     .verticalScroll(rememberScrollState())
             ) {
 
-                WakeWordAudioOutputFormatScreenContent(
+                SpeechToTextAudioOutputFormatScreenContent(
                     isEncodingChangeEnabled = viewState.isOutputEncodingChangeEnabled,
                     viewState = editData.speechToTextAudioOutputData,
                     onEvent = viewModel::onEvent
@@ -63,7 +63,7 @@ fun SpeechToTextAudioOutputFormatScreen(viewModel: SpeechToTextConfigurationView
 }
 
 @Composable
-private fun WakeWordAudioOutputFormatScreenContent(
+private fun SpeechToTextAudioOutputFormatScreenContent(
     isEncodingChangeEnabled: Boolean,
     viewState: SpeechToTextAudioOutputConfigurationData,
     onEvent: (event: SpeechToTextConfigurationUiEvent) -> Unit

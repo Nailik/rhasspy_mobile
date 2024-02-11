@@ -6,10 +6,8 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.application.install
-import io.ktor.server.engine.BaseApplicationEngine
-import io.ktor.server.engine.applicationEngineEnvironment
+import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.dataconversion.DataConversion
 import io.ktor.server.plugins.statuspages.StatusPages
@@ -29,6 +27,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import okio.Path.Companion.toPath
 import org.koin.core.component.inject
+import org.koin.dsl.module
 import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
@@ -46,7 +45,7 @@ import org.rhasspy.mobile.logic.middleware.Source.HttpApi
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonExists
 import org.rhasspy.mobile.platformspecific.file.FolderType
-import org.rhasspy.mobile.platformspecific.ktor.getEngine
+import org.rhasspy.mobile.platformspecific.ktor.buildServer
 import org.rhasspy.mobile.platformspecific.ktor.installCallLogging
 import org.rhasspy.mobile.platformspecific.ktor.installCompression
 import org.rhasspy.mobile.platformspecific.ktor.installConnector
@@ -81,7 +80,7 @@ internal class WebServerConnection : IWebServerConnection {
         val audioContentType = ContentType("audio", "wav")
     }
 
-    private var server: BaseApplicationEngine? = null
+    private var server: ApplicationEngine? = null
 
     /**
      * starts server when enabled
@@ -110,7 +109,20 @@ internal class WebServerConnection : IWebServerConnection {
             }
 
             try {
-                server = buildServer()
+                server = buildServer(
+                    module = { createModules() },
+                    configure = {
+                        installConnector(
+                            nativeApplication = nativeApplication,
+                            port = params.port,
+                            isUseSSL = params.isSSLEnabled,
+                            keyStoreFile = "${FolderType.CertificateFolder.WebServer}/${params.keyStoreFile ?: ""}",
+                            keyStorePassword = params.keyStorePassword,
+                            keyAlias = params.keyAlias,
+                            keyPassword = params.keyPassword
+                        )
+                    },
+                )
                 server?.start()
                 connectionState.value = ServiceState.Success
             } catch (exception: Exception) {
@@ -134,43 +146,31 @@ internal class WebServerConnection : IWebServerConnection {
     /**
      * build server with routing and addons
      */
-    private fun buildServer(): BaseApplicationEngine {
+    private fun Application.createModules() {
         // TrafficStats.setTrafficStatsTag()
         logger.d { "buildServer" }
-        val environment = applicationEngineEnvironment {
-            installConnector(
-                nativeApplication = nativeApplication,
-                port = params.port,
-                isUseSSL = params.isSSLEnabled,
-                keyStoreFile = "${FolderType.CertificateFolder.WebServer}/${params.keyStoreFile ?: ""}",
-                keyStorePassword = params.keyStorePassword,
-                keyAlias = params.keyAlias,
-                keyPassword = params.keyPassword
-            )
-            module {
-                //install(WebSockets)
-                installCallLogging()
-                install(DataConversion)
-                //Greatly reduces the amount of data that's needed to be sent to the client by
-                //gzipping outgoing content when applicable.
-                installCompression()
 
-                // configures Cross-Origin Resource Sharing. CORS is needed to make calls from arbitrary
-                // JavaScript clients, and helps us prevent issues down the line.
-                install(CORS) {
-                    methods.add(HttpMethod.Get)
-                    methods.add(HttpMethod.Post)
-                    methods.add(HttpMethod.Delete)
-                    anyHost()
-                }
+        module {
+            //install(WebSockets)
+            installCallLogging()
+            install(DataConversion)
+            //Greatly reduces the amount of data that's needed to be sent to the client by
+            //gzipping outgoing content when applicable.
+            installCompression()
 
-                buildStatusPages()
-
-                buildRouting()
+            // configures Cross-Origin Resource Sharing. CORS is needed to make calls from arbitrary
+            // JavaScript clients, and helps us prevent issues down the line.
+            install(CORS) {
+                methods.add(HttpMethod.Get)
+                methods.add(HttpMethod.Post)
+                methods.add(HttpMethod.Delete)
+                anyHost()
             }
-        }
 
-        return getEngine(environment = environment)
+            buildStatusPages()
+
+            buildRouting()
+        }
     }
 
     /**

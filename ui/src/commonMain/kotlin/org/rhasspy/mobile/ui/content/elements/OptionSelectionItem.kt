@@ -17,7 +17,7 @@ import org.rhasspy.mobile.ui.content.list.RadioButtonListItem
 import org.rhasspy.mobile.ui.testTag
 
 @Composable
-fun <E : IOption<*>> RadioButtonsEnumSelectionList(
+fun <E : IOption> RadioButtonsEnumSelectionList(
     modifier: Modifier = Modifier,
     selected: E,
     onSelect: (item: E) -> Unit,
@@ -43,7 +43,7 @@ fun <E : IOption<*>> RadioButtonsEnumSelectionList(
 }
 
 @Composable
-fun <E : IOption<*>> RadioButtonsEnumSelection(
+fun <E : IOption> RadioButtonsEnumSelection(
     modifier: Modifier = Modifier,
     selected: E,
     onSelect: (item: E) -> Unit,
@@ -81,7 +81,7 @@ fun <E : IOption<*>> RadioButtonsEnumSelection(
 
 
 @Composable
-fun <E : IOption<*>> RadioButtonsEnumSelection(
+fun <E : IOption> RadioButtonsEnumSelection(
     modifier: Modifier = Modifier,
     selected: E,
     onSelect: (item: E) -> Unit,

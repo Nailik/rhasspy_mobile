@@ -1,14 +1,13 @@
 package org.rhasspy.mobile.data.service.option
 
 import dev.icerock.moko.resources.FileResource
+import kotlinx.serialization.Serializable
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 
-enum class PorcupineLanguageOption(
-    override val text: StableStringResource,
-    val file: FileResource
-) : IOption<PorcupineLanguageOption> {
+@Serializable
+enum class PorcupineLanguageOption(override val text: StableStringResource, val file: FileResource) : IOption {
 
     EN(MR.strings.english.stable, MR.files.porcupine_params),
     AR(MR.strings.arabic.stable, MR.files.porcupine_params_ar),
@@ -27,7 +26,5 @@ enum class PorcupineLanguageOption(
     SV(MR.strings.swedish.stable, MR.files.porcupine_params_sv),
     VN(MR.strings.vietnamese.stable, MR.files.porcupine_params_vn),
     ZH(MR.strings.chinese.stable, MR.files.porcupine_params_zh);
-
-    override val internalEntries get() = entries
 
 }
