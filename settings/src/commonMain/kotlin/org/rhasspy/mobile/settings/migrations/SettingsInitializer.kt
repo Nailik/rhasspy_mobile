@@ -14,13 +14,11 @@ import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 
 object SettingsInitializer : KoinComponent {
 
-    val currentSettingsVersion = 2
+    const val currentSettingsVersion = 3
     private val logger = Logger.withTag("SettingsInitializer")
     private val settings = get<Settings>()
 
-    private val migrations = listOf<IMigration>(
-        Migrate1To2()
-    )
+    private val migrations = listOf(Migrate1To2, Migrate2To3)
 
     private fun initializeVersionIfMissing() {
         //1. App newly installed/ no settings

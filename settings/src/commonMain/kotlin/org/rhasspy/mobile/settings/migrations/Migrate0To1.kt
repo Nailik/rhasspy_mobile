@@ -8,48 +8,20 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import org.rhasspy.mobile.data.connection.HttpConnectionData
 import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
 import org.rhasspy.mobile.data.connection.MqttConnectionData
-import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.data.settings.SettingsEnum
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 internal object Migrate0To1 : IMigration(0, 1) {
 
-    override fun preMigrate() {
-        if (settings[SettingsEnum.AudioPlayingOption.name, ""] == "RemoteHTTP") {
-            settings[SettingsEnum.AudioPlayingOption.name] = AudioPlayingOption.Rhasspy2HermesHttp.name
-        }
-        if (settings[SettingsEnum.AudioPlayingOption.name, ""] == "RemoteMQTT") {
-            settings[SettingsEnum.AudioPlayingOption.name] = AudioPlayingOption.Rhasspy2HermesMQTT.name
-        }
-        if (settings[SettingsEnum.DialogManagementOption.name, ""] == "RemoteMQTT") {
-            settings[SettingsEnum.DialogManagementOption.name] = DialogManagementOption.Rhasspy2HermesMQTT.name
-        }
-        if (settings[SettingsEnum.IntentHandlingOption.name, ""] == "RemoteHTTP") {
-            settings[SettingsEnum.IntentHandlingOption.name] = IntentHandlingOption.Rhasspy2HermesHttp.name
-        }
-        if (settings[SettingsEnum.IntentRecognitionOption.name, ""] == "RemoteHTTP") {
-            settings[SettingsEnum.IntentRecognitionOption.name] = IntentRecognitionOption.Rhasspy2HermesHttp.name
-        }
-        if (settings[SettingsEnum.IntentRecognitionOption.name, ""] == "RemoteMQTT") {
-            settings[SettingsEnum.IntentRecognitionOption.name] = IntentRecognitionOption.Rhasspy2HermesMQTT.name
-        }
-        if (settings[SettingsEnum.SpeechToTextOption.name, ""] == "RemoteMQTT") {
-            settings[SettingsEnum.SpeechToTextOption.name] = SpeechToTextOption.Rhasspy2HermesMQTT.name
-        }
-        if (settings[SettingsEnum.SpeechToTextOption.name, ""] == "RemoteMQTT") {
-            settings[SettingsEnum.SpeechToTextOption.name] = SpeechToTextOption.Rhasspy2HermesMQTT.name
-        }
-        if (settings[SettingsEnum.TextToSpeechOption.name, ""] == "RemoteMQTT") {
-            settings[SettingsEnum.TextToSpeechOption.name] = TextToSpeechOption.Rhasspy2HermesMQTT.name
-        }
-        if (settings[SettingsEnum.TextToSpeechOption.name, ""] == "RemoteMQTT") {
-            settings[SettingsEnum.TextToSpeechOption.name] = TextToSpeechOption.Rhasspy2HermesMQTT.name
-        }
-        if (settings[SettingsEnum.WakeWordOption.name, ""] == "MQTT") {
-            settings[SettingsEnum.WakeWordOption.name] = WakeWordOption.Rhasspy2HermesMQTT.name
-        }
-    }
-
-    private enum class DeprecatedSettingsEnum {
+    private enum class MigrationSettingsEnum {
+        AudioPlayingOption,
+        DialogManagementOption,
+        IntentHandlingOption,
+        IntentRecognitionOption,
+        SpeechToTextOption,
+        TextToSpeechOption,
+        WakeWordOption,
         MQTTEnabled,
         MQTTHost,
         MQTTPort,
@@ -76,32 +48,68 @@ internal object Migrate0To1 : IMigration(0, 1) {
         HttpServerSSLKeyPassword
     }
 
-    private val isMqttEnabled = settings[DeprecatedSettingsEnum.MQTTEnabled.name, false]
-    private val mqttHost = settings[DeprecatedSettingsEnum.MQTTHost.name, ""]
-    private val mqttPort = settings[DeprecatedSettingsEnum.MQTTPort.name, 1883]
-    private val mqttUserName = settings[DeprecatedSettingsEnum.MQTTUserName.name, ""]
-    private val mqttPassword = settings[DeprecatedSettingsEnum.MQTTPassword.name, ""]
-    private val isMqttSSLEnabled = settings[DeprecatedSettingsEnum.MQTTSSLEnabled.name, false]
-    private val mqttConnectionTimeout = settings[DeprecatedSettingsEnum.MQTTConnectionTimeout.name, 5L]
-    private val mqttKeepAliveInterval = settings[DeprecatedSettingsEnum.MQTTKeepAliveInterval.name, 30L]
-    private val mqttRetryInterval = settings[DeprecatedSettingsEnum.MQTTRetryInterval.name, 10L]
-    private val mqttKeyStoreFile = settings[DeprecatedSettingsEnum.MQTTKeyStoreFile.name, ""]
+    override fun preMigrate() {
+        if (settings[MigrationSettingsEnum.AudioPlayingOption.name, ""] == "RemoteHTTP") {
+            settings[MigrationSettingsEnum.AudioPlayingOption.name] = "Rhasspy2HermesHttp"
+        }
+        if (settings[MigrationSettingsEnum.AudioPlayingOption.name, ""] == "RemoteMQTT") {
+            settings[MigrationSettingsEnum.AudioPlayingOption.name] = "Rhasspy2HermesMQTT"
+        }
+        if (settings[MigrationSettingsEnum.DialogManagementOption.name, ""] == "RemoteMQTT") {
+            settings[MigrationSettingsEnum.DialogManagementOption.name] = "Rhasspy2HermesMQTT"
+        }
+        if (settings[MigrationSettingsEnum.IntentHandlingOption.name, ""] == "RemoteHTTP") {
+            settings[MigrationSettingsEnum.IntentHandlingOption.name] = "Rhasspy2HermesHttp"
+        }
+        if (settings[MigrationSettingsEnum.IntentRecognitionOption.name, ""] == "RemoteHTTP") {
+            settings[MigrationSettingsEnum.IntentRecognitionOption.name] = "Rhasspy2HermesHttp"
+        }
+        if (settings[MigrationSettingsEnum.IntentRecognitionOption.name, ""] == "RemoteMQTT") {
+            settings[MigrationSettingsEnum.IntentRecognitionOption.name] = "Rhasspy2HermesMQTT"
+        }
+        if (settings[MigrationSettingsEnum.SpeechToTextOption.name, ""] == "RemoteMQTT") {
+            settings[MigrationSettingsEnum.SpeechToTextOption.name] = "Rhasspy2HermesMQTT"
+        }
+        if (settings[MigrationSettingsEnum.SpeechToTextOption.name, ""] == "RemoteHTTP") {
+            settings[MigrationSettingsEnum.SpeechToTextOption.name] = "Rhasspy2HermesHttp"
+        }
+        if (settings[MigrationSettingsEnum.TextToSpeechOption.name, ""] == "RemoteMQTT") {
+            settings[MigrationSettingsEnum.TextToSpeechOption.name] = "Rhasspy2HermesMQTT"
+        }
+        if (settings[MigrationSettingsEnum.TextToSpeechOption.name, ""] == "RemoteHTTP") {
+            settings[MigrationSettingsEnum.TextToSpeechOption.name] = "Rhasspy2HermesHttp"
+        }
+        if (settings[MigrationSettingsEnum.WakeWordOption.name, ""] == "MQTT") {
+            settings[MigrationSettingsEnum.WakeWordOption.name] = "Rhasspy2HermesMQTT"
+        }
+    }
 
-    private val isHttpClientSSLVerificationDisabled = settings[DeprecatedSettingsEnum.SSLVerificationDisabled.name, true]
-    private val httpClientServerEndpointHost = settings[DeprecatedSettingsEnum.HttpClientServerEndpointHost.name, ""]
-    private val httpClientServerEndpointPort = settings[DeprecatedSettingsEnum.HttpClientServerEndpointPort.name, 12101]
-    private val httpClientTimeout = settings[DeprecatedSettingsEnum.HttpClientTimeout.name, 30000L]
+    private val isMqttEnabled = settings[MigrationSettingsEnum.MQTTEnabled.name, false]
+    private val mqttHost = settings[MigrationSettingsEnum.MQTTHost.name, ""]
+    private val mqttPort = settings[MigrationSettingsEnum.MQTTPort.name, 1883]
+    private val mqttUserName = settings[MigrationSettingsEnum.MQTTUserName.name, ""]
+    private val mqttPassword = settings[MigrationSettingsEnum.MQTTPassword.name, ""]
+    private val isMqttSSLEnabled = settings[MigrationSettingsEnum.MQTTSSLEnabled.name, false]
+    private val mqttConnectionTimeout = settings[MigrationSettingsEnum.MQTTConnectionTimeout.name, 5L]
+    private val mqttKeepAliveInterval = settings[MigrationSettingsEnum.MQTTKeepAliveInterval.name, 30L]
+    private val mqttRetryInterval = settings[MigrationSettingsEnum.MQTTRetryInterval.name, 10L]
+    private val mqttKeyStoreFile = settings[MigrationSettingsEnum.MQTTKeyStoreFile.name, ""]
 
-    private val intentHandlingHomeAssistantEndpoint = settings[DeprecatedSettingsEnum.IntentHandlingHassUrl.name, ""]
-    private val intentHandlingHomeAssistantAccessToken = settings[DeprecatedSettingsEnum.IntentHandlingHassAccessToken.name, ""]
+    private val isHttpClientSSLVerificationDisabled = settings[MigrationSettingsEnum.SSLVerificationDisabled.name, true]
+    private val httpClientServerEndpointHost = settings[MigrationSettingsEnum.HttpClientServerEndpointHost.name, ""]
+    private val httpClientServerEndpointPort = settings[MigrationSettingsEnum.HttpClientServerEndpointPort.name, 12101]
+    private val httpClientTimeout = settings[MigrationSettingsEnum.HttpClientTimeout.name, 30000L]
 
-    private val isHttpServerEnabled = settings[DeprecatedSettingsEnum.HttpServerEnabled.name, true]
-    private val httpServerPort = settings[DeprecatedSettingsEnum.HttpServerPort.name, 12101]
-    private val isHttpServerSSLEnabledEnabled = settings[DeprecatedSettingsEnum.HttpServerSSLEnabled.name, false]
-    private val httpServerSSLKeyStoreFile = settings[DeprecatedSettingsEnum.HttpServerSSLKeyStoreFile.name, ""]
-    private val httpServerSSLKeyStorePassword = settings[DeprecatedSettingsEnum.HttpServerSSLKeyStorePassword.name, ""]
-    private val httpServerSSLKeyAlias = settings[DeprecatedSettingsEnum.HttpServerSSLKeyAlias.name, ""]
-    private val httpServerSSLKeyPassword = settings[DeprecatedSettingsEnum.HttpServerSSLKeyPassword.name, ""]
+    private val intentHandlingHomeAssistantEndpoint = settings[MigrationSettingsEnum.IntentHandlingHassUrl.name, ""]
+    private val intentHandlingHomeAssistantAccessToken = settings[MigrationSettingsEnum.IntentHandlingHassAccessToken.name, ""]
+
+    private val isHttpServerEnabled = settings[MigrationSettingsEnum.HttpServerEnabled.name, true]
+    private val httpServerPort = settings[MigrationSettingsEnum.HttpServerPort.name, 12101]
+    private val isHttpServerSSLEnabledEnabled = settings[MigrationSettingsEnum.HttpServerSSLEnabled.name, false]
+    private val httpServerSSLKeyStoreFile = settings[MigrationSettingsEnum.HttpServerSSLKeyStoreFile.name, ""]
+    private val httpServerSSLKeyStorePassword = settings[MigrationSettingsEnum.HttpServerSSLKeyStorePassword.name, ""]
+    private val httpServerSSLKeyAlias = settings[MigrationSettingsEnum.HttpServerSSLKeyAlias.name, ""]
+    private val httpServerSSLKeyPassword = settings[MigrationSettingsEnum.HttpServerSSLKeyPassword.name, ""]
 
     @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
     override fun migrate() {
@@ -110,7 +118,7 @@ internal object Migrate0To1 : IMigration(0, 1) {
             HttpConnectionData.serializer(), SettingsEnum.Rhasspy2Connection.name,
             HttpConnectionData(
                 host = "${httpClientServerEndpointHost}:${httpClientServerEndpointPort}",
-                timeout = httpClientTimeout,
+                timeout = httpClientTimeout.toDuration(DurationUnit.SECONDS),
                 bearerToken = "",
                 isSSLVerificationDisabled = isHttpClientSSLVerificationDisabled
             )
@@ -120,7 +128,7 @@ internal object Migrate0To1 : IMigration(0, 1) {
             HttpConnectionData.serializer(), SettingsEnum.HomeAssistantConnection.name,
             HttpConnectionData(
                 host = intentHandlingHomeAssistantEndpoint,
-                timeout = httpClientTimeout,
+                timeout = httpClientTimeout.toDuration(DurationUnit.SECONDS),
                 bearerToken = intentHandlingHomeAssistantAccessToken,
                 isSSLVerificationDisabled = isHttpClientSSLVerificationDisabled
             )
@@ -134,9 +142,9 @@ internal object Migrate0To1 : IMigration(0, 1) {
                 userName = mqttUserName,
                 password = mqttPassword,
                 isSSLEnabled = isMqttSSLEnabled,
-                connectionTimeout = mqttConnectionTimeout.toInt(),
-                keepAliveInterval = mqttKeepAliveInterval.toInt(),
-                retryInterval = mqttRetryInterval,
+                connectionTimeout = mqttConnectionTimeout.toDuration(DurationUnit.SECONDS),
+                keepAliveInterval = mqttKeepAliveInterval.toDuration(DurationUnit.SECONDS),
+                retryInterval = mqttRetryInterval.toDuration(DurationUnit.SECONDS),
                 keystoreFile = mqttKeyStoreFile.ifEmpty { null }
             )
         )
@@ -154,33 +162,33 @@ internal object Migrate0To1 : IMigration(0, 1) {
             )
         )
 
-        settings.remove(DeprecatedSettingsEnum.MQTTEnabled.name)
-        settings.remove(DeprecatedSettingsEnum.MQTTHost.name)
-        settings.remove(DeprecatedSettingsEnum.MQTTPort.name)
-        settings.remove(DeprecatedSettingsEnum.MQTTUserName.name)
-        settings.remove(DeprecatedSettingsEnum.MQTTPassword.name)
-        settings.remove(DeprecatedSettingsEnum.MQTTSSLEnabled.name)
-        settings.remove(DeprecatedSettingsEnum.MQTTConnectionTimeout.name)
-        settings.remove(DeprecatedSettingsEnum.MQTTKeepAliveInterval.name)
-        settings.remove(DeprecatedSettingsEnum.MQTTRetryInterval.name)
-        settings.remove(DeprecatedSettingsEnum.MQTTKeyStoreFile.name)
+        settings.remove(MigrationSettingsEnum.MQTTEnabled.name)
+        settings.remove(MigrationSettingsEnum.MQTTHost.name)
+        settings.remove(MigrationSettingsEnum.MQTTPort.name)
+        settings.remove(MigrationSettingsEnum.MQTTUserName.name)
+        settings.remove(MigrationSettingsEnum.MQTTPassword.name)
+        settings.remove(MigrationSettingsEnum.MQTTSSLEnabled.name)
+        settings.remove(MigrationSettingsEnum.MQTTConnectionTimeout.name)
+        settings.remove(MigrationSettingsEnum.MQTTKeepAliveInterval.name)
+        settings.remove(MigrationSettingsEnum.MQTTRetryInterval.name)
+        settings.remove(MigrationSettingsEnum.MQTTKeyStoreFile.name)
 
-        settings.remove(DeprecatedSettingsEnum.SSLVerificationDisabled.name)
-        settings.remove(DeprecatedSettingsEnum.HttpClientServerEndpointHost.name)
-        settings.remove(DeprecatedSettingsEnum.HttpClientServerEndpointPort.name)
-        settings.remove(DeprecatedSettingsEnum.HttpClientTimeout.name)
+        settings.remove(MigrationSettingsEnum.SSLVerificationDisabled.name)
+        settings.remove(MigrationSettingsEnum.HttpClientServerEndpointHost.name)
+        settings.remove(MigrationSettingsEnum.HttpClientServerEndpointPort.name)
+        settings.remove(MigrationSettingsEnum.HttpClientTimeout.name)
 
-        settings.remove(DeprecatedSettingsEnum.IntentHandlingEndpoint.name)
-        settings.remove(DeprecatedSettingsEnum.IntentHandlingHassUrl.name)
-        settings.remove(DeprecatedSettingsEnum.IntentHandlingHassAccessToken.name)
+        settings.remove(MigrationSettingsEnum.IntentHandlingEndpoint.name)
+        settings.remove(MigrationSettingsEnum.IntentHandlingHassUrl.name)
+        settings.remove(MigrationSettingsEnum.IntentHandlingHassAccessToken.name)
 
-        settings.remove(DeprecatedSettingsEnum.HttpServerEnabled.name)
-        settings.remove(DeprecatedSettingsEnum.HttpServerPort.name)
-        settings.remove(DeprecatedSettingsEnum.HttpServerSSLEnabled.name)
-        settings.remove(DeprecatedSettingsEnum.HttpServerSSLKeyStoreFile.name)
-        settings.remove(DeprecatedSettingsEnum.HttpServerSSLKeyStorePassword.name)
-        settings.remove(DeprecatedSettingsEnum.HttpServerSSLKeyAlias.name)
-        settings.remove(DeprecatedSettingsEnum.HttpServerSSLKeyPassword.name)
+        settings.remove(MigrationSettingsEnum.HttpServerEnabled.name)
+        settings.remove(MigrationSettingsEnum.HttpServerPort.name)
+        settings.remove(MigrationSettingsEnum.HttpServerSSLEnabled.name)
+        settings.remove(MigrationSettingsEnum.HttpServerSSLKeyStoreFile.name)
+        settings.remove(MigrationSettingsEnum.HttpServerSSLKeyStorePassword.name)
+        settings.remove(MigrationSettingsEnum.HttpServerSSLKeyAlias.name)
+        settings.remove(MigrationSettingsEnum.HttpServerSSLKeyPassword.name)
     }
 
 }

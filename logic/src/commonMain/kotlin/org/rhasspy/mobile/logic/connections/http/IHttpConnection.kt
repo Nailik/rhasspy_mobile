@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.HttpTimeoutConfig
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.websocket.*
@@ -70,7 +71,7 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = params.timeout.inWholeMilliseconds
-                connectTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS
+                connectTimeoutMillis = HttpTimeoutConfig.INFINITE_TIMEOUT_MS
             }
             //  engine {
             //       configureEngine(params.isSSLVerificationDisabled)

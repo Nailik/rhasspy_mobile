@@ -54,6 +54,7 @@ import org.rhasspy.mobile.platformspecific.ktor.installCallLogging
 import org.rhasspy.mobile.platformspecific.ktor.installCompression
 import org.rhasspy.mobile.platformspecific.ktor.installConnector
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.resources.MR.strings.keyStorePassword
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 internal interface IWebServerConnection : IConnection {
@@ -130,7 +131,7 @@ internal class WebServerConnection(
                             nativeApplication = nativeApplication,
                             port = params.port,
                             isUseSSL = params.isSSLEnabled,
-                            keyStoreFile = "${FolderType.CertificateFolder.WebServer}/${params.keyStoreFile ?: ""}",
+                            keyStoreFile = params.keyStoreFile ?: "", //TODO test
                             keyStorePassword = params.keyStorePassword,
                             keyAlias = params.keyAlias,
                             keyPassword = params.keyPassword
