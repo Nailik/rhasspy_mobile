@@ -25,10 +25,10 @@ class AudioInputConfigurationViewModel(
     fun onAction(action: Action) {
         when (action) {
             BackClick                            -> navigator.onBackPressed()
-            OpenWakeWordRecorderFormatScreen     -> navigator.navigate(WakeWordConfigurationScreen, WakeWordConfigurationScreenDestination.AudioRecorderFormatScreen)
-            OpenWakeWordOutputFormatScreen       -> navigator.navigate(WakeWordConfigurationScreen, WakeWordConfigurationScreenDestination.AudioOutputFormatScreen)
-            OpenTextToSpeechRecorderFormatScreen -> navigator.navigate(SpeechToTextConfigurationScreen, SpeechToTextConfigurationScreenDestination.AudioRecorderFormatScreen)
-            OpenTextToSpeechOutputFormatScreen   -> navigator.navigate(SpeechToTextConfigurationScreen, SpeechToTextConfigurationScreenDestination.AudioOutputFormatScreen)
+            OpenWakeWordRecorderFormatScreen     -> navigator.navigate(WakeWordConfigurationScreenDestination.AudioRecorderFormatScreen)
+            OpenWakeWordOutputFormatScreen       -> navigator.navigate(WakeWordConfigurationScreenDestination.AudioOutputFormatScreen)
+            OpenTextToSpeechRecorderFormatScreen -> navigator.navigate(SpeechToTextConfigurationScreenDestination.AudioRecorderFormatScreen)
+            OpenTextToSpeechOutputFormatScreen   -> navigator.navigate(SpeechToTextConfigurationScreenDestination.AudioOutputFormatScreen)
         }
     }
 
