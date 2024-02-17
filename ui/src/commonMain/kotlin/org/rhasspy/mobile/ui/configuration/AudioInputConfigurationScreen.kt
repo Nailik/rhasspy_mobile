@@ -134,7 +134,7 @@ private fun AudioInputWakeWord(
                     }
                 )
 
-                Divider()
+                HorizontalDivider()
 
                 //button to open audio output format
                 ListElement(
@@ -169,7 +169,7 @@ private fun AudioInputSpeechToText(
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
 
-        ListElement {
+        TitleListElement {
             Text(resource = MR.strings.speechToText.stable)
         }
 
@@ -191,7 +191,7 @@ private fun AudioInputSpeechToText(
                     }
                 )
 
-                Divider()
+                HorizontalDivider()
 
                 //button to open audio output format
                 ListElement(

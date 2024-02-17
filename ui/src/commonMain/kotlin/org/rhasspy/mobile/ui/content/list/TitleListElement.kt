@@ -19,7 +19,7 @@ fun TitleListElement(
     text: @Composable () -> Unit
 ) {
     CustomElevation(
-        tonalElevation = (-6).dp,
+        tonalElevation = (-3).dp,
     ) {
         ListItem(
             headlineContent = text,

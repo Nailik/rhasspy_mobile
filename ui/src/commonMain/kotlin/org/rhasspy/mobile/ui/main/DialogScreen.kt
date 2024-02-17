@@ -154,7 +154,7 @@ fun DialogTransitionListItem(item: DialogInformationItem) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Divider(
+        HorizontalDivider(
             color = MaterialTheme.colorScheme.surfaceVariant,
             modifier = Modifier
                 .height(10.dp)
@@ -169,7 +169,6 @@ fun DialogTransitionListItem(item: DialogInformationItem) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DialogActionListItem(item: DialogActionViewState) {
     ListElement(
