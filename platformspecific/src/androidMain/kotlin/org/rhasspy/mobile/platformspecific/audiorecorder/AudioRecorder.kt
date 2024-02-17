@@ -25,6 +25,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioSourceType
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.resampler.Resampler
@@ -87,6 +88,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
      */
     @SuppressLint("MissingPermission")
     actual override fun startRecording(
+        audioRecorderSourceType: AudioSourceType,
         audioRecorderChannelType: AudioFormatChannelType,
         audioRecorderEncodingType: AudioFormatEncodingType,
         audioRecorderSampleRateType: AudioFormatSampleRateType,
@@ -128,7 +130,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
             logger.v { "initializing recorder $tempBufferSize" }
             recorder?.release()
             recorder = AudioRecord.Builder()
-                .setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
+                .setAudioSource(audioRecorderSourceType.value)
                 .setAudioFormat(
                     AudioFormat.Builder()
                         .setSampleRate(audioRecorderSampleRateType.value)

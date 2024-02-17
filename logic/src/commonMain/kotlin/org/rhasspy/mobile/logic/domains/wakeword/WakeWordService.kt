@@ -186,6 +186,7 @@ internal class WakeWordService(
     private fun startRecording() {
         if (_serviceState.value == Success) {
             audioRecorder.startRecording(
+                audioRecorderSourceType = params.audioRecorderSourceType,
                 audioRecorderChannelType = params.audioRecorderChannelType,
                 audioRecorderEncodingType = params.audioRecorderEncodingType,
                 audioRecorderSampleRateType = params.audioRecorderSampleRateType,

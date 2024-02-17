@@ -330,6 +330,7 @@
     <string name="shareSettingsFileFailed">share setting file failed</string>
     <string name="selectFileFailed">unable to open file chooser</string>
     <string name="audioRecorder">Audio Recorder</string>
+    <string name="source">Source</string>
     <string name="sampleRate">Sample rate</string>
     <string name="channel">Channel</string>
     <string name="encoding">Encoding</string>
@@ -369,6 +370,11 @@
     <string name="subscribe_failed">subscription failed</string>
     <string name="topic_subscription_failed">topic subscription failed</string>
     <!-- audioRecorder -->
+    <string name="source_type_default">Default</string>
+    <string name="source_type_mic">Mic</string>
+    <string name="source_type_unprocessed">Unprocessed</string>
+    <string name="source_type_voice_communication">Voice Communication</string>
+    <string name="source_type_voice_recognition">Voice Recognition</string>
     <string name="channel_type_default">Default</string>
     <string name="channel_type_mono">Mono</string>
     <string name="channel_type_stereo">Stereo</string>

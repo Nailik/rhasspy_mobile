@@ -22,6 +22,7 @@ import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.AudioRecorderFormatUiEvent.Change.*
@@ -76,6 +77,23 @@ private fun WakeWordAudioRecorderFormatScreenContent(
     viewState: WakeWordAudioRecorderConfigurationData,
     onEvent: (event: WakeWordConfigurationUiEvent) -> Unit
 ) {
+    Card(
+        modifier = Modifier.padding(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
+        ListElement {
+            Text(resource = MR.strings.source.stable)
+        }
+
+        RadioButtonsEnumSelectionList(
+            modifier = Modifier.testTag(TestTag.AudioRecorderSourceType),
+            selected = viewState.audioRecorderSourceType,
+            onSelect = { onEvent(SelectAudioRecorderSourceType(it)) },
+            combinedTestTag = TestTag.AudioRecorderSourceType,
+            values = viewState.audioRecorderSourceTypes
+        )
+    }
+
     Card(
         modifier = Modifier.padding(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)

@@ -158,6 +158,7 @@ class VoiceActivityDetectionConfigurationViewModel(
         AppSetting.isHotWordEnabled.value = false
         //start this recording
         audioRecorder.startRecording(
+            audioRecorderSourceType = ConfigurationSetting.speechToTextAudioRecorderSourceType.value,
             audioRecorderChannelType = ConfigurationSetting.speechToTextAudioRecorderChannel.value,
             audioRecorderEncodingType = ConfigurationSetting.speechToTextAudioRecorderEncoding.value,
             audioRecorderSampleRateType = ConfigurationSetting.speechToTextAudioRecorderSampleRate.value,

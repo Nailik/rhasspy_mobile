@@ -100,8 +100,8 @@ class WakeWordConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 copy(
-                    wakeWordAudioRecorderData =
-                    when (event) {
+                    wakeWordAudioRecorderData = when (event) {
+                        is SelectAudioRecorderSourceType     -> wakeWordAudioRecorderData.copy(audioRecorderSourceType = event.value)
                         is SelectAudioRecorderChannelType    -> wakeWordAudioRecorderData.copy(audioRecorderChannelType = event.value)
                         is SelectAudioRecorderEncodingType   -> wakeWordAudioRecorderData.copy(audioRecorderEncodingType = event.value)
                         is SelectAudioRecorderSampleRateType -> wakeWordAudioRecorderData.copy(audioRecorderSampleRateType = event.value)

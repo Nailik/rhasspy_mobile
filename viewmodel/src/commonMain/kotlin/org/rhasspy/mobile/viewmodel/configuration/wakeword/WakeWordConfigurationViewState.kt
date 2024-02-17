@@ -7,6 +7,7 @@ import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioSourceType
 import org.rhasspy.mobile.data.data.toStringOrEmpty
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
@@ -45,10 +46,12 @@ data class WakeWordConfigurationViewState internal constructor(
 
         @Stable
         data class WakeWordAudioRecorderConfigurationData(
+            val audioRecorderSourceType: AudioSourceType = ConfigurationSetting.wakeWordAudioRecorderSourceType.value,
             val audioRecorderChannelType: AudioFormatChannelType = ConfigurationSetting.wakeWordAudioRecorderChannel.value,
             val audioRecorderEncodingType: AudioFormatEncodingType = ConfigurationSetting.wakeWordAudioRecorderEncoding.value,
             val audioRecorderSampleRateType: AudioFormatSampleRateType = ConfigurationSetting.wakeWordAudioRecorderSampleRate.value,
         ) {
+            val audioRecorderSourceTypes: ImmutableList<AudioSourceType> = AudioSourceType.supportedValues().toImmutableList()
             val audioRecorderChannelTypes: ImmutableList<AudioFormatChannelType> = AudioFormatChannelType.entries.toTypedArray().toImmutableList()
             val audioRecorderEncodingTypes: ImmutableList<AudioFormatEncodingType> = AudioFormatEncodingType.supportedValues().toImmutableList()
             val audioRecorderSampleRateTypes: ImmutableList<AudioFormatSampleRateType> = AudioFormatSampleRateType.entries.toTypedArray().toImmutableList()

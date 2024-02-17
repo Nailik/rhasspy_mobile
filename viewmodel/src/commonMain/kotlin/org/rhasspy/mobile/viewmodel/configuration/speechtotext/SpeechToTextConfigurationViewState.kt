@@ -6,6 +6,7 @@ import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioSourceType
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
@@ -29,10 +30,12 @@ data class SpeechToTextConfigurationViewState internal constructor(
 
         @Stable
         data class SpeechToTextAudioRecorderConfigurationData(
+            val audioRecorderSourceType: AudioSourceType = ConfigurationSetting.speechToTextAudioRecorderSourceType.value,
             val audioRecorderChannelType: AudioFormatChannelType = ConfigurationSetting.speechToTextAudioRecorderChannel.value,
             val audioRecorderEncodingType: AudioFormatEncodingType = ConfigurationSetting.speechToTextAudioRecorderEncoding.value,
             val audioRecorderSampleRateType: AudioFormatSampleRateType = ConfigurationSetting.speechToTextAudioRecorderSampleRate.value,
         ) {
+            val audioRecorderSourceTypes: ImmutableList<AudioSourceType> = AudioSourceType.supportedValues().toImmutableList()
             val audioRecorderChannelTypes: ImmutableList<AudioFormatChannelType> = AudioFormatChannelType.entries.toImmutableList()
             val audioRecorderEncodingTypes: ImmutableList<AudioFormatEncodingType> = AudioFormatEncodingType.supportedValues().toImmutableList()
             val audioRecorderSampleRateTypes: ImmutableList<AudioFormatSampleRateType> = AudioFormatSampleRateType.entries.toImmutableList()

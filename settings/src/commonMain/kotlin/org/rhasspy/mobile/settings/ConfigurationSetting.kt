@@ -4,6 +4,7 @@ import kotlinx.serialization.builtins.ListSerializer
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioSourceType
 import org.rhasspy.mobile.data.connection.HttpConnectionData
 import org.rhasspy.mobile.data.connection.LocalWebserverConnectionData
 import org.rhasspy.mobile.data.connection.MqttConnectionData
@@ -84,6 +85,7 @@ object ConfigurationSetting {
 
     val wakeWordOption = ISetting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled, WakeWordOption.serializer())
 
+    val wakeWordAudioRecorderSourceType = ISetting(SettingsEnum.WakeWordAudioRecorderSourceType, AudioSourceType.default, AudioSourceType.serializer())
     val wakeWordAudioRecorderChannel = ISetting(SettingsEnum.WakeWordAudioRecorderChannel, AudioFormatChannelType.default, AudioFormatChannelType.serializer())
     val wakeWordAudioRecorderEncoding = ISetting(SettingsEnum.WakeWordAudioRecorderEncoding, AudioFormatEncodingType.default, AudioFormatEncodingType.serializer())
     val wakeWordAudioRecorderSampleRate = ISetting(SettingsEnum.WakeWordAudioRecorderSampleRate, AudioFormatSampleRateType.default, AudioFormatSampleRateType.serializer())
@@ -123,6 +125,7 @@ object ConfigurationSetting {
 
     val speechToTextOption = ISetting(SettingsEnum.SpeechToTextOption, SpeechToTextOption.Disabled, SpeechToTextOption.serializer())
 
+    val speechToTextAudioRecorderSourceType = ISetting(SettingsEnum.SpeechToTextRecorderSourceType, AudioSourceType.default, AudioSourceType.serializer())
     val speechToTextAudioRecorderChannel = ISetting(SettingsEnum.SpeechToTextAudioRecorderChannel, AudioFormatChannelType.default, AudioFormatChannelType.serializer())
     val speechToTextAudioRecorderEncoding = ISetting(SettingsEnum.SpeechToTextAudioRecorderEncoding, AudioFormatEncodingType.default, AudioFormatEncodingType.serializer())
     val speechToTextAudioRecorderSampleRate = ISetting(SettingsEnum.SpeechToTextAudioRecorderSampleRate, AudioFormatSampleRateType.default, AudioFormatSampleRateType.serializer())
