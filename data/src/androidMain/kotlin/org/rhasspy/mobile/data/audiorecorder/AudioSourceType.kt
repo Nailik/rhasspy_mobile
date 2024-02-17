@@ -31,7 +31,7 @@ actual enum class AudioSourceType(
         actual fun supportedValues(): List<AudioSourceType> {
             return buildList {
                 addAll(listOf(Default, Mic))
-                if (VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                if (VERSION.SDK_INT >= VERSION_CODES.N) {
                     add(Unprocessed)
                 }
                 addAll(listOf(VoiceCommunication, VoiceRecognition))
