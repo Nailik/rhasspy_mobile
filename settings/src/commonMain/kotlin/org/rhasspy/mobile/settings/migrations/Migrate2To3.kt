@@ -14,6 +14,7 @@ import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioSourceType
 import org.rhasspy.mobile.data.domain.*
 import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.data.log.LogLevel
@@ -283,6 +284,7 @@ internal object Migrate2To3 : IMigration(2, 3) {
 
 
         ConfigurationSetting.micDomainData.value = MicDomainData(
+            audioInputSource = AudioSourceType.default,
             audioInputChannel = speechToTextAudioRecorderChannel.value,
             audioInputEncoding = speechToTextAudioRecorderEncoding.value,
             audioInputSampleRate = speechToTextAudioRecorderSampleRate.value,

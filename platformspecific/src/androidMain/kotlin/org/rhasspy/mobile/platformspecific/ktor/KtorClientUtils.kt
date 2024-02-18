@@ -3,42 +3,58 @@ package org.rhasspy.mobile.platformspecific.ktor
 import android.annotation.SuppressLint
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
-import io.ktor.client.engine.cio.CIOEngineConfig
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.websocket.WebSocketDeflateExtension
 import io.ktor.websocket.WebSocketExtensionsConfig
 import okhttp3.Dns
 import okhttp3.OkHttpClient
-import okhttp3.Protocol
+import org.rhasspy.mobile.platformspecific.ktor.SslSettings.getSslContext
+import org.rhasspy.mobile.platformspecific.ktor.SslSettings.getTrustManager
+import java.io.FileInputStream
 import java.net.Inet4Address
 import java.net.InetAddress
+import java.security.KeyStore
 import java.security.cert.X509Certificate
-import java.util.Collections
-import java.util.concurrent.TimeUnit
 import java.util.zip.Deflater
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
-/**
- * configure client engine
- */
-actual fun CIOEngineConfig.configureEngine(isHttpVerificationDisabled: Boolean) {
+object SslSettings {
+    private fun getKeyStore(): KeyStore {
+        val keyStoreFile = FileInputStream("keystore.jks")
+        val keyStorePassword = "foobar".toCharArray()
+        val keyStore: KeyStore = KeyStore.getInstance(KeyStore.getDefaultType())
+        keyStore.load(keyStoreFile, keyStorePassword)
+        return keyStore
+    }
 
+    private fun getTrustManagerFactory(): TrustManagerFactory? {
+        val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+        trustManagerFactory.init(getKeyStore())
+        return trustManagerFactory
+    }
 
-    https {
-        if (isHttpVerificationDisabled) {
-            trustManager = @SuppressLint("CustomX509TrustManager")
-            object : X509TrustManager {
-                @SuppressLint("TrustAllX509TrustManager")
-                override fun checkClientTrusted(p0: Array<out X509Certificate>?, p1: String?) {
-                }
+    fun getSslContext(): SSLContext? {
+        val sslContext = SSLContext.getInstance("TLS")
+        sslContext.init(null, getTrustManagerFactory()?.trustManagers, null)
+        return sslContext
+    }
 
-                @SuppressLint("TrustAllX509TrustManager")
-                override fun checkServerTrusted(p0: Array<out X509Certificate>?, p1: String?) {
-                }
-
-                override fun getAcceptedIssuers(): Array<X509Certificate>? = null
+    fun getTrustManager(): X509TrustManager {
+        @SuppressLint("CustomX509TrustManager")
+        val custom = object : X509TrustManager {
+            @SuppressLint("TrustAllX509TrustManager")
+            override fun checkClientTrusted(p0: Array<out X509Certificate>?, p1: String?) {
             }
+
+            @SuppressLint("TrustAllX509TrustManager")
+            override fun checkServerTrusted(p0: Array<out X509Certificate>?, p1: String?) {
+            }
+
+            override fun getAcceptedIssuers(): Array<X509Certificate>? = null
         }
+        return custom
     }
 }
 
@@ -56,21 +72,27 @@ actual fun WebSocketExtensionsConfig.installDeflate() {
     }
 }
 
-class DnsSelector() : Dns {
+class DnsSelector : Dns {
     override fun lookup(hostname: String): List<InetAddress> {
         return Dns.SYSTEM.lookup(hostname).filterIsInstance<Inet4Address>()
     }
 }
 
-actual fun HttpClientF(
+actual fun createClient(
+    isSSLVerificationDisabled: Boolean,
     block: HttpClientConfig<*>.() -> Unit
 ): HttpClient {
 
     return HttpClient(
         engineFactory = OkHttp,
         block = {
+
             engine {
+
                 config {
+                    if(isSSLVerificationDisabled) {
+                        sslSocketFactory(getSslContext()!!.socketFactory, getTrustManager())
+                    }
                     followRedirects(true)
                     followSslRedirects(true)
 

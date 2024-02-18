@@ -89,6 +89,7 @@ internal class MicDomain(
 
         with(params) {
             audioRecorder.startRecording(
+                audioRecorderSourceType = audioInputSource,
                 audioRecorderChannelType = audioInputChannel,
                 audioRecorderEncodingType = audioInputEncoding,
                 audioRecorderSampleRateType = audioInputSampleRate,

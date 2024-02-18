@@ -27,7 +27,7 @@ kotlin {
                 implementation(Jetbrains.Compose.materialIconsExtended)
                 implementation(Koin.core)
                 implementation(Icerock.Mvvm.core)
-                implementation(Ktor2.Client.core)
+                implementation(Ktor3.Client.core)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Square.okio)
                 implementation(Mikepenz.aboutLibrariesCore)

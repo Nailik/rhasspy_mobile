@@ -1,7 +1,7 @@
 import de.fayard.refreshVersions.core.DependencyGroup
 import org.gradle.kotlin.dsl.IsNotADependency
 
-object Ktor2 : DependencyGroup(group = "io.ktor") {
+object Ktor3 : DependencyGroup(group = "io.ktor") {
 
     object Plugins : IsNotADependency {
         val network = module("ktor-network")
@@ -22,6 +22,9 @@ object Ktor2 : DependencyGroup(group = "io.ktor") {
         val cio = module("ktor-client-cio")
         val core = module("ktor-client-core")
         val websockets = module("ktor-client-websockets")
+        val logging = module("ktor-client-logging")
+        val android = module("ktor-client-android")
+        val okHttp = module("ktor-client-okhttp")
     }
 
 }

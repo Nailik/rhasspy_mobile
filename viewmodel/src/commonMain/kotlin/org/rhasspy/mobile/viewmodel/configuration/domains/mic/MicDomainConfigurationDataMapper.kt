@@ -7,6 +7,7 @@ class MicDomainConfigurationDataMapper {
 
     operator fun invoke(data: MicDomainData): MicDomainConfigurationData {
         return MicDomainConfigurationData(
+            audioInputSource = data.audioInputSource,
             audioInputChannel = data.audioInputChannel,
             audioInputEncoding = data.audioInputEncoding,
             audioInputSampleRate = data.audioInputSampleRate,
@@ -19,6 +20,7 @@ class MicDomainConfigurationDataMapper {
 
     operator fun invoke(data: MicDomainConfigurationData): MicDomainData {
         return MicDomainData(
+            audioInputSource = data.audioInputSource,
             audioInputChannel = data.audioInputChannel,
             audioInputEncoding = data.audioInputEncoding,
             audioInputSampleRate = data.audioInputSampleRate,

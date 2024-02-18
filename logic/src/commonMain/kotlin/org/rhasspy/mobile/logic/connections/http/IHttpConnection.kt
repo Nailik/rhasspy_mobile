@@ -29,7 +29,7 @@ import org.rhasspy.mobile.data.service.ConnectionState.*
 import org.rhasspy.mobile.data.viewstate.TextWrapper.TextWrapperStableStringResource
 import org.rhasspy.mobile.logic.connections.IConnection
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.ktor.HttpClientF
+import org.rhasspy.mobile.platformspecific.ktor.createClient
 import org.rhasspy.mobile.platformspecific.ktor.installDeflate
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ISetting
@@ -58,13 +58,12 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
      * builds client
      */
     private fun buildClient(params: HttpConnectionData): HttpClient {
-        return HttpClientF {
+        return createClient(params.isSSLVerificationDisabled) {
             expectSuccess = false
             install(WebSockets) {
                 extensions {
                     installDeflate()
                 }
-
             }
             install(Logging) {
                 level = LogLevel.ALL
@@ -73,9 +72,6 @@ internal abstract class IHttpConnection(settings: ISetting<HttpConnectionData>) 
                 requestTimeoutMillis = params.timeout.inWholeMilliseconds
                 connectTimeoutMillis = HttpTimeoutConfig.INFINITE_TIMEOUT_MS
             }
-            //  engine {
-            //       configureEngine(params.isSSLVerificationDisabled)
-            //  }
         }
     }
 

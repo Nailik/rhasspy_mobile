@@ -24,6 +24,7 @@ import org.rhasspy.mobile.logic.domains.IDomainHistory
 import org.rhasspy.mobile.logic.domains.mic.MicAudioChunk
 import org.rhasspy.mobile.logic.pipeline.Source
 import org.rhasspy.mobile.logic.pipeline.WakeResult
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.porcupine.PorcupineWakeWordClient
 
 /**
@@ -234,12 +235,18 @@ internal class WakeDomain(
     }
 
     private suspend fun awaitRhasspy3WyomingHttpWakeDetection(audioStream: Flow<MicAudioChunk>): WakeResult {
-        //TODO
-        return WakeResult(
-            name = "dummy",
-            sessionId = null,
-            source = Source.Rhasspy3WyomingHttp
-        )
+
+        val first = audioStream.first()
+        val result = rhasspy3WyomingConnection.detectWake(AudioSource.Data(first.data))
+
+        return when (result) {
+            is HttpClientResult.HttpClientError -> awaitRhasspy3WyomingHttpWakeDetection(audioStream)
+            is HttpClientResult.Success         -> WakeResult(
+                name = "dummy",
+                sessionId = null,
+                source = Source.Rhasspy3WyomingWebsocket
+            )
+        }
     }
 
     private suspend fun awaitRhasspy3WyomingWebsocketWakeDetection(audioStream: Flow<MicAudioChunk>): WakeResult {

@@ -5,10 +5,9 @@ import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.cio.CIOEngineConfig
 import io.ktor.websocket.WebSocketExtensionsConfig
 
-expect fun CIOEngineConfig.configureEngine(isHttpVerificationDisabled: Boolean)
-
 expect fun WebSocketExtensionsConfig.installDeflate()
 
-expect fun HttpClientF(
+expect fun createClient(
+    isSSLVerificationDisabled: Boolean,
     block: HttpClientConfig<*>.() -> Unit = {}
 ): HttpClient

@@ -4,9 +4,11 @@ import kotlinx.serialization.Serializable
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioSourceType
 
 @Serializable
 data class MicDomainData(
+    val audioInputSource: AudioSourceType,
     val audioInputChannel: AudioFormatChannelType,
     val audioInputEncoding: AudioFormatEncodingType,
     val audioInputSampleRate: AudioFormatSampleRateType,
