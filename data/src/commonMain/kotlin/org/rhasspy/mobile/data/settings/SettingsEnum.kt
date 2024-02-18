@@ -70,6 +70,7 @@ enum class SettingsEnum {
 
     WakeWordOption,
 
+    WakeWordAudioRecorderSourceType,
     WakeWordAudioRecorderChannel,
     WakeWordAudioRecorderEncoding,
     WakeWordAudioRecorderSampleRate,
@@ -84,6 +85,7 @@ enum class SettingsEnum {
     WakeWordPorcupineLanguage,
 
     SpeechToTextOption,
+    SpeechToTextRecorderSourceType,
     SpeechToTextAudioRecorderChannel,
     SpeechToTextAudioRecorderEncoding,
     SpeechToTextAudioRecorderSampleRate,

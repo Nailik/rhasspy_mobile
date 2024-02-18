@@ -4,6 +4,7 @@ import okio.Path
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioSourceType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
@@ -88,7 +89,7 @@ sealed interface WakeWordConfigurationUiEvent {
     sealed interface AudioRecorderFormatUiEvent : WakeWordConfigurationUiEvent {
 
         sealed interface Change : AudioRecorderFormatUiEvent {
-
+            data class SelectAudioRecorderSourceType(val value: AudioSourceType) : Change
             data class SelectAudioRecorderChannelType(val value: AudioFormatChannelType) : Change
             data class SelectAudioRecorderEncodingType(val value: AudioFormatEncodingType) : Change
             data class SelectAudioRecorderSampleRateType(val value: AudioFormatSampleRateType) : Change

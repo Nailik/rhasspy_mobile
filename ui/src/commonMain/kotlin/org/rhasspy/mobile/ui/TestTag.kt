@@ -104,6 +104,7 @@ enum class TestTag {
     AudioFocusOnDialog,
     AudioFocusStopRecording,
 
+    AudioRecorderSourceType,
     AudioRecorderEncodingType,
     AudioRecorderChannelType,
     AudioRecorderSampleRateType,

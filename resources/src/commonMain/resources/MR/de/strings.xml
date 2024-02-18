@@ -319,12 +319,12 @@
     <string name="saveLogFileFailed">Speichern des Logs fehlgeschlagen</string>
     <string name="shareLogFileFailed">Teilen des Logs fehlgeschlagen</string>
     <string name="disableBatteryOptimizationFailed">Deaktivieren der Batterie-Optimierung fehlgeschlagen</string>
-    <string name="exportSettingsFileFailed">Exportieren der Einstellungsdatei fehlgeschlagen
-    </string>
+    <string name="exportSettingsFileFailed">Exportieren der Einstellungsdatei fehlgeschlagen</string>
     <string name="restoreSettingsFromFileFailed">Einstellungen aus Datei wiederherstellen fehlgeschlagen</string>
     <string name="shareSettingsFileFailed">Einstellungsdatei freigeben fehlgeschlagen</string>
     <string name="selectFileFailed">Die Dateiauswahl kann nicht geöffnet werden</string>
     <string name="audioRecorder">Audiorecorder</string>
+    <string name="source">Quelle</string>
     <string name="sampleRate">Samplerate</string>
     <string name="channel">Channel</string>
     <string name="encoding">Encoding</string>
@@ -364,6 +364,11 @@
     <string name="subscribe_failed">subscription failed</string>
     <string name="topic_subscription_failed">topic subscription failed</string>
     <!-- audioRecorder -->
+    <string name="source_type_default">Default</string>
+    <string name="source_type_mic">Mic</string>
+    <string name="source_type_unprocessed">Unprocessed</string>
+    <string name="source_type_voice_communication">Voice Communication</string>
+    <string name="source_type_voice_recognition">Voice Recognition</string>
     <string name="channel_type_default">Default</string>
     <string name="channel_type_mono">Mono</string>
     <string name="channel_type_stereo">Stereo</string>

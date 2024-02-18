@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioSourceType
 
 internal actual class AudioRecorder : IAudioRecorder {
 
@@ -23,6 +24,7 @@ internal actual class AudioRecorder : IAudioRecorder {
      * start recording
      */
     actual override fun startRecording(
+        audioRecorderSourceType: AudioSourceType,
         audioRecorderChannelType: AudioFormatChannelType,
         audioRecorderEncodingType: AudioFormatEncodingType,
         audioRecorderSampleRateType: AudioFormatSampleRateType,

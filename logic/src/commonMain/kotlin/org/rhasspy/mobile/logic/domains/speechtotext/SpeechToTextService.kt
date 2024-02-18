@@ -247,6 +247,7 @@ internal class SpeechToTextService(
         }
 
         audioRecorder.startRecording(
+            audioRecorderSourceType = params.audioRecorderSourceType,
             audioRecorderChannelType = params.audioRecorderChannelType,
             audioRecorderEncodingType = params.audioRecorderEncodingType,
             audioRecorderSampleRateType = params.audioRecorderSampleRateType,

@@ -78,6 +78,7 @@ class SpeechToTextConfigurationViewModel(
             it.copy(editData = with(it.editData) {
                 copy(
                     speechToTextAudioRecorderData = when (event) {
+                        is SelectAudioRecorderSourceType     -> speechToTextAudioRecorderData.copy(audioRecorderSourceType = event.value)
                         is SelectAudioRecorderChannelType    -> speechToTextAudioRecorderData.copy(audioRecorderChannelType = event.value)
                         is SelectAudioRecorderEncodingType   -> speechToTextAudioRecorderData.copy(audioRecorderEncodingType = event.value)
                         is SelectAudioRecorderSampleRateType -> speechToTextAudioRecorderData.copy(audioRecorderSampleRateType = event.value)

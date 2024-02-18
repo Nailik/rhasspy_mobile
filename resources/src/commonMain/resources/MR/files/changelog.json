@@ -4,5 +4,6 @@
   "update Ui to new Domain Settings",
   "fixed possible issue with AudioRecorder in combination with Pause on Media Playback",
   "updated Log to be stored in a Database",
-  "fixed settings not saving correctly"
+  "fixed settings not saving correctly",
+  "added audio source type setting"
 ]

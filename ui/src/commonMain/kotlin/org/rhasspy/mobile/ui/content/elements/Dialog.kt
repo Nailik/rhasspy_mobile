@@ -260,7 +260,7 @@ private fun Dialog(
 
                         //Divider (optional)
                         if (showDivider) {
-                            Divider()
+                            HorizontalDivider()
                         }
                     }
 

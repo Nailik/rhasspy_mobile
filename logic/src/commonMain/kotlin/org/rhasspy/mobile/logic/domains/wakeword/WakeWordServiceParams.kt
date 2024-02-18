@@ -4,6 +4,7 @@ import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioFormatSampleRateType
+import org.rhasspy.mobile.data.audiorecorder.AudioSourceType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
@@ -13,6 +14,7 @@ internal data class WakeWordServiceParams(
     val isMicrophonePermissionEnabled: Boolean,
     val isEnabled: Boolean,
     val isAutoPauseOnMediaPlayback: Boolean,
+    val audioRecorderSourceType: AudioSourceType,
     val audioRecorderSampleRateType: AudioFormatSampleRateType,
     val audioRecorderChannelType: AudioFormatChannelType,
     val audioRecorderEncodingType: AudioFormatEncodingType,
