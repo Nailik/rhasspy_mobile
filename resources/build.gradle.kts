@@ -5,6 +5,8 @@ import com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
 import com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
 import groovy.json.JsonSlurper
 import org.apache.tools.ant.taskdefs.condition.Os
+import java.net.URLDecoder
+import java.net.URLEncoder
 
 plugins {
     kotlin("multiplatform")
@@ -180,8 +182,15 @@ tasks.register("updatePorcupineFiles") {
 
                 // parse directory listing
                 contents = JsonSlurper().parse(contentsFile) as List<Map<Any, String>>
-                urls = contents.map { url -> url["download_url"] }
+                urls = contents.map { url ->
+                    val downloadUrl: String = url["download_url"]!!
+                    //some urls need decoding (download_url contains special characters in the filename)
+                    //therefore all urls are first encoded and then decoded again, because URLEncoder.encode translates whitespace to +, + is replaced with %20
+                    //only substring after last / is encoded/decoded, because it's the filename
+                    "${downloadUrl.substringBeforeLast("/")}/${URLEncoder.encode(URLDecoder.decode(downloadUrl.substringAfterLast("/"), "UTF-8"), "UTF-8").replace("+", "%20")}"
+                }
 
+                //download each file separate so a fail will not skip all
                 // download files
                 download.run {
                     src(urls)
@@ -189,7 +198,6 @@ tasks.register("updatePorcupineFiles") {
                     overwrite(true)
                     onlyIfModified(true)
                     eachFile {
-                        //correctly encode non standard letters
                         name = name.replace(Regex("[^A-Za-z0-9._]"), "")
                     }
                 }
