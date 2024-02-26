@@ -65,8 +65,9 @@
     <string name="wakeWordAudioRecorderFormat">Formato Registrazione Audio per Parola di Risveglio</string>
     <string name="wakeWordAudioOutputFormat">Formato Output Audio per Parola di Risveglio</string>
     <string name="refresh">Aggiorna</string>
-    <string name="de">Tedesco</string>
-    <string name="en">Inglese</string>
+    <string name="de">Deutsch</string>
+    <string name="en">English</string>
+    <string name="it">Italian</string>    
     <string name="automaticSilenceDetection">Rilevamento Automatico del Silenzio</string>
     <string name="backgroundWakeWordDetection">Rilevamento Parola di Risveglio in Background</string>
     <string name="enableBackground">Abilita Servizi in Background</string>
