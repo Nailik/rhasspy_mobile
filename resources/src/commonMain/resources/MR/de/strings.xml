@@ -67,6 +67,7 @@
     <string name="refresh">Laden</string>
     <string name="de">Deutsch</string>
     <string name="en">English</string>
+    <string name="it">Italian</string>  
     <string name="automaticSilenceDetection">Automatische Stille-Erkennung</string>
     <string name="backgroundWakeWordDetection">Hintergrund-Aktivierungswort-Erkennung</string>
     <string name="enableBackground">Hintergrunddienste aktivieren</string>
