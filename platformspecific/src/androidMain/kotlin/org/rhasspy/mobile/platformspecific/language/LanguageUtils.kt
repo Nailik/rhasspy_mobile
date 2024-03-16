@@ -11,11 +11,8 @@ import org.rhasspy.mobile.data.language.LanguageType
 internal actual class LanguageUtils : ILanguageUtils {
 
     actual override fun getDeviceLanguage(): LanguageType {
-        return when (LocaleListCompat.getDefault().getFirstMatch(arrayOf("en", "de"))?.language) {
-            "en" -> LanguageType.English
-            "de" -> LanguageType.German
-            else -> LanguageType.English
-        }
+        val localeCode = LocaleListCompat.getDefault().getFirstMatch(LanguageType.entries.map { it.code }.toTypedArray())?.language
+        return LanguageType.entries.firstOrNull { it.code == localeCode } ?: LanguageType.Italiano
     }
 
     actual override fun setupLanguage(defaultLanguageType: LanguageType): LanguageType {
@@ -29,13 +26,8 @@ internal actual class LanguageUtils : ILanguageUtils {
     }
 
     actual override fun getSystemAppLanguage(): LanguageType? {
-        return AppCompatDelegate.getApplicationLocales().getFirstMatch(arrayOf("en", "de")).let {
-            when (it?.language) {
-                "en" -> LanguageType.English
-                "de" -> LanguageType.German
-                else -> null
-            }
-        }
+        val localeCode = AppCompatDelegate.getApplicationLocales().getFirstMatch(LanguageType.entries.map { it.code }.toTypedArray())?.language
+        return LanguageType.entries.firstOrNull { it.code == localeCode }
     }
 
     actual override fun setLanguage(languageType: LanguageType) {

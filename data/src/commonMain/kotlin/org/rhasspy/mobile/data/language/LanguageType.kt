@@ -11,7 +11,8 @@ import org.rhasspy.mobile.resources.MR
 enum class LanguageType(override val text: StableStringResource, val code: String) : IOption {
 
     English(MR.strings.en.stable, "en"),
-    German(MR.strings.de.stable, "de");
+    German(MR.strings.de.stable, "de"),
+    Italiano(MR.strings.it.stable, "it");
 
 
 }

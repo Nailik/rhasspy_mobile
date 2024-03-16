@@ -44,7 +44,7 @@ android {
         targetSdk = 34
         versionCode = Version.code
         versionName = Version.toString()
-        resourceConfigurations += setOf("en", "de")
+        resourceConfigurations += setOf("en", "de", "it")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "true"
         testInstrumentationRunnerArguments["useTestStorageService"] = "true"
