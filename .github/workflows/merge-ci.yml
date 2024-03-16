@@ -35,6 +35,10 @@ jobs:
   uiTest:
     needs: check
     runs-on: self-hosted
+    permissions:
+      id-token: write
+      contents: read
+      checks: write
     steps:
       - uses: actions/checkout@v3
         with:
