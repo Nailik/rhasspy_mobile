@@ -39,11 +39,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
-      - name: Set Up JDK 21
+      - name: Set Up JDK 22
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '21'
+          java-version: '22'
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       # necessary for linux/macos but doesn't work on windows
@@ -73,11 +73,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
-      - name: Set Up JDK 21
+      - name: Set Up JDK 22
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '21'
+          java-version: '22'
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       # necessary for linux/macos but doesn't work on windows
@@ -114,7 +114,7 @@ jobs:
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
-          BUILD_TOOLS_VERSION: "34.0.0"
+          BUILD_TOOLS_VERSION: "36.0.0"
       # sign the generated apks
       - uses: r0adkll/sign-android-release@v1
         name: Sign App Bundle
@@ -126,7 +126,7 @@ jobs:
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
-          BUILD_TOOLS_VERSION: "34.0.0"
+          BUILD_TOOLS_VERSION: "36.0.0"
       # upload apks to action
       - uses: actions/upload-artifact@v3
         with:
