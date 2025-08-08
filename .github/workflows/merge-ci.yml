@@ -114,7 +114,7 @@ jobs:
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
-          BUILD_TOOLS_VERSION: "36.0.0"
+          BUILD_TOOLS_VERSION: "35.0.0"
       # sign the generated apks
       - uses: r0adkll/sign-android-release@v1
         name: Sign App Bundle
@@ -126,7 +126,7 @@ jobs:
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
-          BUILD_TOOLS_VERSION: "36.0.0"
+          BUILD_TOOLS_VERSION: "35.0.0"
       # upload apks to action
       - uses: actions/upload-artifact@v4
         with:
