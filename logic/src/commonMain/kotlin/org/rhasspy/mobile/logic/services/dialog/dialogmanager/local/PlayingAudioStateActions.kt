@@ -21,9 +21,9 @@ internal class PlayingAudioStateActions(
 ) : IPlayingAudioStateActions {
     override fun onAction(action: DialogServiceMiddlewareAction) {
         when (action) {
-            is PlayFinished     -> onPlayFinished(action)
+            is PlayFinished -> onPlayFinished(action)
             is StopAudioPlaying -> onStopAudioPlaying(action)
-            else                -> Unit
+            else -> Unit
         }
     }
 

@@ -13,26 +13,60 @@ import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.services.wakeword.IWakeWordService
-import org.rhasspy.mobile.platformspecific.*
+import org.rhasspy.mobile.platformspecific.IDispatcherProvider
+import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.platformspecific.toIntOrNullOrConstant
+import org.rhasspy.mobile.platformspecific.toIntOrZero
+import org.rhasspy.mobile.platformspecific.updateList
+import org.rhasspy.mobile.platformspecific.updateListItem
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.*
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.AudioOutputFormatUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.AudioRecorderFormatUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.OpenAudioOutputFormat
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.OpenAudioRecorderFormat
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.RequestMicrophonePermission
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.AudioOutputFormatUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.AudioOutputFormatUiEvent.Change.SelectAudioOutputChannelType
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.AudioOutputFormatUiEvent.Change.SelectAudioOutputEncodingType
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.AudioOutputFormatUiEvent.Change.SelectAudioOutputSampleRateType
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.AudioRecorderFormatUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.AudioRecorderFormatUiEvent.Change.SelectAudioRecorderChannelType
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.AudioRecorderFormatUiEvent.Change.SelectAudioRecorderEncodingType
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.AudioRecorderFormatUiEvent.Change.SelectAudioRecorderSampleRateType
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.AddCustomPorcupineKeyword
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.DownloadCustomPorcupineKeyword
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.PageClick
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.PorcupineLanguageClick
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.AddPorcupineKeywordCustom
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.ClickPorcupineKeywordCustom
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.ClickPorcupineKeywordDefault
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.DeletePorcupineKeywordCustom
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeWordPorcupineLanguage
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SetPorcupineKeywordCustom
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SetPorcupineKeywordDefault
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UndoCustomKeywordDeleted
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineKeywordCustomSensitivity
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineKeywordDefaultSensitivity
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.AudioOutputFormatScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.AudioRecorderFormatScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
 
 @Stable
 class WakeWordConfigurationViewModel(
@@ -84,11 +118,11 @@ class WakeWordConfigurationViewModel(
 
     fun onEvent(event: WakeWordConfigurationUiEvent) {
         when (event) {
-            is Change                     -> onChange(event)
-            is Action                     -> onAction(event)
-            is PorcupineUiEvent           -> onPorcupineAction(event)
-            is UdpUiEvent                 -> onUdpAction(event)
-            is AudioOutputFormatUiEvent   -> onAudioOutputFormatEvent(event)
+            is Change -> onChange(event)
+            is Action -> onAction(event)
+            is PorcupineUiEvent -> onPorcupineAction(event)
+            is UdpUiEvent -> onUdpAction(event)
+            is AudioOutputFormatUiEvent -> onAudioOutputFormatEvent(event)
             is AudioRecorderFormatUiEvent -> onAudioRecorderFormatEvent(event)
         }
     }
@@ -98,15 +132,26 @@ class WakeWordConfigurationViewModel(
             it.copy(editData = with(it.editData) {
                 copy(
                     wakeWordAudioRecorderData =
-                    when (event) {
-                        is SelectAudioRecorderChannelType    -> wakeWordAudioRecorderData.copy(audioRecorderChannelType = event.value)
-                        is SelectAudioRecorderEncodingType   -> wakeWordAudioRecorderData.copy(audioRecorderEncodingType = event.value)
-                        is SelectAudioRecorderSampleRateType -> wakeWordAudioRecorderData.copy(audioRecorderSampleRateType = event.value)
-                    },
+                        when (event) {
+                            is SelectAudioRecorderChannelType -> wakeWordAudioRecorderData.copy(
+                                audioRecorderChannelType = event.value
+                            )
+
+                            is SelectAudioRecorderEncodingType -> wakeWordAudioRecorderData.copy(
+                                audioRecorderEncodingType = event.value
+                            )
+
+                            is SelectAudioRecorderSampleRateType -> wakeWordAudioRecorderData.copy(
+                                audioRecorderSampleRateType = event.value
+                            )
+                        },
                     //TODO #408
                     wakeWordAudioOutputData = when (event) {
-                        is SelectAudioRecorderEncodingType -> wakeWordAudioOutputData.copy(audioOutputEncodingType = event.value)
-                        else                               -> wakeWordAudioOutputData
+                        is SelectAudioRecorderEncodingType -> wakeWordAudioOutputData.copy(
+                            audioOutputEncodingType = event.value
+                        )
+
+                        else -> wakeWordAudioOutputData
                     }
                 )
             })
@@ -118,8 +163,8 @@ class WakeWordConfigurationViewModel(
             it.copy(editData = with(it.editData) {
                 copy(wakeWordAudioOutputData = wakeWordAudioOutputData.let { data ->
                     when (event) {
-                        is SelectAudioOutputChannelType    -> data.copy(audioOutputChannelType = event.value)
-                        is SelectAudioOutputEncodingType   -> data.copy(audioOutputEncodingType = event.value)
+                        is SelectAudioOutputChannelType -> data.copy(audioOutputChannelType = event.value)
+                        is SelectAudioOutputEncodingType -> data.copy(audioOutputEncodingType = event.value)
                         is SelectAudioOutputSampleRateType -> data.copy(audioOutputSampleRateType = event.value)
                     }
                 })
@@ -150,10 +195,10 @@ class WakeWordConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             RequestMicrophonePermission -> requireMicrophonePermission {}
-            BackClick                   -> navigator.onBackPressed()
-            is Navigate                 -> navigator.navigate(action.destination)
-            OpenAudioOutputFormat       -> navigator.navigate(AudioOutputFormatScreen)
-            OpenAudioRecorderFormat     -> navigator.navigate(AudioRecorderFormatScreen)
+            BackClick -> navigator.onBackPressed()
+            is Navigate -> navigator.navigate(action.destination)
+            OpenAudioOutputFormat -> navigator.navigate(AudioOutputFormatScreen)
+            OpenAudioRecorderFormat -> navigator.navigate(AudioRecorderFormatScreen)
         }
     }
 
@@ -169,17 +214,51 @@ class WakeWordConfigurationViewModel(
             it.copy(editData = with(it.editData) {
                 copy(wakeWordPorcupineConfigurationData = with(wakeWordPorcupineConfigurationData) {
                     when (change) {
-                        is UpdateWakeWordPorcupineAccessToken               -> copy(accessToken = change.value)
-                        is ClickPorcupineKeywordCustom                      -> copy(customOptions = customOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
-                        is ClickPorcupineKeywordDefault                     -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
-                        is DeletePorcupineKeywordCustom                     -> copy(deletedCustomOptions = deletedCustomOptions.updateList { add(change.item) })
-                        is SelectWakeWordPorcupineLanguage                  -> copy(porcupineLanguage = change.option)
-                        is SetPorcupineKeywordCustom                        -> copy(customOptions = customOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
-                        is SetPorcupineKeywordDefault                       -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
-                        is UndoCustomKeywordDeleted                         -> copy(deletedCustomOptions = deletedCustomOptions.updateList { remove(change.item) })
-                        is UpdateWakeWordPorcupineKeywordCustomSensitivity  -> copy(customOptions = customOptions.updateListItem(change.item) { copy(sensitivity = change.value) })
-                        is UpdateWakeWordPorcupineKeywordDefaultSensitivity -> copy(defaultOptions = defaultOptions.updateListItem(change.item) { copy(sensitivity = change.value) })
-                        is AddPorcupineKeywordCustom                        -> copy(customOptions = customOptions.updateList {
+                        is UpdateWakeWordPorcupineAccessToken -> copy(accessToken = change.value)
+                        is ClickPorcupineKeywordCustom -> copy(
+                            customOptions = customOptions.updateListItem(
+                                change.item
+                            ) { copy(isEnabled = !isEnabled) })
+
+                        is ClickPorcupineKeywordDefault -> copy(
+                            defaultOptions = defaultOptions.updateListItem(
+                                change.item
+                            ) { copy(isEnabled = !isEnabled) })
+
+                        is DeletePorcupineKeywordCustom -> copy(deletedCustomOptions = deletedCustomOptions.updateList {
+                            add(
+                                change.item
+                            )
+                        })
+
+                        is SelectWakeWordPorcupineLanguage -> copy(porcupineLanguage = change.option)
+                        is SetPorcupineKeywordCustom -> copy(
+                            customOptions = customOptions.updateListItem(
+                                change.item
+                            ) { copy(isEnabled = change.value) })
+
+                        is SetPorcupineKeywordDefault -> copy(
+                            defaultOptions = defaultOptions.updateListItem(
+                                change.item
+                            ) { copy(isEnabled = change.value) })
+
+                        is UndoCustomKeywordDeleted -> copy(deletedCustomOptions = deletedCustomOptions.updateList {
+                            remove(
+                                change.item
+                            )
+                        })
+
+                        is UpdateWakeWordPorcupineKeywordCustomSensitivity -> copy(
+                            customOptions = customOptions.updateListItem(
+                                change.item
+                            ) { copy(sensitivity = change.value) })
+
+                        is UpdateWakeWordPorcupineKeywordDefaultSensitivity -> copy(
+                            defaultOptions = defaultOptions.updateListItem(
+                                change.item
+                            ) { copy(sensitivity = change.value) })
+
+                        is AddPorcupineKeywordCustom -> copy(customOptions = customOptions.updateList {
                             add(
                                 PorcupineCustomKeyword(
                                     fileName = change.path.name,
@@ -196,12 +275,12 @@ class WakeWordConfigurationViewModel(
 
     private fun onPorcupineAction(action: PorcupineUiEvent.Action) {
         when (action) {
-            AddCustomPorcupineKeyword         -> addCustomPorcupineKeyword()
-            DownloadCustomPorcupineKeyword    -> openLink(LinkType.PicoVoiceCustomWakeWord)
-            OpenPicoVoiceConsole              -> openLink(LinkType.PicoVoiceConsole)
+            AddCustomPorcupineKeyword -> addCustomPorcupineKeyword()
+            DownloadCustomPorcupineKeyword -> openLink(LinkType.PicoVoiceCustomWakeWord)
+            OpenPicoVoiceConsole -> openLink(LinkType.PicoVoiceConsole)
             PorcupineUiEvent.Action.BackClick -> navigator.onBackPressed()
-            PorcupineLanguageClick            -> navigator.navigate(EditPorcupineLanguageScreen)
-            is PageClick                      -> _viewState.update { it.copy(porcupineWakeWordScreen = action.screen) }
+            PorcupineLanguageClick -> navigator.navigate(EditPorcupineLanguageScreen)
+            is PageClick -> _viewState.update { it.copy(porcupineWakeWordScreen = action.screen) }
         }
     }
 
@@ -244,7 +323,8 @@ class WakeWordConfigurationViewModel(
                 ConfigurationSetting.wakeWordPorcupineAccessToken.value = accessToken
                 ConfigurationSetting.wakeWordPorcupineLanguage.value = porcupineLanguage
                 ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value = defaultOptions
-                ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value = customOptions.updateList { removeAll(deletedCustomOptions) }
+                ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value =
+                    customOptions.updateList { removeAll(deletedCustomOptions) }
             }
 
             with(wakeWordUdpConfigurationData) {
@@ -255,7 +335,8 @@ class WakeWordConfigurationViewModel(
             with(wakeWordAudioRecorderData) {
                 ConfigurationSetting.wakeWordAudioRecorderChannel.value = audioRecorderChannelType
                 ConfigurationSetting.wakeWordAudioRecorderEncoding.value = audioRecorderEncodingType
-                ConfigurationSetting.wakeWordAudioRecorderSampleRate.value = audioRecorderSampleRateType
+                ConfigurationSetting.wakeWordAudioRecorderSampleRate.value =
+                    audioRecorderSampleRateType
             }
 
             with(wakeWordAudioOutputData) {

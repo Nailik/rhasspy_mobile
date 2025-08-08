@@ -16,8 +16,10 @@ data class AudioFocusSettingsViewState(
     val isPauseRecordingOnMedia: Boolean,
 ) {
 
-    val audioFocusOptions: PersistentList<AudioFocusOption> = AudioFocusOption.values().toMutableList().toPersistentList()
+    val audioFocusOptions: PersistentList<AudioFocusOption> =
+        AudioFocusOption.values().toMutableList().toPersistentList()
 
-    val isPauseRecordingOnMediaFeatureEnabled = FeatureAvailability.isPauseRecordingOnPlaybackFeatureEnabled
+    val isPauseRecordingOnMediaFeatureEnabled =
+        FeatureAvailability.isPauseRecordingOnPlaybackFeatureEnabled
 
 }

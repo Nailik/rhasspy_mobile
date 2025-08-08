@@ -60,6 +60,7 @@ class PorcupineLanguageScreenTest : FlakyTest() {
         composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).performClick()
         //german is selected
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).onListItemRadioButton()
+            .assertIsSelected()
     }
 }

@@ -3,8 +3,13 @@ package org.rhasspy.mobile.platformspecific.mqtt
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import okio.Path
-import org.eclipse.paho.client.mqttv3.*
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
+import org.eclipse.paho.client.mqttv3.MqttCallback
 import org.eclipse.paho.client.mqttv3.MqttClient
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions
+import org.eclipse.paho.client.mqttv3.MqttException
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException
+import org.eclipse.paho.client.mqttv3.MqttSecurityException
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence
 import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
@@ -28,8 +33,8 @@ actual class MqttClient actual constructor(
 
     private var client = when (persistenceType) {
         MqttPersistence.MEMORY -> MqttClient(brokerUrl, clientId, MemoryPersistence())
-        MqttPersistence.FILE   -> MqttClient(brokerUrl, clientId, MqttDefaultFilePersistence())
-        else                   -> MqttClient(brokerUrl, clientId)
+        MqttPersistence.FILE -> MqttClient(brokerUrl, clientId, MqttDefaultFilePersistence())
+        else -> MqttClient(brokerUrl, clientId)
     }
 
     /**
@@ -136,9 +141,9 @@ actual class MqttClient actual constructor(
             else if (securityEx.reasonCode == 5) status = MqttStatus.NOT_AUTHORIZED
         } catch (mqttEx: MqttException) {
             status = when (mqttEx.reasonCode) {
-                3    -> MqttStatus.SERVER_UNAVAILABLE
-                2    -> MqttStatus.IDENTIFIER_REJECTED
-                1    -> MqttStatus.UNACCEPTABLE_PROTOCOL
+                3 -> MqttStatus.SERVER_UNAVAILABLE
+                2 -> MqttStatus.IDENTIFIER_REJECTED
+                1 -> MqttStatus.UNACCEPTABLE_PROTOCOL
                 else -> MqttStatus.UNKNOWN
             }
         } catch (e: Exception) {

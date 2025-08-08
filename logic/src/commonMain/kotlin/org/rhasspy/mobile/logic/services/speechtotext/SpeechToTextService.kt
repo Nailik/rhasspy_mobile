@@ -1,10 +1,14 @@
 package org.rhasspy.mobile.logic.services.speechtotext
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import okio.FileHandle
 import okio.Path
 import org.koin.core.component.inject
@@ -15,7 +19,9 @@ import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SilenceDetected
 import org.rhasspy.mobile.logic.middleware.Source.Local
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.audiofocus.IAudioFocusService
@@ -71,7 +77,8 @@ internal class SpeechToTextService(
     private val _serviceState = MutableStateFlow<ServiceState>(Success)
     override val serviceState = _serviceState.readOnly
 
-    override val speechToTextAudioFile: Path = Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
+    override val speechToTextAudioFile: Path =
+        Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
     override var isActive: Boolean = false
     override val isRecording: StateFlow<Boolean> = audioRecorder.isRecording
     private var fileHandle: FileHandle? = null
@@ -93,7 +100,7 @@ internal class SpeechToTextService(
                     when (it.speechToTextOption) {
                         SpeechToTextOption.RemoteHTTP -> Success
                         SpeechToTextOption.RemoteMQTT -> Success
-                        SpeechToTextOption.Disabled   -> Disabled
+                        SpeechToTextOption.Disabled -> Disabled
                     }
             }
         }
@@ -144,7 +151,7 @@ internal class SpeechToTextService(
                 httpClientService.speechToText(speechToTextAudioFile) { result ->
                     _serviceState.value = result.toServiceState()
                     val action = when (result) {
-                        is HttpClientResult.Error   -> AsrError(Local)
+                        is HttpClientResult.Error -> AsrError(Local)
                         is HttpClientResult.Success -> AsrTextCaptured(Local, result.data)
                     }
                     serviceMiddleware.action(action)
@@ -158,7 +165,7 @@ internal class SpeechToTextService(
                 }
             }
 
-            SpeechToTextOption.Disabled   -> Unit
+            SpeechToTextOption.Disabled -> Unit
         }
     }
 
@@ -179,8 +186,11 @@ internal class SpeechToTextService(
 
         when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> _serviceState.value = Success
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.startListening(sessionId) { _serviceState.value = it }
-            SpeechToTextOption.Disabled   -> {
+            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.startListening(
+                sessionId
+            ) { _serviceState.value = it }
+
+            SpeechToTextOption.Disabled -> {
                 _serviceState.value = Disabled
                 return //recorder doesn't need to be started
             }
@@ -212,7 +222,7 @@ internal class SpeechToTextService(
                 ) { _serviceState.value = it }
             }
 
-            SpeechToTextOption.Disabled   -> _serviceState.value = Disabled
+            SpeechToTextOption.Disabled -> _serviceState.value = Disabled
         }
 
         //write async after data was send

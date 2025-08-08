@@ -7,8 +7,13 @@ import android.media.MediaPlayer
 import android.net.Uri
 import androidx.annotation.AnyRes
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
@@ -51,8 +56,8 @@ class InternalAudioPlayer(
 
     @Suppress("DEPRECATION")
     private val uri = when (audioSource) {
-        is AudioSource.Data     -> getUriFromData(audioSource.data)
-        is AudioSource.File     -> Uri.fromFile(audioSource.path.toFile())
+        is AudioSource.Data -> getUriFromData(audioSource.data)
+        is AudioSource.File -> Uri.fromFile(audioSource.path.toFile())
         is AudioSource.Resource -> getUriFromResource(audioSource.fileResource.rawResId)
     }
 
@@ -60,7 +65,7 @@ class InternalAudioPlayer(
         setAudioAttributes(
             AudioAttributes.Builder().apply {
                 when (audioOutputOption) {
-                    AudioOutputOption.Sound        -> {
+                    AudioOutputOption.Sound -> {
                         this.setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                         this.setUsage(AudioAttributes.USAGE_MEDIA)
                     }

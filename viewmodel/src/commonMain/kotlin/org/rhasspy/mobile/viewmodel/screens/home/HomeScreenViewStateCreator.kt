@@ -29,7 +29,10 @@ class HomeScreenViewStateCreator(
 
     private fun getViewState(): HomeScreenViewState {
         return HomeScreenViewState(
-            isMicrophonePermissionRequired = ConfigurationSetting.wakeWordOption.value in listOf(WakeWordOption.Porcupine, WakeWordOption.Udp),
+            isMicrophonePermissionRequired = ConfigurationSetting.wakeWordOption.value in listOf(
+                WakeWordOption.Porcupine,
+                WakeWordOption.Udp
+            ),
             isPlayingRecording = serviceMiddleware.isPlayingRecording.value,
             isPlayingRecordingEnabled = serviceMiddleware.isPlayingRecordingEnabled.value,
             microphoneFabViewState = microphoneFabViewStateFlow.value,

@@ -1,7 +1,8 @@
 package org.rhasspy.mobile.platformspecific.firebase
 
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
+
 
 internal actual class Crashlytics : ICrashlytics {
 

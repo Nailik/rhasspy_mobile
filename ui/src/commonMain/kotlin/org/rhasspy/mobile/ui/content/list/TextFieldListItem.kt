@@ -10,9 +10,18 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusEvent
@@ -37,7 +46,6 @@ fun TextFieldListItemVisibility(
     autoCorrect: Boolean = false,
     enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
     isLastItem: Boolean = true,
     onValueChange: ((String) -> Unit)? = null,
     action: (@Composable () -> Unit)? = null,
@@ -53,7 +61,6 @@ fun TextFieldListItemVisibility(
         enabled = enabled,
         onValueChange = onValueChange,
         keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
         isLastItem = isLastItem,
         trailingIcon = {
             IconButton(onClick = { isShowPassword = !isShowPassword }) {
@@ -82,7 +89,6 @@ fun TextFieldListItem(
     enabled: Boolean = true,
     onValueChange: ((String) -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
     isLastItem: Boolean = true,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -97,7 +103,6 @@ fun TextFieldListItem(
         enabled = enabled,
         onValueChange = onValueChange,
         keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
         isLastItem = isLastItem,
         trailingIcon = trailingIcon,
         visualTransformation = visualTransformation,
@@ -116,7 +121,6 @@ fun TextFieldListItem(
     enabled: Boolean = true,
     onValueChange: ((String) -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
     isLastItem: Boolean = true,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -140,12 +144,12 @@ fun TextFieldListItem(
             keyboardOptions = if (isLastItem) {
                 keyboardOptions.copy(
                     imeAction = ImeAction.Done,
-                    autoCorrect = autoCorrect
+                    autoCorrectEnabled = autoCorrect
                 )
             } else {
                 keyboardOptions.copy(
                     imeAction = ImeAction.Next,
-                    autoCorrect = autoCorrect
+                    autoCorrectEnabled = autoCorrect
                 )
             },
             keyboardActions = if (isLastItem) {

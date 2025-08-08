@@ -4,7 +4,18 @@ import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTimeoutError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.EndSession
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionResult
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionTimeoutError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SilenceDetected
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopAudioPlaying
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopListening
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.SessionState
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
@@ -31,16 +42,16 @@ internal class SessionStateActions(
     override fun onAction(action: DialogServiceMiddlewareAction, state: SessionState) {
         if (checkIfActionIsAllowed(action, state)) {
             when (action) {
-                is AsrError                      -> onAsrError(action, state)
-                is AsrTextCaptured               -> onAsrTextCaptured(action, state)
-                is EndSession                    -> onEndSession(action, state)
-                is IntentRecognitionError        -> onIntentRecognitionError(action, state)
-                is IntentRecognitionResult       -> onIntentRecognitionResult(action, state)
-                is SilenceDetected               -> onSilenceDetected(action, state)
-                is StopListening                 -> onStopListening(action, state)
-                is AsrTimeoutError               -> onAsrTimeoutError(action, state)
+                is AsrError -> onAsrError(action, state)
+                is AsrTextCaptured -> onAsrTextCaptured(action, state)
+                is EndSession -> onEndSession(action, state)
+                is IntentRecognitionError -> onIntentRecognitionError(action, state)
+                is IntentRecognitionResult -> onIntentRecognitionResult(action, state)
+                is SilenceDetected -> onSilenceDetected(action, state)
+                is StopListening -> onStopListening(action, state)
+                is AsrTimeoutError -> onAsrTimeoutError(action, state)
                 is IntentRecognitionTimeoutError -> onIntentRecognitionTimeoutError(action, state)
-                else                             -> Unit
+                else -> Unit
             }
         }
     }
@@ -173,7 +184,10 @@ internal class SessionStateActions(
         )
     }
 
-    private fun onIntentRecognitionTimeoutError(action: IntentRecognitionTimeoutError, state: SessionState) {
+    private fun onIntentRecognitionTimeoutError(
+        action: IntentRecognitionTimeoutError,
+        state: SessionState
+    ) {
         stopSpeechToTextService(action, state)
 
         indicationService.onError()
@@ -188,7 +202,10 @@ internal class SessionStateActions(
         )
     }
 
-    private fun stopSpeechToTextService(action: DialogServiceMiddlewareAction, state: SessionState) {
+    private fun stopSpeechToTextService(
+        action: DialogServiceMiddlewareAction,
+        state: SessionState
+    ) {
         if (speechToTextService.isActive) {
             speechToTextService.endSpeechToText(
                 sessionId = state.sessionData.sessionId,
@@ -197,28 +214,31 @@ internal class SessionStateActions(
         }
     }
 
-    private fun checkIfActionIsAllowed(action: DialogServiceMiddlewareAction, state: SessionState): Boolean {
+    private fun checkIfActionIsAllowed(
+        action: DialogServiceMiddlewareAction,
+        state: SessionState
+    ): Boolean {
         //not from mqtt
         if (action.source !is Source.Mqtt) return true
         //session id doesn't match
         if (action.source.sessionId != state.sessionData.sessionId) return false
 
         return when (action) {
-            is WakeWordDetected        -> {
+            is WakeWordDetected -> {
                 val wakeWordOption = ConfigurationSetting.wakeWordOption.value
                 return wakeWordOption == WakeWordOption.MQTT || wakeWordOption == WakeWordOption.Udp
             }
 
             is AsrError,
-            is AsrTextCaptured         -> ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteMQTT
+            is AsrTextCaptured -> ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteMQTT
 
             is IntentRecognitionError,
             is IntentRecognitionResult -> ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.RemoteMQTT
 
             is PlayAudio,
-            is StopAudioPlaying        -> true
+            is StopAudioPlaying -> true
 
-            else                       -> false
+            else -> false
         }
 
     }

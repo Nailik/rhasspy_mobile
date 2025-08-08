@@ -64,7 +64,7 @@ fun Text(
             )
         }
 
-        is TextWrapperString               -> {
+        is TextWrapperString -> {
             androidx.compose.material3.Text(
                 text = wrapper.data,
                 modifier = modifier,

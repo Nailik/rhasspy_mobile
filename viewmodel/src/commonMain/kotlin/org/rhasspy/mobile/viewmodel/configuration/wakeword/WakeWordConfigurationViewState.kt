@@ -11,7 +11,6 @@ import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.platformspecific.toStringOrEmpty
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
@@ -41,7 +40,8 @@ data class WakeWordConfigurationViewState internal constructor(
         val wakeWordAudioOutputData: WakeWordAudioOutputConfigurationData = WakeWordAudioOutputConfigurationData(),
     ) : IConfigurationData {
 
-        val wakeWordOptions: ImmutableList<WakeWordOption> = WakeWordOption.values().toImmutableList()
+        val wakeWordOptions: ImmutableList<WakeWordOption> =
+            WakeWordOption.values().toImmutableList()
 
         @Stable
         data class WakeWordAudioRecorderConfigurationData(
@@ -49,9 +49,12 @@ data class WakeWordConfigurationViewState internal constructor(
             val audioRecorderEncodingType: AudioFormatEncodingType = ConfigurationSetting.wakeWordAudioRecorderEncoding.value,
             val audioRecorderSampleRateType: AudioFormatSampleRateType = ConfigurationSetting.wakeWordAudioRecorderSampleRate.value,
         ) {
-            val audioRecorderChannelTypes: ImmutableList<AudioFormatChannelType> = AudioFormatChannelType.values().toImmutableList()
-            val audioRecorderEncodingTypes: ImmutableList<AudioFormatEncodingType> = AudioFormatEncodingType.supportedValues().toImmutableList()
-            val audioRecorderSampleRateTypes: ImmutableList<AudioFormatSampleRateType> = AudioFormatSampleRateType.values().toImmutableList()
+            val audioRecorderChannelTypes: ImmutableList<AudioFormatChannelType> =
+                AudioFormatChannelType.values().toImmutableList()
+            val audioRecorderEncodingTypes: ImmutableList<AudioFormatEncodingType> =
+                AudioFormatEncodingType.supportedValues().toImmutableList()
+            val audioRecorderSampleRateTypes: ImmutableList<AudioFormatSampleRateType> =
+                AudioFormatSampleRateType.values().toImmutableList()
         }
 
         @Stable
@@ -60,9 +63,12 @@ data class WakeWordConfigurationViewState internal constructor(
             val audioOutputEncodingType: AudioFormatEncodingType = ConfigurationSetting.wakeWordAudioOutputEncoding.value,
             val audioOutputSampleRateType: AudioFormatSampleRateType = ConfigurationSetting.wakeWordAudioOutputSampleRate.value,
         ) {
-            val audioOutputChannelTypes: ImmutableList<AudioFormatChannelType> = AudioFormatChannelType.values().toImmutableList()
-            val audioOutputEncodingTypes: ImmutableList<AudioFormatEncodingType> = AudioFormatEncodingType.supportedValues().toImmutableList()
-            val audioOutputSampleRateTypes: ImmutableList<AudioFormatSampleRateType> = AudioFormatSampleRateType.values().toImmutableList()
+            val audioOutputChannelTypes: ImmutableList<AudioFormatChannelType> =
+                AudioFormatChannelType.values().toImmutableList()
+            val audioOutputEncodingTypes: ImmutableList<AudioFormatEncodingType> =
+                AudioFormatEncodingType.supportedValues().toImmutableList()
+            val audioOutputSampleRateTypes: ImmutableList<AudioFormatSampleRateType> =
+                AudioFormatSampleRateType.values().toImmutableList()
         }
 
         @Stable
@@ -74,7 +80,8 @@ data class WakeWordConfigurationViewState internal constructor(
             val deletedCustomOptions: ImmutableList<PorcupineCustomKeyword> = persistentListOf(),
         ) {
 
-            val languageOptions: ImmutableList<PorcupineLanguageOption> = PorcupineLanguageOption.values().toImmutableList()
+            val languageOptions: ImmutableList<PorcupineLanguageOption> =
+                PorcupineLanguageOption.values().toImmutableList()
 
             val customOptionsUi: ImmutableList<PorcupineCustomKeywordViewState> =
                 customOptions.map {
@@ -85,7 +92,8 @@ data class WakeWordConfigurationViewState internal constructor(
                 }.toImmutableList()
 
             val defaultOptionsUi: ImmutableList<PorcupineDefaultKeyword>
-                get() = defaultOptions.filter { it.option.language == porcupineLanguage }.toImmutableList()
+                get() = defaultOptions.filter { it.option.language == porcupineLanguage }
+                    .toImmutableList()
 
             val keywordCount: Int get() = defaultOptionsUi.count { it.isEnabled } + customOptionsUi.count { it.keyword.isEnabled }
 

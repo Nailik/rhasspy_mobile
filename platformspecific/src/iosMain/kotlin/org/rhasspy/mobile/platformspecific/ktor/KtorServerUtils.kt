@@ -2,9 +2,8 @@ package org.rhasspy.mobile.platformspecific.ktor
 
 import io.ktor.server.application.Application
 import io.ktor.server.cio.CIO
-import io.ktor.server.engine.ApplicationEngineEnvironment
-import io.ktor.server.engine.ApplicationEngineEnvironmentBuilder
-import io.ktor.server.engine.BaseApplicationEngine
+import io.ktor.server.engine.ApplicationEngine
+import io.ktor.server.engine.EmbeddedServer
 import io.ktor.server.engine.embeddedServer
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
@@ -25,7 +24,7 @@ actual fun Application.installCallLogging() {
 /**
  * create connector for webserver with ssl settings if enabled
  */
-actual fun ApplicationEngineEnvironmentBuilder.installConnector(
+actual fun ApplicationEngine.Configuration.installConnector(
     nativeApplication: NativeApplication,
     port: Int,
     isUseSSL: Boolean,
@@ -40,6 +39,13 @@ actual fun ApplicationEngineEnvironmentBuilder.installConnector(
 /**
  * get server engine
  */
-actual fun getEngine(environment: ApplicationEngineEnvironment): BaseApplicationEngine {
-    return embeddedServer(factory = CIO, environment = environment) //TODO("Not yet implemented")
+actual fun getEngine(
+    configure: ApplicationEngine.Configuration.() -> Unit,
+    module: Application.() -> Unit
+): EmbeddedServer<*, *> {
+    return embeddedServer(
+        factory = CIO,
+        configure = configure,
+        module = module,
+    ) //TODO("Not yet implemented")
 }

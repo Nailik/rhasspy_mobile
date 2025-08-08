@@ -99,7 +99,7 @@ internal actual class SettingsUtils actual constructor(
                         } ?: false
                 }
 
-                else                             -> false
+                else -> false
             }
 
 

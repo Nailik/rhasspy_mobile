@@ -61,7 +61,7 @@ internal class TextToSpeechService(
                     when (it.textToSpeechOption) {
                         TextToSpeechOption.RemoteHTTP -> Success
                         TextToSpeechOption.RemoteMQTT -> Success
-                        TextToSpeechOption.Disabled   -> Disabled
+                        TextToSpeechOption.Disabled -> Disabled
                     }
             }
         }
@@ -85,11 +85,11 @@ internal class TextToSpeechService(
             TextToSpeechOption.RemoteHTTP -> {
                 httpClientService.textToSpeech(text, volume, null) { result ->
                     _serviceState.value = when (result) {
-                        is HttpClientResult.Error   -> ServiceState.Exception(result.exception)
+                        is HttpClientResult.Error -> ServiceState.Exception(result.exception)
                         is HttpClientResult.Success -> Success
                     }
                     val action = when (result) {
-                        is HttpClientResult.Error   -> AsrError(Source.Local)
+                        is HttpClientResult.Error -> AsrError(Source.Local)
                         is HttpClientResult.Success -> PlayAudio(Source.Local, result.data)
                     }
                     serviceMiddleware.action(action)
@@ -101,7 +101,7 @@ internal class TextToSpeechService(
                 mqttClientService.say(mqttSessionId, text, siteId) { _serviceState.value = it }
             }
 
-            TextToSpeechOption.Disabled   -> _serviceState.value = Disabled
+            TextToSpeechOption.Disabled -> _serviceState.value = Disabled
         }
     }
 

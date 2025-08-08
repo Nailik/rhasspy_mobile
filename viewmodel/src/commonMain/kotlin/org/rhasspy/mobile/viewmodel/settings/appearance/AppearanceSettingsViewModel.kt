@@ -37,7 +37,7 @@ class AppearanceSettingsViewModel(
                     it.copy(languageOption = change.option)
                 }
 
-                is SelectThemeOption    -> {
+                is SelectThemeOption -> {
                     AppSetting.themeType.value = change.option
                     it.copy(themeOption = change.option)
                 }

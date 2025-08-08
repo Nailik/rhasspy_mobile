@@ -51,7 +51,10 @@ internal actual class BackgroundService : IBackgroundService, Service(), KoinCom
             nativeApplication.isAppInBackground.first { !it }
             //start as foreground service and instantly display notification
             ContextCompat.startForegroundService(nativeApplication, intent)
-            startForeground(ServiceNotification.ONGOING_NOTIFICATION_ID, ServiceNotification.create())
+            startForeground(
+                ServiceNotification.ONGOING_NOTIFICATION_ID,
+                ServiceNotification.create()
+            )
         }
     }
 

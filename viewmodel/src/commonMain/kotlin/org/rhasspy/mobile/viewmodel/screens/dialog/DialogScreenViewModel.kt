@@ -22,9 +22,11 @@ class DialogScreenViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            ToggleListAutoScroll -> AppSetting.isDialogAutoscroll.value = !AppSetting.isDialogAutoscroll.value
-            ManualListScroll     -> AppSetting.isDialogAutoscroll.value = false
-            else                 -> dialogManagerService.clearHistory()
+            ToggleListAutoScroll -> AppSetting.isDialogAutoscroll.value =
+                !AppSetting.isDialogAutoscroll.value
+
+            ManualListScroll -> AppSetting.isDialogAutoscroll.value = false
+            else -> dialogManagerService.clearHistory()
         }
     }
 

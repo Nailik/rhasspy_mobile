@@ -1,12 +1,22 @@
 package org.rhasspy.mobile.android.settings.content
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextReplacement
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.utils.FlakyTest
+import org.rhasspy.mobile.android.utils.hasTestTag
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.requestMicrophonePermissions
+import org.rhasspy.mobile.android.utils.waitUntilExists
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
@@ -113,7 +123,8 @@ class SilenceDetectionSettingsContentTest : FlakyTest() {
             .assertDoesNotExist()
 
         //user clicks audio level test
-        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTest).performScrollTo()
+        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTest)
+            .performScrollTo()
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTest).performClick()
         composeTestRule.awaitIdle()

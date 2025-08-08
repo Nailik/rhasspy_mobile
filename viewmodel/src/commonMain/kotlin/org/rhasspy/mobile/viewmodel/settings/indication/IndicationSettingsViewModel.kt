@@ -7,7 +7,10 @@ import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEven
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change
-import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SelectSoundIndicationOutputOption
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetSoundIndicationEnabled
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetWakeWordDetectionTurnOnDisplay
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetWakeWordLightIndicationEnabled
 
 @Stable
 class IndicationSettingsViewModel(
@@ -25,7 +28,7 @@ class IndicationSettingsViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            is SetSoundIndicationEnabled         -> AppSetting.isSoundIndicationEnabled.value =
+            is SetSoundIndicationEnabled -> AppSetting.isSoundIndicationEnabled.value =
                 change.enabled
 
             is SelectSoundIndicationOutputOption -> AppSetting.soundIndicationOutputOption.value =
@@ -44,7 +47,7 @@ class IndicationSettingsViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick   -> navigator.onBackPressed()
+            BackClick -> navigator.onBackPressed()
             is Navigate -> navigator.navigate(action.destination)
         }
     }

@@ -91,7 +91,8 @@ sealed interface WakeWordConfigurationUiEvent {
 
             data class SelectAudioRecorderChannelType(val value: AudioFormatChannelType) : Change
             data class SelectAudioRecorderEncodingType(val value: AudioFormatEncodingType) : Change
-            data class SelectAudioRecorderSampleRateType(val value: AudioFormatSampleRateType) : Change
+            data class SelectAudioRecorderSampleRateType(val value: AudioFormatSampleRateType) :
+                Change
         }
 
 
@@ -103,7 +104,8 @@ sealed interface WakeWordConfigurationUiEvent {
 
             data class SelectAudioOutputChannelType(val value: AudioFormatChannelType) : Change
             data class SelectAudioOutputEncodingType(val value: AudioFormatEncodingType) : Change
-            data class SelectAudioOutputSampleRateType(val value: AudioFormatSampleRateType) : Change
+            data class SelectAudioOutputSampleRateType(val value: AudioFormatSampleRateType) :
+                Change
         }
 
 

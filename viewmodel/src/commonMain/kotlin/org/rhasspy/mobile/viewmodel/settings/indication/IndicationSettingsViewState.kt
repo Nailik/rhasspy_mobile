@@ -2,8 +2,8 @@ package org.rhasspy.mobile.viewmodel.settings.indication
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
-import org.rhasspy.mobile.platformspecific.toImmutableList
 
 @Stable
 data class IndicationSettingsViewState internal constructor(

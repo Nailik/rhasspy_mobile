@@ -12,9 +12,14 @@ import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.ServiceStateDialogState
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.UnsavedChangesDialogState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Discard
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.OpenServiceStateDialog
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction.*
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction.Close
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction.Confirm
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction.Dismiss
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
@@ -26,7 +31,8 @@ abstract class ConfigurationViewModel(
     protected val viewStateCreator by inject<IConfigurationViewStateCreator> { parametersOf(service) }
     private val dispatcher by inject<IDispatcherProvider>()
 
-    private val _configurationViewState = MutableStateFlow(ConfigurationViewState(serviceViewState = ServiceViewState(service.serviceState)))
+    private val _configurationViewState =
+        MutableStateFlow(ConfigurationViewState(serviceViewState = ServiceViewState(service.serviceState)))
     val configurationViewState by lazy { initViewStateCreator(_configurationViewState) }
     abstract fun initViewStateCreator(configurationViewState: MutableStateFlow<ConfigurationViewState>): StateFlow<ConfigurationViewState>
 
@@ -36,17 +42,24 @@ abstract class ConfigurationViewModel(
 
     fun onEvent(event: IConfigurationUiEvent) {
         when (event) {
-            is Action       -> onAction(event)
+            is Action -> onAction(event)
             is DialogAction -> onDialog(event)
         }
     }
 
     private fun onAction(action: Action) {
         when (action) {
-            Discard                -> discard(false)
-            Save                   -> save(false)
-            OpenServiceStateDialog -> _configurationViewState.update { it.copy(dialogState = ServiceStateDialogState(service.serviceState.value.getText())) }
-            BackClick              -> navigator.onBackPressed()
+            Discard -> discard(false)
+            Save -> save(false)
+            OpenServiceStateDialog -> _configurationViewState.update {
+                it.copy(
+                    dialogState = ServiceStateDialogState(
+                        service.serviceState.value.getText()
+                    )
+                )
+            }
+
+            BackClick -> navigator.onBackPressed()
         }
     }
 
@@ -59,10 +72,10 @@ abstract class ConfigurationViewModel(
                 when (dialogAction) {
                     is Confirm -> save(true)
                     is Dismiss -> discard(true)
-                    is Close   -> _configurationViewState.update { it.copy(dialogState = null) }
+                    is Close -> _configurationViewState.update { it.copy(dialogState = null) }
                 }
 
-            else                      -> Unit
+            else -> Unit
         }
 
     }
@@ -95,14 +108,14 @@ abstract class ConfigurationViewModel(
                 true
             }
 
-            null                      -> {
+            null -> {
                 if (_configurationViewState.value.hasUnsavedChanges) {
                     _configurationViewState.update { it.copy(dialogState = UnsavedChangesDialogState) }
                     true
                 } else false
             }
 
-            else                      -> {
+            else -> {
                 _configurationViewState.update { it.copy(dialogState = null) }
                 true
             }

@@ -1,14 +1,32 @@
 package org.rhasspy.mobile.logic.middleware
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import okio.Path
-import org.rhasspy.mobile.data.service.option.*
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.*
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.data.service.option.AudioPlayingOption
+import org.rhasspy.mobile.data.service.option.DialogManagementOption
+import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
+import org.rhasspy.mobile.data.service.option.SpeechToTextOption
+import org.rhasspy.mobile.data.service.option.TextToSpeechOption
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioOutputToggle
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.HotWordToggle
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.IntentHandlingToggle
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopListening
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.Mqtt
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.PlayStopRecording
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.SayText
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.WakeWordError
 import org.rhasspy.mobile.logic.middleware.Source.Local
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.IdleState
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerState.SessionState.RecordingIntentState
@@ -73,10 +91,10 @@ internal class ServiceMiddleware(
             previousJob?.join()
 
             when (serviceMiddlewareAction) {
-                is PlayStopRecording                  -> playStopRecordingAction()
-                is WakeWordError                      -> mqttService.wakeWordError(serviceMiddlewareAction.description)
+                is PlayStopRecording -> playStopRecordingAction()
+                is WakeWordError -> mqttService.wakeWordError(serviceMiddlewareAction.description)
                 is AppSettingsServiceMiddlewareAction -> appSettingsAction(serviceMiddlewareAction)
-                is SayText                            ->
+                is SayText ->
                     textToSpeechService.textToSpeech(
                         text = serviceMiddlewareAction.text,
                         volume = serviceMiddlewareAction.volume,
@@ -84,18 +102,31 @@ internal class ServiceMiddleware(
                         sessionId = serviceMiddlewareAction.sessionId
                     )
 
-                is DialogServiceMiddlewareAction      -> dialogManagerService.onAction(serviceMiddlewareAction)
-                is Mqtt                               -> mqttService.onMessageReceived(serviceMiddlewareAction.topic, serviceMiddlewareAction.payload)
+                is DialogServiceMiddlewareAction -> dialogManagerService.onAction(
+                    serviceMiddlewareAction
+                )
+
+                is Mqtt -> mqttService.onMessageReceived(
+                    serviceMiddlewareAction.topic,
+                    serviceMiddlewareAction.payload
+                )
             }
         }
     }
 
     private fun appSettingsAction(action: AppSettingsServiceMiddlewareAction) {
         when (action) {
-            is AudioOutputToggle    -> appSettingsService.audioOutputToggle(action.enabled, action.source)
-            is AudioVolumeChange    -> appSettingsService.setAudioVolume(action.volume, action.source)
-            is HotWordToggle        -> appSettingsService.hotWordToggle(action.enabled, action.source)
-            is IntentHandlingToggle -> appSettingsService.intentHandlingToggle(action.enabled, action.source)
+            is AudioOutputToggle -> appSettingsService.audioOutputToggle(
+                action.enabled,
+                action.source
+            )
+
+            is AudioVolumeChange -> appSettingsService.setAudioVolume(action.volume, action.source)
+            is HotWordToggle -> appSettingsService.hotWordToggle(action.enabled, action.source)
+            is IntentHandlingToggle -> appSettingsService.intentHandlingToggle(
+                action.enabled,
+                action.source
+            )
         }
     }
 
@@ -120,7 +151,7 @@ internal class ServiceMiddleware(
 
     override fun userSessionClick() {
         when (dialogManagerService.currentDialogState.value) {
-            is IdleState            -> {
+            is IdleState -> {
                 if (isAnyServiceUsingMqtt() && !mqttService.isHasStarted.value) {
                     //await for mqtt to be started (connected and subscribed to topics) in the case that any service is using mqtt
                     //this is necessary to ensure all topics are correctly being sent and consumed
@@ -135,7 +166,7 @@ internal class ServiceMiddleware(
             }
 
             is RecordingIntentState -> action(StopListening(Local))
-            else                    -> Unit
+            else -> Unit
         }
     }
 

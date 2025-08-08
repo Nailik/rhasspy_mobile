@@ -3,7 +3,23 @@ package org.rhasspy.mobile.logic.services.dialog.dialogmanager.mqtt
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTimeoutError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.EndSession
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionResult
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionTimeoutError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionEnded
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionStarted
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SilenceDetected
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartListening
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartSession
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopAudioPlaying
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopListening
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.middleware.Source.Mqtt
 import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
@@ -43,28 +59,31 @@ class DialogManagerMqtt(
         with(dialogManagerService.currentDialogState.value) {
             logger.d { "action $action on state $this" }
             when (action) {
-                is AsrError                      -> dialogManagerService.addToHistory(action)
-                is AsrTextCaptured               -> dialogManagerService.addToHistory(action)
-                is EndSession                    -> dialogManagerService.addToHistory(action)
-                is IntentRecognitionError        -> dialogManagerService.addToHistory(action)
-                is IntentRecognitionResult       -> onIntentRecognitionResult(action, this)
-                is PlayAudio                     -> onPlayAudio(action)
-                is PlayFinished                  -> onPlayFinished(action)
-                is SessionEnded                  -> onSessionEnded(action, this)
-                is SessionStarted                -> dialogManagerService.addToHistory(action)
-                is SilenceDetected               -> onSilenceDetected(action, this)
-                is StartListening                -> onStartListening(action)
-                is StartSession                  -> dialogManagerService.addToHistory(action)
-                is StopAudioPlaying              -> onStopAudioPlaying(action)
-                is StopListening                 -> onStopListening(action, this)
-                is WakeWordDetected              -> onWakeWordDetected(action)
-                is AsrTimeoutError               -> onAsrTimeoutError(action, this)
+                is AsrError -> dialogManagerService.addToHistory(action)
+                is AsrTextCaptured -> dialogManagerService.addToHistory(action)
+                is EndSession -> dialogManagerService.addToHistory(action)
+                is IntentRecognitionError -> dialogManagerService.addToHistory(action)
+                is IntentRecognitionResult -> onIntentRecognitionResult(action, this)
+                is PlayAudio -> onPlayAudio(action)
+                is PlayFinished -> onPlayFinished(action)
+                is SessionEnded -> onSessionEnded(action, this)
+                is SessionStarted -> dialogManagerService.addToHistory(action)
+                is SilenceDetected -> onSilenceDetected(action, this)
+                is StartListening -> onStartListening(action)
+                is StartSession -> dialogManagerService.addToHistory(action)
+                is StopAudioPlaying -> onStopAudioPlaying(action)
+                is StopListening -> onStopListening(action, this)
+                is WakeWordDetected -> onWakeWordDetected(action)
+                is AsrTimeoutError -> onAsrTimeoutError(action, this)
                 is IntentRecognitionTimeoutError -> onIntentRecognitionTimeoutError(action, this)
             }
         }
     }
 
-    private fun onIntentRecognitionResult(action: IntentRecognitionResult, state: DialogManagerState) {
+    private fun onIntentRecognitionResult(
+        action: IntentRecognitionResult,
+        state: DialogManagerState
+    ) {
         state.stopTimeoutJob()
 
         stopSpeechToTextService(action, state)
@@ -190,7 +209,10 @@ class DialogManagerMqtt(
         )
     }
 
-    private fun onIntentRecognitionTimeoutError(action: IntentRecognitionTimeoutError, state: DialogManagerState) {
+    private fun onIntentRecognitionTimeoutError(
+        action: IntentRecognitionTimeoutError,
+        state: DialogManagerState
+    ) {
         state.stopTimeoutJob()
 
         stopSpeechToTextService(action, state)
@@ -204,7 +226,10 @@ class DialogManagerMqtt(
         )
     }
 
-    private fun stopSpeechToTextService(action: DialogServiceMiddlewareAction, state: DialogManagerState) {
+    private fun stopSpeechToTextService(
+        action: DialogServiceMiddlewareAction,
+        state: DialogManagerState
+    ) {
         state.stopTimeoutJob()
 
         if (speechToTextService.isActive) {
@@ -239,8 +264,8 @@ class DialogManagerMqtt(
     private fun getNewSessionId(source: Source): String {
         return when (source) {
             Source.HttpApi -> uuid4().toString()
-            Source.Local   -> uuid4().toString()
-            is Mqtt        -> source.sessionId ?: uuid4().toString()
+            Source.Local -> uuid4().toString()
+            is Mqtt -> source.sessionId ?: uuid4().toString()
         }
     }
 

@@ -13,7 +13,9 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.*
+import org.rhasspy.mobile.data.service.ServiceState.Disabled
+import org.rhasspy.mobile.data.service.ServiceState.Pending
+import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
@@ -24,7 +26,6 @@ import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
 import org.rhasspy.mobile.logic.services.httpclient.IHttpClientService
 import org.rhasspy.mobile.logic.services.mqtt.IMqttService
 import org.rhasspy.mobile.platformspecific.readOnly
-import kotlin.Exception
 
 interface IIntentRecognitionService : IService {
 
@@ -69,7 +70,7 @@ internal class IntentRecognitionService(
         _serviceState.value = when (params.intentRecognitionOption) {
             IntentRecognitionOption.RemoteHTTP -> Success
             IntentRecognitionOption.RemoteMQTT -> Success
-            IntentRecognitionOption.Disabled   -> Disabled
+            IntentRecognitionOption.Disabled -> Disabled
         }
     }
 
@@ -97,7 +98,7 @@ internal class IntentRecognitionService(
                 httpClientService.recognizeIntent(text) { result ->
                     _serviceState.value = result.toServiceState()
                     val action = when (result) {
-                        is HttpClientResult.Error   -> IntentRecognitionError(Source.Local)
+                        is HttpClientResult.Error -> IntentRecognitionError(Source.Local)
                         is HttpClientResult.Success -> IntentRecognitionResult(
                             source = Source.Local,
                             intentName = readIntentNameFromJson(result.data),
@@ -108,11 +109,14 @@ internal class IntentRecognitionService(
                 }
             }
 
-            IntentRecognitionOption.RemoteMQTT -> mqttClientService.recognizeIntent(sessionId, text) {
+            IntentRecognitionOption.RemoteMQTT -> mqttClientService.recognizeIntent(
+                sessionId,
+                text
+            ) {
                 _serviceState.value = it
             }
 
-            IntentRecognitionOption.Disabled   -> serviceMiddleware.action(
+            IntentRecognitionOption.Disabled -> serviceMiddleware.action(
                 IntentRecognitionResult(
                     Source.Local,
                     "",

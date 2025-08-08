@@ -26,7 +26,7 @@ class MicrophoneOverlaySettingsViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            is SelectMicrophoneOverlaySizeOption   ->
+            is SelectMicrophoneOverlaySizeOption ->
                 if (change.option != MicrophoneOverlaySizeOption.Disabled) {
                     requireOverlayPermission {
                         AppSetting.microphoneOverlaySizeOption.value = change.option

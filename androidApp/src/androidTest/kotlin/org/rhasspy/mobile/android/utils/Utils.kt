@@ -5,8 +5,23 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.SemanticsNodeInteractionCollection
+import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.filter
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.isEnabled
+import androidx.compose.ui.test.isSelectable
+import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onChildAt
+import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.permission.PermissionRequester
@@ -96,7 +111,7 @@ private fun getText(text: StableStringResource): String {
         is StableResourceFormattedStringDesc ->
             text.stringResource.toString(getInstrumentation().targetContext.applicationContext)
 
-        is StableStringResourceSingle        ->
+        is StableStringResourceSingle ->
             StringDesc.Resource(text.stringResource)
                 .toString(getInstrumentation().targetContext.applicationContext)
     }
@@ -118,11 +133,11 @@ fun requestExternalStoragePermissions(device: UiDevice) {
             }
         }
 
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R                                                  -> {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
             device.executeShellCommand("appops set --uid ${getInstrumentation().targetContext.packageName} MANAGE_EXTERNAL_STORAGE allow")
         }
 
-        else                                                                                            -> return
+        else -> return
     }
     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).listFiles()
         ?.forEach {

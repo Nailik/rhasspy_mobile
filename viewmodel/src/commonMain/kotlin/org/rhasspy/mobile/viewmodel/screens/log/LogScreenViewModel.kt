@@ -12,11 +12,13 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.*
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.SaveLogFile
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.ShareLogFile
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Change
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Change.ManualListScroll
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Change.ToggleListAutoScroll
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Consumed
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Consumed.ShowSnackBar
 
 @Stable
@@ -32,8 +34,8 @@ class LogScreenViewModel(
 
     fun onEvent(event: LogScreenUiEvent) {
         when (event) {
-            is Change   -> onChange(event)
-            is Action   -> onAction(event)
+            is Change -> onChange(event)
+            is Action -> onAction(event)
             is Consumed -> onConsumed(event)
         }
     }
@@ -43,13 +45,13 @@ class LogScreenViewModel(
             ToggleListAutoScroll -> AppSetting.isLogAutoscroll.value =
                 !AppSetting.isLogAutoscroll.value
 
-            ManualListScroll     -> AppSetting.isLogAutoscroll.value = false
+            ManualListScroll -> AppSetting.isLogAutoscroll.value = false
         }
     }
 
     private fun onAction(action: Action) {
         when (action) {
-            SaveLogFile  -> {
+            SaveLogFile -> {
                 viewModelScope.launch(dispatcher.IO) {
                     if (!fileLogger.saveLogFile()) {
                         _viewState.update {

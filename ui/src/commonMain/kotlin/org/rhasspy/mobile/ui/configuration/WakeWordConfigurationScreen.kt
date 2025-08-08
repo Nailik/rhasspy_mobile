@@ -12,7 +12,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.data.resource.stable
@@ -32,7 +36,10 @@ import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.OpenAudioOutputFormat
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.OpenAudioRecorderFormat
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.RequestMicrophonePermission
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
@@ -40,7 +47,10 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordAudioOutputConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordAudioRecorderConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordPorcupineConfigurationData
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.WakeWordConfigurationData.WakeWordUdpConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordConfigurationScreenDestination.EditPorcupineWakeWordScreen
@@ -106,7 +116,7 @@ private fun WakeWordConfigurationOptionContent(
                     onEvent = onEvent
                 )
 
-            WakeWordOption.Udp       ->
+            WakeWordOption.Udp ->
                 UdpSettings(
                     editData = viewState.editData.wakeWordUdpConfigurationData,
                     wakeWordAudioRecorderData = viewState.editData.wakeWordAudioRecorderData,
@@ -115,7 +125,7 @@ private fun WakeWordConfigurationOptionContent(
                     onEvent = onEvent
                 )
 
-            else                     -> Unit
+            else -> Unit
         }
 
     }
@@ -193,9 +203,10 @@ private fun PorcupineConfiguration(
             modifier = Modifier.clickable { onEvent(OpenAudioRecorderFormat) },
             text = { Text(MR.strings.audioRecorderFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(wakeWordAudioRecorderData.audioRecorderChannelType.text)} | " +
-                        "${translate(wakeWordAudioRecorderData.audioRecorderEncodingType.text)} | " +
-                        translate(wakeWordAudioRecorderData.audioRecorderSampleRateType.text)
+                val text =
+                    "${translate(wakeWordAudioRecorderData.audioRecorderChannelType.text)} | " +
+                            "${translate(wakeWordAudioRecorderData.audioRecorderEncodingType.text)} | " +
+                            translate(wakeWordAudioRecorderData.audioRecorderSampleRateType.text)
                 Text(text = text)
             }
         )
@@ -253,9 +264,10 @@ private fun UdpSettings(
             modifier = Modifier.clickable { onEvent(OpenAudioRecorderFormat) },
             text = { Text(MR.strings.audioRecorderFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(wakeWordAudioRecorderData.audioRecorderChannelType.text)} | " +
-                        "${translate(wakeWordAudioRecorderData.audioRecorderEncodingType.text)} | " +
-                        translate(wakeWordAudioRecorderData.audioRecorderSampleRateType.text)
+                val text =
+                    "${translate(wakeWordAudioRecorderData.audioRecorderChannelType.text)} | " +
+                            "${translate(wakeWordAudioRecorderData.audioRecorderEncodingType.text)} | " +
+                            translate(wakeWordAudioRecorderData.audioRecorderSampleRateType.text)
                 Text(text = text)
             }
         )

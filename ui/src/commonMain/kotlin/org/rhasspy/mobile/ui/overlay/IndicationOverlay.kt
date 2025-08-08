@@ -1,8 +1,23 @@
 package org.rhasspy.mobile.ui.overlay
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -15,7 +30,11 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.indication.IndicationState
-import org.rhasspy.mobile.data.indication.IndicationState.*
+import org.rhasspy.mobile.data.indication.IndicationState.Idle
+import org.rhasspy.mobile.data.indication.IndicationState.Recording
+import org.rhasspy.mobile.data.indication.IndicationState.Speaking
+import org.rhasspy.mobile.data.indication.IndicationState.Thinking
+import org.rhasspy.mobile.data.indication.IndicationState.WakeUp
 import org.rhasspy.mobile.resources.assistant_color_four
 import org.rhasspy.mobile.resources.assistant_color_one
 import org.rhasspy.mobile.resources.assistant_color_three
@@ -68,11 +87,11 @@ private fun Indication(
     ) {
 
         when (indicationState) {
-            Idle      -> Unit
-            WakeUp    -> WakeupIndication()
+            Idle -> Unit
+            WakeUp -> WakeupIndication()
             Recording -> RecordingIndication()
-            Thinking  -> ThinkingIndication()
-            Speaking  -> SpeakingIndication()
+            Thinking -> ThinkingIndication()
+            Speaking -> SpeakingIndication()
         }
     }
 }
@@ -237,7 +256,7 @@ private fun IndicationCircle(color: Color, item: Int, current: Float) {
         val height = abs(item - current)
         return when {
             height < 1.5f -> height
-            else          -> 1f
+            else -> 1f
         }
     }
 

@@ -5,10 +5,8 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.application.install
-import io.ktor.server.engine.BaseApplicationEngine
-import io.ktor.server.engine.applicationEngineEnvironment
+import io.ktor.server.engine.EmbeddedServer
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.dataconversion.DataConversion
 import io.ktor.server.plugins.statuspages.StatusPages
@@ -31,14 +29,21 @@ import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.HotWordToggle
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartListening
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopListening
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.Mqtt
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.PlayStopRecording
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.SayText
 import org.rhasspy.mobile.logic.middleware.Source.HttpApi
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
-import org.rhasspy.mobile.logic.services.webserver.WebServerResult.*
+import org.rhasspy.mobile.logic.services.webserver.WebServerResult.Accepted
+import org.rhasspy.mobile.logic.services.webserver.WebServerResult.Error
+import org.rhasspy.mobile.logic.services.webserver.WebServerResult.Ok
 import org.rhasspy.mobile.logic.services.webserver.WebServerServiceErrorType.WakeOptionInvalid
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.commonExists
@@ -86,7 +91,7 @@ internal class WebServerService(
         val audioContentType = ContentType("audio", "wav")
     }
 
-    private var server: BaseApplicationEngine? = null
+    private var server: EmbeddedServer<*, *>? = null
 
     /**
      * starts server when enabled
@@ -136,10 +141,8 @@ internal class WebServerService(
     /**
      * build server with routing and addons
      */
-    private fun buildServer(): BaseApplicationEngine {
-        // TrafficStats.setTrafficStatsTag()
-        logger.d { "buildServer" }
-        val environment = applicationEngineEnvironment {
+    private fun buildServer() = getEngine(
+        configure = {
             installConnector(
                 nativeApplication = nativeApplication,
                 port = params.httpServerPort,
@@ -149,31 +152,29 @@ internal class WebServerService(
                 keyAlias = params.httpServerSSLKeyAlias,
                 keyPassword = params.httpServerSSLKeyPassword
             )
-            module {
-                //install(WebSockets)
-                installCallLogging()
-                install(DataConversion)
-                //Greatly reduces the amount of data that's needed to be sent to the client by
-                //gzipping outgoing content when applicable.
-                installCompression()
+        },
+        module = {
+            installCallLogging()
+            //install(WebSockets)
+            install(DataConversion)
+            //Greatly reduces the amount of data that's needed to be sent to the client by
+            //gzipping outgoing content when applicable.
+            installCompression()
 
-                // configures Cross-Origin Resource Sharing. CORS is needed to make calls from arbitrary
-                // JavaScript clients, and helps us prevent issues down the line.
-                install(CORS) {
-                    methods.add(HttpMethod.Get)
-                    methods.add(HttpMethod.Post)
-                    methods.add(HttpMethod.Delete)
-                    anyHost()
-                }
-
-                buildStatusPages()
-
-                buildRouting()
+            // configures Cross-Origin Resource Sharing. CORS is needed to make calls from arbitrary
+            // JavaScript clients, and helps us prevent issues down the line.
+            install(CORS) {
+                methods.add(HttpMethod.Get)
+                methods.add(HttpMethod.Post)
+                methods.add(HttpMethod.Delete)
+                anyHost()
             }
-        }
 
-        return getEngine(environment = environment)
-    }
+            buildStatusPages()
+
+            buildRouting()
+        }
+    )
 
     /**
      * evaluates HttpStatusCode and updates event state
@@ -196,13 +197,13 @@ internal class WebServerService(
      */
     private fun Application.buildRouting() {
         routing {
-            WebServerPath.values().forEach { path ->
+            WebServerPath.entries.forEach { path ->
                 when (path.type) {
                     WebServerPath.WebServerCallType.POST -> post(path.path) {
                         evaluateCall(path, call)
                     }
 
-                    WebServerPath.WebServerCallType.GET  -> get(path.path) {
+                    WebServerPath.WebServerCallType.GET -> get(path.path) {
                         evaluateCall(path, call)
                     }
                 }
@@ -217,28 +218,28 @@ internal class WebServerService(
         logger.d { "evaluateCall ${path.path} ${call.parameters}" }
         try {
             val result = when (path) {
-                WebServerPath.ListenForCommand  -> listenForCommand()
-                WebServerPath.ListenForWake     -> listenForWake(call)
+                WebServerPath.ListenForCommand -> listenForCommand()
+                WebServerPath.ListenForWake -> listenForWake(call)
                 WebServerPath.PlayRecordingPost -> playRecordingPost()
-                WebServerPath.PlayRecordingGet  -> playRecordingGet(call)
-                WebServerPath.PlayWav           -> playWav(call)
-                WebServerPath.SetVolume         -> setVolume(call)
-                WebServerPath.StartRecording    -> startRecording()
-                WebServerPath.StopRecording     -> stopRecording()
-                WebServerPath.Say               -> say(call)
-                WebServerPath.Mqtt              -> mqtt(call)
+                WebServerPath.PlayRecordingGet -> playRecordingGet(call)
+                WebServerPath.PlayWav -> playWav(call)
+                WebServerPath.SetVolume -> setVolume(call)
+                WebServerPath.StartRecording -> startRecording()
+                WebServerPath.StopRecording -> stopRecording()
+                WebServerPath.Say -> say(call)
+                WebServerPath.Mqtt -> mqtt(call)
             }
 
             when (result) {
                 is Accepted -> call.respond(HttpStatusCode.Accepted, result.data)
 
-                is Error    -> {
+                is Error -> {
                     logger.d { "evaluateCall BadRequest ${result.errorType.description}" }
                     call.respond(HttpStatusCode.BadRequest, result.errorType.description)
                 }
 
-                Ok          -> call.respond(HttpStatusCode.OK)
-                else        -> Unit
+                Ok -> call.respond(HttpStatusCode.OK)
+                else -> Unit
             }
             _serviceState.value = ServiceState.Success
 
@@ -271,9 +272,9 @@ internal class WebServerService(
     private suspend fun listenForWake(call: ApplicationCall): WebServerResult {
         val value = call.receive<String>()
         val action = when (value) {
-            "on"  -> true
+            "on" -> true
             "off" -> false
-            else  -> null
+            else -> null
         }
 
         return action?.let {

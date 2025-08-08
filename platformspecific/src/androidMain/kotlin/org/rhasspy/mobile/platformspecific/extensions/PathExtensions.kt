@@ -5,10 +5,13 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import co.touchlab.kermit.Severity
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
-import okio.*
+import okio.FileHandle
+import okio.FileSystem
+import okio.Path
+import okio.Source
+import okio.source
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Result
@@ -35,7 +38,8 @@ actual fun Path.commonSize(): Long? = FileSystem.SYSTEM.metadata(this).size
 
 actual fun Path.commonSource(): Source = this.toFile().source()
 
-actual fun Path.commonReadWrite(): FileHandle = FileSystem.SYSTEM.openReadWrite(this, !FileSystem.SYSTEM.exists(this))
+actual fun Path.commonReadWrite(): FileHandle =
+    FileSystem.SYSTEM.openReadWrite(this, !FileSystem.SYSTEM.exists(this))
 
 @OptIn(ExperimentalSerializationApi::class)
 actual inline fun <reified T> Path.commonDecodeLogList(): T =

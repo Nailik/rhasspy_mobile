@@ -12,7 +12,12 @@ import org.rhasspy.mobile.platformspecific.settings.ISettingsUtils
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action
-import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.ExportSettingsFile
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.ExportSettingsFileDialogResult
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.RestoreSettingsFromFile
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.RestoreSettingsFromFileDialogResult
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.ShareSettingsFile
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Consumed
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Consumed.ShowSnackBar
 
@@ -28,7 +33,7 @@ class SaveAndRestoreSettingsViewModel(
 
     fun onEvent(event: SaveAndRestoreSettingsUiEvent) {
         when (event) {
-            is Action   -> onAction(event)
+            is Action -> onAction(event)
             is Consumed -> onConsumed(event)
         }
     }
@@ -37,25 +42,25 @@ class SaveAndRestoreSettingsViewModel(
         viewModelScope.launch(dispatcher.IO) {
             _viewState.update {
                 when (action) {
-                    ExportSettingsFile                     -> it.copy(
+                    ExportSettingsFile -> it.copy(
                         isSaveSettingsToFileDialogVisible = true
                     )
 
-                    RestoreSettingsFromFile                -> it.copy(
+                    RestoreSettingsFromFile -> it.copy(
                         isRestoreSettingsFromFileDialogVisible = true
                     )
 
-                    ShareSettingsFile                      ->
+                    ShareSettingsFile ->
                         if (!settingsUtils.shareSettingsFile()) {
                             it.copy(snackBarText = MR.strings.shareSettingsFileFailed.stable)
                         } else it
 
-                    is BackClick                           -> {
+                    is BackClick -> {
                         navigator.onBackPressed()
                         it
                     }
 
-                    is ExportSettingsFileDialogResult      -> {
+                    is ExportSettingsFileDialogResult -> {
                         if (action.confirmed) {
                             if (!settingsUtils.exportSettingsFile()) {
                                 it.copy(

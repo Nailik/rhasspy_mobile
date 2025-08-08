@@ -19,7 +19,7 @@ actual fun translate(resource: StableStringResource): String {
 
     return when (resource) {
         is StableResourceFormattedStringDesc -> resource.stringResource.localized()
-        is StableStringResourceSingle        -> StringDesc.Resource(resource.stringResource)
+        is StableStringResourceSingle -> StringDesc.Resource(resource.stringResource)
             .localized()
     }
 }

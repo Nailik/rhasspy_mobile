@@ -21,8 +21,20 @@ import com.journeyapps.barcodescanner.ScanOptions
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.*
-import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.*
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Error
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.NotFound
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Result
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Success
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.CreateDocument
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.GetContent
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.OpenAppSettings
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.OpenBatteryOptimizationSettings
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.OpenDocument
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.OpenLink
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.OpenOverlaySettings
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.RequestMicrophonePermissionExternally
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.ScanQRCode
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.ShareFile
 import org.rhasspy.mobile.platformspecific.resumeSave
 import org.rhasspy.mobile.resources.MR
 
@@ -99,12 +111,22 @@ internal actual class ExternalResultRequest actual constructor(
         }
     }
 
-    private fun <R> getResult(intention: ExternalResultRequestIntention<R>, activityResult: ActivityResult): ExternalRedirectResult<R> {
+    private fun <R> getResult(
+        intention: ExternalResultRequestIntention<R>,
+        activityResult: ActivityResult
+    ): ExternalRedirectResult<R> {
         return if (activityResult.resultCode == Activity.RESULT_OK) {
             @Suppress("UNCHECKED_CAST")
             return when (intention) {
-                is ScanQRCode -> Result(ScanContract().parseResult(activityResult.resultCode, activityResult.data).contents as R)
-                else          -> activityResult.data?.data?.let { uri -> Result(uri.toString() as R) } ?: Error()
+                is ScanQRCode -> Result(
+                    ScanContract().parseResult(
+                        activityResult.resultCode,
+                        activityResult.data
+                    ).contents as R
+                )
+
+                else -> activityResult.data?.data?.let { uri -> Result(uri.toString() as R) }
+                    ?: Error()
             }
 
         } else Error()
@@ -112,12 +134,12 @@ internal actual class ExternalResultRequest actual constructor(
 
     private fun <R> intentFromIntention(intention: ExternalResultRequestIntention<R>): Intent {
         return when (intention) {
-            is CreateDocument                     ->
+            is CreateDocument ->
                 ActivityResultContracts
                     .CreateDocument(intention.mimeType)
                     .createIntent(nativeApplication, intention.title)
 
-            is OpenDocument                       ->
+            is OpenDocument ->
                 ActivityResultContracts
                     .OpenDocument()
                     .createIntent(nativeApplication, intention.mimeTypes.toTypedArray())
@@ -128,7 +150,7 @@ internal actual class ExternalResultRequest actual constructor(
                         putExtra(Intent.EXTRA_MIME_TYPES, intention.mimeTypes.toTypedArray())
                     }
 
-            is GetContent                         ->
+            is GetContent ->
                 ActivityResultContracts
                     .GetContent()
                     .createIntent(nativeApplication, "*/*")
@@ -139,7 +161,7 @@ internal actual class ExternalResultRequest actual constructor(
                         putExtra(Intent.EXTRA_MIME_TYPES, intention.mimeTypes.toTypedArray())
                     }
 
-            OpenBatteryOptimizationSettings       ->
+            OpenBatteryOptimizationSettings ->
                 Intent().apply {
                     @SuppressLint("BatteryLife")
                     action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
@@ -152,22 +174,22 @@ internal actual class ExternalResultRequest actual constructor(
                     data = Uri.parse("package:org.rhasspy.mobile.android")
                 }
 
-            is OpenLink                           ->
+            is OpenLink ->
                 CustomTabsIntent.Builder().build().intent.apply {
                     data = Uri.parse(intention.link.url)
                 }
 
-            OpenAppSettings                       ->
+            OpenAppSettings ->
                 Intent().apply {
                     action = Settings.ACTION_SETTINGS
                 }
 
-            OpenOverlaySettings                   ->
+            OpenOverlaySettings ->
                 Intent().apply {
                     action = Settings.ACTION_MANAGE_OVERLAY_PERMISSION
                 }
 
-            ScanQRCode                            -> {
+            ScanQRCode -> {
                 ScanContract().createIntent(
                     context = nativeApplication,
                     input = ScanOptions().apply {
@@ -179,7 +201,7 @@ internal actual class ExternalResultRequest actual constructor(
                 )
             }
 
-            is ShareFile                          -> {
+            is ShareFile -> {
                 val uri = Uri.parse(intention.fileUri)
                 val chooser = Intent.createChooser(
                     Intent().apply {
@@ -190,10 +212,18 @@ internal actual class ExternalResultRequest actual constructor(
                     null
                 )
 
-                val resInfoList: List<ResolveInfo> = nativeApplication.packageManager.queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY)
+                val resInfoList: List<ResolveInfo> =
+                    nativeApplication.packageManager.queryIntentActivities(
+                        chooser,
+                        PackageManager.MATCH_DEFAULT_ONLY
+                    )
                 for (resolveInfo in resInfoList) {
                     val packageName = resolveInfo.activityInfo.packageName
-                    nativeApplication.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    nativeApplication.grantUriPermission(
+                        packageName,
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
                 }
                 return chooser
             }

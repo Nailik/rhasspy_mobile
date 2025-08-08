@@ -6,7 +6,12 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change
-import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.SelectAudioFocusOption
+import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.SetAudioFocusOnDialog
+import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.SetAudioFocusOnNotification
+import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.SetAudioFocusOnRecord
+import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.SetAudioFocusOnSound
+import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.SetStopRecording
 
 class AudioFocusSettingsViewModel(
     viewStateCreator: AudioFocusSettingsViewStateCreator
@@ -23,12 +28,14 @@ class AudioFocusSettingsViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            is SelectAudioFocusOption      -> AppSetting.audioFocusOption.value = change.option
-            is SetAudioFocusOnDialog       -> AppSetting.isAudioFocusOnDialog.value = change.enabled
-            is SetAudioFocusOnNotification -> AppSetting.isAudioFocusOnNotification.value = change.enabled
-            is SetAudioFocusOnRecord       -> AppSetting.isAudioFocusOnRecord.value = change.enabled
-            is SetAudioFocusOnSound        -> AppSetting.isAudioFocusOnSound.value = change.enabled
-            is SetStopRecording            -> AppSetting.isPauseRecordingOnMedia.value = change.enabled
+            is SelectAudioFocusOption -> AppSetting.audioFocusOption.value = change.option
+            is SetAudioFocusOnDialog -> AppSetting.isAudioFocusOnDialog.value = change.enabled
+            is SetAudioFocusOnNotification -> AppSetting.isAudioFocusOnNotification.value =
+                change.enabled
+
+            is SetAudioFocusOnRecord -> AppSetting.isAudioFocusOnRecord.value = change.enabled
+            is SetAudioFocusOnSound -> AppSetting.isAudioFocusOnSound.value = change.enabled
+            is SetStopRecording -> AppSetting.isPauseRecordingOnMedia.value = change.enabled
         }
     }
 

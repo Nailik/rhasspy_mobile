@@ -1,15 +1,19 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR
+import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT
+import org.gradle.api.tasks.testing.logging.TestLogEvent.STARTED
 import java.util.Properties
 
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
-    id("base-gradle")
+    id("base.android.app")
+    alias(libs.plugins.google)
+    alias(libs.plugins.firebase)
+    alias(libs.plugins.compose)
 }
 
 val signingProperties = Properties()
@@ -36,15 +40,15 @@ android {
             }
         }
     }
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "org.rhasspy.mobile.android"
         minSdk = 23
-        targetSdk = 34
+        targetSdk = 36
         versionCode = Version.code
         versionName = Version.toString()
-        resourceConfigurations += setOf("en", "de")
+        resourceConfigurations += setOf("en", "de", "it")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "true"
         testInstrumentationRunnerArguments["useTestStorageService"] = "true"
@@ -134,12 +138,16 @@ android {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
-    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
-    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi"
-    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi"
-    kotlinOptions.freeCompilerArgs += "-P=plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_metrics"
-    kotlinOptions.freeCompilerArgs += "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_metrics"
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi",
+            "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+            "-P=plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_metrics",
+            "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_metrics"
+        )
+    }
 }
 
 tasks.withType<Test> {
@@ -153,7 +161,7 @@ tasks.withType<Test> {
 }
 
 dependencies {
-    coreLibraryDesugaring(Android.tools.desugarJdkLibs)
+    coreLibraryDesugaring(libs.desugar)
 
     implementation(project(":app"))
     implementation(project(":viewmodel"))
@@ -165,43 +173,35 @@ dependencies {
     implementation(project(":settings"))
     implementation(project(":widget"))
 
-    implementation(AndroidX.appCompat)
-    implementation(AndroidX.Core.splashscreen)
-    implementation(AndroidX.Activity.compose)
-    implementation(AndroidX.multidex)
-    implementation(AndroidX.window)
-    implementation(AndroidX.Core.ktx)
-    implementation(Touchlab.kermit)
-    implementation(Koin.core)
-    implementation(Square.okio)
-    implementation(Russhwolf.multiplatformSettingsNoArg)
-    implementation(Icerock.Mvvm.core)
-    implementation(Kotlin.test)
-    implementation(Kotlin.Test.junit)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.multidex)
+    implementation(libs.androidx.window)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.kermit)
+    implementation(libs.koin.core)
+    implementation(libs.okio)
+    implementation(libs.multiplatform.settings.no.arg)
+    implementation(libs.moko.mvvm.core)
 
-    implementation(Kotlin.test)
-    implementation(AndroidX.Activity.compose)
-    implementation(AndroidX.appCompat)
+    androidTestUtil(libs.androidx.test.orchestrator)
 
-    androidTestUtil(AndroidX.Test.orchestrator)
+    androidTestImplementation(libs.androidx.activity.compose)
+    androidTestImplementation(libs.androidx.test.uiautomator)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.core.ktx)
+    androidTestImplementation(libs.kotlin.test.junit)
+    androidTestImplementation(libs.compose.test.junit4)
+    androidTestImplementation(libs.adevinta.barista)
+    androidTestImplementation(libs.hamcrest)
+    androidTestImplementation(libs.compose.ui)
+    androidTestImplementation(libs.compose.material3)
+    androidTestImplementation(libs.kotlinx.collections.immutable)
+    androidTestImplementation(libs.moko.mvvm.core)
+    androidTestImplementation(libs.kermit)
 
-    androidTestImplementation(AndroidX.Activity.compose)
-    androidTestImplementation(Koin.test)
-    androidTestImplementation(AndroidX.Test.uiAutomator)
-    androidTestImplementation(AndroidX.Test.runner)
-    androidTestImplementation(AndroidX.Test.rules)
-    androidTestImplementation(Kotlin.test)
-    androidTestImplementation(Kotlin.Test.junit)
-    androidTestImplementation(AndroidX.Test.coreKtx)
-    androidTestImplementation(Jetbrains.Compose.testJunit4)
-    androidTestImplementation(Adevinta.barista)
-    androidTestImplementation(Hamcrest.hamcrest)
-    androidTestImplementation(Jetbrains.Compose.ui)
-    androidTestImplementation(Jetbrains.Compose.material3)
-    androidTestImplementation(Jetbrains.Kotlinx.immutable)
-    androidTestImplementation(Icerock.Mvvm.core)
-    androidTestImplementation(Touchlab.kermit)
-
-    debugImplementation(AndroidX.tracing.ktx)
-    debugImplementation(AndroidX.Compose.Ui.testManifest)
+    debugImplementation(libs.androidx.tracing.ktx)
+    debugImplementation(libs.compose.ui.test.manifest)
 }
