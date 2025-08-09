@@ -4,6 +4,7 @@ import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
+import org.kodein.mock.generated.injectMocks
 import org.rhasspy.mobile.platformspecific.settings.ISettingsUtils
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.coEvery
@@ -22,7 +23,7 @@ class SaveAndRestoreSettingsViewModelTest : AppTest() {
 
     private lateinit var saveAndRestoreSettingsViewModel: SaveAndRestoreSettingsViewModel
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {

@@ -33,11 +33,6 @@ kotlin {
     }
 
     sourceSets {
-        all {
-            languageSettings {
-                optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
-            }
-        }
         commonMain.dependencies {
             api(libs.moko.resources)
             api(libs.moko.resources.compose)

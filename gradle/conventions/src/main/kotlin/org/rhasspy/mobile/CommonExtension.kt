@@ -44,7 +44,6 @@ internal fun Project.configureKotlinCommon() {
                 "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
                 "-P=plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${layout.buildDirectory.get().asFile.absolutePath}/compose_metrics",
                 "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${layout.buildDirectory.get().asFile.absolutePath}/compose_metrics",
-                "-opt-in=co.touchlab.kermit.ExperimentalKermitApi",
             )
         }
     }

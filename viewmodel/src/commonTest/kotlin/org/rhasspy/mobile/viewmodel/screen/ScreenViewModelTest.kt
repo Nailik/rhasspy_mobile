@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
 import org.koin.dsl.module
+import org.kodein.mock.generated.injectMocks
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -30,7 +31,7 @@ class ScreenViewModelTest : AppTest() {
 
     private lateinit var screenViewModel: ScreenViewModel
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {

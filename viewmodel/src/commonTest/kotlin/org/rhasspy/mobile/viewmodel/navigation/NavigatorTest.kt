@@ -4,6 +4,7 @@ import kotlinx.collections.immutable.persistentListOf
 import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
+import org.kodein.mock.generated.injectMocks
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.nVerify
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination
@@ -23,7 +24,7 @@ class NavigatorTest : AppTest() {
     @Mock
     lateinit var homeScreenViewModel: IHomeScreeViewModel
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {

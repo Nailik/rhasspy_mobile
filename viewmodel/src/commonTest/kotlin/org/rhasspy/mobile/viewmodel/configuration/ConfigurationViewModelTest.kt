@@ -3,6 +3,7 @@ package org.rhasspy.mobile.viewmodel.configuration
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.kodein.mock.generated.injectMocks
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
@@ -36,7 +37,7 @@ class ConfigurationViewModelTest : AppTest() {
     }
 
     private lateinit var configurationViewState: MutableStateFlow<ConfigurationViewState>
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {

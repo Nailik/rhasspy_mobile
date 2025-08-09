@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.kodein.mock.Mock
 import org.koin.core.component.get
 import org.koin.dsl.module
+import org.kodein.mock.generated.injectMocks
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
@@ -34,7 +35,7 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
 
     private val isAppInBackground = MutableStateFlow(false)
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {

@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings
 
 import org.kodein.mock.Mock
 import org.koin.core.component.get
+import org.kodein.mock.generated.injectMocks
 import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.background.IBackgroundService
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
@@ -27,7 +28,7 @@ class BackgroundServiceSettingsViewModelTest : AppTest() {
 
     private lateinit var backgroundServiceSettingsViewModel: BackgroundServiceSettingsViewModel
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {

@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
 import org.koin.dsl.module
+import org.kodein.mock.generated.injectMocks
 import org.koin.test.get
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
@@ -27,7 +28,7 @@ class MicrophoneFabViewModelTest : AppTest() {
 
     private lateinit var microphoneFabViewModel: MicrophoneFabViewModel
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {
