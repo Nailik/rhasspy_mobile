@@ -126,7 +126,7 @@ tasks.findByPath("preBuild")!!.dependsOn(createVersionTxt)
 @Suppress("unused")
 val increaseCodeVersion: TaskProvider<Task> = tasks.register("increaseCodeVersion") {
     doLast {
-        File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
+        File(projectDir.parent, "gradle/conventions/src/main/kotlin/Version.kt").also {
             it.writeText(
                 it.readText().replace("code = ${Version.code}", "code = ${Version.code + 1}")
             )
