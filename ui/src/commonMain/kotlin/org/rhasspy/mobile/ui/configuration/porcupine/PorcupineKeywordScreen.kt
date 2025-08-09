@@ -105,7 +105,6 @@ fun PorcupineKeywordScreen() {
     }
 }
 
-
 /**
  * app bar for title and back button
  */
@@ -130,14 +129,13 @@ private fun AppBar(onEvent: (PorcupineUiEvent) -> Unit) {
 
 }
 
-
 /**
  * Displays tabs on bottom (default/ custom)
  */
 @Composable
 private fun BottomTabBar(
     selectedIndex: Int,
-    onSelectedScreen: (screen: Int) -> Unit
+    onSelectedScreen: (screen: Int) -> Unit,
 ) {
 
     Column {

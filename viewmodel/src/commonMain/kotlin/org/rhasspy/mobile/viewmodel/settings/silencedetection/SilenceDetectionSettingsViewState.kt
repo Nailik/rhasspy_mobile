@@ -12,5 +12,5 @@ data class SilenceDetectionSettingsViewState(
     val currentVolume: String,
     val audioLevelPercentage: Float,
     val isAudioLevelBiggerThanMax: Boolean,
-    val isRecording: Boolean
+    val isRecording: Boolean,
 )

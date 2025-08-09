@@ -72,7 +72,7 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSe
 fun IndicationSoundScreen(
     viewModel: IIndicationSoundSettingsViewModel,
     screen: IndicationSettingsScreenDestination,
-    title: StableStringResource
+    title: StableStringResource,
 ) {
     Screen(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
@@ -167,7 +167,7 @@ private fun SoundElements(
     modifier: Modifier,
     soundSetting: String,
     customSoundFiles: ImmutableList<String>,
-    onEvent: (IIndicationSoundSettingsUiEvent) -> Unit
+    onEvent: (IIndicationSoundSettingsUiEvent) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -208,7 +208,7 @@ private fun SoundListItem(
     isSelected: Boolean,
     soundFile: String,
     onClick: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
 ) {
 
     RadioButtonListItem(
@@ -240,7 +240,7 @@ private fun SoundListItem(
 private fun SoundActionButtons(
     onPlay: () -> Unit,
     isPlaying: Boolean,
-    onChooseFile: () -> Unit
+    onChooseFile: () -> Unit,
 ) {
     Surface(
         shape = RectangleShape, //ListItemDefaults.shape,
@@ -298,7 +298,7 @@ private fun SoundActionButtons(
 @Composable
 private fun AppBar(
     title: StableStringResource,
-    onEvent: (event: IIndicationSoundSettingsUiEvent) -> Unit
+    onEvent: (event: IIndicationSoundSettingsUiEvent) -> Unit,
 ) {
 
     TopAppBar(

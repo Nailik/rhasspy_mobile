@@ -102,7 +102,7 @@ fun LogScreen() {
 @Composable
 private fun AppBar(
     isLogAutoscroll: Boolean,
-    onEvent: (LogScreenUiEvent) -> Unit
+    onEvent: (LogScreenUiEvent) -> Unit,
 ) {
     TopAppBar(
         modifier = Modifier,
@@ -123,7 +123,7 @@ private fun AppBar(
 private fun LogScreenContent(
     isLogAutoscroll: Boolean,
     logList: ImmutableList<LogElement>,
-    onEvent: (LogScreenUiEvent) -> Unit
+    onEvent: (LogScreenUiEvent) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberForeverLazyListState(LogScreenList)
@@ -163,7 +163,7 @@ private fun LogScreenContent(
 @Composable
 private fun LogScreenActions(
     isLogAutoscroll: Boolean,
-    onEvent: (LogScreenUiEvent) -> Unit
+    onEvent: (LogScreenUiEvent) -> Unit,
 ) {
 
     Row(

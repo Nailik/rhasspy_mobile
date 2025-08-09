@@ -73,7 +73,7 @@ fun SpeechToTextAudioRecorderFormatScreen() {
 @Composable
 private fun WakeWordAudioFormatScreenContent(
     viewState: SpeechToTextAudioRecorderFormatConfigurationData,
-    onEvent: (event: SpeechToTextConfigurationUiEvent) -> Unit
+    onEvent: (event: SpeechToTextConfigurationUiEvent) -> Unit,
 ) {
     Card(
         modifier = Modifier.padding(8.dp),

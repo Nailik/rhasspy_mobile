@@ -99,7 +99,6 @@ class IndicationSettingsContentTest : FlakyTest() {
         //wake up display is saved
         assertTrue { IndicationSettingsViewModel(get()).viewState.value.isWakeWordDetectionTurnOnDisplayEnabled }
 
-
         //user clicks visual
         composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).performClick()
         //user accepts permission
@@ -177,9 +176,11 @@ class IndicationSettingsContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertDoesNotExist()
         composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.WakeIndicationSoundScreen)
             .assertDoesNotExist()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
+        composeTestRule
+            .onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
             .assertDoesNotExist()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
+        composeTestRule
+            .onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
             .assertDoesNotExist()
 
         //user clicks sound
@@ -192,9 +193,11 @@ class IndicationSettingsContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertIsDisplayed()
         composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.WakeIndicationSoundScreen)
             .assertIsDisplayed()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
+        composeTestRule
+            .onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
             .assertIsDisplayed()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
+        composeTestRule
+            .onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
             .assertIsDisplayed()
 
         //sound output is notification
@@ -228,19 +231,23 @@ class IndicationSettingsContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
 
         //user clicks recorded
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
+        composeTestRule
+            .onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
             .performClick()
         //recorded page is opened
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
+        composeTestRule
+            .onNodeWithTag(IndicationSettingsScreenDestination.RecordedIndicationSoundScreen)
             .assertIsDisplayed()
         //user clicks back
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
 
         //user click error
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
+        composeTestRule
+            .onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
             .performClick()
         //error page is opened
-        composeTestRule.onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
+        composeTestRule
+            .onNodeWithTag(IndicationSettingsScreenDestination.ErrorIndicationSoundScreen)
             .assertIsDisplayed()
         //user clicks back
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()

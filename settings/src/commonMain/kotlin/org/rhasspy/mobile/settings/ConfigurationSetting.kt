@@ -54,7 +54,6 @@ object ConfigurationSetting {
     val mqttRetryInterval = ISetting(SettingsEnum.MQTTRetryInterval, 10L)
     val mqttKeyStoreFile = ISetting(SettingsEnum.MQTTKeyStoreFile, null, OkioPathSerializer)
 
-
     val wakeWordOption = ISetting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled)
 
     val wakeWordAudioRecorderChannel =

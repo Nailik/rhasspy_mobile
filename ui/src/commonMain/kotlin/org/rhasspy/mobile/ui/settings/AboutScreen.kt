@@ -199,7 +199,7 @@ fun AppIcon(onEvent: (AboutScreenUiEvent) -> Unit) {
 @Composable
 fun AppInformationChips(
     viewState: AboutScreenViewState,
-    onEvent: (AboutScreenUiEvent) -> Unit
+    onEvent: (AboutScreenUiEvent) -> Unit,
 ) {
 
     if (viewState.isPrivacyDialogVisible) {
@@ -242,14 +242,13 @@ fun AppInformationChips(
     }
 }
 
-
 /**
  * Dialog to show data privacy information
  */
 @Composable
 fun DataPrivacyDialog(
     dataPrivacy: String,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
 ) {
 
     val scrollState = rememberScrollState()
@@ -280,7 +279,7 @@ fun DataPrivacyDialog(
 @Composable
 private fun ChangelogDialog(
     changelog: ImmutableList<String>,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
 ) {
 
     Dialog(
@@ -299,7 +298,6 @@ private fun ChangelogDialog(
     )
 
 }
-
 
 /**
  * Displays all provided libraries in a simple list.
@@ -378,14 +376,13 @@ private fun Library(
 
 }
 
-
 /**
  * Library dialog with more information
  */
 @Composable
 fun LibraryDialog(
     stableLibrary: StableLibrary,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
 ) {
 
     Dialog(

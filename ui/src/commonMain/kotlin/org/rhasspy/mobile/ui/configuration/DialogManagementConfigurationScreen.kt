@@ -66,7 +66,7 @@ fun DialogManagementConfigurationScreen() {
 @Composable
 private fun DialogManagementEditContent(
     editData: DialogManagementConfigurationData,
-    onEvent: (DialogManagementConfigurationUiEvent) -> Unit
+    onEvent: (DialogManagementConfigurationUiEvent) -> Unit,
 ) {
 
     LazyColumn(
@@ -88,7 +88,7 @@ private fun DialogManagementEditContent(
 @Composable
 private fun DialogManagementOptionContent(
     editData: DialogManagementConfigurationData,
-    onEvent: (DialogManagementConfigurationUiEvent) -> Unit
+    onEvent: (DialogManagementConfigurationUiEvent) -> Unit,
 ) {
 
     //drop down to select option
@@ -98,7 +98,6 @@ private fun DialogManagementOptionContent(
         onSelect = { onEvent(SelectDialogManagementOption(it)) },
         values = editData.dialogManagementOptionList
     ) { option ->
-
 
         Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
             when (option) {
@@ -132,7 +131,7 @@ private fun DialogManagementSettingsLocal(
     textAsrTimeoutText: String,
     intentRecognitionTimeoutText: String,
     recordingTimeoutText: String,
-    onEvent: (DialogManagementConfigurationUiEvent) -> Unit
+    onEvent: (DialogManagementConfigurationUiEvent) -> Unit,
 ) {
 
     DialogManagementSettings(
@@ -158,7 +157,7 @@ private fun DialogManagementSettingsMqtt(
     textAsrTimeoutText: String,
     intentRecognitionTimeoutText: String,
     recordingTimeoutText: String,
-    onEvent: (DialogManagementConfigurationUiEvent) -> Unit
+    onEvent: (DialogManagementConfigurationUiEvent) -> Unit,
 ) {
 
     DialogManagementSettings(
@@ -188,7 +187,7 @@ private fun DialogManagementSettings(
     textAsrTimeoutText: String,
     intentRecognitionTimeoutText: String,
     recordingTimeoutText: String,
-    onEvent: (DialogManagementConfigurationUiEvent) -> Unit
+    onEvent: (DialogManagementConfigurationUiEvent) -> Unit,
 ) {
 
     //asr timeout

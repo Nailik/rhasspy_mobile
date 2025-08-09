@@ -150,8 +150,8 @@ tasks.register("updatePorcupineFiles") {
                 }
 
                 fun encodeFilenameInUrl(url: String) = url.substringBeforeLast("/") + "/" +
-                        URLEncoder.encode(url.substringAfterLast("/"), "UTF-8")
-                            .replace("%2520", "%20")
+                    URLEncoder.encode(url.substringAfterLast("/"), "UTF-8")
+                        .replace("%2520", "%20")
 
                 // parse directory listing
                 contents = JsonSlurper().parse(contentsFile) as List<Map<Any, String>>

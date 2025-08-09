@@ -15,7 +15,7 @@ interface IHomeScreeViewModel : IScreenViewModel
 @Stable
 class HomeScreenViewModel(
     private val serviceMiddleware: IServiceMiddleware,
-    viewStateCreator: HomeScreenViewStateCreator
+    viewStateCreator: HomeScreenViewStateCreator,
 ) : IHomeScreeViewModel, ScreenViewModel() {
 
     val viewState: StateFlow<HomeScreenViewState> = viewStateCreator()

@@ -7,5 +7,5 @@ data class MicrophoneFabViewState(
     val isMicrophonePermissionAllowed: Boolean,
     val isUserActionEnabled: Boolean,
     val isShowBorder: Boolean,
-    val isRecording: Boolean
+    val isRecording: Boolean,
 )

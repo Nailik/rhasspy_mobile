@@ -171,7 +171,6 @@ internal class WakeWordService(
         audioRecorder.stopRecording()
     }
 
-
     private fun startPorcupine() {
         _serviceState.value = porcupineWakeWordClient?.let { client ->
             val error = client.start()

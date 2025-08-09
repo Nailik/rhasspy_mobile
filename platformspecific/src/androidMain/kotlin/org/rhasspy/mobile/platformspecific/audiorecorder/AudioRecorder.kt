@@ -199,7 +199,6 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
         }
     }
 
-
     /**
      * reads from audio and emits buffer onto output
      */

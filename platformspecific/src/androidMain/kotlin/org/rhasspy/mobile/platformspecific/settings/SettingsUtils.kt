@@ -6,7 +6,6 @@ import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.rhasspy.mobile.data.settings.SettingsEnum
@@ -23,11 +22,12 @@ import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 internal actual class SettingsUtils actual constructor(
     private val externalResultRequest: IExternalResultRequest,
-    private val nativeApplication: NativeApplication
+    private val nativeApplication: NativeApplication,
 ) : ISettingsUtils {
 
     private val logger = Logger.withTag("SettingsUtils")

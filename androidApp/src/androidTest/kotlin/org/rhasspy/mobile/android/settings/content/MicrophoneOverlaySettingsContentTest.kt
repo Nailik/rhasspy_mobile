@@ -14,7 +14,6 @@ import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
-import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onListItemRadioButton

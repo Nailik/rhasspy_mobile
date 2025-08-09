@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.viewmodel.settings
 
 import org.kodein.mock.Mock
-import org.koin.core.component.get
 import org.kodein.mock.generated.injectMocks
+import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.background.IBackgroundService
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult

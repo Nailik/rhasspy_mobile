@@ -90,7 +90,6 @@ class SilenceDetectionSettingsViewModel(
         super.onDisposed()
     }
 
-
     private fun startRecording() {
         //save to restore later
         wakeWordSetting = AppSetting.isHotWordEnabled.value

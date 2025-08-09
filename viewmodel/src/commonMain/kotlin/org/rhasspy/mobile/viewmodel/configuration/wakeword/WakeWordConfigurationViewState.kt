@@ -22,13 +22,13 @@ data class WakeWordConfigurationViewState(
     val isRecorderEncodingChangeEnabled: Boolean,
     val isOutputEncodingChangeEnabled: Boolean,
     val porcupineWakeWordScreen: Int,
-    val isMicrophonePermissionRequestVisible: Boolean
+    val isMicrophonePermissionRequestVisible: Boolean,
 ) : IConfigurationViewState {
 
     @Stable
     data class PorcupineCustomKeywordViewState(
         val keyword: PorcupineCustomKeyword,
-        val deleted: Boolean = false
+        val deleted: Boolean = false,
     )
 
     @Stable
@@ -102,7 +102,7 @@ data class WakeWordConfigurationViewState(
         @Stable
         data class WakeWordUdpConfigurationData(
             val outputHost: String = ConfigurationSetting.wakeWordUdpOutputHost.value,
-            val outputPort: Int? = ConfigurationSetting.wakeWordUdpOutputPort.value
+            val outputPort: Int? = ConfigurationSetting.wakeWordUdpOutputPort.value,
         ) {
 
             val outputPortText: String = outputPort.toStringOrEmpty()

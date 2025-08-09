@@ -11,7 +11,7 @@ import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent.Actio
 
 @Stable
 class SettingsScreenViewModel(
-    viewStateCreator: SettingsScreenViewStateCreator
+    viewStateCreator: SettingsScreenViewStateCreator,
 ) : ScreenViewModel() {
 
     val viewState: StateFlow<SettingsScreenViewState> = viewStateCreator()

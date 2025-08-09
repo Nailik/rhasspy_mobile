@@ -75,7 +75,6 @@ fun WakeWordConfigurationOverviewScreen() {
         onEvent = viewModel::onEvent
     ) {
 
-
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -97,7 +96,7 @@ fun WakeWordConfigurationOverviewScreen() {
 @Composable
 private fun WakeWordConfigurationOptionContent(
     viewState: WakeWordConfigurationViewState,
-    onEvent: (WakeWordConfigurationUiEvent) -> Unit
+    onEvent: (WakeWordConfigurationUiEvent) -> Unit,
 ) {
 
     RadioButtonsEnumSelection(
@@ -144,7 +143,7 @@ private fun PorcupineConfiguration(
     editData: WakeWordPorcupineConfigurationData,
     wakeWordAudioRecorderData: WakeWordAudioRecorderConfigurationData,
     isMicrophonePermissionRequestVisible: Boolean,
-    onEvent: (WakeWordConfigurationUiEvent) -> Unit
+    onEvent: (WakeWordConfigurationUiEvent) -> Unit,
 ) {
 
     Column(
@@ -197,7 +196,6 @@ private fun PorcupineConfiguration(
             secondaryText = { Text("${editData.keywordCount} ${translate(MR.strings.active.stable)}") }
         )
 
-
         //button to open audio recorder format
         ListElement(
             modifier = Modifier.clickable { onEvent(OpenAudioRecorderFormat) },
@@ -205,8 +203,8 @@ private fun PorcupineConfiguration(
             secondaryText = @Composable {
                 val text =
                     "${translate(wakeWordAudioRecorderData.audioRecorderChannelType.text)} | " +
-                            "${translate(wakeWordAudioRecorderData.audioRecorderEncodingType.text)} | " +
-                            translate(wakeWordAudioRecorderData.audioRecorderSampleRateType.text)
+                        "${translate(wakeWordAudioRecorderData.audioRecorderEncodingType.text)} | " +
+                        translate(wakeWordAudioRecorderData.audioRecorderSampleRateType.text)
                 Text(text = text)
             }
         )
@@ -236,7 +234,7 @@ private fun UdpSettings(
     wakeWordAudioRecorderData: WakeWordAudioRecorderConfigurationData,
     wakeWordAudioOutputData: WakeWordAudioOutputConfigurationData,
     isMicrophonePermissionRequestVisible: Boolean,
-    onEvent: (WakeWordConfigurationUiEvent) -> Unit
+    onEvent: (WakeWordConfigurationUiEvent) -> Unit,
 ) {
 
     Column {
@@ -266,8 +264,8 @@ private fun UdpSettings(
             secondaryText = @Composable {
                 val text =
                     "${translate(wakeWordAudioRecorderData.audioRecorderChannelType.text)} | " +
-                            "${translate(wakeWordAudioRecorderData.audioRecorderEncodingType.text)} | " +
-                            translate(wakeWordAudioRecorderData.audioRecorderSampleRateType.text)
+                        "${translate(wakeWordAudioRecorderData.audioRecorderEncodingType.text)} | " +
+                        translate(wakeWordAudioRecorderData.audioRecorderSampleRateType.text)
                 Text(text = text)
             }
         )
@@ -278,8 +276,8 @@ private fun UdpSettings(
             text = { Text(MR.strings.audioOutputFormat.stable) },
             secondaryText = @Composable {
                 val text = "${translate(wakeWordAudioOutputData.audioOutputChannelType.text)} | " +
-                        "${translate(wakeWordAudioOutputData.audioOutputEncodingType.text)} | " +
-                        translate(wakeWordAudioOutputData.audioOutputSampleRateType.text)
+                    "${translate(wakeWordAudioOutputData.audioOutputEncodingType.text)} | " +
+                    translate(wakeWordAudioOutputData.audioOutputSampleRateType.text)
                 Text(text = text)
             }
         )

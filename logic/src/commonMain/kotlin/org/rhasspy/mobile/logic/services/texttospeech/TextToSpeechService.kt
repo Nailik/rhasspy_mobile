@@ -36,7 +36,7 @@ interface ITextToSpeechService : IService {
  * when data is null the service was most probably mqtt and will return result in a call function
  */
 internal class TextToSpeechService(
-    paramsCreator: TextToSpeechServiceParamsCreator
+    paramsCreator: TextToSpeechServiceParamsCreator,
 ) : ITextToSpeechService {
 
     override val logger = LogType.TextToSpeechService.logger()
@@ -66,7 +66,6 @@ internal class TextToSpeechService(
             }
         }
     }
-
 
     /**
      * hermes/tts/say

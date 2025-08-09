@@ -110,7 +110,6 @@ abstract class IIndicationSoundSettingsViewModel(
         }
     }
 
-
     private fun onConsumed(consumed: Consumed) {
         _viewState.update {
             when (consumed) {

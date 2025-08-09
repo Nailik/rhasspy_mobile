@@ -14,7 +14,7 @@ import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEven
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.SetStopRecording
 
 class AudioFocusSettingsViewModel(
-    viewStateCreator: AudioFocusSettingsViewStateCreator
+    viewStateCreator: AudioFocusSettingsViewStateCreator,
 ) : ScreenViewModel() {
 
     val viewState: StateFlow<AudioFocusSettingsViewState> = viewStateCreator()

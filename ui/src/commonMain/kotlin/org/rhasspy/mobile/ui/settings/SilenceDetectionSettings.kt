@@ -131,7 +131,7 @@ fun SilenceDetectionSettingsContent() {
 private fun Time(
     silenceDetectionMinimumTimeText: String,
     silenceDetectionTimeText: String,
-    onEvent: (SilenceDetectionSettingsUiEvent) -> Unit
+    onEvent: (SilenceDetectionSettingsUiEvent) -> Unit,
 ) {
 
     TextFieldListItem(
@@ -160,7 +160,7 @@ private fun Time(
 private fun AudioLevel(
     silenceDetectionAudioLevelPercentage: Float,
     silenceDetectionAudioLevel: Float,
-    onEvent: (SilenceDetectionSettingsUiEvent) -> Unit
+    onEvent: (SilenceDetectionSettingsUiEvent) -> Unit,
 ) {
 
     SliderListItem(
@@ -172,7 +172,6 @@ private fun AudioLevel(
 
 }
 
-
 /**
  * testing of audio level
  */
@@ -181,7 +180,7 @@ private fun CurrentAudioLevel(
     isRecording: Boolean,
     isAudioLevelBiggerThanMax: Boolean,
     audioLevelPercentage: Float,
-    currentVolume: String
+    currentVolume: String,
 ) {
 
     AnimatedVisibility(
@@ -232,7 +231,7 @@ private fun CurrentAudioLevel(
 @Composable
 private fun StartTestButton(
     isRecording: Boolean,
-    onEvent: (SilenceDetectionSettingsUiEvent) -> Unit
+    onEvent: (SilenceDetectionSettingsUiEvent) -> Unit,
 ) {
     ListElement {
         Column(modifier = Modifier.fillMaxWidth()) {

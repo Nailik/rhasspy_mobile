@@ -15,7 +15,7 @@ import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEven
 
 @Stable
 class DeviceSettingsViewModel(
-    viewStateCreator: DeviceSettingsViewStateCreator
+    viewStateCreator: DeviceSettingsViewStateCreator,
 ) : ScreenViewModel() {
 
     val viewState = viewStateCreator()

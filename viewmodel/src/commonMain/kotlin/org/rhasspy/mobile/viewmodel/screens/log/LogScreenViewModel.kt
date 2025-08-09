@@ -24,7 +24,7 @@ import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Consumed.ShowSn
 @Stable
 class LogScreenViewModel(
     private val fileLogger: IFileLogger,
-    viewStateCreator: LogScreenViewStateCreator
+    viewStateCreator: LogScreenViewStateCreator,
 ) : ScreenViewModel() {
 
     private val dispatcher by inject<IDispatcherProvider>()

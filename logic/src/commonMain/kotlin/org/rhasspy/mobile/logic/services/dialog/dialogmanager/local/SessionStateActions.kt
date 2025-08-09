@@ -74,7 +74,6 @@ internal class SessionStateActions(
         )
     }
 
-
     private fun onAsrTextCaptured(action: AsrTextCaptured, state: SessionState) {
         state.timeoutJob.cancel()
 
@@ -154,7 +153,6 @@ internal class SessionStateActions(
         )
     }
 
-
     private fun onStopListening(action: StopListening, state: SessionState) {
         state.timeoutJob.cancel()
 
@@ -186,7 +184,7 @@ internal class SessionStateActions(
 
     private fun onIntentRecognitionTimeoutError(
         action: IntentRecognitionTimeoutError,
-        state: SessionState
+        state: SessionState,
     ) {
         stopSpeechToTextService(action, state)
 
@@ -204,7 +202,7 @@ internal class SessionStateActions(
 
     private fun stopSpeechToTextService(
         action: DialogServiceMiddlewareAction,
-        state: SessionState
+        state: SessionState,
     ) {
         if (speechToTextService.isActive) {
             speechToTextService.endSpeechToText(
@@ -216,7 +214,7 @@ internal class SessionStateActions(
 
     private fun checkIfActionIsAllowed(
         action: DialogServiceMiddlewareAction,
-        state: SessionState
+        state: SessionState,
     ): Boolean {
         //not from mqtt
         if (action.source !is Source.Mqtt) return true
@@ -230,13 +228,16 @@ internal class SessionStateActions(
             }
 
             is AsrError,
-            is AsrTextCaptured -> ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteMQTT
+            is AsrTextCaptured,
+                -> ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteMQTT
 
             is IntentRecognitionError,
-            is IntentRecognitionResult -> ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.RemoteMQTT
+            is IntentRecognitionResult,
+                -> ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.RemoteMQTT
 
             is PlayAudio,
-            is StopAudioPlaying -> true
+            is StopAudioPlaying,
+                -> true
 
             else -> false
         }

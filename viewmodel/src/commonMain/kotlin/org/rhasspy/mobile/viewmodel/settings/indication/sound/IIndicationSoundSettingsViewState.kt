@@ -13,7 +13,7 @@ data class IIndicationSoundSettingsViewState(
     val isAudioPlaying: Boolean,
     val audioOutputOption: AudioOutputOption,
     val isNoSoundInformationBoxVisible: Boolean,
-    val snackBarText: StableStringResource? = null
+    val snackBarText: StableStringResource? = null,
 ) {
 
     constructor(
@@ -23,7 +23,7 @@ data class IIndicationSoundSettingsViewState(
         isAudioPlaying: Boolean,
         audioOutputOption: AudioOutputOption,
         deviceSoundVolume: Int?,
-        deviceNotificationVolume: Int?
+        deviceNotificationVolume: Int?,
     ) : this(
         soundSetting = soundSetting,
         customSoundFiles = customSoundFiles,

@@ -27,7 +27,7 @@ class InternalAudioPlayer(
     audioSource: AudioSource,
     private val volume: StateFlow<Float>,
     private val audioOutputOption: AudioOutputOption,
-    private val onFinished: () -> Unit
+    private val onFinished: () -> Unit,
 ) : KoinComponent {
 
     private val nativeApplication = get<NativeApplication>()
@@ -159,9 +159,9 @@ class InternalAudioPlayer(
         val res: Resources = nativeApplication.resources
         return Uri.parse(
             ContentResolver.SCHEME_ANDROID_RESOURCE +
-                    "://" + res.getResourcePackageName(resId)
-                    + '/' + res.getResourceTypeName(resId)
-                    + '/' + res.getResourceEntryName(resId)
+                "://" + res.getResourcePackageName(resId)
+                + '/' + res.getResourceTypeName(resId)
+                + '/' + res.getResourceEntryName(resId)
         )
     }
 

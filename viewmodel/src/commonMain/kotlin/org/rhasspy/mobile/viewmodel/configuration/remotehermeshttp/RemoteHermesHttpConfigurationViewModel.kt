@@ -24,7 +24,7 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
 
 @Stable
 class RemoteHermesHttpConfigurationViewModel(
-    service: IHttpClientService
+    service: IHttpClientService,
 ) : ConfigurationViewModel(
     service = service
 ) {
@@ -34,7 +34,7 @@ class RemoteHermesHttpConfigurationViewModel(
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
+        configurationViewState: MutableStateFlow<ConfigurationViewState>,
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
             init = ::RemoteHermesHttpConfigurationData,

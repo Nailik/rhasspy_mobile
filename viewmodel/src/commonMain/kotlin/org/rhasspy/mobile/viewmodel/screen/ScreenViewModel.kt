@@ -131,7 +131,8 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
             is SnackBar.Action -> {
                 when (snackBar.snackBarState) {
                     MicrophonePermissionRequestDenied,
-                    MicrophonePermissionRequestFailed ->
+                    MicrophonePermissionRequestFailed,
+                        ->
                         if (externalResultRequest.launch(RequestMicrophonePermissionExternally) !is ExternalRedirectResult.Success) {
                             _screenViewState.update { it.copy(snackBarState = MicrophonePermissionRequestFailed) }
                         }
@@ -148,7 +149,6 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
     open fun onBackPressed(): Boolean {
         return false
     }
-
 
     /**
      * returns true if pop back stack was handled internally

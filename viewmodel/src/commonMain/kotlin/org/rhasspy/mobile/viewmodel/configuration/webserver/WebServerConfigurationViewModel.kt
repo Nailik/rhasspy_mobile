@@ -30,7 +30,7 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
 
 @Stable
 class WebServerConfigurationViewModel(
-    service: IWebServerService
+    service: IWebServerService,
 ) : ConfigurationViewModel(
     service = service
 ) {
@@ -40,7 +40,7 @@ class WebServerConfigurationViewModel(
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
+        configurationViewState: MutableStateFlow<ConfigurationViewState>,
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
             init = ::WebServerConfigurationData,
@@ -71,7 +71,6 @@ class WebServerConfigurationViewModel(
             })
         }
     }
-
 
     private fun onAction(action: Action) {
         when (action) {

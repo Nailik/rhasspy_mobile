@@ -53,7 +53,7 @@ internal class HomeAssistantService(
     override fun sendIntent(
         intentName: String,
         intent: String,
-        onResult: (result: ServiceState) -> Unit
+        onResult: (result: ServiceState) -> Unit,
     ) {
         logger.d { "sendIntent name: $intentName json: $intent" }
         try {

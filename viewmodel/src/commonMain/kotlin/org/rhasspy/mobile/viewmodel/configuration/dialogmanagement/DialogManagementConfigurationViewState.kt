@@ -11,7 +11,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfi
 
 @Stable
 data class DialogManagementConfigurationViewState(
-    override val editData: DialogManagementConfigurationData
+    override val editData: DialogManagementConfigurationData,
 ) : IConfigurationViewState {
 
     @Stable
@@ -19,7 +19,7 @@ data class DialogManagementConfigurationViewState(
         val dialogManagementOption: DialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
         val textAsrTimeout: Long? = ConfigurationSetting.textAsrTimeout.value,
         val intentRecognitionTimeout: Long? = ConfigurationSetting.intentRecognitionTimeout.value,
-        val recordingTimeout: Long? = ConfigurationSetting.recordingTimeout.value
+        val recordingTimeout: Long? = ConfigurationSetting.recordingTimeout.value,
     ) : IConfigurationData {
 
         val dialogManagementOptionList: ImmutableList<DialogManagementOption> =

@@ -13,7 +13,7 @@ import org.rhasspy.mobile.resources.MR
 actual enum class AudioFormatEncodingType(
     override val text: StableStringResource,
     actual val value: Int,
-    actual val bitRate: Int
+    actual val bitRate: Int,
 ) : IOption<AudioFormatEncodingType> {
 
     PCM8Bit(MR.strings.encoding_type_PCM8Bit.stable, ENCODING_PCM_8BIT, 8),

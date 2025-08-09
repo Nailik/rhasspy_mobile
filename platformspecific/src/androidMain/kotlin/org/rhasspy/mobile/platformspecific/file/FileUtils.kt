@@ -54,7 +54,6 @@ actual object FileUtils : KoinComponent {
             }
         }
 
-
     /**
      * read file from system
      */
@@ -85,13 +84,12 @@ actual object FileUtils : KoinComponent {
         folderType: FolderType,
         uri: Uri,
         folderName: String,
-        fileName: String
+        fileName: String,
     ): String? =
         when (folderType) {
             FolderType.PorcupineFolder -> copyPorcupineFile(uri, folderName, fileName)
             else -> copyNormalFile(uri, folderName, fileName)
         }
-
 
     /**
      * open normal file and copy
@@ -121,7 +119,7 @@ actual object FileUtils : KoinComponent {
     private suspend fun copyPorcupineFile(
         uri: Uri,
         folderName: String,
-        selectedFileName: String
+        selectedFileName: String,
     ): String? = suspendCancellableCoroutine { continuation ->
         context.contentResolver.openInputStream(uri)?.also { inputStream ->
 

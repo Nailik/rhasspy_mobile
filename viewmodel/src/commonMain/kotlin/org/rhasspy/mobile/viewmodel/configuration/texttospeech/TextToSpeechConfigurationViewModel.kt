@@ -19,7 +19,7 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 
 @Stable
 class TextToSpeechConfigurationViewModel(
-    service: ITextToSpeechService
+    service: ITextToSpeechService,
 ) : ConfigurationViewModel(
     service = service
 ) {
@@ -29,7 +29,7 @@ class TextToSpeechConfigurationViewModel(
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
+        configurationViewState: MutableStateFlow<ConfigurationViewState>,
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
             init = ::TextToSpeechConfigurationData,

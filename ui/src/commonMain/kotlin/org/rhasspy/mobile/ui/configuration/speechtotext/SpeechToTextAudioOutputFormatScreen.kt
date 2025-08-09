@@ -75,7 +75,7 @@ fun SpeechToTextAudioOutputFormatScreen() {
 private fun WakeWordAudioOutputFormatScreenContent(
     isEncodingChangeEnabled: Boolean,
     viewState: SpeechToTextAudioOutputFormatConfigurationData,
-    onEvent: (event: SpeechToTextConfigurationUiEvent) -> Unit
+    onEvent: (event: SpeechToTextConfigurationUiEvent) -> Unit,
 ) {
     Card(
         modifier = Modifier.padding(8.dp),

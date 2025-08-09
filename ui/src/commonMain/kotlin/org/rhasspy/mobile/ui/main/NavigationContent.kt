@@ -44,7 +44,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordCon
 
 @Composable
 fun NavigationContent(
-    screen: NavigationDestination
+    screen: NavigationDestination,
 ) {
     Crossfade(targetState = screen) {
         when (it) {
@@ -60,10 +60,9 @@ fun NavigationContent(
     }
 }
 
-
 @Composable
 private fun MainNavigationContent(
-    screen: MainScreenNavigationDestination
+    screen: MainScreenNavigationDestination,
 ) {
     Column {
         Box(modifier = Modifier.weight(1f)) {
@@ -82,7 +81,7 @@ private fun MainNavigationContent(
 
 @Composable
 private fun ConfigurationNavigationContent(
-    screen: ConfigurationScreenNavigationDestination
+    screen: ConfigurationScreenNavigationDestination,
 ) {
     when (screen) {
         ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen -> AudioPlayingConfigurationScreen()
@@ -98,10 +97,9 @@ private fun ConfigurationNavigationContent(
     }
 }
 
-
 @Composable
 private fun SettingsNavigationContent(
-    screen: SettingsScreenDestination
+    screen: SettingsScreenDestination,
 ) {
     when (screen) {
         SettingsScreenDestination.AboutSettings -> AboutScreen()
@@ -119,7 +117,7 @@ private fun SettingsNavigationContent(
 
 @Composable
 private fun WakeWordNavigationContent(
-    screen: WakeWordConfigurationScreenDestination
+    screen: WakeWordConfigurationScreenDestination,
 ) {
     when (screen) {
         WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen -> PorcupineLanguageScreen()
@@ -131,7 +129,7 @@ private fun WakeWordNavigationContent(
 
 @Composable
 private fun SpeechToTextConfigurationNavigationContent(
-    screen: SpeechToTextConfigurationScreenDestination
+    screen: SpeechToTextConfigurationScreenDestination,
 ) {
     when (screen) {
         SpeechToTextConfigurationScreenDestination.AudioRecorderFormatScreen -> SpeechToTextAudioRecorderFormatScreen()
@@ -141,7 +139,7 @@ private fun SpeechToTextConfigurationNavigationContent(
 
 @Composable
 private fun IndicationNavigationContent(
-    screen: IndicationSettingsScreenDestination
+    screen: IndicationSettingsScreenDestination,
 ) {
     when (screen) {
         IndicationSettingsScreenDestination.WakeIndicationSoundScreen -> IndicationWakeScreen()

@@ -22,7 +22,7 @@ fun FilledTonalButtonListItem(
     icon: ImageVector? = null,
     text: StableStringResource,
     enabled: Boolean = true,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     ListElement(modifier = modifier) {
         Column(

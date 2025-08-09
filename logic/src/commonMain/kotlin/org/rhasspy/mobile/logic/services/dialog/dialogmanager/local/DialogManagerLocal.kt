@@ -14,7 +14,7 @@ internal class DialogManagerLocal(
     private val sessionStateActions: ISessionStateActions,
     private val idleStateActions: IIdleStateActions,
     private val stateTransition: IStateTransition,
-    private val playingAudioStateActions: IPlayingAudioStateActions
+    private val playingAudioStateActions: IPlayingAudioStateActions,
 ) : IDialogManager {
 
     private val logger = Logger.withTag("DialogManagerLocal")

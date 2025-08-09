@@ -78,7 +78,7 @@ fun IntentHandlingConfigurationScreen() {
 @Composable
 private fun IntentHandlingEditContent(
     editData: IntentHandlingConfigurationData,
-    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
+    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit,
 ) {
 
     LazyColumn(
@@ -100,7 +100,7 @@ private fun IntentHandlingEditContent(
 @Composable
 private fun IntentHandlingOptionContent(
     editData: IntentHandlingConfigurationData,
-    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
+    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit,
 ) {
 
     RadioButtonsEnumSelection(
@@ -137,7 +137,7 @@ private fun IntentHandlingOptionContent(
 @Composable
 private fun RemoteHTTPOption(
     intentHandlingHttpEndpoint: String,
-    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
+    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
@@ -165,7 +165,7 @@ private fun HomeAssistantOption(
     intentHandlingHassEndpoint: String,
     intentHandlingHassAccessToken: String,
     intentHandlingHassOption: HomeAssistantIntentHandlingOption,
-    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
+    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {

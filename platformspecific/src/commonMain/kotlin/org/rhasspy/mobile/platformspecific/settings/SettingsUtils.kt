@@ -13,7 +13,7 @@ interface ISettingsUtils {
 
 internal expect class SettingsUtils(
     externalResultRequest: IExternalResultRequest,
-    nativeApplication: NativeApplication
+    nativeApplication: NativeApplication,
 ) : ISettingsUtils {
 
     /**

@@ -9,5 +9,5 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 data class LogScreenViewState(
     val isLogAutoscroll: Boolean,
     val logList: ImmutableList<LogElement>,
-    val snackBarText: StableStringResource? = null
+    val snackBarText: StableStringResource? = null,
 )

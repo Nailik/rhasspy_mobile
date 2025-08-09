@@ -19,7 +19,7 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiE
 
 @Stable
 class ConfigurationScreenViewModel(
-    viewStateCreator: ConfigurationScreenViewStateCreator
+    viewStateCreator: ConfigurationScreenViewStateCreator,
 ) : ScreenViewModel() {
 
     private val _viewState: MutableStateFlow<ConfigurationScreenViewState> = viewStateCreator()

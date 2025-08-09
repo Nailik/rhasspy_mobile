@@ -64,7 +64,7 @@ fun IntentRecognitionConfigurationScreen() {
 @Composable
 fun IntentRecognitionEditContent(
     editData: IntentRecognitionConfigurationData,
-    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit
+    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit,
 ) {
 
     LazyColumn(
@@ -86,7 +86,7 @@ fun IntentRecognitionEditContent(
 @Composable
 private fun IntentRecognitionOptionContent(
     editData: IntentRecognitionConfigurationData,
-    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit
+    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit,
 ) {
 
     RadioButtonsEnumSelection(
@@ -117,7 +117,7 @@ private fun IntentRecognitionOptionContent(
 private fun IntentRecognitionHTTP(
     isUseCustomIntentRecognitionHttpEndpoint: Boolean,
     intentRecognitionHttpEndpointText: String,
-    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit
+    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {

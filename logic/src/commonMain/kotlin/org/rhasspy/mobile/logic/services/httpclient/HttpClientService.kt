@@ -48,7 +48,7 @@ interface IHttpClientService : IService {
         text: String,
         volume: Float?,
         siteId: String?,
-        onResult: (result: HttpClientResult<ByteArray>) -> Unit
+        onResult: (result: HttpClientResult<ByteArray>) -> Unit,
     )
 
     fun playWav(audioSource: AudioSource, onResult: (result: HttpClientResult<String>) -> Unit)
@@ -56,12 +56,12 @@ interface IHttpClientService : IService {
     fun homeAssistantEvent(
         json: String,
         intentName: String,
-        onResult: (result: HttpClientResult<String>) -> Unit
+        onResult: (result: HttpClientResult<String>) -> Unit,
     )
 
     fun homeAssistantIntent(
         intentJson: String,
-        onResult: (result: HttpClientResult<String>) -> Unit
+        onResult: (result: HttpClientResult<String>) -> Unit,
     )
 }
 
@@ -71,7 +71,7 @@ interface IHttpClientService : IService {
  * functions return the result or an exception
  */
 internal class HttpClientService(
-    paramsCreator: HttpClientServiceParamsCreator
+    paramsCreator: HttpClientServiceParamsCreator,
 ) : IHttpClientService {
 
     override val logger = LogType.HttpClientService.logger()
@@ -186,7 +186,6 @@ internal class HttpClientService(
         }
     }
 
-
     /**
      * /api/speech-to-text
      * POST a WAV file and have Rhasspy return the text transcription
@@ -195,7 +194,7 @@ internal class HttpClientService(
      */
     override fun speechToText(
         audioFilePath: Path,
-        onResult: (result: HttpClientResult<String>) -> Unit
+        onResult: (result: HttpClientResult<String>) -> Unit,
     ) {
         logger.d { "speechToText: audioFilePath.name" }
 
@@ -219,7 +218,7 @@ internal class HttpClientService(
      */
     override fun recognizeIntent(
         text: String,
-        onResult: (result: HttpClientResult<String>) -> Unit
+        onResult: (result: HttpClientResult<String>) -> Unit,
     ) {
         logger.d { "recognizeIntent text: $text" }
 
@@ -245,7 +244,7 @@ internal class HttpClientService(
         text: String,
         volume: Float?,
         siteId: String?,
-        onResult: (result: HttpClientResult<ByteArray>) -> Unit
+        onResult: (result: HttpClientResult<ByteArray>) -> Unit,
     ) {
         logger.d { "textToSpeech text: $text" }
 
@@ -267,7 +266,7 @@ internal class HttpClientService(
     @Suppress("IMPLICIT_CAST_TO_ANY")
     override fun playWav(
         audioSource: AudioSource,
-        onResult: (result: HttpClientResult<String>) -> Unit
+        onResult: (result: HttpClientResult<String>) -> Unit,
     ) {
         logger.d { "playWav size: $audioSource" }
         @Suppress("DEPRECATION")
@@ -306,7 +305,7 @@ internal class HttpClientService(
      */
     override fun intentHandling(
         intent: String,
-        onResult: (result: HttpClientResult<String>) -> Unit
+        onResult: (result: HttpClientResult<String>) -> Unit,
     ) {
         logger.d { "intentHandling intent: $intent" }
         return post(
@@ -323,7 +322,7 @@ internal class HttpClientService(
     override fun homeAssistantEvent(
         json: String,
         intentName: String,
-        onResult: (result: HttpClientResult<String>) -> Unit
+        onResult: (result: HttpClientResult<String>) -> Unit,
     ) {
         logger.d { "homeAssistantEvent json: $json intentName: $intentName" }
         return post(
@@ -338,13 +337,12 @@ internal class HttpClientService(
         )
     }
 
-
     /**
      * send intent as Intent to Home Assistant
      */
     override fun homeAssistantIntent(
         intentJson: String,
-        onResult: (result: HttpClientResult<String>) -> Unit
+        onResult: (result: HttpClientResult<String>) -> Unit,
     ) {
         logger.d { "homeAssistantIntent json: $intentJson" }
         return post(
@@ -359,7 +357,6 @@ internal class HttpClientService(
         )
     }
 
-
     /**
      * post data to endpoint
      * handles even in event logger
@@ -367,7 +364,7 @@ internal class HttpClientService(
     private inline fun <reified T> post(
         url: String,
         crossinline block: HttpRequestBuilder.() -> Unit,
-        crossinline onResult: (result: HttpClientResult<T>) -> Unit
+        crossinline onResult: (result: HttpClientResult<T>) -> Unit,
     ) {
         coroutineScope.launch {
             val result = httpClient?.let { client ->

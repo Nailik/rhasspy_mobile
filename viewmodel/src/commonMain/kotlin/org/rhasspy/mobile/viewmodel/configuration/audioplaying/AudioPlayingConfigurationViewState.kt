@@ -11,7 +11,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfi
 
 @Stable
 data class AudioPlayingConfigurationViewState(
-    override val editData: AudioPlayingConfigurationData
+    override val editData: AudioPlayingConfigurationData,
 ) : IConfigurationViewState {
 
     @Stable
@@ -20,7 +20,7 @@ data class AudioPlayingConfigurationViewState(
         val audioOutputOption: AudioOutputOption = ConfigurationSetting.audioOutputOption.value,
         val isUseCustomAudioPlayingHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value,
         val audioPlayingHttpEndpoint: String = ConfigurationSetting.audioPlayingHttpEndpoint.value,
-        val audioPlayingMqttSiteId: String = ConfigurationSetting.audioPlayingMqttSiteId.value
+        val audioPlayingMqttSiteId: String = ConfigurationSetting.audioPlayingMqttSiteId.value,
     ) : IConfigurationData {
 
         val audioPlayingOptionList: ImmutableList<AudioPlayingOption> =

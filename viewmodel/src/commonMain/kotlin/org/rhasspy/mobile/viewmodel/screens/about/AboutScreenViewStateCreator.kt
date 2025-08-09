@@ -12,7 +12,7 @@ import org.rhasspy.mobile.platformspecific.resource.readToString
 import org.rhasspy.mobile.resources.MR
 
 class AboutScreenViewStateCreator(
-    val nativeApplication: NativeApplication
+    val nativeApplication: NativeApplication,
 ) {
 
     operator fun invoke(): MutableStateFlow<AboutScreenViewState> {

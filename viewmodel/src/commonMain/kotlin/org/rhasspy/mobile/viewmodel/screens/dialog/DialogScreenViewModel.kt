@@ -9,7 +9,7 @@ import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change.To
 
 class DialogScreenViewModel(
     viewStateCreator: DialogScreenViewStateCreator,
-    private val dialogManagerService: IDialogManagerService
+    private val dialogManagerService: IDialogManagerService,
 ) : ScreenViewModel() {
 
     val viewState = viewStateCreator()

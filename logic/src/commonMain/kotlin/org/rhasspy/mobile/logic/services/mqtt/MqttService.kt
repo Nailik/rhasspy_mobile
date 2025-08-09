@@ -78,7 +78,7 @@ interface IMqttService : IService {
     fun asrAudioSessionFrame(
         sessionId: String,
         byteArray: ByteArray,
-        onResult: (result: ServiceState) -> Unit
+        onResult: (result: ServiceState) -> Unit,
     )
 
     fun hotWordDetected(keyword: String)
@@ -93,7 +93,7 @@ interface IMqttService : IService {
         sessionId: String,
         text: String,
         siteId: String,
-        onResult: (result: ServiceState) -> Unit
+        onResult: (result: ServiceState) -> Unit,
     )
 
     fun playAudioRemote(audioSource: AudioSource, onResult: (result: ServiceState) -> Unit)
@@ -102,7 +102,7 @@ interface IMqttService : IService {
 }
 
 internal class MqttService(
-    paramsCreator: MqttServiceParamsCreator
+    paramsCreator: MqttServiceParamsCreator,
 ) : IMqttService {
 
     override val logger = LogType.MqttService.logger()
@@ -230,7 +230,6 @@ internal class MqttService(
         return _isConnected.value
     }
 
-
     /**
      * try to reconnect after disconnect
      */
@@ -307,7 +306,8 @@ internal class MqttService(
                         MqttTopicsSubscription.SetVolume -> setVolume(jsonObject)
                         MqttTopicsSubscription.Say -> say(jsonObject)
                         MqttTopicsSubscription.PlayBytes,
-                        MqttTopicsSubscription.PlayFinished -> {
+                        MqttTopicsSubscription.PlayFinished,
+                            -> {
                             logger.d { "isThisSiteId mqttTopic notFound $topic" }
                         }
                     }
@@ -333,7 +333,6 @@ internal class MqttService(
 
         }
     }
-
 
     /**
      * Subscribes to topics that are necessary
@@ -362,7 +361,6 @@ internal class MqttService(
         }
     }
 
-
     /**
      * published new messages
      *
@@ -371,7 +369,7 @@ internal class MqttService(
     private fun publishMessage(
         topic: String,
         message: MqttMessage,
-        onResult: ((result: ServiceState) -> Unit)? = null
+        onResult: ((result: ServiceState) -> Unit)? = null,
     ) {
         scope.launch {
             val status = if (params.isMqttEnabled) {
@@ -401,7 +399,7 @@ internal class MqttService(
     private fun publishMessage(
         mqttTopic: MqttTopicsPublish,
         message: MqttMessage,
-        onResult: ((result: ServiceState) -> Unit)? = null
+        onResult: ((result: ServiceState) -> Unit)? = null,
     ) {
         publishMessage(mqttTopic.topic, message, onResult)
     }
@@ -428,7 +426,6 @@ internal class MqttService(
      */
     private fun startSession(jsonObject: JsonObject) =
         serviceMiddleware.action(StartSession(jsonObject.getSource()))
-
 
     /**
      * https://rhasspy.readthedocs.io/en/latest/reference/#dialoguemanager_endsession
@@ -543,7 +540,7 @@ internal class MqttService(
     override fun asrAudioSessionFrame(
         sessionId: String,
         byteArray: ByteArray,
-        onResult: (result: ServiceState) -> Unit
+        onResult: (result: ServiceState) -> Unit,
     ) {
         publishMessage(
             MqttTopicsPublish.AsrAudioSessionFrame.topic
@@ -571,7 +568,6 @@ internal class MqttService(
      */
     private fun hotWordToggleOff() =
         serviceMiddleware.action(HotWordToggle(false, Mqtt(null)))
-
 
     /**
      * hermes/hotword/<wakewordId>/detected (JSON)
@@ -666,7 +662,6 @@ internal class MqttService(
         )
     }
 
-
     /**
      * hermes/asr/stopListening (JSON)
      * Tell ASR system to stop recording
@@ -739,7 +734,6 @@ internal class MqttService(
     private fun asrError(jsonObject: JsonObject) =
         serviceMiddleware.action(AsrError(Mqtt(jsonObject.getSessionId())))
 
-
     /**
      * hermes/error/asr (JSON)
      * Sent when an error occurs in the ASR system
@@ -790,7 +784,7 @@ internal class MqttService(
     override fun recognizeIntent(
         sessionId: String,
         text: String,
-        onResult: (result: ServiceState) -> Unit
+        onResult: (result: ServiceState) -> Unit,
     ) {
         publishMessage(
             MqttTopicsPublish.Query,
@@ -866,7 +860,7 @@ internal class MqttService(
         sessionId: String,
         text: String,
         siteId: String,
-        onResult: (result: ServiceState) -> Unit
+        onResult: (result: ServiceState) -> Unit,
     ) {
         publishMessage(
             MqttTopicsPublish.Say,
@@ -906,7 +900,6 @@ internal class MqttService(
             )
         }
 
-
     /**
      * hermes/audioServer/<siteId>/playBytes/<requestId> (JSON)
      * Play WAV data
@@ -944,7 +937,7 @@ internal class MqttService(
      */
     override fun playAudioRemote(
         audioSource: AudioSource,
-        onResult: (result: ServiceState) -> Unit
+        onResult: (result: ServiceState) -> Unit,
     ) {
         publishMessage(
             MqttTopicsPublish.AudioOutputPlayBytes.topic
@@ -992,7 +985,6 @@ internal class MqttService(
         )
     }
 
-
     /**
      * rhasspy/audioServer/setVolume (JSON, Rhasspy only)
      * Set the volume at one or more sitesu
@@ -1003,7 +995,6 @@ internal class MqttService(
         jsonObject[MqttParams.Volume.value]?.jsonPrimitive?.floatOrNull?.let {
             serviceMiddleware.action(AudioVolumeChange(it, Mqtt(null)))
         }
-
 
     private fun JsonObject.getSource() = Mqtt(jsonObject.getSessionId())
 

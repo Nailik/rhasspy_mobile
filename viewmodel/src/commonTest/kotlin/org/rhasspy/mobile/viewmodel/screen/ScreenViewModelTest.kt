@@ -3,8 +3,8 @@ package org.rhasspy.mobile.viewmodel.screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
-import org.koin.dsl.module
 import org.kodein.mock.generated.injectMocks
+import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -15,7 +15,11 @@ import org.rhasspy.mobile.viewmodel.navigation.INavigator
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Confirm
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.MicrophonePermissionInfo
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.OverlayPermissionInfo
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class ScreenViewModelTest : AppTest() {
 
@@ -27,7 +31,6 @@ class ScreenViewModelTest : AppTest() {
 
     @Mock
     lateinit var overlayPermission: IOverlayPermission
-
 
     private lateinit var screenViewModel: ScreenViewModel
 

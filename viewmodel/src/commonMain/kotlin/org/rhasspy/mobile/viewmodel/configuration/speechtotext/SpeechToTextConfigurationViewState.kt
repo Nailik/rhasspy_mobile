@@ -15,7 +15,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfi
 @Stable
 data class SpeechToTextConfigurationViewState(
     override val editData: SpeechToTextConfigurationData,
-    val isOutputEncodingChangeEnabled: Boolean
+    val isOutputEncodingChangeEnabled: Boolean,
 ) : IConfigurationViewState {
 
     @Stable
@@ -25,7 +25,7 @@ data class SpeechToTextConfigurationViewState(
         val isUseSpeechToTextMqttSilenceDetection: Boolean = ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value,
         val speechToTextHttpEndpoint: String = ConfigurationSetting.speechToTextHttpEndpoint.value,
         val speechToTextAudioRecorderFormatData: SpeechToTextAudioRecorderFormatConfigurationData = SpeechToTextAudioRecorderFormatConfigurationData(),
-        val speechToTextAudioOutputFormatData: SpeechToTextAudioOutputFormatConfigurationData = SpeechToTextAudioOutputFormatConfigurationData()
+        val speechToTextAudioOutputFormatData: SpeechToTextAudioOutputFormatConfigurationData = SpeechToTextAudioOutputFormatConfigurationData(),
     ) : IConfigurationData {
 
         val speechToTextOptions: ImmutableList<SpeechToTextOption> =

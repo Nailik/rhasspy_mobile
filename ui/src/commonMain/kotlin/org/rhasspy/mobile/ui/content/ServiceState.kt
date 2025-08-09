@@ -33,7 +33,7 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 fun ServiceStateDialog(
     dialogText: TextWrapper,
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
 
     Dialog(
@@ -56,7 +56,7 @@ fun ServiceStateHeader(
     modifier: Modifier = Modifier,
     serviceViewState: ServiceViewState,
     enabled: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Box(
         modifier = modifier

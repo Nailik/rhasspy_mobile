@@ -43,7 +43,7 @@ actual class IndicationOverlay actual constructor(
     private val viewModel: IndicationOverlayViewModel,
     private val nativeApplication: NativeApplication,
     private val overlayPermission: IOverlayPermission,
-    private val dispatcher: IDispatcherProvider
+    private val dispatcher: IDispatcherProvider,
 ) : IIndicationOverlay {
 
     private val logger = Logger.withTag("IndicationOverlay")
@@ -102,7 +102,6 @@ actual class IndicationOverlay actual constructor(
             logger.a(exception) { "exception in initialization" }
         }
     }
-
 
     /**
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary

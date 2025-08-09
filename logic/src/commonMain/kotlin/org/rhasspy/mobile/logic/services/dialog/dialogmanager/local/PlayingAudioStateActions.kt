@@ -17,7 +17,7 @@ interface IPlayingAudioStateActions {
 internal class PlayingAudioStateActions(
     private val dialogManagerService: IDialogManagerService,
     private val audioPlayingService: IAudioPlayingService,
-    private val stateTransition: IStateTransition
+    private val stateTransition: IStateTransition,
 ) : IPlayingAudioStateActions {
     override fun onAction(action: DialogServiceMiddlewareAction) {
         when (action) {

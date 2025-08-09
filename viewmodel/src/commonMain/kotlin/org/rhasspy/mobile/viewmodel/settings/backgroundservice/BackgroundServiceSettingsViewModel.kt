@@ -28,7 +28,7 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
 @Stable
 class BackgroundServiceSettingsViewModel(
     viewStateCreator: BackgroundServiceSettingsViewStateCreator,
-    private val backgroundService: IBackgroundService
+    private val backgroundService: IBackgroundService,
 ) : ScreenViewModel() {
 
     private val _viewState: MutableStateFlow<BackgroundServiceSettingsViewState> =

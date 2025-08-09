@@ -71,7 +71,7 @@ interface IWebServerService : IService {
  * - else: determined by Ktor
  */
 internal class WebServerService(
-    paramsCreator: WebServerServiceParamsCreator
+    paramsCreator: WebServerServiceParamsCreator,
 ) : IWebServerService {
 
     override val logger = LogType.WebServerService.logger()
@@ -262,7 +262,6 @@ internal class WebServerService(
         return Ok
     }
 
-
     /**
      * /api/listen-for-wake
      * POST "on" to have Rhasspy listen for a wake word
@@ -283,7 +282,6 @@ internal class WebServerService(
         } ?: Error(WakeOptionInvalid)
     }
 
-
     /**
      * /api/play-recording
      * POST to play last recorded voice command
@@ -292,7 +290,6 @@ internal class WebServerService(
         serviceMiddleware.action(PlayStopRecording)
         return Ok
     }
-
 
     /**
      * /api/play-recording

@@ -14,7 +14,7 @@ import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEven
 
 @Stable
 class IndicationSettingsViewModel(
-    viewStateCreator: IndicationSettingsViewStateCreator
+    viewStateCreator: IndicationSettingsViewStateCreator,
 ) : ScreenViewModel() {
 
     val viewState = viewStateCreator()

@@ -11,5 +11,5 @@ interface IDispatcherProvider {
 
 internal class DispatcherProvider(
     override val IO: CoroutineDispatcher = Dispatchers.IO,
-    override val Main: CoroutineDispatcher = Dispatchers.Main
+    override val Main: CoroutineDispatcher = Dispatchers.Main,
 ) : IDispatcherProvider

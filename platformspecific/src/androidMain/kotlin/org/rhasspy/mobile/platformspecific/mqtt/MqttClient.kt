@@ -27,7 +27,7 @@ actual class MqttClient actual constructor(
     persistenceType: MqttPersistence,
     onDelivered: (token: Int) -> Unit,
     onMessageReceived: (topic: String, message: MqttMessage) -> Unit,
-    onDisconnect: (error: Throwable) -> Unit
+    onDisconnect: (error: Throwable) -> Unit,
 ) {
     private val logger = Logger.withTag("MqttClient")
 
@@ -53,7 +53,7 @@ actual class MqttClient actual constructor(
 
         override fun messageArrived(
             topic: String,
-            message: org.eclipse.paho.client.mqttv3.MqttMessage
+            message: org.eclipse.paho.client.mqttv3.MqttMessage,
         ) {
             onMessageReceived(topic, message.toMqttMessage())
         }

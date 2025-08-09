@@ -14,5 +14,5 @@ data class AboutScreenViewState(
     val libraries: ImmutableList<StableLibrary>,
     val isLibraryDialogVisible: Boolean,
     val libraryDialogContent: StableLibrary?,
-    val snackBarText: StableStringResource?
+    val snackBarText: StableStringResource?,
 )

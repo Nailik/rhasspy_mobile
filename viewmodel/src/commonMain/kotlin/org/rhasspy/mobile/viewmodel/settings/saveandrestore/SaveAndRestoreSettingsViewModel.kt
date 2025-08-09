@@ -23,7 +23,7 @@ import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettin
 
 @Stable
 class SaveAndRestoreSettingsViewModel(
-    private val settingsUtils: ISettingsUtils
+    private val settingsUtils: ISettingsUtils,
 ) : ScreenViewModel() {
 
     private val dispatcher by inject<IDispatcherProvider>()

@@ -12,7 +12,7 @@ import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlay
 
 @Stable
 class MicrophoneOverlaySettingsViewModel(
-    viewStateCreator: MicrophoneOverlaySettingsViewStateCreator
+    viewStateCreator: MicrophoneOverlaySettingsViewStateCreator,
 ) : ScreenViewModel() {
 
     val viewState = viewStateCreator()

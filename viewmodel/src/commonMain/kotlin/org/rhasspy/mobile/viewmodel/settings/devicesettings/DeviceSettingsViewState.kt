@@ -9,5 +9,5 @@ data class DeviceSettingsViewState(
     val volume: Float,
     val isHotWordEnabled: Boolean,
     val isAudioOutputEnabled: Boolean,
-    val isIntentHandlingEnabled: Boolean
+    val isIntentHandlingEnabled: Boolean,
 )

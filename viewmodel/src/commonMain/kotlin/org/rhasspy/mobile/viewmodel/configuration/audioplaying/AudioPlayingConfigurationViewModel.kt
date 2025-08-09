@@ -29,7 +29,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
  */
 @Stable
 class AudioPlayingConfigurationViewModel(
-    service: IAudioPlayingService
+    service: IAudioPlayingService,
 ) : ConfigurationViewModel(
     service = service
 ) {
@@ -39,7 +39,7 @@ class AudioPlayingConfigurationViewModel(
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
+        configurationViewState: MutableStateFlow<ConfigurationViewState>,
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
             init = ::AudioPlayingConfigurationData,

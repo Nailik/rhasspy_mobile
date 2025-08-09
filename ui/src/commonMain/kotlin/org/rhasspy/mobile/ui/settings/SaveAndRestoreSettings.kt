@@ -88,7 +88,7 @@ fun SaveAndRestoreSettingsContent() {
 @Composable
 private fun SaveSettings(
     isSaveSettingsToFileDialogVisible: Boolean,
-    onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit
+    onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit,
 ) {
 
     //save settings
@@ -124,7 +124,7 @@ private fun SaveSettings(
 @Composable
 private fun RestoreSettings(
     isRestoreSettingsFromFileDialogVisible: Boolean,
-    onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit
+    onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit,
 ) {
 
     //restore settings

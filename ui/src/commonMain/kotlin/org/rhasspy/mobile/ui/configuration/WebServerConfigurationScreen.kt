@@ -79,7 +79,7 @@ fun WebServerConfigurationScreen() {
 @Composable
 private fun WebServerEditContent(
     editData: WebServerConfigurationData,
-    onEvent: (WebServerConfigurationUiEvent) -> Unit
+    onEvent: (WebServerConfigurationUiEvent) -> Unit,
 ) {
 
     LazyColumn(
@@ -148,9 +148,8 @@ private fun WebserverSSL(
     httpServerSSLKeyStorePassword: String,
     httpServerSSLKeyAlias: String,
     httpServerSSLKeyPassword: String,
-    onEvent: (WebServerConfigurationUiEvent) -> Unit
+    onEvent: (WebServerConfigurationUiEvent) -> Unit,
 ) {
-
 
     //switch to enabled http ssl
     SwitchListItem(

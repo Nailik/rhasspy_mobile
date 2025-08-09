@@ -31,7 +31,7 @@ interface INavigator {
  * wenn screen nicht mehr angezeigt wird disposen
  */
 internal class Navigator(
-    private val nativeApplication: NativeApplication
+    private val nativeApplication: NativeApplication,
 ) : INavigator {
 
     override val navStack =

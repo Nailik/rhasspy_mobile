@@ -31,7 +31,6 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.O
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.ScanQRCodeFailed
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.SelectFileFailed
 
-
 val LocalSnackBarHostState = compositionLocalOf<SnackbarHostState> {
     error("No SnackBarHostState provided")
 }
@@ -44,7 +43,7 @@ val LocalViewModelFactory = compositionLocalOf<ViewModelFactory> {
 fun Screen(
     modifier: Modifier = Modifier,
     screenViewModel: IScreenViewModel,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
 
     val screenViewState by screenViewModel.screenViewState.collectAsState()

@@ -18,7 +18,6 @@ import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performClick
@@ -40,7 +39,6 @@ import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
-
 fun SemanticsNodeInteraction.onListItemSwitch(): SemanticsNodeInteraction {
     return this.onChildren().filter(isToggleable()).onFirst()
 }
@@ -60,45 +58,43 @@ fun hasCombinedTestTag(tag1: Enum<*>, tag2: Enum<*>): SemanticsMatcher =
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     testTag: IOption<*>,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteraction = onNode(hasTestTag(testTag.name), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     testTag: TestTag,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteraction = onNode(hasTestTag(testTag.name), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     testTag: NavigationDestination,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteraction = onNode(hasTestTag(testTag.toString()), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     name: String,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteraction = onNode(hasTestTag(name), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
     tag1: TestTag, tag2: TestTag,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteraction = onNode(hasTestTag("${tag1.name}${tag2.name}"), useUnmergedTree)
-
 
 fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
     testTag: Enum<*>, tag: TestTag,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteraction = onNode(hasTestTag("${testTag.name}${tag.name}"), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
     name: String, tag: TestTag,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteraction = onNode(hasTestTag("$name${tag.name}"), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onAllNodesWithText(
     text: StableStringResource,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteractionCollection = onAllNodesWithText(getText(text), useUnmergedTree)
-
 
 fun textRes(text: StableStringResource): BySelector {
     return By.text(getText(text))
@@ -118,7 +114,6 @@ private fun getText(text: StableStringResource): String {
 fun UiSelector.text(text: StableStringResource): UiSelector {
     return this.textMatches(getText(text))
 }
-
 
 //https://github.com/SergKhram/allure-kotlin/blob/081c7d39ee440b82ca490ce91d34ce1a1421670c/allure-kotlin-android/src/main/kotlin/io/qameta/allure/android/internal/TestUtils.kt
 fun requestExternalStoragePermissions(device: UiDevice) {
@@ -180,7 +175,7 @@ suspend fun ComposeTestRule.saveBottomAppBar() {
 @OptIn(ExperimentalTestApi::class)
 fun ComposeTestRule.waitUntilExists(
     matcher: SemanticsMatcher,
-    timeoutMillis: Long = 5000
+    timeoutMillis: Long = 5000,
 ) {
     return this.waitUntilNodeCount(matcher, 1, timeoutMillis)
 }
@@ -188,7 +183,7 @@ fun ComposeTestRule.waitUntilExists(
 @OptIn(ExperimentalTestApi::class)
 fun ComposeTestRule.waitUntilNotExists(
     matcher: SemanticsMatcher,
-    timeoutMillis: Long = 5000
+    timeoutMillis: Long = 5000,
 ) {
     return this.waitUntilNodeCount(matcher, 0, timeoutMillis)
 }

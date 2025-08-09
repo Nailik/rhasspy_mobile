@@ -67,7 +67,7 @@ fun AudioPlayingConfigurationScreen() {
 @Composable
 private fun AudioPlayingEditContent(
     editData: AudioPlayingConfigurationData,
-    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
+    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit,
 ) {
 
     LazyColumn(
@@ -89,7 +89,7 @@ private fun AudioPlayingEditContent(
 @Composable
 private fun AudioPlayingOptionContent(
     editData: AudioPlayingConfigurationData,
-    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
+    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit,
 ) {
 
     //radio buttons list of available values
@@ -132,7 +132,7 @@ private fun AudioPlayingOptionContent(
 private fun LocalConfigurationContent(
     audioOutputOption: AudioOutputOption,
     audioOutputOptionList: ImmutableList<AudioOutputOption>,
-    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
+    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit,
 ) {
 
     //visibility of local output options
@@ -156,7 +156,7 @@ private fun LocalConfigurationContent(
 private fun HttpEndpointConfigurationContent(
     isUseCustomAudioPlayingHttpEndpoint: Boolean,
     audioPlayingHttpEndpoint: String,
-    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
+    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit,
 ) {
 
     //visibility of endpoint option
@@ -183,14 +183,13 @@ private fun HttpEndpointConfigurationContent(
 
 }
 
-
 /**
  * show mqtt site id options
  */
 @Composable
 private fun MqttSiteIdConfigurationContent(
     audioPlayingMqttSiteId: String,
-    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
+    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit,
 ) {
 
     //visibility of endpoint option

@@ -22,7 +22,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
 
 @Stable
 class IntentHandlingConfigurationViewModel(
-    service: IIntentHandlingService
+    service: IIntentHandlingService,
 ) : ConfigurationViewModel(
     service = service
 ) {
@@ -32,7 +32,7 @@ class IntentHandlingConfigurationViewModel(
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
+        configurationViewState: MutableStateFlow<ConfigurationViewState>,
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
             init = ::IntentHandlingConfigurationData,

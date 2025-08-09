@@ -41,7 +41,7 @@ interface IIntentRecognitionService : IService {
  * when data is null the service was most probably mqtt and will return result in a call function
  */
 internal class IntentRecognitionService(
-    paramsCreator: IntentRecognitionServiceParamsCreator
+    paramsCreator: IntentRecognitionServiceParamsCreator,
 ) : IIntentRecognitionService {
 
     override val logger = LogType.IntentRecognitionService.logger()

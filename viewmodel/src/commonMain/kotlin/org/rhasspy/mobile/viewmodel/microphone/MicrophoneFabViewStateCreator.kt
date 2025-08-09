@@ -12,7 +12,7 @@ class MicrophoneFabViewStateCreator(
     private val serviceMiddleware: IServiceMiddleware,
     private val wakeWordService: IWakeWordService,
     private val microphonePermission: IMicrophonePermission,
-    private val speechToTextService: ISpeechToTextService
+    private val speechToTextService: ISpeechToTextService,
 ) {
 
     operator fun invoke(): StateFlow<MicrophoneFabViewState> {

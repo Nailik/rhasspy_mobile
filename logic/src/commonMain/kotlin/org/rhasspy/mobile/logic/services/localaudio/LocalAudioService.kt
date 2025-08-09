@@ -40,7 +40,7 @@ interface ILocalAudioService : IService {
 }
 
 internal class LocalAudioService(
-    paramsCreator: LocalAudioServiceParamsCreator
+    paramsCreator: LocalAudioServiceParamsCreator,
 ) : ILocalAudioService {
 
     override val logger = LogType.LocalAudioService.logger()
@@ -164,7 +164,7 @@ internal class LocalAudioService(
         audioSource: AudioSource,
         volume: StateFlow<Float>,
         audioOutputOption: AudioOutputOption,
-        onFinished: (() -> Unit)? = null
+        onFinished: (() -> Unit)? = null,
     ) {
         audioFocusService.request(Notification)
 

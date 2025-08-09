@@ -115,14 +115,13 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
 }
 
-
 /**
  * Displays changelog as text in a dialog
  */
 @Composable
 private fun ChangelogDialog(
     changelog: ImmutableList<String>,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
 ) {
 
     Dialog(

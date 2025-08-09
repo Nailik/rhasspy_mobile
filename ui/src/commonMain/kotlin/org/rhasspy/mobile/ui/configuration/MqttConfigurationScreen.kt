@@ -85,7 +85,7 @@ fun MqttConfigurationScreen() {
 @Composable
 private fun MqttEditContent(
     editData: MqttConfigurationData,
-    onEvent: (MqttConfigurationUiEvent) -> Unit
+    onEvent: (MqttConfigurationUiEvent) -> Unit,
 ) {
 
     LazyColumn(
@@ -143,7 +143,6 @@ private fun MqttEditContent(
 
 }
 
-
 /**
  * connection settings for mqtt
  * text fields for
@@ -155,7 +154,7 @@ private fun MqttConnectionSettings(
     mqttPortText: String,
     mqttUserName: String,
     mqttPassword: String,
-    onEvent: (MqttConfigurationUiEvent) -> Unit
+    onEvent: (MqttConfigurationUiEvent) -> Unit,
 ) {
 
     //host
@@ -203,7 +202,7 @@ private fun MqttConnectionSettings(
 private fun MqttSSL(
     isMqttSSLEnabled: Boolean,
     mqttKeyStoreFileName: String?,
-    onEvent: (MqttConfigurationUiEvent) -> Unit
+    onEvent: (MqttConfigurationUiEvent) -> Unit,
 ) {
 
     SwitchListItem(
@@ -273,7 +272,7 @@ private fun MqttConnectionTiming(
     mqttConnectionTimeoutText: String,
     mqttKeepAliveIntervalText: String,
     mqttRetryIntervalText: String,
-    onEvent: (MqttConfigurationUiEvent) -> Unit
+    onEvent: (MqttConfigurationUiEvent) -> Unit,
 ) {
 
     TextFieldListItem(

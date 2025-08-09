@@ -12,7 +12,6 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
@@ -29,6 +28,7 @@ import org.rhasspy.mobile.platformspecific.extensions.commonShare
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 interface IFileLogger {
@@ -43,7 +43,7 @@ interface IFileLogger {
 
 internal class FileLogger(
     private val nativeApplication: NativeApplication,
-    private val externalResultRequest: IExternalResultRequest
+    private val externalResultRequest: IExternalResultRequest,
 ) : IFileLogger, LogWriter() {
     private val logger = Logger.withTag("FileLogger")
 

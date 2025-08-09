@@ -89,7 +89,6 @@ fun PorcupineLanguageScreen() {
     }
 }
 
-
 /**
  * app bar for the language
  */
@@ -97,7 +96,7 @@ fun PorcupineLanguageScreen() {
 @Composable
 private fun AppBar(
     title: StableStringResource,
-    onEvent: (PorcupineUiEvent) -> Unit
+    onEvent: (PorcupineUiEvent) -> Unit,
 ) {
 
     TopAppBar(

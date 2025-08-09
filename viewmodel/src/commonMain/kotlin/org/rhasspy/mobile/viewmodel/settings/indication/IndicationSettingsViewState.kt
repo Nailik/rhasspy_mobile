@@ -13,7 +13,7 @@ data class IndicationSettingsViewState(
     val soundIndicationOutputOption: AudioOutputOption,
     val wakeSound: String,
     val recordedSound: String,
-    val errorSound: String
+    val errorSound: String,
 ) {
 
     val audioOutputOptionList: ImmutableList<AudioOutputOption> =

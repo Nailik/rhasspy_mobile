@@ -55,7 +55,7 @@ interface IDialogManagerService : IService {
  */
 internal class DialogManagerService(
     dispatcherProvider: IDispatcherProvider,
-    private val mqttService: IMqttService
+    private val mqttService: IMqttService,
 ) : IDialogManagerService {
 
     private val dialogManagerLocal by inject<DialogManagerLocal>()
@@ -134,7 +134,7 @@ internal class DialogManagerService(
 
     override fun informMqtt(
         sessionData: SessionData?,
-        action: DialogServiceMiddlewareAction
+        action: DialogServiceMiddlewareAction,
     ) {
         if (action.source !is Source.Mqtt) {
             if (sessionData != null) {

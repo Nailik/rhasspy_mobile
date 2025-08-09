@@ -10,7 +10,7 @@ import org.rhasspy.mobile.settings.AppSetting
 import kotlin.math.log
 
 class SilenceDetectionSettingsViewStateCreator(
-    private val audioRecorder: IAudioRecorder
+    private val audioRecorder: IAudioRecorder,
 ) {
 
     operator fun invoke(): StateFlow<SilenceDetectionSettingsViewState> {

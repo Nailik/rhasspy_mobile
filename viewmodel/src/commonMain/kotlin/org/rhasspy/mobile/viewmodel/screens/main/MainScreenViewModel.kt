@@ -11,7 +11,7 @@ import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.Crashl
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.Navigate
 
 class MainScreenViewModel(
-    viewStateCreator: MainScreenViewStateCreator
+    viewStateCreator: MainScreenViewStateCreator,
 ) : ScreenViewModel() {
 
     val viewState = viewStateCreator()

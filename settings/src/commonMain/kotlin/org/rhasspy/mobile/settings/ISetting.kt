@@ -21,7 +21,7 @@ private val logger = Logger.withTag("ISetting")
 open class ISetting<T>(
     private val key: SettingsEnum,
     private val initial: T,
-    private val serializer: KSerializer<T>? = null
+    private val serializer: KSerializer<T>? = null,
 ) : KoinComponent {
 
     private val settings = get<Settings>()

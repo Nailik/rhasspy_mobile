@@ -8,7 +8,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfi
 
 @Stable
 data class RemoteHermesHttpConfigurationViewState(
-    override val editData: RemoteHermesHttpConfigurationData
+    override val editData: RemoteHermesHttpConfigurationData,
 ) : IConfigurationViewState {
 
     @Stable
@@ -16,7 +16,7 @@ data class RemoteHermesHttpConfigurationViewState(
         val httpClientServerEndpointHost: String = ConfigurationSetting.httpClientServerEndpointHost.value,
         val httpClientServerEndpointPort: Int? = ConfigurationSetting.httpClientServerEndpointPort.value,
         val httpClientTimeout: Long? = ConfigurationSetting.httpClientTimeout.value,
-        val isHttpSSLVerificationDisabled: Boolean = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value
+        val isHttpSSLVerificationDisabled: Boolean = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value,
     ) : IConfigurationData {
 
         val httpClientServerEndpointPortText: String =

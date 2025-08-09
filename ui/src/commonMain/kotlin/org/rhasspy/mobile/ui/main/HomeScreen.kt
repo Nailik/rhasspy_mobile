@@ -91,11 +91,10 @@ fun HomeScreen() {
     }
 }
 
-
 @Composable
 private fun MicrophoneFabElement(
     viewState: MicrophoneFabViewState,
-    onEvent: (event: HomeScreenUiEvent) -> Unit
+    onEvent: (event: HomeScreenUiEvent) -> Unit,
 ) {
     MicrophoneFab(
         modifier = Modifier.fillMaxSize(),
@@ -105,7 +104,6 @@ private fun MicrophoneFabElement(
     )
 }
 
-
 /**
  * button to play latest recording
  */
@@ -114,7 +112,7 @@ private fun PlayRecording(
     modifier: Modifier = Modifier,
     isPlaying: Boolean,
     isPlayingRecordingEnabled: Boolean,
-    onEvent: (event: HomeScreenUiEvent) -> Unit
+    onEvent: (event: HomeScreenUiEvent) -> Unit,
 ) {
 
     FilledTonalButtonListItem(

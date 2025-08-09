@@ -62,7 +62,7 @@ fun TextToSpeechConfigurationScreen() {
 @Composable
 private fun TextToSpeechEditContent(
     editData: TextToSpeechConfigurationData,
-    onEvent: (TextToSpeechConfigurationUiEvent) -> Unit
+    onEvent: (TextToSpeechConfigurationUiEvent) -> Unit,
 ) {
 
     LazyColumn(
@@ -81,11 +81,10 @@ private fun TextToSpeechEditContent(
 
 }
 
-
 @Composable
 private fun TextToSpeechOptionContent(
     editData: TextToSpeechConfigurationData,
-    onEvent: (TextToSpeechConfigurationUiEvent) -> Unit
+    onEvent: (TextToSpeechConfigurationUiEvent) -> Unit,
 ) {
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.TextToSpeechOptions),
@@ -114,7 +113,7 @@ private fun TextToSpeechOptionContent(
 private fun TextToSpeechHTTP(
     isUseCustomTextToSpeechHttpEndpoint: Boolean,
     textToSpeechHttpEndpointText: String,
-    onAction: (TextToSpeechConfigurationUiEvent) -> Unit
+    onAction: (TextToSpeechConfigurationUiEvent) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {

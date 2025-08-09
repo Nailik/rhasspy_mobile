@@ -25,7 +25,7 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
 abstract class ConfigurationViewModel(
-    private val service: IService
+    private val service: IService,
 ) : ScreenViewModel() {
 
     protected val viewStateCreator by inject<IConfigurationViewStateCreator> { parametersOf(service) }
@@ -38,7 +38,6 @@ abstract class ConfigurationViewModel(
 
     protected abstract fun onDiscard()
     protected abstract fun onSave()
-
 
     fun onEvent(event: IConfigurationUiEvent) {
         when (event) {

@@ -62,7 +62,7 @@ internal class ServiceMiddleware(
     private val textToSpeechService: ITextToSpeechService,
     private val appSettingsService: IAppSettingsService,
     private val localAudioService: ILocalAudioService,
-    private val mqttService: IMqttService
+    private val mqttService: IMqttService,
 ) : IServiceMiddleware {
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
@@ -174,10 +174,10 @@ internal class ServiceMiddleware(
 
     private fun isAnyServiceUsingMqtt(): Boolean {
         return ConfigurationSetting.audioPlayingOption.value == AudioPlayingOption.RemoteMQTT ||
-                ConfigurationSetting.dialogManagementOption.value == DialogManagementOption.RemoteMQTT ||
-                ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.RemoteMQTT ||
-                ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteMQTT ||
-                ConfigurationSetting.textToSpeechOption.value == TextToSpeechOption.RemoteMQTT
+            ConfigurationSetting.dialogManagementOption.value == DialogManagementOption.RemoteMQTT ||
+            ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.RemoteMQTT ||
+            ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteMQTT ||
+            ConfigurationSetting.textToSpeechOption.value == TextToSpeechOption.RemoteMQTT
     }
 
 }

@@ -26,7 +26,6 @@ import kotlin.test.assertEquals
 
 class IntentHandlingConfigurationContentTest : FlakyTest() {
 
-
     private val viewModel = get<IntentHandlingConfigurationViewModel>()
 
     @Composable

@@ -42,7 +42,7 @@ class ConfigurationScreenViewStateCreator(
     private val textToSpeechService: ITextToSpeechService,
     private val audioPlayingService: IAudioPlayingService,
     private val dialogManagerService: IDialogManagerService,
-    private val intentHandlingService: IIntentHandlingService
+    private val intentHandlingService: IIntentHandlingService,
 ) {
 
     private val serviceStateFlow = combineStateFlow(

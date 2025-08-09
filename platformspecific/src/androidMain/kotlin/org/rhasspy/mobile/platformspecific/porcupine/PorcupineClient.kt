@@ -31,7 +31,6 @@ class PorcupineClient(
         .setModelPath(copyModelFile())
         .build(context)
 
-
     private var oldData = ShortArray(0)
 
     fun audioFrame(data: ByteArray) {
@@ -72,7 +71,8 @@ class PorcupineClient(
     }
 
     private fun getKeywordPaths(): Array<String> {
-        return wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
+        return wakeWordPorcupineKeywordDefaultOptions
+            .filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
             .map {
                 copyBuildInKeywordFile(it)
             }.toMutableList().also { list ->
@@ -88,7 +88,8 @@ class PorcupineClient(
     }
 
     private fun getSensitivities(): FloatArray {
-        return wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
+        return wakeWordPorcupineKeywordDefaultOptions
+            .filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
             .map {
                 it.sensitivity
             }.toMutableList().also { list ->
@@ -118,7 +119,6 @@ class PorcupineClient(
 
         return file.absolutePath
     }
-
 
     /**
      * copies a keyword file from the file moko-resources to app storage directory, else cannot be used by porcupine

@@ -48,7 +48,7 @@ import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogS
 import kotlin.time.ExperimentalTime
 
 class DialogScreenViewStateCreator(
-    private val dialogManagerService: IDialogManagerService
+    private val dialogManagerService: IDialogManagerService,
 ) {
 
     operator fun invoke(): StateFlow<DialogScreenViewState> {

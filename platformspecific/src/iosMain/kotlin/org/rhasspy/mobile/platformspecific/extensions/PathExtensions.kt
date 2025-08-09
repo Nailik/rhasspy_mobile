@@ -17,7 +17,6 @@ import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
 
-
 private val fileManager = NSFileManager.defaultManager
 
 @OptIn(ExperimentalForeignApi::class)
@@ -43,7 +42,7 @@ private fun createDirectoryIfNotExists(parentDirectory: NSURL) {
 
 actual fun Path.Companion.commonInternalPath(
     nativeApplication: NativeApplication,
-    fileName: String
+    fileName: String,
 ): Path = "${readDocumentsDirectory().replace("file:", "")}/$fileName".toPath()
 
 actual fun Path?.commonExists(): Boolean = this?.let { !FileSystem.SYSTEM.exists(this) } ?: false
@@ -78,7 +77,7 @@ actual inline fun <reified T> Path.commonDecodeLogList(): T {
 
 actual fun Path.commonShare(
     nativeApplication: NativeApplication,
-    externalResultRequest: IExternalResultRequest
+    externalResultRequest: IExternalResultRequest,
 ): Boolean {
     //TODO("Not yet implemented")
     return true
@@ -88,7 +87,7 @@ actual suspend fun Path.commonSave(
     nativeApplication: NativeApplication,
     externalResultRequest: IExternalResultRequest,
     fileName: String,
-    fileType: String
+    fileType: String,
 ): Boolean {
     //TODO("Not yet implemented")
     return true

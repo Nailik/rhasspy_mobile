@@ -11,7 +11,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfi
 
 @Stable
 data class IntentHandlingConfigurationViewState(
-    override val editData: IntentHandlingConfigurationData
+    override val editData: IntentHandlingConfigurationData,
 ) : IConfigurationViewState {
 
     @Stable

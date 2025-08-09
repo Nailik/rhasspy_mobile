@@ -59,7 +59,7 @@ interface ISpeechToTextService : IService {
  */
 internal class SpeechToTextService(
     paramsCreator: SpeechToTextServiceParamsCreator,
-    private val audioRecorder: IAudioRecorder
+    private val audioRecorder: IAudioRecorder,
 ) : ISpeechToTextService {
 
     override val logger = LogType.SpeechToTextService.logger()
@@ -105,7 +105,6 @@ internal class SpeechToTextService(
             }
         }
     }
-
 
     /**
      * Speech to Text (Wav Data)

@@ -82,7 +82,7 @@ class DialogManagerMqtt(
 
     private fun onIntentRecognitionResult(
         action: IntentRecognitionResult,
-        state: DialogManagerState
+        state: DialogManagerState,
     ) {
         state.stopTimeoutJob()
 
@@ -211,7 +211,7 @@ class DialogManagerMqtt(
 
     private fun onIntentRecognitionTimeoutError(
         action: IntentRecognitionTimeoutError,
-        state: DialogManagerState
+        state: DialogManagerState,
     ) {
         state.stopTimeoutJob()
 
@@ -228,7 +228,7 @@ class DialogManagerMqtt(
 
     private fun stopSpeechToTextService(
         action: DialogServiceMiddlewareAction,
-        state: DialogManagerState
+        state: DialogManagerState,
     ) {
         state.stopTimeoutJob()
 

@@ -31,7 +31,6 @@ import kotlin.test.assertEquals
 
 class AudioPlayingConfigurationContentTest : FlakyTest() {
 
-
     private val viewModel = get<AudioPlayingConfigurationViewModel>()
 
     @Composable

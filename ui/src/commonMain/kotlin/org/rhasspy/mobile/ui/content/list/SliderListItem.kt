@@ -21,14 +21,13 @@ import org.rhasspy.mobile.platformspecific.roundToDecimals
 import org.rhasspy.mobile.ui.content.elements.ProvideTextStyleFromToken
 import org.rhasspy.mobile.ui.content.elements.Text
 
-
 @Composable
 fun SliderListItem(
     modifier: Modifier = Modifier,
     text: StableStringResource,
     value: Float,
     valueText: String? = null,
-    onValueChange: (Float) -> Unit
+    onValueChange: (Float) -> Unit,
 ) {
     //uses custom list item to fix padding for slider
     Surface(

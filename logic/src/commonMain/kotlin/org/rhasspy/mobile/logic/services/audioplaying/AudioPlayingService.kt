@@ -36,7 +36,7 @@ interface IAudioPlayingService : IService {
  * when data is null the service was most probably mqtt and will return result in a call function
  */
 internal class AudioPlayingService(
-    paramsCreator: AudioPlayingServiceParamsCreator
+    paramsCreator: AudioPlayingServiceParamsCreator,
 ) : IAudioPlayingService {
 
     override val logger = LogType.AudioPlayingService.logger()

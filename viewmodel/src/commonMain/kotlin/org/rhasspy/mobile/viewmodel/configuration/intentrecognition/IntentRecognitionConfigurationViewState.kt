@@ -11,14 +11,14 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfi
 
 @Stable
 data class IntentRecognitionConfigurationViewState(
-    override val editData: IntentRecognitionConfigurationData
+    override val editData: IntentRecognitionConfigurationData,
 ) : IConfigurationViewState {
 
     @Stable
     data class IntentRecognitionConfigurationData(
         val intentRecognitionOption: IntentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
         val isUseCustomIntentRecognitionHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value,
-        val intentRecognitionHttpEndpoint: String = ConfigurationSetting.intentRecognitionHttpEndpoint.value
+        val intentRecognitionHttpEndpoint: String = ConfigurationSetting.intentRecognitionHttpEndpoint.value,
     ) : IConfigurationData {
 
         val intentRecognitionOptionList: ImmutableList<IntentRecognitionOption> =

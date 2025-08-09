@@ -15,7 +15,7 @@ import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsUiEven
 
 @Stable
 class AppearanceSettingsViewModel(
-    private val languageUtils: ILanguageUtils
+    private val languageUtils: ILanguageUtils,
 ) : ScreenViewModel() {
 
     private val _viewState = MutableStateFlow(AppearanceSettingsViewState())

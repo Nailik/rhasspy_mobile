@@ -58,7 +58,7 @@ fun RemoteHermesHttpConfigurationScreen() {
 @Composable
 private fun WebServerEditContent(
     editData: RemoteHermesHttpConfigurationData,
-    onEvent: (RemoteHermesHttpConfigurationUiEvent) -> Unit
+    onEvent: (RemoteHermesHttpConfigurationUiEvent) -> Unit,
 ) {
 
     LazyColumn(

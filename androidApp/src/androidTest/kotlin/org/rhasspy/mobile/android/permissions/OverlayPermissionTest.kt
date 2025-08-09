@@ -74,7 +74,6 @@ class OverlayPermissionTest : KoinComponent {
         }
     }
 
-
     /**
      * User clicks button
      * InformationDialog is shown

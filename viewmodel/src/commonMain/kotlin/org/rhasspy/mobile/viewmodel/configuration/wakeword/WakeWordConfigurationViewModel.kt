@@ -71,7 +71,7 @@ import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.WakeWordCon
 @Stable
 class WakeWordConfigurationViewModel(
     microphonePermission: IMicrophonePermission,
-    service: IWakeWordService
+    service: IWakeWordService,
 ) : ConfigurationViewModel(
     service = service
 ) {
@@ -91,7 +91,7 @@ class WakeWordConfigurationViewModel(
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
+        configurationViewState: MutableStateFlow<ConfigurationViewState>,
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
             init = ::WakeWordConfigurationData,
@@ -109,7 +109,7 @@ class WakeWordConfigurationViewModel(
                 _viewState.update {
                     it.copy(
                         isMicrophonePermissionRequestVisible = !microphonePermission.granted.value
-                                && (it.editData.wakeWordOption == WakeWordOption.Porcupine || it.editData.wakeWordOption == WakeWordOption.Udp),
+                            && (it.editData.wakeWordOption == WakeWordOption.Porcupine || it.editData.wakeWordOption == WakeWordOption.Udp),
                     )
                 }
             }
@@ -313,7 +313,6 @@ class WakeWordConfigurationViewModel(
             })
         }
     }
-
 
     override fun onSave() {
         with(_viewState.value.editData) {

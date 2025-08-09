@@ -25,72 +25,72 @@ data class ConfigurationScreenViewState(
     val intentHandling: IntentHandlingViewState,
     val hasError: StateFlow<Boolean>,
     val firstErrorIndex: StateFlow<Int?>,
-    val scrollToError: Int?
+    val scrollToError: Int?,
 ) {
 
     @Stable
     data class SiteIdViewState(
-        val text: StateFlow<String>
+        val text: StateFlow<String>,
     )
 
     @Stable
     data class RemoteHermesHttpViewState(
         val isHttpSSLVerificationEnabled: Boolean,
-        val serviceState: ServiceViewState
+        val serviceState: ServiceViewState,
     )
 
     @Stable
     data class WebServerViewState(
         val isHttpServerEnabled: Boolean,
-        val serviceState: ServiceViewState
+        val serviceState: ServiceViewState,
     )
 
     @Stable
     data class MqttViewState(
         val isMQTTConnected: Boolean,
-        val serviceState: ServiceViewState
+        val serviceState: ServiceViewState,
     )
 
     @Stable
     data class WakeWordViewState(
         val wakeWordValueOption: WakeWordOption,
-        val serviceState: ServiceViewState
+        val serviceState: ServiceViewState,
     )
 
     @Stable
     data class SpeechToTextViewState(
         val speechToTextOption: SpeechToTextOption,
-        val serviceState: ServiceViewState
+        val serviceState: ServiceViewState,
     )
 
     @Stable
     data class IntentRecognitionViewState(
         val intentRecognitionOption: IntentRecognitionOption,
-        val serviceState: ServiceViewState
+        val serviceState: ServiceViewState,
     )
 
     @Stable
     data class TextToSpeechViewState(
         val textToSpeechOption: TextToSpeechOption,
-        val serviceState: ServiceViewState
+        val serviceState: ServiceViewState,
     )
 
     @Stable
     data class AudioPlayingViewState(
         val audioPlayingOption: AudioPlayingOption,
-        val serviceState: ServiceViewState
+        val serviceState: ServiceViewState,
     )
 
     @Stable
     data class DialogManagementViewState(
         val dialogManagementOption: DialogManagementOption,
-        val serviceState: ServiceViewState
+        val serviceState: ServiceViewState,
     )
 
     @Stable
     data class IntentHandlingViewState(
         val intentHandlingOption: IntentHandlingOption,
-        val serviceState: ServiceViewState
+        val serviceState: ServiceViewState,
     )
 
 }

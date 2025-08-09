@@ -7,7 +7,7 @@ import org.rhasspy.mobile.widget.R
 @DrawableRes
 fun getContainerForMicrophoneFabLegacy(
     isActionEnabled: Boolean,
-    isRecording: Boolean
+    isRecording: Boolean,
 ): Int {
     return when {
         isRecording -> R.drawable.microphone_widget_background_error
@@ -20,7 +20,7 @@ fun getContainerForMicrophoneFabLegacy(
 fun getMicrophoneFabIconLegacy(
     isMicOn: Boolean,
     isActionEnabled: Boolean,
-    isRecording: Boolean
+    isRecording: Boolean,
 ): Int {
     return when {
         isRecording -> if (isMicOn) R.drawable.ic_mic_on_error_container else R.drawable.ic_mic_off_on_error_container

@@ -101,7 +101,7 @@ fun ConfigurationScreen() {
 @Composable
 fun ConfigurationScreenContent(
     onEvent: (ConfigurationScreenUiEvent) -> Unit,
-    viewState: ConfigurationScreenViewState
+    viewState: ConfigurationScreenViewState,
 ) {
     val scrollState = rememberForeverScrollState(ConfigurationScreenList)
 
@@ -208,7 +208,7 @@ fun ConfigurationScreenContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ServiceErrorInformation(
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     Surface {
@@ -243,14 +243,13 @@ private fun ServiceErrorInformation(
 
 }
 
-
 /**
  * site id element
  */
 @Composable
 private fun SiteId(
     viewState: SiteIdViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     TextFieldListItem(
@@ -269,7 +268,7 @@ private fun SiteId(
 @Composable
 private fun RemoteHermesHttp(
     viewState: RemoteHermesHttpViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -293,7 +292,7 @@ private fun RemoteHermesHttp(
 @Composable
 private fun Webserver(
     viewState: WebServerViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -313,7 +312,7 @@ private fun Webserver(
 @Composable
 private fun Mqtt(
     viewState: MqttViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -326,7 +325,6 @@ private fun Mqtt(
 
 }
 
-
 /**
  * List element for wake word configuration
  * shows which option is selected
@@ -334,7 +332,7 @@ private fun Mqtt(
 @Composable
 private fun WakeWord(
     viewState: WakeWordViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -354,7 +352,7 @@ private fun WakeWord(
 @Composable
 private fun SpeechToText(
     viewState: SpeechToTextViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -367,7 +365,6 @@ private fun SpeechToText(
 
 }
 
-
 /**
  * List element for intent recognition configuration
  * shows which option is selected
@@ -375,7 +372,7 @@ private fun SpeechToText(
 @Composable
 private fun IntentRecognition(
     viewState: IntentRecognitionViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -395,7 +392,7 @@ private fun IntentRecognition(
 @Composable
 private fun TextToSpeech(
     viewState: TextToSpeechViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -415,7 +412,7 @@ private fun TextToSpeech(
 @Composable
 private fun AudioPlaying(
     viewState: AudioPlayingViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -435,7 +432,7 @@ private fun AudioPlaying(
 @Composable
 private fun DialogManagement(
     viewState: DialogManagementViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -455,7 +452,7 @@ private fun DialogManagement(
 @Composable
 private fun IntentHandling(
     viewState: IntentHandlingViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -477,7 +474,7 @@ private fun ConfigurationListItem(
     secondaryText: StableStringResource,
     serviceViewState: ServiceViewState,
     destination: ConfigurationScreenNavigationDestination,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
     ListElement(
         modifier = Modifier
@@ -503,7 +500,7 @@ private fun ConfigurationListItem(
     secondaryText: String,
     viewState: ServiceViewState,
     destination: ConfigurationScreenNavigationDestination,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
     ListElement(
         modifier = Modifier

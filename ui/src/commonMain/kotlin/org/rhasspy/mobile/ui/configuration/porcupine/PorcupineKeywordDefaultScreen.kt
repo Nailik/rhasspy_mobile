@@ -31,7 +31,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 @Composable
 fun PorcupineKeywordDefaultScreen(
     editData: WakeWordPorcupineConfigurationData,
-    onEvent: (PorcupineUiEvent) -> Unit
+    onEvent: (PorcupineUiEvent) -> Unit,
 ) {
 
     LazyColumn(

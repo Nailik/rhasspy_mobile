@@ -43,7 +43,6 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         MainScreen(LocalViewModelFactory.current)
     }
 
-
     /**
      * option is disable
      *

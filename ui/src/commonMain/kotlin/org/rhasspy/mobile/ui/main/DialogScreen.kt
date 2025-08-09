@@ -41,7 +41,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.toStdlibInstant
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.dialog.SessionData
 import org.rhasspy.mobile.resources.MR
@@ -108,7 +107,7 @@ fun DialogScreen() {
 @Composable
 private fun AppBar(
     isLogAutoscroll: Boolean,
-    onEvent: (DialogScreenUiEvent) -> Unit
+    onEvent: (DialogScreenUiEvent) -> Unit,
 ) {
     TopAppBar(
         modifier = Modifier,
@@ -134,7 +133,7 @@ private fun AppBar(
 private fun DialogScreenContent(
     isLogAutoscroll: Boolean,
     history: ImmutableList<DialogInformationItem>,
-    onEvent: (DialogScreenUiEvent) -> Unit
+    onEvent: (DialogScreenUiEvent) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberForeverLazyListState(DialogScreenList)
@@ -253,8 +252,11 @@ private fun DialogStateListItem(item: DialogStateViewState) {
         modifier = Modifier.clip(RoundedCornerShape(5.dp)),
         text = { Text(item.name) },
         secondaryText = item.sessionData?.let { { DialogSessionData(it) } },
-        overlineText = { Text(
-            item.timeStamp.toLocalDateTime(currentSystemDefault()).toString()) }
+        overlineText = {
+            Text(
+                item.timeStamp.toLocalDateTime(currentSystemDefault()).toString()
+            )
+        }
     )
 }
 

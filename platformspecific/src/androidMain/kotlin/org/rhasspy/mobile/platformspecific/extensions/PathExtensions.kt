@@ -25,7 +25,7 @@ import java.util.Collections
 
 actual fun Path.Companion.commonInternalPath(
     nativeApplication: NativeApplication,
-    fileName: String
+    fileName: String,
 ): Path = "${nativeApplication.filesDir?.let { "$it/" } ?: ""}$fileName".toPath()
 
 actual fun Path?.commonExists(): Boolean = this?.let { !FileSystem.SYSTEM.exists(this) } ?: false
@@ -68,7 +68,7 @@ fun InputStream.modify(): InputStream {
 
 actual fun Path.commonShare(
     nativeApplication: NativeApplication,
-    externalResultRequest: IExternalResultRequest
+    externalResultRequest: IExternalResultRequest,
 ): Boolean {
     val fileUri: Uri = FileProvider.getUriForFile(
         nativeApplication, nativeApplication.packageName.toString() + ".provider",
@@ -89,7 +89,7 @@ actual suspend fun Path.commonSave(
     nativeApplication: NativeApplication,
     externalResultRequest: IExternalResultRequest,
     fileName: String,
-    fileType: String
+    fileType: String,
 ): Boolean {
 
     val result = externalResultRequest.launchForResult(

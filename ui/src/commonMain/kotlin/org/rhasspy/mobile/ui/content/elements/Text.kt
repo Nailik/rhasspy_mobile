@@ -40,7 +40,7 @@ fun Text(
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
     onTextLayout: (TextLayoutResult) -> Unit = {},
-    style: TextStyle = LocalTextStyle.current
+    style: TextStyle = LocalTextStyle.current,
 ) {
     when (wrapper) {
         is TextWrapperStableStringResource -> {
@@ -104,7 +104,7 @@ fun Text(
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
     onTextLayout: (TextLayoutResult) -> Unit = {},
-    style: TextStyle = LocalTextStyle.current
+    style: TextStyle = LocalTextStyle.current,
 ) {
     androidx.compose.material3.Text(
         text = translate(resource),
@@ -136,7 +136,6 @@ fun ProvideTextStyleFromToken(
         ProvideTextStyle(textStyle, content)
     }
 }
-
 
 fun Boolean.toText(): StableStringResource {
     return if (this) MR.strings.enabled.stable else MR.strings.disabled.stable

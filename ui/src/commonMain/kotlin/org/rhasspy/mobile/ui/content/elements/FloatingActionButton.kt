@@ -17,7 +17,7 @@ fun FloatingActionButton(
     isEnabled: Boolean,
     containerColor: Color,
     contentColor: Color,
-    icon: @Composable RowScope.() -> Unit
+    icon: @Composable RowScope.() -> Unit,
 ) {
     Button(
         modifier = modifier,

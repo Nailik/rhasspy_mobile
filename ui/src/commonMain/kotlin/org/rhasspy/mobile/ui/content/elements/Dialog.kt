@@ -47,7 +47,7 @@ fun Dialog(
     dismissLabel: StableStringResource? = null,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    onClose: () -> Unit = onDismiss //outside click
+    onClose: () -> Unit = onDismiss, //outside click
 ) {
 
     Dialog(
@@ -74,7 +74,7 @@ fun Dialog(
     dismissLabel: StableStringResource? = null,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    onClose: () -> Unit = onDismiss //outside click
+    onClose: () -> Unit = onDismiss, //outside click
 ) {
 
     Dialog(
@@ -101,7 +101,7 @@ fun Dialog(
     dismissLabel: StableStringResource? = null,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    onClose: () -> Unit = onDismiss //outside click
+    onClose: () -> Unit = onDismiss, //outside click
 ) {
     Dialog(
         modifier = Modifier.testTag(testTag),
@@ -148,7 +148,7 @@ fun Dialog(
     dismissLabel: StableStringResource? = null,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    onClose: () -> Unit = onDismiss //outside click
+    onClose: () -> Unit = onDismiss, //outside click
 ) {
     Dialog(
         modifier = Modifier.testTag(testTag),
@@ -195,7 +195,7 @@ private fun Dialog(
     confirmButton: @Composable () -> Unit,
     dismissButton: (@Composable () -> Unit)? = null,
     dismissOnOutside: Boolean = true,
-    showDivider: Boolean = false
+    showDivider: Boolean = false,
 ) {
     DialogContainer {
 

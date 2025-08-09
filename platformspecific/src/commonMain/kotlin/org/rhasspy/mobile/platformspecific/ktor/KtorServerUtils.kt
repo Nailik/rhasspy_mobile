@@ -25,7 +25,7 @@ expect fun ApplicationEngine.Configuration.installConnector(
     keyStoreFile: String,
     keyStorePassword: String,
     keyAlias: String,
-    keyPassword: String
+    keyPassword: String,
 )
 
 /**
@@ -33,5 +33,5 @@ expect fun ApplicationEngine.Configuration.installConnector(
  */
 expect fun getEngine(
     configure: ApplicationEngine.Configuration.() -> Unit,
-    module: Application.() -> Unit
+    module: Application.() -> Unit,
 ): EmbeddedServer<*, *>

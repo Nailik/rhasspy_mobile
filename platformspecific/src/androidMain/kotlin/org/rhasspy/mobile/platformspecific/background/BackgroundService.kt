@@ -39,7 +39,6 @@ internal actual class BackgroundService : IBackgroundService, Service(), KoinCom
         nativeApplication.stopService(intent)
     }
 
-
     /**
      * create service, show notification and start in foreground
      */

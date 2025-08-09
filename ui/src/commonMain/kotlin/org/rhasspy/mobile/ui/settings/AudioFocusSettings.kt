@@ -83,7 +83,7 @@ private fun AudioFocusSettings(
     isAudioFocusOnSound: Boolean,
     isAudioFocusOnRecord: Boolean,
     isAudioFocusOnDialog: Boolean,
-    onEvent: (AudioFocusSettingsUiEvent) -> Unit
+    onEvent: (AudioFocusSettingsUiEvent) -> Unit,
 ) {
 
     Column(modifier = Modifier.testTag(TestTag.AudioFocusSettingsConfiguration)) {

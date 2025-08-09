@@ -18,5 +18,5 @@ expect class IndicationOverlay(
     viewModel: IndicationOverlayViewModel,
     nativeApplication: NativeApplication,
     overlayPermission: IOverlayPermission,
-    dispatcher: IDispatcherProvider
+    dispatcher: IDispatcherProvider,
 ) : IIndicationOverlay

@@ -68,12 +68,11 @@ fun SettingsScreen() {
 
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreenContent(
     viewState: SettingsScreenViewState,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     Scaffold(
@@ -184,11 +183,10 @@ fun SettingsScreenContent(
 
 }
 
-
 @Composable
 private fun Language(
     viewState: SettingsScreenViewState,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     SettingsListItem(
@@ -203,7 +201,7 @@ private fun Language(
 @Composable
 private fun BackgroundService(
     isBackgroundEnabled: Boolean,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     SettingsListItem(
@@ -218,7 +216,7 @@ private fun BackgroundService(
 @Composable
 private fun MicrophoneOverlay(
     microphoneOverlaySizeOption: MicrophoneOverlaySizeOption,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     SettingsListItem(
@@ -234,7 +232,7 @@ private fun MicrophoneOverlay(
 private fun Indication(
     isSoundIndicationEnabled: Boolean,
     isWakeWordLightIndicationEnabled: Boolean,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     var stateText = if (isSoundIndicationEnabled) translate(MR.strings.sound.stable) else ""
@@ -272,7 +270,7 @@ private fun Device(onEvent: (event: SettingsScreenUiEvent) -> Unit) {
 @Composable
 private fun AudioFocus(
     audioFocusOption: AudioFocusOption,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     SettingsListItem(
@@ -287,7 +285,7 @@ private fun AudioFocus(
 @Composable
 private fun SilenceDetection(
     isSilenceDetectionEnabled: Boolean,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     SettingsListItem(
@@ -302,7 +300,7 @@ private fun SilenceDetection(
 @Composable
 private fun Log(
     logLevel: LogLevel,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     SettingsListItem(
@@ -338,13 +336,12 @@ private fun About(onEvent: (event: SettingsScreenUiEvent) -> Unit) {
 
 }
 
-
 @Composable
 private fun SettingsListItem(
     text: StableStringResource,
     secondaryText: StableStringResource? = null,
     destination: SettingsScreenDestination,
-    onEvent: (navigate: Navigate) -> Unit
+    onEvent: (navigate: Navigate) -> Unit,
 ) {
 
     ListElement(
@@ -361,7 +358,7 @@ private fun SettingsListItem(
     text: StableStringResource,
     secondaryText: String,
     destination: SettingsScreenDestination,
-    onEvent: (navigate: Navigate) -> Unit
+    onEvent: (navigate: Navigate) -> Unit,
 ) {
 
     ListElement(

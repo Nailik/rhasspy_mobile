@@ -44,7 +44,7 @@ actual class MicrophoneOverlay actual constructor(
     private val viewModel: MicrophoneOverlayViewModel,
     private val nativeApplication: NativeApplication,
     private val overlayPermission: IOverlayPermission,
-    private val dispatcher: IDispatcherProvider
+    private val dispatcher: IDispatcherProvider,
 ) : IMicrophoneOverlay {
 
     private val logger = Logger.withTag("MicrophoneOverlay")
@@ -80,7 +80,6 @@ actual class MicrophoneOverlay actual constructor(
         }
     }
 
-
     private fun onDrag(delta: Offset, view: View) {
         logger.d { "onDrag $delta" }
         viewModel.onEvent(UpdateMicrophoneOverlayPosition(offsetX = delta.x, offsetY = delta.y))
@@ -113,7 +112,6 @@ actual class MicrophoneOverlay actual constructor(
             logger.a(exception) { "exception in initialization" }
         }
     }
-
 
     private fun WindowManager.LayoutParams.applySettings(): WindowManager.LayoutParams {
         //apply

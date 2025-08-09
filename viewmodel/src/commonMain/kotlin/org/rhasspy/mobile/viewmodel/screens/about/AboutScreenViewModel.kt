@@ -29,7 +29,7 @@ import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Consumed.Sh
  */
 @Stable
 class AboutScreenViewModel(
-    viewStateCreator: AboutScreenViewStateCreator
+    viewStateCreator: AboutScreenViewStateCreator,
 ) : ScreenViewModel() {
 
     private val _viewState: MutableStateFlow<AboutScreenViewState> = viewStateCreator()

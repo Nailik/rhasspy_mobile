@@ -17,5 +17,5 @@ data class SettingsScreenViewState(
     val isWakeWordLightIndicationEnabled: Boolean,
     val audioFocusOption: AudioFocusOption,
     val isAutomaticSilenceDetectionEnabled: Boolean,
-    val logLevel: LogLevel
+    val logLevel: LogLevel,
 )

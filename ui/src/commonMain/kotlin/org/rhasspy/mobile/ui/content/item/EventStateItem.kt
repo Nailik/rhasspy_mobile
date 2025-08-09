@@ -58,7 +58,8 @@ fun EventStateIcon(serviceState: ServiceState) {
             is Loading -> Icons.AutoMirrored.Outlined.RotateRight
             is Success -> Icons.Outlined.Done
             is Error,
-            is Exception -> Icons.Filled.Error
+            is Exception,
+                -> Icons.Filled.Error
 
             is Disabled -> Icons.Outlined.Circle
         },
@@ -67,7 +68,8 @@ fun EventStateIcon(serviceState: ServiceState) {
             is Loading -> MR.strings.loading.stable
             is Success -> MR.strings.success.stable
             is Error,
-            is Exception -> MR.strings.error.stable
+            is Exception,
+                -> MR.strings.error.stable
 
             is Disabled -> MR.strings.disabled.stable
         }
@@ -97,7 +99,8 @@ fun EventStateIconTinted(serviceState: ServiceState) {
             is Loading -> Icons.AutoMirrored.Outlined.RotateRight
             is Success -> Icons.Outlined.Done
             is Error,
-            is Exception -> Icons.Filled.Error
+            is Exception,
+                -> Icons.Filled.Error
 
             is Disabled -> Icons.Outlined.Circle
         },
@@ -106,7 +109,8 @@ fun EventStateIconTinted(serviceState: ServiceState) {
             is Loading -> MR.strings.loading.stable
             is Success -> MR.strings.success.stable
             is Error,
-            is Exception -> MR.strings.error.stable
+            is Exception,
+                -> MR.strings.error.stable
 
             is Disabled -> MR.strings.disabled.stable
         },
@@ -115,7 +119,8 @@ fun EventStateIconTinted(serviceState: ServiceState) {
             is Loading -> MaterialTheme.colorScheme.secondary
             is Success -> MaterialTheme.colorScheme.primary
             is Error,
-            is Exception -> MaterialTheme.colorScheme.errorContainer
+            is Exception,
+                -> MaterialTheme.colorScheme.errorContainer
 
             is Disabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
         }
@@ -125,14 +130,15 @@ fun EventStateIconTinted(serviceState: ServiceState) {
 @Composable
 fun EventStateContent(
     serviceState: ServiceState,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val contentColor = when (serviceState) {
         is Pending -> MaterialTheme.colorScheme.onSurfaceVariant
         is Loading -> MaterialTheme.colorScheme.onSecondaryContainer
         is Success -> MaterialTheme.colorScheme.onPrimaryContainer
         is Error,
-        is Exception -> MaterialTheme.colorScheme.onErrorContainer
+        is Exception,
+            -> MaterialTheme.colorScheme.onErrorContainer
 
         is Disabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
     }
@@ -148,7 +154,7 @@ fun EventStateCard(
     serviceState: ServiceState,
     enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Card(
         modifier = Modifier.clip(RoundedCornerShape(12.dp))
@@ -159,7 +165,8 @@ fun EventStateCard(
                 is Loading -> MaterialTheme.colorScheme.secondaryContainer
                 is Success -> MaterialTheme.colorScheme.primaryContainer
                 is Error,
-                is Exception -> MaterialTheme.colorScheme.errorContainer
+                is Exception,
+                    -> MaterialTheme.colorScheme.errorContainer
 
                 is Disabled -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
             }

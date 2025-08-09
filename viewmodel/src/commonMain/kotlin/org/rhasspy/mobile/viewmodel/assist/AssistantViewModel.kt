@@ -13,7 +13,7 @@ import org.rhasspy.mobile.viewmodel.assist.AssistantUiEvent.Activate
 
 class AssistantViewModel(
     private val serviceMiddleware: IServiceMiddleware,
-    private val indicationService: IIndicationService
+    private val indicationService: IIndicationService,
 ) : ViewModel() {
 
     fun awaitIdle(function: () -> Unit) {

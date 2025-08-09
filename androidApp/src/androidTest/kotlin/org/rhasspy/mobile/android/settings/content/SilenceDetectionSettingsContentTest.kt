@@ -35,7 +35,6 @@ class SilenceDetectionSettingsContentTest : FlakyTest() {
         SilenceDetectionSettingsContent()
     }
 
-
     /**
      * Automatic silence detection disabled
      * settings not visible

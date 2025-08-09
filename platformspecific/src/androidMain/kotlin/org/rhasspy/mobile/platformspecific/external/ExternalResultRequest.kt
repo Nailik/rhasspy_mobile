@@ -38,9 +38,8 @@ import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntenti
 import org.rhasspy.mobile.platformspecific.resumeSave
 import org.rhasspy.mobile.resources.MR
 
-
 internal actual class ExternalResultRequest actual constructor(
-    private val nativeApplication: NativeApplication
+    private val nativeApplication: NativeApplication,
 ) : IExternalResultRequest, KoinComponent {
 
     private val logger = Logger.withTag("ExternalRedirect")
@@ -113,7 +112,7 @@ internal actual class ExternalResultRequest actual constructor(
 
     private fun <R> getResult(
         intention: ExternalResultRequestIntention<R>,
-        activityResult: ActivityResult
+        activityResult: ActivityResult,
     ): ExternalRedirectResult<R> {
         return if (activityResult.resultCode == Activity.RESULT_OK) {
             @Suppress("UNCHECKED_CAST")

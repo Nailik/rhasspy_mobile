@@ -10,7 +10,7 @@ data class LogSettingsViewState(
     val logLevel: LogLevel,
     val isCrashlyticsEnabled: Boolean,
     val isShowLogEnabled: Boolean,
-    val isLogAudioFramesEnabled: Boolean
+    val isLogAudioFramesEnabled: Boolean,
 ) {
 
     val logLevelOptions: ImmutableList<LogLevel> = LogLevel.entries.toImmutableList()

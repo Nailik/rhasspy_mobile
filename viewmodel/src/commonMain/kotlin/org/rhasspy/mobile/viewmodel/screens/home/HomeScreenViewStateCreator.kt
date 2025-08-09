@@ -10,7 +10,7 @@ import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
 
 class HomeScreenViewStateCreator(
     microphoneFabViewStateCreator: MicrophoneFabViewStateCreator,
-    private val serviceMiddleware: IServiceMiddleware
+    private val serviceMiddleware: IServiceMiddleware,
 ) {
 
     private val microphoneFabViewStateFlow = microphoneFabViewStateCreator()

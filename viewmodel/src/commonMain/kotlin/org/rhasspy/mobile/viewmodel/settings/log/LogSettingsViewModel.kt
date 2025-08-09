@@ -16,7 +16,7 @@ import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.SetSh
 @Stable
 class LogSettingsViewModel(
     val viewStateCreator: LogSettingsViewStateCreator,
-    private val crashlytics: ICrashlytics
+    private val crashlytics: ICrashlytics,
 ) : ScreenViewModel() {
 
     val viewState = viewStateCreator()

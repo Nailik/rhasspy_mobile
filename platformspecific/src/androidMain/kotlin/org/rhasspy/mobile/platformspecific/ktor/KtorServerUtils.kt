@@ -43,7 +43,7 @@ actual fun ApplicationEngine.Configuration.installConnector(
     keyStoreFile: String,
     keyStorePassword: String,
     keyAlias: String,
-    keyPassword: String
+    keyPassword: String,
 ) {
     if (isUseSSL) {
         val keystore = KeyStore.getInstance(KeyStore.getDefaultType())
@@ -74,7 +74,7 @@ actual fun ApplicationEngine.Configuration.installConnector(
  */
 actual fun getEngine(
     configure: ApplicationEngine.Configuration.() -> Unit,
-    module: Application.() -> Unit
+    module: Application.() -> Unit,
 ): EmbeddedServer<*, *> {
     return embeddedServer(
         factory = Netty,

@@ -31,7 +31,7 @@ fun SettingsScreenItemContent(
     modifier: Modifier = Modifier,
     title: StableStringResource,
     onBackClick: () -> Unit,
-    expandedContent: @Composable () -> Unit
+    expandedContent: @Composable () -> Unit,
 ) {
 
     Scaffold(

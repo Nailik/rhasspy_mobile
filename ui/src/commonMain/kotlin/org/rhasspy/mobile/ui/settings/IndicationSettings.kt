@@ -119,7 +119,6 @@ fun IndicationSettingsOverviewScreen() {
                     onCheckedChange = { viewModel.onEvent(SetSoundIndicationEnabled(it)) }
                 )
 
-
                 //visibility of sounds settings
                 SecondaryContent(visible = viewState.isSoundIndicationEnabled) {
 
@@ -150,7 +149,7 @@ private fun SoundIndicationSettingsOverview(
     wakeSound: String,
     recordedSound: String,
     errorSound: String,
-    onEvent: (IndicationSettingsUiEvent) -> Unit
+    onEvent: (IndicationSettingsUiEvent) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {

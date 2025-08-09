@@ -55,7 +55,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 @Composable
 fun PorcupineKeywordCustomScreen(
     editData: WakeWordPorcupineConfigurationData,
-    onEvent: (PorcupineUiEvent) -> Unit
+    onEvent: (PorcupineUiEvent) -> Unit,
 ) {
 
     Column(
@@ -94,7 +94,7 @@ fun PorcupineKeywordCustomScreen(
 @Composable
 private fun KeywordListItem(
     option: PorcupineCustomKeywordViewState,
-    onEvent: (PorcupineUiEvent) -> Unit
+    onEvent: (PorcupineUiEvent) -> Unit,
 ) {
     if (option.deleted) {
         //small item to be deleted

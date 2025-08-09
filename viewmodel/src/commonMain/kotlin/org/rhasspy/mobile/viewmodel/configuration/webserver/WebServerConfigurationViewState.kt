@@ -9,7 +9,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfi
 
 @Stable
 data class WebServerConfigurationViewState(
-    override val editData: WebServerConfigurationData
+    override val editData: WebServerConfigurationData,
 ) : IConfigurationViewState {
 
     @Stable

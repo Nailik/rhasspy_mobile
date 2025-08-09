@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.rhasspy.mobile.configureAndroidCommon
 import org.rhasspy.mobile.configureKotlinCommon
 
-
 apply(plugin = "com.android.library")
 apply(plugin = "org.jetbrains.kotlin.multiplatform")
 configureAndroidCommon<LibraryExtension>()

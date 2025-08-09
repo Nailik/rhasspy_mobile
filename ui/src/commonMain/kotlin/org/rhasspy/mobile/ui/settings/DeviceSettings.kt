@@ -68,7 +68,6 @@ fun DeviceSettingsContent() {
             )
         }
 
-
         //volume slider
         SliderListItem(
             modifier = Modifier.testTag(TestTag.Volume),

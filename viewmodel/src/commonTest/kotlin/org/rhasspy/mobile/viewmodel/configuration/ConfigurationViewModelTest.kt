@@ -3,10 +3,10 @@ package org.rhasspy.mobile.viewmodel.configuration
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.kodein.mock.generated.injectMocks
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
+import org.kodein.mock.generated.injectMocks
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.ServiceState
@@ -19,7 +19,11 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAc
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.DialogAction.Dismiss
 import org.rhasspy.mobile.viewmodel.nVerify
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ConfigurationViewModelTest : AppTest() {
 

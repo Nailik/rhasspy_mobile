@@ -75,7 +75,7 @@ fun IndicationContent() {
  */
 @Composable
 private fun Indication(
-    indicationState: IndicationState
+    indicationState: IndicationState,
 ) {
     Box(
         modifier = Modifier

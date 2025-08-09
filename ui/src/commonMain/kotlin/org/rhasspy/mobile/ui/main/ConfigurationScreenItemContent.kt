@@ -58,7 +58,7 @@ fun ConfigurationScreenItemContent(
     title: StableStringResource,
     viewState: ConfigurationViewState,
     onEvent: (IConfigurationUiEvent) -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
 
     Screen(
@@ -121,7 +121,7 @@ fun ConfigurationScreenItemContent(
 @Composable
 private fun Dialogs(
     dialogState: DialogState,
-    onEvent: (IConfigurationUiEvent) -> Unit
+    onEvent: (IConfigurationUiEvent) -> Unit,
 ) {
     when (dialogState) {
         is ServiceStateDialogState -> {
@@ -131,7 +131,6 @@ private fun Dialogs(
                 onDismiss = { onEvent(Dismiss(dialogState)) }
             )
         }
-
 
         UnsavedChangesDialogState -> {
             Dialog(
@@ -192,7 +191,7 @@ private fun BottomAppBar(
 @Composable
 private fun AppBar(
     title: StableStringResource,
-    onEvent: (IConfigurationUiEvent) -> Unit
+    onEvent: (IConfigurationUiEvent) -> Unit,
 ) {
 
     TopAppBar(

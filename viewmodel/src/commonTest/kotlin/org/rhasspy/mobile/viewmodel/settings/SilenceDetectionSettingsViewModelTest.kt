@@ -2,9 +2,9 @@ package org.rhasspy.mobile.viewmodel.settings
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.kodein.mock.Mock
+import org.kodein.mock.generated.injectMocks
 import org.koin.core.component.get
 import org.koin.dsl.module
-import org.kodein.mock.generated.injectMocks
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
@@ -29,7 +29,6 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
 
     @Mock
     lateinit var overlayPermission: IOverlayPermission
-
 
     private lateinit var silenceDetectionSettingsViewModel: SilenceDetectionSettingsViewModel
 

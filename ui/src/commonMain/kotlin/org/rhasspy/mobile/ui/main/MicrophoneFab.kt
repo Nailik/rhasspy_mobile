@@ -30,7 +30,7 @@ fun MicrophoneFab(
     modifier: Modifier = Modifier,
     iconSize: Dp,
     viewState: MicrophoneFabViewState,
-    onEvent: (MicrophoneFabUiEvent) -> Unit
+    onEvent: (MicrophoneFabUiEvent) -> Unit,
 ) {
 
     FloatingActionButton(
@@ -70,7 +70,6 @@ fun MicrophoneFab(
     )
 
 }
-
 
 @Composable
 fun getContainerColorForMicrophoneFab(isActionEnabled: Boolean, isRecording: Boolean): Color {

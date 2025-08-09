@@ -75,7 +75,7 @@ fun WakeWordAudioRecorderFormatScreen() {
 private fun WakeWordAudioRecorderFormatScreenContent(
     isEncodingChangeEnabled: Boolean,
     viewState: WakeWordAudioRecorderConfigurationData,
-    onEvent: (event: WakeWordConfigurationUiEvent) -> Unit
+    onEvent: (event: WakeWordConfigurationUiEvent) -> Unit,
 ) {
     Card(
         modifier = Modifier.padding(8.dp),

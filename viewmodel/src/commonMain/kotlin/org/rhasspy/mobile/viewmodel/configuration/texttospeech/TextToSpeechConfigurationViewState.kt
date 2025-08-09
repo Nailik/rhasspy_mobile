@@ -11,7 +11,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfi
 
 @Stable
 data class TextToSpeechConfigurationViewState(
-    override val editData: TextToSpeechConfigurationData
+    override val editData: TextToSpeechConfigurationData,
 ) : IConfigurationViewState {
 
     @Stable

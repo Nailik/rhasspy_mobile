@@ -16,7 +16,7 @@ import org.rhasspy.mobile.settings.AppSetting
 
 internal class UdpConnection(
     private val host: String,
-    private val port: Int
+    private val port: Int,
 ) {
     private val logger = Logger.withTag("UdpConnection")
 
@@ -24,7 +24,6 @@ internal class UdpConnection(
     private var sendChannel: SendChannel<Datagram>? = null
     private var hasLoggedError = false
     private var socketBuilder: UDPSocketBuilder? = null
-
 
     var isConnected: Boolean = false
         private set

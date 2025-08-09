@@ -32,7 +32,7 @@ interface IIntentHandlingService : IService {
  * when data is null the service was most probably mqtt and will return result in a call function
  */
 internal class IntentHandlingService(
-    paramsCreator: IntentHandlingServiceParamsCreator
+    paramsCreator: IntentHandlingServiceParamsCreator,
 ) : IIntentHandlingService {
 
     override val logger = LogType.IntentHandlingService.logger()

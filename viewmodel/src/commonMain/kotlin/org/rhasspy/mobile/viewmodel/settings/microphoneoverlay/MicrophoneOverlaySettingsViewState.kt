@@ -8,7 +8,7 @@ import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 @Stable
 data class MicrophoneOverlaySettingsViewState(
     val microphoneOverlaySizeOption: MicrophoneOverlaySizeOption,
-    val isMicrophoneOverlayWhileAppEnabled: Boolean
+    val isMicrophoneOverlayWhileAppEnabled: Boolean,
 ) {
 
     val microphoneOverlaySizeOptions: ImmutableList<MicrophoneOverlaySizeOption> =

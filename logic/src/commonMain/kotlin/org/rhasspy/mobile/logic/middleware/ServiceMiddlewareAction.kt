@@ -14,7 +14,7 @@ sealed class ServiceMiddlewareAction {
         val text: String,
         val volume: Float?,
         val siteId: String,
-        val sessionId: String?
+        val sessionId: String?,
     ) : ServiceMiddlewareAction() {
         override fun toString(): String {
             return "${super.toString()} text: $text"

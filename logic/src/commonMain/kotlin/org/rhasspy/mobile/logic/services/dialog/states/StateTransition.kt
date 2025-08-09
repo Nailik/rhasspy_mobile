@@ -35,7 +35,7 @@ interface IStateTransition {
 
     fun transitionToRecordingState(
         sessionData: SessionData,
-        isSourceMqtt: Boolean
+        isSourceMqtt: Boolean,
     ): DialogManagerState
 
     fun transitionToTranscribingIntentState(sessionData: SessionData): DialogManagerState
@@ -55,7 +55,7 @@ internal class StateTransition(
     private val intentRecognitionService: IIntentRecognitionService,
     private val speechToTextService: ISpeechToTextService,
     private val indicationService: IIndicationService,
-    private val mqttService: IMqttService
+    private val mqttService: IMqttService,
 ) : IStateTransition {
 
     private val paramsFlow: StateFlow<DialogManagerServiceParams> = paramsCreator()
@@ -65,7 +65,7 @@ internal class StateTransition(
 
     override fun transitionToIdleState(
         sessionData: SessionData?,
-        isSourceMqtt: Boolean
+        isSourceMqtt: Boolean,
     ): DialogManagerState {
 
         audioFocusService.abandon(AudioFocusRequestReason.Dialog)
@@ -82,7 +82,7 @@ internal class StateTransition(
 
     override fun transitionToRecordingState(
         sessionData: SessionData,
-        isSourceMqtt: Boolean
+        isSourceMqtt: Boolean,
     ): DialogManagerState {
 
         wakeWordService.stopDetection()

@@ -21,7 +21,7 @@ import org.rhasspy.mobile.viewmodel.ViewModelFactory
 @Composable
 fun MainUi(
     viewModelFactory: ViewModelFactory,
-    isHasStarted: StateFlow<Boolean>
+    isHasStarted: StateFlow<Boolean>,
 ) {
 
     MaterialTheme {

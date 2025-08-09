@@ -7,5 +7,5 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 data class BackgroundServiceSettingsViewState(
     val isBackgroundServiceEnabled: Boolean,
     val isBatteryOptimizationDeactivationEnabled: Boolean,
-    val snackBarText: StableStringResource? = null
+    val snackBarText: StableStringResource? = null,
 )

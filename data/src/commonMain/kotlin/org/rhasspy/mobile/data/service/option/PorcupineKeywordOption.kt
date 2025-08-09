@@ -8,7 +8,7 @@ import org.rhasspy.mobile.resources.MR
 enum class PorcupineKeywordOption(
     override val text: StableStringResource,
     val file: FileResource,
-    val language: PorcupineLanguageOption
+    val language: PorcupineLanguageOption,
 ) : IOption<PorcupineKeywordOption> {
 
     //en

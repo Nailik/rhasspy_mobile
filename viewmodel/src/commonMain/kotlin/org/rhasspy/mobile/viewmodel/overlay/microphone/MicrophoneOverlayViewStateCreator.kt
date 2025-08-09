@@ -11,7 +11,7 @@ import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
 class MicrophoneOverlayViewStateCreator(
     private val nativeApplication: NativeApplication,
     private val overlayPermission: IOverlayPermission,
-    microphoneFabViewStateCreator: MicrophoneFabViewStateCreator
+    microphoneFabViewStateCreator: MicrophoneFabViewStateCreator,
 ) {
 
     private val microphoneFabViewStateFlow = microphoneFabViewStateCreator()

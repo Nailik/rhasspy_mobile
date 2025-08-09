@@ -23,11 +23,10 @@ fun <T1, T2, R> combineState(
     flow2: StateFlow<T2>,
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
     sharingStarted: SharingStarted = SharingStarted.Lazily,
-    transform: (T1, T2) -> R
+    transform: (T1, T2) -> R,
 ): StateFlow<R> = combine(flow1, flow2) { o1, o2 ->
     transform.invoke(o1, o2)
 }.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value))
-
 
 fun <T1, T2, T3, R> combineState(
     flow1: StateFlow<T1>,
@@ -35,7 +34,7 @@ fun <T1, T2, T3, R> combineState(
     flow3: StateFlow<T3>,
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
     sharingStarted: SharingStarted = SharingStarted.Lazily,
-    transform: (T1, T2, T3) -> R
+    transform: (T1, T2, T3) -> R,
 ): StateFlow<R> = combine(flow1, flow2, flow3) { o1, o2, o3 ->
     transform.invoke(o1, o2, o3)
 }.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value, flow3.value))
@@ -43,7 +42,7 @@ fun <T1, T2, T3, R> combineState(
 fun combineStateFlow(
     vararg flows: StateFlow<*>,
     scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
-    sharingStarted: SharingStarted = SharingStarted.Eagerly
+    sharingStarted: SharingStarted = SharingStarted.Eagerly,
 ): StateFlow<List<Any?>> = combine(*flows) { array ->
     array.toList()
 }.stateIn(
@@ -55,7 +54,7 @@ fun combineStateFlow(
 fun <T, R> StateFlow<T>.mapReadonlyState(
     scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
     sharingStarted: SharingStarted = SharingStarted.Eagerly,
-    transform: (T) -> R
+    transform: (T) -> R,
 ): StateFlow<R> = this.map {
     transform(it)
 }.stateIn(scope, sharingStarted, transform.invoke(this.value))
@@ -125,7 +124,7 @@ fun <T> CancellableContinuation<T>.resumeSave(value: T) {
 @OptIn(ExperimentalCoroutinesApi::class)
 fun <T> CancellableContinuation<T>.resumeSave(
     value: T,
-    onCancellation: ((cause: Throwable) -> Unit)?
+    onCancellation: ((cause: Throwable) -> Unit)?,
 ) {
     if (!this.isCompleted) {
         resume(value) { cause, _, _ -> onCancellation?.invoke(cause) }
