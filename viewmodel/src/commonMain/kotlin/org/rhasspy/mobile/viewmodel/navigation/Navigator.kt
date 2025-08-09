@@ -55,7 +55,7 @@ internal class Navigator(
         } else {
             navStack.update {
                 it.updateList {
-                    removeLast()
+                    removeAt(it.lastIndex)
                 }
             }
         }
