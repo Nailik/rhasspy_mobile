@@ -6,7 +6,7 @@ import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.rhasspy.mobile.data.settings.SettingsEnum
@@ -23,6 +23,7 @@ import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
+import kotlin.time.ExperimentalTime
 
 internal actual class SettingsUtils actual constructor(
     private val externalResultRequest: IExternalResultRequest,
@@ -34,6 +35,7 @@ internal actual class SettingsUtils actual constructor(
     /**
      * export the settings file
      */
+    @OptIn(ExperimentalTime::class)
     actual override suspend fun exportSettingsFile(): Boolean {
         return try {
             logger.d { "exportSettingsFile" }
@@ -74,7 +76,7 @@ internal actual class SettingsUtils actual constructor(
 
                             //all custom files
                             val files = nativeApplication.filesDir
-                            FolderType.values().forEach { folderType ->
+                            FolderType.entries.forEach { folderType ->
                                 File(files, folderType.toString()).walkTopDown().forEach { file ->
                                     if (file.exists()) {
                                         if (file.isDirectory) {

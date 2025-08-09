@@ -14,6 +14,8 @@ plugins {
     alias(libs.plugins.google)
     alias(libs.plugins.firebase)
     alias(libs.plugins.compose)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.android)
 }
 
 val signingProperties = Properties()
@@ -40,19 +42,19 @@ android {
             }
         }
     }
-    compileSdk = 36
 
     defaultConfig {
         applicationId = "org.rhasspy.mobile.android"
-        minSdk = 23
-        targetSdk = 36
         versionCode = Version.code
         versionName = Version.toString()
-        resourceConfigurations += setOf("en", "de", "it")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "true"
         testInstrumentationRunnerArguments["useTestStorageService"] = "true"
         testInstrumentationRunnerArguments["disableAnalytics"] = "false"
+    }
+
+    androidResources {
+        localeFilters += listOf("en", "de", "it")
     }
 
     buildTypes {
@@ -81,10 +83,6 @@ android {
 
     buildFeatures {
         compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "_"
     }
 
     splits {
@@ -137,19 +135,6 @@ android {
 
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    compilerOptions {
-        freeCompilerArgs.addAll(
-            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-            "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi",
-            "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-            "-P=plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_metrics",
-            "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_metrics"
-        )
-    }
-}
-
 tasks.withType<Test> {
     testLogging {
         events(STARTED, PASSED, SKIPPED, FAILED, STANDARD_OUT, STANDARD_ERROR)
@@ -161,6 +146,7 @@ tasks.withType<Test> {
 }
 
 dependencies {
+    implementation(libs.core.ktx)
     coreLibraryDesugaring(libs.desugar)
 
     implementation(project(":app"))

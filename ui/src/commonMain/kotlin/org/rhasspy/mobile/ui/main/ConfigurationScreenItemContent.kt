@@ -5,7 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Warning
@@ -35,8 +36,6 @@ import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.ui.theme.GetColorScheme
-import org.rhasspy.mobile.ui.theme.SetSystemColor
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.DialogState.ServiceStateDialogState
@@ -68,9 +67,6 @@ fun ConfigurationScreenItemContent(
         modifier = modifier,
         screenViewModel = screenViewModel
     ) {
-
-        val colorScheme by GetColorScheme()
-        SetSystemColor(colorScheme.surfaceColorAtElevation(0.dp))
 
         viewState.dialogState?.also {
             Dialogs(
@@ -218,7 +214,7 @@ private fun AppBar(
                 modifier = Modifier.testTag(TestTag.AppBarBackButton),
                 content = {
                     Icon(
-                        imageVector = Icons.Filled.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = MR.strings.back.stable,
                     )
                 }

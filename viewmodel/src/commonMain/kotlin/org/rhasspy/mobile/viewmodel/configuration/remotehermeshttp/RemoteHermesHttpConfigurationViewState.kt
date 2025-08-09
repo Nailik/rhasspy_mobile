@@ -7,12 +7,12 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 
 @Stable
-data class RemoteHermesHttpConfigurationViewState internal constructor(
+data class RemoteHermesHttpConfigurationViewState(
     override val editData: RemoteHermesHttpConfigurationData
 ) : IConfigurationViewState {
 
     @Stable
-    data class RemoteHermesHttpConfigurationData internal constructor(
+    data class RemoteHermesHttpConfigurationData(
         val httpClientServerEndpointHost: String = ConfigurationSetting.httpClientServerEndpointHost.value,
         val httpClientServerEndpointPort: Int? = ConfigurationSetting.httpClientServerEndpointPort.value,
         val httpClientTimeout: Long? = ConfigurationSetting.httpClientTimeout.value,

@@ -10,12 +10,12 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 
 @Stable
-data class AudioPlayingConfigurationViewState internal constructor(
+data class AudioPlayingConfigurationViewState(
     override val editData: AudioPlayingConfigurationData
 ) : IConfigurationViewState {
 
     @Stable
-    data class AudioPlayingConfigurationData internal constructor(
+    data class AudioPlayingConfigurationData(
         val audioPlayingOption: AudioPlayingOption = ConfigurationSetting.audioPlayingOption.value,
         val audioOutputOption: AudioOutputOption = ConfigurationSetting.audioOutputOption.value,
         val isUseCustomAudioPlayingHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value,
@@ -24,9 +24,9 @@ data class AudioPlayingConfigurationViewState internal constructor(
     ) : IConfigurationData {
 
         val audioPlayingOptionList: ImmutableList<AudioPlayingOption> =
-            AudioPlayingOption.values().toImmutableList()
+            AudioPlayingOption.entries.toImmutableList()
         val audioOutputOptionList: ImmutableList<AudioOutputOption> =
-            AudioOutputOption.values().toImmutableList()
+            AudioOutputOption.entries.toImmutableList()
 
     }
 

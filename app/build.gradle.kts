@@ -100,12 +100,6 @@ kotlin {
     }
 }
 
-tasks.withType<KotlinCompile> {
-    compilerOptions {
-        freeCompilerArgs.addAll("-opt-in=co.touchlab.kermit.ExperimentalKermitApi")
-    }
-}
-
 android {
     namespace = "org.rhasspy.mobile.app"
 }
@@ -130,6 +124,7 @@ val createVersionTxt: TaskProvider<Task> = tasks.register("createVersionTxt") {
 
 tasks.findByPath("preBuild")!!.dependsOn(createVersionTxt)
 
+@Suppress("unused")
 val increaseCodeVersion: TaskProvider<Task> = tasks.register("increaseCodeVersion") {
     doLast {
         File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {

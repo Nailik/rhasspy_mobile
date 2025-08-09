@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -121,7 +123,7 @@ private fun AppBar(onEvent: (PorcupineUiEvent) -> Unit) {
                 modifier = Modifier.testTag(TestTag.AppBarBackButton)
             ) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = MR.strings.back.stable
                 )
             }
@@ -143,7 +145,7 @@ private fun BottomTabBar(
     Column {
 
         //tab bar row
-        TabRow(selectedTabIndex = selectedIndex) {
+        SecondaryTabRow(selectedTabIndex = selectedIndex) {
             Tab(
                 selected = selectedIndex == 0,
                 modifier = Modifier.testTag(TestTag.TabDefault),

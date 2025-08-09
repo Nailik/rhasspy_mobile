@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.HelpCenter
 import androidx.compose.material.icons.filled.HelpCenter
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
@@ -88,7 +89,7 @@ fun SettingsScreenContent(
                         onClick = { onEvent(OpenWikiLink) },
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.HelpCenter,
+                            imageVector = Icons.AutoMirrored.Filled.HelpCenter,
                             contentDescription = MR.strings.wiki.stable,
                         )
                     }

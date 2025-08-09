@@ -3,6 +3,7 @@ package org.rhasspy.mobile.app
 import android.os.Bundle
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.core.app.AppLaunchChecker
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -37,6 +38,7 @@ class MainActivity : IMainActivity(), KoinComponent {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         if (!AppLaunchChecker.hasStartedFromLauncher(this)) {
             isFirstLaunch = true
         }

@@ -6,7 +6,7 @@ import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 
 @Stable
-data class IndicationSettingsViewState internal constructor(
+data class IndicationSettingsViewState(
     val isSoundIndicationEnabled: Boolean,
     val isWakeWordLightIndicationEnabled: Boolean,
     val isWakeWordDetectionTurnOnDisplayEnabled: Boolean,
@@ -17,6 +17,6 @@ data class IndicationSettingsViewState internal constructor(
 ) {
 
     val audioOutputOptionList: ImmutableList<AudioOutputOption> =
-        AudioOutputOption.values().toImmutableList()
+        AudioOutputOption.entries.toImmutableList()
 
 }

@@ -44,7 +44,7 @@ class SettingsScreenTest : FlakyTest() {
         setupContent()
 
         //each item exists and navigates
-        SettingsScreenDestination.values().forEach { tag ->
+        SettingsScreenDestination.entries.forEach { tag ->
             composeTestRule.awaitIdle()
             composeTestRule.onNodeWithTag(TestTag.List).performScrollToNode(hasTestTag(tag))
                 .assertExists()

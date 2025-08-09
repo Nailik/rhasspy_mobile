@@ -50,6 +50,7 @@ material-icons-extended = "1.7.3"
 material3 = "1.9.0-alpha04"
 mockmp-gradle-plugin = "2.0.2"
 slf4j-simple = "2.1.0-alpha1"
+core-ktx = "1.16.0"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android" }
@@ -132,9 +133,11 @@ multiplatform-settings-serialization = { module = "com.russhwolf:multiplatform-s
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j-simple" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 okio-jvm = { module = "com.squareup.okio:okio-jvm", version.ref = "okio" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 
 [plugins]
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "android" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -148,6 +151,7 @@ mockmp = { id = "org.kodein.mock.mockmp", version.ref = "mockmp-gradle-plugin" }
 crashlyticslink = { id = "co.touchlab.crashkios.crashlyticslink", version.ref = "crashlyticslink" }
 download = { id = "de.undercouch.download", version.ref = "download" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 [bundles]
 gradle = [

@@ -6,7 +6,7 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 
 @Stable
-data class IIndicationSoundSettingsViewState internal constructor(
+data class IIndicationSoundSettingsViewState(
     val soundSetting: String,
     val customSoundFiles: ImmutableList<String>,
     val soundVolume: Float,

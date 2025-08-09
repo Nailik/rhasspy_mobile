@@ -5,7 +5,7 @@ import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewState
 
 @Stable
-data class MicrophoneOverlayViewState internal constructor(
+data class MicrophoneOverlayViewState(
     val shouldOverlayBeShown: Boolean,
     val microphoneOverlayPositionX: Int,
     val microphoneOverlayPositionY: Int,

@@ -12,7 +12,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
@@ -29,6 +29,7 @@ import org.rhasspy.mobile.platformspecific.extensions.commonShare
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
+import kotlin.time.ExperimentalTime
 
 interface IFileLogger {
 
@@ -61,6 +62,7 @@ internal class FileLogger(
     /**
      * override log function to append text to file
      */
+    @OptIn(ExperimentalTime::class)
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
         val element = LogElement(
             Clock.System.now().toLocalDateTime(currentSystemDefault()).toString(),
@@ -95,6 +97,7 @@ internal class FileLogger(
     /**
      * save log to external file
      */
+    @OptIn(ExperimentalTime::class)
     override suspend fun saveLogFile() = file.commonSave(
         nativeApplication,
         externalResultRequest,

@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewmodel.settings.silencedetection
 import androidx.compose.runtime.Stable
 
 @Stable
-data class SilenceDetectionSettingsViewState internal constructor(
+data class SilenceDetectionSettingsViewState(
     val silenceDetectionTimeText: String,
     val silenceDetectionMinimumTimeText: String,
     val isSilenceDetectionEnabled: Boolean,

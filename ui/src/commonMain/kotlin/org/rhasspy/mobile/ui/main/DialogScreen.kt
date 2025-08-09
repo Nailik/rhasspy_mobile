@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.PlaylistRemove
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,6 +44,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.toStdlibInstant
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.dialog.SessionData
 import org.rhasspy.mobile.resources.MR
@@ -68,6 +71,7 @@ import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change.Cl
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change.ManualListScroll
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change.ToggleListAutoScroll
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenViewModel
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun DialogScreen() {
@@ -180,11 +184,9 @@ fun DialogTransitionListItem(item: DialogInformationItem) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Divider(
+        VerticalDivider(
             color = MaterialTheme.colorScheme.surfaceVariant,
-            modifier = Modifier
-                .height(10.dp)
-                .width(1.dp)
+            modifier = Modifier.height(10.dp)
         )
 
         when (item) {
@@ -195,7 +197,7 @@ fun DialogTransitionListItem(item: DialogInformationItem) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
 private fun DialogActionListItem(item: DialogActionViewState) {
     ListElement(
@@ -241,11 +243,12 @@ private fun DialogActionListItem(item: DialogActionViewState) {
             }
         },
         overlineText = {
-            Text(item.timeStamp.toLocalDateTime(currentSystemDefault()).toString())
+            Text(item.timeStamp.toStdlibInstant().toLocalDateTime(currentSystemDefault()).toString())
         }
     )
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
 private fun DialogStateListItem(item: DialogStateViewState) {
     ListElement(
@@ -253,7 +256,8 @@ private fun DialogStateListItem(item: DialogStateViewState) {
         modifier = Modifier.clip(RoundedCornerShape(5.dp)),
         text = { Text(item.name) },
         secondaryText = item.sessionData?.let { { DialogSessionData(it) } },
-        overlineText = { Text(item.timeStamp.toLocalDateTime(currentSystemDefault()).toString()) }
+        overlineText = { Text(
+            item.timeStamp.toStdlibInstant().toLocalDateTime(currentSystemDefault()).toString()) }
     )
 }
 

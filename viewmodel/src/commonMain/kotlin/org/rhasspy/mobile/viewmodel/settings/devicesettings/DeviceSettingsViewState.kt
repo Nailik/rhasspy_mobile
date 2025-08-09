@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewmodel.settings.devicesettings
 import androidx.compose.runtime.Stable
 
 @Stable
-data class DeviceSettingsViewState internal constructor(
+data class DeviceSettingsViewState(
     val isMqttApiDeviceChangeEnabled: Boolean,
     val isHttpApiDeviceChangeEnabled: Boolean,
     val volume: Float,

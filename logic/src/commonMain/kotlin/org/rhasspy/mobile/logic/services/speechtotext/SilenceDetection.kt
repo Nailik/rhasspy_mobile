@@ -1,10 +1,12 @@
 package org.rhasspy.mobile.logic.services.speechtotext
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 import org.rhasspy.mobile.settings.AppSetting
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 class SilenceDetection(
     private val onSilenceDetected: () -> Unit
 ) {

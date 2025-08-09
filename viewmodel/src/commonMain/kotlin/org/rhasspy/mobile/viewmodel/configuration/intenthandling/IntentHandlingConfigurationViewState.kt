@@ -10,12 +10,12 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 
 @Stable
-data class IntentHandlingConfigurationViewState internal constructor(
+data class IntentHandlingConfigurationViewState(
     override val editData: IntentHandlingConfigurationData
 ) : IConfigurationViewState {
 
     @Stable
-    data class IntentHandlingConfigurationData internal constructor(
+    data class IntentHandlingConfigurationData(
         val intentHandlingOption: IntentHandlingOption = ConfigurationSetting.intentHandlingOption.value,
         val intentHandlingHttpEndpoint: String = ConfigurationSetting.intentHandlingHttpEndpoint.value,
         val intentHandlingHomeAssistantEndpoint: String = ConfigurationSetting.intentHandlingHomeAssistantEndpoint.value,
@@ -24,7 +24,7 @@ data class IntentHandlingConfigurationViewState internal constructor(
     ) : IConfigurationData {
 
         val intentHandlingOptionList: ImmutableList<IntentHandlingOption> =
-            IntentHandlingOption.values().toList().toImmutableList()
+            IntentHandlingOption.entries.toList().toImmutableList()
 
     }
 

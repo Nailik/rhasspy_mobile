@@ -343,7 +343,7 @@ internal class MqttService(
         var hasError = false
 
         //subscribe to topics with this site id (if contained in topic, currently only in PlayBytes)
-        MqttTopicsSubscription.values().forEach { mqttTopic ->
+        MqttTopicsSubscription.entries.forEach { mqttTopic ->
             try {
                 client?.subscribe(mqttTopic.topic.set(MqttTopicPlaceholder.SiteId, params.siteId))
                     ?.also {

@@ -66,7 +66,7 @@ class LogSettingsViewModelTest : AppTest() {
     @Test
     fun `when user selects log level it is saved and the logger is updated`() {
 
-        LogLevel.values().forEach { logLevel ->
+        LogLevel.entries.forEach { logLevel ->
 
             logSettingsViewModel.onEvent(SetLogLevel(logLevel))
             assertEquals(logLevel, AppSetting.logLevel.value)

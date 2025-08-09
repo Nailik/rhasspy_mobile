@@ -55,7 +55,7 @@ class MicrophoneOverlaySettingsViewModelTest : AppTest() {
         every { overlayPermission.granted } returns MutableStateFlow(false)
         every { overlayPermission.request() } returns false
 
-        MicrophoneOverlaySizeOption.values().filter { it != Disabled }.forEach { option ->
+        MicrophoneOverlaySizeOption.entries.filter { it != Disabled }.forEach { option ->
 
             microphoneOverlaySettingsViewModel.onEvent(SelectMicrophoneOverlaySizeOption(option))
             microphoneOverlaySettingsViewModel.onEvent(Confirm(OverlayPermissionInfo))
@@ -72,7 +72,7 @@ class MicrophoneOverlaySettingsViewModelTest : AppTest() {
         AppSetting.microphoneOverlaySizeOption.value = Disabled
         every { overlayPermission.granted } returns MutableStateFlow(true)
 
-        MicrophoneOverlaySizeOption.values().forEach { option ->
+        MicrophoneOverlaySizeOption.entries.forEach { option ->
 
             microphoneOverlaySettingsViewModel.onEvent(SelectMicrophoneOverlaySizeOption(option))
 

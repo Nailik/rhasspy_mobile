@@ -8,10 +8,10 @@ import org.rhasspy.mobile.data.theme.ThemeType
 import org.rhasspy.mobile.settings.AppSetting
 
 @Stable
-data class AppearanceSettingsViewState internal constructor(
+data class AppearanceSettingsViewState(
     val languageOption: LanguageType = AppSetting.languageType.value,
     val themeOption: ThemeType = AppSetting.themeType.value,
 ) {
-    val languageOptions: ImmutableList<LanguageType> = LanguageType.values().toImmutableList()
-    val themeOptions: ImmutableList<ThemeType> = ThemeType.values().toImmutableList()
+    val languageOptions: ImmutableList<LanguageType> = LanguageType.entries.toImmutableList()
+    val themeOptions: ImmutableList<ThemeType> = ThemeType.entries.toImmutableList()
 }

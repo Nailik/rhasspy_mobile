@@ -37,7 +37,7 @@ class LanguageSettingsViewModelTest : AppTest() {
     fun `when user selects language it's saved and updated in the system`() {
         every { languageUtils.setLanguage(isAny()) } returns Unit
 
-        LanguageType.values().forEach { language ->
+        LanguageType.entries.forEach { language ->
             appearanceSettingsViewModel.onEvent(SelectLanguageOption(language))
 
             assertEquals(language, AppSetting.languageType.value)

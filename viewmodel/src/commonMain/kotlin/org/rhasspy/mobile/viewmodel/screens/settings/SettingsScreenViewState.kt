@@ -8,7 +8,7 @@ import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.data.theme.ThemeType
 
 @Stable
-data class SettingsScreenViewState internal constructor(
+data class SettingsScreenViewState(
     val currentLanguage: LanguageType,
     val currentTheme: ThemeType,
     val isBackgroundEnabled: Boolean,

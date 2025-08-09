@@ -130,6 +130,6 @@ fun <T> CancellableContinuation<T>.resumeSave(
     onCancellation: ((cause: Throwable) -> Unit)?
 ) {
     if (!this.isCompleted) {
-        this.resume(value, onCancellation)
+        resume(value) { cause, _, _ -> onCancellation?.invoke(cause) }
     }
 }

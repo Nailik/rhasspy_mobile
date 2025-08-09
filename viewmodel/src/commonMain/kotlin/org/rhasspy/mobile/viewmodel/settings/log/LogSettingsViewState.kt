@@ -6,13 +6,13 @@ import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.log.LogLevel
 
 @Stable
-data class LogSettingsViewState internal constructor(
+data class LogSettingsViewState(
     val logLevel: LogLevel,
     val isCrashlyticsEnabled: Boolean,
     val isShowLogEnabled: Boolean,
     val isLogAudioFramesEnabled: Boolean
 ) {
 
-    val logLevelOptions: ImmutableList<LogLevel> = LogLevel.values().toImmutableList()
+    val logLevelOptions: ImmutableList<LogLevel> = LogLevel.entries.toImmutableList()
 
 }

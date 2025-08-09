@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.RotateRight
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material.icons.outlined.Done
@@ -55,7 +56,7 @@ fun EventStateIcon(serviceState: ServiceState) {
         modifier = Modifier.rotate(rotation),
         imageVector = when (serviceState) {
             is Pending -> Icons.Outlined.Pending
-            is Loading -> Icons.Outlined.RotateRight
+            is Loading -> Icons.AutoMirrored.Outlined.RotateRight
             is Success -> Icons.Outlined.Done
             is Error,
             is Exception -> Icons.Filled.Error
@@ -94,7 +95,7 @@ fun EventStateIconTinted(serviceState: ServiceState) {
         modifier = Modifier.rotate(rotation),
         imageVector = when (serviceState) {
             is Pending -> Icons.Outlined.Pending
-            is Loading -> Icons.Outlined.RotateRight
+            is Loading -> Icons.AutoMirrored.Outlined.RotateRight
             is Success -> Icons.Outlined.Done
             is Error,
             is Exception -> Icons.Filled.Error

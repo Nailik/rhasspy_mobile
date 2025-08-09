@@ -26,7 +26,7 @@ actual enum class AudioFormatSampleRateType(
         actual val default: AudioFormatSampleRateType get() = SR16000
 
         fun findValue(value: Int): AudioFormatSampleRateType {
-            return AudioFormatSampleRateType.values().firstOrNull { it.value == value } ?: default
+            return AudioFormatSampleRateType.entries.firstOrNull { it.value == value } ?: default
         }
     }
 }

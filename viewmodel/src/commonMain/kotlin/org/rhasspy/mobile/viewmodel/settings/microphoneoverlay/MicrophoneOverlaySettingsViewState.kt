@@ -6,12 +6,12 @@ import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 
 @Stable
-data class MicrophoneOverlaySettingsViewState internal constructor(
+data class MicrophoneOverlaySettingsViewState(
     val microphoneOverlaySizeOption: MicrophoneOverlaySizeOption,
     val isMicrophoneOverlayWhileAppEnabled: Boolean
 ) {
 
     val microphoneOverlaySizeOptions: ImmutableList<MicrophoneOverlaySizeOption> =
-        MicrophoneOverlaySizeOption.values().toImmutableList()
+        MicrophoneOverlaySizeOption.entries.toImmutableList()
 
 }

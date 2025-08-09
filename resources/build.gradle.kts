@@ -59,7 +59,6 @@ multiplatformResources {
 
 aboutLibraries {
     export.prettyPrint = true
-    android.registerAndroidTasks = false
     library {
         // Enable the duplication mode, allows to merge, or link dependencies which relate
         duplicationMode = MERGE
@@ -132,7 +131,7 @@ tasks.register("updatePorcupineFiles") {
         // download files
         download.run {
             src(urls)
-            dest("$baseDest")
+            dest(baseDest)
             overwrite(true)
             onlyIfModified(true)
             eachFile {

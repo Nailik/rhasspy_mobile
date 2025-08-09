@@ -10,7 +10,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 
 @Stable
-data class TextToSpeechConfigurationViewState internal constructor(
+data class TextToSpeechConfigurationViewState(
     override val editData: TextToSpeechConfigurationData
 ) : IConfigurationViewState {
 
@@ -22,7 +22,7 @@ data class TextToSpeechConfigurationViewState internal constructor(
     ) : IConfigurationData {
 
         val textToSpeechOptions: ImmutableList<TextToSpeechOption> =
-            TextToSpeechOption.values().toImmutableList()
+            TextToSpeechOption.entries.toImmutableList()
 
         val textToSpeechHttpEndpointText: String
             get() = if (isUseCustomTextToSpeechHttpEndpoint) textToSpeechHttpEndpoint else "${ConfigurationSetting.httpClientServerEndpointHost.value}:${ConfigurationSetting.httpClientServerEndpointPort.value}/${HttpClientPath.SpeechToText.path}"
