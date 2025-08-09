@@ -1,7 +1,5 @@
 @file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("base.kmp.compose.library")
 }

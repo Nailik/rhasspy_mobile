@@ -76,7 +76,7 @@ internal actual class SettingsUtils actual constructor(
 
                             //all custom files
                             val files = nativeApplication.filesDir
-                            FolderType.entries.forEach { folderType ->
+                            FolderType.values().forEach { folderType ->
                                 File(files, folderType.toString()).walkTopDown().forEach { file ->
                                     if (file.exists()) {
                                         if (file.isDirectory) {

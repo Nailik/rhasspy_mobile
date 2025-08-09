@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.viewmodel.settings
 
 import org.kodein.mock.Mock
+import org.kodein.mock.generated.injectMocks
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.language.LanguageType
@@ -20,7 +21,7 @@ class LanguageSettingsViewModelTest : AppTest() {
 
     private lateinit var appearanceSettingsViewModel: AppearanceSettingsViewModel
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {

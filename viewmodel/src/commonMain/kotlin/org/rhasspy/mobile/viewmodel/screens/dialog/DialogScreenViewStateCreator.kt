@@ -45,6 +45,7 @@ import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogA
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogActionViewState.SourceViewState
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogActionViewState.SourceViewState.SourceType
 import org.rhasspy.mobile.viewmodel.screens.dialog.DialogInformationItem.DialogStateViewState
+import kotlin.time.ExperimentalTime
 
 class DialogScreenViewStateCreator(
     private val dialogManagerService: IDialogManagerService
@@ -71,6 +72,7 @@ class DialogScreenViewStateCreator(
         )
     }
 
+    @OptIn(ExperimentalTime::class)
     private fun State.toDialogStateViewState(): DialogStateViewState {
         return DialogStateViewState(
             name = this.value.toText(),
@@ -89,6 +91,7 @@ class DialogScreenViewStateCreator(
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     private fun Action.toDialogActionViewState(): DialogActionViewState {
         val source = this.value.source.toSourceViewState()
 

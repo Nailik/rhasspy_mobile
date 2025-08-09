@@ -42,9 +42,12 @@ android {
             }
         }
     }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "org.rhasspy.mobile.android"
+        targetSdk = 36
+        minSdk = 23
         versionCode = Version.code
         versionName = Version.toString()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

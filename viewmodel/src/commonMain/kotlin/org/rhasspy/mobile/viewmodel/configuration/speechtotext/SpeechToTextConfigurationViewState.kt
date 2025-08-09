@@ -43,7 +43,7 @@ data class SpeechToTextConfigurationViewState(
             val audioRecorderChannelTypes: ImmutableList<AudioFormatChannelType> =
                 AudioFormatChannelType.entries.toTypedArray().toImmutableList()
             val audioRecorderEncodingTypes: ImmutableList<AudioFormatEncodingType> =
-                AudioFormatEncodingType.supportedentries.toImmutableList()
+                AudioFormatEncodingType.supportedValues().toImmutableList()
             val audioRecorderSampleRateTypes: ImmutableList<AudioFormatSampleRateType> =
                 AudioFormatSampleRateType.entries.toTypedArray().toImmutableList()
         }
@@ -57,7 +57,7 @@ data class SpeechToTextConfigurationViewState(
             val audioOutputChannelTypes: ImmutableList<AudioFormatChannelType> =
                 AudioFormatChannelType.entries.toTypedArray().toImmutableList()
             val audioOutputEncodingTypes: ImmutableList<AudioFormatEncodingType> =
-                AudioFormatEncodingType.supportedentries.toImmutableList()
+                AudioFormatEncodingType.supportedValues().toImmutableList()
             val audioOutputSampleRateTypes: ImmutableList<AudioFormatSampleRateType> =
                 AudioFormatSampleRateType.entries.toTypedArray().toImmutableList()
         }

@@ -52,7 +52,7 @@ data class WakeWordConfigurationViewState(
             val audioRecorderChannelTypes: ImmutableList<AudioFormatChannelType> =
                 AudioFormatChannelType.entries.toImmutableList()
             val audioRecorderEncodingTypes: ImmutableList<AudioFormatEncodingType> =
-                AudioFormatEncodingType.supportedentries.toImmutableList()
+                AudioFormatEncodingType.supportedValues().toImmutableList()
             val audioRecorderSampleRateTypes: ImmutableList<AudioFormatSampleRateType> =
                 AudioFormatSampleRateType.entries.toImmutableList()
         }
@@ -66,7 +66,7 @@ data class WakeWordConfigurationViewState(
             val audioOutputChannelTypes: ImmutableList<AudioFormatChannelType> =
                 AudioFormatChannelType.entries.toImmutableList()
             val audioOutputEncodingTypes: ImmutableList<AudioFormatEncodingType> =
-                AudioFormatEncodingType.supportedentries.toImmutableList()
+                AudioFormatEncodingType.supportedValues().toImmutableList()
             val audioOutputSampleRateTypes: ImmutableList<AudioFormatSampleRateType> =
                 AudioFormatSampleRateType.entries.toImmutableList()
         }

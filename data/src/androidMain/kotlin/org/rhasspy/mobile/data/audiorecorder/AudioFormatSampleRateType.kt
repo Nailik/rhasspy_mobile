@@ -24,9 +24,5 @@ actual enum class AudioFormatSampleRateType(
 
     actual companion object {
         actual val default: AudioFormatSampleRateType get() = SR16000
-
-        fun findValue(value: Int): AudioFormatSampleRateType {
-            return AudioFormatSampleRateType.entries.firstOrNull { it.value == value } ?: default
-        }
     }
 }
