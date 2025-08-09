@@ -10,7 +10,7 @@ import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
 
 class HomeScreenViewStateCreator(
     microphoneFabViewStateCreator: MicrophoneFabViewStateCreator,
-    private val serviceMiddleware: IServiceMiddleware
+    private val serviceMiddleware: IServiceMiddleware,
 ) {
 
     private val microphoneFabViewStateFlow = microphoneFabViewStateCreator()
@@ -29,7 +29,10 @@ class HomeScreenViewStateCreator(
 
     private fun getViewState(): HomeScreenViewState {
         return HomeScreenViewState(
-            isMicrophonePermissionRequired = ConfigurationSetting.wakeWordOption.value in listOf(WakeWordOption.Porcupine, WakeWordOption.Udp),
+            isMicrophonePermissionRequired = ConfigurationSetting.wakeWordOption.value in listOf(
+                WakeWordOption.Porcupine,
+                WakeWordOption.Udp
+            ),
             isPlayingRecording = serviceMiddleware.isPlayingRecording.value,
             isPlayingRecordingEnabled = serviceMiddleware.isPlayingRecordingEnabled.value,
             microphoneFabViewState = microphoneFabViewStateFlow.value,

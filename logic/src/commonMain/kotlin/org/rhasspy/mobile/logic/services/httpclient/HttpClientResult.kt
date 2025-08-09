@@ -10,7 +10,7 @@ sealed class HttpClientResult<T> {
 
     fun toServiceState(): ServiceState {
         return when (this) {
-            is Error   -> ServiceState.Exception(this.exception)
+            is Error -> ServiceState.Exception(this.exception)
             is Success -> ServiceState.Success
         }
     }

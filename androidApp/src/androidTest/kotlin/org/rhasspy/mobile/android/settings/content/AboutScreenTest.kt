@@ -40,7 +40,6 @@ class AboutScreenTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.DialogChangelog).assertDoesNotExist()
     }
 
-
     /**
      * User clicks button
      * Dialog with text opens

@@ -36,7 +36,7 @@ interface ITextToSpeechService : IService {
  * when data is null the service was most probably mqtt and will return result in a call function
  */
 internal class TextToSpeechService(
-    paramsCreator: TextToSpeechServiceParamsCreator
+    paramsCreator: TextToSpeechServiceParamsCreator,
 ) : ITextToSpeechService {
 
     override val logger = LogType.TextToSpeechService.logger()
@@ -61,12 +61,11 @@ internal class TextToSpeechService(
                     when (it.textToSpeechOption) {
                         TextToSpeechOption.RemoteHTTP -> Success
                         TextToSpeechOption.RemoteMQTT -> Success
-                        TextToSpeechOption.Disabled   -> Disabled
+                        TextToSpeechOption.Disabled -> Disabled
                     }
             }
         }
     }
-
 
     /**
      * hermes/tts/say
@@ -85,11 +84,11 @@ internal class TextToSpeechService(
             TextToSpeechOption.RemoteHTTP -> {
                 httpClientService.textToSpeech(text, volume, null) { result ->
                     _serviceState.value = when (result) {
-                        is HttpClientResult.Error   -> ServiceState.Exception(result.exception)
+                        is HttpClientResult.Error -> ServiceState.Exception(result.exception)
                         is HttpClientResult.Success -> Success
                     }
                     val action = when (result) {
-                        is HttpClientResult.Error   -> AsrError(Source.Local)
+                        is HttpClientResult.Error -> AsrError(Source.Local)
                         is HttpClientResult.Success -> PlayAudio(Source.Local, result.data)
                     }
                     serviceMiddleware.action(action)
@@ -101,7 +100,7 @@ internal class TextToSpeechService(
                 mqttClientService.say(mqttSessionId, text, siteId) { _serviceState.value = it }
             }
 
-            TextToSpeechOption.Disabled   -> _serviceState.value = Disabled
+            TextToSpeechOption.Disabled -> _serviceState.value = Disabled
         }
     }
 

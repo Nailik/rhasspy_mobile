@@ -13,8 +13,8 @@ enum class MqttQos(val value: Int) {
          * @return An instance of MqttQos.
          */
         fun createMqttQos(value: Int) = when (value) {
-            1    -> AT_LEAST_ONCE
-            2    -> EXACTLY_ONCE
+            1 -> AT_LEAST_ONCE
+            2 -> EXACTLY_ONCE
             else -> AT_MOST_ONCE
         }
     }

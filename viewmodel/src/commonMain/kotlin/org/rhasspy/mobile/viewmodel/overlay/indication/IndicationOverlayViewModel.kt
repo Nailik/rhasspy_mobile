@@ -6,7 +6,7 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 
 @Stable
 class IndicationOverlayViewModel(
-    viewStateCreator: IndicationOverlayViewStateCreator
+    viewStateCreator: IndicationOverlayViewStateCreator,
 ) : ScreenViewModel() {
 
     val viewState: StateFlow<IndicationOverlayViewState> = viewStateCreator()

@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.logic.audioplaying
 
 import org.kodein.mock.Mock
+import org.kodein.mock.generated.injectMocks
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.AppTest
 import org.rhasspy.mobile.logic.nVerify
@@ -14,7 +15,7 @@ class AudioPlayingServiceTest : AppTest() {
     @Mock
     lateinit var audioPlayingService: IAudioPlayingService
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {

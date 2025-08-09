@@ -21,15 +21,22 @@ import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.utils.IOpenLinkUtils
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.*
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.RequestMicrophonePermission
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.RequestOverlayPermission
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Confirm
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Dismiss
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar.Consumed
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.MicrophonePermissionInfo
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.OverlayPermissionInfo
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.*
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.LinkOpenFailed
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.MicrophonePermissionRequestDenied
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.MicrophonePermissionRequestFailed
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.OverlayPermissionRequestFailed
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.ScanQRCodeFailed
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.SelectFileFailed
 
 abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
 
@@ -79,17 +86,18 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
 
     fun scanQRCode(onResult: (String) -> Unit) {
         viewModelScope.launch(dispatcher.IO) {
-            when (val result = externalResultRequest.launchForResult(ExternalResultRequestIntention.ScanQRCode)) {
+            when (val result =
+                externalResultRequest.launchForResult(ExternalResultRequestIntention.ScanQRCode)) {
                 is ExternalRedirectResult.Result -> onResult(result.data)
-                else                             -> _screenViewState.update { it.copy(snackBarState = ScanQRCodeFailed) }
+                else -> _screenViewState.update { it.copy(snackBarState = ScanQRCodeFailed) }
             }
         }
     }
 
     override fun onEvent(event: ScreenViewModelUiEvent) {
         when (event) {
-            is Action   -> onAction(event)
-            is Dialog   -> onDialog(event)
+            is Action -> onAction(event)
+            is Dialog -> onDialog(event)
             is SnackBar -> onSnackBar(event)
         }
     }
@@ -97,7 +105,7 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
     private fun onAction(action: Action) {
         when (action) {
             RequestMicrophonePermission -> onRequestMicrophonePermission(false)
-            RequestOverlayPermission    -> onRequestOverlayPermission(false)
+            RequestOverlayPermission -> onRequestOverlayPermission(false)
         }
     }
 
@@ -110,7 +118,7 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
             is Confirm -> {
                 when (dialog.dialogState) {
                     MicrophonePermissionInfo -> onRequestMicrophonePermission(true)
-                    OverlayPermissionInfo    -> onRequestOverlayPermission(true)
+                    OverlayPermissionInfo -> onRequestOverlayPermission(true)
                 }
             }
         }
@@ -119,16 +127,17 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
     private fun onSnackBar(snackBar: SnackBar) {
         _screenViewState.update { it.copy(snackBarState = null) }
         when (snackBar) {
-            Consumed           -> Unit
+            Consumed -> Unit
             is SnackBar.Action -> {
                 when (snackBar.snackBarState) {
                     MicrophonePermissionRequestDenied,
-                    MicrophonePermissionRequestFailed ->
+                    MicrophonePermissionRequestFailed,
+                        ->
                         if (externalResultRequest.launch(RequestMicrophonePermissionExternally) !is ExternalRedirectResult.Success) {
                             _screenViewState.update { it.copy(snackBarState = MicrophonePermissionRequestFailed) }
                         }
 
-                    else                              -> Unit
+                    else -> Unit
                 }
             }
         }
@@ -140,7 +149,6 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
     open fun onBackPressed(): Boolean {
         return false
     }
-
 
     /**
      * returns true if pop back stack was handled internally

@@ -12,5 +12,5 @@ internal data class DialogManagerServiceParams(
     val intentRecognitionOption: IntentRecognitionOption,
     val asrTimeout: Long,
     val intentRecognitionTimeout: Long,
-    val recordingTimeout: Long
+    val recordingTimeout: Long,
 )

@@ -2,9 +2,13 @@ package org.rhasspy.mobile.platformspecific.ktor
 
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
-import io.ktor.server.engine.*
+import io.ktor.server.engine.ApplicationEngine
+import io.ktor.server.engine.EmbeddedServer
+import io.ktor.server.engine.connector
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.engine.sslConnector
 import io.ktor.server.netty.Netty
-import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.compression.Compression
 import io.ktor.server.plugins.compression.gzip
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
@@ -32,14 +36,14 @@ actual fun Application.installCallLogging() {
 /**
  * create connector for webserver with ssl settings if enabled
  */
-actual fun ApplicationEngineEnvironmentBuilder.installConnector(
+actual fun ApplicationEngine.Configuration.installConnector(
     nativeApplication: NativeApplication,
     port: Int,
     isUseSSL: Boolean,
     keyStoreFile: String,
     keyStorePassword: String,
     keyAlias: String,
-    keyPassword: String
+    keyPassword: String,
 ) {
     if (isUseSSL) {
         val keystore = KeyStore.getInstance(KeyStore.getDefaultType())
@@ -68,6 +72,13 @@ actual fun ApplicationEngineEnvironmentBuilder.installConnector(
 /**
  * get server engine
  */
-actual fun getEngine(environment: ApplicationEngineEnvironment): BaseApplicationEngine {
-    return embeddedServer(factory = Netty, environment = environment)
+actual fun getEngine(
+    configure: ApplicationEngine.Configuration.() -> Unit,
+    module: Application.() -> Unit,
+): EmbeddedServer<*, *> {
+    return embeddedServer(
+        factory = Netty,
+        configure = configure,
+        module = module
+    )
 }

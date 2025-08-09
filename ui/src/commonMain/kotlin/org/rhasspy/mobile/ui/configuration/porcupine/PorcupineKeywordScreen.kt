@@ -6,8 +6,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SecondaryTabRow
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -23,7 +29,9 @@ import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.horizontalAnimationSpec
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.PageClick
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.PorcupineLanguageClick
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 
 /**
@@ -97,7 +105,6 @@ fun PorcupineKeywordScreen() {
     }
 }
 
-
 /**
  * app bar for title and back button
  */
@@ -113,7 +120,7 @@ private fun AppBar(onEvent: (PorcupineUiEvent) -> Unit) {
                 modifier = Modifier.testTag(TestTag.AppBarBackButton)
             ) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = MR.strings.back.stable
                 )
             }
@@ -122,20 +129,19 @@ private fun AppBar(onEvent: (PorcupineUiEvent) -> Unit) {
 
 }
 
-
 /**
  * Displays tabs on bottom (default/ custom)
  */
 @Composable
 private fun BottomTabBar(
     selectedIndex: Int,
-    onSelectedScreen: (screen: Int) -> Unit
+    onSelectedScreen: (screen: Int) -> Unit,
 ) {
 
     Column {
 
         //tab bar row
-        TabRow(selectedTabIndex = selectedIndex) {
+        SecondaryTabRow(selectedTabIndex = selectedIndex) {
             Tab(
                 selected = selectedIndex == 0,
                 modifier = Modifier.testTag(TestTag.TabDefault),

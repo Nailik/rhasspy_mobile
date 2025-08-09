@@ -5,27 +5,31 @@ import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okio.Path
 import okio.buffer
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.extensions.*
+import org.rhasspy.mobile.platformspecific.extensions.commonDecodeLogList
+import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
+import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
+import org.rhasspy.mobile.platformspecific.extensions.commonSave
+import org.rhasspy.mobile.platformspecific.extensions.commonShare
 import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.settings.AppSetting
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 interface IFileLogger {
 
@@ -39,7 +43,7 @@ interface IFileLogger {
 
 internal class FileLogger(
     private val nativeApplication: NativeApplication,
-    private val externalResultRequest: IExternalResultRequest
+    private val externalResultRequest: IExternalResultRequest,
 ) : IFileLogger, LogWriter() {
     private val logger = Logger.withTag("FileLogger")
 
@@ -58,6 +62,7 @@ internal class FileLogger(
     /**
      * override log function to append text to file
      */
+    @OptIn(ExperimentalTime::class)
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
         val element = LogElement(
             Clock.System.now().toLocalDateTime(currentSystemDefault()).toString(),
@@ -92,6 +97,7 @@ internal class FileLogger(
     /**
      * save log to external file
      */
+    @OptIn(ExperimentalTime::class)
     override suspend fun saveLogFile() = file.commonSave(
         nativeApplication,
         externalResultRequest,

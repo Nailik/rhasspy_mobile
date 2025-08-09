@@ -9,7 +9,7 @@ import org.rhasspy.mobile.viewmodel.screens.dialog.DialogScreenUiEvent.Change.To
 
 class DialogScreenViewModel(
     viewStateCreator: DialogScreenViewStateCreator,
-    private val dialogManagerService: IDialogManagerService
+    private val dialogManagerService: IDialogManagerService,
 ) : ScreenViewModel() {
 
     val viewState = viewStateCreator()
@@ -22,9 +22,11 @@ class DialogScreenViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            ToggleListAutoScroll -> AppSetting.isDialogAutoscroll.value = !AppSetting.isDialogAutoscroll.value
-            ManualListScroll     -> AppSetting.isDialogAutoscroll.value = false
-            else                 -> dialogManagerService.clearHistory()
+            ToggleListAutoScroll -> AppSetting.isDialogAutoscroll.value =
+                !AppSetting.isDialogAutoscroll.value
+
+            ManualListScroll -> AppSetting.isDialogAutoscroll.value = false
+            else -> dialogManagerService.clearHistory()
         }
     }
 

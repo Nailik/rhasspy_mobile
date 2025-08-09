@@ -2,7 +2,11 @@ package org.rhasspy.mobile.logic.services.dialog.dialogmanager.local
 
 import com.benasher44.uuid.uuid4
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayAudio
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionStarted
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartListening
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.StartSession
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.audioplaying.IAudioPlayingService
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
@@ -28,11 +32,11 @@ internal class IdleStateActions(
 
     override fun onAction(action: DialogServiceMiddlewareAction) {
         when (action) {
-            is StartListening   -> onStartListening(action)
-            is StartSession     -> onStartSession(action)
+            is StartListening -> onStartListening(action)
+            is StartSession -> onStartSession(action)
             is WakeWordDetected -> onWakeWordDetected(action)
-            is PlayAudio        -> onPlayAudio(action)
-            else                -> Unit
+            is PlayAudio -> onPlayAudio(action)
+            else -> Unit
         }
     }
 
@@ -124,7 +128,7 @@ internal class IdleStateActions(
     private fun getNewSessionId(source: Source): String {
         return when (source) {
             Source.HttpApi -> uuid4().toString()
-            Source.Local   -> uuid4().toString()
+            Source.Local -> uuid4().toString()
             is Source.Mqtt -> source.sessionId ?: uuid4().toString()
         }
     }

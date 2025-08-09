@@ -11,7 +11,7 @@ actual class IndicationOverlay actual constructor(
     viewModel: IndicationOverlayViewModel,
     nativeApplication: NativeApplication,
     overlayPermission: IOverlayPermission,
-    dispatcher: IDispatcherProvider
+    dispatcher: IDispatcherProvider,
 ) : IIndicationOverlay {
 
     override fun start() {

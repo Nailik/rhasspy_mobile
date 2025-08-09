@@ -9,5 +9,5 @@ data class MainScreenViewState(
     val isShowLogEnabled: Boolean,
     val isShowCrashlyticsDialog: Boolean,
     val changelog: ImmutableList<String>,
-    val isChangelogDialogVisible: Boolean
+    val isChangelogDialogVisible: Boolean,
 )

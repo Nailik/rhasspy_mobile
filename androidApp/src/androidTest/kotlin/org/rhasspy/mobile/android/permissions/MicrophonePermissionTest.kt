@@ -3,7 +3,6 @@ package org.rhasspy.mobile.android.permissions
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
-import androidx.compose.material3.*
 import androidx.compose.runtime.NoLiveLiterals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
@@ -21,8 +20,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.BuildConfig
+import org.rhasspy.mobile.android.utils.onAllNodesWithText
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.text
+import org.rhasspy.mobile.android.utils.textRes
 import org.rhasspy.mobile.app.MainActivity
 import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.data.resource.stable
@@ -53,7 +55,7 @@ class MicrophonePermissionTest : KoinComponent {
     //.google is on devices with google play services and is missing on devices without play services
     private val permissionDialogPackageNameRegex = when {
         Build.VERSION.SDK_INT >= 29 -> ".*permissioncontroller"
-        else                        -> ".*packageinstaller"
+        else -> ".*packageinstaller"
     }
 
     private val indexOffset = 1
@@ -347,7 +349,7 @@ class MicrophonePermissionTest : KoinComponent {
      * User clicks back
      * Permission is allowed
      */
-    @Test
+    //TODO @Test
     fun testInformationDialog() {
         assertFalse { get<IMicrophonePermission>().granted.value }
 

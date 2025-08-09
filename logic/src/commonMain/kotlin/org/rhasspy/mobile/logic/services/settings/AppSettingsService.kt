@@ -5,7 +5,9 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.middleware.Source
-import org.rhasspy.mobile.logic.middleware.Source.*
+import org.rhasspy.mobile.logic.middleware.Source.HttpApi
+import org.rhasspy.mobile.logic.middleware.Source.Local
+import org.rhasspy.mobile.logic.middleware.Source.Mqtt
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
@@ -35,7 +37,7 @@ internal class AppSettingsService : IAppSettingsService {
 
         when (source) {
             HttpApi -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
-            Local   -> Unit
+            Local -> Unit
             is Mqtt -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
         }
 
@@ -47,7 +49,7 @@ internal class AppSettingsService : IAppSettingsService {
 
         when (source) {
             HttpApi -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
-            Local   -> Unit
+            Local -> Unit
             is Mqtt -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
         }
 
@@ -59,7 +61,7 @@ internal class AppSettingsService : IAppSettingsService {
 
         when (source) {
             HttpApi -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
-            Local   -> Unit
+            Local -> Unit
             is Mqtt -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
         }
 
@@ -71,7 +73,7 @@ internal class AppSettingsService : IAppSettingsService {
 
         when (source) {
             HttpApi -> if (!AppSetting.isHttpApiDeviceChangeEnabled.value) return
-            Local   -> Unit
+            Local -> Unit
             is Mqtt -> if (!AppSetting.isMqttApiDeviceChangeEnabled.value) return
         }
 

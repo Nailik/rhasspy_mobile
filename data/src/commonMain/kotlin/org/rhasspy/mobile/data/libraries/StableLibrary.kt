@@ -7,5 +7,5 @@ val Library.stable get() = StableLibrary(this)
 
 @Stable
 data class StableLibrary(
-    val library: Library
+    val library: Library,
 )

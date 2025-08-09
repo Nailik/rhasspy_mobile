@@ -1,10 +1,12 @@
 package org.rhasspy.mobile.logic.services.dialog
 
-import kotlinx.datetime.Clock
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 sealed class DialogInformation {
 
+    @OptIn(ExperimentalTime::class)
     val timeStamp = Clock.System.now()
 
     data class State(val value: DialogManagerState) : DialogInformation()

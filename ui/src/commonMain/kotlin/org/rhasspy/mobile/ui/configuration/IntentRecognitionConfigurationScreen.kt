@@ -23,7 +23,9 @@ import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.ChangeIntentRecognitionHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SetUseCustomHttpEndpoint
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewState.IntentRecognitionConfigurationData
 
@@ -62,7 +64,7 @@ fun IntentRecognitionConfigurationScreen() {
 @Composable
 fun IntentRecognitionEditContent(
     editData: IntentRecognitionConfigurationData,
-    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit
+    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit,
 ) {
 
     LazyColumn(
@@ -84,7 +86,7 @@ fun IntentRecognitionEditContent(
 @Composable
 private fun IntentRecognitionOptionContent(
     editData: IntentRecognitionConfigurationData,
-    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit
+    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit,
 ) {
 
     RadioButtonsEnumSelection(
@@ -102,7 +104,7 @@ private fun IntentRecognitionOptionContent(
                     onEvent = onEvent
                 )
 
-            else                               -> Unit
+            else -> Unit
         }
 
     }
@@ -115,7 +117,7 @@ private fun IntentRecognitionOptionContent(
 private fun IntentRecognitionHTTP(
     isUseCustomIntentRecognitionHttpEndpoint: Boolean,
     intentRecognitionHttpEndpointText: String,
-    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit
+    onEvent: (IntentRecognitionConfigurationUiEvent) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {

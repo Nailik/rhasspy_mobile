@@ -5,23 +5,25 @@ import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.Datagram
 import io.ktor.network.sockets.InetSocketAddress
 import io.ktor.network.sockets.SocketAddress
+import io.ktor.network.sockets.UDPSocketBuilder
 import io.ktor.network.sockets.aSocket
 import io.ktor.server.engine.internal.ClosedChannelException
-import io.ktor.utils.io.core.ByteReadPacket
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.channels.SendChannel
+import kotlinx.io.Buffer
 import org.rhasspy.mobile.settings.AppSetting
 
 internal class UdpConnection(
     private val host: String,
-    private val port: Int
+    private val port: Int,
 ) {
     private val logger = Logger.withTag("UdpConnection")
 
     private var socketAddress: SocketAddress? = null
     private var sendChannel: SendChannel<Datagram>? = null
     private var hasLoggedError = false
+    private var socketBuilder: UDPSocketBuilder? = null
 
     var isConnected: Boolean = false
         private set
@@ -34,7 +36,7 @@ internal class UdpConnection(
     fun connect(): Exception? {
         logger.d { "initialization" }
         return try {
-            sendChannel = aSocket(SelectorManager(Dispatchers.IO)).udp().bind().outgoing
+            socketBuilder = aSocket(SelectorManager(Dispatchers.IO)).udp()
 
             socketAddress = InetSocketAddress(host, port)
 
@@ -63,11 +65,16 @@ internal class UdpConnection(
         if (AppSetting.isLogAudioFramesEnabled.value) {
             logger.d { "stream audio dataSize: ${data.size}" }
         }
+        if (sendChannel == null) {
+            sendChannel = socketBuilder?.bind()?.outgoing
+        }
         socketAddress?.also {
             try {
                 sendChannel?.send(
                     Datagram(
-                        packet = ByteReadPacket(data),
+                        packet = Buffer().apply {
+                            write(data, startIndex = 0, endIndex = data.size)
+                        },
                         address = it
                     )
                 )

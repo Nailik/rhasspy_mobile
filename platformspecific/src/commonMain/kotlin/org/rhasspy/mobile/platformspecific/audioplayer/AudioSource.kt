@@ -12,8 +12,8 @@ sealed class AudioSource : KoinComponent {
 
     override fun toString(): String {
         return when (this) {
-            is Data     -> data.toString()
-            is File     -> path.toString()
+            is Data -> data.toString()
+            is File -> path.toString()
             is Resource -> fileResource.toString()
         }
     }

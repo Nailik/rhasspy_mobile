@@ -27,12 +27,17 @@ import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.settings.sound.IndicationSoundScreen
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination.ErrorIndicationSoundScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination.RecordedIndicationSoundScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.IndicationSettingsScreenDestination.WakeIndicationSoundScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.IndicationSettings
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.Navigate
-import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SelectSoundIndicationOutputOption
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetSoundIndicationEnabled
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetWakeWordDetectionTurnOnDisplay
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetWakeWordLightIndicationEnabled
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.RecordedIndicationSoundSettingsViewModel
@@ -114,7 +119,6 @@ fun IndicationSettingsOverviewScreen() {
                     onCheckedChange = { viewModel.onEvent(SetSoundIndicationEnabled(it)) }
                 )
 
-
                 //visibility of sounds settings
                 SecondaryContent(visible = viewState.isSoundIndicationEnabled) {
 
@@ -145,7 +149,7 @@ private fun SoundIndicationSettingsOverview(
     wakeSound: String,
     recordedSound: String,
     errorSound: String,
-    onEvent: (IndicationSettingsUiEvent) -> Unit
+    onEvent: (IndicationSettingsUiEvent) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {

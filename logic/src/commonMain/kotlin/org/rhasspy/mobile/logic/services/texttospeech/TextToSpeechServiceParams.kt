@@ -4,5 +4,5 @@ import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 
 internal data class TextToSpeechServiceParams(
     val siteId: String,
-    val textToSpeechOption: TextToSpeechOption
+    val textToSpeechOption: TextToSpeechOption,
 )

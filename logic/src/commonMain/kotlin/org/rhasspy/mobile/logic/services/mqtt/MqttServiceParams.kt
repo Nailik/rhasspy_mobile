@@ -10,5 +10,5 @@ internal data class MqttServiceParams(
     val retryInterval: Long,
     val mqttServiceConnectionOptions: MqttServiceConnectionOptions,
     val isUseSpeechToTextMqttSilenceDetection: Boolean,
-    val audioPlayingMqttSiteId: String
+    val audioPlayingMqttSiteId: String,
 )

@@ -5,7 +5,7 @@ import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 
 internal actual class SettingsUtils actual constructor(
     externalResultRequest: IExternalResultRequest,
-    nativeApplication: NativeApplication
+    nativeApplication: NativeApplication,
 ) : ISettingsUtils {
 
     /**

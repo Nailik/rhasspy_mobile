@@ -6,7 +6,7 @@ import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
 actual class BatteryOptimization actual constructor(
-    private val nativeApplication: NativeApplication
+    private val nativeApplication: NativeApplication,
 ) {
 
     private val logger = Logger.withTag("BatteryOptimization")

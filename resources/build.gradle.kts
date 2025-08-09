@@ -5,18 +5,15 @@ import com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
 import com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
 import groovy.json.JsonSlurper
 import org.apache.tools.ant.taskdefs.condition.Os
-import org.jetbrains.compose.experimental.uikit.tasks.SyncComposeResourcesForIosTask
+import java.net.URLEncoder
 
 plugins {
-    kotlin("multiplatform")
-    kotlin("native.cocoapods")
-    id("com.android.library")
+    id("base.kmp.compose.library")
     id("dev.icerock.mobile.multiplatform-resources")
-    id("com.codingfeline.buildkonfig")
-    id("org.jetbrains.compose")
-    id("com.mikepenz.aboutlibraries.plugin")
-    id("de.undercouch.download")
-    id("base-gradle")
+    alias(libs.plugins.buildkonfig)
+    alias(libs.plugins.aboutlibraries)
+    alias(libs.plugins.download)
+    alias(libs.plugins.native.cocoapods)
 }
 
 version = Version.toString()
@@ -31,82 +28,43 @@ kotlin {
         framework {
             baseName = "resources"
             isStatic = true
-            export(Icerock.Resources)
+            export(libs.moko.resources)
         }
     }
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(Icerock.Resources)
-                implementation(Icerock.Resources)
-                implementation(Jetbrains.Kotlinx.atomicfu)
-                implementation(Icerock.Resources.resourcesCompose)
-                implementation(Jetbrains.Compose.ui)
-                implementation(Jetbrains.Compose.foundation)
-                implementation(Jetbrains.Compose.material)
-                implementation(Jetbrains.Compose.material3)
-                implementation(Jetbrains.Compose.runtime)
-            }
+        commonMain.dependencies {
+            api(libs.moko.resources)
+            api(libs.moko.resources.compose)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.runtime)
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(Kotlin.test)
-            }
-        }
-        val androidMain by getting
-        val androidUnitTest by getting
-        val iosX64Main by getting {
-            resources.srcDirs("build/generated/moko/iosX64Main/src")
-        }
-        val iosArm64Main by getting {
-            resources.srcDirs("build/generated/moko/iosArm64Main/src")
-        }
-        val iosSimulatorArm64Main by getting {
-            resources.srcDirs("build/generated/moko/iosSimulatorArm64Main/src")
-        }
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-        }
-        val iosX64Test by getting
-        val iosArm64Test by getting
-        val iosSimulatorArm64Test by getting
-        val iosTest by creating {
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            iosSimulatorArm64Test.dependsOn(this)
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
         }
     }
 }
 
 multiplatformResources {
-    multiplatformResourcesPackage = "org.rhasspy.mobile.resources" // required
-    disableStaticFrameworkWarning = true
+    resourcesPackage.set("org.rhasspy.mobile.resources")
 }
 
 aboutLibraries {
-    prettyPrint = true
-    registerAndroidTasks = false
-    // Enable the duplication mode, allows to merge, or link dependencies which relate
-    duplicationMode = MERGE
-    // Configure the duplication rule, to match "duplicates" with
-    duplicationRule = SIMPLE
+    export.prettyPrint = true
+    library {
+        // Enable the duplication mode, allows to merge, or link dependencies which relate
+        duplicationMode = MERGE
+        // Configure the duplication rule, to match "duplicates" with
+        duplicationRule = SIMPLE
+    }
 }
-
 
 android {
     namespace = "org.rhasspy.mobile.resources"
-    sourceSets {
-        //java because else Expected object 'MR' has no actual declaration in module <resources_debug> for JVM
-        getByName("main").java.srcDirs("build/generated/moko/androidMain/src")
-    }
-    kotlin {
-        jvmToolchain(19)
-    }
+    sourceSets["main"].res.srcDirs("build/generated/assets/generateMRandroidMain")
 }
 
 buildkonfig {
@@ -120,25 +78,31 @@ buildkonfig {
     }
 }
 
-tasks.findByPath("preBuild")!!.doFirst {
-    exec {
-        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-            workingDir = File("$projectDir/..")
-        }
-        commandLine = listOf(
-            if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                "gradlew.bat"
-            } else "../gradlew",
-            "exportLibraryDefinitions",
-            "-PaboutLibraries.exportPath=${projectDir}/src/commonMain/resources/MR/files"
-        )
+val exportMyLibraryDefinitions by tasks.registering(Exec::class) {
+    group = "build setup"
+    description = "Exports library definitions before build"
+
+    // Set working directory
+    workingDir = if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        File("$projectDir/..")
+    } else {
+        file("..")
     }
+
+    // Set command line
+    commandLine = listOf(
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            "gradlew.bat"
+        } else {
+            "./gradlew"
+        },
+        "exportLibraryDefinitions",
+        "-PaboutLibraries.exportPath=${projectDir}/src/commonMain/moko-resources/MR/files"
+    )
 }
 
-tasks.withType<SyncComposeResourcesForIosTask> {
-    dependsOn(tasks.findByName("generateMRcommonMain"))
-    dependsOn(tasks.findByName("generateMRiosArm64Main"))
-    dependsOn(tasks.findByName("generateMRiosSimulatorArm64Main"))
+tasks.named("preBuild") {
+    dependsOn(exportMyLibraryDefinitions)
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -146,10 +110,10 @@ tasks.withType<SyncComposeResourcesForIosTask> {
 tasks.register("updatePorcupineFiles") {
     doLast {
         val baseUrl = "https://api.github.com/repos/Picovoice/porcupine/contents"
-        val baseDest = "$projectDir/src/commonMain/resources/MR/files/porcupine"
+        val baseDest = "$projectDir/src/commonMain/moko-resources/files"
 
         var src = "$baseUrl/lib/common"
-        val contentsFile = File(buildDir, "directory_contents.json")
+        val contentsFile = layout.buildDirectory.file("directory_contents.json").get().asFile
         download.run {
             src(src)
             dest(contentsFile)
@@ -162,7 +126,7 @@ tasks.register("updatePorcupineFiles") {
         // download files
         download.run {
             src(urls)
-            dest("$baseDest/models")
+            dest(baseDest)
             overwrite(true)
             onlyIfModified(true)
             eachFile {
@@ -185,14 +149,18 @@ tasks.register("updatePorcupineFiles") {
                     dest(contentsFile)
                 }
 
+                fun encodeFilenameInUrl(url: String) = url.substringBeforeLast("/") + "/" +
+                    URLEncoder.encode(url.substringAfterLast("/"), "UTF-8")
+                        .replace("%2520", "%20")
+
                 // parse directory listing
                 contents = JsonSlurper().parse(contentsFile) as List<Map<Any, String>>
-                urls = contents.map { url -> url["download_url"] }
+                urls = contents.map { url -> encodeFilenameInUrl(url["download_url"]!!) }
 
                 // download files
                 download.run {
                     src(urls)
-                    dest("$baseDest/keyword_files$language")
+                    dest(baseDest)
                     overwrite(true)
                     onlyIfModified(true)
                     eachFile {

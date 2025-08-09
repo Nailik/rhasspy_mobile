@@ -17,5 +17,5 @@ data class MqttServiceConnectionOptions(
     /** Keep alive interval in seconds. */
     val keepAliveInterval: Int,
     val connUsername: String,
-    val connPassword: String
+    val connPassword: String,
 )

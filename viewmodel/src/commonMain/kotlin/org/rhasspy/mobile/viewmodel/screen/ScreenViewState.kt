@@ -3,9 +3,9 @@ package org.rhasspy.mobile.viewmodel.screen
 import androidx.compose.runtime.Stable
 
 @Stable
-data class ScreenViewState internal constructor(
+data class ScreenViewState(
     val dialogState: ScreenDialogState? = null,
-    val snackBarState: ScreenSnackBarState? = null
+    val snackBarState: ScreenSnackBarState? = null,
 ) {
 
     sealed interface ScreenDialogState {

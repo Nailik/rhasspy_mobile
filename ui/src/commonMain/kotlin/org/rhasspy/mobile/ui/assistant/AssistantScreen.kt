@@ -13,7 +13,6 @@ import org.rhasspy.mobile.ui.overlay.IndicationContent
 import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
 
-
 @Composable
 fun AssistantScreen(viewModelFactory: ViewModelFactory) {
 

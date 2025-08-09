@@ -51,7 +51,7 @@ actual class Resampler actual constructor(
 
     private fun AudioFormatChannelType.toResamplerChannel(): ResamplerChannel {
         return when (this) {
-            AudioFormatChannelType.Mono   -> ResamplerChannel.MONO
+            AudioFormatChannelType.Mono -> ResamplerChannel.MONO
             AudioFormatChannelType.Stereo -> ResamplerChannel.STEREO
         }
     }

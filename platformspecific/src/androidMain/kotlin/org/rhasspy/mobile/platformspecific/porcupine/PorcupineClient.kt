@@ -31,7 +31,6 @@ class PorcupineClient(
         .setModelPath(copyModelFile())
         .build(context)
 
-
     private var oldData = ShortArray(0)
 
     fun audioFrame(data: ByteArray) {
@@ -43,7 +42,8 @@ class PorcupineClient(
                 //get a sized chunk
                 val chunk = currentRecording.take(512).toShortArray()
                 //cut remaining data
-                currentRecording = currentRecording.takeLast(currentRecording.size - 512).toShortArray()
+                currentRecording =
+                    currentRecording.takeLast(currentRecording.size - 512).toShortArray()
 
                 val keywordIndex = porcupine.process(chunk)
                 if (keywordIndex != -1) {
@@ -71,7 +71,8 @@ class PorcupineClient(
     }
 
     private fun getKeywordPaths(): Array<String> {
-        return wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
+        return wakeWordPorcupineKeywordDefaultOptions
+            .filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
             .map {
                 copyBuildInKeywordFile(it)
             }.toMutableList().also { list ->
@@ -87,7 +88,8 @@ class PorcupineClient(
     }
 
     private fun getSensitivities(): FloatArray {
-        return wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
+        return wakeWordPorcupineKeywordDefaultOptions
+            .filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
             .map {
                 it.sensitivity
             }.toMutableList().also { list ->
@@ -100,7 +102,7 @@ class PorcupineClient(
     }
 
     /**
-     * copies a model file from the file resources to app storage directory, else cannot be used by porcupine
+     * copies a model file from the file moko-resources to app storage directory, else cannot be used by porcupine
      */
     private fun copyModelFile(): String {
         val folder = File(context.filesDir, "porcupine")
@@ -108,7 +110,8 @@ class PorcupineClient(
         val file = File(folder, "model_${wakeWordPorcupineLanguage.name.lowercase()}.pv")
 
         file.outputStream().apply {
-            val inputStream = context.resources.openRawResource(wakeWordPorcupineLanguage.file.rawResId)
+            val inputStream =
+                context.resources.openRawResource(wakeWordPorcupineLanguage.file.rawResId)
             write(inputStream.readBytes())
             close()
             inputStream.close()
@@ -117,9 +120,8 @@ class PorcupineClient(
         return file.absolutePath
     }
 
-
     /**
-     * copies a keyword file from the file resources to app storage directory, else cannot be used by porcupine
+     * copies a keyword file from the file moko-resources to app storage directory, else cannot be used by porcupine
      */
     private fun copyBuildInKeywordFile(defaultKeyword: PorcupineDefaultKeyword): String {
         val folder = File(context.filesDir, "porcupine")

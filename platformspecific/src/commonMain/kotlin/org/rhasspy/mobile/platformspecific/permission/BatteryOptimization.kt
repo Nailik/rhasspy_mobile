@@ -3,7 +3,7 @@ package org.rhasspy.mobile.platformspecific.permission
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
 expect class BatteryOptimization(
-    nativeApplication: NativeApplication
+    nativeApplication: NativeApplication,
 ) {
 
     /**

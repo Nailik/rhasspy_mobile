@@ -33,7 +33,7 @@ enum class MqttTopicsSubscription(override val topic: String) : MqttTopic {
 
     companion object {
         fun fromTopic(topic: String): MqttTopicsSubscription? {
-            return values().firstOrNull { it.topic == topic }
+            return entries.firstOrNull { it.topic == topic }
         }
     }
 

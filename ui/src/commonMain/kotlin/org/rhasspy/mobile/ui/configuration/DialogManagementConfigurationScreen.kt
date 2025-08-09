@@ -25,7 +25,10 @@ import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action.Navigate
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeIntentRecognitionTimeout
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeRecordingTimeout
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.ChangeTextAsrTimeout
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewState.DialogManagementConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.DeviceSettings
@@ -63,7 +66,7 @@ fun DialogManagementConfigurationScreen() {
 @Composable
 private fun DialogManagementEditContent(
     editData: DialogManagementConfigurationData,
-    onEvent: (DialogManagementConfigurationUiEvent) -> Unit
+    onEvent: (DialogManagementConfigurationUiEvent) -> Unit,
 ) {
 
     LazyColumn(
@@ -85,7 +88,7 @@ private fun DialogManagementEditContent(
 @Composable
 private fun DialogManagementOptionContent(
     editData: DialogManagementConfigurationData,
-    onEvent: (DialogManagementConfigurationUiEvent) -> Unit
+    onEvent: (DialogManagementConfigurationUiEvent) -> Unit,
 ) {
 
     //drop down to select option
@@ -95,7 +98,6 @@ private fun DialogManagementOptionContent(
         onSelect = { onEvent(SelectDialogManagementOption(it)) },
         values = editData.dialogManagementOptionList
     ) { option ->
-
 
         Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
             when (option) {
@@ -129,7 +131,7 @@ private fun DialogManagementSettingsLocal(
     textAsrTimeoutText: String,
     intentRecognitionTimeoutText: String,
     recordingTimeoutText: String,
-    onEvent: (DialogManagementConfigurationUiEvent) -> Unit
+    onEvent: (DialogManagementConfigurationUiEvent) -> Unit,
 ) {
 
     DialogManagementSettings(
@@ -155,7 +157,7 @@ private fun DialogManagementSettingsMqtt(
     textAsrTimeoutText: String,
     intentRecognitionTimeoutText: String,
     recordingTimeoutText: String,
-    onEvent: (DialogManagementConfigurationUiEvent) -> Unit
+    onEvent: (DialogManagementConfigurationUiEvent) -> Unit,
 ) {
 
     DialogManagementSettings(
@@ -185,7 +187,7 @@ private fun DialogManagementSettings(
     textAsrTimeoutText: String,
     intentRecognitionTimeoutText: String,
     recordingTimeoutText: String,
-    onEvent: (DialogManagementConfigurationUiEvent) -> Unit
+    onEvent: (DialogManagementConfigurationUiEvent) -> Unit,
 ) {
 
     //asr timeout

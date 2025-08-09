@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.StableStringResource.StableStringResourceSingle
 
-
 @Composable
 expect fun translate(resource: StableStringResource): String
 

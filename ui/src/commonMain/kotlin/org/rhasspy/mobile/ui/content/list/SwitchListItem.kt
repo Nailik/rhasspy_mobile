@@ -13,7 +13,7 @@ fun SwitchListItem(
     text: StableStringResource,
     secondaryText: StableStringResource? = null,
     isChecked: Boolean,
-    onCheckedChange: ((Boolean) -> Unit)
+    onCheckedChange: ((Boolean) -> Unit),
 ) {
     ListElement(
         modifier = modifier.toggleable(

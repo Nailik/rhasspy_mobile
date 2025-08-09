@@ -25,5 +25,5 @@ internal data class WakeWordServiceParams(
     val wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
     val wakeWordPorcupineLanguage: PorcupineLanguageOption,
     val wakeWordUdpOutputHost: String,
-    val wakeWordUdpOutputPort: Int
+    val wakeWordUdpOutputPort: Int,
 )

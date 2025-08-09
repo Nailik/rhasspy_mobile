@@ -11,7 +11,7 @@ import org.rhasspy.mobile.ui.LocalViewModelFactory
 
 @Composable
 fun KoinComponent.TestContentProvider(
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
 
     val snackbarHostState = remember { SnackbarHostState() }

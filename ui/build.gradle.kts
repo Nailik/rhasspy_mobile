@@ -1,86 +1,46 @@
 @file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
-    id("org.jetbrains.compose")
-    id("base-gradle")
+    id("base.kmp.compose.library")
 }
 
 version = Version.toString()
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(project(":viewmodel"))
-                implementation(project(":data"))
-                implementation(project(":logic"))
-                implementation(project(":resources"))
-                implementation(project(":settings"))
-                implementation(project(":platformspecific"))
-                implementation(Icerock.Resources.resourcesCompose)
-                implementation(Icerock.Mvvm.core)
-                implementation(Koin.core)
-                implementation(Touchlab.kermit)
-                implementation(Jetbrains.Kotlinx.immutable)
-                implementation(Jetbrains.Compose.ui)
-                implementation(Jetbrains.Compose.foundation)
-                implementation(Jetbrains.Compose.material)
-                implementation(Jetbrains.Compose.material3)
-                implementation(Jetbrains.Compose.runtime)
-                implementation(Jetbrains.Compose.materialIconsExtended)
-                implementation(Mikepenz.aboutLibrariesCore)
-                implementation(Jetbrains.Kotlinx.dateTime)
-            }
+        commonMain.dependencies {
+            implementation(project(":viewmodel"))
+            implementation(project(":data"))
+            implementation(project(":logic"))
+            implementation(project(":resources"))
+            implementation(project(":settings"))
+            implementation(project(":platformspecific"))
+            implementation(libs.moko.resources.compose)
+            implementation(libs.moko.mvvm.core)
+            implementation(libs.koin.core)
+            implementation(libs.kermit)
+            implementation(libs.kotlinx.collections.immutable)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.material.icons.extended)
+            implementation(libs.aboutlibraries.core)
+            implementation(libs.kotlinx.datetime)
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(Kotlin.test)
-            }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
         }
-        val androidMain by getting {
-            dependencies {
-                implementation(AndroidX.Activity.compose)
-                implementation(AndroidX.Compose.ui)
-                implementation(AndroidX.Compose.Ui.toolingPreview)
-                implementation(Google.accompanist.systemUiController)
-                implementation(AndroidX.core)
-                implementation(AndroidX.multidex)
-            }
-        }
-        val androidUnitTest by getting
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-        }
-        val iosX64Test by getting
-        val iosArm64Test by getting
-        val iosSimulatorArm64Test by getting
-        val iosTest by creating {
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            iosSimulatorArm64Test.dependsOn(this)
+        androidMain.dependencies {
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.androidx.core.ktx)
+            implementation(libs.androidx.multidex)
         }
     }
 
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
-    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
-    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi"
-    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi"
-    kotlinOptions.freeCompilerArgs += "-P=plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_metrics"
-    kotlinOptions.freeCompilerArgs += "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_metrics"
 }
 
 android {
@@ -88,7 +48,4 @@ android {
     buildFeatures {
         compose = true
     }
-}
-dependencies {
-    debugImplementation("androidx.compose.ui:ui-tooling:1.4.3")
 }

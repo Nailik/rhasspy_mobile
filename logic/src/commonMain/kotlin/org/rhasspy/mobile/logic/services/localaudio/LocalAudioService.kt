@@ -40,7 +40,7 @@ interface ILocalAudioService : IService {
 }
 
 internal class LocalAudioService(
-    paramsCreator: LocalAudioServiceParamsCreator
+    paramsCreator: LocalAudioServiceParamsCreator,
 ) : ILocalAudioService {
 
     override val logger = LogType.LocalAudioService.logger()
@@ -93,14 +93,14 @@ internal class LocalAudioService(
                 onFinished()
             }
 
-            SoundOption.Default.name  -> playAudio(
-                AudioSource.Resource(MR.files.etc_wav_beep_hi),
+            SoundOption.Default.name -> playAudio(
+                AudioSource.Resource(MR.files.etc_wav_beep_hi_wav),
                 AppSetting.wakeSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value,
                 onFinished
             )
 
-            else                      -> playAudio(
+            else -> playAudio(
                 AudioSource.File(
                     Path.commonInternalPath(
                         nativeApplication = nativeApplication,
@@ -118,13 +118,13 @@ internal class LocalAudioService(
         logger.d { "playRecordedSound" }
         when (AppSetting.recordedSound.value) {
             SoundOption.Disabled.name -> Unit
-            SoundOption.Default.name  -> playAudio(
-                AudioSource.Resource(MR.files.etc_wav_beep_lo),
+            SoundOption.Default.name -> playAudio(
+                AudioSource.Resource(MR.files.etc_wav_beep_lo_wav),
                 AppSetting.recordedSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             )
 
-            else                      -> playAudio(
+            else -> playAudio(
                 AudioSource.File(
                     Path.commonInternalPath(
                         nativeApplication = nativeApplication,
@@ -141,13 +141,13 @@ internal class LocalAudioService(
         logger.d { "playErrorSound" }
         when (AppSetting.errorSound.value) {
             SoundOption.Disabled.name -> Unit
-            SoundOption.Default.name  -> playAudio(
-                AudioSource.Resource(MR.files.etc_wav_beep_error),
+            SoundOption.Default.name -> playAudio(
+                AudioSource.Resource(MR.files.etc_wav_beep_error_wav),
                 AppSetting.errorSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             )
 
-            else                      -> playAudio(
+            else -> playAudio(
                 AudioSource.File(
                     Path.commonInternalPath(
                         nativeApplication = nativeApplication,
@@ -164,7 +164,7 @@ internal class LocalAudioService(
         audioSource: AudioSource,
         volume: StateFlow<Float>,
         audioOutputOption: AudioOutputOption,
-        onFinished: (() -> Unit)? = null
+        onFinished: (() -> Unit)? = null,
     ) {
         audioFocusService.request(Notification)
 

@@ -11,7 +11,7 @@ actual class MicrophoneOverlay actual constructor(
     viewModel: MicrophoneOverlayViewModel,
     nativeApplication: NativeApplication,
     overlayPermission: IOverlayPermission,
-    dispatcher: IDispatcherProvider
+    dispatcher: IDispatcherProvider,
 ) : IMicrophoneOverlay {
     override fun start() {
         //TODO("Not yet implemented")

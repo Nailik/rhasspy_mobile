@@ -19,5 +19,5 @@ internal data class HttpClientServiceParams(
     val intentHandlingHttpEndpoint: String,
     val intentHandlingHomeAssistantEndpoint: String,
     val intentHandlingHomeAssistantAccessToken: String,
-    val intentHandlingOption: IntentHandlingOption
+    val intentHandlingOption: IntentHandlingOption,
 )

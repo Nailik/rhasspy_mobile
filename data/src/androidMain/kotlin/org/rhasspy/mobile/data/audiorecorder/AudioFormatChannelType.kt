@@ -10,7 +10,7 @@ import org.rhasspy.mobile.resources.MR
 actual enum class AudioFormatChannelType(
     override val text: StableStringResource,
     actual val value: Int,
-    actual val count: Int
+    actual val count: Int,
 ) : IOption<AudioFormatChannelType> {
 
     Mono(MR.strings.channel_type_mono.stable, CHANNEL_IN_MONO, 1),

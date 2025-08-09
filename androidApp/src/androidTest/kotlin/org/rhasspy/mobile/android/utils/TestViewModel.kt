@@ -18,9 +18,9 @@ class TestService : IService {
 }
 
 data class TestConfigurationViewState(
-    override val editData: TestConfigurationData = TestConfigurationData(null)
+    override val editData: TestConfigurationData = TestConfigurationData(null),
 
-) : IConfigurationViewState {
+    ) : IConfigurationViewState {
 
     data class TestConfigurationData(val data: Any?) : IConfigurationViewState.IConfigurationData
 

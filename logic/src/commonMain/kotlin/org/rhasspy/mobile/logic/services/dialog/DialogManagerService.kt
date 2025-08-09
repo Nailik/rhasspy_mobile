@@ -13,7 +13,13 @@ import org.rhasspy.mobile.data.service.ServiceState.Disabled
 import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.IntentRecognitionError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionEnded
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.SessionStarted
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.dialog.DialogInformation.Action
@@ -49,14 +55,15 @@ interface IDialogManagerService : IService {
  */
 internal class DialogManagerService(
     dispatcherProvider: IDispatcherProvider,
-    private val mqttService: IMqttService
+    private val mqttService: IMqttService,
 ) : IDialogManagerService {
 
     private val dialogManagerLocal by inject<DialogManagerLocal>()
     private val dialogManagerMqtt by inject<DialogManagerMqtt>()
     private val dialogManagerDisabled by inject<DialogManagerDisabled>()
 
-    override val dialogHistory = MutableStateFlow<ImmutableList<DialogInformation>>(persistentListOf())
+    override val dialogHistory =
+        MutableStateFlow<ImmutableList<DialogInformation>>(persistentListOf())
 
     override val logger = LogType.DialogManagerService.logger()
 
@@ -81,7 +88,7 @@ internal class DialogManagerService(
     private fun updateOptionAndInitServiceState(dialogManagementOption: DialogManagementOption) {
         dialogHistory.value = persistentListOf()
         _serviceState.value = when (dialogManagementOption) {
-            DialogManagementOption.Local      -> {
+            DialogManagementOption.Local -> {
                 dialogManagerLocal.onInit()
                 Success
             }
@@ -91,7 +98,7 @@ internal class DialogManagerService(
                 Success
             }
 
-            DialogManagementOption.Disabled   -> {
+            DialogManagementOption.Disabled -> {
                 dialogManagerDisabled.onInit()
                 Disabled
             }
@@ -119,33 +126,37 @@ internal class DialogManagerService(
 
     override suspend fun onAction(action: DialogServiceMiddlewareAction) {
         when (ConfigurationSetting.dialogManagementOption.value) {
-            DialogManagementOption.Local      -> dialogManagerLocal.onAction(action)
+            DialogManagementOption.Local -> dialogManagerLocal.onAction(action)
             DialogManagementOption.RemoteMQTT -> dialogManagerMqtt.onAction(action)
-            DialogManagementOption.Disabled   -> dialogManagerDisabled.onAction(action)
+            DialogManagementOption.Disabled -> dialogManagerDisabled.onAction(action)
         }
     }
 
     override fun informMqtt(
         sessionData: SessionData?,
-        action: DialogServiceMiddlewareAction
+        action: DialogServiceMiddlewareAction,
     ) {
         if (action.source !is Source.Mqtt) {
             if (sessionData != null) {
                 when (action) {
-                    is AsrError               -> mqttService.asrError(sessionData.sessionId)
-                    is AsrTextCaptured        -> mqttService.asrTextCaptured(sessionData.sessionId, action.text)
-                    is WakeWordDetected       -> mqttService.hotWordDetected(action.wakeWord)
+                    is AsrError -> mqttService.asrError(sessionData.sessionId)
+                    is AsrTextCaptured -> mqttService.asrTextCaptured(
+                        sessionData.sessionId,
+                        action.text
+                    )
+
+                    is WakeWordDetected -> mqttService.hotWordDetected(action.wakeWord)
                     is IntentRecognitionError -> mqttService.intentNotRecognized(sessionData.sessionId)
-                    is SessionEnded           -> mqttService.sessionEnded(sessionData.sessionId)
-                    is SessionStarted         -> mqttService.sessionStarted(sessionData.sessionId)
-                    is PlayFinished           -> mqttService.playFinished()
-                    else                      -> Unit
+                    is SessionEnded -> mqttService.sessionEnded(sessionData.sessionId)
+                    is SessionStarted -> mqttService.sessionStarted(sessionData.sessionId)
+                    is PlayFinished -> mqttService.playFinished()
+                    else -> Unit
                 }
             } else {
                 when (action) {
                     is WakeWordDetected -> mqttService.hotWordDetected(action.wakeWord)
-                    is PlayFinished     -> mqttService.playFinished()
-                    else                -> Unit
+                    is PlayFinished -> mqttService.playFinished()
+                    else -> Unit
                 }
             }
         }

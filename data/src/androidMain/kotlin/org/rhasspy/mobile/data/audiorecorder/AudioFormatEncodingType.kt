@@ -1,7 +1,9 @@
 package org.rhasspy.mobile.data.audiorecorder
 
 import android.annotation.SuppressLint
-import android.media.AudioFormat.*
+import android.media.AudioFormat.ENCODING_PCM_16BIT
+import android.media.AudioFormat.ENCODING_PCM_32BIT
+import android.media.AudioFormat.ENCODING_PCM_8BIT
 import android.os.Build
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
@@ -11,7 +13,7 @@ import org.rhasspy.mobile.resources.MR
 actual enum class AudioFormatEncodingType(
     override val text: StableStringResource,
     actual val value: Int,
-    actual val bitRate: Int
+    actual val bitRate: Int,
 ) : IOption<AudioFormatEncodingType> {
 
     PCM8Bit(MR.strings.encoding_type_PCM8Bit.stable, ENCODING_PCM_8BIT, 8),

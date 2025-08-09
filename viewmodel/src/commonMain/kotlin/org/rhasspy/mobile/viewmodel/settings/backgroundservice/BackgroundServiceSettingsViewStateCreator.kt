@@ -12,7 +12,7 @@ import org.rhasspy.mobile.settings.AppSetting
 
 class BackgroundServiceSettingsViewStateCreator(
     private val nativeApplication: NativeApplication,
-    private val batteryOptimization: BatteryOptimization
+    private val batteryOptimization: BatteryOptimization,
 ) {
 
     private val updaterScope = CoroutineScope(Dispatchers.IO)

@@ -6,7 +6,7 @@ import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 
 class IndicationOverlayViewStateCreator(
-    private val indicationService: IIndicationService
+    private val indicationService: IIndicationService,
 ) {
 
     operator fun invoke(): StateFlow<IndicationOverlayViewState> {

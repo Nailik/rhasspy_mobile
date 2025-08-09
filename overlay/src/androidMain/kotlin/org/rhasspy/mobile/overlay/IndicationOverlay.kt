@@ -7,7 +7,12 @@ import android.os.Looper
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
-import android.view.WindowManager.LayoutParams.*
+import android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+import android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+import android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+import android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+import android.view.WindowManager.LayoutParams.TYPE_PHONE
+import android.view.WindowManager.LayoutParams.WRAP_CONTENT
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.getSystemService
@@ -38,7 +43,7 @@ actual class IndicationOverlay actual constructor(
     private val viewModel: IndicationOverlayViewModel,
     private val nativeApplication: NativeApplication,
     private val overlayPermission: IOverlayPermission,
-    private val dispatcher: IDispatcherProvider
+    private val dispatcher: IDispatcherProvider,
 ) : IIndicationOverlay {
 
     private val logger = Logger.withTag("IndicationOverlay")
@@ -97,7 +102,6 @@ actual class IndicationOverlay actual constructor(
             logger.a(exception) { "exception in initialization" }
         }
     }
-
 
     /**
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary

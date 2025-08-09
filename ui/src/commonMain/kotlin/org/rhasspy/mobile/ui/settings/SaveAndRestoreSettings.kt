@@ -13,16 +13,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.*
+import org.rhasspy.mobile.ui.LocalSnackBarHostState
+import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.Screen
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.SaveAndRestoreSettings
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent
-import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.ExportSettingsFile
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.ExportSettingsFileDialogResult
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.RestoreSettingsFromFile
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.RestoreSettingsFromFileDialogResult
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.ShareSettingsFile
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsViewModel
 
@@ -79,7 +88,7 @@ fun SaveAndRestoreSettingsContent() {
 @Composable
 private fun SaveSettings(
     isSaveSettingsToFileDialogVisible: Boolean,
-    onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit
+    onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit,
 ) {
 
     //save settings
@@ -115,7 +124,7 @@ private fun SaveSettings(
 @Composable
 private fun RestoreSettings(
     isRestoreSettingsFromFileDialogVisible: Boolean,
-    onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit
+    onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit,
 ) {
 
     //restore settings

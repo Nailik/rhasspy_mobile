@@ -4,7 +4,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.indication.IndicationState
-import org.rhasspy.mobile.data.indication.IndicationState.*
+import org.rhasspy.mobile.data.indication.IndicationState.Idle
+import org.rhasspy.mobile.data.indication.IndicationState.Recording
+import org.rhasspy.mobile.data.indication.IndicationState.Speaking
+import org.rhasspy.mobile.data.indication.IndicationState.Thinking
+import org.rhasspy.mobile.data.indication.IndicationState.WakeUp
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.services.IService

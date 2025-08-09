@@ -3,6 +3,7 @@ package org.rhasspy.mobile.viewmodel.screens
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
+import org.kodein.mock.generated.injectMocks
 import org.koin.dsl.module
 import org.koin.test.get
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
@@ -29,7 +30,7 @@ class HomeScreenViewModelTest : AppTest() {
 
     private lateinit var homeScreenViewModel: HomeScreenViewModel
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {

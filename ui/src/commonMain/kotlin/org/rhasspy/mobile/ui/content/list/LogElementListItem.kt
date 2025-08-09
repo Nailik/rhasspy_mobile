@@ -13,7 +13,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Severity
 import org.rhasspy.mobile.data.log.LogElement
-import org.rhasspy.mobile.resources.*
+import org.rhasspy.mobile.resources.color_assert
+import org.rhasspy.mobile.resources.color_debug
+import org.rhasspy.mobile.resources.color_error
+import org.rhasspy.mobile.resources.color_info
+import org.rhasspy.mobile.resources.color_verbose
+import org.rhasspy.mobile.resources.color_warn
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,11 +33,11 @@ fun LogListElement(item: LogElement) {
 
                 val color = when (item.severity) {
                     Severity.Verbose -> MaterialTheme.colorScheme.color_verbose
-                    Severity.Debug   -> MaterialTheme.colorScheme.color_debug
-                    Severity.Info    -> MaterialTheme.colorScheme.color_info
-                    Severity.Warn    -> MaterialTheme.colorScheme.color_warn
-                    Severity.Error   -> MaterialTheme.colorScheme.color_error
-                    Severity.Assert  -> MaterialTheme.colorScheme.color_assert
+                    Severity.Debug -> MaterialTheme.colorScheme.color_debug
+                    Severity.Info -> MaterialTheme.colorScheme.color_info
+                    Severity.Warn -> MaterialTheme.colorScheme.color_warn
+                    Severity.Error -> MaterialTheme.colorScheme.color_error
+                    Severity.Assert -> MaterialTheme.colorScheme.color_assert
                 }
 
                 Badge(

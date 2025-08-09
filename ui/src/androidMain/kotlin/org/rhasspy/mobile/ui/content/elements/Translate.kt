@@ -20,7 +20,8 @@ actual fun translate(resource: StableStringResource): String {
 
     return when (resource) {
         is StableResourceFormattedStringDesc -> resource.stringResource.toString(LocalContext.current)
-        is StableStringResourceSingle        -> StringDesc.Resource(resource.stringResource).toString(LocalContext.current)
+        is StableStringResourceSingle -> StringDesc.Resource(resource.stringResource)
+            .toString(LocalContext.current)
     }
 }
 

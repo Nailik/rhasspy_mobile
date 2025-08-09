@@ -12,7 +12,7 @@ import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlay
 
 @Stable
 class MicrophoneOverlaySettingsViewModel(
-    viewStateCreator: MicrophoneOverlaySettingsViewStateCreator
+    viewStateCreator: MicrophoneOverlaySettingsViewStateCreator,
 ) : ScreenViewModel() {
 
     val viewState = viewStateCreator()
@@ -26,7 +26,7 @@ class MicrophoneOverlaySettingsViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            is SelectMicrophoneOverlaySizeOption   ->
+            is SelectMicrophoneOverlaySizeOption ->
                 if (change.option != MicrophoneOverlaySizeOption.Disabled) {
                     requireOverlayPermission {
                         AppSetting.microphoneOverlaySizeOption.value = change.option

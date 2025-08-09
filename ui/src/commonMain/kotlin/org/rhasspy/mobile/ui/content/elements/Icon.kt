@@ -13,7 +13,7 @@ fun Icon(
     imageVector: ImageVector,
     contentDescription: StableStringResource,
     modifier: Modifier = Modifier,
-    tint: Color = LocalContentColor.current
+    tint: Color = LocalContentColor.current,
 ) {
     Icon(
         imageVector = imageVector,

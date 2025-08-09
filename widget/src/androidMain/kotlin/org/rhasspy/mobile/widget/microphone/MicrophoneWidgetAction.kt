@@ -16,7 +16,7 @@ class MicrophoneWidgetAction : ActionCallback, KoinComponent {
     override suspend fun onAction(
         context: Context,
         glanceId: GlanceId,
-        parameters: ActionParameters
+        parameters: ActionParameters,
     ) {
         get<MicrophoneFabViewModel>().onEvent(MicrophoneFabClick)
     }

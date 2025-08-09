@@ -13,7 +13,7 @@ class IConfigurationViewStateCreator(
     operator fun <T> invoke(
         init: () -> T,
         viewState: StateFlow<IConfigurationViewState>,
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
+        configurationViewState: MutableStateFlow<ConfigurationViewState>,
     ): StateFlow<ConfigurationViewState> {
 
         return combineState(

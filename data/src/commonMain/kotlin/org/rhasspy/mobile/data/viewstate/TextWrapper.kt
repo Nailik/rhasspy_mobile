@@ -7,11 +7,11 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 sealed interface TextWrapper {
 
     data class TextWrapperStableStringResource(
-        val data: StableStringResource
+        val data: StableStringResource,
     ) : TextWrapper
 
     data class TextWrapperString(
-        val data: String
+        val data: String,
     ) : TextWrapper
 
 }

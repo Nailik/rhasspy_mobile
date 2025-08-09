@@ -9,7 +9,6 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
-
 actual object ClipboardUtils : KoinComponent {
 
     private val nativeApplication by inject<NativeApplication>()

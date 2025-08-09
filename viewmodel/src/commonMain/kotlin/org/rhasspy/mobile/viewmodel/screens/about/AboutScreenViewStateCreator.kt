@@ -12,20 +12,24 @@ import org.rhasspy.mobile.platformspecific.resource.readToString
 import org.rhasspy.mobile.resources.MR
 
 class AboutScreenViewStateCreator(
-    val nativeApplication: NativeApplication
+    val nativeApplication: NativeApplication,
 ) {
 
     operator fun invoke(): MutableStateFlow<AboutScreenViewState> {
         return MutableStateFlow(
             AboutScreenViewState(
-                changelog = Json.decodeFromString<JsonArray>(MR.files.changelog.readToString(nativeApplication))
+                changelog = Json.decodeFromString<JsonArray>(
+                    MR.files.changelog_json.readToString(
+                        nativeApplication
+                    )
+                )
                     .map { "· ${it.jsonPrimitive.content}\n" }
                     .toImmutableList(),
                 isChangelogDialogVisible = false,
-                privacy = MR.files.dataprivacy.readToString(nativeApplication),
+                privacy = MR.files.dataprivacy_html.readToString(nativeApplication),
                 isPrivacyDialogVisible = false,
                 libraries = Libs.Builder().withJson(
-                    MR.files.aboutlibraries.readToString(nativeApplication)
+                    MR.files.aboutlibraries_json.readToString(nativeApplication)
                 ).build().libraries.map {
                     it.stable
                 }.toImmutableList(),

@@ -11,5 +11,5 @@ data class LogElement(
     val severity: Severity,
     val tag: String,
     val message: String,
-    val throwable: String?
+    val throwable: String?,
 )

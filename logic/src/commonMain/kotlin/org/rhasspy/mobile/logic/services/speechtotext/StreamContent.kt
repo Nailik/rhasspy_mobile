@@ -3,6 +3,7 @@ package org.rhasspy.mobile.logic.services.speechtotext
 import co.touchlab.kermit.Logger
 import io.ktor.http.content.OutgoingContent
 import io.ktor.utils.io.ByteWriteChannel
+import io.ktor.utils.io.writeFully
 import okio.Path
 import okio.buffer
 import okio.use
@@ -15,11 +16,10 @@ private val logger = Logger.withTag("StreamContent")
 internal class StreamContent(private val filePath: Path) : OutgoingContent.WriteChannelContent() {
 
     override suspend fun writeTo(channel: ByteWriteChannel) {
-        var bytesRead: Int
         val buffer = ByteArray(1024)
         filePath.commonSource().buffer().use { source ->
-            while (source.read(buffer).also { bytesRead = it } != -1 && !channel.isClosedForWrite) {
-                channel.writeFully(buffer, offset = 0, length = bytesRead)
+            while (source.read(buffer) != -1 && !channel.isClosedForWrite) {
+                channel.writeFully(buffer)
                 channel.flush()
             }
         }

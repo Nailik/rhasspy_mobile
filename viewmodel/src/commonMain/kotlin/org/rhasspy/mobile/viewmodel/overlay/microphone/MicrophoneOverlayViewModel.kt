@@ -16,7 +16,7 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 class MicrophoneOverlayViewModel(
     private val intentAction: IIntentAction,
     private val microphoneFabViewModel: MicrophoneFabViewModel,
-    viewStateCreator: MicrophoneOverlayViewStateCreator
+    viewStateCreator: MicrophoneOverlayViewStateCreator,
 ) : ScreenViewModel() {
 
     val viewState: StateFlow<MicrophoneOverlayViewState> = viewStateCreator()

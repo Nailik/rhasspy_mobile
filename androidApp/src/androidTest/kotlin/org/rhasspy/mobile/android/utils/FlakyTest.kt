@@ -19,7 +19,6 @@ abstract class FlakyTest : KoinComponent {
     @get:Rule
     val composeTestRule = createEmptyComposeRule()
 
-
     lateinit var scenario: ActivityScenario<ComponentActivity>
     lateinit var activity: ComponentActivity
 

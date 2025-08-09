@@ -7,14 +7,19 @@ import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.*
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.OpenWikiLink
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToErrorClick
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Consumed
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Consumed.ScrollToError
 
 @Stable
 class ConfigurationScreenViewModel(
-    viewStateCreator: ConfigurationScreenViewStateCreator
+    viewStateCreator: ConfigurationScreenViewStateCreator,
 ) : ScreenViewModel() {
 
     private val _viewState: MutableStateFlow<ConfigurationScreenViewState> = viewStateCreator()
@@ -22,8 +27,8 @@ class ConfigurationScreenViewModel(
 
     fun onEvent(event: ConfigurationScreenUiEvent) {
         when (event) {
-            is Change   -> onChange(event)
-            is Action   -> onAction(event)
+            is Change -> onChange(event)
+            is Action -> onAction(event)
             is Consumed -> onConsumed(event)
         }
     }
@@ -37,9 +42,9 @@ class ConfigurationScreenViewModel(
     private fun onAction(action: Action) {
         when (action) {
             ScrollToErrorClick -> _viewState.update { it.copy(scrollToError = viewState.value.firstErrorIndex.value) }
-            BackClick          -> navigator.onBackPressed()
-            is Navigate        -> navigator.navigate(action.destination)
-            OpenWikiLink       -> openLink(LinkType.WikiConfiguration)
+            BackClick -> navigator.onBackPressed()
+            is Navigate -> navigator.navigate(action.destination)
+            OpenWikiLink -> openLink(LinkType.WikiConfiguration)
         }
     }
 

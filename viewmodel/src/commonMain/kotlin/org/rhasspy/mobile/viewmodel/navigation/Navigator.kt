@@ -31,11 +31,13 @@ interface INavigator {
  * wenn screen nicht mehr angezeigt wird disposen
  */
 internal class Navigator(
-    private val nativeApplication: NativeApplication
+    private val nativeApplication: NativeApplication,
 ) : INavigator {
 
-    override val navStack = MutableStateFlow<ImmutableList<NavigationDestination>>(persistentListOf(HomeScreen))
-    override val topScreen: StateFlow<NavigationDestination> = navStack.mapReadonlyState { list -> list.lastOrNull() ?: HomeScreen }
+    override val navStack =
+        MutableStateFlow<ImmutableList<NavigationDestination>>(persistentListOf(HomeScreen))
+    override val topScreen: StateFlow<NavigationDestination> =
+        navStack.mapReadonlyState { list -> list.lastOrNull() ?: HomeScreen }
 
     private val _viewModelStack = mutableListOf<IScreenViewModel>()
 
@@ -53,7 +55,7 @@ internal class Navigator(
         } else {
             navStack.update {
                 it.updateList {
-                    removeLast()
+                    removeAt(it.lastIndex)
                 }
             }
         }

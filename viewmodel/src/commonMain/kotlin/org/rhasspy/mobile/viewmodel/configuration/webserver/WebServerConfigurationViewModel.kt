@@ -15,23 +15,32 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLKeyStoreFile
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyAlias
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyPassword
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyStorePassword
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpServerPort
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewState.WebServerConfigurationData
 
 @Stable
 class WebServerConfigurationViewModel(
-    service: IWebServerService
+    service: IWebServerService,
 ) : ConfigurationViewModel(
     service = service
 ) {
 
-    private val _viewState = MutableStateFlow(WebServerConfigurationViewState(WebServerConfigurationData()))
+    private val _viewState =
+        MutableStateFlow(WebServerConfigurationViewState(WebServerConfigurationData()))
     val viewState = _viewState.readOnly
 
     override fun initViewStateCreator(
-        configurationViewState: MutableStateFlow<ConfigurationViewState>
+        configurationViewState: MutableStateFlow<ConfigurationViewState>,
     ): StateFlow<ConfigurationViewState> {
         return viewStateCreator(
             init = ::WebServerConfigurationData,
@@ -51,24 +60,28 @@ class WebServerConfigurationViewModel(
         _viewState.update {
             it.copy(editData = with(it.editData) {
                 when (change) {
-                    is SetHttpServerEnabled          -> copy(isHttpServerEnabled = change.value)
-                    is SetHttpServerSSLEnabled       -> copy(isHttpServerSSLEnabled = change.value)
-                    is UpdateHttpSSLKeyAlias         -> copy(httpServerSSLKeyAlias = change.value)
-                    is UpdateHttpSSLKeyPassword      -> copy(httpServerSSLKeyPassword = change.value)
+                    is SetHttpServerEnabled -> copy(isHttpServerEnabled = change.value)
+                    is SetHttpServerSSLEnabled -> copy(isHttpServerSSLEnabled = change.value)
+                    is UpdateHttpSSLKeyAlias -> copy(httpServerSSLKeyAlias = change.value)
+                    is UpdateHttpSSLKeyPassword -> copy(httpServerSSLKeyPassword = change.value)
                     is UpdateHttpSSLKeyStorePassword -> copy(httpServerSSLKeyStorePassword = change.value)
-                    is UpdateHttpServerPort          -> copy(httpServerPort = change.value.toIntOrNullOrConstant())
-                    is SetHttpServerSSLKeyStoreFile  -> copy(httpServerSSLKeyStoreFile = change.value)
+                    is UpdateHttpServerPort -> copy(httpServerPort = change.value.toIntOrNullOrConstant())
+                    is SetHttpServerSSLKeyStoreFile -> copy(httpServerSSLKeyStoreFile = change.value)
                 }
             })
         }
     }
 
-
     private fun onAction(action: Action) {
         when (action) {
             OpenWebServerSSLWiki -> openLink(LinkType.WikiWebServerSSL)
-            SelectSSLCertificate -> selectFile(FolderType.CertificateFolder.WebServer) { path -> onEvent(SetHttpServerSSLKeyStoreFile(path)) }
-            BackClick            -> navigator.onBackPressed()
+            SelectSSLCertificate -> selectFile(FolderType.CertificateFolder.WebServer) { path ->
+                onEvent(
+                    SetHttpServerSSLKeyStoreFile(path)
+                )
+            }
+
+            BackClick -> navigator.onBackPressed()
         }
     }
 

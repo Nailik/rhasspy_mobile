@@ -17,7 +17,7 @@ import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewMode
 
 @Composable
 fun MicrophoneOverlay(
-    onDrag: (offset: Offset) -> Unit
+    onDrag: (offset: Offset) -> Unit,
 ) {
     val viewModel: MicrophoneOverlayViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()

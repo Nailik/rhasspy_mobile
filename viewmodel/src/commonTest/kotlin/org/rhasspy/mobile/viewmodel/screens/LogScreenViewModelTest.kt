@@ -4,6 +4,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
+import org.kodein.mock.generated.injectMocks
 import org.koin.dsl.module
 import org.koin.test.get
 import org.rhasspy.mobile.logic.logger.IFileLogger
@@ -24,7 +25,7 @@ class LogScreenViewModelTest : AppTest() {
 
     private lateinit var logScreenViewModel: LogScreenViewModel
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {

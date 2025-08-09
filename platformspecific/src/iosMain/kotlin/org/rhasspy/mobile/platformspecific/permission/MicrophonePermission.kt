@@ -7,7 +7,7 @@ import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 
 internal actual class MicrophonePermission actual constructor(
     private val nativeApplication: NativeApplication,
-    private val externalResultRequest: IExternalResultRequest
+    private val externalResultRequest: IExternalResultRequest,
 ) : IMicrophonePermission {
 
     /**

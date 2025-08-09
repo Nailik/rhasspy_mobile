@@ -9,7 +9,7 @@ sealed interface ExternalResultRequestIntention<R> {
      */
     data class CreateDocument(
         val title: String,
-        val mimeType: String
+        val mimeType: String,
     ) : ExternalResultRequestIntention<String>
 
     /**
@@ -17,7 +17,7 @@ sealed interface ExternalResultRequestIntention<R> {
      */
     data class OpenDocument(
         val uri: String,
-        val mimeTypes: List<String>
+        val mimeTypes: List<String>,
     ) : ExternalResultRequestIntention<String>
 
     /**
@@ -26,7 +26,7 @@ sealed interface ExternalResultRequestIntention<R> {
      */
     data class GetContent(
         val uri: String,
-        val mimeTypes: List<String>
+        val mimeTypes: List<String>,
     ) : ExternalResultRequestIntention<String>
 
     data object OpenBatteryOptimizationSettings : ExternalResultRequestIntention<Unit>
@@ -40,7 +40,7 @@ sealed interface ExternalResultRequestIntention<R> {
     data object OpenAppSettings : ExternalResultRequestIntention<Unit>
 
     data class OpenLink(
-        val link: LinkType
+        val link: LinkType,
     ) : ExternalResultRequestIntention<Unit>
 
     data class ShareFile(

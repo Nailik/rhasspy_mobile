@@ -152,7 +152,6 @@ fun Modifier.combinedTestTag(IOption: IOption<*>, tag: TestTag) = semantics(
     }
 )
 
-
 fun Modifier.combinedTestTag(name: String, tag: TestTag) = semantics(
     properties = {
         testTag = "$name${tag.name}"
@@ -164,7 +163,6 @@ fun Modifier.combinedTestTag(name: TestTag, tag: TestTag) = semantics(
         testTag = "${name.name}${tag.name}"
     }
 )
-
 
 fun Modifier.testTag(enum: TestTag) = semantics(
     properties = {

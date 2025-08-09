@@ -5,10 +5,13 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import co.touchlab.kermit.Severity
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
-import okio.*
+import okio.FileHandle
+import okio.FileSystem
+import okio.Path
+import okio.Source
+import okio.source
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Result
@@ -22,7 +25,7 @@ import java.util.Collections
 
 actual fun Path.Companion.commonInternalPath(
     nativeApplication: NativeApplication,
-    fileName: String
+    fileName: String,
 ): Path = "${nativeApplication.filesDir?.let { "$it/" } ?: ""}$fileName".toPath()
 
 actual fun Path?.commonExists(): Boolean = this?.let { !FileSystem.SYSTEM.exists(this) } ?: false
@@ -35,7 +38,8 @@ actual fun Path.commonSize(): Long? = FileSystem.SYSTEM.metadata(this).size
 
 actual fun Path.commonSource(): Source = this.toFile().source()
 
-actual fun Path.commonReadWrite(): FileHandle = FileSystem.SYSTEM.openReadWrite(this, !FileSystem.SYSTEM.exists(this))
+actual fun Path.commonReadWrite(): FileHandle =
+    FileSystem.SYSTEM.openReadWrite(this, !FileSystem.SYSTEM.exists(this))
 
 @OptIn(ExperimentalSerializationApi::class)
 actual inline fun <reified T> Path.commonDecodeLogList(): T =
@@ -64,7 +68,7 @@ fun InputStream.modify(): InputStream {
 
 actual fun Path.commonShare(
     nativeApplication: NativeApplication,
-    externalResultRequest: IExternalResultRequest
+    externalResultRequest: IExternalResultRequest,
 ): Boolean {
     val fileUri: Uri = FileProvider.getUriForFile(
         nativeApplication, nativeApplication.packageName.toString() + ".provider",
@@ -85,7 +89,7 @@ actual suspend fun Path.commonSave(
     nativeApplication: NativeApplication,
     externalResultRequest: IExternalResultRequest,
     fileName: String,
-    fileType: String
+    fileType: String,
 ): Boolean {
 
     val result = externalResultRequest.launchForResult(

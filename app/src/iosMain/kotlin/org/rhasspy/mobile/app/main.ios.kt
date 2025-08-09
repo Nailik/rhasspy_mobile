@@ -18,7 +18,6 @@ class MainView : KoinComponent {
     }
 }
 
-
 fun MainViewController(): UIViewController {
     Application()
     return MainView().controller()

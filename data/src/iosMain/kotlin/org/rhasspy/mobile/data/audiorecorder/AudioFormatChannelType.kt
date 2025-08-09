@@ -8,7 +8,7 @@ import org.rhasspy.mobile.resources.MR
 actual enum class AudioFormatChannelType(
     override val text: StableStringResource,
     actual val value: Int,
-    actual val count: Int
+    actual val count: Int,
 ) : IOption<AudioFormatChannelType> {
     //TODO("Not yet implemented")
     Default(MR.strings.defaultText.stable, 1, 1);

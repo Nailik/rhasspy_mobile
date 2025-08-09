@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings
 
 import co.touchlab.kermit.Logger
 import org.kodein.mock.Mock
+import org.kodein.mock.generated.injectMocks
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.log.LogLevel
@@ -31,7 +32,7 @@ class LogSettingsViewModelTest : AppTest() {
 
     private lateinit var logSettingsViewModel: LogSettingsViewModel
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {
@@ -66,7 +67,7 @@ class LogSettingsViewModelTest : AppTest() {
     @Test
     fun `when user selects log level it is saved and the logger is updated`() {
 
-        LogLevel.values().forEach { logLevel ->
+        LogLevel.entries.forEach { logLevel ->
 
             logSettingsViewModel.onEvent(SetLogLevel(logLevel))
             assertEquals(logLevel, AppSetting.logLevel.value)

@@ -13,9 +13,13 @@ import io.ktor.client.utils.buildHeaders
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMessageBuilder
 import io.ktor.http.contentType
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.httpclient.HttpClientPath
@@ -27,7 +31,9 @@ import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
-import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.*
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.Data
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.File
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource.Resource
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.ktor.configureEngine
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -38,11 +44,25 @@ interface IHttpClientService : IService {
 
     fun speechToText(audioFilePath: Path, onResult: (result: HttpClientResult<String>) -> Unit)
     fun recognizeIntent(text: String, onResult: (result: HttpClientResult<String>) -> Unit)
-    fun textToSpeech(text: String, volume: Float?, siteId: String?, onResult: (result: HttpClientResult<ByteArray>) -> Unit)
+    fun textToSpeech(
+        text: String,
+        volume: Float?,
+        siteId: String?,
+        onResult: (result: HttpClientResult<ByteArray>) -> Unit,
+    )
+
     fun playWav(audioSource: AudioSource, onResult: (result: HttpClientResult<String>) -> Unit)
     fun intentHandling(intent: String, onResult: (result: HttpClientResult<String>) -> Unit)
-    fun homeAssistantEvent(json: String, intentName: String, onResult: (result: HttpClientResult<String>) -> Unit)
-    fun homeAssistantIntent(intentJson: String, onResult: (result: HttpClientResult<String>) -> Unit)
+    fun homeAssistantEvent(
+        json: String,
+        intentName: String,
+        onResult: (result: HttpClientResult<String>) -> Unit,
+    )
+
+    fun homeAssistantIntent(
+        intentJson: String,
+        onResult: (result: HttpClientResult<String>) -> Unit,
+    )
 }
 
 /**
@@ -51,7 +71,7 @@ interface IHttpClientService : IService {
  * functions return the result or an exception
  */
 internal class HttpClientService(
-    paramsCreator: HttpClientServiceParamsCreator
+    paramsCreator: HttpClientServiceParamsCreator,
 ) : IHttpClientService {
 
     override val logger = LogType.HttpClientService.logger()
@@ -166,14 +186,16 @@ internal class HttpClientService(
         }
     }
 
-
     /**
      * /api/speech-to-text
      * POST a WAV file and have Rhasspy return the text transcription
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    override fun speechToText(audioFilePath: Path, onResult: (result: HttpClientResult<String>) -> Unit) {
+    override fun speechToText(
+        audioFilePath: Path,
+        onResult: (result: HttpClientResult<String>) -> Unit,
+    ) {
         logger.d { "speechToText: audioFilePath.name" }
 
         post(
@@ -194,7 +216,10 @@ internal class HttpClientService(
      *
      * returns null if the intent is not found
      */
-    override fun recognizeIntent(text: String, onResult: (result: HttpClientResult<String>) -> Unit) {
+    override fun recognizeIntent(
+        text: String,
+        onResult: (result: HttpClientResult<String>) -> Unit,
+    ) {
         logger.d { "recognizeIntent text: $text" }
 
         post(
@@ -215,7 +240,12 @@ internal class HttpClientService(
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    override fun textToSpeech(text: String, volume: Float?, siteId: String?, onResult: (result: HttpClientResult<ByteArray>) -> Unit) {
+    override fun textToSpeech(
+        text: String,
+        volume: Float?,
+        siteId: String?,
+        onResult: (result: HttpClientResult<ByteArray>) -> Unit,
+    ) {
         logger.d { "textToSpeech text: $text" }
 
         post(
@@ -234,7 +264,10 @@ internal class HttpClientService(
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     @Suppress("IMPLICIT_CAST_TO_ANY")
-    override fun playWav(audioSource: AudioSource, onResult: (result: HttpClientResult<String>) -> Unit) {
+    override fun playWav(
+        audioSource: AudioSource,
+        onResult: (result: HttpClientResult<String>) -> Unit,
+    ) {
         logger.d { "playWav size: $audioSource" }
         @Suppress("DEPRECATION")
         val body = when (audioSource) {
@@ -270,7 +303,10 @@ internal class HttpClientService(
      *
      * Implemented by rhasspy-remote-http-hermes
      */
-    override fun intentHandling(intent: String, onResult: (result: HttpClientResult<String>) -> Unit) {
+    override fun intentHandling(
+        intent: String,
+        onResult: (result: HttpClientResult<String>) -> Unit,
+    ) {
         logger.d { "intentHandling intent: $intent" }
         return post(
             url = params.intentHandlingHttpEndpoint, block = {
@@ -283,7 +319,11 @@ internal class HttpClientService(
     /**
      * send intent as Event to Home Assistant
      */
-    override fun homeAssistantEvent(json: String, intentName: String, onResult: (result: HttpClientResult<String>) -> Unit) {
+    override fun homeAssistantEvent(
+        json: String,
+        intentName: String,
+        onResult: (result: HttpClientResult<String>) -> Unit,
+    ) {
         logger.d { "homeAssistantEvent json: $json intentName: $intentName" }
         return post(
             url = "$hassEventUrl$intentName", block = {
@@ -297,11 +337,13 @@ internal class HttpClientService(
         )
     }
 
-
     /**
      * send intent as Intent to Home Assistant
      */
-    override fun homeAssistantIntent(intentJson: String, onResult: (result: HttpClientResult<String>) -> Unit) {
+    override fun homeAssistantIntent(
+        intentJson: String,
+        onResult: (result: HttpClientResult<String>) -> Unit,
+    ) {
         logger.d { "homeAssistantIntent json: $intentJson" }
         return post(
             url = hassIntentUrl, block = {
@@ -315,7 +357,6 @@ internal class HttpClientService(
         )
     }
 
-
     /**
      * post data to endpoint
      * handles even in event logger
@@ -323,7 +364,7 @@ internal class HttpClientService(
     private inline fun <reified T> post(
         url: String,
         crossinline block: HttpRequestBuilder.() -> Unit,
-        crossinline onResult: (result: HttpClientResult<T>) -> Unit
+        crossinline onResult: (result: HttpClientResult<T>) -> Unit,
     ) {
         coroutineScope.launch {
             val result = httpClient?.let { client ->

@@ -21,14 +21,14 @@ import org.rhasspy.mobile.viewmodel.ViewModelFactory
 @Composable
 fun MainUi(
     viewModelFactory: ViewModelFactory,
-    isHasStarted: StateFlow<Boolean>
+    isHasStarted: StateFlow<Boolean>,
 ) {
 
     MaterialTheme {
 
         Crossfade(targetState = isHasStarted.collectAsState().value) { hasStarted ->
             when (hasStarted) {
-                true  -> MainScreen(viewModelFactory)
+                true -> MainScreen(viewModelFactory)
                 false -> SplashScreen()
             }
         }

@@ -15,7 +15,7 @@ import org.rhasspy.mobile.viewmodel.settings.appearance.AppearanceSettingsUiEven
 
 @Stable
 class AppearanceSettingsViewModel(
-    private val languageUtils: ILanguageUtils
+    private val languageUtils: ILanguageUtils,
 ) : ScreenViewModel() {
 
     private val _viewState = MutableStateFlow(AppearanceSettingsViewState())
@@ -37,7 +37,7 @@ class AppearanceSettingsViewModel(
                     it.copy(languageOption = change.option)
                 }
 
-                is SelectThemeOption    -> {
+                is SelectThemeOption -> {
                     AppSetting.themeType.value = change.option
                     it.copy(themeOption = change.option)
                 }

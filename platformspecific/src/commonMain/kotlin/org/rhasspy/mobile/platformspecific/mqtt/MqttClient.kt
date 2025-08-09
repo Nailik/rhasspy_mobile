@@ -17,7 +17,7 @@ expect class MqttClient(
     //Handles the messageArrived event. First argument is the topic. Second argument is the [message][MqttMessage].
     onMessageReceived: (topic: String, message: MqttMessage) -> Unit,
     //Handles the connectionLost event. First argument is the cause.
-    onDisconnect: (error: Throwable) -> Unit
+    onDisconnect: (error: Throwable) -> Unit,
 ) {
     /**
      * If *true* then there is a connection to the MQTT Broker.

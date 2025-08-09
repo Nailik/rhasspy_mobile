@@ -14,11 +14,11 @@ private val SaveMapLazyListState = mutableMapOf<ListType, KeyParams>()
 
 private data class KeyParams(
     val index: Int,
-    val scrollOffset: Int
+    val scrollOffset: Int,
 )
 
 private data class ScrollKeyParams(
-    val value: Int
+    val value: Int,
 )
 
 /**
@@ -29,7 +29,7 @@ private data class ScrollKeyParams(
 @Composable
 fun rememberForeverScrollState(
     key: ListType,
-    initial: Int = 0
+    initial: Int = 0,
 ): ScrollState {
     val scrollState = rememberSaveable(saver = ScrollState.Saver) {
         val scrollValue: Int = SaveMapScrollState[key]?.value ?: initial
@@ -48,7 +48,7 @@ fun rememberForeverScrollState(
 fun rememberForeverLazyListState(
     key: ListType,
     initialFirstVisibleItemIndex: Int = 0,
-    initialFirstVisibleItemScrollOffset: Int = 0
+    initialFirstVisibleItemScrollOffset: Int = 0,
 ): LazyListState {
     val scrollState = rememberSaveable(saver = LazyListState.Saver) {
         val savedValue = SaveMapLazyListState[key]

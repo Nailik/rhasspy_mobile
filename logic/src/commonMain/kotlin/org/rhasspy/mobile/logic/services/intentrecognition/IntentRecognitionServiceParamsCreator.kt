@@ -17,7 +17,6 @@ internal class IntentRecognitionServiceParamsCreator {
 
     }
 
-
     private fun getParams(): IntentRecognitionServiceParams {
         return IntentRecognitionServiceParams(
             intentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value

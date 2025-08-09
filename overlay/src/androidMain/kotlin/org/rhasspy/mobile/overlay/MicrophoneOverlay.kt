@@ -7,7 +7,11 @@ import android.os.Looper
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
-import android.view.WindowManager.LayoutParams.*
+import android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+import android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+import android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+import android.view.WindowManager.LayoutParams.TYPE_PHONE
+import android.view.WindowManager.LayoutParams.WRAP_CONTENT
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.ComposeView
@@ -40,7 +44,7 @@ actual class MicrophoneOverlay actual constructor(
     private val viewModel: MicrophoneOverlayViewModel,
     private val nativeApplication: NativeApplication,
     private val overlayPermission: IOverlayPermission,
-    private val dispatcher: IDispatcherProvider
+    private val dispatcher: IDispatcherProvider,
 ) : IMicrophoneOverlay {
 
     private val logger = Logger.withTag("MicrophoneOverlay")
@@ -76,7 +80,6 @@ actual class MicrophoneOverlay actual constructor(
         }
     }
 
-
     private fun onDrag(delta: Offset, view: View) {
         logger.d { "onDrag $delta" }
         viewModel.onEvent(UpdateMicrophoneOverlayPosition(offsetX = delta.x, offsetY = delta.y))
@@ -109,7 +112,6 @@ actual class MicrophoneOverlay actual constructor(
             logger.a(exception) { "exception in initialization" }
         }
     }
-
 
     private fun WindowManager.LayoutParams.applySettings(): WindowManager.LayoutParams {
         //apply

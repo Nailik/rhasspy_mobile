@@ -16,7 +16,7 @@ class IIndicationSoundSettingsViewStateCreator(
     private val localAudioService: ILocalAudioService,
     private val customSoundOptions: ISetting<ImmutableList<String>>,
     private val soundSetting: ISetting<String>,
-    private val soundVolume: ISetting<Float>
+    private val soundVolume: ISetting<Float>,
 ) {
 
     private val updaterScope = CoroutineScope(Dispatchers.IO)
@@ -40,7 +40,6 @@ class IIndicationSoundSettingsViewStateCreator(
 
         return viewState
     }
-
 
     private fun getViewState(): IIndicationSoundSettingsViewState {
         return IIndicationSoundSettingsViewState(
