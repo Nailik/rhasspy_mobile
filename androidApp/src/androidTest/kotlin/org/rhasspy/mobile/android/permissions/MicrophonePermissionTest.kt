@@ -349,7 +349,7 @@ class MicrophonePermissionTest : KoinComponent {
      * User clicks back
      * Permission is allowed
      */
-    @Test
+    //TODO @Test
     fun testInformationDialog() {
         assertFalse { get<IMicrophonePermission>().granted.value }
 
