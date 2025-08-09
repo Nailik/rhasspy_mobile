@@ -40,18 +40,16 @@ fun <T1, T2, T3, R> combineState(
     transform.invoke(o1, o2, o3)
 }.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value, flow3.value))
 
-inline fun <reified T> combineStateFlow(
-    vararg flows: StateFlow<T>,
+fun combineStateFlow(
+    vararg flows: StateFlow<*>,
     scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
     sharingStarted: SharingStarted = SharingStarted.Eagerly
-): StateFlow<Array<T>> = combine(flows = flows) {
-    it
+): StateFlow<List<Any?>> = combine(*flows) { array ->
+    array.toList()
 }.stateIn(
     scope = scope,
     started = sharingStarted,
-    initialValue = flows.map {
-        it.value
-    }.toTypedArray()
+    initialValue = flows.map { it.value }.toList()
 )
 
 fun <T, R> StateFlow<T>.mapReadonlyState(
