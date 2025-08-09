@@ -24,6 +24,7 @@
         android:localeConfig="@xml/locales_config"
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
+        android:theme="@style/AppTheme.AppSplash"
         tools:ignore="Instantiatable,UnusedAttribute">
         <service
             android:name="org.rhasspy.mobile.platformspecific.background.BackgroundService"

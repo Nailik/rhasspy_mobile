@@ -62,10 +62,9 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         snackbarHost = { SnackbarHost(snackBarHostState) },
-                    ) { paddingValues ->
+                    ) {
 
-
-                        Box(modifier = Modifier.padding(paddingValues)) {
+                        Box(modifier = Modifier.padding()) {
 
                             val viewModel: MainScreenViewModel =
                                 LocalViewModelFactory.current.getViewModel()

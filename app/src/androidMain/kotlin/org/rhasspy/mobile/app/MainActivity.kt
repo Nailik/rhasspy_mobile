@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.app.AppLaunchChecker
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,7 +20,6 @@ import org.rhasspy.mobile.viewmodel.navigation.INavigator
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action.MicrophoneFabClick
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 import org.rhasspy.mobile.widget.microphone.MicrophoneWidgetUtils
-
 
 /**
  * simple main activity to start application with splash screen
@@ -38,6 +36,10 @@ class MainActivity : IMainActivity(), KoinComponent {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen().setKeepOnScreenCondition {
+            //splash screen should be visible until the app has started
+            !nativeApplication.isHasStarted.value
+        }
         enableEdgeToEdge()
         if (!AppLaunchChecker.hasStartedFromLauncher(this)) {
             isFirstLaunch = true
@@ -49,13 +51,7 @@ class MainActivity : IMainActivity(), KoinComponent {
             navigator.onBackPressed()
         }
 
-        installSplashScreen().setKeepOnScreenCondition {
-            //splash screen should be visible until the app has started
-            !nativeApplication.isHasStarted.value
-        }
         super.onCreate(savedInstanceState)
-
-        WindowCompat.setDecorFitsSystemWindows(window, true)
 
         if (intent.getBooleanExtra(IntentActionType.StartRecording.param, false)) {
             viewModelFactory.getViewModel<HomeScreenViewModel>().onEvent(MicrophoneFabClick)
