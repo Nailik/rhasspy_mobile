@@ -1,4 +1,4 @@
-@file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE")
+@file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE", "UNNECESSARY_NOT_NULL_ASSERTION")
 
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
@@ -128,7 +128,7 @@ val createVersionTxt: TaskProvider<Task> = tasks.register("createVersionTxt") {
     }
 }
 
-tasks.findByPath("preBuild").dependsOn(createVersionTxt)
+tasks.findByPath("preBuild")!!.dependsOn(createVersionTxt)
 
 val increaseCodeVersion: TaskProvider<Task> = tasks.register("increaseCodeVersion") {
     doLast {

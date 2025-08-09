@@ -26,6 +26,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
+      # setup jdk 22
       - name: Set Up JDK 22
         uses: actions/setup-java@v4
         with:

@@ -3,6 +3,7 @@ package org.rhasspy.mobile.logic.services.speechtotext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
+import org.kodein.mock.generated.injectMocks
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
@@ -28,7 +29,7 @@ class SpeechToTextServiceTest : AppTest() {
     @Mock
     lateinit var serviceMiddleware: IServiceMiddleware
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {

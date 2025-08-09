@@ -69,7 +69,7 @@ android {
         }
         debug {
             isDebuggable = true
-            enableUnitTestCoverage = true
+            //enableUnitTestCoverage = true
             enableAndroidTestCoverage = true
             isMinifyEnabled = false
             isShrinkResources = false

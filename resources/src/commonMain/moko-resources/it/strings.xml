@@ -32,12 +32,7 @@
     <string name="rhasspyTextToSpeechURL">URL del Testo alla Voce di Rhasspy (%s)</string>
     <string name="audioOutputURL">URL Output Audio (%s)</string>
     <string name="audioPlaying">Riproduzione Audio</string>
-    <string name="dialog_pipeline">Dialogo e Pipeline</string>
-    <string name="audio_input">Input Audio</string>
-    <string name="audio_input_information">Speech-to-Text e Parola di Risveglio</string>
-    <string name="voice_activity_detection">Rilevamento Attività Vocale</string>
-    <string name="connections">Connessioni</string>
-    <string name="connections_information">Hermes/Mqtt (Rhasspy2) e Wyoming (Rhasspy3)</string>
+    <string name="dialogManagement">Gestione del dialogo</string>
     <string name="intentHandling">Gestione Intent</string>
     <string name="remoteURL">URL Remoto</string>
     <string name="checkConnection">Controlla Connessione</string>
@@ -47,8 +42,8 @@
     <string name="local">Locale</string>
     <string name="remote">Remoto</string>
     <string name="disabled">Disabilitato</string>
-    <string name="rhasspy2hermes_mqtt">Rhasspy2 MQTT (Hermes)</string>
-    <string name="rhasspy2hermes_http">Rhasspy2 HTTP (Hermes)</string>
+    <string name="remoteMQTT">Rhasspy2 MQTT (Hermes)</string>
+    <string name="remoteHTTP">Rhasspy2 HTTP (Hermes)</string>
     <string name="withRecognition">Con Riconoscimento</string>
     <string name="homeAssistant">Home Assistant</string>
     <string name="hassURL">URL Hass</string>
@@ -61,8 +56,7 @@
     <string name="homeAssistantEvents">Invia *eventi* a Home Assistant (/api/events)</string>
     <string name="homeAssistantIntents">Invia *intenti* a Home Assistant (/api/intent/handle)
     </string>
-    <string name="speechToTextAudioRecorderFormat">Formato Registrazione Audio per Speech to Text
-    </string>
+    <string name="speechToTextAudioRecorderFormat">Formato Registrazione Audio per Speech to Text</string>
     <string name="speechToTextAudioOutputFormat">Formato Output Audio per Speech to Text</string>
     <string name="wakeWordAudioRecorderFormat">Formato Registrazione Audio per Parola di Risveglio
     </string>
@@ -193,41 +187,22 @@
     <string name="errorSound">Errore</string>
     <string name="selectFile">File</string>
     <string name="defaultText">Predefinito</string>
-    <string name="remote_http">HTTP Remoto</string>
+    <string name="remoteHermesHTTP">HTTP Remoto (Hermes)</string>
     <string name="sslValidation">Validazione SSL</string>
     <string name="disableSSLValidation">Disabilita la Validazione del Certificato SSL</string>
     <string name="disableSSLValidationInformation">Possibilmente necessario quando si utilizzano
         certificati auto-firmati
     </string>
-    <string name="local_webserver">Webserver Locale</string>
-    <string name="server">Server</string>
-    <string name="protocols">Protocolli</string>
-    <string name="rhasspy2_hermes_server">Server Rhasspy2/Hermes</string>
-    <string name="rhasspy2_hermes_info">Rhasspy 2.5</string>
-    <string name="rhasspy3_wyoming_server">Server Rhasspy3/Wyoming</string>
-    <string name="rhasspy3_wyoming_info">Assistente per la Casa, Rhasspy 3</string>
-    <string name="home_assistant">Home Assistant</string>
-    <string name="home_assistant_server">Server Home Assistant</string>
-    <string name="home_assistant_info">Gestione Intent di Home Assistant</string>
-    <string name="add">Aggiungi</string>
+    <string name="webserver">Webserver</string>
     <string name="enableHTTPApi">Abilita API HTTP</string>
     <string name="english">Inglese</string>
-    <string name="arabic">Arabo</string>
     <string name="german">Tedesco</string>
     <string name="spanish">Spagnolo</string>
-    <string name="farsi">Persiano</string>
     <string name="french">Francese</string>
-    <string name="hindi">Hindi</string>
     <string name="italian">Italiano</string>
     <string name="japanese">Giapponese</string>
     <string name="korean">Coreano</string>
-    <string name="dutch">Olandese</string>
-    <string name="polish">Polacco</string>
     <string name="portuguese">Portoghese</string>
-    <string name="russian">Russo</string>
-    <string name="swedish">Svedese</string>
-    <string name="vietnamese">Vietnamita</string>
-    <string name="chinese">Cinese</string>
     <string name="icon">Icona</string>
     <string name="dataPrivacy">Privacy dei Dati</string>
     <string name="sourceCode">Codice Sorgente</string>
