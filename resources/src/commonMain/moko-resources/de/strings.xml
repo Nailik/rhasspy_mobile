@@ -298,7 +298,7 @@
     <string name="serviceStatusErrorText">Dienstfehler ist aufgetreten</string>
     <string name="executeTestHttpConnection">Teste HTTP-Verbindung</string>
     <string name="porcupineLanguageInformation">Alle aktiven Aktivierungswörter müssen mit der
-        ausgewählten Sprache übereinstimmen und der aktuellen Porcupine Version (2.2.2) kompatibel
+        ausgewählten Sprache übereinstimmen und der aktuellen Porcupine Version (3.0) kompatibel
         sein!
     </string>
     <string name="backgroundServiceInformation">Der Hintergrunddienst ermöglicht es, der App im

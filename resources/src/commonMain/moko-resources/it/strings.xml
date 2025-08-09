@@ -309,7 +309,7 @@
     <string name="executeTestHttpConnection">Test Connessione HTTP</string>
     <string name="porcupineLanguageInformation">Tutte le parole di attivazione attive devono
         corrispondere alla lingua selezionata e essere compatibili con la versione corrente di
-        Porcupine (2.2.2)!
+        Porcupine (3.0)!
     </string>
     <string name="backgroundServiceInformation">Il servizio in background consentirà all\'app di
         rimanere attiva in background e impedirà che venga chiusa dal sistema.

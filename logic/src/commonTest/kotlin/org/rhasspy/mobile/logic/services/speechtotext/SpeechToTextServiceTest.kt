@@ -62,7 +62,7 @@ class SpeechToTextServiceTest : AppTest() {
             //sent varying (random) data below threshold
             val job = coroutineScope.launch {
                 while (true) {
-                    audioRecorder.sendMaxVolume(Random.nextFloat() * (threshold - 1))
+                    audioRecorder.sendMaxVolume(Random.nextFloat() * (threshold) - 1)
                     delay(10)
                 }
             }
@@ -98,7 +98,7 @@ class SpeechToTextServiceTest : AppTest() {
             //sent varying (random) data below threshold
             val job = coroutineScope.launch {
                 while (true) {
-                    audioRecorder.sendMaxVolume(Random.nextFloat() * (threshold - 1))
+                    audioRecorder.sendMaxVolume(Random.nextFloat() * (threshold) - 1)
                     delay(10)
                 }
             }
@@ -134,7 +134,7 @@ class SpeechToTextServiceTest : AppTest() {
         //sent varying (random) data below threshold
         val job = coroutineScope.launch {
             while (true) {
-                audioRecorder.sendMaxVolume(Random.nextFloat() * (threshold - 1))
+                audioRecorder.sendMaxVolume(Random.nextFloat() * (threshold) - 1)
                 delay(10)
             }
         }
@@ -175,7 +175,7 @@ class SpeechToTextServiceTest : AppTest() {
                 //sent varying (random) data below threshold for half the silence detection time
                 while (true) {
                     val volume =
-                        if (time < 200) Random.nextFloat() * (threshold - 1) else Random.nextFloat() * (32767.0f - threshold) + (threshold + 1)
+                        if (time < 200) Random.nextFloat() * (threshold) - 1 else Random.nextFloat() * (32767.0f - threshold) + (threshold) + 1
                     audioRecorder.sendMaxVolume(volume)
                     delay(10)
                     time += 10
@@ -215,7 +215,7 @@ class SpeechToTextServiceTest : AppTest() {
             val job = coroutineScope.launch {
                 //sent varying (random) data below threshold
                 while (true) {
-                    audioRecorder.sendMaxVolume(Random.nextFloat() * (threshold - 1))
+                    audioRecorder.sendMaxVolume(Random.nextFloat() * (threshold) - 1)
                     delay(10)
                 }
             }
@@ -246,7 +246,7 @@ class SpeechToTextServiceTest : AppTest() {
         val job = coroutineScope.launch {
             //sent varying (random) data below threshold for half the silence detection time
             while (true) {
-                audioRecorder.sendMaxVolume(Random.nextFloat() * (threshold + 1))
+                audioRecorder.sendMaxVolume(Random.nextFloat() * (threshold) + 1)
                 delay(10)
             }
         }
