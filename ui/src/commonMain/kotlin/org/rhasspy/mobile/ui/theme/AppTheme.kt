@@ -4,8 +4,11 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.surfaceColorAtElevation
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.theme.ThemeType
 import org.rhasspy.mobile.resources.DarkThemeColors
@@ -17,23 +20,22 @@ import org.rhasspy.mobile.settings.AppSetting
  */
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
-    val colorScheme by GetColorScheme()
-    SetSystemColor(colorScheme.surfaceColorAtElevation(0.dp))
+    val colorScheme by getColorScheme()
     MaterialTheme(
         colorScheme = colorScheme,
-        content = content
+        content = content,
     )
 }
 
 @Composable
-fun GetColorScheme(): State<ColorScheme> {
+fun getColorScheme(): State<ColorScheme> {
     val theme by AppSetting.themeType.data.collectAsState()
     val isSystemInDarkTheme = isSystemInDarkTheme()
     val colorScheme = derivedStateOf {
         when (theme) {
             ThemeType.System -> if (isSystemInDarkTheme) DarkThemeColors else LightThemeColors
-            ThemeType.Light  -> LightThemeColors
-            ThemeType.Dark   -> DarkThemeColors
+            ThemeType.Light -> LightThemeColors
+            ThemeType.Dark -> DarkThemeColors
         }
     }
     return colorScheme

@@ -7,7 +7,7 @@ import org.rhasspy.mobile.resources.MR
 
 actual enum class AudioFormatSampleRateType(
     override val text: StableStringResource,
-    actual val value: Int
+    actual val value: Int,
 ) : IOption<AudioFormatSampleRateType> {
     //TODO("Not yet implemented")
     Default(MR.strings.defaultText.stable, 1);

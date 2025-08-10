@@ -28,7 +28,8 @@ import kotlin.test.assertTrue
 class BackgroundSettingsContentTest : FlakyTest() {
 
     private val viewModel = get<BackgroundServiceSettingsViewModel>()
-    private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private val device: UiDevice =
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     private val dialog = " com.android.settings"
     private val acceptButton = "android:id/button1"

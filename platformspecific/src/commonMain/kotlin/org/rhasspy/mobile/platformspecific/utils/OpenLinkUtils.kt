@@ -14,7 +14,7 @@ interface IOpenLinkUtils {
 }
 
 internal class OpenLinkUtils(
-    private val externalResultRequest: IExternalResultRequest
+    private val externalResultRequest: IExternalResultRequest,
 ) : IOpenLinkUtils {
 
     /**

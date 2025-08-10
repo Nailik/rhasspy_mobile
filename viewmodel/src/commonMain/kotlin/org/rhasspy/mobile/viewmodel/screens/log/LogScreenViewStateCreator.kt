@@ -13,7 +13,7 @@ import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.settings.AppSetting
 
 class LogScreenViewStateCreator(
-    private val fileLogger: IFileLogger
+    private val fileLogger: IFileLogger,
 ) {
 
     private val updaterScope = CoroutineScope(Dispatchers.IO)

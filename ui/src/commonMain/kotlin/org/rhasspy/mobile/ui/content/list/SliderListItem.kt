@@ -1,6 +1,12 @@
 package org.rhasspy.mobile.ui.content.list
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
@@ -15,14 +21,13 @@ import org.rhasspy.mobile.platformspecific.roundToDecimals
 import org.rhasspy.mobile.ui.content.elements.ProvideTextStyleFromToken
 import org.rhasspy.mobile.ui.content.elements.Text
 
-
 @Composable
 fun SliderListItem(
     modifier: Modifier = Modifier,
     text: StableStringResource,
     value: Float,
     valueText: String? = null,
-    onValueChange: (Float) -> Unit
+    onValueChange: (Float) -> Unit,
 ) {
     //uses custom list item to fix padding for slider
     Surface(

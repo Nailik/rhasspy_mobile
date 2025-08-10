@@ -10,5 +10,5 @@ internal data class WebServerServiceParams(
     val httpServerSSLKeyStoreFile: Path?,
     val httpServerSSLKeyStorePassword: String,
     val httpServerSSLKeyAlias: String,
-    val httpServerSSLKeyPassword: String
+    val httpServerSSLKeyPassword: String,
 )

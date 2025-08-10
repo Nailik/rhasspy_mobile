@@ -5,8 +5,22 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.SemanticsNodeInteractionCollection
+import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.filter
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.isEnabled
+import androidx.compose.ui.test.isSelectable
+import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.permission.PermissionRequester
@@ -25,15 +39,12 @@ import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
-
 fun SemanticsNodeInteraction.onListItemSwitch(): SemanticsNodeInteraction {
-    //return this.onChildren().filter(isToggleable()).onFirst()
-    return this.onChildAt(0).onChildren().filter(isToggleable()).onFirst()
+    return this.onChildren().filter(isToggleable()).onFirst()
 }
 
 fun SemanticsNodeInteraction.onListItemRadioButton(): SemanticsNodeInteraction {
-    //return this.onChildren().filter(isSelectable()).onFirst()
-    return this.onChildAt(0).onChildren().filter(isSelectable()).onFirst()
+    return this.onChildren().filter(isSelectable()).onFirst()
 }
 
 fun hasTestTag(testTag: Enum<*>): SemanticsMatcher =
@@ -47,45 +58,43 @@ fun hasCombinedTestTag(tag1: Enum<*>, tag2: Enum<*>): SemanticsMatcher =
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     testTag: IOption<*>,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteraction = onNode(hasTestTag(testTag.name), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     testTag: TestTag,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteraction = onNode(hasTestTag(testTag.name), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     testTag: NavigationDestination,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteraction = onNode(hasTestTag(testTag.toString()), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     name: String,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteraction = onNode(hasTestTag(name), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
     tag1: TestTag, tag2: TestTag,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteraction = onNode(hasTestTag("${tag1.name}${tag2.name}"), useUnmergedTree)
-
 
 fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
     testTag: Enum<*>, tag: TestTag,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteraction = onNode(hasTestTag("${testTag.name}${tag.name}"), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
     name: String, tag: TestTag,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteraction = onNode(hasTestTag("$name${tag.name}"), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onAllNodesWithText(
     text: StableStringResource,
-    useUnmergedTree: Boolean = false
+    useUnmergedTree: Boolean = false,
 ): SemanticsNodeInteractionCollection = onAllNodesWithText(getText(text), useUnmergedTree)
-
 
 fun textRes(text: StableStringResource): BySelector {
     return By.text(getText(text))
@@ -96,7 +105,7 @@ private fun getText(text: StableStringResource): String {
         is StableResourceFormattedStringDesc ->
             text.stringResource.toString(getInstrumentation().targetContext.applicationContext)
 
-        is StableStringResourceSingle        ->
+        is StableStringResourceSingle ->
             StringDesc.Resource(text.stringResource)
                 .toString(getInstrumentation().targetContext.applicationContext)
     }
@@ -105,7 +114,6 @@ private fun getText(text: StableStringResource): String {
 fun UiSelector.text(text: StableStringResource): UiSelector {
     return this.textMatches(getText(text))
 }
-
 
 //https://github.com/SergKhram/allure-kotlin/blob/081c7d39ee440b82ca490ce91d34ce1a1421670c/allure-kotlin-android/src/main/kotlin/io/qameta/allure/android/internal/TestUtils.kt
 fun requestExternalStoragePermissions(device: UiDevice) {
@@ -118,11 +126,11 @@ fun requestExternalStoragePermissions(device: UiDevice) {
             }
         }
 
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R                                                  -> {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
             device.executeShellCommand("appops set --uid ${getInstrumentation().targetContext.packageName} MANAGE_EXTERNAL_STORAGE allow")
         }
 
-        else                                                                                            -> return
+        else -> return
     }
     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).listFiles()
         ?.forEach {
@@ -167,7 +175,7 @@ suspend fun ComposeTestRule.saveBottomAppBar() {
 @OptIn(ExperimentalTestApi::class)
 fun ComposeTestRule.waitUntilExists(
     matcher: SemanticsMatcher,
-    timeoutMillis: Long = 5000
+    timeoutMillis: Long = 5000,
 ) {
     return this.waitUntilNodeCount(matcher, 1, timeoutMillis)
 }
@@ -175,7 +183,7 @@ fun ComposeTestRule.waitUntilExists(
 @OptIn(ExperimentalTestApi::class)
 fun ComposeTestRule.waitUntilNotExists(
     matcher: SemanticsMatcher,
-    timeoutMillis: Long = 5000
+    timeoutMillis: Long = 5000,
 ) {
     return this.waitUntilNodeCount(matcher, 0, timeoutMillis)
 }

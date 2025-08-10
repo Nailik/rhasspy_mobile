@@ -15,7 +15,7 @@ interface IHomeScreeViewModel : IScreenViewModel
 @Stable
 class HomeScreenViewModel(
     private val serviceMiddleware: IServiceMiddleware,
-    viewStateCreator: HomeScreenViewStateCreator
+    viewStateCreator: HomeScreenViewStateCreator,
 ) : IHomeScreeViewModel, ScreenViewModel() {
 
     val viewState: StateFlow<HomeScreenViewState> = viewStateCreator()
@@ -29,7 +29,7 @@ class HomeScreenViewModel(
     private fun onAction(action: Action) {
         when (action) {
             TogglePlayRecording -> serviceMiddleware.action(PlayStopRecording)
-            MicrophoneFabClick  -> requireMicrophonePermission(serviceMiddleware::userSessionClick)
+            MicrophoneFabClick -> requireMicrophonePermission(serviceMiddleware::userSessionClick)
         }
     }
 

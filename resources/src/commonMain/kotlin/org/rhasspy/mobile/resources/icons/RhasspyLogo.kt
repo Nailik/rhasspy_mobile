@@ -18,7 +18,7 @@ val RhasspyLogo: ImageVector
         }
         `_rhasspy-raven-square` = Builder(
             name = "Rhasspy-raven-square", defaultWidth =
-            36.848656.dp, defaultHeight = 36.848656.dp, viewportWidth = 36.848656f,
+                36.848656.dp, defaultHeight = 36.848656.dp, viewportWidth = 36.848656f,
             viewportHeight = 36.848656f
         ).apply {
             path(

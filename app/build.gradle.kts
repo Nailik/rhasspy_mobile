@@ -1,17 +1,18 @@
-@file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE")
+@file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE", "UNNECESSARY_NOT_NULL_ASSERTION")
 
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR
+import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT
+import org.gradle.api.tasks.testing.logging.TestLogEvent.STARTED
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("multiplatform")
-    kotlin("native.cocoapods")
-    id("com.android.library")
-    id("org.jetbrains.compose")
-    id("co.touchlab.crashkios.crashlyticslink")
-    id("base-gradle")
+    id("base.kmp.compose.library")
+    alias(libs.plugins.crashlyticslink) apply false
+    alias(libs.plugins.native.cocoapods)
 }
 
 version = Version.toString()
@@ -29,88 +30,58 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(project(":ui"))
-                implementation(project(":data"))
-                implementation(project(":logic"))
-                implementation(project(":viewmodel"))
-                implementation(project(":platformspecific"))
-                implementation(project(":settings"))
-                implementation(project(":overlay"))
-                implementation(project(":widget"))
-                implementation(Kotlin.Stdlib.common)
-                implementation(Touchlab.kermit)
-                implementation(Touchlab.Kermit.crashlytics)
-                implementation(Icerock.Mvvm.core)
-                implementation(Icerock.Resources.resourcesCompose)
-                implementation(Jetbrains.Kotlinx.dateTime)
-                implementation(Jetbrains.Kotlinx.serialization)
-                implementation(Jetbrains.Kotlinx.immutable)
-                implementation(Ktor.Client.core)
-                implementation(Ktor.plugins.network)
-                implementation(Ktor2.Server.core)
-                implementation(Ktor2.Server.cors)
-                implementation(Ktor2.Server.cio)
-                implementation(Ktor2.Server.dataConversion)
-                implementation(Ktor2.Client.cio)
-                implementation(Ktor.Server.statusPages)
-                implementation(Ktor.Plugins.network)
-                implementation(Benasher.uuid)
-                implementation(Koin.core)
-                implementation(Square.okio)
-                implementation(Russhwolf.multiplatformSettingsNoArg)
-            }
+        commonMain.dependencies {
+            implementation(project(":ui"))
+            implementation(project(":data"))
+            implementation(project(":logic"))
+            implementation(project(":viewmodel"))
+            implementation(project(":platformspecific"))
+            implementation(project(":settings"))
+            implementation(project(":overlay"))
+            implementation(project(":widget"))
+            implementation(libs.kotlin.stdlib.common)
+            implementation(libs.kermit)
+            implementation(libs.kermit.crashlytics)
+            implementation(libs.moko.mvvm.core)
+            implementation(libs.moko.resources)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization)
+            implementation(libs.kotlinx.collections.immutable)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.network)
+            implementation(libs.ktor.server.core)
+            implementation(libs.ktor.server.cors)
+            implementation(libs.ktor.server.cio)
+            implementation(libs.ktor.server.data.conversion)
+            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.server.status.pages)
+            implementation(libs.benasher44.uuid)
+            implementation(libs.koin.core)
+            implementation(libs.okio)
+            implementation(libs.multiplatform.settings.no.arg)
         }
-        val commonTest by getting {
-            dependsOn(commonMain)
-            dependencies {
-                implementation(Kotlin.test)
-            }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
         }
-        val androidMain by getting {
-            dependencies {
-                implementation(AndroidX.appCompat)
-                implementation(AndroidX.Activity.compose)
-                implementation(AndroidX.lifecycle.process)
-                implementation(AndroidX.Fragment.ktx)
-                implementation(AndroidX.multidex)
-                implementation(AndroidX.window)
-                implementation(AndroidX.activity)
-                implementation(AndroidX.documentFile)
-                implementation(Icerock.Resources.resourcesCompose)
-                implementation(Slf4j.simple)
-                implementation(Ktor2.Server.compression)
-                implementation(Ktor2.Server.callLogging)
-                implementation(Ktor.Server.netty)
-                implementation(Ktor.Plugins.networkTlsCertificates)
-                implementation(AndroidX.Core.splashscreen)
-            }
+        androidMain.dependencies {
+            implementation(libs.androidx.appcompat)
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.lifecycle.process)
+            implementation(libs.androidx.fragment.ktx)
+            implementation(libs.androidx.multidex)
+            implementation(libs.androidx.window)
+            implementation(libs.androidx.documentfile)
+            implementation(libs.androidx.core.splashscreen)
+            implementation(libs.moko.resources.compose)
+            implementation(libs.slf4j.simple)
+            implementation(libs.ktor.server.compression)
+            implementation(libs.ktor.server.call.logging)
+            implementation(libs.ktor.server.netty)
+            implementation(libs.ktor.network.tls.certificates)
         }
-        val androidUnitTest by getting {
-            dependsOn(commonMain)
-            dependencies {
-                implementation(Kotlin.test)
-                implementation(Kotlin.Test.junit)
-            }
-        }
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-        }
-        val iosX64Test by getting
-        val iosArm64Test by getting
-        val iosSimulatorArm64Test by getting
-        val iosTest by creating {
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            iosSimulatorArm64Test.dependsOn(this)
+        androidUnitTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlin.test.junit)
         }
     }
 
@@ -126,10 +97,6 @@ kotlin {
             }
         }
     }
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.freeCompilerArgs += "-opt-in=co.touchlab.kermit.ExperimentalKermitApi"
 }
 
 android {
@@ -156,9 +123,10 @@ val createVersionTxt: TaskProvider<Task> = tasks.register("createVersionTxt") {
 
 tasks.findByPath("preBuild")!!.dependsOn(createVersionTxt)
 
+@Suppress("unused")
 val increaseCodeVersion: TaskProvider<Task> = tasks.register("increaseCodeVersion") {
     doLast {
-        File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
+        File(projectDir.parent, "gradle/conventions/src/main/kotlin/Version.kt").also {
             it.writeText(
                 it.readText().replace("code = ${Version.code}", "code = ${Version.code + 1}")
             )

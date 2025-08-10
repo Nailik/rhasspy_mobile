@@ -15,7 +15,7 @@ fun RadioButtonListItem(
     isChecked: Boolean,
     enabled: Boolean = true,
     trailing: @Composable (() -> Unit)? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     ListElement(
         modifier = modifier.clickable(enabled = enabled, onClick = onClick),
@@ -38,7 +38,7 @@ fun RadioButtonListItem(
     isChecked: Boolean,
     enabled: Boolean = true,
     trailing: @Composable (() -> Unit)? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     ListElement(
         modifier = modifier.clickable(enabled = enabled, onClick = onClick),

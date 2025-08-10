@@ -11,10 +11,12 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
-import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.*
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Action.DisableBatteryOptimization
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Change.SetBackgroundServiceSettingsEnabled
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Consumed
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Consumed.ShowSnackBar
 
 /**
@@ -26,7 +28,7 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
 @Stable
 class BackgroundServiceSettingsViewModel(
     viewStateCreator: BackgroundServiceSettingsViewStateCreator,
-    private val backgroundService: IBackgroundService
+    private val backgroundService: IBackgroundService,
 ) : ScreenViewModel() {
 
     private val _viewState: MutableStateFlow<BackgroundServiceSettingsViewState> =
@@ -35,8 +37,8 @@ class BackgroundServiceSettingsViewModel(
 
     fun onEvent(event: BackgroundServiceSettingsUiEvent) {
         when (event) {
-            is Change   -> onChange(event)
-            is Action   -> onAction(event)
+            is Change -> onChange(event)
+            is Action -> onAction(event)
             is Consumed -> onConsumed(event)
         }
     }
@@ -57,7 +59,7 @@ class BackgroundServiceSettingsViewModel(
     private fun onAction(action: Action) {
         when (action) {
             DisableBatteryOptimization -> disableBatteryOptimization()
-            is BackClick               -> navigator.onBackPressed()
+            is BackClick -> navigator.onBackPressed()
         }
     }
 

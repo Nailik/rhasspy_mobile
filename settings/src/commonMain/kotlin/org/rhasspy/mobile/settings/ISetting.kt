@@ -21,7 +21,7 @@ private val logger = Logger.withTag("ISetting")
 open class ISetting<T>(
     private val key: SettingsEnum,
     private val initial: T,
-    private val serializer: KSerializer<T>? = null
+    private val serializer: KSerializer<T>? = null,
 ) : KoinComponent {
 
     private val settings = get<Settings>()
@@ -52,14 +52,14 @@ open class ISetting<T>(
                 settings.encodeValue(serializer, key.name, newValue)
             } else {
                 when (initial) {
-                    is String     -> settings[key.name] = newValue as String
-                    is Int        -> settings[key.name] = newValue as Int
-                    is Float      -> settings[key.name] = newValue as Float
-                    is Long?      -> settings[key.name] = newValue as Long?
-                    is Long       -> settings[key.name] = newValue as Long
-                    is Boolean    -> settings[key.name] = newValue as Boolean
+                    is String -> settings[key.name] = newValue as String
+                    is Int -> settings[key.name] = newValue as Int
+                    is Float -> settings[key.name] = newValue as Float
+                    is Long? -> settings[key.name] = newValue as Long?
+                    is Long -> settings[key.name] = newValue as Long
+                    is Boolean -> settings[key.name] = newValue as Boolean
                     is IOption<*> -> settings[key.name] = (newValue as IOption<*>).name
-                    else          -> logger.a { "save value unsupported type initial: $initial key: ${key.name}" }
+                    else -> logger.a { "save value unsupported type initial: $initial key: ${key.name}" }
                 }
             }
         } catch (e: Exception) {
@@ -78,14 +78,14 @@ open class ISetting<T>(
                 settings.decodeValue(serializer, key.name, initial)
             } else {
                 when (initial) {
-                    is String     -> settings[key.name, initial]
-                    is Int        -> settings[key.name, initial]
-                    is Float      -> settings[key.name, initial]
-                    is Long?      -> settings[key.name, initial ?: 0L]
-                    is Long       -> settings[key.name, initial]
-                    is Boolean    -> settings[key.name, initial]
+                    is String -> settings[key.name, initial]
+                    is Int -> settings[key.name, initial]
+                    is Float -> settings[key.name, initial]
+                    is Long? -> settings[key.name, initial ?: 0L]
+                    is Long -> settings[key.name, initial]
+                    is Boolean -> settings[key.name, initial]
                     is IOption<*> -> initial.findValue(settings[key.name, initial.name])
-                    else          -> {
+                    else -> {
                         logger.a { "could not read ${key.name} resetting it to $initial" }
                         initial
                     }

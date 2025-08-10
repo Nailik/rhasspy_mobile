@@ -23,7 +23,7 @@ fun <E : IOption<*>> RadioButtonsEnumSelectionList(
     onSelect: (item: E) -> Unit,
     enabled: Boolean = true,
     combinedTestTag: TestTag? = null,
-    values: ImmutableList<E>
+    values: ImmutableList<E>,
 ) {
     Column(modifier = modifier) {
         values.forEach { item ->
@@ -49,7 +49,7 @@ fun <E : IOption<*>> RadioButtonsEnumSelection(
     onSelect: (item: E) -> Unit,
     enabled: Boolean = true,
     values: ImmutableList<E>,
-    content: (@Composable (item: E) -> Unit)? = null
+    content: (@Composable (item: E) -> Unit)? = null,
 ) {
     Card(
         modifier = modifier.padding(8.dp),
@@ -79,7 +79,6 @@ fun <E : IOption<*>> RadioButtonsEnumSelection(
     }
 }
 
-
 @Composable
 fun <E : IOption<*>> RadioButtonsEnumSelection(
     modifier: Modifier = Modifier,
@@ -88,7 +87,7 @@ fun <E : IOption<*>> RadioButtonsEnumSelection(
     enabled: Boolean = true,
     values: PersistentList<E>,
     secondaryContentVisible: Boolean,
-    content: (@Composable () -> Unit)? = null
+    content: (@Composable () -> Unit)? = null,
 ) {
     Card(
         modifier = modifier.padding(8.dp),

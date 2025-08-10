@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.kodein.mock.Mock
+import org.kodein.mock.generated.injectMocks
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
@@ -26,7 +27,7 @@ class MicrophoneOverlaySettingsViewModelTest : AppTest() {
 
     private lateinit var microphoneOverlaySettingsViewModel: MicrophoneOverlaySettingsViewModel
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {
@@ -55,7 +56,7 @@ class MicrophoneOverlaySettingsViewModelTest : AppTest() {
         every { overlayPermission.granted } returns MutableStateFlow(false)
         every { overlayPermission.request() } returns false
 
-        MicrophoneOverlaySizeOption.values().filter { it != Disabled }.forEach { option ->
+        MicrophoneOverlaySizeOption.entries.filter { it != Disabled }.forEach { option ->
 
             microphoneOverlaySettingsViewModel.onEvent(SelectMicrophoneOverlaySizeOption(option))
             microphoneOverlaySettingsViewModel.onEvent(Confirm(OverlayPermissionInfo))
@@ -72,7 +73,7 @@ class MicrophoneOverlaySettingsViewModelTest : AppTest() {
         AppSetting.microphoneOverlaySizeOption.value = Disabled
         every { overlayPermission.granted } returns MutableStateFlow(true)
 
-        MicrophoneOverlaySizeOption.values().forEach { option ->
+        MicrophoneOverlaySizeOption.entries.forEach { option ->
 
             microphoneOverlaySettingsViewModel.onEvent(SelectMicrophoneOverlaySizeOption(option))
 

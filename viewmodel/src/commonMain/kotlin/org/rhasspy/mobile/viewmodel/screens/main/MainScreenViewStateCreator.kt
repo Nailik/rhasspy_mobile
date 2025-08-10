@@ -35,10 +35,15 @@ class MainScreenViewStateCreator(
 
     private fun getViewState(): MainScreenViewState {
         return MainScreenViewState(
-            bottomNavigationIndex = (navigator.topScreen.value as? MainScreenNavigationDestination?)?.ordinal ?: 1,
+            bottomNavigationIndex = (navigator.topScreen.value as? MainScreenNavigationDestination?)?.ordinal
+                ?: 1,
             isShowLogEnabled = AppSetting.isShowLogEnabled.value,
             isShowCrashlyticsDialog = !AppSetting.didShowCrashlyticsDialog.value,
-            changelog = Json.decodeFromString<JsonArray>(MR.files.changelog.readToString(nativeApplication))
+            changelog = Json.decodeFromString<JsonArray>(
+                MR.files.changelog_json.readToString(
+                    nativeApplication
+                )
+            )
                 .map { "· ${it.jsonPrimitive.content}\n" }
                 .toImmutableList(),
             isChangelogDialogVisible = AppSetting.didShowChangelogDialog.value < BuildKonfig.versionCode

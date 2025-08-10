@@ -14,7 +14,7 @@ object AudioRecorderUtils {
     fun ByteArray.appendWavHeader(
         audioRecorderChannelType: AudioFormatChannelType,
         audioRecorderSampleRateType: AudioFormatSampleRateType,
-        audioRecorderEncodingType: AudioFormatEncodingType
+        audioRecorderEncodingType: AudioFormatEncodingType,
     ): ByteArray {
         return getWavHeader(
             audioRecorderChannelType = audioRecorderChannelType,
@@ -28,7 +28,7 @@ object AudioRecorderUtils {
         audioRecorderChannelType: AudioFormatChannelType,
         audioRecorderEncodingType: AudioFormatEncodingType,
         audioRecorderSampleRateType: AudioFormatSampleRateType,
-        audioSize: Long
+        audioSize: Long,
     ): ByteArray {
         //info https://docs.fileformat.com/audio/wav/
         val channel = audioRecorderChannelType.count

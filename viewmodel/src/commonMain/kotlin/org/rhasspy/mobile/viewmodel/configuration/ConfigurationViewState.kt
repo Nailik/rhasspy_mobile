@@ -9,7 +9,7 @@ data class ConfigurationViewState(
     val serviceViewState: ServiceViewState,
     val hasUnsavedChanges: Boolean = false,
     val isOpenServiceStateDialogEnabled: Boolean = false,
-    val dialogState: DialogState? = null
+    val dialogState: DialogState? = null,
 ) {
 
     @Stable

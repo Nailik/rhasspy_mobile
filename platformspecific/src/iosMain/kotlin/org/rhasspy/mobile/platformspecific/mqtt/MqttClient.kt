@@ -10,7 +10,7 @@ actual class MqttClient actual constructor(
     persistenceType: MqttPersistence,
     onDelivered: (token: Int) -> Unit,
     onMessageReceived: (topic: String, message: MqttMessage) -> Unit,
-    onDisconnect: (error: Throwable) -> Unit
+    onDisconnect: (error: Throwable) -> Unit,
 ) {
     /** If *true* then there is a connection to the MQTT Broker. */
     actual val isConnected: StateFlow<Boolean>
@@ -28,7 +28,7 @@ actual class MqttClient actual constructor(
     actual suspend fun publish(
         topic: String,
         msg: MqttMessage,
-        timeout: Long
+        timeout: Long,
     ): MqttError? {
         //TODO("Not yet implemented")
         return null
