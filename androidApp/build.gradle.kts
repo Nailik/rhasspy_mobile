@@ -48,7 +48,7 @@ android {
         applicationId = "org.rhasspy.mobile.android"
         targetSdk = 36
         minSdk = 23
-        versionCode = Version.code
+        versionCode = Version.CODE
         versionName = Version.toString()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "true"

@@ -303,6 +303,7 @@
     </string>
     <string name="backgroundServiceInformation">Der Hintergrunddienst ermöglicht es, der App im
         Hintergrund aktiv zu bleiben und dadurch nicht vom System beendet zu werden.
+        Rhasspy verwendet auch das Mikrofon, wenn der Wake-Word-Dienst aktiviert ist.
     </string>
     <string name="isMqttApiDeviceChangeEnabled">Änderungen über MQTT Api aktiviert</string>
     <string name="isMqttApiDeviceChangeEnabledInformation">Sollte bei Verwendung von Dialog

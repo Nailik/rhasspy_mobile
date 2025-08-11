@@ -313,6 +313,7 @@
     </string>
     <string name="backgroundServiceInformation">Il servizio in background consentirà all\'app di
         rimanere attiva in background e impedirà che venga chiusa dal sistema.
+        Rhasspy utilizzerà anche il microfono se il servizio di attivazione vocale è abilitato.
     </string>
     <string name="isMqttApiDeviceChangeEnabled">cambi tramite MQTT Api abilitati</string>
     <string name="isMqttApiDeviceChangeEnabledInformation">Dovrebbero essere abilitati quando si

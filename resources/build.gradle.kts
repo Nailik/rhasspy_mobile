@@ -73,7 +73,7 @@ buildkonfig {
     exposeObjectWithName = "BuildKonfig"
 
     defaultConfigs {
-        buildConfigField(FieldSpec.Type.INT, "versionCode", Version.code.toString())
+        buildConfigField(FieldSpec.Type.INT, "versionCode", Version.CODE.toString())
         buildConfigField(FieldSpec.Type.STRING, "versionName", Version.toString())
     }
 }

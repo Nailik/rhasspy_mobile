@@ -17,12 +17,14 @@ import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.INotificationPermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.utils.IOpenLinkUtils
 import org.rhasspy.mobile.viewmodel.navigation.INavigator
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.RequestMicrophonePermission
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.RequestNotificationPermission
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.RequestOverlayPermission
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Confirm
@@ -30,10 +32,12 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Dismiss
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar.Consumed
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.MicrophonePermissionInfo
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.NotificationPermissionInfo
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.OverlayPermissionInfo
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.LinkOpenFailed
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.MicrophonePermissionRequestDenied
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.MicrophonePermissionRequestFailed
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.NotificationPermissionRequestFailed
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.OverlayPermissionRequestFailed
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.ScanQRCodeFailed
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.SelectFileFailed
@@ -46,6 +50,7 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
     protected val microphonePermission = get<IMicrophonePermission>()
     protected val externalResultRequest = get<IExternalResultRequest>()
     private val overlayPermission = get<IOverlayPermission>()
+    private val notificationPermission = get<INotificationPermission>()
     private val openLinkUtils = get<IOpenLinkUtils>()
 
     private val _screenViewState = MutableStateFlow(ScreenViewState())
@@ -67,6 +72,14 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
             function()
         } else {
             onEvent(RequestOverlayPermission)
+        }
+    }
+
+    fun requireNotificationPermission(function: () -> Unit) {
+        return if (notificationPermission.granted.value) {
+            function()
+        } else {
+            onEvent(RequestNotificationPermission)
         }
     }
 
@@ -106,6 +119,7 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
         when (action) {
             RequestMicrophonePermission -> onRequestMicrophonePermission(false)
             RequestOverlayPermission -> onRequestOverlayPermission(false)
+            RequestNotificationPermission -> onRequestNotificationPermission(false)
         }
     }
 
@@ -119,6 +133,7 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
                 when (dialog.dialogState) {
                     MicrophonePermissionInfo -> onRequestMicrophonePermission(true)
                     OverlayPermissionInfo -> onRequestOverlayPermission(true)
+                    NotificationPermissionInfo -> onRequestNotificationPermission(true)
                 }
             }
         }
@@ -187,6 +202,23 @@ abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
                 if (!overlayPermission.request()) {
                     //show snack bar
                     _screenViewState.update { it.copy(snackBarState = OverlayPermissionRequestFailed) }
+                }
+            }
+        }
+    }
+
+    private fun onRequestNotificationPermission(hasShownInformation: Boolean) {
+        if (!notificationPermission.granted.value) {
+            if (!hasShownInformation) {
+                _screenViewState.update { it.copy(dialogState = NotificationPermissionInfo) }
+            } else {
+                viewModelScope.launch(dispatcher.IO) {
+                    notificationPermission.request()
+
+                    if (!notificationPermission.granted.value) {
+                        //show snack bar
+                        _screenViewState.update { it.copy(snackBarState = NotificationPermissionRequestFailed) }
+                    }
                 }
             }
         }

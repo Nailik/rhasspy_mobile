@@ -46,10 +46,13 @@ class BackgroundServiceSettingsViewModel(
     private fun onChange(change: Change) {
         when (change) {
             is SetBackgroundServiceSettingsEnabled -> {
-                AppSetting.isBackgroundServiceEnabled.value = change.enabled
                 if (change.enabled) {
-                    backgroundService.start()
+                    requireNotificationPermission {
+                        AppSetting.isBackgroundServiceEnabled.value = true
+                        backgroundService.start()
+                    }
                 } else {
+                    AppSetting.isBackgroundServiceEnabled.value = false
                     backgroundService.stop()
                 }
             }

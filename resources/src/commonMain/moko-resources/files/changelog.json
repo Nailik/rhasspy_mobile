@@ -1,5 +1,6 @@
 [
-  "Breaking change: Porcupine 3.0",
+  "BREAKING CHANGE: Porcupine 3.0\nAR, FA, HI, NL, PL, RU, SV, VN, ZH removed resets to EN",
+  "Fix background service: requires notification permission",
   "Build for Android SDK 36",
   "Italian translation",
   "All Dependencies Updated"

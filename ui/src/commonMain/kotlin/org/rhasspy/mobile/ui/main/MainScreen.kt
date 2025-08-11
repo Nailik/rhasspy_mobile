@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -51,7 +52,9 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
     Box(modifier = Modifier.fillMaxSize()) {
         AppTheme {
             //fixes bright flashing when navigating between screens
-            Surface(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
+            Surface(modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .systemBarsPadding()) {
 
                 val snackBarHostState = remember { SnackbarHostState() }
 
