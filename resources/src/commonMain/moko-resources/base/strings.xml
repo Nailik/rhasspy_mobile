@@ -127,10 +127,12 @@
     </string>
     <string name="overlayPermissionRequestFailed">requesting overlay permission failed</string>
     <string name="notificationPermissionTitle">Notification Permission</string>
-    <string name="notificationPermissionInfo">Background services use Notifications to keep running in
+    <string name="notificationPermissionInfo">Background services use Notifications to keep running
+        in
         the background. This allows you to always track when Rhasspy is running.
     </string>
-    <string name="notificationPermissionRequestFailed">requesting notification permission failed</string>
+    <string name="notificationPermissionRequestFailed">requesting notification permission failed
+    </string>
     <string name="save">Save</string>
     <string name="saveSettingsText">Save settings to an external file</string>
     <string name="restoreSettingsText">Restore settings from an external file</string>

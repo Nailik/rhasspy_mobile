@@ -29,8 +29,8 @@
         tools:ignore="Instantiatable,UnusedAttribute">
         <service
             android:name="org.rhasspy.mobile.platformspecific.background.BackgroundService"
-            android:foregroundServiceType="microphone"
             android:exported="false"
+            android:foregroundServiceType="microphone"
             android:permission="android.permission.RECORD_AUDIO" />
 
         <service

@@ -56,7 +56,8 @@
     <string name="homeAssistantEvents">Invia *eventi* a Home Assistant (/api/events)</string>
     <string name="homeAssistantIntents">Invia *intenti* a Home Assistant (/api/intent/handle)
     </string>
-    <string name="speechToTextAudioRecorderFormat">Formato Registrazione Audio per Speech to Text</string>
+    <string name="speechToTextAudioRecorderFormat">Formato Registrazione Audio per Speech to Text
+    </string>
     <string name="speechToTextAudioOutputFormat">Formato Output Audio per Speech to Text</string>
     <string name="wakeWordAudioRecorderFormat">Formato Registrazione Audio per Parola di Risveglio
     </string>

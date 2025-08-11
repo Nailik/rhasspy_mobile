@@ -52,9 +52,11 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
     Box(modifier = Modifier.fillMaxSize()) {
         AppTheme {
             //fixes bright flashing when navigating between screens
-            Surface(modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .systemBarsPadding()) {
+            Surface(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surface)
+                    .systemBarsPadding()
+            ) {
 
                 val snackBarHostState = remember { SnackbarHostState() }
 
