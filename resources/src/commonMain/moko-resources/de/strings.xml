@@ -127,6 +127,13 @@
     </string>
     <string name="overlayPermissionRequestFailed">Anforderung der Overlay-Erlaubnis fehlgeschlagen
     </string>
+    <string name="notificationPermissionTitle">Benachrichtigungsberechtigung</string>
+    <string name="notificationPermissionInfo">Hintergrunddienste benötigen eine Benachrichtigunge,
+        um im Hintergrund aktiv zu bleiben.
+        Dadurch können Sie jederzeit verfolgen, wann Rhasspy ausgeführt wird.
+    </string>
+    <string name="notificationPermissionRequestFailed">Anforderung der Benachrichtigungsberechtigung fehlgeschlagen.
+    </string>
     <string name="save">Speichern</string>
     <string name="saveSettingsText">Einstellungen in einer externen Datei speichern</string>
     <string name="restoreSettingsText">Wiederherstellung der Einstellungen aus einer externen

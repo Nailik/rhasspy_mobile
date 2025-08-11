@@ -138,6 +138,13 @@
     <string name="overlayPermissionRequestFailed">richiesta di permesso per la sovrapposizione
         fallita
     </string>
+    <string name="notificationPermissionTitle">Autorizzazione alle notifiche</string>
+    <string name="notificationPermissionInfo">I servizi in background utilizzano le notifiche per continuare a funzionare
+        in
+        background. Ciò consente di monitorare costantemente quando Rhasspy è in esecuzione.
+    </string>
+    <string name="notificationPermissionRequestFailed">richiesta di autorizzazione alle notifiche non riuscita
+    </string>
     <string name="save">Salva</string>
     <string name="saveSettingsText">Salva le impostazioni su un file esterno</string>
     <string name="restoreSettingsText">Ripristina le impostazioni da un file esterno</string>
