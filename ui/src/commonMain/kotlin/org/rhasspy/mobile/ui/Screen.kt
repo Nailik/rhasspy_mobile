@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.NotificationsPaused
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -23,10 +24,12 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Dismiss
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar.Action
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar.Consumed
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.MicrophonePermissionInfo
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.NotificationPermissionInfo
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.OverlayPermissionInfo
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.LinkOpenFailed
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.MicrophonePermissionRequestDenied
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.MicrophonePermissionRequestFailed
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.NotificationPermissionRequestFailed
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.OverlayPermissionRequestFailed
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.ScanQRCodeFailed
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.SelectFileFailed
@@ -82,6 +85,19 @@ fun Screen(
                     onDismiss = { screenViewModel.onEvent(Dismiss) }
                 )
             }
+
+            NotificationPermissionInfo -> {
+                Dialog(
+                    testTag = TestTag.DialogNotificationPermissionInfo,
+                    icon = Icons.Filled.NotificationsPaused,
+                    title = MR.strings.notificationPermissionTitle.stable,
+                    message = MR.strings.notificationPermissionInfo.stable,
+                    confirmLabel = MR.strings.ok.stable,
+                    dismissLabel = MR.strings.cancel.stable,
+                    onConfirm = { screenViewModel.onEvent(Confirm(dialogState)) },
+                    onDismiss = { screenViewModel.onEvent(Dismiss) }
+                )
+            }
         }
     }
 
@@ -108,6 +124,13 @@ fun Screen(
             OverlayPermissionRequestFailed -> {
                 SnackBar(
                     title = MR.strings.overlayPermissionRequestFailed.stable,
+                    consumed = { screenViewModel.onEvent(Consumed) },
+                )
+            }
+
+            NotificationPermissionRequestFailed -> {
+                SnackBar(
+                    title = MR.strings.notificationPermissionRequestFailed.stable,
                     consumed = { screenViewModel.onEvent(Consumed) },
                 )
             }

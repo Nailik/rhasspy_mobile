@@ -38,8 +38,12 @@ class IndicationSettingsViewModel(
                 change.enabled
 
             is SetWakeWordLightIndicationEnabled -> {
-                requireOverlayPermission {
-                    AppSetting.isWakeWordLightIndicationEnabled.value = change.enabled
+                if (change.enabled) {
+                    requireOverlayPermission {
+                        AppSetting.isWakeWordLightIndicationEnabled.value = change.enabled
+                    }
+                } else {
+                    AppSetting.isWakeWordLightIndicationEnabled.value = false
                 }
             }
         }

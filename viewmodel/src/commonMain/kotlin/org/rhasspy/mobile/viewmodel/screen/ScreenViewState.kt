@@ -12,6 +12,7 @@ data class ScreenViewState(
 
         data object MicrophonePermissionInfo : ScreenDialogState
         data object OverlayPermissionInfo : ScreenDialogState
+        data object NotificationPermissionInfo : ScreenDialogState
 
     }
 
@@ -19,6 +20,8 @@ data class ScreenViewState(
 
         data object OverlayPermissionRequestFailed : ScreenSnackBarState
         data object MicrophonePermissionRequestFailed : ScreenSnackBarState
+
+        data object NotificationPermissionRequestFailed : ScreenSnackBarState
         data object MicrophonePermissionRequestDenied : ScreenSnackBarState
         data object LinkOpenFailed : ScreenSnackBarState
         data object SelectFileFailed : ScreenSnackBarState

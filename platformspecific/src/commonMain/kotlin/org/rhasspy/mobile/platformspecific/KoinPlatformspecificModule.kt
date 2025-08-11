@@ -16,8 +16,10 @@ import org.rhasspy.mobile.platformspecific.language.ILanguageUtils
 import org.rhasspy.mobile.platformspecific.language.LanguageUtils
 import org.rhasspy.mobile.platformspecific.permission.BatteryOptimization
 import org.rhasspy.mobile.platformspecific.permission.IMicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.INotificationPermission
 import org.rhasspy.mobile.platformspecific.permission.IOverlayPermission
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.NotificationPermission
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.platformspecific.settings.ISettingsUtils
 import org.rhasspy.mobile.platformspecific.settings.SettingsUtils
@@ -49,6 +51,12 @@ val platformSpecificModule = module {
     }
     single<IMicrophonePermission> {
         MicrophonePermission(
+            nativeApplication = get(),
+            externalResultRequest = get()
+        )
+    }
+    single<INotificationPermission> {
+        NotificationPermission(
             nativeApplication = get(),
             externalResultRequest = get()
         )

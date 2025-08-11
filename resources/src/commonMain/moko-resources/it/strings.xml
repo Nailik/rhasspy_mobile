@@ -56,7 +56,8 @@
     <string name="homeAssistantEvents">Invia *eventi* a Home Assistant (/api/events)</string>
     <string name="homeAssistantIntents">Invia *intenti* a Home Assistant (/api/intent/handle)
     </string>
-    <string name="speechToTextAudioRecorderFormat">Formato Registrazione Audio per Speech to Text</string>
+    <string name="speechToTextAudioRecorderFormat">Formato Registrazione Audio per Speech to Text
+    </string>
     <string name="speechToTextAudioOutputFormat">Formato Output Audio per Speech to Text</string>
     <string name="wakeWordAudioRecorderFormat">Formato Registrazione Audio per Parola di Risveglio
     </string>
@@ -136,6 +137,13 @@
     </string>
     <string name="overlayPermissionRequestFailed">richiesta di permesso per la sovrapposizione
         fallita
+    </string>
+    <string name="notificationPermissionTitle">Autorizzazione alle notifiche</string>
+    <string name="notificationPermissionInfo">I servizi in background utilizzano le notifiche per continuare a funzionare
+        in
+        background. Ciò consente di monitorare costantemente quando Rhasspy è in esecuzione.
+    </string>
+    <string name="notificationPermissionRequestFailed">richiesta di autorizzazione alle notifiche non riuscita
     </string>
     <string name="save">Salva</string>
     <string name="saveSettingsText">Salva le impostazioni su un file esterno</string>
@@ -313,6 +321,7 @@
     </string>
     <string name="backgroundServiceInformation">Il servizio in background consentirà all\'app di
         rimanere attiva in background e impedirà che venga chiusa dal sistema.
+        Rhasspy utilizzerà anche il microfono se il servizio di attivazione vocale è abilitato.
     </string>
     <string name="isMqttApiDeviceChangeEnabled">cambi tramite MQTT Api abilitati</string>
     <string name="isMqttApiDeviceChangeEnabledInformation">Dovrebbero essere abilitati quando si

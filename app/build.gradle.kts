@@ -128,7 +128,7 @@ val increaseCodeVersion: TaskProvider<Task> = tasks.register("increaseCodeVersio
     doLast {
         File(projectDir.parent, "gradle/conventions/src/main/kotlin/Version.kt").also {
             it.writeText(
-                it.readText().replace("code = ${Version.code}", "code = ${Version.code + 1}")
+                it.readText().replace("CODE = ${Version.CODE}", "CODE = ${Version.CODE + 1}")
             )
         }
     }

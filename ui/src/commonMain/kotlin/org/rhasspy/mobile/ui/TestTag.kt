@@ -142,6 +142,7 @@ enum class TestTag {
     DialogCrashlytics,
     DialogMicrophonePermissionInfo,
     DialogOverlayPermissionInfo,
+    DialogNotificationPermissionInfo,
     DialogSaveSettings,
     DialogRestoreSettings
 }
