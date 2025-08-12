@@ -110,7 +110,7 @@ internal class DialogManagerService(
         dialogHistory.value = dialogHistory.value.updateList {
             add(State(state))
             while (size > 100) {
-                removeLast()
+                removeAt(lastIndex)
             }
         }
     }
@@ -119,7 +119,7 @@ internal class DialogManagerService(
         dialogHistory.value = dialogHistory.value.updateList {
             add(Action(action))
             while (size > 100) {
-                removeLast()
+                removeAt(lastIndex)
             }
         }
     }
