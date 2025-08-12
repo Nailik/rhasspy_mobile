@@ -1,9 +1,27 @@
 package org.rhasspy.mobile.ui.content.elements
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -29,7 +47,7 @@ fun Dialog(
     dismissLabel: StableStringResource? = null,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    onClose: () -> Unit = onDismiss //outside click
+    onClose: () -> Unit = onDismiss, //outside click
 ) {
 
     Dialog(
@@ -56,7 +74,7 @@ fun Dialog(
     dismissLabel: StableStringResource? = null,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    onClose: () -> Unit = onDismiss //outside click
+    onClose: () -> Unit = onDismiss, //outside click
 ) {
 
     Dialog(
@@ -83,7 +101,7 @@ fun Dialog(
     dismissLabel: StableStringResource? = null,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    onClose: () -> Unit = onDismiss //outside click
+    onClose: () -> Unit = onDismiss, //outside click
 ) {
     Dialog(
         modifier = Modifier.testTag(testTag),
@@ -91,14 +109,14 @@ fun Dialog(
         headline = title?.let { { Text(it) } },
         supportingText = supportingText,
         icon =
-        icon?.let {
-            {
-                Icon(
-                    imageVector = it,
-                    contentDescription = MR.strings.icon.stable
-                )
-            }
-        },
+            icon?.let {
+                {
+                    Icon(
+                        imageVector = it,
+                        contentDescription = MR.strings.icon.stable
+                    )
+                }
+            },
         confirmButton = {
             Button(
                 onClick = onConfirm,
@@ -130,7 +148,7 @@ fun Dialog(
     dismissLabel: StableStringResource? = null,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    onClose: () -> Unit = onDismiss //outside click
+    onClose: () -> Unit = onDismiss, //outside click
 ) {
     Dialog(
         modifier = Modifier.testTag(testTag),
@@ -138,14 +156,14 @@ fun Dialog(
         headline = title.let { { Text(it) } },
         supportingText = supportingText,
         icon =
-        icon?.let {
-            {
-                Icon(
-                    imageVector = it,
-                    contentDescription = MR.strings.icon.stable
-                )
-            }
-        },
+            icon?.let {
+                {
+                    Icon(
+                        imageVector = it,
+                        contentDescription = MR.strings.icon.stable
+                    )
+                }
+            },
         confirmButton = {
             Button(
                 onClick = onConfirm,
@@ -177,7 +195,7 @@ private fun Dialog(
     confirmButton: @Composable () -> Unit,
     dismissButton: (@Composable () -> Unit)? = null,
     dismissOnOutside: Boolean = true,
-    showDivider: Boolean = false
+    showDivider: Boolean = false,
 ) {
     DialogContainer {
 
@@ -258,7 +276,7 @@ private fun Dialog(
 
                         //Divider (optional)
                         if (showDivider) {
-                            Divider()
+                            HorizontalDivider()
                         }
                     }
 

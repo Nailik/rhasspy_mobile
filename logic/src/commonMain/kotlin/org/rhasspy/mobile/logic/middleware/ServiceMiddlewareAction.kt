@@ -14,7 +14,7 @@ sealed class ServiceMiddlewareAction {
         val text: String,
         val volume: Float?,
         val siteId: String,
-        val sessionId: String?
+        val sessionId: String?,
     ) : ServiceMiddlewareAction() {
         override fun toString(): String {
             return "${super.toString()} text: $text"
@@ -24,10 +24,17 @@ sealed class ServiceMiddlewareAction {
     class Mqtt(val topic: String, val payload: ByteArray) : ServiceMiddlewareAction()
 
     sealed class AppSettingsServiceMiddlewareAction : ServiceMiddlewareAction() {
-        class AudioOutputToggle(val enabled: Boolean, val source: Source) : AppSettingsServiceMiddlewareAction()
-        class AudioVolumeChange(val volume: Float, val source: Source) : AppSettingsServiceMiddlewareAction()
-        class HotWordToggle(val enabled: Boolean, val source: Source) : AppSettingsServiceMiddlewareAction()
-        class IntentHandlingToggle(val enabled: Boolean, val source: Source) : AppSettingsServiceMiddlewareAction()
+        class AudioOutputToggle(val enabled: Boolean, val source: Source) :
+            AppSettingsServiceMiddlewareAction()
+
+        class AudioVolumeChange(val volume: Float, val source: Source) :
+            AppSettingsServiceMiddlewareAction()
+
+        class HotWordToggle(val enabled: Boolean, val source: Source) :
+            AppSettingsServiceMiddlewareAction()
+
+        class IntentHandlingToggle(val enabled: Boolean, val source: Source) :
+            AppSettingsServiceMiddlewareAction()
     }
 
     sealed class DialogServiceMiddlewareAction(val source: Source) : ServiceMiddlewareAction() {

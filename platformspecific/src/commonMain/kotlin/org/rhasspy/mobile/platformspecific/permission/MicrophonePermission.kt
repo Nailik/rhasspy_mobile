@@ -14,13 +14,12 @@ interface IMicrophonePermission {
 
 }
 
-
 /**
  * to check microphone permission
  */
 internal expect class MicrophonePermission(
     nativeApplication: NativeApplication,
-    externalResultRequest: IExternalResultRequest
+    externalResultRequest: IExternalResultRequest,
 ) : IMicrophonePermission {
 
     /**

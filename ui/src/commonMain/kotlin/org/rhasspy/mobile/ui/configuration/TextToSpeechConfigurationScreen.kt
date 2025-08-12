@@ -22,7 +22,9 @@ import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SelectTextToSpeechOption
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SetUseCustomHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.UpdateTextToSpeechHttpEndpoint
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewState.TextToSpeechConfigurationData
 
@@ -60,7 +62,7 @@ fun TextToSpeechConfigurationScreen() {
 @Composable
 private fun TextToSpeechEditContent(
     editData: TextToSpeechConfigurationData,
-    onEvent: (TextToSpeechConfigurationUiEvent) -> Unit
+    onEvent: (TextToSpeechConfigurationUiEvent) -> Unit,
 ) {
 
     LazyColumn(
@@ -79,11 +81,10 @@ private fun TextToSpeechEditContent(
 
 }
 
-
 @Composable
 private fun TextToSpeechOptionContent(
     editData: TextToSpeechConfigurationData,
-    onEvent: (TextToSpeechConfigurationUiEvent) -> Unit
+    onEvent: (TextToSpeechConfigurationUiEvent) -> Unit,
 ) {
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.TextToSpeechOptions),
@@ -99,7 +100,7 @@ private fun TextToSpeechOptionContent(
                 onAction = onEvent
             )
 
-            else                          -> Unit
+            else -> Unit
         }
 
     }
@@ -112,7 +113,7 @@ private fun TextToSpeechOptionContent(
 private fun TextToSpeechHTTP(
     isUseCustomTextToSpeechHttpEndpoint: Boolean,
     textToSpeechHttpEndpointText: String,
-    onAction: (TextToSpeechConfigurationUiEvent) -> Unit
+    onAction: (TextToSpeechConfigurationUiEvent) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {

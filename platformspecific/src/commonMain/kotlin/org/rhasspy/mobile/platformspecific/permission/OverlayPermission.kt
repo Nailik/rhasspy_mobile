@@ -15,7 +15,7 @@ interface IOverlayPermission {
 
 internal expect class OverlayPermission(
     nativeApplication: NativeApplication,
-    externalResultRequest: IExternalResultRequest
+    externalResultRequest: IExternalResultRequest,
 ) : IOverlayPermission {
 
     /**

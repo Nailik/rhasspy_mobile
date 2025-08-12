@@ -9,7 +9,9 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.*
+import org.rhasspy.mobile.data.service.ServiceState.Disabled
+import org.rhasspy.mobile.data.service.ServiceState.Pending
+import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.homeassistant.IHomeAssistantService
@@ -30,7 +32,7 @@ interface IIntentHandlingService : IService {
  * when data is null the service was most probably mqtt and will return result in a call function
  */
 internal class IntentHandlingService(
-    paramsCreator: IntentHandlingServiceParamsCreator
+    paramsCreator: IntentHandlingServiceParamsCreator,
 ) : IIntentHandlingService {
 
     override val logger = LogType.IntentHandlingService.logger()
@@ -56,10 +58,10 @@ internal class IntentHandlingService(
 
     private fun updateState() {
         _serviceState.value = when (params.intentHandlingOption) {
-            IntentHandlingOption.HomeAssistant   -> Success
-            IntentHandlingOption.RemoteHTTP      -> Success
+            IntentHandlingOption.HomeAssistant -> Success
+            IntentHandlingOption.RemoteHTTP -> Success
             IntentHandlingOption.WithRecognition -> Success
-            IntentHandlingOption.Disabled        -> Disabled
+            IntentHandlingOption.Disabled -> Disabled
         }
     }
 
@@ -81,18 +83,18 @@ internal class IntentHandlingService(
     override fun intentHandling(intentName: String, intent: String) {
         logger.d { "intentHandling intentName: $intentName intent: $intent" }
         when (params.intentHandlingOption) {
-            IntentHandlingOption.HomeAssistant   ->
+            IntentHandlingOption.HomeAssistant ->
                 homeAssistantService.sendIntent(intentName, intent) {
                     _serviceState.value = it
                 }
 
-            IntentHandlingOption.RemoteHTTP      ->
+            IntentHandlingOption.RemoteHTTP ->
                 httpClientService.intentHandling(intent) {
                     _serviceState.value = it.toServiceState()
                 }
 
             IntentHandlingOption.WithRecognition -> Unit
-            IntentHandlingOption.Disabled        -> Unit
+            IntentHandlingOption.Disabled -> Unit
         }
     }
 

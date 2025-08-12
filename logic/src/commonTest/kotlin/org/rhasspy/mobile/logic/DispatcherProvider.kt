@@ -7,5 +7,5 @@ import org.rhasspy.mobile.platformspecific.IDispatcherProvider
 
 internal class TestDispatcherProvider @OptIn(ExperimentalCoroutinesApi::class) constructor(
     override val IO: CoroutineDispatcher = UnconfinedTestDispatcher(),
-    override val Main: CoroutineDispatcher = UnconfinedTestDispatcher()
+    override val Main: CoroutineDispatcher = UnconfinedTestDispatcher(),
 ) : IDispatcherProvider

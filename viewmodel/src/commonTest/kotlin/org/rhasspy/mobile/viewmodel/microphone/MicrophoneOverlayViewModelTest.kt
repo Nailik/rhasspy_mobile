@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.microphone
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.kodein.mock.Mock
+import org.kodein.mock.generated.injectMocks
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
@@ -34,10 +35,9 @@ class MicrophoneOverlayViewModelTest : AppTest() {
     @Mock
     lateinit var intentAction: IIntentAction
 
-
     private lateinit var microphoneOverlayViewModel: MicrophoneOverlayViewModel
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {

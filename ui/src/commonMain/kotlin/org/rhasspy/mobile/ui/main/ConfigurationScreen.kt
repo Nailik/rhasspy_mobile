@@ -1,13 +1,31 @@
 package org.rhasspy.mobile.ui.main
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.HelpCenter
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.HelpCenter
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -17,7 +35,11 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.elements.*
+import org.rhasspy.mobile.ui.content.elements.CustomDivider
+import org.rhasspy.mobile.ui.content.elements.Icon
+import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.content.elements.toText
+import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.item.EventStateIconTinted
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
@@ -25,15 +47,36 @@ import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.utils.ListType.ConfigurationScreenList
 import org.rhasspy.mobile.ui.utils.rememberForeverScrollState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.DialogManagementConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.IntentHandlingConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.IntentRecognitionConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.MqttConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.RemoteHermesHttpConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.SpeechToTextConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.TextToSpeechConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.ConfigurationScreenNavigationDestination.WebServerConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.ConfigurationScreen
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.OpenWikiLink
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToErrorClick
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Consumed.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.AudioPlayingViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.DialogManagementViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentHandlingViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentRecognitionViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.MqttViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.RemoteHermesHttpViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SiteIdViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SpeechToTextViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.TextToSpeechViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.WakeWordViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.WebServerViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 /**
@@ -58,7 +101,7 @@ fun ConfigurationScreen() {
 @Composable
 fun ConfigurationScreenContent(
     onEvent: (ConfigurationScreenUiEvent) -> Unit,
-    viewState: ConfigurationScreenViewState
+    viewState: ConfigurationScreenViewState,
 ) {
     val scrollState = rememberForeverScrollState(ConfigurationScreenList)
 
@@ -74,7 +117,7 @@ fun ConfigurationScreenContent(
                         onClick = { onEvent(OpenWikiLink) },
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.HelpCenter,
+                            imageVector = Icons.AutoMirrored.Filled.HelpCenter,
                             contentDescription = MR.strings.wiki.stable,
                         )
                     }
@@ -165,7 +208,7 @@ fun ConfigurationScreenContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ServiceErrorInformation(
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     Surface {
@@ -200,14 +243,13 @@ private fun ServiceErrorInformation(
 
 }
 
-
 /**
  * site id element
  */
 @Composable
 private fun SiteId(
     viewState: SiteIdViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     TextFieldListItem(
@@ -226,12 +268,16 @@ private fun SiteId(
 @Composable
 private fun RemoteHermesHttp(
     viewState: RemoteHermesHttpViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
         text = MR.strings.remoteHermesHTTP.stable,
-        secondaryText = "${translate(MR.strings.sslValidation.stable)} ${translate(viewState.isHttpSSLVerificationEnabled.not().toText())}",
+        secondaryText = "${translate(MR.strings.sslValidation.stable)} ${
+            translate(
+                viewState.isHttpSSLVerificationEnabled.not().toText()
+            )
+        }",
         viewState = viewState.serviceState,
         destination = RemoteHermesHttpConfigurationScreen,
         onEvent = onEvent
@@ -246,7 +292,7 @@ private fun RemoteHermesHttp(
 @Composable
 private fun Webserver(
     viewState: WebServerViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -266,7 +312,7 @@ private fun Webserver(
 @Composable
 private fun Mqtt(
     viewState: MqttViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -279,7 +325,6 @@ private fun Mqtt(
 
 }
 
-
 /**
  * List element for wake word configuration
  * shows which option is selected
@@ -287,7 +332,7 @@ private fun Mqtt(
 @Composable
 private fun WakeWord(
     viewState: WakeWordViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -307,7 +352,7 @@ private fun WakeWord(
 @Composable
 private fun SpeechToText(
     viewState: SpeechToTextViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -320,7 +365,6 @@ private fun SpeechToText(
 
 }
 
-
 /**
  * List element for intent recognition configuration
  * shows which option is selected
@@ -328,7 +372,7 @@ private fun SpeechToText(
 @Composable
 private fun IntentRecognition(
     viewState: IntentRecognitionViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -348,7 +392,7 @@ private fun IntentRecognition(
 @Composable
 private fun TextToSpeech(
     viewState: TextToSpeechViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -368,7 +412,7 @@ private fun TextToSpeech(
 @Composable
 private fun AudioPlaying(
     viewState: AudioPlayingViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -388,7 +432,7 @@ private fun AudioPlaying(
 @Composable
 private fun DialogManagement(
     viewState: DialogManagementViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -408,7 +452,7 @@ private fun DialogManagement(
 @Composable
 private fun IntentHandling(
     viewState: IntentHandlingViewState,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
 
     ConfigurationListItem(
@@ -430,7 +474,7 @@ private fun ConfigurationListItem(
     secondaryText: StableStringResource,
     serviceViewState: ServiceViewState,
     destination: ConfigurationScreenNavigationDestination,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
     ListElement(
         modifier = Modifier
@@ -456,7 +500,7 @@ private fun ConfigurationListItem(
     secondaryText: String,
     viewState: ServiceViewState,
     destination: ConfigurationScreenNavigationDestination,
-    onEvent: (ConfigurationScreenUiEvent) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
 ) {
     ListElement(
         modifier = Modifier

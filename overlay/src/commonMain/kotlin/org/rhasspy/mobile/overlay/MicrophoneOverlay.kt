@@ -18,5 +18,5 @@ expect class MicrophoneOverlay(
     viewModel: MicrophoneOverlayViewModel,
     nativeApplication: NativeApplication,
     overlayPermission: IOverlayPermission,
-    dispatcher: IDispatcherProvider
+    dispatcher: IDispatcherProvider,
 ) : IMicrophoneOverlay

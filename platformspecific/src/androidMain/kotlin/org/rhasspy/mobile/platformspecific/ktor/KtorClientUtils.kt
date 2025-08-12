@@ -1,8 +1,7 @@
 package org.rhasspy.mobile.platformspecific.ktor
 
 import android.annotation.SuppressLint
-import io.ktor.client.engine.cio.*
-import io.ktor.network.tls.extensions.*
+import io.ktor.client.engine.cio.CIOEngineConfig
 import java.security.cert.X509Certificate
 import javax.net.ssl.X509TrustManager
 

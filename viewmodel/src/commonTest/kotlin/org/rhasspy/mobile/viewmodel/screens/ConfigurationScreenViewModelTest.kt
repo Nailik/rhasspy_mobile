@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.screens
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.kodein.mock.Mock
+import org.kodein.mock.generated.injectMocks
 import org.koin.dsl.module
 import org.koin.test.get
 import org.rhasspy.mobile.data.service.ServiceState
@@ -26,7 +27,7 @@ class ConfigurationScreenViewModelTest : AppTest() {
 
     private lateinit var configurationScreenViewModel: ConfigurationScreenViewModel
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {

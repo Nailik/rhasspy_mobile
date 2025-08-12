@@ -1,14 +1,22 @@
 package org.rhasspy.mobile.logic.services.wakeword
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.*
+import org.rhasspy.mobile.data.service.ServiceState.Disabled
+import org.rhasspy.mobile.data.service.ServiceState.Error
+import org.rhasspy.mobile.data.service.ServiceState.Loading
+import org.rhasspy.mobile.data.service.ServiceState.Pending
+import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
@@ -20,7 +28,6 @@ import org.rhasspy.mobile.platformspecific.porcupine.PorcupineWakeWordClient
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
-import kotlin.Exception
 
 interface IWakeWordService : IService {
 
@@ -102,15 +109,15 @@ internal class WakeWordService(
                 } else Pending
             }
 
-            WakeWordOption.MQTT      -> Success
-            WakeWordOption.Udp       -> {
+            WakeWordOption.MQTT -> Success
+            WakeWordOption.Udp -> {
                 if (!params.isMicrophonePermissionEnabled) {
                     //post error when microphone permission is missing
                     Error(MR.strings.microphonePermissionDenied.stable)
                 } else Pending
             }
 
-            WakeWordOption.Disabled  -> Disabled
+            WakeWordOption.Disabled -> Disabled
         }
     }
 
@@ -130,8 +137,8 @@ internal class WakeWordService(
         //actually start recording
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> startPorcupine()
-            WakeWordOption.Udp       -> startUdp()
-            else                     -> Unit
+            WakeWordOption.Udp -> startUdp()
+            else -> Unit
         }
     }
 
@@ -163,7 +170,6 @@ internal class WakeWordService(
         recording = null
         audioRecorder.stopRecording()
     }
-
 
     private fun startPorcupine() {
         _serviceState.value = porcupineWakeWordClient?.let { client ->
@@ -216,9 +222,9 @@ internal class WakeWordService(
             if (it == params.copy(isEnabled = it.isEnabled)) {
                 when (params.wakeWordOption) {
                     WakeWordOption.Porcupine -> if (porcupineWakeWordClient != null) return
-                    WakeWordOption.MQTT      -> return
-                    WakeWordOption.Udp       -> if (udpConnection != null) return
-                    WakeWordOption.Disabled  -> return
+                    WakeWordOption.MQTT -> return
+                    WakeWordOption.Udp -> if (udpConnection != null) return
+                    WakeWordOption.Disabled -> return
                 }
             }
         }
@@ -243,8 +249,8 @@ internal class WakeWordService(
                 Success
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
-            WakeWordOption.MQTT      -> Success
-            WakeWordOption.Udp       -> {
+            WakeWordOption.MQTT -> Success
+            WakeWordOption.Udp -> {
                 _serviceState.value = Loading
 
                 udpConnection = UdpConnection(
@@ -255,7 +261,7 @@ internal class WakeWordService(
                 Success
             }
 
-            WakeWordOption.Disabled  -> Disabled
+            WakeWordOption.Disabled -> Disabled
         }
     }
 
@@ -283,8 +289,8 @@ internal class WakeWordService(
 
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> porcupineWakeWordClient?.audioFrame(data)
-            WakeWordOption.MQTT      -> Unit //nothing will wait for mqtt message
-            WakeWordOption.Udp       -> udpConnection?.streamAudio(
+            WakeWordOption.MQTT -> Unit //nothing will wait for mqtt message
+            WakeWordOption.Udp -> udpConnection?.streamAudio(
                 data = data.appendWavHeader(
                     audioRecorderChannelType = params.audioOutputChannelType,
                     audioRecorderEncodingType = params.audioOutputEncodingType,
@@ -292,7 +298,7 @@ internal class WakeWordService(
                 )
             )
 
-            WakeWordOption.Disabled  -> Unit
+            WakeWordOption.Disabled -> Unit
         }
     }
 

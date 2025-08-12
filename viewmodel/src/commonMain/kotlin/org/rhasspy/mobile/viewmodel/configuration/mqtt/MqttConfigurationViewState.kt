@@ -8,12 +8,12 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationData
 
 @Stable
-data class MqttConfigurationViewState internal constructor(
-    override val editData: MqttConfigurationData
+data class MqttConfigurationViewState(
+    override val editData: MqttConfigurationData,
 ) : IConfigurationViewState {
 
     @Stable
-    data class MqttConfigurationData internal constructor(
+    data class MqttConfigurationData(
         val isMqttEnabled: Boolean = ConfigurationSetting.isMqttEnabled.value,
         val mqttHost: String = ConfigurationSetting.mqttHost.value,
         val mqttPort: Int? = ConfigurationSetting.mqttPort.value,
@@ -23,7 +23,7 @@ data class MqttConfigurationViewState internal constructor(
         val mqttConnectionTimeout: Long? = ConfigurationSetting.mqttConnectionTimeout.value,
         val mqttKeepAliveInterval: Long? = ConfigurationSetting.mqttKeepAliveInterval.value,
         val mqttRetryInterval: Long? = ConfigurationSetting.mqttRetryInterval.value,
-        val mqttKeyStoreFile: Path? = ConfigurationSetting.mqttKeyStoreFile.value
+        val mqttKeyStoreFile: Path? = ConfigurationSetting.mqttKeyStoreFile.value,
     ) : IConfigurationData {
 
         val mqttPortText: String = mqttPort.toStringOrEmpty()

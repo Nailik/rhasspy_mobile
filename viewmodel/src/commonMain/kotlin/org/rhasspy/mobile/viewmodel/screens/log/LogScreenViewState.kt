@@ -6,8 +6,8 @@ import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.resource.StableStringResource
 
 @Stable
-data class LogScreenViewState internal constructor(
+data class LogScreenViewState(
     val isLogAutoscroll: Boolean,
     val logList: ImmutableList<LogElement>,
-    val snackBarText: StableStringResource? = null
+    val snackBarText: StableStringResource? = null,
 )

@@ -5,8 +5,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.HelpCenter
-import androidx.compose.material3.*
+import androidx.compose.material.icons.automirrored.filled.HelpCenter
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,14 +25,27 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.elements.*
+import org.rhasspy.mobile.ui.content.elements.CustomDivider
+import org.rhasspy.mobile.ui.content.elements.Icon
+import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.content.elements.toText
+import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.utils.ListType.SettingsScreenList
 import org.rhasspy.mobile.ui.utils.rememberForeverLazyListState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.MainScreenNavigationDestination.SettingsScreen
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination
-import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.AboutSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.AppearanceSettingsScreen
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.AudioFocusSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.BackgroundServiceSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.DeviceSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.IndicationSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.LogSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.MicrophoneOverlaySettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.SaveAndRestoreSettings
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.SilenceDetectionSettings
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent.Action.OpenWikiLink
@@ -51,12 +68,11 @@ fun SettingsScreen() {
 
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreenContent(
     viewState: SettingsScreenViewState,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     Scaffold(
@@ -71,7 +87,7 @@ fun SettingsScreenContent(
                         onClick = { onEvent(OpenWikiLink) },
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.HelpCenter,
+                            imageVector = Icons.AutoMirrored.Filled.HelpCenter,
                             contentDescription = MR.strings.wiki.stable,
                         )
                     }
@@ -167,11 +183,10 @@ fun SettingsScreenContent(
 
 }
 
-
 @Composable
 private fun Language(
     viewState: SettingsScreenViewState,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     SettingsListItem(
@@ -186,7 +201,7 @@ private fun Language(
 @Composable
 private fun BackgroundService(
     isBackgroundEnabled: Boolean,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     SettingsListItem(
@@ -201,7 +216,7 @@ private fun BackgroundService(
 @Composable
 private fun MicrophoneOverlay(
     microphoneOverlaySizeOption: MicrophoneOverlaySizeOption,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     SettingsListItem(
@@ -217,7 +232,7 @@ private fun MicrophoneOverlay(
 private fun Indication(
     isSoundIndicationEnabled: Boolean,
     isWakeWordLightIndicationEnabled: Boolean,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     var stateText = if (isSoundIndicationEnabled) translate(MR.strings.sound.stable) else ""
@@ -255,7 +270,7 @@ private fun Device(onEvent: (event: SettingsScreenUiEvent) -> Unit) {
 @Composable
 private fun AudioFocus(
     audioFocusOption: AudioFocusOption,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     SettingsListItem(
@@ -270,7 +285,7 @@ private fun AudioFocus(
 @Composable
 private fun SilenceDetection(
     isSilenceDetectionEnabled: Boolean,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     SettingsListItem(
@@ -285,7 +300,7 @@ private fun SilenceDetection(
 @Composable
 private fun Log(
     logLevel: LogLevel,
-    onEvent: (event: SettingsScreenUiEvent) -> Unit
+    onEvent: (event: SettingsScreenUiEvent) -> Unit,
 ) {
 
     SettingsListItem(
@@ -321,13 +336,12 @@ private fun About(onEvent: (event: SettingsScreenUiEvent) -> Unit) {
 
 }
 
-
 @Composable
 private fun SettingsListItem(
     text: StableStringResource,
     secondaryText: StableStringResource? = null,
     destination: SettingsScreenDestination,
-    onEvent: (navigate: Navigate) -> Unit
+    onEvent: (navigate: Navigate) -> Unit,
 ) {
 
     ListElement(
@@ -344,7 +358,7 @@ private fun SettingsListItem(
     text: StableStringResource,
     secondaryText: String,
     destination: SettingsScreenDestination,
-    onEvent: (navigate: Navigate) -> Unit
+    onEvent: (navigate: Navigate) -> Unit,
 ) {
 
     ListElement(

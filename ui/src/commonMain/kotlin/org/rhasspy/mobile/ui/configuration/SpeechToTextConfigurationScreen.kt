@@ -28,7 +28,10 @@ import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.OpenAudioOutputFormat
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.OpenAudioRecorderFormat
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SetUseCustomHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SetUseSpeechToTextMqttSilenceDetection
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.UpdateSpeechToTextHttpEndpoint
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState.SpeechToTextConfigurationData.SpeechToTextAudioOutputFormatConfigurationData
@@ -68,7 +71,7 @@ fun SpeechToTextConfigurationScreen() {
 @Composable
 private fun SpeechToTextOptionEditContent(
     editData: SpeechToTextConfigurationData,
-    onEvent: (SpeechToTextConfigurationUiEvent) -> Unit
+    onEvent: (SpeechToTextConfigurationUiEvent) -> Unit,
 ) {
 
     LazyColumn(
@@ -87,11 +90,10 @@ private fun SpeechToTextOptionEditContent(
 
 }
 
-
 @Composable
 private fun SpeechToTextOption(
     editData: SpeechToTextConfigurationData,
-    onEvent: (SpeechToTextConfigurationUiEvent) -> Unit
+    onEvent: (SpeechToTextConfigurationUiEvent) -> Unit,
 ) {
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.SpeechToTextOptions),
@@ -116,7 +118,7 @@ private fun SpeechToTextOption(
                 speechToTextAudioOutputFormatData = editData.speechToTextAudioOutputFormatData,
             )
 
-            else                          -> Unit
+            else -> Unit
         }
 
     }
@@ -131,7 +133,7 @@ private fun SpeechToTextHTTP(
     speechToTextHttpEndpointText: String,
     speechToTextAudioRecorderFormatData: SpeechToTextAudioRecorderFormatConfigurationData,
     speechToTextAudioOutputFormatData: SpeechToTextAudioOutputFormatConfigurationData,
-    onEvent: (SpeechToTextConfigurationUiEvent) -> Unit
+    onEvent: (SpeechToTextConfigurationUiEvent) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
@@ -153,13 +155,13 @@ private fun SpeechToTextHTTP(
             label = translate(MR.strings.speechToTextURL.stable, HttpClientPath.SpeechToText.path)
         )
 
-
         //button to open audio recorder format
         ListElement(
             modifier = Modifier.clickable { onEvent(OpenAudioRecorderFormat) },
             text = { Text(resource = MR.strings.audioRecorderFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(speechToTextAudioRecorderFormatData.audioRecorderChannelType.text)} | " +
+                val text =
+                    "${translate(speechToTextAudioRecorderFormatData.audioRecorderChannelType.text)} | " +
                         "${translate(speechToTextAudioRecorderFormatData.audioRecorderEncodingType.text)} | " +
                         translate(speechToTextAudioRecorderFormatData.audioRecorderSampleRateType.text)
                 Text(text = text)
@@ -171,7 +173,8 @@ private fun SpeechToTextHTTP(
             modifier = Modifier.clickable { onEvent(OpenAudioOutputFormat) },
             text = { Text(MR.strings.audioOutputFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(speechToTextAudioOutputFormatData.audioOutputChannelType.text)} | " +
+                val text =
+                    "${translate(speechToTextAudioOutputFormatData.audioOutputChannelType.text)} | " +
                         "${translate(speechToTextAudioOutputFormatData.audioOutputEncodingType.text)} | " +
                         translate(speechToTextAudioOutputFormatData.audioOutputSampleRateType.text)
                 Text(text = text)
@@ -189,7 +192,7 @@ private fun SpeechToTextMqtt(
     isUseSpeechToTextMqttSilenceDetection: Boolean,
     speechToTextAudioRecorderFormatData: SpeechToTextAudioRecorderFormatConfigurationData,
     speechToTextAudioOutputFormatData: SpeechToTextAudioOutputFormatConfigurationData,
-    onEvent: (SpeechToTextConfigurationUiEvent) -> Unit
+    onEvent: (SpeechToTextConfigurationUiEvent) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
@@ -207,7 +210,8 @@ private fun SpeechToTextMqtt(
             modifier = Modifier.clickable { onEvent(OpenAudioRecorderFormat) },
             text = { Text(MR.strings.audioRecorderFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(speechToTextAudioRecorderFormatData.audioRecorderChannelType.text)} | " +
+                val text =
+                    "${translate(speechToTextAudioRecorderFormatData.audioRecorderChannelType.text)} | " +
                         "${translate(speechToTextAudioRecorderFormatData.audioRecorderEncodingType.text)} | " +
                         translate(speechToTextAudioRecorderFormatData.audioRecorderSampleRateType.text)
                 Text(text = text)
@@ -219,7 +223,8 @@ private fun SpeechToTextMqtt(
             modifier = Modifier.clickable { onEvent(OpenAudioOutputFormat) },
             text = { Text(MR.strings.audioOutputFormat.stable) },
             secondaryText = @Composable {
-                val text = "${translate(speechToTextAudioOutputFormatData.audioOutputChannelType.text)} | " +
+                val text =
+                    "${translate(speechToTextAudioOutputFormatData.audioOutputChannelType.text)} | " +
                         "${translate(speechToTextAudioOutputFormatData.audioOutputEncodingType.text)} | " +
                         translate(speechToTextAudioOutputFormatData.audioOutputSampleRateType.text)
                 Text(text = text)

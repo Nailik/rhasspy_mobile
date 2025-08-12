@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("./gradle/conventions")
     repositories {
         google()
         gradlePluginPortal()
@@ -6,12 +7,8 @@ pluginManagement {
     }
 }
 
-plugins {
-    // See https://jmfayard.github.io/refreshVersions
-    id("de.fayard.refreshVersions") version "0.51.0"
-}
-
 rootProject.name = "Rhasspy_Mobile"
+includeBuild("./gradle/conventions")
 include(":androidApp")
 include(":app")
 
@@ -22,9 +19,9 @@ include(":widget")
 
 include(":viewmodel")
 include(":logic")
-include(":settings")
 include(":platformspecific")
 include(":data")
+include(":settings")
 include(":resources")
 
 

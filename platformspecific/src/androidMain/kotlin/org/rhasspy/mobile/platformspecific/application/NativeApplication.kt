@@ -74,15 +74,15 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
             ProcessLifecycleOwner.get().lifecycle.addObserver(object : LifecycleEventObserver {
                 override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                     when (event) {
-                        Lifecycle.Event.ON_START  -> currentlyAppInBackground.value = false
-                        Lifecycle.Event.ON_STOP   -> currentlyAppInBackground.value = true
+                        Lifecycle.Event.ON_START -> currentlyAppInBackground.value = false
+                        Lifecycle.Event.ON_STOP -> currentlyAppInBackground.value = true
                         Lifecycle.Event.ON_RESUME -> {
                             CoroutineScope(get<IDispatcherProvider>().IO).launch {
                                 resume()
                             }
                         }
 
-                        else                      -> Unit
+                        else -> Unit
                     }
                 }
             })

@@ -18,7 +18,12 @@ import org.rhasspy.mobile.ui.main.SettingsScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination.SettingsScreenDestination.DeviceSettings
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent
-import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.SetAudioOutputEnabled
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.SetHotWordEnabled
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.SetHttpApiChangesEnabled
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.SetIntentHandlingEnabled
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.SetMqttApiChangesEnabled
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.UpdateVolume
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsViewModel
 
 /**
@@ -62,7 +67,6 @@ fun DeviceSettingsContent() {
                 onCheckedChange = { viewModel.onEvent(SetHttpApiChangesEnabled(it)) }
             )
         }
-
 
         //volume slider
         SliderListItem(

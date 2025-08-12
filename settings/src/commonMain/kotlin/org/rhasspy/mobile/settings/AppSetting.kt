@@ -22,23 +22,30 @@ object AppSetting : KoinComponent {
     val didShowCrashlyticsDialog = ISetting(SettingsEnum.CrashlyticsDialog, false)
     val didShowChangelogDialog = ISetting(SettingsEnum.ChangelogDialog, 0)
 
-    val languageType = ISetting(SettingsEnum.LanguageOption, get<ILanguageUtils>().getDeviceLanguage())
+    val languageType =
+        ISetting(SettingsEnum.LanguageOption, get<ILanguageUtils>().getDeviceLanguage())
     val themeType = ISetting(SettingsEnum.ThemeOption, ThemeType.System)
 
     val isAutomaticSilenceDetectionEnabled = ISetting(SettingsEnum.AutomaticSilenceDetection, false)
-    val automaticSilenceDetectionAudioLevel = ISetting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
-    val automaticSilenceDetectionTime = ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
-    val automaticSilenceDetectionMinimumTime = ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000)
+    val automaticSilenceDetectionAudioLevel =
+        ISetting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
+    val automaticSilenceDetectionTime =
+        ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
+    val automaticSilenceDetectionMinimumTime =
+        ISetting<Long?>(SettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000)
 
     val isBackgroundServiceEnabled = ISetting(SettingsEnum.BackgroundEnabled, false)
-    val microphoneOverlaySizeOption = ISetting(SettingsEnum.MicrophoneOverlaySize, MicrophoneOverlaySizeOption.Disabled)
+    val microphoneOverlaySizeOption =
+        ISetting(SettingsEnum.MicrophoneOverlaySize, MicrophoneOverlaySizeOption.Disabled)
     val isMicrophoneOverlayWhileAppEnabled = ISetting(SettingsEnum.MicrophoneOverlayWhileApp, false)
     val microphoneOverlayPositionX = ISetting(SettingsEnum.MicrophoneOverlayPositionX, 0)
     val microphoneOverlayPositionY = ISetting(SettingsEnum.MicrophoneOverlayPositionY, 0)
 
-    val isWakeWordDetectionTurnOnDisplayEnabled = ISetting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
+    val isWakeWordDetectionTurnOnDisplayEnabled =
+        ISetting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
     val isSoundIndicationEnabled = ISetting(SettingsEnum.SoundIndication, true)
-    val soundIndicationOutputOption = ISetting(SettingsEnum.SoundIndicationOutput, AudioOutputOption.Notification)
+    val soundIndicationOutputOption =
+        ISetting(SettingsEnum.SoundIndicationOutput, AudioOutputOption.Notification)
     val isWakeWordLightIndicationEnabled = ISetting(SettingsEnum.WakeWordLightIndication, false)
 
     val isMqttApiDeviceChangeEnabled = ISetting(SettingsEnum.MqttApiDeviceChangeEnabled, false)
@@ -57,9 +64,12 @@ object AppSetting : KoinComponent {
     val errorSound = ISetting(SettingsEnum.ErrorSound, SoundOption.Default.name)
 
     //saves sound as pair, first is fileName as String, second is used and indicates if this custom sound file is used
-    val customWakeSounds = ISetting(SettingsEnum.CustomWakeSounds, persistentListOf(), StringListSerializer)
-    val customRecordedSounds = ISetting(SettingsEnum.CustomRecordedSounds, persistentListOf(), StringListSerializer)
-    val customErrorSounds = ISetting(SettingsEnum.CustomErrorSounds, persistentListOf(), StringListSerializer)
+    val customWakeSounds =
+        ISetting(SettingsEnum.CustomWakeSounds, persistentListOf(), StringListSerializer)
+    val customRecordedSounds =
+        ISetting(SettingsEnum.CustomRecordedSounds, persistentListOf(), StringListSerializer)
+    val customErrorSounds =
+        ISetting(SettingsEnum.CustomErrorSounds, persistentListOf(), StringListSerializer)
 
     val isCrashlyticsEnabled = ISetting(SettingsEnum.Crashlytics, false)
     val isShowLogEnabled = ISetting(SettingsEnum.ShowLog, isDebug())

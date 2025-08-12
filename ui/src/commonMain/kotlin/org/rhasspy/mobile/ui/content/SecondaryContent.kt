@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SecondaryContent(
     visible: Boolean,
-    content: (@Composable () -> Unit)
+    content: (@Composable () -> Unit),
 ) {
     AnimatedVisibility(
         enter = expandVertically(),

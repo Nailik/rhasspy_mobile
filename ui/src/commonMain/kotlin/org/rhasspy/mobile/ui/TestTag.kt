@@ -142,6 +142,7 @@ enum class TestTag {
     DialogCrashlytics,
     DialogMicrophonePermissionInfo,
     DialogOverlayPermissionInfo,
+    DialogNotificationPermissionInfo,
     DialogSaveSettings,
     DialogRestoreSettings
 }
@@ -151,7 +152,6 @@ fun Modifier.combinedTestTag(IOption: IOption<*>, tag: TestTag) = semantics(
         testTag = "${IOption.name}${tag.name}"
     }
 )
-
 
 fun Modifier.combinedTestTag(name: String, tag: TestTag) = semantics(
     properties = {
@@ -164,7 +164,6 @@ fun Modifier.combinedTestTag(name: TestTag, tag: TestTag) = semantics(
         testTag = "${name.name}${tag.name}"
     }
 )
-
 
 fun Modifier.testTag(enum: TestTag) = semantics(
     properties = {

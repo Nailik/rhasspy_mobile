@@ -11,7 +11,7 @@ import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.Request
 @Stable
 class MicrophoneFabViewModel(
     private val serviceMiddleware: IServiceMiddleware,
-    viewStateCreator: MicrophoneFabViewStateCreator
+    viewStateCreator: MicrophoneFabViewStateCreator,
 ) : ScreenViewModel() {
 
     val viewState: StateFlow<MicrophoneFabViewState> = viewStateCreator()

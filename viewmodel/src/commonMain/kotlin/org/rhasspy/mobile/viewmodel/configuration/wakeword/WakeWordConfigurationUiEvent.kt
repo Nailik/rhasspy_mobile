@@ -36,24 +36,24 @@ sealed interface WakeWordConfigurationUiEvent {
             data class SelectWakeWordPorcupineLanguage(val option: PorcupineLanguageOption) : Change
             data class UpdateWakeWordPorcupineKeywordDefaultSensitivity(
                 val item: PorcupineDefaultKeyword,
-                val value: Float
+                val value: Float,
             ) : Change
 
             data class ClickPorcupineKeywordDefault(val item: PorcupineDefaultKeyword) : Change
             data class SetPorcupineKeywordDefault(
                 val item: PorcupineDefaultKeyword,
-                val value: Boolean
+                val value: Boolean,
             ) : Change
 
             data class UpdateWakeWordPorcupineKeywordCustomSensitivity(
                 val item: PorcupineCustomKeyword,
-                val value: Float
+                val value: Float,
             ) : Change
 
             data class ClickPorcupineKeywordCustom(val item: PorcupineCustomKeyword) : Change
             data class SetPorcupineKeywordCustom(
                 val item: PorcupineCustomKeyword,
-                val value: Boolean
+                val value: Boolean,
             ) : Change
 
             data class UndoCustomKeywordDeleted(val item: PorcupineCustomKeyword) : Change
@@ -91,7 +91,8 @@ sealed interface WakeWordConfigurationUiEvent {
 
             data class SelectAudioRecorderChannelType(val value: AudioFormatChannelType) : Change
             data class SelectAudioRecorderEncodingType(val value: AudioFormatEncodingType) : Change
-            data class SelectAudioRecorderSampleRateType(val value: AudioFormatSampleRateType) : Change
+            data class SelectAudioRecorderSampleRateType(val value: AudioFormatSampleRateType) :
+                Change
         }
 
 
@@ -103,7 +104,8 @@ sealed interface WakeWordConfigurationUiEvent {
 
             data class SelectAudioOutputChannelType(val value: AudioFormatChannelType) : Change
             data class SelectAudioOutputEncodingType(val value: AudioFormatEncodingType) : Change
-            data class SelectAudioOutputSampleRateType(val value: AudioFormatSampleRateType) : Change
+            data class SelectAudioOutputSampleRateType(val value: AudioFormatSampleRateType) :
+                Change
         }
 
 
