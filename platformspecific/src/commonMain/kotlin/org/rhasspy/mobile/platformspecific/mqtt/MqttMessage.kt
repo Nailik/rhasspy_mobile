@@ -9,7 +9,7 @@ data class MqttMessage(
     /** Quality of service. */
     val qos: MqttQos = MqttQos.AT_MOST_ONCE,
     /** If *true* then the message is kept by the MQTT Broker. */
-    val retained: Boolean = false
+    val retained: Boolean = false,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

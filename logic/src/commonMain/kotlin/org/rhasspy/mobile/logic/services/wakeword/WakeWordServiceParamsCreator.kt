@@ -8,7 +8,7 @@ import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 internal class WakeWordServiceParamsCreator(
-    private val microphonePermission: IMicrophonePermission
+    private val microphonePermission: IMicrophonePermission,
 ) {
 
     operator fun invoke(): StateFlow<WakeWordServiceParams> {

@@ -34,7 +34,11 @@ import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action.ScanHomeAssistantAccessToken
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.ChangeIntentHandlingHomeAssistantAccessToken
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.ChangeIntentHandlingHomeAssistantEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.ChangeIntentHandlingHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingHomeAssistantOption
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewState.IntentHandlingConfigurationData
 
@@ -74,7 +78,7 @@ fun IntentHandlingConfigurationScreen() {
 @Composable
 private fun IntentHandlingEditContent(
     editData: IntentHandlingConfigurationData,
-    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
+    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit,
 ) {
 
     LazyColumn(
@@ -96,7 +100,7 @@ private fun IntentHandlingEditContent(
 @Composable
 private fun IntentHandlingOptionContent(
     editData: IntentHandlingConfigurationData,
-    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
+    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit,
 ) {
 
     RadioButtonsEnumSelection(
@@ -114,12 +118,12 @@ private fun IntentHandlingOptionContent(
                 onEvent = onEvent
             )
 
-            IntentHandlingOption.RemoteHTTP    -> RemoteHTTPOption(
+            IntentHandlingOption.RemoteHTTP -> RemoteHTTPOption(
                 intentHandlingHttpEndpoint = editData.intentHandlingHttpEndpoint,
                 onEvent = onEvent
             )
 
-            else                               -> Unit
+            else -> Unit
         }
 
     }
@@ -133,7 +137,7 @@ private fun IntentHandlingOptionContent(
 @Composable
 private fun RemoteHTTPOption(
     intentHandlingHttpEndpoint: String,
-    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
+    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
@@ -161,7 +165,7 @@ private fun HomeAssistantOption(
     intentHandlingHassEndpoint: String,
     intentHandlingHassAccessToken: String,
     intentHandlingHassOption: HomeAssistantIntentHandlingOption,
-    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
+    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
@@ -185,7 +189,10 @@ private fun HomeAssistantOption(
                 IconButton(
                     modifier = Modifier
                         .size(48.dp)
-                        .background(MaterialTheme.colorScheme.secondaryContainer, shape = CircleShape),
+                        .background(
+                            MaterialTheme.colorScheme.secondaryContainer,
+                            shape = CircleShape
+                        ),
                     onClick = { onEvent(ScanHomeAssistantAccessToken) }
                 ) {
                     Icon(

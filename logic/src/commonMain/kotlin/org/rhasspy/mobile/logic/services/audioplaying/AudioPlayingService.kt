@@ -10,7 +10,9 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Sound
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.ServiceState.*
+import org.rhasspy.mobile.data.service.ServiceState.Disabled
+import org.rhasspy.mobile.data.service.ServiceState.Pending
+import org.rhasspy.mobile.data.service.ServiceState.Success
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished
@@ -34,7 +36,7 @@ interface IAudioPlayingService : IService {
  * when data is null the service was most probably mqtt and will return result in a call function
  */
 internal class AudioPlayingService(
-    paramsCreator: AudioPlayingServiceParamsCreator
+    paramsCreator: AudioPlayingServiceParamsCreator,
 ) : IAudioPlayingService {
 
     override val logger = LogType.AudioPlayingService.logger()
@@ -63,10 +65,10 @@ internal class AudioPlayingService(
 
     private fun updateState() {
         _serviceState.value = when (params.audioPlayingOption) {
-            AudioPlayingOption.Local      -> Success
+            AudioPlayingOption.Local -> Success
             AudioPlayingOption.RemoteHTTP -> Success
             AudioPlayingOption.RemoteMQTT -> Success
-            AudioPlayingOption.Disabled   -> Disabled
+            AudioPlayingOption.Disabled -> Disabled
         }
     }
 
@@ -91,7 +93,7 @@ internal class AudioPlayingService(
     override fun playAudio(audioSource: AudioSource) {
         logger.d { "playAudio" }
         when (params.audioPlayingOption) {
-            AudioPlayingOption.Local      -> {
+            AudioPlayingOption.Local -> {
                 audioFocusService.request(Sound)
                 localAudioService.playAudio(audioSource) {
                     _serviceState.value = it
@@ -114,7 +116,7 @@ internal class AudioPlayingService(
                 serviceMiddleware.action(PlayFinished(Source.Local))
             }
 
-            AudioPlayingOption.Disabled   -> serviceMiddleware.action(PlayFinished(Source.Local))
+            AudioPlayingOption.Disabled -> serviceMiddleware.action(PlayFinished(Source.Local))
         }
     }
 
@@ -124,7 +126,7 @@ internal class AudioPlayingService(
     override fun stopPlayAudio() {
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local -> localAudioService.stop()
-            else                     -> serviceMiddleware.action(PlayFinished(Source.Local))
+            else -> serviceMiddleware.action(PlayFinished(Source.Local))
         }
     }
 

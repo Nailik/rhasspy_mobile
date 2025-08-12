@@ -8,7 +8,7 @@ import org.rhasspy.mobile.resources.MR
 actual enum class AudioFormatEncodingType(
     override val text: StableStringResource,
     actual val value: Int,
-    actual val bitRate: Int
+    actual val bitRate: Int,
 ) : IOption<AudioFormatEncodingType> {
 
     //TODO("Not yet implemented")

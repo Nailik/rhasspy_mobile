@@ -8,7 +8,7 @@ import org.rhasspy.mobile.platformspecific.external.IExternalResultRequest
 
 expect fun Path.Companion.commonInternalPath(
     nativeApplication: NativeApplication,
-    fileName: String
+    fileName: String,
 ): Path
 
 expect fun Path?.commonExists(): Boolean
@@ -25,12 +25,12 @@ expect inline fun <reified T> Path.commonDecodeLogList(): T
 
 expect fun Path.commonShare(
     nativeApplication: NativeApplication,
-    externalResultRequest: IExternalResultRequest
+    externalResultRequest: IExternalResultRequest,
 ): Boolean
 
 expect suspend fun Path.commonSave(
     nativeApplication: NativeApplication,
     externalResultRequest: IExternalResultRequest,
     fileName: String,
-    fileType: String
+    fileType: String,
 ): Boolean

@@ -16,7 +16,13 @@ import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParamsCreator
 import org.rhasspy.mobile.logic.services.dialog.IDialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.disabled.DialogManagerDisabled
-import org.rhasspy.mobile.logic.services.dialog.dialogmanager.local.*
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.local.DialogManagerLocal
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.local.IIdleStateActions
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.local.IPlayingAudioStateActions
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.local.ISessionStateActions
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.local.IdleStateActions
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.local.PlayingAudioStateActions
+import org.rhasspy.mobile.logic.services.dialog.dialogmanager.local.SessionStateActions
 import org.rhasspy.mobile.logic.services.dialog.dialogmanager.mqtt.DialogManagerMqtt
 import org.rhasspy.mobile.logic.services.dialog.states.IStateTransition
 import org.rhasspy.mobile.logic.services.dialog.states.StateTransition

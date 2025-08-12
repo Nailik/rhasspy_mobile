@@ -1,83 +1,53 @@
 @file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
 
 plugins {
-    id("org.kodein.mock.mockmp")
-    kotlin("multiplatform")
-    kotlin("plugin.serialization")
-    id("com.android.library")
-    id("base-gradle")
-    id("org.gradle.test-retry")
+    id("base.kmp.library")
+    alias(libs.plugins.serialization)
+    alias(libs.plugins.mockmp)
+    alias(libs.plugins.test.retry)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(project(":data"))
-                implementation(project(":platformspecific"))
-                implementation(project(":resources"))
-                implementation(project(":settings"))
-                implementation(Jetbrains.Kotlinx.coroutines)
-                implementation(Touchlab.kermit)
-                implementation(Jetbrains.Kotlinx.serialization)
-                implementation(Jetbrains.Kotlinx.immutable)
-                implementation(Jetbrains.Kotlinx.dateTime)
-                implementation(Icerock.Resources.resourcesCompose)
-                implementation(Ktor2.Server.core)
-                implementation(Ktor2.Server.cors)
-                implementation(Ktor2.Server.cio)
-                implementation(Ktor2.Server.dataConversion)
-                implementation(Ktor2.Client.cio)
-                implementation(Ktor2.Server.statusPages)
-                implementation(Ktor2.Plugins.network)
-                implementation(Ktor2.Server.core)
-                implementation(Benasher.uuid)
-                implementation(Square.okio)
-                implementation(Koin.core)
-            }
+        commonMain.dependencies {
+            implementation(project(":data"))
+            implementation(project(":platformspecific"))
+            implementation(project(":resources"))
+            implementation(project(":settings"))
+            implementation(libs.kotlinx.coroutines)
+            implementation(libs.kotlinx.serialization)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.collections.immutable)
+            implementation(libs.kermit)
+            implementation(libs.moko.resources)
+            implementation(libs.ktor.network)
+            implementation(libs.ktor.server.core)
+            implementation(libs.ktor.server.cors)
+            implementation(libs.ktor.server.cio)
+            implementation(libs.ktor.server.data.conversion)
+            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.server.status.pages)
+            implementation(libs.benasher44.uuid)
+            implementation(libs.okio)
+            implementation(libs.koin.core)
         }
-        val commonTest by getting {
-            dependsOn(commonMain)
-            dependencies {
-                implementation(project(":platformspecific"))
-                implementation(Russhwolf.multiplatformSettingsTest)
-                implementation(Russhwolf.multiplatformSettingsNoArg)
-                implementation(Kotlin.test)
-                implementation(Koin.test)
-                implementation(KotlinX.Coroutines.test)
-            }
+        commonTest.dependencies {
+            implementation(project(":platformspecific"))
+            implementation(libs.multiplatform.settings.test)
+            implementation(libs.multiplatform.settings.no.arg)
+            implementation(libs.kotlin.test)
+            implementation(libs.koin.test)
+            implementation(libs.kotlinx.coroutines.test)
         }
-        val androidMain by getting {
-            dependencies {
-                implementation(AndroidX.multidex)
-                implementation(Picovoice.porcupineAndroid)
-            }
+        androidMain.dependencies {
+            implementation(libs.androidx.multidex)
+            implementation(libs.porcupine)
         }
-        val androidUnitTest by getting {
-            dependsOn(commonTest)
-            dependencies {
-                implementation(project(":androidApp"))
-                implementation(project(":app"))
-                implementation(AndroidX.archCore.testing)
-            }
-        }
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-        }
-        val iosX64Test by getting
-        val iosArm64Test by getting
-        val iosSimulatorArm64Test by getting
-        val iosTest by creating {
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            iosSimulatorArm64Test.dependsOn(this)
+        androidUnitTest.dependencies {
+            implementation(project(":androidApp"))
+            implementation(project(":app"))
+            implementation(libs.androidx.arch.core.testing)
         }
     }
 }
@@ -92,7 +62,9 @@ android {
 }
 
 mockmp {
-    usesHelper = true
+    onTest {
+        withHelper()
+    }
 }
 
 tasks.withType<Test>().configureEach {

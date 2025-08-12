@@ -15,7 +15,10 @@ import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSe
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.ToggleAudioLevelTest
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.SetSilenceDetectionEnabled
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.UpdateSilenceDetectionAudioLevelLogarithm
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.UpdateSilenceDetectionMinimumTime
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.UpdateSilenceDetectionTime
 import kotlin.math.pow
 
 @Stable
@@ -49,7 +52,7 @@ class SilenceDetectionSettingsViewModel(
 
     private fun onChange(change: Change) {
         when (change) {
-            is SetSilenceDetectionEnabled                ->
+            is SetSilenceDetectionEnabled ->
                 AppSetting.isAutomaticSilenceDetectionEnabled.value = change.enabled
 
             is UpdateSilenceDetectionAudioLevelLogarithm ->
@@ -58,25 +61,28 @@ class SilenceDetectionSettingsViewModel(
                         audioRecorder.absoluteMaxVolume.pow(change.percentage)
                     } else 0f
 
-            is UpdateSilenceDetectionMinimumTime         ->
-                AppSetting.automaticSilenceDetectionMinimumTime.value = change.time.toLongOrNullOrConstant()
+            is UpdateSilenceDetectionMinimumTime ->
+                AppSetting.automaticSilenceDetectionMinimumTime.value =
+                    change.time.toLongOrNullOrConstant()
 
-            is UpdateSilenceDetectionTime                ->
-                AppSetting.automaticSilenceDetectionTime.value = change.time.toLongOrNullOrConstant()
+            is UpdateSilenceDetectionTime ->
+                AppSetting.automaticSilenceDetectionTime.value =
+                    change.time.toLongOrNullOrConstant()
         }
     }
 
     private fun onAction(action: Action) {
         when (action) {
-            ToggleAudioLevelTest -> requireMicrophonePermission {
-                if (audioRecorder.isRecording.value) {
-                    stopRecording()
-                } else {
-                    startRecording()
+            ToggleAudioLevelTest ->
+                requireMicrophonePermission {
+                    if (audioRecorder.isRecording.value) {
+                        stopRecording()
+                    } else {
+                        startRecording()
+                    }
                 }
-            }
 
-            is BackClick         -> navigator.onBackPressed()
+            is BackClick -> navigator.onBackPressed()
         }
     }
 
@@ -84,7 +90,6 @@ class SilenceDetectionSettingsViewModel(
         stopRecording()
         super.onDisposed()
     }
-
 
     private fun startRecording() {
         //save to restore later

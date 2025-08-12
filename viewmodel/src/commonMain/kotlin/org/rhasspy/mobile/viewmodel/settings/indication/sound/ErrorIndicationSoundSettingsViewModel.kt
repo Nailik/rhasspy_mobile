@@ -9,7 +9,7 @@ import org.rhasspy.mobile.settings.AppSetting
 @Stable
 class ErrorIndicationSoundSettingsViewModel(
     localAudioService: ILocalAudioService,
-    nativeApplication: NativeApplication
+    nativeApplication: NativeApplication,
 ) : IIndicationSoundSettingsViewModel(
     localAudioService = localAudioService,
     nativeApplication = nativeApplication,

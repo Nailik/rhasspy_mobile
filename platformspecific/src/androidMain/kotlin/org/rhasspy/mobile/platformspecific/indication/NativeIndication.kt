@@ -32,7 +32,6 @@ actual object NativeIndication : KoinComponent {
         }
     }
 
-
     /**
      * remove wake lock and let screen go off
      */

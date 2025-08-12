@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.kodein.mock.Mock
+import org.kodein.mock.generated.injectMocks
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.audiorecorder.IAudioRecorder
@@ -29,12 +30,11 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
     @Mock
     lateinit var overlayPermission: IOverlayPermission
 
-
     private lateinit var silenceDetectionSettingsViewModel: SilenceDetectionSettingsViewModel
 
     private val isAppInBackground = MutableStateFlow(false)
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {
@@ -75,13 +75,31 @@ class SilenceDetectionSettingsViewModelTest : AppTest() {
     @Suppress("unused")
     fun `when the user tests the audio recording and closes the app audio recording test is stopped`() {
         every { audioRecorder.stopRecording() } returns Unit
-        every { audioRecorder.startRecording(isAny(), isAny(), isAny(), isAny(), isAny(), isAny(), isAny()) } returns Unit
+        every {
+            audioRecorder.startRecording(
+                isAny(),
+                isAny(),
+                isAny(),
+                isAny(),
+                isAny(),
+                isAny(),
+                isAny()
+            )
+        } returns Unit
         every { microphonePermission.granted } returns MutableStateFlow(true)
         assertEquals(false, audioRecorder.isRecording.value)
 
         silenceDetectionSettingsViewModel.onEvent(ToggleAudioLevelTest)
         nVerify {
-            audioRecorder.startRecording(isAny(), isAny(), isAny(), isAny(), isAny(), isAny(), isAny())
+            audioRecorder.startRecording(
+                isAny(),
+                isAny(),
+                isAny(),
+                isAny(),
+                isAny(),
+                isAny(),
+                isAny()
+            )
         }
 
         isAppInBackground.value = true

@@ -1,7 +1,11 @@
 package org.rhasspy.mobile.android.configuration
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
@@ -29,7 +33,8 @@ import kotlin.test.assertTrue
 
 class WakeWordConfigurationContentTest : FlakyTest() {
 
-    private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private val device: UiDevice =
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     private val viewModel = get<WakeWordConfigurationViewModel>()
 
@@ -37,7 +42,6 @@ class WakeWordConfigurationContentTest : FlakyTest() {
     override fun ComposableContent() {
         MainScreen(LocalViewModelFactory.current)
     }
-
 
     /**
      * option is disable

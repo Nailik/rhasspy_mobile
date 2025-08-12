@@ -13,7 +13,7 @@ interface IExternalResultRequest {
 }
 
 internal expect class ExternalResultRequest(
-    nativeApplication: NativeApplication
+    nativeApplication: NativeApplication,
 ) : IExternalResultRequest {
 
     override fun <R> launch(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R>

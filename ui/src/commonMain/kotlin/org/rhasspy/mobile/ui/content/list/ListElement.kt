@@ -14,7 +14,7 @@ fun ListElement(
     secondaryText: @Composable (() -> Unit)? = null,
     overlineText: @Composable (() -> Unit)? = null,
     trailing: @Composable (() -> Unit)? = null,
-    text: @Composable () -> Unit
+    text: @Composable () -> Unit,
 ) {
     ListItem(
         headlineContent = text,

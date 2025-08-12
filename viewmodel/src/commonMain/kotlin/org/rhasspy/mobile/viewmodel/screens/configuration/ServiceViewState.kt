@@ -6,5 +6,5 @@ import org.rhasspy.mobile.data.service.ServiceState
 
 @Stable
 data class ServiceViewState(
-    val serviceState: StateFlow<ServiceState>
+    val serviceState: StateFlow<ServiceState>,
 )

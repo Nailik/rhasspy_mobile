@@ -2,8 +2,14 @@ package org.rhasspy.mobile.logic.services.homeassistant
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
@@ -44,7 +50,11 @@ internal class HomeAssistantService(
     /**
      * simplified conversion from intent to hass event or hass intent
      */
-    override fun sendIntent(intentName: String, intent: String, onResult: (result: ServiceState) -> Unit) {
+    override fun sendIntent(
+        intentName: String,
+        intent: String,
+        onResult: (result: ServiceState) -> Unit,
+    ) {
         logger.d { "sendIntent name: $intentName json: $intent" }
         try {
             val slots = mutableMapOf<String, JsonElement?>()
@@ -77,7 +87,7 @@ internal class HomeAssistantService(
             val intentRes = Json.encodeToString(slots)
 
             when (params.intentHandlingHomeAssistantOption) {
-                Event  -> httpClientService.homeAssistantEvent(intentRes, intentName) {
+                Event -> httpClientService.homeAssistantEvent(intentRes, intentName) {
                     onResult(it.toServiceState())
                 }
 

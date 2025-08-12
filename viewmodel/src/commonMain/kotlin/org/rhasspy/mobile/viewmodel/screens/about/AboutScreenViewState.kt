@@ -6,7 +6,7 @@ import org.rhasspy.mobile.data.libraries.StableLibrary
 import org.rhasspy.mobile.data.resource.StableStringResource
 
 @Stable
-data class AboutScreenViewState internal constructor(
+data class AboutScreenViewState(
     val changelog: ImmutableList<String>,
     val isChangelogDialogVisible: Boolean,
     val privacy: String,
@@ -14,5 +14,5 @@ data class AboutScreenViewState internal constructor(
     val libraries: ImmutableList<StableLibrary>,
     val isLibraryDialogVisible: Boolean,
     val libraryDialogContent: StableLibrary?,
-    val snackBarText: StableStringResource?
+    val snackBarText: StableStringResource?,
 )

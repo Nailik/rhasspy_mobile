@@ -3,6 +3,7 @@ package org.rhasspy.mobile.viewmodel.element
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.kodein.mock.Mock
+import org.kodein.mock.generated.injectMocks
 import org.koin.dsl.module
 import org.koin.test.get
 import org.rhasspy.mobile.logic.middleware.IServiceMiddleware
@@ -27,7 +28,7 @@ class MicrophoneFabViewModelTest : AppTest() {
 
     private lateinit var microphoneFabViewModel: MicrophoneFabViewModel
 
-    override fun setUpMocks() = injectMocks(mocker)
+    override fun setUpMocks() = mocker.injectMocks(this)
 
     @BeforeTest
     fun before() {

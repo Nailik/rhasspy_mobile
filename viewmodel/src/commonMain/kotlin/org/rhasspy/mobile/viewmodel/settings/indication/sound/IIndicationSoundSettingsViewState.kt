@@ -6,14 +6,14 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 
 @Stable
-data class IIndicationSoundSettingsViewState internal constructor(
+data class IIndicationSoundSettingsViewState(
     val soundSetting: String,
     val customSoundFiles: ImmutableList<String>,
     val soundVolume: Float,
     val isAudioPlaying: Boolean,
     val audioOutputOption: AudioOutputOption,
     val isNoSoundInformationBoxVisible: Boolean,
-    val snackBarText: StableStringResource? = null
+    val snackBarText: StableStringResource? = null,
 ) {
 
     constructor(
@@ -23,7 +23,7 @@ data class IIndicationSoundSettingsViewState internal constructor(
         isAudioPlaying: Boolean,
         audioOutputOption: AudioOutputOption,
         deviceSoundVolume: Int?,
-        deviceNotificationVolume: Int?
+        deviceNotificationVolume: Int?,
     ) : this(
         soundSetting = soundSetting,
         customSoundFiles = customSoundFiles,
@@ -31,7 +31,7 @@ data class IIndicationSoundSettingsViewState internal constructor(
         isAudioPlaying = isAudioPlaying,
         audioOutputOption = audioOutputOption,
         isNoSoundInformationBoxVisible = when (audioOutputOption) {
-            AudioOutputOption.Sound        -> deviceSoundVolume == 0
+            AudioOutputOption.Sound -> deviceSoundVolume == 0
             AudioOutputOption.Notification -> deviceNotificationVolume == 0
         }
     )

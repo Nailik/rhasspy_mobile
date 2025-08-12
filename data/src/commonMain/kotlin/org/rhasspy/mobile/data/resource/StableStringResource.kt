@@ -14,12 +14,12 @@ sealed interface StableStringResource {
 
     @Stable
     data class StableStringResourceSingle(
-        val stringResource: StringResource
+        val stringResource: StringResource,
     ) : StableStringResource
 
     @Stable
     data class StableResourceFormattedStringDesc(
-        val stringResource: ResourceFormattedStringDesc
+        val stringResource: ResourceFormattedStringDesc,
     ) : StableStringResource
 
 
