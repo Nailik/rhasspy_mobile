@@ -7,11 +7,6 @@ or in [Releases](https://github.com/Nailik/rhasspy_mobile/releases).
 
 [<img src="documentation/images/google-play-badge.png" height="75">](https://play.google.com/store/apps/details?id=org.rhasspy.mobile.android)
 
-### Status
-
-Rhasspy mobile is currently only maintained in order to keep working and also meet Play Store requirements.
-There will be no further development or new features.
-
 ### Supported Devices
 
 The project uses Kotlin Multiplatform Mobile which supports a lot of platforms but is not
