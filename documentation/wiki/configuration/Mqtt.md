@@ -75,7 +75,7 @@ This section explains how to secure the MQTT protocol using its encrypted varian
 
 3. Sign the client's CSR with the CA.
    ```bash
-   openssl x509 -req -in client.csr -CA ../../ca/ca.crt -CAkey ../../ca/ca.key -CAcreateserial -out client.crt -days 365
+   openssl x509 -req -in client.csr -CA ../ca/ca.crt -CAkey ../ca/ca.key -CAcreateserial -out client.crt -days 365
    ```
 
 ##### **Folder structure**
