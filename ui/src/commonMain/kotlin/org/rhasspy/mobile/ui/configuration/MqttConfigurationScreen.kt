@@ -35,6 +35,8 @@ import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeyStorePassword
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.RemoveSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttConnectionTimeout
@@ -124,6 +126,8 @@ private fun MqttEditContent(
                     MqttSSL(
                         isMqttSSLEnabled = editData.isMqttSSLEnabled,
                         mqttKeyStoreFileName = editData.mqttKeyStoreFileName,
+                        isKeyStoreFileTextVisible = editData.isKeyStoreFileTextVisible,
+                        mqttKeyStorePassword = editData.mqttKeyStorePassword,
                         onEvent = onEvent
                     )
 
@@ -202,6 +206,8 @@ private fun MqttConnectionSettings(
 private fun MqttSSL(
     isMqttSSLEnabled: Boolean,
     mqttKeyStoreFileName: String?,
+    isKeyStoreFileTextVisible: Boolean,
+    mqttKeyStorePassword: String,
     onEvent: (MqttConfigurationUiEvent) -> Unit,
 ) {
 
@@ -240,8 +246,6 @@ private fun MqttSSL(
                 onClick = { onEvent(SelectSSLCertificate) }
             )
 
-            val isKeyStoreFileTextVisible by remember { derivedStateOf { mqttKeyStoreFileName != null } }
-
             AnimatedVisibility(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
@@ -250,13 +254,28 @@ private fun MqttSSL(
 
                 val keyStoreFileText by remember { derivedStateOf { mqttKeyStoreFileName ?: "" } }
 
-                InformationListElement(
-                    text = translate(
-                        resource = MR.strings.currentlySelectedCertificate.stable,
-                        keyStoreFileText
+                Column {
+                    InformationListElement(
+                        text = translate(
+                            resource = MR.strings.currentlySelectedCertificate.stable,
+                            keyStoreFileText
+                        )
                     )
-                )
+
+                    FilledTonalButtonListItem(
+                        text = MR.strings.remove.stable,
+                        modifier = Modifier.testTag(TestTag.Delete),
+                        onClick = { onEvent(RemoveSSLCertificate) }
+                    )
+                }
             }
+
+            // show the current HTTP server keystore password (read-only)
+            TextFieldListItemVisibility(
+                label = MR.strings.keyStorePassword.stable,
+                value = mqttKeyStorePassword,
+                onValueChange = { onEvent(UpdateMqttKeyStorePassword(it)) }
+            )
 
         }
     }

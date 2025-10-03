@@ -118,7 +118,11 @@ internal class MqttService(
     private val paramsFlow: StateFlow<MqttServiceParams> = paramsCreator()
     private val params: MqttServiceParams get() = paramsFlow.value
 
-    private val url get() = "tcp://${params.mqttHost}:${params.mqttPort}"
+    private val url: String
+        get() {
+            val scheme = if (params.mqttServiceConnectionOptions.isSSLEnabled) "ssl" else "tcp"
+            return "$scheme://${params.mqttHost}:${params.mqttPort}"
+        }
 
     private var client: MqttClient? = null
     private var retryJob: Job? = null

@@ -16,6 +16,7 @@ sealed interface MqttConfigurationUiEvent {
         data class UpdateMqttKeepAliveInterval(val keepAliveInterval: String) : Change
         data class UpdateMqttRetryInterval(val retryInterval: String) : Change
         data class UpdateMqttKeyStoreFile(val file: Path) : Change
+        data class UpdateMqttKeyStorePassword(val mqttKeyStorePassword: String) : Change
 
     }
 
@@ -23,6 +24,7 @@ sealed interface MqttConfigurationUiEvent {
 
         data object OpenMqttSSLWiki : Action
         data object SelectSSLCertificate : Action
+        data object RemoveSSLCertificate : Action
         data object BackClick : Action
 
     }

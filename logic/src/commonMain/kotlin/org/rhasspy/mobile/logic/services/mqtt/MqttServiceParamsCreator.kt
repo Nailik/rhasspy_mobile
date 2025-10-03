@@ -18,6 +18,7 @@ internal class MqttServiceParamsCreator {
             ConfigurationSetting.mqttRetryInterval.data,
             ConfigurationSetting.isMqttSSLEnabled.data,
             ConfigurationSetting.mqttKeyStoreFile.data,
+            ConfigurationSetting.mqttKeyStorePassword.data,
             ConfigurationSetting.mqttUserName.data,
             ConfigurationSetting.mqttPassword.data,
             ConfigurationSetting.mqttConnectionTimeout.data,
@@ -40,6 +41,7 @@ internal class MqttServiceParamsCreator {
             mqttServiceConnectionOptions = MqttServiceConnectionOptions(
                 isSSLEnabled = ConfigurationSetting.isMqttSSLEnabled.value,
                 keyStorePath = ConfigurationSetting.mqttKeyStoreFile.value,
+                keyStorePassword = ConfigurationSetting.mqttKeyStorePassword.value,
                 connUsername = ConfigurationSetting.mqttUserName.value,
                 connPassword = ConfigurationSetting.mqttPassword.value,
                 connectionTimeout = ConfigurationSetting.mqttConnectionTimeout.value.toInt(),

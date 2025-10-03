@@ -24,6 +24,8 @@ data class MqttConfigurationViewState(
         val mqttKeepAliveInterval: Long? = ConfigurationSetting.mqttKeepAliveInterval.value,
         val mqttRetryInterval: Long? = ConfigurationSetting.mqttRetryInterval.value,
         val mqttKeyStoreFile: Path? = ConfigurationSetting.mqttKeyStoreFile.value,
+        val mqttKeyStorePassword: String = ConfigurationSetting.mqttKeyStorePassword.value,
+        val isKeyStoreFileTextVisible: Boolean = ConfigurationSetting.mqttKeyStoreFile.value != null,
     ) : IConfigurationData {
 
         val mqttPortText: String = mqttPort.toStringOrEmpty()

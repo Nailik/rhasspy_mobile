@@ -197,6 +197,7 @@ internal actual class SettingsUtils actual constructor(
                 SettingsEnum.MQTTSSLEnabled.name,
                 SettingsEnum.MQTTPassword.name,
                 SettingsEnum.MQTTKeyStoreFile.name,
+                SettingsEnum.MQTTKeyStorePassword.name,
                 SettingsEnum.WakeWordUDPOutputHost.name,
                 SettingsEnum.WakeWordUDPOutputPort.name,
                 SettingsEnum.WakeWordPorcupineAccessToken.name,

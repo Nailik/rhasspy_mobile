@@ -17,6 +17,7 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import java.security.KeyStore
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.KeyManagerFactory
 
 /**
  * Represents a MQTT client which can connect to the MQTT Broker.
@@ -137,9 +138,16 @@ actual class MqttClient actual constructor(
             client.connectWithResult(connOptions)
             client.setCallback(callback)
         } catch (securityEx: MqttSecurityException) {
+            logger.e(securityEx) {
+                "MqttSecurityException during connect: reasonCode=${securityEx.reasonCode}, message='${securityEx.message}', cause='${securityEx.cause?.message}'"
+            }
             if (securityEx.reasonCode == 4) status = MqttStatus.INVALID_CREDENTIALS
             else if (securityEx.reasonCode == 5) status = MqttStatus.NOT_AUTHORIZED
+            else status = MqttStatus.UNKNOWN
         } catch (mqttEx: MqttException) {
+            logger.e(mqttEx) {
+                "MqttException during connect: reasonCode=${mqttEx.reasonCode}, message='${mqttEx.message}', cause='${mqttEx.cause?.message}'"
+            }
             status = when (mqttEx.reasonCode) {
                 3 -> MqttStatus.SERVER_UNAVAILABLE
                 2 -> MqttStatus.IDENTIFIER_REJECTED
@@ -148,6 +156,7 @@ actual class MqttClient actual constructor(
             }
         } catch (e: Exception) {
             //some exception occurred
+            logger.e(e) { "Unknown exception during connect: ${e::class.qualifiedName}: ${e.message}" }
             status = MqttStatus.UNKNOWN
         }
         if (status != MqttStatus.SUCCESS) {
@@ -185,8 +194,22 @@ actual class MqttClient actual constructor(
     private fun MqttServiceConnectionOptions.toPahoConnectOptions(): MqttConnectOptions {
         return MqttConnectOptions().also {
             if (this.isSSLEnabled) {
+                logger.v { "SSL is enabled for MQTT connection options" }
                 this.keyStorePath?.also { path ->
-                    it.socketFactory = createSSLContext(path).socketFactory
+                    val file = path.toFile()
+                    val exists = file.exists()
+                    val length = if (exists) file.length() else -1
+                    logger.v { "Preparing SSLContext, keyStorePath='${path}', absolute='${file.absolutePath}', exists=${exists}, sizeBytes=${length}" }
+                    try {
+                        it.socketFactory = createSSLContext(path,this.keyStorePassword).socketFactory
+                        logger.v { "SSLContext created and socketFactory applied successfully" }
+                    } catch (t: Throwable) {
+                        logger.e(t) { "Failed to create/apply SSLContext from keystore path: ${path}" }
+                        throw t
+                    }
+                } ?: run {
+                    it.socketFactory = createSSLContext(null, null).socketFactory
+                    logger.w { "SSL enabled but no keystore path provided, using default SSLContext" }
                 }
             }
             it.isCleanSession = this.cleanSession
@@ -212,13 +235,23 @@ actual class MqttClient actual constructor(
     /**
      * create ssl context by reading keystore file
      */
-    private fun createSSLContext(keyStorePath: Path): SSLContext {
-        val keyStore = KeyStore.getInstance("BKS")
-        keyStore.load(keyStorePath.toFile().inputStream(), null)
-        val factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-        factory.init(keyStore)
+    private fun createSSLContext(keyStorePath: Path?, keyStorePassword: String?): SSLContext {
         val sslContext = SSLContext.getInstance("TLS")
-        sslContext.init(null, factory.trustManagers, null)
+        if (keyStorePath != null) {
+            val keyStore = KeyStore.getInstance("BKS")
+            keyStorePath.toFile().inputStream().use { input ->
+                keyStore.load(input, keyStorePassword?.toCharArray())
+            }
+            val keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
+            keyManagerFactory.init(keyStore, keyStorePassword?.toCharArray())
+            val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+            trustManagerFactory.init(keyStore)
+            sslContext.init(keyManagerFactory.keyManagers, trustManagerFactory.trustManagers, null)
+        } else {
+            val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+            trustManagerFactory.init(null as KeyStore?)
+            sslContext.init(null, trustManagerFactory.trustManagers, null)
+        }
         return sslContext
     }
 

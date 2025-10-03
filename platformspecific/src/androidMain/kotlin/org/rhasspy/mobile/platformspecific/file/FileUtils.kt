@@ -13,6 +13,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectUtils
+import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.resumeSave
 import java.io.BufferedInputStream
 import java.io.File
@@ -43,7 +44,9 @@ actual object FileUtils : KoinComponent {
                         //create folder if it doesn't exist yet
                         File(context.filesDir, folderType.toString()).mkdirs()
                         val result = copyFile(folderType, uri, folderType.toString(), finalFileName)
-                        continuation.resumeSave(result?.toPath())
+                        // Return absolute internal path so consumers don't resolve to root
+                        val path: Path? = result?.let { Path.commonInternalPath(context, "${folderType}/$it") }
+                        continuation.resumeSave(path)
                     } ?: run {
                         continuation.resumeSave(null)
                     }
