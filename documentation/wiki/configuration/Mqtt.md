@@ -189,7 +189,7 @@ use the documentation if you are not used to using traefik https://doc.traefik.i
         rule: HostSNI(`your.dns.example`)
         entryPoints: mqttsecure
         tls:
-          passthrough: true
+          certResolver: myresolver
         service: mqtt@file
     services:
       mqtt:
