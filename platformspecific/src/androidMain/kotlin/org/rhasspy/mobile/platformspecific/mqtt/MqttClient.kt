@@ -139,15 +139,13 @@ actual class MqttClient actual constructor(
             client.setCallback(callback)
         } catch (securityEx: MqttSecurityException) {
             logger.e(securityEx) {
-                "MqttSecurityException during connect: reasonCode=${securityEx.reasonCode}, message='${securityEx.message}', cause='${securityEx.cause?.message}'"
+                "MqttSecurityException during connect"
             }
             if (securityEx.reasonCode == 4) status = MqttStatus.INVALID_CREDENTIALS
             else if (securityEx.reasonCode == 5) status = MqttStatus.NOT_AUTHORIZED
             else status = MqttStatus.UNKNOWN
         } catch (mqttEx: MqttException) {
-            logger.e(mqttEx) {
-                "MqttException during connect: reasonCode=${mqttEx.reasonCode}, message='${mqttEx.message}', cause='${mqttEx.cause?.message}'"
-            }
+            logger.e(mqttEx) { "MqttException during connect" }
             status = when (mqttEx.reasonCode) {
                 3 -> MqttStatus.SERVER_UNAVAILABLE
                 2 -> MqttStatus.IDENTIFIER_REJECTED
@@ -156,7 +154,7 @@ actual class MqttClient actual constructor(
             }
         } catch (e: Exception) {
             //some exception occurred
-            logger.e(e) { "Unknown exception during connect: ${e::class.qualifiedName}: ${e.message}" }
+            logger.e(e) { "Unknown exception during connect" }
             status = MqttStatus.UNKNOWN
         }
         if (status != MqttStatus.SUCCESS) {
