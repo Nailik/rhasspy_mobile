@@ -19,8 +19,8 @@ import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.RemoveSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled

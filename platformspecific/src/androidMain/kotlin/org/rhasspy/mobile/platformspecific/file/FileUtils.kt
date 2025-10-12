@@ -8,12 +8,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okio.Path
-import okio.Path.Companion.toPath
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.external.ExternalRedirectUtils
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirectUtils
 import org.rhasspy.mobile.platformspecific.resumeSave
 import java.io.BufferedInputStream
 import java.io.File
@@ -45,7 +44,8 @@ actual object FileUtils : KoinComponent {
                         File(context.filesDir, folderType.toString()).mkdirs()
                         val result = copyFile(folderType, uri, folderType.toString(), finalFileName)
                         // Return absolute internal path so consumers don't resolve to root
-                        val path: Path? = result?.let { Path.commonInternalPath(context, "${folderType}/$it") }
+                        val path: Path? =
+                            result?.let { Path.commonInternalPath(context, "${folderType}/$it") }
                         continuation.resumeSave(path)
                     } ?: run {
                         continuation.resumeSave(null)

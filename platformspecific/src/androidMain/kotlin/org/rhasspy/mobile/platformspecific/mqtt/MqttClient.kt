@@ -15,9 +15,9 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence
 import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.platformspecific.readOnly
 import java.security.KeyStore
+import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
-import javax.net.ssl.KeyManagerFactory
 
 /**
  * Represents a MQTT client which can connect to the MQTT Broker.
@@ -199,7 +199,8 @@ actual class MqttClient actual constructor(
                     val length = if (exists) file.length() else -1
                     logger.v { "Preparing SSLContext, keyStorePath='${path}', absolute='${file.absolutePath}', exists=${exists}, sizeBytes=${length}" }
                     try {
-                        it.socketFactory = createSSLContext(path,this.keyStorePassword).socketFactory
+                        it.socketFactory =
+                            createSSLContext(path, this.keyStorePassword).socketFactory
                         logger.v { "SSLContext created and socketFactory applied successfully" }
                     } catch (t: Throwable) {
                         logger.e(t) { "Failed to create/apply SSLContext from keystore path: ${path}" }
@@ -240,13 +241,16 @@ actual class MqttClient actual constructor(
             keyStorePath.toFile().inputStream().use { input ->
                 keyStore.load(input, keyStorePassword?.toCharArray())
             }
-            val keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
+            val keyManagerFactory =
+                KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
             keyManagerFactory.init(keyStore, keyStorePassword?.toCharArray())
-            val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+            val trustManagerFactory =
+                TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
             trustManagerFactory.init(keyStore)
             sslContext.init(keyManagerFactory.keyManagers, trustManagerFactory.trustManagers, null)
         } else {
-            val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+            val trustManagerFactory =
+                TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
             trustManagerFactory.init(null as KeyStore?)
             sslContext.init(null, trustManagerFactory.trustManagers, null)
         }
