@@ -26,6 +26,11 @@ on:
 env:
   ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 60
 
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
 jobs:
   check:
     uses: ./.github/workflows/pullrequest-ci.yml

@@ -15,6 +15,11 @@ on:
       SONAR_KEY:
         required: true
 
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
 jobs:
   #runs sonar
   analyze:
