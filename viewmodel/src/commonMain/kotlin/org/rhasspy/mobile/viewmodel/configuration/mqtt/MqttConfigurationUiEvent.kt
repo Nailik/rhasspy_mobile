@@ -15,7 +15,7 @@ sealed interface MqttConfigurationUiEvent {
         data class UpdateMqttConnectionTimeout(val timeout: String) : Change
         data class UpdateMqttKeepAliveInterval(val keepAliveInterval: String) : Change
         data class UpdateMqttRetryInterval(val retryInterval: String) : Change
-        data class UpdateMqttKeyStoreFile(val file: Path) : Change
+        data class UpdateMqttKeyStoreFile(val file: Path?) : Change
         data class UpdateMqttKeyStorePassword(val mqttKeyStorePassword: String) : Change
 
     }

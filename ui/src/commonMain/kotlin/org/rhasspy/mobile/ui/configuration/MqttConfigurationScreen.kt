@@ -205,7 +205,7 @@ private fun MqttConnectionSettings(
 @Composable
 private fun MqttSSL(
     isMqttSSLEnabled: Boolean,
-    mqttKeyStoreFileName: String?,
+    mqttKeyStoreFileName: String,
     isKeyStoreFileTextVisible: Boolean,
     mqttKeyStorePassword: String,
     onEvent: (MqttConfigurationUiEvent) -> Unit,
@@ -251,14 +251,11 @@ private fun MqttSSL(
                 exit = shrinkVertically(),
                 visible = isKeyStoreFileTextVisible
             ) {
-
-                val keyStoreFileText by remember { derivedStateOf { mqttKeyStoreFileName ?: "" } }
-
                 Column {
                     InformationListElement(
                         text = translate(
                             resource = MR.strings.currentlySelectedCertificate.stable,
-                            keyStoreFileText
+                            mqttKeyStoreFileName
                         )
                     )
 

@@ -75,10 +75,7 @@ class MqttConfigurationViewModel(
                     is UpdateMqttPort -> copy(mqttPort = change.port.toIntOrNullOrConstant())
                     is UpdateMqttRetryInterval -> copy(mqttRetryInterval = change.retryInterval.toLongOrNullOrConstant())
                     is UpdateMqttUserName -> copy(mqttUserName = change.userName)
-                    is UpdateMqttKeyStoreFile -> copy(
-                        mqttKeyStoreFile = change.file,
-                        isKeyStoreFileTextVisible = true
-                    )
+                    is UpdateMqttKeyStoreFile -> copy(mqttKeyStoreFile = change.file)
                     is UpdateMqttKeyStorePassword -> copy(mqttKeyStorePassword = change.mqttKeyStorePassword)
                 }
             })
@@ -89,23 +86,19 @@ class MqttConfigurationViewModel(
         when (action) {
             OpenMqttSSLWiki -> openLink(LinkType.WikiMQTTSSL)
             SelectSSLCertificate -> selectFile(FolderType.CertificateFolder.Mqtt) { path ->
-                onChange(
-                    UpdateMqttKeyStoreFile(path)
-                )
+                onChange(UpdateMqttKeyStoreFile(path))
             }
 
             RemoveSSLCertificate -> {
+                // save only removes the current configured file if it changes
+                // therefore deletion of the edit data keystore file (that is not yet saved)
+                // needs to happen here
                 val current = _viewState.value.editData.mqttKeyStoreFile
                 val configured = ConfigurationSetting.mqttKeyStoreFile.value
                 if (current != null && current != configured) {
                     current.commonDelete()
                 }
-                _viewState.update { vs ->
-                    vs.copy(editData = vs.editData.copy(
-                        mqttKeyStoreFile = null,
-                        isKeyStoreFileTextVisible = false
-                    ))
-                }
+                onChange(UpdateMqttKeyStoreFile(null))
             }
 
             BackClick -> navigator.onBackPressed()

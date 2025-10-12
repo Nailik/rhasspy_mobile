@@ -51,7 +51,6 @@ class MqttConfigurationViewModelTest : AppTest() {
             mqttKeepAliveInterval = 30L,
             mqttRetryInterval = 10L,
             mqttKeyStoreFile = null,
-            isKeyStoreFileTextVisible = false,
             mqttKeyStorePassword = ""
         )
 
@@ -66,7 +65,6 @@ class MqttConfigurationViewModelTest : AppTest() {
             mqttKeepAliveInterval = 9154L,
             mqttRetryInterval = 1958L,
             mqttKeyStoreFile = Path.commonInternalPath(get(), getRandomString(5)),
-            isKeyStoreFileTextVisible = true,
             mqttKeyStorePassword = getRandomString(5)
         )
 
@@ -90,7 +88,7 @@ class MqttConfigurationViewModelTest : AppTest() {
             mqttConfigurationViewModel.onEvent(UpdateMqttPort(mqttPort.toString()))
             mqttConfigurationViewModel.onEvent(UpdateMqttRetryInterval(mqttRetryInterval.toString()))
             mqttConfigurationViewModel.onEvent(UpdateMqttUserName(mqttUserName))
-            mqttConfigurationViewModel.onEvent(UpdateMqttKeyStoreFile(mqttKeyStoreFile!!)),
+            mqttConfigurationViewModel.onEvent(UpdateMqttKeyStoreFile(mqttKeyStoreFile))
             mqttConfigurationViewModel.onEvent(UpdateMqttKeyStorePassword(mqttKeyStorePassword))
         }
 
@@ -119,7 +117,7 @@ class MqttConfigurationViewModelTest : AppTest() {
             mqttConfigurationViewModel.onEvent(UpdateMqttPort(mqttPort.toString()))
             mqttConfigurationViewModel.onEvent(UpdateMqttRetryInterval(mqttRetryInterval.toString()))
             mqttConfigurationViewModel.onEvent(UpdateMqttUserName(mqttUserName))
-            mqttConfigurationViewModel.onEvent(UpdateMqttKeyStoreFile(mqttKeyStoreFile!!)),
+            mqttConfigurationViewModel.onEvent(UpdateMqttKeyStoreFile(mqttKeyStoreFile))
             mqttConfigurationViewModel.onEvent(UpdateMqttKeyStorePassword(mqttKeyStorePassword))
         }
 
