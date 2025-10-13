@@ -27,7 +27,7 @@ env:
   ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 60
 
 permissions:
-  contents: read
+  contents: write
   actions: read
   checks: write
 
