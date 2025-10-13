@@ -3,6 +3,7 @@
   "extends": [
     "config:base"
   ],
+  "baseBranches": ["develop"],
   "dependencyDashboard": false,
   "prConcurrentLimit": 1,
   "branchConcurrentLimit": 1,
