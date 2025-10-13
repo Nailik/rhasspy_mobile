@@ -201,5 +201,5 @@ dependencies {
     androidTestImplementation(libs.kermit)
 
     debugImplementation(libs.androidx.tracing.ktx)
-    debugImplementation(libs.compose.ui.test.manifest)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
