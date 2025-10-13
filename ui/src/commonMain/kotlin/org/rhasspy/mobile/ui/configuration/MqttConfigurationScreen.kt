@@ -12,9 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.data.resource.stable
@@ -34,12 +32,14 @@ import org.rhasspy.mobile.ui.main.ConfigurationScreenItemContent
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.RemoveSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttConnectionTimeout
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttHost
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeepAliveInterval
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeyStorePassword
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPassword
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPort
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttRetryInterval
@@ -124,6 +124,8 @@ private fun MqttEditContent(
                     MqttSSL(
                         isMqttSSLEnabled = editData.isMqttSSLEnabled,
                         mqttKeyStoreFileName = editData.mqttKeyStoreFileName,
+                        isKeyStoreFileTextVisible = editData.isKeyStoreFileTextVisible,
+                        mqttKeyStorePassword = editData.mqttKeyStorePassword,
                         onEvent = onEvent
                     )
 
@@ -201,7 +203,9 @@ private fun MqttConnectionSettings(
 @Composable
 private fun MqttSSL(
     isMqttSSLEnabled: Boolean,
-    mqttKeyStoreFileName: String?,
+    mqttKeyStoreFileName: String,
+    isKeyStoreFileTextVisible: Boolean,
+    mqttKeyStorePassword: String,
     onEvent: (MqttConfigurationUiEvent) -> Unit,
 ) {
 
@@ -240,23 +244,33 @@ private fun MqttSSL(
                 onClick = { onEvent(SelectSSLCertificate) }
             )
 
-            val isKeyStoreFileTextVisible by remember { derivedStateOf { mqttKeyStoreFileName != null } }
-
             AnimatedVisibility(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
                 visible = isKeyStoreFileTextVisible
             ) {
-
-                val keyStoreFileText by remember { derivedStateOf { mqttKeyStoreFileName ?: "" } }
-
-                InformationListElement(
-                    text = translate(
-                        resource = MR.strings.currentlySelectedCertificate.stable,
-                        keyStoreFileText
+                Column {
+                    InformationListElement(
+                        text = translate(
+                            resource = MR.strings.currentlySelectedCertificate.stable,
+                            mqttKeyStoreFileName
+                        )
                     )
-                )
+
+                    FilledTonalButtonListItem(
+                        text = MR.strings.remove.stable,
+                        modifier = Modifier.testTag(TestTag.Delete),
+                        onClick = { onEvent(RemoveSSLCertificate) }
+                    )
+                }
             }
+
+            // show the current HTTP server keystore password (read-only)
+            TextFieldListItemVisibility(
+                label = MR.strings.keyStorePassword.stable,
+                value = mqttKeyStorePassword,
+                onValueChange = { onEvent(UpdateMqttKeyStorePassword(it)) }
+            )
 
         }
     }

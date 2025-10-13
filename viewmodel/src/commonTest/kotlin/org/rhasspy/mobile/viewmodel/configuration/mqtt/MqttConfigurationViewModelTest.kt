@@ -14,6 +14,7 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttHost
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeepAliveInterval
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeyStoreFile
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeyStorePassword
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPassword
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPort
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttRetryInterval
@@ -49,7 +50,8 @@ class MqttConfigurationViewModelTest : AppTest() {
             mqttConnectionTimeout = 5L,
             mqttKeepAliveInterval = 30L,
             mqttRetryInterval = 10L,
-            mqttKeyStoreFile = null
+            mqttKeyStoreFile = null,
+            mqttKeyStorePassword = ""
         )
 
         mqttConfigurationData = MqttConfigurationData(
@@ -62,7 +64,8 @@ class MqttConfigurationViewModelTest : AppTest() {
             mqttConnectionTimeout = 6914L,
             mqttKeepAliveInterval = 9154L,
             mqttRetryInterval = 1958L,
-            mqttKeyStoreFile = Path.commonInternalPath(get(), getRandomString(5))
+            mqttKeyStoreFile = Path.commonInternalPath(get(), getRandomString(5)),
+            mqttKeyStorePassword = getRandomString(5)
         )
 
         mqttConfigurationViewModel = get()
@@ -85,7 +88,8 @@ class MqttConfigurationViewModelTest : AppTest() {
             mqttConfigurationViewModel.onEvent(UpdateMqttPort(mqttPort.toString()))
             mqttConfigurationViewModel.onEvent(UpdateMqttRetryInterval(mqttRetryInterval.toString()))
             mqttConfigurationViewModel.onEvent(UpdateMqttUserName(mqttUserName))
-            mqttConfigurationViewModel.onEvent(UpdateMqttKeyStoreFile(mqttKeyStoreFile!!))
+            mqttConfigurationViewModel.onEvent(UpdateMqttKeyStoreFile(mqttKeyStoreFile))
+            mqttConfigurationViewModel.onEvent(UpdateMqttKeyStorePassword(mqttKeyStorePassword))
         }
 
         assertEquals(mqttConfigurationData, mqttConfigurationViewModel.viewState.value.editData)
@@ -113,7 +117,8 @@ class MqttConfigurationViewModelTest : AppTest() {
             mqttConfigurationViewModel.onEvent(UpdateMqttPort(mqttPort.toString()))
             mqttConfigurationViewModel.onEvent(UpdateMqttRetryInterval(mqttRetryInterval.toString()))
             mqttConfigurationViewModel.onEvent(UpdateMqttUserName(mqttUserName))
-            mqttConfigurationViewModel.onEvent(UpdateMqttKeyStoreFile(mqttKeyStoreFile!!))
+            mqttConfigurationViewModel.onEvent(UpdateMqttKeyStoreFile(mqttKeyStoreFile))
+            mqttConfigurationViewModel.onEvent(UpdateMqttKeyStorePassword(mqttKeyStorePassword))
         }
 
         assertEquals(mqttConfigurationData, mqttConfigurationViewModel.viewState.value.editData)

@@ -2,12 +2,12 @@ package org.rhasspy.mobile.platformspecific.ktor
 
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
+import io.ktor.server.cio.CIO
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.EmbeddedServer
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.engine.sslConnector
-import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.compression.Compression
 import io.ktor.server.plugins.compression.gzip
@@ -77,7 +77,7 @@ actual fun getEngine(
     module: Application.() -> Unit,
 ): EmbeddedServer<*, *> {
     return embeddedServer(
-        factory = Netty,
+        factory = CIO,
         configure = configure,
         module = module
     )

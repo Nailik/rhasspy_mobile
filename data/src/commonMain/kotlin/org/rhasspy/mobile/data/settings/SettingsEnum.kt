@@ -80,6 +80,7 @@ enum class SettingsEnum {
     MQTTKeepAliveInterval,
     MQTTRetryInterval,
     MQTTKeyStoreFile,
+    MQTTKeyStorePassword,
 
     WakeWordUDPOutputHost,
     WakeWordUDPOutputPort,
