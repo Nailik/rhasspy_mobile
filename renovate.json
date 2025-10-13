@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "dependencyDashboard": false,
+  "prConcurrentLimit": 1,
+  "branchConcurrentLimit": 1,
+  "separateMajorMinor": false,
+  "separateMultipleMajor": false,
+  "groupName": "all-dependencies",
+  "packageRules": [
+    {
+      "matchPackagePatterns": [".*"],
+      "groupName": "all-dependencies",
+      "groupSlug": "all-dependencies",
+      "separateMinorPatch": false,
+      "separateMajorMinor": false
+    }
+  ]
+}
