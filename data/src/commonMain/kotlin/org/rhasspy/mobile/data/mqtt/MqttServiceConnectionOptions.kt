@@ -12,6 +12,7 @@ data class MqttServiceConnectionOptions(
     val cleanStart: Boolean = true,
     val isSSLEnabled: Boolean,
     val keyStorePath: Path?,
+    val keyStorePassword: String?,
     /** Connection timeout in seconds. */
     val connectionTimeout: Int,
     /** Keep alive interval in seconds. */

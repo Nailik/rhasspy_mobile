@@ -15,6 +15,11 @@ on:
       SONAR_KEY:
         required: true
 
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
 jobs:
   #runs sonar
   analyze:
@@ -74,7 +79,7 @@ jobs:
         run: ./gradlew test${{ inputs.BUILD_TYPE }}
       # better looking test report inside github
       - name: Create Test Report
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v2
         if: always()
         with:
           name: Test Report

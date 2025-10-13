@@ -26,6 +26,11 @@ on:
 env:
   ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 60
 
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
 jobs:
   check:
     uses: ./.github/workflows/pullrequest-ci.yml
@@ -67,7 +72,7 @@ jobs:
           script: ./gradlew androidApp:connectedCheck -Pandroid.testInstrumentationRunnerArguments.deviceSerial=emulator-5554
       # better looking test report inside github
       - name: Create Test Report
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v2
         if: always()
         with:
           name: Test Report
