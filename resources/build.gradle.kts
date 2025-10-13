@@ -97,7 +97,7 @@ val exportMyLibraryDefinitions by tasks.registering(Exec::class) {
             "./gradlew"
         },
         "exportLibraryDefinitions",
-        "-PaboutLibraries.exportPath=${projectDir}/src/commonMain/moko-resources/MR/files"
+        "-PaboutLibraries.exportPath=${projectDir}/src/commonMain/moko-resources/files"
     )
 }
 
