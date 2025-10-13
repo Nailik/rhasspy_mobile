@@ -159,7 +159,6 @@ tasks.withType<Test> {
 }
 
 dependencies {
-    implementation(libs.core.ktx)
     coreLibraryDesugaring(libs.desugar)
 
     implementation(project(":app"))

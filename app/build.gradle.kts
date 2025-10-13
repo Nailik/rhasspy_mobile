@@ -76,7 +76,7 @@ kotlin {
             implementation(libs.slf4j.simple)
             implementation(libs.ktor.server.compression)
             implementation(libs.ktor.server.call.logging)
-            implementation(libs.ktor.server.netty)
+            implementation(libs.ktor.server.cio)
             implementation(libs.ktor.network.tls.certificates)
         }
         androidUnitTest.dependencies {

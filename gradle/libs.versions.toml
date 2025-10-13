@@ -27,7 +27,7 @@ buildkonfig = "0.17.1"
 google-services = "4.4.4"
 zxing-android-embedded = "4.3.0"
 aboutlibraries-core = "13.0.0"
-aboutlibraries-plugin = "13.0.0-rc01"
+aboutlibraries-plugin = "13.0.0"
 moko-mvvm = "0.16.1"
 moko-resources = "0.25.1"
 firebase = "34.4.0"
@@ -50,7 +50,6 @@ material-icons-extended = "1.7.3"
 material3 = "1.9.0-beta06"
 mockmp-gradle-plugin = "2.0.2"
 slf4j-simple = "2.1.0-alpha1"
-core-ktx = "1.17.0"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android" }
@@ -117,7 +116,6 @@ ktor-server-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
 ktor-server-compression = { module = "io.ktor:ktor-server-compression", version.ref = "ktor" }
 ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
 ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
-ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-network-tls-certificates = { module = "io.ktor:ktor-network-tls-certificates", version.ref = "ktor" }
@@ -131,7 +129,6 @@ multiplatform-settings-serialization = { module = "com.russhwolf:multiplatform-s
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j-simple" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 okio-jvm = { module = "com.squareup.okio:okio-jvm", version.ref = "okio" }
-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 
 [plugins]
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }

@@ -36,7 +36,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.process)
             implementation(libs.ktor.server.compression)
             implementation(libs.ktor.server.call.logging)
-            implementation(libs.ktor.server.netty)
+            implementation(libs.ktor.server.cio)
             implementation(libs.koin.android)
             implementation(libs.koin.android.compat)
             implementation(libs.kotlinx.datetime)
