@@ -19,6 +19,7 @@ import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.RemoveSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
@@ -27,6 +28,7 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttHost
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeepAliveInterval
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeyStoreFile
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeyStorePassword
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPassword
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPort
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttRetryInterval
@@ -74,6 +76,7 @@ class MqttConfigurationViewModel(
                     is UpdateMqttRetryInterval -> copy(mqttRetryInterval = change.retryInterval.toLongOrNullOrConstant())
                     is UpdateMqttUserName -> copy(mqttUserName = change.userName)
                     is UpdateMqttKeyStoreFile -> copy(mqttKeyStoreFile = change.file)
+                    is UpdateMqttKeyStorePassword -> copy(mqttKeyStorePassword = change.mqttKeyStorePassword)
                 }
             })
         }
@@ -83,9 +86,19 @@ class MqttConfigurationViewModel(
         when (action) {
             OpenMqttSSLWiki -> openLink(LinkType.WikiMQTTSSL)
             SelectSSLCertificate -> selectFile(FolderType.CertificateFolder.Mqtt) { path ->
-                onChange(
-                    UpdateMqttKeyStoreFile(path)
-                )
+                onChange(UpdateMqttKeyStoreFile(path))
+            }
+
+            RemoveSSLCertificate -> {
+                // save only removes the current configured file if it changes
+                // therefore deletion of the edit data keystore file (that is not yet saved)
+                // needs to happen here
+                val current = _viewState.value.editData.mqttKeyStoreFile
+                val configured = ConfigurationSetting.mqttKeyStoreFile.value
+                if (current != null && current != configured) {
+                    current.commonDelete()
+                }
+                onChange(UpdateMqttKeyStoreFile(null))
             }
 
             BackClick -> navigator.onBackPressed()
@@ -114,6 +127,7 @@ class MqttConfigurationViewModel(
             ConfigurationSetting.mqttPassword.value = mqttPassword
             ConfigurationSetting.isMqttSSLEnabled.value = isMqttSSLEnabled
             ConfigurationSetting.mqttKeyStoreFile.value = mqttKeyStoreFile
+            ConfigurationSetting.mqttKeyStorePassword.value = mqttKeyStorePassword
             ConfigurationSetting.mqttConnectionTimeout.value = mqttConnectionTimeout.toLongOrZero()
             ConfigurationSetting.mqttKeepAliveInterval.value = mqttKeepAliveInterval.toLongOrZero()
             ConfigurationSetting.mqttRetryInterval.value = mqttRetryInterval.toLongOrZero()

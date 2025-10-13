@@ -92,7 +92,7 @@ val exportMyLibraryDefinitions by tasks.registering(Exec::class) {
     // Set command line
     commandLine = listOf(
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-            "gradlew.bat"
+            "$projectDir\\..\\gradlew.bat"
         } else {
             "./gradlew"
         },
