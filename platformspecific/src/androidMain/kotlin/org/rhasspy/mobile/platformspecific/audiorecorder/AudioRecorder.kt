@@ -64,11 +64,11 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
     private var recorder: AudioRecord? = null
     private var resampler: Resampler? = null
 
-    private val audioPlaybackCallback =
+    private val audioCallback =
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> AudioManagerCallback(
-                callback = { isPlaying ->
-                    if (isPlaying) {
+                callback = { isInUse ->
+                    if (isInUse) {
                         pauseRecording()
                     } else {
                         resumeRecording()
@@ -144,7 +144,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
             read(tempBufferSize)
 
             if (isAutoPauseOnMediaPlayback) {
-                audioPlaybackCallback.register()
+                audioCallback.register(recorder?.audioSessionId)
             }
 
         } catch (e: Exception) {
@@ -155,6 +155,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
 
     private fun pauseRecording() {
         logger.v { "pauseRecording ${recorder?.recordingState}" }
+        if (!_isRecording.value) return
         _isRecording.value = false
         try {
             recorder?.stop()
@@ -165,6 +166,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
 
     private fun resumeRecording() {
         logger.v { "resumeRecording ${recorder?.recordingState}" }
+        if (_isRecording.value) return
         if (shouldRecord) {
             try {
                 if (recorder?.recordingState != STATE_UNINITIALIZED) {
@@ -182,7 +184,7 @@ internal actual class AudioRecorder : IAudioRecorder, KoinComponent {
      * stop recording
      */
     actual override fun stopRecording() {
-        audioPlaybackCallback.unregister()
+        audioCallback.unregister()
 
         shouldRecord = false
         logger.v { "stopRecording ${recorder?.recordingState}" }
