@@ -90,11 +90,10 @@ internal class WakeWordService(
                 //check that everything is initialized
                 initialize()
 
-                //resume detection if necessary
-                resumeDetection()
-
-                if (!it.isEnabled && isRecording.value) {
-                    stopRecording()
+                if (!it.isEnabled || it.wakeWordOption == WakeWordOption.Disabled) {
+                    stopDetection()
+                } else {
+                    startDetection()
                 }
             }
         }
@@ -150,15 +149,6 @@ internal class WakeWordService(
         if (!isDetectionRunning) return
         stopRecording()
         isDetectionRunning = false
-    }
-
-    /**
-     * resume the detection internally
-     */
-    private fun resumeDetection() {
-        if (isDetectionRunning) {
-            startDetection()
-        }
     }
 
     /**
