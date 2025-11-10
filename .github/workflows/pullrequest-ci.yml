@@ -46,7 +46,7 @@ jobs:
       - name: Android Lint
         run: ./gradlew lint${{ inputs.BUILD_TYPE }}
       # android lint debug upload
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: AndroidLintRelease
           path: |

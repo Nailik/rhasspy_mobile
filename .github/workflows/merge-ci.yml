@@ -144,7 +144,7 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "35.0.0"
       # upload apks to action
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: Artifact of signed apks
           path: |
