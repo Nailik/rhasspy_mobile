@@ -26,7 +26,7 @@ jobs:
     runs-on: self-hosted
     steps:
       #checkout project
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Setup Gradle
@@ -62,7 +62,7 @@ jobs:
     needs: analyze
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
           fetch-depth: 0

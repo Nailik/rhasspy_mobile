@@ -44,7 +44,7 @@ jobs:
     needs: check
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
       # setup jdk 22
@@ -83,7 +83,7 @@ jobs:
     runs-on: self-hosted
     needs: uiTest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
       # setup jdk 22
